@@ -1,0 +1,26 @@
+{
+  "name": "HOSHIZAKI (THAILAND) - Job Service Management",
+  "short_name": "Hoshizaki Service",
+  "description": "ระบบจัดการใบแจ้งบริการ ออกใบเสนอราคา/ใบเสร็จ สแกนเนมเพลต และค้นหาคู่มือ PDF สำหรับทีมช่าง Hoshizaki (Thailand)",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#002B49",
+  "theme_color": "#002B49",
+  "lang": "th",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='108' fill='%23002B49'/%3E%3Ccircle cx='256' cy='256' r='190' fill='%2300A3E0'/%3E%3Ctext x='256' y='322' font-family='sans-serif' font-weight='900' font-size='210' fill='%23ffffff' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='108' fill='%23002B49'/%3E%3Ccircle cx='256' cy='256' r='190' fill='%2300A3E0'/%3E%3Ctext x='256' y='322' font-family='sans-serif' font-weight='900' font-size='210' fill='%23ffffff' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

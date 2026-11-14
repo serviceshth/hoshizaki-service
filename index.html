@@ -560,7 +560,81 @@
 </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    </head>
+    
+    <!-- Organized 4-Category Responsive Toolbar Grid (v17.6) -->
+    <style id="v17-6-toolbar-grid">
+        .tb-sections-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.65rem;
+        }
+        .tb-sections-grid.single-cat-mode {
+            grid-template-columns: 1fr;
+        }
+        @media (max-width: 767px) {
+            .tb-sections-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .tb-group-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 0.75rem;
+            padding: 0.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+        .tb-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 700;
+            color: #bae6fd;
+            letter-spacing: 0.02em;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tb-btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.4rem;
+        }
+        .tb-sections-grid.single-cat-mode .tb-btn-grid {
+            grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+        }
+        @media (max-width: 420px) {
+            .tb-btn-grid,
+            .tb-sections-grid.single-cat-mode .tb-btn-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        .tb-action-item {
+            min-height: 40px;
+            padding: 0.45rem 0.55rem;
+            border-radius: 0.55rem;
+            font-size: 11.5px;
+            line-height: 1.25;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            text-align: center;
+            width: 100% !important;
+            transition: transform 0.12s ease, background-color 0.15s ease;
+        }
+        .tb-action-item:active {
+            transform: scale(0.98);
+        }
+        @media screen and (max-width: 639px) {
+            #toolbarActions .tb-action-item:not(.hidden) {
+                justify-content: center !important;
+                padding-left: 0.55rem !important;
+            }
+        }
+    </style>
+</head>
 <body class="p-2 sm:p-4 md:p-6 pb-24 sm:pb-6 min-h-screen">
 
     <!-- Batch Photo Upload Progress Banner (v12.7) -->
@@ -671,7 +745,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v17.0 Global</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v17.6 Global</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -714,107 +788,143 @@
             </div>
         </div>
 
-        <!-- แถบปุ่มคำสั่งหลัก (แสดงตลอดบนแท็บเล็ต/พีซี และพับเก็บได้บนมือถือ) -->
-        <div id="toolbarActions" class="hidden sm:block mt-3 pt-2.5 border-t border-white/15 space-y-2 text-xs">
-            <!-- แถบเลือกหมวดหมู่หลัก 4 หมวด (ช่วยจัดระเบียบปุ่มคำสั่งบน PC/Tablet/Mobile ให้ค้นหาง่าย) -->
-            <div class="flex flex-wrap items-center justify-between gap-1.5">
+        <!-- แถบปุ่มคำสั่งหลัก จัดหมวดหมู่ 4 โซนชัดเจน รองรับ Mobile / Tablet / Desktop (v17.6) -->
+        <div id="toolbarActions" class="hidden sm:block mt-3 pt-2.5 border-t border-white/15 space-y-2.5 text-xs">
+            <!-- แถบแท็บเลือกหมวดหมู่ + ช่องกรองปุ่มเมนู -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <button type="button" onclick="switchToolbarCategory('ALL')" id="tbCatBtn_ALL" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-hoshizaki-blue text-white font-bold transition">
-                        <i class="fa-solid fa-border-all mr-1"></i>ทั้งหมด
+                    <button type="button" onclick="switchToolbarCategory('ALL')" id="tbCatBtn_ALL" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-hoshizaki-blue text-white font-bold transition shadow-xs">
+                        <i class="fa-solid fa-border-all mr-1"></i>ทั้งหมด (4 หมวด)
                     </button>
-                    <button type="button" onclick="switchToolbarCategory('SERVICE')" id="tbCatBtn_SERVICE" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
-                        <i class="fa-solid fa-wrench mr-1 text-amber-300"></i>1. งานบริการ & ตารางช่าง
+                    <button type="button" onclick="switchToolbarCategory('SERVICE')" id="tbCatBtn_SERVICE" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+                        <i class="fa-solid fa-wrench mr-1 text-amber-300"></i>1. งานบริการ
                     </button>
-                    <button type="button" onclick="switchToolbarCategory('DOCS')" id="tbCatBtn_DOCS" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
-                        <i class="fa-solid fa-file-invoice-dollar mr-1 text-emerald-300"></i>2. เอกสารการเงิน & งานเคลม
+                    <button type="button" onclick="switchToolbarCategory('DOCS')" id="tbCatBtn_DOCS" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+                        <i class="fa-solid fa-file-invoice-dollar mr-1 text-emerald-300"></i>2. เอกสาร &amp; เคลม
                     </button>
-                    <button type="button" onclick="switchToolbarCategory('STOCK_PM')" id="tbCatBtn_STOCK_PM" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition relative">
-                        <i class="fa-solid fa-boxes-stacked mr-1 text-orange-300"></i>3. สต็อกรถช่าง & PM / ค้างอะไหล่
+                    <button type="button" onclick="switchToolbarCategory('STOCK_PM')" id="tbCatBtn_STOCK_PM" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+                        <i class="fa-solid fa-boxes-stacked mr-1 text-orange-300"></i>3. สต็อก &amp; PM
                         <span id="waitingPartsTopBadge" class="hidden ml-1 bg-rose-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
                     </button>
-                    <button type="button" onclick="switchToolbarCategory('MANUAL_TEAM')" id="tbCatBtn_MANUAL_TEAM" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
-                        <i class="fa-solid fa-book-open mr-1 text-cyan-300"></i>4. คู่มือ & ทีมงาน/ซิงค์
+                    <button type="button" onclick="switchToolbarCategory('MANUAL_TEAM')" id="tbCatBtn_MANUAL_TEAM" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+                        <i class="fa-solid fa-book-open mr-1 text-cyan-300"></i>4. คู่มือ &amp; ระบบ
                     </button>
                 </div>
-                <button type="button" onclick="openWaitingPartsBackorderModal()" class="bg-rose-600/90 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-xs" title="ดูรายการงานรออะไหล่ / ค้างส่ง (Waiting Parts & Backorder)">
-                    <i class="fa-solid fa-hourglass-half"></i> <span>งานรออะไหล่ (<span id="waitingPartsInlineCount">0</span>)</span>
-                </button>
+
+                <!-- ช่องค้นหาเมนูเร็ว -->
+                <div class="relative w-full md:w-56">
+                    <i class="fa-solid fa-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-sky-300 text-[11px]"></i>
+                    <input type="text" id="toolbarMenuFilterInput" oninput="filterToolbarButtons(this.value)" placeholder="กรองปุ่มเมนูเร็ว..." class="w-full bg-white/10 focus:bg-white text-white focus:text-hoshizaki-navy placeholder-blue-200/75 focus:placeholder-gray-400 text-[11px] rounded-lg pl-7 pr-6 py-1.5 border border-white/20 focus:outline-none">
+                    <button type="button" onclick="const el=document.getElementById('toolbarMenuFilterInput'); el.value=''; filterToolbarButtons('');" class="absolute right-2 top-1/2 -translate-y-1/2 text-blue-200 hover:text-rose-400 text-xs font-bold">&times;</button>
+                </div>
             </div>
 
-            <!-- รายการปุ่มคำสั่งแยกตามหมวดหมู่ -->
-            <div class="flex flex-wrap items-center gap-1.5">
+            <!-- กริดการ์ด 4 หมวดหมู่หลัก -->
+            <div id="toolbarSectionsGrid" class="tb-sections-grid">
                 <!-- หมวด 1: งานบริการ & ตารางช่าง -->
-                <button type="button" data-tb-cat="SERVICE" onclick="openScheduleModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-calendar-days"></i> <span>ตารางงาน / Schedule</span>
-                </button>
-                <button type="button" data-tb-cat="SERVICE" onclick="createNewJobForm()" class="tb-action-item flex-1 sm:flex-none justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-file-circle-plus"></i> <span>ใบงานใหม่ / New Job</span>
-                </button>
-                <button type="button" data-tb-cat="SERVICE" onclick="saveToHistory()" class="tb-action-item flex-1 sm:flex-none justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-floppy-disk"></i> <span>บันทึก / Save</span>
-                </button>
-                <button type="button" data-tb-cat="SERVICE" onclick="openHistoryModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-clock-rotate-left"></i> <span>ประวัติ / History</span>
-                </button>
-                <button type="button" data-tb-cat="SERVICE" onclick="openFullSheetPreview()" class="tb-action-item flex-1 sm:flex-none justify-center bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-eye"></i> <span>พรีวิว / Preview</span>
-                </button>
-                <button type="button" data-tb-cat="SERVICE" onclick="printCurrentDocument('JOB')" class="tb-action-item flex-1 sm:flex-none justify-center bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-print"></i> <span>พิมพ์ / Print</span>
-                </button>
+                <section class="tb-group-card" data-tb-group="SERVICE">
+                    <div class="tb-group-header">
+                        <span><i class="fa-solid fa-screwdriver-wrench text-amber-300 mr-1.5"></i>1. งานบริการ &amp; ตารางช่าง (Service &amp; Job)</span>
+                        <span class="text-[10px] text-white/60 font-normal">6 คำสั่ง</span>
+                    </div>
+                    <div class="tb-btn-grid">
+                        <button type="button" data-tb-cat="SERVICE" onclick="openScheduleModal()" class="tb-action-item bg-amber-500 hover:bg-amber-600 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-calendar-days"></i> <span>ตารางงาน / Schedule</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="createNewJobForm()" class="tb-action-item bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm">
+                            <i class="fa-solid fa-file-circle-plus"></i> <span>ใบงานใหม่ / New Job</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="saveToHistory()" class="tb-action-item bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-floppy-disk"></i> <span>บันทึก / Save</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openHistoryModal()" class="tb-action-item bg-slate-700 hover:bg-slate-800 text-white font-medium shadow-sm">
+                            <i class="fa-solid fa-clock-rotate-left"></i> <span>ประวัติ / History</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openFullSheetPreview()" class="tb-action-item bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white font-medium shadow-sm">
+                            <i class="fa-solid fa-eye"></i> <span>พรีวิว / Preview</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="printCurrentDocument('JOB')" class="tb-action-item bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-sm">
+                            <i class="fa-solid fa-print"></i> <span>พิมพ์ / Print</span>
+                        </button>
+                    </div>
+                </section>
 
-                <!-- หมวด 2: เอกสารการเงิน & งานเคลม -->
-                <button type="button" data-tb-cat="DOCS" onclick="openQuotationArchiveModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm" title="ค้นหาและดึงใบเสนอราคาเก่า 2,486 ฉบับ ลูกค้า 862 ราย และราคาอะไหล่">
-                    <i class="fa-solid fa-folder-open"></i> <span>ใบเสนอราคาเก่า (<span id="qtArchiveToolbarCount">2,486</span>)</span>
-                </button>
-                <button type="button" data-tb-cat="DOCS" onclick="generateReceiptModal(false)" class="tb-action-item flex-1 sm:flex-none justify-center bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-file-invoice-dollar"></i> <span>ใบเสนอราคา & บิล / QT · IV · RE</span>
-                </button>
-                <button type="button" data-tb-cat="DOCS" onclick="openWarrantyClaimModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm" title="ใบเคลมประกัน Hoshizaki Warranty Claim Form + ดึงใบเคลมลูกค้าออนไลน์">
-                    <i class="fa-solid fa-file-shield"></i> <span>ใบเคลมประกัน / Warranty Claim</span>
-                </button>
-                <button type="button" data-tb-cat="DOCS" onclick="sharePDFToLine()" class="tb-action-item flex-1 sm:flex-none justify-center bg-[#06C755] hover:bg-[#05b34c] text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-file-pdf"></i> <span>แชร์ PDF เข้า LINE</span>
-                </button>
-                <button type="button" data-tb-cat="DOCS" onclick="sendJobByEmail()" class="tb-action-item flex-1 sm:flex-none justify-center bg-rose-700 hover:bg-rose-800 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-envelope"></i> <span>ส่งอีเมล PDF</span>
-                </button>
-                <button type="button" data-tb-cat="DOCS" onclick="exportWeeklyMultiSheetExcel()" class="tb-action-item flex-1 sm:flex-none justify-center bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-file-excel"></i> <span>สรุปประจำสัปดาห์ (4 ชีต)</span>
-                </button>
+                <!-- หมวด 2: เอกสารการเงิน & ส่งออก -->
+                <section class="tb-group-card" data-tb-group="DOCS">
+                    <div class="tb-group-header">
+                        <span><i class="fa-solid fa-file-invoice-dollar text-emerald-300 mr-1.5"></i>2. เอกสารการเงิน, เคลม &amp; ส่งออก (Docs &amp; Export)</span>
+                        <span class="text-[10px] text-white/60 font-normal">6 คำสั่ง</span>
+                    </div>
+                    <div class="tb-btn-grid">
+                        <button type="button" data-tb-cat="DOCS" onclick="generateReceiptModal(false)" class="tb-action-item bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-file-invoice-dollar"></i> <span>ใบเสนอราคา &amp; บิล / QT·IV·RE</span>
+                        </button>
+                        <button type="button" data-tb-cat="DOCS" onclick="openQuotationArchiveModal()" class="tb-action-item bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-folder-open"></i> <span>ใบเสนอราคาเก่า (<span id="qtArchiveToolbarCount">2,486</span>)</span>
+                        </button>
+                        <button type="button" data-tb-cat="DOCS" onclick="openWarrantyClaimModal()" class="tb-action-item bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-file-shield"></i> <span>ใบเคลมประกัน / Warranty</span>
+                        </button>
+                        <button type="button" data-tb-cat="DOCS" onclick="exportWeeklyMultiSheetExcel()" class="tb-action-item bg-emerald-700 hover:bg-emerald-800 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-file-excel"></i> <span>สรุปประจำสัปดาห์ (4 ชีต)</span>
+                        </button>
+                        <button type="button" data-tb-cat="DOCS" onclick="sharePDFToLine()" class="tb-action-item bg-[#06C755] hover:bg-[#05b34c] text-white font-semibold shadow-sm">
+                            <i class="fa-solid fa-file-pdf"></i> <span>แชร์ PDF เข้า LINE</span>
+                        </button>
+                        <button type="button" data-tb-cat="DOCS" onclick="sendJobByEmail()" class="tb-action-item bg-rose-700 hover:bg-rose-800 text-white font-medium shadow-sm">
+                            <i class="fa-solid fa-envelope"></i> <span>ส่งอีเมล PDF</span>
+                        </button>
+                    </div>
+                </section>
 
                 <!-- หมวด 3: สต็อกรถช่าง & PM / ค้างอะไหล่ -->
-                <button type="button" data-tb-cat="STOCK_PM" onclick="openVanStockModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-truck-ramp-box"></i> <span>สต็อกรถช่าง / Van Stock</span>
-                </button>
-                <button type="button" data-tb-cat="STOCK_PM" onclick="openPmAndAnalyticsModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-violet-600 hover:bg-violet-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-chart-pie"></i> <span>แจ้งเตือน PM & สถิติ / PM & KPI</span>
-                    <span id="pmDueBadgeCount" class="hidden bg-amber-400 text-hoshizaki-navy text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
-                </button>
-                <button type="button" data-tb-cat="STOCK_PM" onclick="openWaitingPartsBackorderModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-hourglass-half"></i> <span>งานรออะไหล่ / Backorder</span>
-                </button>
+                <section class="tb-group-card" data-tb-group="STOCK_PM">
+                    <div class="tb-group-header">
+                        <span><i class="fa-solid fa-boxes-stacked text-orange-300 mr-1.5"></i>3. สต็อกรถช่าง, PM &amp; ค้างอะไหล่ (Stock &amp; PM)</span>
+                        <span class="text-[10px] text-white/60 font-normal">3 คำสั่ง</span>
+                    </div>
+                    <div class="tb-btn-grid">
+                        <button type="button" data-tb-cat="STOCK_PM" onclick="openVanStockModal()" class="tb-action-item bg-orange-600 hover:bg-orange-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-truck-ramp-box"></i> <span>สต็อกรถช่าง / Van Stock</span>
+                        </button>
+                        <button type="button" data-tb-cat="STOCK_PM" onclick="openWaitingPartsBackorderModal()" class="tb-action-item bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-hourglass-half"></i> <span>งานรออะไหล่ (<span id="waitingPartsInlineCount">0</span>)</span>
+                        </button>
+                        <button type="button" data-tb-cat="STOCK_PM" onclick="openPmAndAnalyticsModal()" class="tb-action-item col-span-2 bg-violet-600 hover:bg-violet-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-chart-pie"></i> <span>แจ้งเตือน PM &amp; สถิติ / PM &amp; KPI</span>
+                            <span id="pmDueBadgeCount" class="hidden bg-amber-400 text-hoshizaki-navy text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
+                        </button>
+                    </div>
+                </section>
 
                 <!-- หมวด 4: คู่มือ & ทีมงาน/ซิงค์ -->
-                <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openErrorCodeModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-slate-700 hover:bg-slate-800 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-triangle-exclamation"></i> <span>คู่มือ & Error Code</span>
-                </button>
-                <button type="button" data-tb-cat="MANUAL_TEAM" id="btnManualSearchTrigger" onclick="toggleManualSearchMenu(event)" class="tb-action-item flex-1 sm:flex-none justify-center bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-book-open"></i> <span>ค้นหาคู่มือ / Parts (PDF)</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] ml-0.5"></i>
-                </button>
-                <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openStaffManagerModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-users-gear"></i> <span>จัดการบุคลากร / Staff & Roles</span>
-                </button>
-                <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openTeamCloudSyncModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ & สำรองข้อมูล / Sync & Backup</span>
-                </button>
-                <button type="button" data-tb-cat="MANUAL_TEAM" id="btnPwaDirectInstall" onclick="triggerPwaInstall()" class="hidden tb-action-item flex-1 sm:flex-none justify-center bg-teal-700 hover:bg-teal-800 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-download"></i> <span>ติดตั้งแอป</span>
-                </button>
-                <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openInstallGuideModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-sky-700 hover:bg-sky-800 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-mobile-screen-button"></i> <span>เพิ่มลงหน้าจอ</span>
-                </button>
+                <section class="tb-group-card" data-tb-group="MANUAL_TEAM">
+                    <div class="tb-group-header">
+                        <span><i class="fa-solid fa-book-open text-cyan-300 mr-1.5"></i>4. คู่มือช่าง, บุคลากร &amp; ระบบ (Manual &amp; System)</span>
+                        <span class="text-[10px] text-white/60 font-normal">5 คำสั่ง</span>
+                    </div>
+                    <div class="tb-btn-grid">
+                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openErrorCodeModal()" class="tb-action-item bg-slate-700 hover:bg-slate-800 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-300"></i> <span>คู่มือ &amp; Error Code</span>
+                        </button>
+                        <button type="button" data-tb-cat="MANUAL_TEAM" id="btnManualSearchTrigger" onclick="toggleManualSearchMenu(event)" class="tb-action-item bg-cyan-600 hover:bg-cyan-700 text-white font-semibold shadow-sm">
+                            <i class="fa-solid fa-book-open"></i> <span>ค้นหาคู่มือ / Parts (PDF)</span>
+                            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openStaffManagerModal()" class="tb-action-item bg-teal-600 hover:bg-teal-700 text-white font-medium shadow-sm">
+                            <i class="fa-solid fa-users-gear"></i> <span>จัดการบุคลากร / Staff</span>
+                        </button>
+                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openTeamCloudSyncModal()" class="tb-action-item bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ &amp; สำรองข้อมูล</span>
+                        </button>
+                        <button type="button" data-tb-cat="MANUAL_TEAM" id="btnPwaDirectInstall" onclick="triggerPwaInstall()" class="hidden tb-action-item bg-teal-700 hover:bg-teal-800 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-download"></i> <span>ติดตั้งแอป</span>
+                        </button>
+                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openInstallGuideModal()" class="tb-action-item col-span-2 bg-sky-700 hover:bg-sky-800 text-white font-medium shadow-sm">
+                            <i class="fa-solid fa-mobile-screen-button"></i> <span>เพิ่มแอปลงหน้าจอ (Add to Home Screen)</span>
+                        </button>
+                    </div>
+                </section>
             </div>
         </div>
 
@@ -13967,6 +14077,18 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 btn.classList.toggle('font-bold', isSelected);
                 btn.classList.toggle('bg-white/10', !isSelected);
             });
+            const grid = document.getElementById('toolbarSectionsGrid');
+            if (grid) {
+                grid.classList.toggle('single-cat-mode', cat !== 'ALL');
+            }
+            document.querySelectorAll('.tb-group-card').forEach(card => {
+                const groupCat = card.getAttribute('data-tb-group');
+                if (cat === 'ALL' || groupCat === cat) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
             document.querySelectorAll('.tb-action-item').forEach(item => {
                 if (item.id === 'btnPwaDirectInstall' && !window.__deferredPwaPrompt) {
                     item.classList.add('hidden');
@@ -13978,6 +14100,34 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 } else {
                     item.classList.add('hidden');
                 }
+            });
+        }
+
+        function filterToolbarButtons(keyword) {
+            const q = String(keyword || '').trim().toLowerCase();
+            if (!q) {
+                switchToolbarCategory('ALL');
+                return;
+            }
+            const grid = document.getElementById('toolbarSectionsGrid');
+            if (grid) grid.classList.remove('single-cat-mode');
+
+            document.querySelectorAll('.tb-group-card').forEach(card => {
+                let visibleCount = 0;
+                card.querySelectorAll('.tb-action-item').forEach(btn => {
+                    if (btn.id === 'btnPwaDirectInstall' && !window.__deferredPwaPrompt) {
+                        btn.classList.add('hidden');
+                        return;
+                    }
+                    const text = (btn.innerText || '').toLowerCase();
+                    if (text.includes(q)) {
+                        btn.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        btn.classList.add('hidden');
+                    }
+                });
+                card.classList.toggle('hidden', visibleCount === 0);
             });
         }
 

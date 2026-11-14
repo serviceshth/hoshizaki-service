@@ -718,7 +718,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.7 Model Error Matrix + Flex OA</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.8 Dishwasher Err + Thermistor + Tech Docs</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -882,6 +882,9 @@
                         </button>
                         <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openFullScreenSpecViewerModal()" class="tb-action-item bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-table-list text-amber-200"></i> <span>ตาราง Spec Sheet เต็มจอ</span>
+                        </button>
+                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openTechnicalDocManagerModal()" class="tb-action-item col-span-2 bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-folder-plus text-amber-100"></i> <span>เพิ่ม/แก้ไข Spec · Parts · SM · IM · Drawing</span>
                         </button>
                         <button type="button" data-tb-cat="MANUAL_TEAM" id="btnManualSearchTrigger" onclick="toggleManualSearchMenu(event)" class="tb-action-item bg-cyan-600 hover:bg-cyan-700 text-white font-semibold shadow-sm">
                             <i class="fa-solid fa-book-open"></i> <span>ค้นหาคู่มือ / Parts (PDF)</span>
@@ -1310,6 +1313,13 @@
         <option value="RW-218MA-S">
         <option value="RW-96MA-S">
         <option value="RW-98MA-S">
+        <option value="HSU-400">
+        <option value="HSU-500">
+        <option value="JWE-400">
+        <option value="JWE-450">
+        <option value="JWE-500">
+        <option value="JWE-620">
+        <option value="JWE-680">
     </datalist>
 
     <datalist id="hoshizakiPartsList">
@@ -11747,15 +11757,77 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 action: 'Step 1: ล้างแผงคอยล์ร้อนและแผ่นกรองฝุ่นใต้เครื่อง | Step 2: ล้างท่อน้ำทิ้งและถาดระเหยน้ำทิ้ง | Step 3: ตรวจสอบยางขอบประตูและฮีตเตอร์ละลายน้ำแข็ง'
             },
 
-            // 6. SPECIALTY EQUIPMENT (DCM / AM / HNC / DBF / HSU)
+            // 6. COMMERCIAL DISHWASHER SERIES (HSU / JWE Undercounter & Hood-Type)
             {
-                code: 'E1 / E2 / E3',
+                code: 'E01 / E1 (Dishwasher)',
+                series: 'DISHWASHER',
+                seriesLabel: 'HSU / JWE Series (เครื่องล้างจาน)',
+                models: ['HSU-400', 'HSU-500', 'JWE-400', 'JWE-450', 'JWE-500', 'JWE-620', 'JWE-680'],
+                title: 'Water Fill Timeout / Low Water Level (น้ำเข้าถังล้างไม่ถึงระดับในเวลาที่กำหนด)',
+                cause: 'วาล์วน้ำเข้า (Water Valve) อุดตัน/คอยล์ขาด, แรงดันน้ำต่ำ, จุกเดรน (Drain Plug) ปิดไม่สนิท, หรือ Level Sensor / Float Switch ค้าง',
+                parts: 'Water Valve (456461-01 / P05115-01 / 6262.00008.00), Level Sensor (3X4140G01), Float Switch (449401-01)',
+                action: 'Step 1: ตรวจจุกเดรนน้ำทิ้งว่าใส่สนิท | Step 2: ล้างตะแกรงกรองวาล์วน้ำเข้า | Step 3: ตรวจ Level Sensor / Float Switch และแรงดันน้ำ (0.1-0.6 MPa)'
+            },
+            {
+                code: 'E02 / E2 (Dishwasher)',
+                series: 'DISHWASHER',
+                seriesLabel: 'HSU / JWE Series (เครื่องล้างจาน)',
+                models: ['HSU-400', 'HSU-500', 'JWE-400', 'JWE-450', 'JWE-500', 'JWE-620', 'JWE-680'],
+                title: 'Wash Tank Heating Timeout (ฮีตเตอร์ถังล้างทำความร้อนไม่ถึงอุณหภูมิ 55-65°C)',
+                cause: 'ฮีตเตอร์ถังล้าง (Wash Tank Heater) ขาด, แมกเนติกคอนแทคเตอร์ไม่ดูด, High Limiter ตัด, หรือเซ็นเซอร์ถังล้างเพี้ยน',
+                parts: 'Tank Heater (P04856-01 / 9099.01000.13), Magnetic Contactor (P03655-02), Tank Probe (6262.00043.011)',
+                action: 'Step 1: วัดค่าความต้านทาน Wash Tank Heater | Step 2: เช็กไฟออก Magnetic Contactor | Step 3: กดรีเซ็ต High Limiter และวัดค่าเซ็นเซอร์'
+            },
+            {
+                code: 'E03 / E3 (Dishwasher)',
+                series: 'DISHWASHER',
+                seriesLabel: 'HSU / JWE Series (เครื่องล้างจาน)',
+                models: ['HSU-400', 'HSU-500', 'JWE-400', 'JWE-450', 'JWE-500', 'JWE-620', 'JWE-680'],
+                title: 'Rinse Boiler Heating Timeout (หม้อต้มน้ำล้างจานสุดท้ายไม่ถึง 80-85°C)',
+                cause: 'ฮีตเตอร์หม้อต้ม (Boiler Heater) ขาด, Contactor เสีย, น้ำในหม้อต้มไม่เต็ม, หรือ Boiler Thermistor เสีย',
+                parts: 'Boiler Heater (P04857-01 / 9099.01000.06), Contactor (P03594-02), Boiler Probe (6262.00043.011)',
+                action: 'Step 1: วัดค่าโอห์ม Boiler Heater และเช็กกระแสไฟ | Step 2: ตรวจเช็ก Air Break / Pressure Switch หม้อต้ม | Step 3: วัดค่า kΩ ของ Boiler Thermistor'
+            },
+            {
+                code: 'E04 / E4 (Dishwasher)',
+                series: 'DISHWASHER',
+                seriesLabel: 'HSU / JWE Series (เครื่องล้างจาน)',
+                models: ['HSU-400', 'HSU-500', 'JWE-400', 'JWE-450', 'JWE-500', 'JWE-620', 'JWE-680'],
+                title: 'Thermistor / Temperature Probe Open or Short (เซ็นเซอร์ถังล้างหรือหม้อต้มขาด/ช็อต)',
+                cause: 'สายเซ็นเซอร์ขาด/ชื้น, ขั้วต่อหลวมบน Control Board, หรือหัวโพรบเสื่อมค่าเพี้ยน',
+                parts: 'Thermistor / Temp Probe (463634-01 / 6262.00043.011), Control Board (P04116-02 / P04116-23)',
+                action: 'Step 1: ถอดปลั๊กและวัดค่าโอห์มเซ็นเซอร์เทียบตาราง kΩ vs °C ด้านล่าง | Step 2: ตรวจขั้วต่อ CN บนแผงควบคุม | Step 3: เปลี่ยนหัวโพรบใหม่'
+            },
+            {
+                code: 'E05 / E5 (Dishwasher)',
+                series: 'DISHWASHER',
+                seriesLabel: 'HSU / JWE Series (เครื่องล้างจาน)',
+                models: ['HSU-400', 'HSU-500', 'JWE-400', 'JWE-450', 'JWE-500', 'JWE-620', 'JWE-680'],
+                title: 'Door / Hood Safety Switch Open or Overflow (ฝาปิดไม่สนิทหรือน้ำล้นถัง)',
+                cause: 'เปิดฝา/ยกฮูดขณะเครื่องทำงาน, Reed Switch / Magnet ประตูหลุดหรือเสีย, หรือท่อน้ำทิ้งตันทำให้น้ำล้น',
+                parts: 'Reed Switch / Door Magnet, Pressure Switch (5A1X.37640.615), Drain Hose (459119-01)',
+                action: 'Step 1: ปิดฝา/ฮูดให้สนิทและตรวจแม่เหล็กประตู | Step 2: ล้างตะแกรงกรองเศษอาหารและท่อน้ำทิ้ง | Step 3: เช็ก Pressure Switch ระดับน้ำล้น'
+            },
+            {
+                code: 'E06 / E6 / Pump',
+                series: 'DISHWASHER',
+                seriesLabel: 'HSU / JWE Series (เครื่องล้างจาน)',
+                models: ['HSU-400', 'HSU-500', 'JWE-400', 'JWE-450', 'JWE-500', 'JWE-620', 'JWE-680'],
+                title: 'Wash Pump / Rinse Pump / Detergent Dispenser Fault (ปั๊มฉีดน้ำล้างหรือปั๊มน้ำยาขัดข้อง)',
+                cause: 'เศษอาหารเข้าไปขัดใบพัด Washing Pump, แคปาซิเตอร์ปั๊มเสื่อม, หรือปั๊มดูดน้ำยาล้าง/น้ำยาแวววาวไม่ทำงาน',
+                parts: 'Washing Pump (P04851-01 / 9099.L80T7.5SX), Capacitor (P04851F02), Rinse/Detergent Pump (9999.P22CA.030)',
+                action: 'Step 1: ถอดตะแกรงและตรวจเศษอาหารในเรือนปั๊ม | Step 2: วัดค่า µF ของ Capacitor และกระแส Washing Pump | Step 3: ไล่อากาศสายน้ำยาล้างจาน'
+            },
+
+            // 7. SPECIALTY EQUIPMENT (DCM / AM / HNC / DBF)
+            {
+                code: 'E1 / E2 / E3 (Specialty)',
                 series: 'SPECIALTY',
-                seriesLabel: 'DCM / AM / HNC / DBF / HSU',
-                models: ['DCM-60KE', 'DCM-120KE', 'AM-50BAE', 'HNC-120BE', 'HNC-150BE', 'DBF-25SB', 'HSU-400'],
-                title: 'Specialty Equipment Fault (ระดับน้ำ / อะจีเตเตอร์ / อุณหภูมิ / ฮีตเตอร์ผิดปกติ)',
-                cause: 'DCM: วาล์วน้ำ/ลูกลอย/มอเตอร์กวน | HNC: คอยล์ร้อนตัน/เซ็นเซอร์ | DBF: ปั๊มกวนน้ำเย็น | HSU: ฮีตเตอร์ต้มน้ำ/ลูกลอย',
-                parts: 'DCM Agitator (348969G01), DBF Agitator (P04641-01), HSU Heater (P04856-01), HSU Float (449401-01)',
+                seriesLabel: 'DCM / AM / HNC / DBF',
+                models: ['DCM-60KE', 'DCM-120KE', 'AM-50BAE', 'HNC-120BE', 'HNC-150BE', 'DBF-25SB', 'DBF-43WD'],
+                title: 'Specialty Equipment Fault (ระดับน้ำ / อะจีเตเตอร์ / อุณหภูมิผิดปกติ)',
+                cause: 'DCM: วาล์วน้ำ/ลูกลอย/มอเตอร์กวน | AM: สเปรย์น้ำ/ถาดน้ำ | HNC: คอยล์ร้อนตัน/เซ็นเซอร์ | DBF: ปั๊มกวนน้ำเย็น (Agitator)',
+                parts: 'DCM Agitator (348969G01), DBF Agitator (P04641-01), HNC Condenser Fan (R500A0528)',
                 action: 'Step 1: ตรวจสอบระบบน้ำเข้าและระดับน้ำ | Step 2: ล้างคอยล์ร้อนและเช็กมอเตอร์กวน/ปั๊ม | Step 3: เปิดดู Wiring Diagram ในคู่มือ PDF เฉพาะรุ่น'
             }
         ];
@@ -11774,7 +11846,8 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     else if (/^FM-/i.test(modelVal)) seriesSel.value = 'ICE_FM';
                     else if (/^(HR|HF|HRF|HRW|HW)-/i.test(modelVal)) seriesSel.value = 'FRIDGE_HR';
                     else if (/^(RT|RTC|RTF|RTS|RW|RF|RR|RRF|RFT)-/i.test(modelVal)) seriesSel.value = 'FRIDGE_RT';
-                    else if (/^(DCM|DIM|AM|HNC|DBF|HSU)-/i.test(modelVal)) seriesSel.value = 'SPECIALTY';
+                    else if (/^(HSU|JWE)-/i.test(modelVal)) seriesSel.value = 'DISHWASHER';
+                    else if (/^(DCM|DIM|AM|HNC|DBF)-/i.test(modelVal)) seriesSel.value = 'SPECIALTY';
                 }
             }
             renderErrorCodeList();
@@ -12027,7 +12100,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     setTimeout(() => {
                         openErrorCodeModal('');
                         const tokens = errQuery.toUpperCase().split(/\s+/);
-                        const mTok = tokens.find(t => /^(IM|KM|KMD|FM|HR|HF|RT|RTC|RTF|DCM|AM|HNC|DBF|HSU)-/.test(t));
+                        const mTok = tokens.find(t => /^(IM|KM|KMD|FM|HR|HF|RT|RTC|RTF|DCM|AM|HNC|DBF|HSU|JWE)-/.test(t));
                         if (mTok) {
                             openErrorCodeModal(mTok);
                             const rest = tokens.filter(t => t !== mTok).join(' ');
@@ -16547,7 +16620,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <div>
                         <h3 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
                             <span>HOSHIZAKI MODEL-SPECIFIC ERROR CODE DIAGNOSTIC SHEET</span>
-                            <span class="text-[10px] bg-rose-500/30 border border-rose-300/40 px-2 py-0.5 rounded-full text-rose-200">v18.7</span>
+                            <span class="text-[10px] bg-rose-500/30 border border-rose-300/40 px-2 py-0.5 rounded-full text-rose-200">v18.8</span>
                         </h3>
                         <p class="text-[11px] text-sky-200">ตารางวิเคราะห์ Error Code แยกตามผลิตภัณฑ์และรุ่นย่อย (เปรียบเทียบความหมายของรหัสเดียวกันในแต่ละโมเดล)</p>
                     </div>
@@ -16576,7 +16649,8 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                             <option value="ICE_FM">3. FM Series — Flake &amp; Nugget Ice (เกล็ด/นักเก็ต)</option>
                             <option value="FRIDGE_HR">4. HR / HF Series — ตู้แช่ทรงยืน (Upright Reach-In)</option>
                             <option value="FRIDGE_RT">5. RT / RTC / RTF — ตู้แช่เคาน์เตอร์ (Undercounter)</option>
-                            <option value="SPECIALTY">6. DCM / AM / HNC / DBF / HSU — ตู้จ่าย/ซูชิ/เบียร์/ล้างจาน</option>
+                            <option value="DISHWASHER">6. HSU / JWE Series — เครื่องล้างจาน (Undercounter &amp; Hood Dishwasher)</option>
+                            <option value="SPECIALTY">7. DCM / AM / HNC / DBF — ตู้จ่ายน้ำแข็ง/ซูชิ/เบียร์สด</option>
                         </select>
                     </div>
                     <div class="md:col-span-4 flex items-center gap-1">
@@ -16606,13 +16680,102 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <button type="button" onclick="quickFilterErrorCode('ICE_FM', 'FM-480AKE', '')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-0.5 rounded-md font-bold">FM-300 / 480 / 750AKE</button>
                     <button type="button" onclick="quickFilterErrorCode('FRIDGE_HR', 'HF-126MA-S', '')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-0.5 rounded-md font-bold">HR / HF ตู้ยืน</button>
                     <button type="button" onclick="quickFilterErrorCode('FRIDGE_RT', 'RTC-150SDB', '')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-0.5 rounded-md font-bold">RT / RTC เคาน์เตอร์</button>
+                    <button type="button" onclick="quickFilterErrorCode('DISHWASHER', 'HSU-400', '')" class="bg-white hover:bg-rose-100 text-rose-900 border border-rose-300 px-2 py-0.5 rounded-md font-bold">HSU / JWE ล้างจาน</button>
+                    <button type="button" onclick="document.getElementById('thermistorReferenceSection')?.scrollIntoView({behavior:'smooth'})" class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-0.5 rounded-md font-bold">
+                        <i class="fa-solid fa-temperature-half mr-0.5"></i> ตารางค่าโอห์ม Thermistor (kΩ vs °C)
+                    </button>
                 </div>
             </div>
 
-            <!-- Scrollable Spec-Sheet-Style Diagnostic Matrix Body -->
-            <div class="flex-1 overflow-y-auto p-2.5 sm:p-5 bg-slate-100">
+            <!-- Scrollable Spec-Sheet-Style Diagnostic Matrix Body + Thermistor kΩ vs °C Reference Table -->
+            <div class="flex-1 overflow-y-auto p-2.5 sm:p-5 bg-slate-100 space-y-4">
                 <div id="errorSheetPrintableCard" class="bg-white rounded-xl border-2 border-hoshizaki-blue/60 shadow-md overflow-hidden">
                     <div id="errorCodeListContainer"></div>
+
+                    <!-- Thermistor Resistance Reference Table (kΩ vs °C) + Live Calculator -->
+                    <div id="thermistorReferenceSection" class="border-t-2 border-hoshizaki-navy bg-white">
+                        <div class="bg-hoshizaki-navy text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs font-extrabold">
+                            <span><i class="fa-solid fa-temperature-half text-amber-300 mr-1.5"></i> HOSHIZAKI THERMISTOR RESISTANCE TABLE (ค่าความต้านทาน kΩ เทียบอุณหภูมิ °C)</span>
+                            <span class="text-sky-200">NTC SENSOR DIAGNOSTIC STANDARD</span>
+                        </div>
+
+                        <!-- Live Ohm-to-Temperature Quick Checker -->
+                        <div class="bg-amber-50/80 border-b border-amber-200 px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-extrabold text-hoshizaki-navy">เครื่องคำนวณเช็กค่ามิเตอร์หน้างาน:</span>
+                                <select id="thermistorTypeSelect" onchange="calculateThermistorFromOhm()" class="border border-amber-300 rounded-lg px-2 py-1 bg-white font-bold text-hoshizaki-navy">
+                                    <option value="ICE_2K">ตระกูล IM / KM / FM (Standard ~2.0 kΩ @ 25°C)</option>
+                                    <option value="FRIDGE_2K">ตู้แช่ HR / HF / RT / RTC (NTC ~2.0 kΩ @ 25°C)</option>
+                                    <option value="DISH_10K">เครื่องล้างจาน HSU / JWE (NTC 10 kΩ @ 25°C)</option>
+                                </select>
+                                <input type="number" step="0.01" id="thermistorMeasuredKohm" oninput="calculateThermistorFromOhm()" placeholder="กรอกค่าที่วัดได้ (kΩ) เช่น 2.25" class="w-40 border border-amber-300 rounded-lg px-2.5 py-1 bg-white font-bold text-rose-800 focus:outline-none">
+                            </div>
+                            <div id="thermistorCalcOutput" class="font-bold text-emerald-900 bg-white border border-emerald-300 px-3 py-1 rounded-lg">
+                                พิมพ์ค่า kΩ เพื่อแปลงเป็นอุณหภูมิ °C อัตโนมัติ
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse text-center text-xs">
+                                <thead>
+                                    <tr class="bg-sky-50 text-hoshizaki-darkblue border-b border-sky-300 font-extrabold">
+                                        <th class="p-2 border-r border-sky-300 text-left">อุณหภูมิ (°C / °F)</th>
+                                        <th class="p-2 border-r border-sky-300">-20°C (-4°F)</th>
+                                        <th class="p-2 border-r border-sky-300">-10°C (14°F)</th>
+                                        <th class="p-2 border-r border-sky-300">0°C (32°F)</th>
+                                        <th class="p-2 border-r border-sky-300">5°C (41°F)</th>
+                                        <th class="p-2 border-r border-sky-300">10°C (50°F)</th>
+                                        <th class="p-2 border-r border-sky-300 bg-emerald-100/70">25°C (77°F)</th>
+                                        <th class="p-2 border-r border-sky-300">40°C (104°F)</th>
+                                        <th class="p-2 border-r border-sky-300">60°C (140°F)</th>
+                                        <th class="p-2">85°C (185°F)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-sky-200 font-semibold text-slate-800">
+                                    <tr>
+                                        <td class="p-2 border-r border-sky-300 text-left font-extrabold text-hoshizaki-navy bg-slate-50">IM / KM / FM (2kΩ Type)</td>
+                                        <td class="p-2 border-r border-sky-200">15.5 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">9.4 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">5.9 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">4.7 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">3.8 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200 bg-emerald-50 font-extrabold text-emerald-900">2.0 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">1.15 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">0.58 kΩ</td>
+                                        <td class="p-2">0.26 kΩ</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 border-r border-sky-300 text-left font-extrabold text-hoshizaki-navy bg-slate-50">HR / HF / RT / RTC (NTC 2kΩ)</td>
+                                        <td class="p-2 border-r border-sky-200">15.8 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">9.6 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">6.0 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">4.8 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">3.9 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200 bg-emerald-50 font-extrabold text-emerald-900">2.0 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">1.14 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">0.56 kΩ</td>
+                                        <td class="p-2">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 border-r border-sky-300 text-left font-extrabold text-hoshizaki-navy bg-slate-50">HSU / JWE Dishwasher (NTC 10kΩ)</td>
+                                        <td class="p-2 border-r border-sky-200">-</td>
+                                        <td class="p-2 border-r border-sky-200">-</td>
+                                        <td class="p-2 border-r border-sky-200">32.6 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">25.4 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">19.9 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200 bg-emerald-50 font-extrabold text-emerald-900">10.0 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">5.3 kΩ</td>
+                                        <td class="p-2 border-r border-sky-200">2.48 kΩ</td>
+                                        <td class="p-2">1.07 kΩ</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="px-4 py-2 bg-slate-50 border-t border-sky-200 text-[11px] text-slate-600 flex flex-wrap justify-between gap-2">
+                            <span><b>วิธีตรวจเช็ก:</b> ถอดปลั๊กไฟและถอดแจ็ก Thermistor ออกจากบอร์ดก่อนวัดค่า Ω • หากวัดได้ <b>0 Ω (Short)</b> หรือ <b>∞ / OL (Open)</b> แสดงว่าเซ็นเซอร์ขาดหรือลัดวงจร</span>
+                            <span class="font-bold text-rose-700">ค่าคลาดเคลื่อนที่ยอมรับได้: ±5% ถึง ±10%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -18706,6 +18869,97 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         });
     </script>
 
+    <!-- Technical Document Library & Editor Modal (v18.8.0: Spec Sheet, Parts List, Service Manual, Instruction Manual, Drawing) -->
+    <div id="technicalDocManagerModal" class="no-print fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[78] flex items-center justify-center p-1.5 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[94dvh] flex flex-col overflow-hidden border border-amber-300">
+            <!-- Header -->
+            <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/25 border border-amber-300/40 flex items-center justify-center text-amber-300">
+                        <i class="fa-solid fa-folder-plus text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold tracking-wide">
+                            คลังจัดการและอัปเดตเอกสารทางเทคนิค (Technical Document &amp; Drawing Manager)
+                        </h3>
+                        <p class="text-[11px] text-sky-200">เพิ่ม แก้ไข อัปเดตลิงก์ PDF/รูปภาพ สำหรับ <b>Spec Sheet, Parts List, Service Manual, Instruction Manual และ Wiring/Exploded Drawing</b></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="syncTechnicalDocsWithCloud(true)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ขึ้น Cloud ทีมช่าง</span>
+                    </button>
+                    <button type="button" onclick="exportTechnicalDocsJson()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-download"></i> <span>สำรอง (.json)</span>
+                    </button>
+                    <button type="button" onclick="closeTechnicalDocManagerModal()" class="bg-white/15 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
+                        <i class="fa-solid fa-xmark"></i> ปิด
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add / Edit Form -->
+            <div class="bg-amber-50/80 border-b border-amber-200 p-3 sm:p-4 space-y-2.5 flex-shrink-0 text-xs">
+                <div class="flex items-center justify-between">
+                    <span id="techDocFormHeading" class="font-extrabold text-hoshizaki-navy">
+                        <i class="fa-solid fa-plus-circle text-amber-600 mr-1"></i> เพิ่ม / อัปเดตเอกสารทางเทคนิคใหม่
+                    </span>
+                    <button type="button" onclick="resetTechnicalDocForm()" class="text-[11px] text-gray-600 hover:text-rose-600 underline font-semibold">ล้างฟอร์ม</button>
+                </div>
+                <input type="hidden" id="techDocEditId" value="">
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                    <div class="sm:col-span-3">
+                        <label class="block text-[11px] font-bold text-gray-700 mb-0.5">หมวดเอกสาร *</label>
+                        <select id="techDocCategoryInput" class="w-full border border-amber-300 rounded-lg px-2.5 py-2 bg-white font-bold text-hoshizaki-navy">
+                            <option value="SPEC">1. Spec Sheet (ตารางสเปก)</option>
+                            <option value="PARTS">2. Parts List (รายการอะไหล่)</option>
+                            <option value="SERVICE">3. Service Manual (คู่มือซ่อม)</option>
+                            <option value="INSTRUCTION">4. Instruction Manual (คู่มือผู้ใช้)</option>
+                            <option value="DRAWING">5. Drawing / Wiring Diagram (แบบวงจร/โครงสร้าง)</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="block text-[11px] font-bold text-gray-700 mb-0.5">รุ่นเครื่อง (Model) *</label>
+                        <input type="text" id="techDocModelInput" list="hoshizakiModelsList" placeholder="เช่น IM-240DNE, KM-901MAJ, HSU-400" class="w-full border border-amber-300 rounded-lg px-2.5 py-2 bg-white font-bold text-hoshizaki-navy">
+                    </div>
+                    <div class="sm:col-span-6">
+                        <label class="block text-[11px] font-bold text-gray-700 mb-0.5">ชื่อเอกสาร / รายละเอียด *</label>
+                        <input type="text" id="techDocTitleInput" placeholder="เช่น Spec Sheet IM-240DNE (2026) หรือ Wiring Diagram HSU-400" class="w-full border border-amber-300 rounded-lg px-2.5 py-2 bg-white font-semibold text-gray-800">
+                    </div>
+                    <div class="sm:col-span-6">
+                        <label class="block text-[11px] font-bold text-gray-700 mb-0.5">ลิงก์ไฟล์ Google Drive / PDF / รูปภาพ Drawing *</label>
+                        <input type="text" id="techDocUrlInput" placeholder="วาง URL ของไฟล์ PDF หรือรูปภาพใน Google Drive (https://drive.google.com/...)" class="w-full border border-amber-300 rounded-lg px-2.5 py-2 bg-white text-sky-900">
+                    </div>
+                    <div class="sm:col-span-4">
+                        <label class="block text-[11px] font-bold text-gray-700 mb-0.5">หมายเหตุ / ข้อมูลสเปกเพิ่มเติม</label>
+                        <input type="text" id="techDocNotesInput" placeholder="เช่น 220V 50Hz R404A, เวอร์ชันอัปเดตล่าสุด..." class="w-full border border-amber-300 rounded-lg px-2.5 py-2 bg-white text-gray-700">
+                    </div>
+                    <div class="sm:col-span-2 flex items-end">
+                        <button type="button" onclick="saveTechnicalDocEntry()" class="w-full bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white py-2 px-3 rounded-lg font-extrabold shadow-xs transition">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกข้อมูล
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="bg-slate-100 border-b border-gray-200 px-4 py-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 flex-shrink-0 text-xs">
+                <div class="flex flex-wrap items-center gap-1">
+                    <button type="button" onclick="setTechDocFilterCat('ALL')" id="tdFilterBtn_ALL" class="td-cat-btn px-2.5 py-1 rounded-lg bg-hoshizaki-navy text-white font-bold">ทั้งหมด</button>
+                    <button type="button" onclick="setTechDocFilterCat('SPEC')" id="tdFilterBtn_SPEC" class="td-cat-btn px-2.5 py-1 rounded-lg bg-white text-gray-700 border border-gray-300 font-bold">Spec Sheet</button>
+                    <button type="button" onclick="setTechDocFilterCat('PARTS')" id="tdFilterBtn_PARTS" class="td-cat-btn px-2.5 py-1 rounded-lg bg-white text-gray-700 border border-gray-300 font-bold">Parts List</button>
+                    <button type="button" onclick="setTechDocFilterCat('SERVICE')" id="tdFilterBtn_SERVICE" class="td-cat-btn px-2.5 py-1 rounded-lg bg-white text-gray-700 border border-gray-300 font-bold">Service Manual</button>
+                    <button type="button" onclick="setTechDocFilterCat('INSTRUCTION')" id="tdFilterBtn_INSTRUCTION" class="td-cat-btn px-2.5 py-1 rounded-lg bg-white text-gray-700 border border-gray-300 font-bold">Instruction Manual</button>
+                    <button type="button" onclick="setTechDocFilterCat('DRAWING')" id="tdFilterBtn_DRAWING" class="td-cat-btn px-2.5 py-1 rounded-lg bg-white text-gray-700 border border-gray-300 font-bold">Drawing / Diagram</button>
+                </div>
+                <input type="text" id="techDocSearchInput" oninput="renderTechnicalDocsList()" placeholder="ค้นหาตามรุ่นเครื่อง, ชื่อเอกสาร, หรือหมายเหตุ..." class="w-full sm:w-64 border border-gray-300 rounded-lg px-3 py-1.5 bg-white font-semibold text-hoshizaki-navy">
+            </div>
+
+            <!-- Document List Body -->
+            <div id="technicalDocsListContainer" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 text-xs bg-white"></div>
+        </div>
+    </div>
+
     <!-- Full-Screen Spec Sheet Viewer Modal (v18.5.0) -->
     <div id="fullScreenSpecViewerModal" class="no-print fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[75] flex items-center justify-center p-1.5 sm:p-4 hidden">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[95dvh] flex flex-col overflow-hidden border border-sky-300">
@@ -18718,12 +18972,15 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <div>
                         <h3 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
                             <span>HOSHIZAKI FULL-SCREEN SPECIFICATION SHEET</span>
-                            <span class="text-[10px] bg-emerald-500/30 border border-emerald-300/40 px-2 py-0.5 rounded-full text-emerald-200">v18.7</span>
+                            <span class="text-[10px] bg-emerald-500/30 border border-emerald-300/40 px-2 py-0.5 rounded-full text-emerald-200">v18.8</span>
                         </h3>
                         <p class="text-[11px] text-sky-200">ตารางสเปกมาตรฐาน Hoshizaki + ภาพหน้าปก Spec Sheet PDF จาก Google Drive</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-1.5">
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" onclick="openTechnicalDocManagerModal('SPEC', document.getElementById('fullSpecModelSearchInput')?.value || '')" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-pen-to-square"></i> <span>เพิ่ม/แก้ไขเอกสารรุ่นนี้</span>
+                    </button>
                     <button type="button" onclick="exportFullSpecSheetPng()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs">
                         <i class="fa-solid fa-image"></i> <span>บันทึกเป็นภาพ PNG</span>
                     </button>
@@ -19093,6 +19350,23 @@ function openFullScreenSpecViewerModal(presetModel) {
             const tableEl = document.getElementById('fullSpecStructuredTableContainer');
             const cloudEl = document.getElementById('fullSpecDriveCloudContent');
             if (tableEl) tableEl.innerHTML = renderFullSpecHtmlTable(q, null);
+            const customDocs = getTechnicalDocsList().filter(d =>
+                (d.model || '').includes(q) || q.includes(d.model || '___')
+            );
+            const customBannerEl = document.getElementById('fullSpecDriveCloudContent');
+            if (customBannerEl && customDocs.length > 0) {
+                const customHtml = customDocs.map(d =>
+                    `<div class="p-2.5 rounded-lg bg-amber-50 border border-amber-300 flex items-center justify-between gap-2">
+                        <div>
+                            <span class="text-[10px] font-extrabold bg-amber-600 text-white px-1.5 py-0.5 rounded mr-1">${d.category}</span>
+                            <span class="font-bold text-hoshizaki-navy">${d.title}</span>
+                            ${d.notes ? `<div class="text-[11px] text-gray-700 mt-0.5">${d.notes}</div>` : ''}
+                        </div>
+                        ${d.url ? `<a href="${d.url}" target="_blank" rel="noopener" class="bg-hoshizaki-navy text-white px-2.5 py-1 rounded-lg text-xs font-bold flex-shrink-0">เปิดไฟล์ ↗</a>` : ''}
+                    </div>`
+                ).join('');
+                customBannerEl.innerHTML = `<div class="space-y-1.5 mb-3">${customHtml}</div>`;
+            }
 
             const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
             if (!webhookUrl) {
@@ -19201,6 +19475,243 @@ function openFullScreenSpecViewerModal(presetModel) {
             } catch (e) {
                 showToast('เกิดข้อผิดพลาดในการส่งเข้า LINE');
             }
+        }
+
+        // --- Thermistor Resistance (kΩ vs °C) Live Calculator (v18.8.0) ---
+        function calculateThermistorFromOhm() {
+            const type = document.getElementById('thermistorTypeSelect')?.value || 'ICE_2K';
+            const rVal = parseFloat(document.getElementById('thermistorMeasuredKohm')?.value || '');
+            const outEl = document.getElementById('thermistorCalcOutput');
+            if (!outEl) return;
+            if (isNaN(rVal) || rVal <= 0) {
+                outEl.innerHTML = 'พิมพ์ค่า kΩ เพื่อแปลงเป็นอุณหภูมิ °C อัตโนมัติ';
+                return;
+            }
+            // Steinhart-Hart / Beta approximation (R25 = 2.0 kΩ Beta=3450 or R25 = 10.0 kΩ Beta=3950)
+            const r25 = type === 'DISH_10K' ? 10.0 : 2.0;
+            const beta = type === 'DISH_10K' ? 3950 : 3450;
+            const tKelvin = 1 / ((1 / 298.15) + (1 / beta) * Math.log(rVal / r25));
+            const tempC = tKelvin - 273.15;
+            if (tempC < -45 || tempC > 130) {
+                outEl.innerHTML = `<span class="text-rose-700">⚠️ ค่า ${rVal} kΩ อยู่นอกช่วงปกติ (เซ็นเซอร์อาจขาดหรือลัดวงจร)</span>`;
+            } else {
+                outEl.innerHTML = `✅ อุณหภูมิโดยประมาณ: <span class="text-rose-700 text-sm">${tempC.toFixed(1)} °C</span> (${(tempC * 9 / 5 + 32).toFixed(1)} °F)`;
+            }
+        }
+
+        // --- Technical Document & Drawing Manager (v18.8.0) ---
+        const TECH_DOCS_STORAGE_KEY = 'HOSHIZAKI_CUSTOM_TECH_DOCS_V188';
+        let currentTechDocFilterCat = 'ALL';
+
+        function getTechnicalDocsList() {
+            try {
+                const raw = localStorage.getItem(TECH_DOCS_STORAGE_KEY);
+                const parsed = raw ? JSON.parse(raw) : [];
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveTechnicalDocsList(list) {
+            localStorage.setItem(TECH_DOCS_STORAGE_KEY, JSON.stringify(list || []));
+        }
+
+        function openTechnicalDocManagerModal(presetCat, presetModel) {
+            const modal = document.getElementById('technicalDocManagerModal');
+            if (!modal) return;
+            resetTechnicalDocForm();
+            if (presetCat) {
+                const catEl = document.getElementById('techDocCategoryInput');
+                if (catEl) catEl.value = presetCat;
+            }
+            const mVal = String(presetModel || document.getElementById('eqModel')?.value || '').trim().toUpperCase();
+            if (mVal) {
+                const modEl = document.getElementById('techDocModelInput');
+                if (modEl) modEl.value = mVal;
+            }
+            renderTechnicalDocsList();
+            modal.classList.remove('hidden');
+        }
+
+        function closeTechnicalDocManagerModal() {
+            document.getElementById('technicalDocManagerModal')?.classList.add('hidden');
+        }
+
+        function resetTechnicalDocForm() {
+            document.getElementById('techDocEditId').value = '';
+            document.getElementById('techDocFormHeading').innerHTML = '<i class="fa-solid fa-plus-circle text-amber-600 mr-1"></i> เพิ่ม / อัปเดตเอกสารทางเทคนิคใหม่';
+            document.getElementById('techDocTitleInput').value = '';
+            document.getElementById('techDocUrlInput').value = '';
+            document.getElementById('techDocNotesInput').value = '';
+        }
+
+        function saveTechnicalDocEntry() {
+            const editId = document.getElementById('techDocEditId')?.value || '';
+            const category = document.getElementById('techDocCategoryInput')?.value || 'SPEC';
+            const model = (document.getElementById('techDocModelInput')?.value || '').trim().toUpperCase();
+            const title = (document.getElementById('techDocTitleInput')?.value || '').trim();
+            const url = (document.getElementById('techDocUrlInput')?.value || '').trim();
+            const notes = (document.getElementById('techDocNotesInput')?.value || '').trim();
+
+            if (!model || !title) {
+                showToast('กรุณาระบุรุ่นเครื่อง (Model) และชื่อเอกสาร');
+                return;
+            }
+
+            const list = getTechnicalDocsList();
+            const nowStr = new Date().toISOString().slice(0, 16).replace('T', ' ');
+            const techName = document.getElementById('responsibleTech')?.value || 'Admin/Tech';
+
+            if (editId) {
+                const idx = list.findIndex(x => x.id === editId);
+                if (idx > -1) {
+                    list[idx] = { ...list[idx], category, model, title, url, notes, updatedBy: techName, updatedAt: nowStr };
+                }
+            } else {
+                list.unshift({
+                    id: 'TDOC-' + Date.now(),
+                    category,
+                    model,
+                    title,
+                    url,
+                    notes,
+                    updatedBy: techName,
+                    updatedAt: nowStr
+                });
+            }
+
+            saveTechnicalDocsList(list);
+            resetTechnicalDocForm();
+            renderTechnicalDocsList();
+            showToast(`บันทึกเอกสาร ${model} เรียบร้อยแล้ว ✓`);
+            syncTechnicalDocsWithCloud(false);
+        }
+
+        function editTechnicalDocEntry(docId) {
+            const list = getTechnicalDocsList();
+            const item = list.find(x => x.id === docId);
+            if (!item) return;
+            document.getElementById('techDocEditId').value = item.id;
+            document.getElementById('techDocCategoryInput').value = item.category || 'SPEC';
+            document.getElementById('techDocModelInput').value = item.model || '';
+            document.getElementById('techDocTitleInput').value = item.title || '';
+            document.getElementById('techDocUrlInput').value = item.url || '';
+            document.getElementById('techDocNotesInput').value = item.notes || '';
+            document.getElementById('techDocFormHeading').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-600 mr-1"></i> กำลังแก้ไขรายการ: ${item.model} — ${item.title}`;
+        }
+
+        function deleteTechnicalDocEntry(docId) {
+            const list = getTechnicalDocsList().filter(x => x.id !== docId);
+            saveTechnicalDocsList(list);
+            renderTechnicalDocsList();
+            showToast('ลบรายการเอกสารเรียบร้อยแล้ว');
+            syncTechnicalDocsWithCloud(false);
+        }
+
+        function setTechDocFilterCat(cat) {
+            currentTechDocFilterCat = cat;
+            document.querySelectorAll('.td-cat-btn').forEach(btn => {
+                btn.className = 'td-cat-btn px-2.5 py-1 rounded-lg bg-white text-gray-700 border border-gray-300 font-bold';
+            });
+            const activeBtn = document.getElementById('tdFilterBtn_' + cat);
+            if (activeBtn) {
+                activeBtn.className = 'td-cat-btn px-2.5 py-1 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            }
+            renderTechnicalDocsList();
+        }
+
+        function renderTechnicalDocsList() {
+            const container = document.getElementById('technicalDocsListContainer');
+            if (!container) return;
+            const q = (document.getElementById('techDocSearchInput')?.value || '').trim().toLowerCase();
+            const list = getTechnicalDocsList().filter(item => {
+                const matchCat = currentTechDocFilterCat === 'ALL' || item.category === currentTechDocFilterCat;
+                const matchQ = !q ||
+                    (item.model || '').toLowerCase().includes(q) ||
+                    (item.title || '').toLowerCase().includes(q) ||
+                    (item.notes || '').toLowerCase().includes(q);
+                return matchCat && matchQ;
+            });
+
+            const catLabels = {
+                SPEC: { text: 'Spec Sheet', cls: 'bg-sky-100 text-sky-900 border-sky-300' },
+                PARTS: { text: 'Parts List', cls: 'bg-emerald-100 text-emerald-900 border-emerald-300' },
+                SERVICE: { text: 'Service Manual', cls: 'bg-indigo-100 text-indigo-900 border-indigo-300' },
+                INSTRUCTION: { text: 'Instruction Manual', cls: 'bg-amber-100 text-amber-900 border-amber-300' },
+                DRAWING: { text: 'Drawing / Diagram', cls: 'bg-purple-100 text-purple-900 border-purple-300' }
+            };
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-500 py-10">
+                    <i class="fa-solid fa-folder-open text-2xl text-amber-500 mb-2"></i>
+                    <div class="font-bold">ยังไม่มีเอกสารที่บันทึกเพิ่มเติมในหมวดนี้</div>
+                    <div class="text-xs mt-1">ใช้ฟอร์มด้านบนเพื่อเพิ่มลิงก์หรือรายละเอียด Spec Sheet, Parts List, Service Manual, Instruction Manual หรือ Drawing ของแต่ละรุ่น</div>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(item => {
+                const badge = catLabels[item.category] || catLabels.SPEC;
+                const openLink = item.url
+                    ? `<a href="${item.url}" target="_blank" rel="noopener" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-2.5 py-1 rounded-lg font-bold">เปิดไฟล์ ↗</a>`
+                    : '';
+                return `
+                    <div class="border border-gray-200 rounded-xl p-3 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="space-y-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="px-2 py-0.5 rounded border text-[10px] font-extrabold ${badge.cls}">${badge.text}</span>
+                                <span class="bg-hoshizaki-navy text-white px-2 py-0.5 rounded text-[11px] font-extrabold">${item.model}</span>
+                                <span class="font-extrabold text-hoshizaki-navy text-xs sm:text-sm">${item.title}</span>
+                            </div>
+                            ${item.notes ? `<div class="text-gray-700 text-[11.5px]"><b>รายละเอียด/หมายเหตุ:</b> ${item.notes}</div>` : ''}
+                            <div class="text-[10px] text-gray-400">อัปเดตล่าสุด: ${item.updatedAt || '-'} โดย ${item.updatedBy || '-'}</div>
+                        </div>
+                        <div class="flex items-center gap-1.5 flex-shrink-0">
+                            ${openLink}
+                            <button type="button" onclick="editTechnicalDocEntry('${item.id}')" class="bg-amber-100 hover:bg-amber-200 text-amber-900 px-2.5 py-1 rounded-lg font-bold">แก้ไข</button>
+                            <button type="button" onclick="deleteTechnicalDocEntry('${item.id}')" class="bg-rose-100 hover:bg-rose-200 text-rose-800 px-2 py-1 rounded-lg font-bold">ลบ</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function syncTechnicalDocsWithCloud(manualNotify) {
+            const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+            if (!webhookUrl) {
+                if (manualNotify) showToast('กรุณาตั้งค่า Google Apps Script URL ก่อนซิงค์');
+                return;
+            }
+            const cfg = typeof getGlobalEnterpriseConfig === 'function' ? getGlobalEnterpriseConfig() : {};
+            const docs = getTechnicalDocsList();
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SYNC_TECHNICAL_DOCS',
+                        apiSecretKey: cfg.apiSecretKey || 'HTH-SECURE-2026',
+                        docs
+                    })
+                });
+                if (manualNotify) showToast(`ซิงค์คลังเอกสารทางเทคนิค (${docs.length} รายการ) ขึ้น Cloud เรียบร้อย ✓`);
+            } catch (e) {
+                if (manualNotify) showToast('ไม่สามารถเชื่อมต่อ Cloud ได้ในขณะนี้');
+            }
+        }
+
+        function exportTechnicalDocsJson() {
+            const docs = getTechnicalDocsList();
+            const blob = new Blob([JSON.stringify(docs, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Hoshizaki_Technical_Docs_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('ส่งออกไฟล์สำรองเอกสารทางเทคนิค (.json) เรียบร้อย ✓');
         }
 
         // รองรับการเปิดหน้าต่าง Spec Sheet เต็มจออัตโนมัติเมื่อกดลิงก์ ?specModel=... จาก LINE OA

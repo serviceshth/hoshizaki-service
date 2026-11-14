@@ -609,69 +609,104 @@
         </div>
 
         <!-- แถบปุ่มคำสั่งหลัก (แสดงตลอดบนแท็บเล็ต/พีซี และพับเก็บได้บนมือถือ) -->
-        <div id="toolbarActions" class="hidden sm:flex flex-wrap items-center gap-2 text-xs sm:text-sm mt-3 pt-3 border-t border-white/15">
-            <button type="button" onclick="openScheduleModal()" class="flex-1 sm:flex-none justify-center bg-amber-500 hover:bg-amber-600 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-calendar-days"></i> <span>ตารางงานช่าง (Schedule)</span>
-            </button>
-            <button type="button" onclick="createNewJobForm()" class="flex-1 sm:flex-none justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-file-circle-plus"></i> <span>ใบงานใหม่</span>
-            </button>
-            <button type="button" onclick="generateReceiptModal(false)" class="flex-1 sm:flex-none justify-center bg-amber-600 hover:bg-amber-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-file-invoice-dollar"></i> <span>ออกใบเสนอราคา/ใบเสร็จ</span>
-            </button>
-            <button type="button" onclick="sharePDFToLine()" class="flex-1 sm:flex-none justify-center bg-[#06C755] hover:bg-[#05b34c] text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-file-pdf"></i> <span>แชร์ PDF เข้า LINE</span>
-            </button>
-            <button type="button" onclick="sendJobByEmail()" class="flex-1 sm:flex-none justify-center bg-rose-600 hover:bg-rose-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-envelope"></i> <span>ส่งอีเมล PDF</span>
-            </button>
-            <button type="button" onclick="openFullSheetPreview()" class="flex-1 sm:flex-none justify-center bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-eye"></i> <span>ดู พรีวิวเต็มรูป</span>
-            </button>
-            <button type="button" onclick="saveToHistory()" class="flex-1 sm:flex-none justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-floppy-disk"></i> <span>บันทึก</span>
-            </button>
-            <button type="button" onclick="openHistoryModal()" class="flex-1 sm:flex-none justify-center bg-gray-700 hover:bg-gray-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-clock-rotate-left"></i> <span>ประวัติ</span>
-            </button>
-            <button type="button" id="btnPwaDirectInstall" onclick="triggerPwaInstall()" class="hidden flex-1 sm:flex-none justify-center bg-teal-600 hover:bg-teal-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-download"></i> <span>ติดตั้งแอป (Install)</span>
-            </button>
-            <button type="button" onclick="openInstallGuideModal()" class="flex-1 sm:flex-none justify-center bg-sky-700 hover:bg-sky-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-mobile-screen-button"></i> <span>เพิ่มลงหน้าจอ</span>
-            </button>
-            <button type="button" onclick="printCurrentDocument('JOB')" class="flex-1 sm:flex-none justify-center bg-purple-600 hover:bg-purple-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-print"></i> <span>พิมพ์</span>
-            </button>
+        <div id="toolbarActions" class="hidden sm:block mt-3 pt-2.5 border-t border-white/15 space-y-2 text-xs">
+            <!-- แถบเลือกหมวดหมู่หลัก 4 หมวด (ช่วยจัดระเบียบปุ่มคำสั่งบน PC/Tablet/Mobile ให้ค้นหาง่าย) -->
+            <div class="flex flex-wrap items-center justify-between gap-1.5">
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" onclick="switchToolbarCategory('ALL')" id="tbCatBtn_ALL" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-hoshizaki-blue text-white font-bold transition">
+                        <i class="fa-solid fa-border-all mr-1"></i>ทั้งหมด
+                    </button>
+                    <button type="button" onclick="switchToolbarCategory('SERVICE')" id="tbCatBtn_SERVICE" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+                        <i class="fa-solid fa-wrench mr-1 text-amber-300"></i>1. งานบริการ & ตารางช่าง
+                    </button>
+                    <button type="button" onclick="switchToolbarCategory('DOCS')" id="tbCatBtn_DOCS" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+                        <i class="fa-solid fa-file-invoice-dollar mr-1 text-emerald-300"></i>2. เอกสารการเงิน & งานเคลม
+                    </button>
+                    <button type="button" onclick="switchToolbarCategory('STOCK_PM')" id="tbCatBtn_STOCK_PM" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition relative">
+                        <i class="fa-solid fa-boxes-stacked mr-1 text-orange-300"></i>3. สต็อกรถช่าง & PM / ค้างอะไหล่
+                        <span id="waitingPartsTopBadge" class="hidden ml-1 bg-rose-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
+                    </button>
+                    <button type="button" onclick="switchToolbarCategory('MANUAL_TEAM')" id="tbCatBtn_MANUAL_TEAM" class="tb-cat-btn px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+                        <i class="fa-solid fa-book-open mr-1 text-cyan-300"></i>4. คู่มือ & ทีมงาน/ซิงค์
+                    </button>
+                </div>
+                <button type="button" onclick="openWaitingPartsBackorderModal()" class="bg-rose-600/90 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-xs" title="ดูรายการงานรออะไหล่ / ค้างส่ง (Waiting Parts & Backorder)">
+                    <i class="fa-solid fa-hourglass-half"></i> <span>งานรออะไหล่ (<span id="waitingPartsInlineCount">0</span>)</span>
+                </button>
+            </div>
 
-            <button type="button" onclick="openStaffManagerModal()" class="flex-1 sm:flex-none justify-center bg-teal-600 hover:bg-teal-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-users-gear"></i> <span>จัดการทีมช่าง/ผู้ประสานงาน</span>
-            </button>
-            <button type="button" onclick="openTeamCloudSyncModal()" class="flex-1 sm:flex-none justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ Sheets / แชร์ทีม</span>
-            </button>
+            <!-- รายการปุ่มคำสั่งแยกตามหมวดหมู่ -->
+            <div class="flex flex-wrap items-center gap-1.5">
+                <!-- หมวด 1: งานบริการ & ตารางช่าง -->
+                <button type="button" data-tb-cat="SERVICE" onclick="openScheduleModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-calendar-days"></i> <span>ตารางงานช่าง (Schedule)</span>
+                </button>
+                <button type="button" data-tb-cat="SERVICE" onclick="createNewJobForm()" class="tb-action-item flex-1 sm:flex-none justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-file-circle-plus"></i> <span>ใบงานใหม่</span>
+                </button>
+                <button type="button" data-tb-cat="SERVICE" onclick="saveToHistory()" class="tb-action-item flex-1 sm:flex-none justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-floppy-disk"></i> <span>บันทึก</span>
+                </button>
+                <button type="button" data-tb-cat="SERVICE" onclick="openHistoryModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-clock-rotate-left"></i> <span>ประวัติ</span>
+                </button>
+                <button type="button" data-tb-cat="SERVICE" onclick="openFullSheetPreview()" class="tb-action-item flex-1 sm:flex-none justify-center bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-eye"></i> <span>พรีวิวเต็มรูป</span>
+                </button>
+                <button type="button" data-tb-cat="SERVICE" onclick="printCurrentDocument('JOB')" class="tb-action-item flex-1 sm:flex-none justify-center bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-print"></i> <span>พิมพ์</span>
+                </button>
 
-            <button type="button" onclick="openPmAndAnalyticsModal()" class="flex-1 sm:flex-none justify-center bg-violet-600 hover:bg-violet-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-chart-pie"></i> <span>PM แจ้งเตือน & สถิติ</span>
-                <span id="pmDueBadgeCount" class="hidden bg-amber-400 text-hoshizaki-navy text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
-            </button>
-            <button type="button" onclick="openVanStockModal()" class="flex-1 sm:flex-none justify-center bg-orange-600 hover:bg-orange-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-truck-ramp-box"></i> <span>สต็อกรถช่าง (Van Stock)</span>
-            </button>
-            <button type="button" onclick="exportWeeklyMultiSheetExcel()" class="flex-1 sm:flex-none justify-center bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-file-excel"></i> <span>สรุปประจำสัปดาห์ (4 ชีต)</span>
-            </button>
-            <button type="button" onclick="openWarrantyClaimModal()" class="flex-1 sm:flex-none justify-center bg-rose-600 hover:bg-rose-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm" title="ใบเคลมประกัน Hoshizaki Warranty Claim Form + เช็กลิสต์ 21 ข้อ + ป้ายส่งคืนอะไหล่เสีย">
-                <i class="fa-solid fa-file-shield"></i> <span>ใบเคลมประกัน (Warranty)</span>
-            </button>
-            <button type="button" onclick="openErrorCodeModal()" class="flex-1 sm:flex-none justify-center bg-slate-700 hover:bg-slate-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-triangle-exclamation"></i> <span>คู่มือซ่อม & Error Code</span>
-            </button>
-            <!-- ปุ่มเปิดเมนูค้นหา Service Manual / Instruction Manual / Parts List (PDF) -->
-            <button type="button" id="btnManualSearchTrigger" onclick="toggleManualSearchMenu(event)" class="flex-1 sm:flex-none justify-center bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-book-open"></i> <span>ค้นหาคู่มือ / Parts (PDF)</span>
-                <i class="fa-solid fa-chevron-down text-[10px] ml-0.5"></i>
-            </button>
+                <!-- หมวด 2: เอกสารการเงิน & งานเคลม -->
+                <button type="button" data-tb-cat="DOCS" onclick="generateReceiptModal(false)" class="tb-action-item flex-1 sm:flex-none justify-center bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> <span>ใบเสนอราคา / ใบแจ้งหนี้ / ใบเสร็จ</span>
+                </button>
+                <button type="button" data-tb-cat="DOCS" onclick="openWarrantyClaimModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm" title="ใบเคลมประกัน Hoshizaki Warranty Claim Form + ดึงใบเคลมลูกค้าออนไลน์">
+                    <i class="fa-solid fa-file-shield"></i> <span>ใบเคลมประกัน (Warranty)</span>
+                </button>
+                <button type="button" data-tb-cat="DOCS" onclick="sharePDFToLine()" class="tb-action-item flex-1 sm:flex-none justify-center bg-[#06C755] hover:bg-[#05b34c] text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-file-pdf"></i> <span>แชร์ PDF เข้า LINE</span>
+                </button>
+                <button type="button" data-tb-cat="DOCS" onclick="sendJobByEmail()" class="tb-action-item flex-1 sm:flex-none justify-center bg-rose-700 hover:bg-rose-800 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-envelope"></i> <span>ส่งอีเมล PDF</span>
+                </button>
+                <button type="button" data-tb-cat="DOCS" onclick="exportWeeklyMultiSheetExcel()" class="tb-action-item flex-1 sm:flex-none justify-center bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-file-excel"></i> <span>สรุปประจำสัปดาห์ (4 ชีต)</span>
+                </button>
+
+                <!-- หมวด 3: สต็อกรถช่าง & PM / ค้างอะไหล่ -->
+                <button type="button" data-tb-cat="STOCK_PM" onclick="openVanStockModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-truck-ramp-box"></i> <span>สต็อกรถช่าง (Van Stock)</span>
+                </button>
+                <button type="button" data-tb-cat="STOCK_PM" onclick="openPmAndAnalyticsModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-violet-600 hover:bg-violet-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-chart-pie"></i> <span>PM แจ้งเตือน & สถิติ</span>
+                    <span id="pmDueBadgeCount" class="hidden bg-amber-400 text-hoshizaki-navy text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
+                </button>
+                <button type="button" data-tb-cat="STOCK_PM" onclick="openWaitingPartsBackorderModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-hourglass-half"></i> <span>ติดตามงานรออะไหล่ (Backorder)</span>
+                </button>
+
+                <!-- หมวด 4: คู่มือ & ทีมงาน/ซิงค์ -->
+                <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openErrorCodeModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-slate-700 hover:bg-slate-800 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-triangle-exclamation"></i> <span>คู่มือซ่อม & Error Code</span>
+                </button>
+                <button type="button" data-tb-cat="MANUAL_TEAM" id="btnManualSearchTrigger" onclick="toggleManualSearchMenu(event)" class="tb-action-item flex-1 sm:flex-none justify-center bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-book-open"></i> <span>ค้นหาคู่มือ / Parts (PDF)</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] ml-0.5"></i>
+                </button>
+                <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openStaffManagerModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-users-gear"></i> <span>จัดการทีมช่าง/ผู้ประสานงาน</span>
+                </button>
+                <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openTeamCloudSyncModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ Sheets / แชร์ทีม</span>
+                </button>
+                <button type="button" data-tb-cat="MANUAL_TEAM" id="btnPwaDirectInstall" onclick="triggerPwaInstall()" class="hidden tb-action-item flex-1 sm:flex-none justify-center bg-teal-700 hover:bg-teal-800 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-download"></i> <span>ติดตั้งแอป</span>
+                </button>
+                <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openInstallGuideModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-sky-700 hover:bg-sky-800 text-white px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>เพิ่มลงหน้าจอ</span>
+                </button>
+            </div>
         </div>
 
         <!-- กล่องเมนู Dropdown ค้นหา PDF ใน Google Drive (ปรับปรุงให้รองรับชื่อย่อ, แยกซีรีส์ และตั้งค่าลิงก์โฟลเดอร์ได้) -->
@@ -3369,7 +3404,8 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-gray-200/80">
                         <div class="flex flex-col gap-0.5">
                             <span class="text-[11px] text-gray-500 font-medium">วันที่จำหน่าย (Date Out):</span>
-                            <input type="text" id="eqDateOut" placeholder="YYYY-MM-DD" class="border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-0.5 font-medium text-gray-800">
+                            <input type="text" id="eqDateOut" oninput="evaluateWarrantyEligibilityFromDateOut(this.value)" onchange="evaluateWarrantyEligibilityFromDateOut(this.value)" placeholder="YYYY-MM-DD" class="border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-0.5 font-medium text-gray-800">
+                            <div id="warrantyAutoCalcBadge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded mt-0.5"></div>
                         </div>
                         <div class="flex flex-col gap-0.5">
                             <span class="text-[11px] text-gray-500 font-medium">เลขที่ใบเสนอราคา/บิล (Invoice No.):</span>
@@ -4453,8 +4489,9 @@
             <div class="flex flex-wrap justify-between items-center border-b pb-3 gap-2 flex-shrink-0">
                 <div class="flex flex-wrap items-center gap-2">
                     <div class="inline-flex rounded-lg border border-amber-300 overflow-hidden text-xs font-bold">
-                        <button type="button" id="btnDocModeQuotation" onclick="setFinancialDocMode('QUOTATION')" class="px-2.5 py-1 bg-amber-600 text-white transition">QUOTATION (ใบเสนอราคา)</button>
-                        <button type="button" id="btnDocModeReceipt" onclick="setFinancialDocMode('RECEIPT')" class="px-2.5 py-1 bg-amber-50 text-amber-900 hover:bg-amber-100 transition">RECEIPT (ใบเสร็จรับเงิน)</button>
+                        <button type="button" id="btnDocModeQuotation" onclick="setFinancialDocMode('QUOTATION')" class="px-2 py-1 bg-amber-600 text-white transition">QT (ใบเสนอราคา)</button>
+                        <button type="button" id="btnDocModeInvoice" onclick="setFinancialDocMode('INVOICE')" class="px-2 py-1 bg-amber-50 text-amber-900 hover:bg-amber-100 transition">IV (ใบแจ้งหนี้/กำกับภาษี)</button>
+                        <button type="button" id="btnDocModeReceipt" onclick="setFinancialDocMode('RECEIPT')" class="px-2 py-1 bg-amber-50 text-amber-900 hover:bg-amber-100 transition">RE (ใบเสร็จรับเงิน)</button>
                     </div>
                     <label class="text-xs text-gray-600 flex items-center gap-1.5 font-medium cursor-pointer">
                         <input type="checkbox" id="whtCheckbox" onchange="renderReceiptDocument()" class="w-4 h-4 rounded text-hoshizaki-blue"> หัก ณ ที่จ่าย (WHT 3%)
@@ -4472,6 +4509,9 @@
                     </button>
                     <button type="button" onclick="copyCustomerQuotationApprovalLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded font-bold flex items-center gap-1 shadow-sm" title="สร้างลิงก์ให้ลูกค้าเปิดดูใบเสนอราคาและกดอนุมัติสั่งซ่อมออนไลน์ผ่านมือถือ">
                         <i class="fa-solid fa-signature"></i> ลิงก์อนุมัติออนไลน์
+                    </button>
+                    <button type="button" onclick="convertApprovedQuoteToJobAndDeductStock()" class="bg-orange-600 hover:bg-orange-700 text-white px-2.5 py-1.5 rounded font-bold flex items-center gap-1 shadow-sm" title="ยืนยันอนุมัติสั่งซ่อม บันทึกเข้าประวัติใบงาน และตัดสต็อกอะไหล่รถช่างทันที">
+                        <i class="fa-solid fa-truck-ramp-box"></i> แปลงเป็นใบงาน & ตัดสต็อกรถช่าง
                     </button>
                     <button type="button" onclick="openReceiptInNewWindow()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> เปิด PDF หน้าต่างใหม่
@@ -13679,6 +13719,419 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
         checkCustomerWarrantyClaimPortalParam();
 
+    
+        // =========================================================================
+        // V14.4 ALL-IN-ONE UPGRADE:
+        // 1. Sync & 1-Click Import Customer Warranty Claims from Google Sheets
+        // 2. Quotation -> Invoice (IV) -> Receipt (RE) + Auto Deduct Van Stock
+        // 3. One-Click Copy Technician Job Card & Prefilled Job URL for LINE
+        // 4. Waiting Parts & Backorder Dashboard + Top Badge
+        // 5. Auto Warranty Eligibility Calculator from Date Out
+        // 6. Grouped 4-Category Toolbar Navigation
+        // =========================================================================
+
+        // --- FEATURE 6: Grouped 4-Category Toolbar Switcher ---
+        function switchToolbarCategory(cat) {
+            document.querySelectorAll('.tb-cat-btn').forEach(btn => {
+                const isSelected = btn.id === `tbCatBtn_${cat}`;
+                btn.classList.toggle('bg-hoshizaki-blue', isSelected);
+                btn.classList.toggle('font-bold', isSelected);
+                btn.classList.toggle('bg-white/10', !isSelected);
+            });
+            document.querySelectorAll('.tb-action-item').forEach(item => {
+                if (item.id === 'btnPwaDirectInstall' && !window.__deferredPwaPrompt) {
+                    item.classList.add('hidden');
+                    return;
+                }
+                const itemCat = item.getAttribute('data-tb-cat');
+                if (cat === 'ALL' || itemCat === cat) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+        // --- FEATURE 5: Auto Warranty Eligibility Check from Date Out ---
+        function evaluateWarrantyEligibilityFromDateOut(rawDateOut) {
+            const badge = document.getElementById('warrantyAutoCalcBadge');
+            if (!badge) return;
+            const s = String(rawDateOut || '').trim();
+            if (!s) {
+                badge.classList.add('hidden');
+                return;
+            }
+            const parsed = new Date(s + (s.length === 10 ? 'T00:00:00' : ''));
+            if (isNaN(parsed.getTime())) {
+                badge.classList.add('hidden');
+                return;
+            }
+            const now = new Date();
+            const diffDays = Math.floor((now.getTime() - parsed.getTime()) / 86400000);
+            const months = Math.max(0, Math.floor(diffDays / 30.4375));
+            const years = (diffDays / 365.25).toFixed(1);
+
+            badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-amber-100', 'text-amber-950', 'bg-red-100', 'text-red-900');
+
+            if (diffDays <= 365) {
+                const daysLeft = Math.max(0, 365 - diffDays);
+                badge.classList.add('bg-emerald-100', 'text-emerald-900');
+                badge.innerHTML = `<i class="fa-solid fa-shield-check mr-1"></i>อายุเครื่อง ${months} เดือน (อยู่ในประกัน 1 ปี • เหลือ ${daysLeft} วัน)`;
+                const wYes = document.getElementById('warrantyYes');
+                if (wYes) wYes.checked = true;
+            } else if (diffDays <= 730) {
+                badge.classList.add('bg-amber-100', 'text-amber-950');
+                badge.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i>อายุเครื่อง ${years} ปี (พ้นประกันตัวเครื่อง 1 ปี • ตรวจสอบประกันคอมเพรสเซอร์)`;
+                const wNo = document.getElementById('warrantyNo');
+                if (wNo) wNo.checked = true;
+            } else {
+                badge.classList.add('bg-red-100', 'text-red-900');
+                badge.innerHTML = `<i class="fa-solid fa-shield-xmark mr-1"></i>อายุเครื่อง ${years} ปี (หมดระยะเวลารับประกันมาตรฐาน)`;
+                const wNo = document.getElementById('warrantyNo');
+                if (wNo) wNo.checked = true;
+            }
+        }
+
+        const _origHandleSerialAutoLookup = handleSerialAutoLookup;
+        handleSerialAutoLookup = function(rawSerial) {
+            _origHandleSerialAutoLookup(rawSerial);
+            const dOut = document.getElementById('eqDateOut')?.value || '';
+            evaluateWarrantyEligibilityFromDateOut(dOut);
+        };
+
+        // --- FEATURE 2: Quotation (QT) / Invoice (IV) / Receipt (RE) + Auto Deduct Van Stock ---
+        setFinancialDocMode = function(mode) {
+            currentFinancialDocMode = mode;
+            const btnQ = document.getElementById('btnDocModeQuotation');
+            const btnI = document.getElementById('btnDocModeInvoice');
+            const btnR = document.getElementById('btnDocModeReceipt');
+            const titleEl = document.getElementById('receiptDocTitle');
+
+            [btnQ, btnI, btnR].forEach(b => {
+                if (!b) return;
+                b.classList.remove('bg-amber-600', 'text-white');
+                b.classList.add('bg-amber-50', 'text-amber-900');
+            });
+
+            const activeBtn = mode === 'RECEIPT' ? btnR : (mode === 'INVOICE' ? btnI : btnQ);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-amber-50', 'text-amber-900');
+                activeBtn.classList.add('bg-amber-600', 'text-white');
+            }
+
+            if (titleEl) {
+                if (mode === 'RECEIPT') titleEl.innerText = 'RECEIPT / TAX INVOICE';
+                else if (mode === 'INVOICE') titleEl.innerText = 'TAX INVOICE / DELIVERY ORDER';
+                else titleEl.innerText = 'QUOTATION';
+            }
+
+            // อัปเดตคำนำหน้าเลขที่เอกสาร QT- / IV- / RE- อัตโนมัติ
+            if (currentOfferNo) {
+                const newPrefix = mode === 'RECEIPT' ? 'RE-' : (mode === 'INVOICE' ? 'IV-' : 'QT-');
+                currentOfferNo = currentOfferNo.replace(/^(QT-|IV-|RE-)/, newPrefix);
+            }
+            renderReceiptDocument();
+        };
+
+        function convertApprovedQuoteToJobAndDeductStock() {
+            const respTech = document.getElementById('responsibleTechSelect')?.value || '';
+            if (!respTech) {
+                showToast('กรุณาเลือก "ช่างผู้รับผิดชอบงาน" ในใบงานก่อนตัดสต็อกรถช่าง');
+                return;
+            }
+            const techCode = getTechCodeByName(respTech);
+            const partsUsed = [];
+            document.querySelectorAll('.parts-row').forEach(r => {
+                const desc = (r.querySelector('.parts-desc')?.value || '').trim();
+                const qty = parseInt(r.querySelector('.parts-qty')?.value || '0', 10) || 0;
+                if (desc && qty > 0) partsUsed.push({ desc, qty });
+            });
+
+            if (partsUsed.length === 0) {
+                showToast('ยังไม่มีรายการอะไหล่ในตารางสำหรับตัดสต็อก');
+                return;
+            }
+
+            deductVanStockForSavedJob({ responsibleTech: respTech, parts: partsUsed });
+            const statusEl = document.getElementById('jobStatus');
+            if (statusEl) {
+                statusEl.value = 'Completed';
+                updateJobStatusStyle();
+            }
+            saveToHistory();
+            closeReceiptModal();
+            showToast(`บันทึกใบงานและตัดสต็อกรถช่าง [${techCode}] เรียบร้อย (${partsUsed.length} รายการ) ✓`);
+        }
+
+        // --- FEATURE 3: One-Click Copy Technician Job Card & Prefilled Link in Schedule Modal ---
+        function copyDispatchJobCardForLine() {
+            const dateStr = document.getElementById('dispDate')?.value || '';
+            const tStart = document.getElementById('dispTimeStart')?.value || '';
+            const tEnd = document.getElementById('dispTimeEnd')?.value || '';
+            const store = (document.getElementById('dispStore')?.value || '').trim();
+            const contact = (document.getElementById('dispOnsiteContact')?.value || '').trim();
+            const address = (document.getElementById('dispAddress')?.value || '').trim();
+            let mapUrl = (document.getElementById('dispMapUrl')?.value || '').trim();
+            const serial = (document.getElementById('dispSerial')?.value || '').trim();
+            const model = (document.getElementById('dispModel')?.value || '').trim();
+            const cat = (document.getElementById('dispJobCategory')?.value || '').trim();
+            const detail = (document.getElementById('dispWorkDetail')?.value || '').trim();
+            const coordName = (document.getElementById('dispCoordName')?.value || '').trim();
+            const coordPhone = (document.getElementById('dispCoordPhone')?.value || '').trim();
+
+            const techs = Array.from(document.querySelectorAll('.disp-tech-cb:checked')).map(cb => cb.value);
+            if (!mapUrl && (store || address)) {
+                mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((store + ' ' + address).trim())}`;
+            }
+
+            // สร้างลิงก์เปิดใบงานที่เติมข้อมูลหน้างานไว้ให้ช่างพร้อมกดเริ่มงานทันที
+            const prefillObj = {
+                date: dateStr,
+                store,
+                contact,
+                address,
+                serial,
+                model,
+                symptom: detail,
+                tech: techs[0] || ''
+            };
+            const encodedJob = btoa(unescape(encodeURIComponent(JSON.stringify(prefillObj))));
+            const baseUrl = TEAM_PRODUCTION_URL.split('?')[0];
+            const quickJobLink = `${baseUrl}?openExternalBrowser=1&prefillJob=${encodeURIComponent(encodedJob)}`;
+
+            const cardLines = [
+                `📋 ใบจ่ายงานบริการ HOSHIZAKI (${cat})`,
+                `📅 วันที่: ${dateStr} | ⏰ เวลา: ${tStart} - ${tEnd} น.`,
+                `👷 ทีมช่าง: ${techs.join(', ') || '-'}`,
+                `🏪 ลูกค้า/ร้าน: ${store || '-'}`,
+                `📞 ติดต่อหน้างาน: ${contact || '-'}`,
+                `📍 ที่อยู่: ${address || '-'}`,
+                `🗺️ แผนที่ Google Maps: ${mapUrl || '-'}`,
+                `❄️ รุ่นเครื่อง: ${model || '-'} | S/N: ${serial || '-'}`,
+                `🔧 รายละเอียดงาน: ${detail || '-'}`,
+                `👩‍💼 ผู้ประสานงาน: ${coordName} ${coordPhone ? '(' + coordPhone + ')' : ''}`,
+                `📲 กดเปิดใบงานที่กรอกข้อมูลไว้แล้ว: ${quickJobLink}`
+            ];
+            const msg = cardLines.join('\n');
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(msg).then(() => {
+                    showToast('คัดลอกการ์ดสรุปงาน + แผนที่ + ลิงก์เปิดใบงานส่ง LINE ช่างเรียบร้อย ✓');
+                }).catch(() => {
+                    prompt('คัดลอกข้อความนี้ส่งเข้า LINE ช่าง:', msg);
+                });
+            } else {
+                prompt('คัดลอกข้อความนี้ส่งเข้า LINE ช่าง:', msg);
+            }
+        }
+
+        function checkPrefillJobUrlParam() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const rawPrefill = params.get('prefillJob');
+                if (!rawPrefill) return;
+                const d = JSON.parse(decodeURIComponent(escape(atob(rawPrefill))));
+                if (d.date && document.getElementById('jobDate')) document.getElementById('jobDate').value = d.date;
+                if (d.store && document.getElementById('custStore')) document.getElementById('custStore').value = d.store;
+                if (d.contact && document.getElementById('custContact')) document.getElementById('custContact').value = d.contact;
+                if (d.address && document.getElementById('custAddress')) document.getElementById('custAddress').value = d.address;
+                if (d.serial && document.getElementById('eqSerial')) {
+                    document.getElementById('eqSerial').value = d.serial;
+                    handleSerialAutoLookup(d.serial);
+                }
+                if (d.model && document.getElementById('eqModel') && !document.getElementById('eqModel').value) {
+                    document.getElementById('eqModel').value = d.model;
+                }
+                if (d.symptom && document.getElementById('diagSymptom')) document.getElementById('diagSymptom').value = d.symptom;
+                if (d.tech && document.getElementById('responsibleTechSelect')) {
+                    document.getElementById('responsibleTechSelect').value = d.tech;
+                    updateResponsibleTechPhone(true);
+                }
+                showToast(`ดึงข้อมูลใบจ่ายงาน "${d.store || d.serial}" เรียบร้อย ✓`);
+            } catch (e) {}
+        }
+
+        // --- FEATURE 1: Pull Customer Online Warranty Claims from Google Sheets & 1-Click Load ---
+        async function fetchCustomerWarrantyClaimsFromCloud() {
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (!webhookUrl) {
+                showToast('กรุณาตั้งค่า Google Apps Script Web App URL ในเมนูซิงค์ Sheets ก่อน');
+                return;
+            }
+            showToast('กำลังดึงรายการใบเคลมลูกค้าจาก Google Sheets...');
+            try {
+                const sep = webhookUrl.includes('?') ? '&' : '?';
+                const resp = await fetch(`${webhookUrl}${sep}action=getWarrantyClaims&_t=${Date.now()}`);
+                const data = await resp.json();
+                if (data && Array.isArray(data.claims)) {
+                    const localList = JSON.parse(localStorage.getItem('hoshizaki_warranty_claims') || '[]');
+                    const map = new Map(localList.map(x => [x.claimNo, x]));
+                    data.claims.forEach(c => {
+                        if (c.claimNo) {
+                            map.set(c.claimNo, {
+                                ...map.get(c.claimNo),
+                                ...c,
+                                status: c.status || 'Customer Submitted (Cloud)'
+                            });
+                        }
+                    });
+                    const merged = Array.from(map.values());
+                    localStorage.setItem('hoshizaki_warranty_claims', JSON.stringify(merged));
+                    renderWarrantyTrackerTable();
+                    showToast(`อัปเดตรายการใบเคลมสำเร็จ (${merged.length} รายการ) ✓`);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('ไม่สามารถดึงข้อมูลได้ กรุณาตรวจสอบว่าอัปเดต Apps Script เป็นเวอร์ชันล่าสุดแล้ว');
+            }
+        }
+
+        function loadWarrantyClaimIntoFormAndJob(claimNo) {
+            const list = JSON.parse(localStorage.getItem('hoshizaki_warranty_claims') || '[]');
+            const c = list.find(x => x.claimNo === claimNo);
+            if (!c) return;
+
+            // เติมลงฟอร์ม HOSHIZAKI WARRANTY CLAIM FORM
+            if (document.getElementById('wcClaimNo')) document.getElementById('wcClaimNo').value = c.claimNo || '';
+            if (document.getElementById('wcServiceReportNo')) document.getElementById('wcServiceReportNo').value = c.jobNo || document.getElementById('jobNo')?.value || '';
+            if (document.getElementById('wcDateOfClaim')) document.getElementById('wcDateOfClaim').value = c.dateOfClaim || new Date().toISOString().split('T')[0];
+            if (document.getElementById('wcDateFailed') && c.dateFailed) document.getElementById('wcDateFailed').value = c.dateFailed;
+            if (document.getElementById('wcModelName')) document.getElementById('wcModelName').value = c.model || '';
+            if (document.getElementById('wcSerialNo')) document.getElementById('wcSerialNo').value = c.serial || '';
+            if (document.getElementById('wcDateInstall') && c.dateInstall) document.getElementById('wcDateInstall').value = c.dateInstall;
+            if (document.getElementById('wcCustomerName')) document.getElementById('wcCustomerName').value = c.customer || '';
+            if (document.getElementById('wcCustomerContact') && c.contactPhone) document.getElementById('wcCustomerContact').value = c.contactPhone;
+            if (document.getElementById('wcCustomerPhone') && c.contactPhone) document.getElementById('wcCustomerPhone').value = c.contactPhone;
+            if (document.getElementById('wcProblemRepairDesc') && c.symptom) document.getElementById('wcProblemRepairDesc').value = c.symptom;
+            if (document.getElementById('wcClaimPartsDesc') && c.claimParts) document.getElementById('wcClaimPartsDesc').value = c.claimParts;
+
+            // เติมลงใบแจ้งบริการ (Service Report) หลักด้วย
+            if (c.customer && document.getElementById('custStore')) document.getElementById('custStore').value = c.customer;
+            if (c.contactPhone && document.getElementById('custContact')) document.getElementById('custContact').value = c.contactPhone;
+            if (c.address && document.getElementById('custAddress')) document.getElementById('custAddress').value = c.address;
+            if (c.serial && document.getElementById('eqSerial')) {
+                document.getElementById('eqSerial').value = c.serial;
+                handleSerialAutoLookup(c.serial);
+            }
+            if (c.model && document.getElementById('eqModel')) document.getElementById('eqModel').value = c.model;
+            if (c.symptom && document.getElementById('diagSymptom')) document.getElementById('diagSymptom').value = c.symptom;
+
+            switchWarrantyTab('CLAIM');
+            showToast(`ดึงข้อมูลใบเคลม ${claimNo} เข้าฟอร์มและใบงานเรียบร้อย ✓`);
+        }
+
+        renderWarrantyTrackerTable = function() {
+            const tbody = document.getElementById('warrantyTrackerTableBody');
+            if (!tbody) return;
+            const list = JSON.parse(localStorage.getItem('hoshizaki_warranty_claims') || '[]');
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-gray-400">ยังไม่มีประวัติการบันทึกใบเคลมประกัน (กดปุ่ม "ดึงใบเคลมลูกค้าจากส่วนกลาง" เพื่อเช็กข้อมูลใหม่)</td></tr>';
+                return;
+            }
+            tbody.innerHTML = list.map(c => {
+                const safeClaimNo = String(c.claimNo || '').replace(/'/g, "\'");
+                const driveBtn = c.folderUrl && String(c.folderUrl).startsWith('http')
+                    ? `<a href="${c.folderUrl}" target="_blank" rel="noopener" class="bg-amber-100 hover:bg-amber-200 text-amber-900 px-2 py-1 rounded text-[10px] font-bold"><i class="fa-solid fa-images"></i> รูป Drive</a>`
+                    : '';
+                return `
+                    <tr class="hover:bg-blue-50/40">
+                        <td class="p-2 font-bold text-hoshizaki-navy">${c.claimNo}</td>
+                        <td class="p-2">${c.jobNo || '-'}</td>
+                        <td class="p-2">${c.dateOfClaim || c.dateFailed || '-'}</td>
+                        <td class="p-2">${c.model || '-'} / ${c.serial || '-'}</td>
+                        <td class="p-2 font-semibold">${c.customer || '-'}</td>
+                        <td class="p-2 text-center"><span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold">${c.status}</span></td>
+                        <td class="p-2 text-right font-bold">${Number(c.totalAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                        <td class="p-2 text-center space-x-1">
+                            <button type="button" onclick="loadWarrantyClaimIntoFormAndJob('${safeClaimNo}')" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-2 py-1 rounded text-[10px] font-bold">
+                                ดึงเข้าฟอร์ม
+                            </button>
+                            ${driveBtn}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        };
+
+        // --- FEATURE 4: Waiting Parts & Backorder Dashboard ---
+        function getWaitingAndPendingJobs() {
+            const history = getJobHistorySync();
+            const now = new Date();
+            return history
+                .filter(h => h.jobStatus === 'Waiting Parts' || h.jobStatus === 'Pending')
+                .map(h => {
+                    const d = h.date ? new Date(h.date + 'T00:00:00') : now;
+                    const waitDays = isNaN(d.getTime()) ? 0 : Math.max(0, Math.floor((now.getTime() - d.getTime()) / 86400000));
+                    return { ...h, waitDays };
+                })
+                .sort((a, b) => b.waitDays - a.waitDays);
+        }
+
+        function refreshWaitingPartsTopBadge() {
+            const list = getWaitingAndPendingJobs();
+            const wpOnly = list.filter(x => x.jobStatus === 'Waiting Parts');
+            const badge = document.getElementById('waitingPartsTopBadge');
+            const inlineEl = document.getElementById('waitingPartsInlineCount');
+            if (inlineEl) inlineEl.innerText = wpOnly.length;
+            if (badge) {
+                badge.innerText = wpOnly.length;
+                badge.classList.toggle('hidden', wpOnly.length === 0);
+            }
+        }
+
+        function openWaitingPartsBackorderModal() {
+            const list = getWaitingAndPendingJobs();
+            const wpOnly = list.filter(x => x.jobStatus === 'Waiting Parts');
+            const overdue3 = wpOnly.filter(x => x.waitDays > 3);
+            const pendOnly = list.filter(x => x.jobStatus === 'Pending');
+
+            if (document.getElementById('wpTotalWaitingCount')) document.getElementById('wpTotalWaitingCount').innerText = wpOnly.length;
+            if (document.getElementById('wpOverdue3Count')) document.getElementById('wpOverdue3Count').innerText = overdue3.length;
+            if (document.getElementById('wpTotalPendingCount')) document.getElementById('wpTotalPendingCount').innerText = pendOnly.length;
+
+            const tbody = document.getElementById('waitingPartsTableBody');
+            if (tbody) {
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-gray-400">ไม่มีรายการงานรออะไหล่หรือรอดำเนินการค้างอยู่ ✓</td></tr>';
+                } else {
+                    tbody.innerHTML = list.map(item => {
+                        const isWp = item.jobStatus === 'Waiting Parts';
+                        const ageBadge = item.waitDays > 3
+                            ? `<span class="bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold">รอ ${item.waitDays} วัน</span>`
+                            : `<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold">${item.waitDays} วัน</span>`;
+                        const partsStr = Array.isArray(item.parts) && item.parts.length > 0
+                            ? item.parts.map(p => `${p.desc} (${p.qty})`).join(', ')
+                            : (item.symptom || '-');
+                        const safeJob = String(item.jobNo || '').replace(/'/g, "\'");
+                        return `
+                            <tr class="hover:bg-rose-50/40">
+                                <td class="p-2 font-bold text-hoshizaki-navy">${item.jobNo}<div class="text-[10px] ${isWp ? 'text-rose-600' : 'text-amber-700'} font-bold">${item.jobStatus}</div></td>
+                                <td class="p-2">${item.date || '-'}</td>
+                                <td class="p-2 text-center">${ageBadge}</td>
+                                <td class="p-2 font-semibold">${item.store || '-'}</td>
+                                <td class="p-2">${item.model || '-'}<div class="text-[10px] text-gray-500">${item.serial || ''}</div></td>
+                                <td class="p-2 max-w-[220px] truncate" title="${partsStr.replace(/"/g, '&quot;')}">${partsStr}</td>
+                                <td class="p-2">${item.responsibleTech || '-'}</td>
+                                <td class="p-2 text-center">
+                                    <button type="button" onclick="document.getElementById('waitingPartsModal')?.classList.add('hidden'); loadJobFromHistory('${safeJob}');" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-2.5 py-1 rounded text-[11px] font-bold">
+                                        เปิดใบงาน
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+            document.getElementById('waitingPartsModal')?.classList.remove('hidden');
+        }
+
+        checkPrefillJobUrlParam();
+        setTimeout(() => {
+            refreshWaitingPartsTopBadge();
+            const dOut = document.getElementById('eqDateOut')?.value || '';
+            if (dOut) evaluateWarrantyEligibilityFromDateOut(dOut);
+        }, 650);
+
     </script>
 
     <!-- Google Sheets Cloud Sync & Team QR Code Poster Modal -->
@@ -14074,6 +14527,9 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
                 <div class="flex flex-wrap items-center justify-between gap-1.5">
                     <div class="flex flex-wrap items-center gap-1.5">
+                        <button type="button" onclick="copyDispatchJobCardForLine()" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs" title="คัดลอกการ์ดสรุปงาน + พิกัด Maps + เบอร์โทร + S/N + ลิงก์เปิดใบงานส่ง LINE ช่างใน 1 คลิก">
+                            <i class="fa-brands fa-line"></i> <span>คัดลอกการ์ดงาน & ลิงก์ใบงานส่งช่าง</span>
+                        </button>
                         <button type="button" onclick="sendDispatchToGoogleCalendar()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1" title="เปิด Google Calendar พร้อมเชิญอีเมลทีมช่างที่เลือกอัตโนมัติ">
                             <i class="fa-brands fa-google"></i> <span>Google Calendar (เชิญอีเมลช่าง)</span>
                         </button>
@@ -14875,9 +15331,14 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                         </div>
                     </div>
 
-                    <!-- TAB 4: WARRANTY CLAIM TRACKER (ทะเบียนติดตามสถานะเคลมประกัน) -->
-                    <div id="warrantyTabClaimTracker" class="hidden space-y-2">
-                        <div class="font-extrabold text-hoshizaki-navy text-sm">ทะเบียนติดตามสถานะใบเคลมประกันและการส่งคืนอะไหล่เสีย</div>
+                    <!-- TAB 4: WARRANTY CLAIM TRACKER (ทะเบียนติดตามสถานะเคลมประกัน + ดึงใบเคลมลูกค้าจากส่วนกลาง) -->
+                    <div id="warrantyTabClaimTracker" class="hidden space-y-2.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="font-extrabold text-hoshizaki-navy text-sm">ทะเบียนติดตามสถานะใบเคลมประกัน & ใบเคลมที่ลูกค้าส่งเข้ามาออนไลน์</div>
+                            <button type="button" onclick="fetchCustomerWarrantyClaimsFromCloud()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-cloud-arrow-down"></i> <span>ดึงใบเคลมลูกค้าจากส่วนกลาง (Sheets)</span>
+                            </button>
+                        </div>
                         <div class="overflow-x-auto border rounded-lg">
                             <table class="w-full text-left border-collapse text-xs min-w-[680px]">
                                 <thead class="bg-hoshizaki-navy text-white">
@@ -14889,6 +15350,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                                         <th class="p-2">ลูกค้า</th>
                                         <th class="p-2 text-center">สถานะเคลม</th>
                                         <th class="p-2 text-right">ยอดเคลม (THB)</th>
+                                        <th class="p-2 text-center">จัดการ / ดึงข้อมูล</th>
                                     </tr>
                                 </thead>
                                 <tbody id="warrantyTrackerTableBody" class="divide-y divide-gray-200"></tbody>
@@ -15059,6 +15521,59 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                         <i class="fa-solid fa-paper-plane"></i> <span>ส่งข้อมูลใบเคลมอัตโนมัติ</span>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Waiting Parts & Backorder Tracking Modal (v14.4) -->
+    <div id="waitingPartsModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[83] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full p-4 sm:p-5 space-y-3 max-h-[92vh] flex flex-col">
+            <div class="flex flex-wrap items-center justify-between border-b pb-2.5 gap-2 flex-shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy flex items-center gap-2">
+                        <i class="fa-solid fa-hourglass-half text-rose-600"></i> แดชบอร์ดติดตามงานรออะไหล่ / ค้างส่ง (Waiting Parts & Backorder)
+                    </h3>
+                    <p class="text-[11px] text-gray-500">แสดงใบงานที่ติดสถานะ "รออะไหล่ (Waiting Parts)" และ "รอดำเนินการ (Pending)" เรียงตามจำนวนวันที่รอคอย เพื่อนัดหมายช่างเข้าปิดงาน</p>
+                </div>
+                <button type="button" onclick="document.getElementById('waitingPartsModal')?.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs flex-shrink-0">
+                <div class="bg-rose-50 border border-rose-200 rounded-xl p-2.5">
+                    <div class="text-[11px] text-rose-700 font-semibold">รออะไหล่ทั้งหมด (Waiting Parts)</div>
+                    <div class="text-lg font-extrabold text-rose-900"><span id="wpTotalWaitingCount">0</span> ใบงาน</div>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5">
+                    <div class="text-[11px] text-amber-800 font-semibold">รอนานเกิน 3 วัน (Overdue > 3 Days)</div>
+                    <div class="text-lg font-extrabold text-amber-950"><span id="wpOverdue3Count">0</span> ใบงาน</div>
+                </div>
+                <div class="bg-sky-50 border border-sky-200 rounded-xl p-2.5">
+                    <div class="text-[11px] text-sky-800 font-semibold">รอดำเนินการทั่วไป (Pending)</div>
+                    <div class="text-lg font-extrabold text-sky-950"><span id="wpTotalPendingCount">0</span> ใบงาน</div>
+                </div>
+            </div>
+
+            <div class="overflow-auto flex-1 border border-gray-200 rounded-lg bg-white text-xs">
+                <table class="w-full text-left border-collapse min-w-[760px]">
+                    <thead class="bg-hoshizaki-navy text-white sticky top-0">
+                        <tr>
+                            <th class="p-2">Job No.</th>
+                            <th class="p-2">วันที่เปิดงาน</th>
+                            <th class="p-2 text-center">ระยะเวลารอ</th>
+                            <th class="p-2">ร้านค้า / ลูกค้า</th>
+                            <th class="p-2">รุ่น / S/N</th>
+                            <th class="p-2">รายการอะไหล่ / อาการที่รอ</th>
+                            <th class="p-2">ช่างรับผิดชอบ</th>
+                            <th class="p-2 text-center">ดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="waitingPartsTableBody" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-end pt-1 flex-shrink-0">
+                <button type="button" onclick="document.getElementById('waitingPartsModal')?.classList.add('hidden')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-4 py-2 rounded-xl font-semibold">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>

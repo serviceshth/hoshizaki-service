@@ -659,7 +659,13 @@
                 <div class="min-w-0 flex-1">
                     <h1 class="font-bold text-sm sm:text-lg leading-tight tracking-wide truncate">HOSHIZAKI (THAILAND)</h1>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System</p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-white/10 px-1.5 py-0.2 rounded text-sky-200 font-bold">v15.0</span></p>
+                        <button type="button" onclick="openExecutiveDashboardModal()" class="text-[10px] bg-sky-500/25 hover:bg-sky-500/40 text-sky-100 border border-sky-400/40 px-2 py-0.5 rounded-full font-bold transition" title="เปิดศูนย์บัญชาการและวิเคราะห์ KPI แผนกบริการ (Executive Command Center)">
+                            <i class="fa-solid fa-gauge-high mr-0.5 text-amber-300"></i> แดชบอร์ด KPI
+                        </button>
+                        <button type="button" id="offlineQueueStatusBadge" onclick="processOfflineSyncQueue(true)" class="hidden text-[10px] bg-amber-500/25 hover:bg-amber-500/40 text-amber-200 border border-amber-400/50 px-2 py-0.5 rounded-full font-bold transition" title="คลิกเพื่อซิงค์รายการที่ค้างอยู่ในคิวขึ้น Google Sheets/Drive ทันที">
+                            <i class="fa-solid fa-cloud-arrow-up mr-0.5"></i> รอซิงค์: <span id="offlineQueueCountText">0</span>
+                        </button>
                         <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="text-[10px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full font-bold transition" title="สลับโหมดหน้าจอระหว่าง ผู้จ่ายงาน/ผู้จัดการ และ ช่างหน้างาน">
                             <i class="fa-solid fa-user-shield mr-0.5"></i> โหมด: ผู้จัดการ/จ่ายงาน
                         </button>
@@ -911,7 +917,48 @@
                 </button>
             </div>
         </div>
-    </header>
+    
+        <!-- v15.0 Universal Search Bar (Ctrl+K) & Technician Express 5-Step Workflow -->
+        <div class="mt-2.5 pt-2 border-t border-white/10 space-y-2">
+            <div class="relative flex items-center gap-1.5">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sky-300 text-xs"></i>
+                    <input type="text" id="universalOmniSearchInput" oninput="handleUniversalOmniSearch(this.value)" onfocus="handleUniversalOmniSearch(this.value)" placeholder="ค้นหาครอบจักรวาล (Ctrl+K): พิมพ์ S/N เครื่อง, ชื่อลูกค้า, เบอร์โทร, Job No., ใบเสนอราคา 2,486 ฉบับ หรือรหัสอะไหล่..." class="w-full bg-white/10 hover:bg-white/15 focus:bg-white text-white focus:text-hoshizaki-navy placeholder-blue-200/80 focus:placeholder-gray-400 text-xs rounded-lg pl-8 pr-16 py-2 border border-white/20 focus:border-hoshizaki-blue focus:outline-none transition">
+                    <button type="button" id="btnClearUniversalSearch" onclick="clearUniversalOmniSearch()" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-rose-500 px-1.5 py-0.5 font-bold">&times;</button>
+                </div>
+                <button type="button" onclick="openExecutiveDashboardModal()" class="hidden sm:flex bg-sky-600 hover:bg-sky-500 text-white px-3 py-2 rounded-lg text-xs font-bold items-center gap-1.5 shadow-sm flex-shrink-0 transition">
+                    <i class="fa-solid fa-chart-line text-amber-300"></i> <span>Command Center</span>
+                </button>
+            </div>
+            <!-- Universal Search Live Results Dropdown -->
+            <div id="universalOmniResultsBox" onclick="event.stopPropagation()" class="hidden bg-white text-gray-800 rounded-xl shadow-2xl border border-sky-200 p-2.5 max-h-80 overflow-y-auto space-y-2 text-xs"></div>
+
+            <!-- Technician Express 5-Step Guided Flow (Shown prominently in Technician Mode or toggleable) -->
+            <div id="techExpressStepBar" class="hidden bg-emerald-950/60 border border-emerald-400/30 rounded-xl p-2">
+                <div class="flex items-center justify-between text-[10px] text-emerald-200 font-bold mb-1.5 px-1">
+                    <span><i class="fa-solid fa-bolt text-amber-300 mr-1"></i> โหมดช่างหน้างานด่วน (Express 5-Step Workflow)</span>
+                    <span id="techExpressProgressLabel">ขั้นตอน 1/5</span>
+                </div>
+                <div class="grid grid-cols-5 gap-1 text-[10px] sm:text-xs font-bold">
+                    <button type="button" onclick="runTechExpressStep(1)" class="bg-emerald-600 hover:bg-emerald-500 text-white py-1.5 px-1 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 shadow-xs">
+                        <span>1. เช็กอิน GPS</span>
+                    </button>
+                    <button type="button" onclick="runTechExpressStep(2)" class="bg-sky-600 hover:bg-sky-500 text-white py-1.5 px-1 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 shadow-xs">
+                        <span>2. สแกน S/N</span>
+                    </button>
+                    <button type="button" onclick="runTechExpressStep(3)" class="bg-amber-600 hover:bg-amber-500 text-white py-1.5 px-1 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 shadow-xs">
+                        <span>3. เช็ก/ถ่ายรูป</span>
+                    </button>
+                    <button type="button" onclick="runTechExpressStep(4)" class="bg-indigo-600 hover:bg-indigo-500 text-white py-1.5 px-1 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 shadow-xs">
+                        <span>4. ลูกค้าเซ็น</span>
+                    </button>
+                    <button type="button" onclick="runTechExpressStep(5)" class="bg-rose-600 hover:bg-rose-500 text-white py-1.5 px-1 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 shadow-xs">
+                        <span>5. ปิดงาน/ส่ง</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+</header>
 
     <!-- Datalist สำหรับเลือกรุ่นเครื่องและอะไหล่มาตรฐาน Hoshizaki -->
     <datalist id="hoshizakiModelsList">
@@ -3496,6 +3543,10 @@
                             <span class="text-[11px] text-gray-500 font-medium">วันที่จำหน่าย (Date Out):</span>
                             <input type="text" id="eqDateOut" oninput="evaluateWarrantyEligibilityFromDateOut(this.value)" onchange="evaluateWarrantyEligibilityFromDateOut(this.value)" placeholder="YYYY-MM-DD" class="border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-0.5 font-medium text-gray-800">
                             <div id="warrantyAutoCalcBadge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded mt-0.5"></div>
+                            <div id="smartWarrantyClaimPrompt" class="hidden mt-1 bg-emerald-50 border border-emerald-300 rounded-lg p-1.5 flex items-center justify-between gap-1 text-[10px]">
+                                <span class="text-emerald-900 font-bold"><i class="fa-solid fa-shield-check text-emerald-600 mr-0.5"></i> เครื่องอยู่ในประกัน สามารถออกใบเคลมได้ทันที</span>
+                                <button type="button" onclick="openWarrantyClaimModal('CLAIM')" class="no-print bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-0.5 rounded font-bold flex-shrink-0">สร้างใบเคลม</button>
+                            </div>
                         </div>
                         <div class="flex flex-col gap-0.5">
                             <span class="text-[11px] text-gray-500 font-medium">เลขที่ใบเสนอราคา/บิล (Invoice No.):</span>
@@ -3856,6 +3907,7 @@
                             <th class="p-2 w-20 text-center">จำนวน</th>
                             <th class="p-2 w-28 text-right">ราคา/หน่วย (THB)</th>
                             <th class="p-2 w-28 text-right">จำนวนเงิน (THB)</th>
+                            <th class="p-2 w-32 text-center no-print">สถานะอะไหล่</th>
                             <th class="p-2 w-12 text-center no-print">ลบ</th>
                         </tr>
                     </thead>
@@ -3872,6 +3924,14 @@
                                 <input type="number" inputmode="decimal" value="0.00" step="10" oninput="calculateTotals()" class="parts-price w-full text-right border border-gray-200 rounded p-1.5 focus:outline-none">
                             </td>
                             <td class="p-2 text-right font-semibold text-gray-700 parts-amount">0.00</td>
+                            <td class="p-2 text-center no-print">
+                                <select onchange="handlePartProcurementStatusChange(this)" class="parts-proc-status w-full border border-gray-200 rounded px-1.5 py-1 text-[11px] font-semibold bg-emerald-50 text-emerald-800">
+                                    <option value="IN_STOCK">มีในรถ/พร้อมเปลี่ยน</option>
+                                    <option value="HQ_ORDER">เบิกคลัง สนง.ใหญ่</option>
+                                    <option value="IMPORT_ORDER">สั่งนำเข้า/รอโรงงาน</option>
+                                    <option value="ARRIVED">อะไหล่เข้าแล้ว ✓</option>
+                                </select>
+                            </td>
                             <td class="p-2 text-center no-print">
                                 <button type="button" onclick="removePartsRow(this)" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash-can"></i></button>
                             </td>
@@ -6506,6 +6566,14 @@
                 </td>
                 <td class="p-2 text-right font-semibold text-gray-700 parts-amount">0.00</td>
                 <td class="p-2 text-center no-print">
+                    <select onchange="handlePartProcurementStatusChange(this)" class="parts-proc-status w-full border border-gray-200 rounded px-1.5 py-1 text-[11px] font-semibold bg-emerald-50 text-emerald-800">
+                        <option value="IN_STOCK" ${(!data.procStatus || data.procStatus === 'IN_STOCK') ? 'selected' : ''}>มีในรถ/พร้อมเปลี่ยน</option>
+                        <option value="HQ_ORDER" ${data.procStatus === 'HQ_ORDER' ? 'selected' : ''}>เบิกคลัง สนง.ใหญ่</option>
+                        <option value="IMPORT_ORDER" ${data.procStatus === 'IMPORT_ORDER' ? 'selected' : ''}>สั่งนำเข้า/รอโรงงาน</option>
+                        <option value="ARRIVED" ${data.procStatus === 'ARRIVED' ? 'selected' : ''}>อะไหล่เข้าแล้ว ✓</option>
+                    </select>
+                </td>
+                <td class="p-2 text-center no-print">
                     <button type="button" onclick="removePartsRow(this)" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash-can"></i></button>
                 </td>
             `;
@@ -6687,7 +6755,8 @@
                 parts.push({
                     desc: row.querySelector('.parts-desc')?.value || '',
                     qty: row.querySelector('.parts-qty')?.value || '1',
-                    price: row.querySelector('.parts-price')?.value || '0.00'
+                    price: row.querySelector('.parts-price')?.value || '0.00',
+                    procStatus: row.querySelector('.parts-proc-status')?.value || 'IN_STOCK'
                 });
             });
 
@@ -16644,5 +16713,699 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             syncBodyModalScrollLock();
         });
 </script>
+
+    <!-- ========================================================================= -->
+    <!-- v15.0 EXECUTIVE COMMAND CENTER & KPI DASHBOARD MODAL                      -->
+    <!-- ========================================================================= -->
+    <div id="executiveDashboardModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[86] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full p-4 sm:p-6 space-y-4 max-h-[94dvh] flex flex-col">
+            <div class="flex flex-wrap items-center justify-between border-b pb-3 gap-2 flex-shrink-0">
+                <div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-hoshizaki-navy flex items-center gap-2">
+                        <i class="fa-solid fa-gauge-high text-sky-600"></i> ศูนย์บัญชาการและวิเคราะห์ KPI แผนกบริการ (Executive Command Center)
+                    </h3>
+                    <p class="text-[11px] text-gray-500">ภาพรวมสถานะใบงาน รายได้บริการ/อะไหล่ ประสิทธิภาพรายช่าง (SLA & Rating) และแจ้งเตือนงานค้างแบบ Real-time</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                    <select id="execDashPeriodSelect" onchange="renderExecutiveDashboard()" class="border border-sky-300 bg-sky-50 text-hoshizaki-navy font-bold rounded-lg px-2.5 py-1.5">
+                        <option value="TODAY">วันนี้ (Today)</option>
+                        <option value="THIS_WEEK">สัปดาห์นี้ (This Week)</option>
+                        <option value="THIS_MONTH" selected>เดือนนี้ (This Month)</option>
+                        <option value="ALL">ทั้งหมด (All Time)</option>
+                    </select>
+                    <button type="button" onclick="syncAllHistoryToGoogleSheets()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ Sheets</span>
+                    </button>
+                    <button type="button" onclick="document.getElementById('executiveDashboardModal')?.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+                </div>
+            </div>
+
+            <div class="overflow-y-auto flex-1 space-y-4 pr-1 text-xs">
+                <!-- 5 Top KPI Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                        <div class="text-[11px] text-slate-600 font-semibold">ใบงานทั้งหมดในช่วงเวลา</div>
+                        <div class="text-xl font-extrabold text-hoshizaki-navy mt-0.5"><span id="kpiTotalJobs">0</span> <span class="text-xs font-normal">งาน</span></div>
+                        <div class="text-[10px] text-slate-500 mt-0.5">เฉลี่ยหน้างาน: <b id="kpiAvgSlaTime">0 นาที</b></div>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                        <div class="text-[11px] text-emerald-700 font-semibold">ปิดงานสำเร็จ (Completed)</div>
+                        <div class="text-xl font-extrabold text-emerald-900 mt-0.5"><span id="kpiCompletedJobs">0</span> <span class="text-xs font-normal">งาน</span></div>
+                        <div class="text-[10px] text-emerald-700 mt-0.5">อัตราปิดงาน: <b id="kpiCompletionRate">0%</b></div>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 cursor-pointer hover:bg-rose-100/70 transition" onclick="document.getElementById('executiveDashboardModal')?.classList.add('hidden'); openWaitingPartsBackorderModal();">
+                        <div class="text-[11px] text-rose-700 font-semibold">งานค้าง / รออะไหล่</div>
+                        <div class="text-xl font-extrabold text-rose-900 mt-0.5"><span id="kpiPendingWaitingJobs">0</span> <span class="text-xs font-normal">งาน</span></div>
+                        <div class="text-[10px] text-rose-700 mt-0.5 underline">คลิกดูคิวรออะไหล่ &rarr;</div>
+                    </div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-3">
+                        <div class="text-[11px] text-sky-700 font-semibold">รายได้บริการ & อะไหล่รวม</div>
+                        <div class="text-lg sm:text-xl font-extrabold text-sky-950 mt-0.5"><span id="kpiTotalRevenue">0</span> <span class="text-xs font-normal">฿</span></div>
+                        <div class="text-[10px] text-sky-700 mt-0.5">รวม VAT 7% แล้ว</div>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 col-span-2 sm:col-span-1">
+                        <div class="text-[11px] text-amber-800 font-semibold">ค่าเดินทาง & คะแนนเฉลี่ย</div>
+                        <div class="text-lg font-extrabold text-amber-950 mt-0.5"><span id="kpiTotalTravelExpense">0</span> <span class="text-xs font-normal">฿</span></div>
+                        <div class="text-[10px] text-amber-800 mt-0.5">ความพึงพอใจ: <b id="kpiAvgRating">5.0 ★</b></div>
+                    </div>
+                </div>
+
+                <!-- Overdue Jobs Alert Box (> 3 Days Pending / Waiting Parts) -->
+                <div id="kpiOverdueAlertSection" class="hidden bg-rose-50/90 border-2 border-rose-300 rounded-xl p-3 space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="font-extrabold text-rose-900 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bell text-rose-600 animate-bounce"></i> แจ้งเตือนงานค้างเกิน 3 วัน (<span id="kpiOverdueCount">0</span> ใบงาน) — ต้องเร่งติดตาม
+                        </span>
+                        <button type="button" onclick="document.getElementById('executiveDashboardModal')?.classList.add('hidden'); openWaitingPartsBackorderModal();" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">
+                            จัดการคิวรออะไหล่ทั้งหมด
+                        </button>
+                    </div>
+                    <div id="kpiOverdueList" class="grid grid-cols-1 md:grid-cols-2 gap-2"></div>
+                </div>
+
+                <!-- Technician KPI Leaderboard Table -->
+                <div class="border border-gray-200 rounded-xl overflow-hidden bg-white">
+                    <div class="bg-hoshizaki-navy text-white px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2">
+                        <span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-ranking-star text-amber-300"></i> ตารางประเมินผลงานและประสิทธิภาพรายช่าง (T01–T08)</span>
+                        <button type="button" onclick="exportWeeklyMultiSheetExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-[11px] font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-file-excel"></i> ส่งออก Excel 4 ชีต
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[720px]">
+                            <thead class="bg-gray-100 text-gray-700 font-bold border-b">
+                                <tr>
+                                    <th class="p-2.5">รหัส / ชื่อช่าง</th>
+                                    <th class="p-2.5 text-center">งานเดี่ยว</th>
+                                    <th class="p-2.5 text-center">ร่วมทีม</th>
+                                    <th class="p-2.5 text-center">ปิดงานสำเร็จ</th>
+                                    <th class="p-2.5 text-center">เวลาเฉลี่ย/งาน</th>
+                                    <th class="p-2.5 text-center">Rating</th>
+                                    <th class="p-2.5 text-right">ยอดบริการรวม (฿)</th>
+                                    <th class="p-2.5 text-right">เบิกเดินทาง (฿)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="execTechKpiTableBody" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t flex-shrink-0 text-xs">
+                <span class="text-gray-500">อัปเดตข้อมูลอัตโนมัติจากฐานข้อมูลในเครื่องและคิวซิงค์ส่วนกลาง</span>
+                <button type="button" onclick="document.getElementById('executiveDashboardModal')?.classList.add('hidden')" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // v15.0 FULL SUITE ENHANCEMENTS:
+        // 1. Executive Command Center & Real-time KPI Dashboard
+        // 2. Universal Omni-Search (Ctrl+K) & Technician Express 5-Step Flow
+        // 3. Seamless 1-Click E-Approval Workflow (QT -> Dispatch -> Stock -> IV) + Smart Warranty
+        // 4. Part Procurement Status & Round-2 Backorder Auto-Dispatch
+        // 5. Offline Auto-Retry Sync Queue & Pre-Close Smart Validation
+        // =========================================================================
+
+        const OFFLINE_SYNC_QUEUE_KEY = 'hoshizaki_offline_sync_queue_v15';
+
+        // --- 1. UNIVERSAL OMNI-SEARCH (Ctrl+K) ---
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                const inp = document.getElementById('universalOmniSearchInput');
+                if (inp) {
+                    inp.focus();
+                    inp.select();
+                }
+            }
+        });
+
+        function clearUniversalOmniSearch() {
+            const inp = document.getElementById('universalOmniSearchInput');
+            const box = document.getElementById('universalOmniResultsBox');
+            const btn = document.getElementById('btnClearUniversalSearch');
+            if (inp) inp.value = '';
+            if (box) box.classList.add('hidden');
+            if (btn) btn.classList.add('hidden');
+        }
+
+        function handleUniversalOmniSearch(rawQuery) {
+            const q = String(rawQuery || '').trim().toLowerCase();
+            const box = document.getElementById('universalOmniResultsBox');
+            const btn = document.getElementById('btnClearUniversalSearch');
+            if (!box) return;
+            if (btn) btn.classList.toggle('hidden', q.length === 0);
+            if (q.length < 2) {
+                box.classList.add('hidden');
+                return;
+            }
+
+            const sections = [];
+
+            // A. Search Job History
+            const jobs = (typeof getJobHistorySync === 'function' ? getJobHistorySync() : [])
+                .filter(j => `${j.jobNo} ${j.store} ${j.serial} ${j.model} ${j.contact} ${j.responsibleTech}`.toLowerCase().includes(q))
+                .slice(0, 5);
+            if (jobs.length > 0) {
+                sections.push(`
+                    <div>
+                        <div class="text-[10px] font-extrabold text-hoshizaki-navy uppercase bg-blue-50 px-2 py-1 rounded mb-1">
+                            <i class="fa-solid fa-file-lines text-hoshizaki-blue mr-1"></i> ประวัติใบแจ้งบริการ (${jobs.length} รายการ)
+                        </div>
+                        ${jobs.map(j => `
+                            <div onclick="loadSavedJobByNo('${String(j.jobNo).replace(/'/g, "\'")}'); clearUniversalOmniSearch();" class="p-1.5 hover:bg-blue-50 rounded-lg cursor-pointer flex items-center justify-between gap-2 border-b border-gray-100">
+                                <div class="min-w-0">
+                                    <div class="font-bold text-hoshizaki-navy truncate">${j.jobNo} — ${j.store || '-'}</div>
+                                    <div class="text-[10px] text-gray-500 truncate">Model: ${j.model || '-'} | S/N: ${j.serial || '-'} | วันที่: ${j.date || '-'}</div>
+                                </div>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 flex-shrink-0">เปิดใบงาน</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `);
+            }
+
+            // B. Search Serial Number Database
+            const serialDb = (typeof getCombinedSerialDatabase === 'function') ? getCombinedSerialDatabase() : [];
+            const matchedSerials = serialDb
+                .filter(s => `${s.serial} ${s.model} ${s.customer} ${s.invoiceNo} ${s.poNo}`.toLowerCase().includes(q))
+                .slice(0, 5);
+            if (matchedSerials.length > 0) {
+                sections.push(`
+                    <div>
+                        <div class="text-[10px] font-extrabold text-emerald-900 uppercase bg-emerald-50 px-2 py-1 rounded mb-1">
+                            <i class="fa-solid fa-barcode text-emerald-600 mr-1"></i> ฐานข้อมูล Serial No. เครื่อง (${matchedSerials.length} เครื่อง)
+                        </div>
+                        ${matchedSerials.map(s => `
+                            <div onclick="applySerialFromOmniSearch('${String(s.serial).replace(/'/g, "\'")}')" class="p-1.5 hover:bg-emerald-50 rounded-lg cursor-pointer flex items-center justify-between gap-2 border-b border-gray-100">
+                                <div class="min-w-0">
+                                    <div class="font-bold text-emerald-950 truncate">S/N: ${s.serial} (${s.model || '-'})</div>
+                                    <div class="text-[10px] text-gray-600 truncate">ลูกค้า: ${s.customer || '-'} | Date Out: ${s.dateOut || '-'}</div>
+                                </div>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-600 text-white flex-shrink-0">ดึงลงใบงาน</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `);
+            }
+
+            // C. Search Quotation Archive (2,486 Quotations)
+            const qtArchive = Array.isArray(window.HOSHIZAKI_QUOTATION_ARCHIVE) ? window.HOSHIZAKI_QUOTATION_ARCHIVE : [];
+            const matchedQts = qtArchive
+                .filter(qt => `${qt.offerNo || qt.qtNo || ''} ${qt.customer || qt.custName || ''} ${qt.serial || ''} ${qt.model || ''}`.toLowerCase().includes(q))
+                .slice(0, 5);
+            if (matchedQts.length > 0) {
+                sections.push(`
+                    <div>
+                        <div class="text-[10px] font-extrabold text-sky-900 uppercase bg-sky-50 px-2 py-1 rounded mb-1">
+                            <i class="fa-solid fa-folder-open text-sky-600 mr-1"></i> คลังใบเสนอราคาเก่า 2020–2026 (${matchedQts.length} ฉบับ)
+                        </div>
+                        ${matchedQts.map(qt => {
+                            const code = qt.offerNo || qt.qtNo || '-';
+                            const cust = qt.customer || qt.custName || '-';
+                            return `
+                            <div onclick="clearUniversalOmniSearch(); if(typeof openQuotationArchiveModal==='function') openQuotationArchiveModal('${String(code).replace(/'/g, "\'")}');" class="p-1.5 hover:bg-sky-50 rounded-lg cursor-pointer flex items-center justify-between gap-2 border-b border-gray-100">
+                                <div class="min-w-0">
+                                    <div class="font-bold text-sky-950 truncate">${code} — ${cust}</div>
+                                    <div class="text-[10px] text-gray-600 truncate">Model: ${qt.model || '-'} | S/N: ${qt.serial || '-'} | ยอดรวม: ${Number(qt.grandTotal || qt.total || 0).toLocaleString()} ฿</div>
+                                </div>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-600 text-white flex-shrink-0">ดูใบเสนอราคา</span>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                `);
+            }
+
+            // D. Search Spare Parts List
+            const partsOpts = Array.from(document.querySelectorAll('#hoshizakiPartsList option'))
+                .map(o => o.value)
+                .filter(v => v.toLowerCase().includes(q))
+                .slice(0, 5);
+            if (partsOpts.length > 0) {
+                sections.push(`
+                    <div>
+                        <div class="text-[10px] font-extrabold text-amber-900 uppercase bg-amber-50 px-2 py-1 rounded mb-1">
+                            <i class="fa-solid fa-gears text-amber-600 mr-1"></i> รายการอะไหล่ Hoshizaki (${partsOpts.length} รายการ)
+                        </div>
+                        ${partsOpts.map(p => `
+                            <div onclick="addPartFromOmniSearch('${String(p).replace(/'/g, "\'")}')" class="p-1.5 hover:bg-amber-50 rounded-lg cursor-pointer flex items-center justify-between gap-2 border-b border-gray-100">
+                                <span class="font-semibold text-gray-800 truncate">${p}</span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500 text-white flex-shrink-0">+ ใส่ตาราง</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `);
+            }
+
+            if (sections.length === 0) {
+                box.innerHTML = `<div class="p-4 text-center text-gray-400">ไม่พบข้อมูลที่ตรงกับ "${rawQuery}"</div>`;
+            } else {
+                box.innerHTML = sections.join('');
+            }
+            box.classList.remove('hidden');
+        }
+
+        function applySerialFromOmniSearch(serial) {
+            const inp = document.getElementById('eqSerial');
+            if (inp) {
+                inp.value = serial;
+                if (typeof handleSerialAutoLookup === 'function') handleSerialAutoLookup(serial);
+            }
+            clearUniversalOmniSearch();
+            document.getElementById('secEquipmentCard')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (typeof showToast === 'function') showToast(`ดึงข้อมูลเครื่อง S/N: ${serial} ลงใบงานแล้ว ✓`);
+        }
+
+        function addPartFromOmniSearch(partText) {
+            if (typeof addPartsRow === 'function') {
+                addPartsRow({ desc: partText, qty: 1, price: '0.00', procStatus: 'IN_STOCK' });
+                const rows = document.querySelectorAll('.parts-row');
+                const lastRow = rows[rows.length - 1];
+                const descInp = lastRow?.querySelector('.parts-desc');
+                if (descInp && typeof autoFillPartPrice === 'function') autoFillPartPrice(descInp);
+            }
+            clearUniversalOmniSearch();
+            document.getElementById('secSpareParts')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (typeof showToast === 'function') showToast(`เพิ่มอะไหล่ "${partText}" ลงตารางแล้ว ✓`);
+        }
+
+        function loadSavedJobByNo(jobNo) {
+            const history = typeof getJobHistorySync === 'function' ? getJobHistorySync() : [];
+            const idx = history.findIndex(h => h.jobNo === jobNo);
+            if (idx >= 0 && typeof loadFromHistory === 'function') {
+                loadFromHistory(idx);
+            }
+        }
+
+        // --- 2. TECHNICIAN EXPRESS 5-STEP WORKFLOW ---
+        function updateTechExpressBarVisibility() {
+            const bar = document.getElementById('techExpressStepBar');
+            if (!bar) return;
+            const isTech = (typeof currentUserRoleMode !== 'undefined' && currentUserRoleMode === 'TECH');
+            bar.classList.toggle('hidden', !isTech);
+        }
+
+        function runTechExpressStep(step) {
+            const label = document.getElementById('techExpressProgressLabel');
+            if (label) label.innerText = `ขั้นตอน ${step}/5`;
+            if (step === 1) {
+                if (typeof checkInOnSiteJob === 'function') checkInOnSiteJob();
+                document.getElementById('secServiceDetails')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else if (step === 2) {
+                document.getElementById('secEquipmentCard')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (typeof openBarcodeScannerModal === 'function') openBarcodeScannerModal();
+            } else if (step === 3) {
+                document.getElementById('secPhotosAndSign')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (typeof showToast === 'function') showToast('กรุณาติ๊กเช็กลิสต์และแนบรูปภาพหน้างาน');
+            } else if (step === 4) {
+                if (typeof openFullscreenSigModal === 'function') {
+                    openFullscreenSigModal('sigCustomer', 'ลายเซ็นลูกค้า (Customer)');
+                }
+            } else if (step === 5) {
+                if (typeof checkOutOnSiteJob === 'function') checkOutOnSiteJob();
+                if (validateJobBeforeClose()) {
+                    if (typeof saveToHistory === 'function') saveToHistory();
+                }
+            }
+        }
+
+        // --- 3. SMART WARRANTY CLAIM PROMPT ---
+        if (typeof evaluateWarrantyEligibilityFromDateOut === 'function') {
+            const _origEvalWarranty = evaluateWarrantyEligibilityFromDateOut;
+            evaluateWarrantyEligibilityFromDateOut = function(dateOutVal) {
+                _origEvalWarranty(dateOutVal);
+                const yesRadio = document.getElementById('warrantyYes');
+                const promptBox = document.getElementById('smartWarrantyClaimPrompt');
+                if (promptBox) {
+                    promptBox.classList.toggle('hidden', !(yesRadio && yesRadio.checked));
+                }
+            };
+        }
+
+        // --- 4. PART PROCUREMENT STATUS & BACKORDER ROUND-2 DISPATCH ---
+        function handlePartProcurementStatusChange(selectEl) {
+            const val = selectEl.value;
+            selectEl.className = 'parts-proc-status w-full border rounded px-1.5 py-1 text-[11px] font-semibold ';
+            if (val === 'IN_STOCK' || val === 'ARRIVED') {
+                selectEl.className += 'border-emerald-200 bg-emerald-50 text-emerald-800';
+            } else if (val === 'HQ_ORDER') {
+                selectEl.className += 'border-amber-300 bg-amber-50 text-amber-900';
+            } else {
+                selectEl.className += 'border-rose-300 bg-rose-50 text-rose-800';
+            }
+
+            if (val === 'HQ_ORDER' || val === 'IMPORT_ORDER') {
+                const statusSel = document.getElementById('jobStatus');
+                if (statusSel && statusSel.value === 'Completed') {
+                    statusSel.value = 'Waiting Parts';
+                    if (typeof updateJobStatusStyle === 'function') updateJobStatusStyle();
+                    if (typeof showToast === 'function') showToast('เปลี่ยนสถานะใบงานเป็น "รออะไหล่ (Waiting Parts)" อัตโนมัติ');
+                }
+            }
+            if (typeof debounceAutoSave === 'function') debounceAutoSave();
+        }
+
+        function scheduleRoundTwoDispatchFromBackorder(jobNo) {
+            const history = typeof getJobHistorySync === 'function' ? getJobHistorySync() : [];
+            const job = history.find(h => h.jobNo === jobNo);
+            if (!job) return;
+
+            // Mark all parts as ARRIVED and change status to Pending (ready for Round 2)
+            if (Array.isArray(job.parts)) {
+                job.parts.forEach(p => {
+                    if (p.procStatus === 'HQ_ORDER' || p.procStatus === 'IMPORT_ORDER') {
+                        p.procStatus = 'ARRIVED';
+                    }
+                });
+            }
+            job.jobStatus = 'Pending';
+            if (typeof persistJobHistoryEverywhere === 'function') {
+                persistJobHistoryEverywhere(history);
+            }
+            if (typeof refreshWaitingPartsTopBadge === 'function') refreshWaitingPartsTopBadge();
+
+            // Create Round-2 Dispatch Schedule Card for tomorrow morning
+            const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+            if (typeof getScheduleItems === 'function' && typeof saveScheduleItems === 'function') {
+                const sched = getScheduleItems();
+                sched.unshift({
+                    id: 'DISP-R2-' + Date.now(),
+                    date: tomorrow,
+                    timeStart: '09:30',
+                    timeEnd: '11:30',
+                    techName: job.responsibleTech || 'Mr.Thanakrit Chanmokonpanit',
+                    coTechs: Array.isArray(job.selectedTechs) ? job.selectedTechs : [],
+                    store: job.store || '',
+                    contact: job.contact || '',
+                    address: job.address || '',
+                    model: job.model || '',
+                    serial: job.serial || '',
+                    symptom: `[นัดซ่อมรอบ 2 - อะไหล่เข้าแล้ว] อ้างอิง ${job.jobNo}: ${job.symptom || ''}`,
+                    status: 'Scheduled'
+                });
+                saveScheduleItems(sched);
+            }
+
+            document.getElementById('waitingPartsModal')?.classList.add('hidden');
+            if (typeof openScheduleModal === 'function') openScheduleModal();
+            if (typeof showToast === 'function') {
+                showToast(`อัปเดตอะไหล่เข้าแล้ว และสร้างคิวนัดซ่อมรอบ 2 สำหรับ ${job.store || job.jobNo} ในตารางงานพรุ่งนี้ ✓`);
+            }
+        }
+
+        // --- 5. OFFLINE AUTO-RETRY SYNC QUEUE & SMART VALIDATION ---
+        function getOfflineSyncQueue() {
+            try {
+                return JSON.parse(localStorage.getItem(OFFLINE_SYNC_QUEUE_KEY) || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveOfflineSyncQueue(queue) {
+            localStorage.setItem(OFFLINE_SYNC_QUEUE_KEY, JSON.stringify(queue));
+            refreshOfflineQueueBadge();
+        }
+
+        function enqueueOfflineJobSync(jobData) {
+            if (!jobData || !jobData.jobNo) return;
+            const queue = getOfflineSyncQueue();
+            const idx = queue.findIndex(item => item.jobNo === jobData.jobNo);
+            const entry = {
+                jobNo: jobData.jobNo,
+                queuedAt: new Date().toISOString(),
+                jobData: jobData
+            };
+            if (idx >= 0) queue[idx] = entry;
+            else queue.push(entry);
+            saveOfflineSyncQueue(queue);
+        }
+
+        function refreshOfflineQueueBadge() {
+            const queue = getOfflineSyncQueue();
+            const badge = document.getElementById('offlineQueueStatusBadge');
+            const countEl = document.getElementById('offlineQueueCountText');
+            if (countEl) countEl.innerText = queue.length;
+            if (badge) {
+                badge.classList.toggle('hidden', queue.length === 0);
+            }
+        }
+
+        async function processOfflineSyncQueue(manual = false) {
+            const queue = getOfflineSyncQueue();
+            if (queue.length === 0) {
+                if (manual && typeof showToast === 'function') showToast('ไม่มีรายการค้างซิงค์ในคิว ✓');
+                return;
+            }
+            if (!navigator.onLine) {
+                if (manual && typeof showToast === 'function') showToast('ขณะนี้ยังไม่มีสัญญาณอินเทอร์เน็ต ระบบจะซิงค์ให้อัตโนมัติเมื่อออนไลน์');
+                return;
+            }
+            const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+            if (!webhookUrl) return;
+
+            if (manual && typeof showToast === 'function') {
+                showToast(`กำลังส่งข้อมูลค้างซิงค์ ${queue.length} รายการขึ้น Google Sheets & Drive...`);
+            }
+
+            const remaining = [];
+            for (const item of queue) {
+                try {
+                    if (typeof pushSingleJobRecordToGoogleSheets === 'function') {
+                        await pushSingleJobRecordToGoogleSheets(item.jobData, true, false);
+                    }
+                } catch (err) {
+                    remaining.push(item);
+                }
+            }
+            saveOfflineSyncQueue(remaining);
+            if (remaining.length === 0 && typeof showToast === 'function') {
+                showToast('ซิงค์รายการที่ค้างอยู่ในคิวทั้งหมดขึ้น Google Sheets/Drive สำเร็จแล้ว ✓');
+            }
+        }
+
+        window.addEventListener('online', () => {
+            setTimeout(() => processOfflineSyncQueue(false), 1500);
+        });
+
+        function validateJobBeforeClose() {
+            const warnings = [];
+            const store = (document.getElementById('custStore')?.value || '').trim();
+            const serial = (document.getElementById('eqSerial')?.value || '').trim();
+            const tech = (document.getElementById('responsibleTechSelect')?.value || '').trim();
+            const wYes = document.getElementById('warrantyYes')?.checked;
+            const wNo = document.getElementById('warrantyNo')?.checked;
+
+            if (!store) warnings.push('ชื่อร้าน/ลูกค้า');
+            if (!serial) warnings.push('Serial No.');
+            if (!tech) warnings.push('ช่างผู้รับผิดชอบ');
+            if (!wYes && !wNo) warnings.push('สถานะการรับประกัน (Yes/No)');
+
+            if (warnings.length > 0 && typeof showToast === 'function') {
+                showToast(`แจ้งเตือนก่อนปิดงาน: ยังไม่ได้ระบุ ${warnings.join(', ')}`);
+            }
+            return true; // Non-blocking gentle reminder
+        }
+
+        // Hook saveToHistory to run Smart Validation + Offline Queue fallback
+        if (typeof saveToHistory === 'function') {
+            const _origSaveToHistory = saveToHistory;
+            saveToHistory = async function() {
+                validateJobBeforeClose();
+                const jobData = typeof collectFullJobData === 'function' ? collectFullJobData() : null;
+                await _origSaveToHistory();
+                if (jobData && (!navigator.onLine || !(typeof getGoogleSheetsWebhookUrl === 'function' && getGoogleSheetsWebhookUrl()))) {
+                    enqueueOfflineJobSync(jobData);
+                }
+            };
+        }
+
+        // Hook applyUserRoleModeUI to toggle Technician Express 5-Step Bar
+        if (typeof applyUserRoleModeUI === 'function') {
+            const _origApplyRoleUI = applyUserRoleModeUI;
+            applyUserRoleModeUI = function() {
+                _origApplyRoleUI();
+                updateTechExpressBarVisibility();
+            };
+        }
+
+        // --- 6. EXECUTIVE COMMAND CENTER & KPI DASHBOARD ---
+        function openExecutiveDashboardModal() {
+            renderExecutiveDashboard();
+            document.getElementById('executiveDashboardModal')?.classList.remove('hidden');
+        }
+
+        function renderExecutiveDashboard() {
+            const period = document.getElementById('execDashPeriodSelect')?.value || 'THIS_MONTH';
+            const allJobs = typeof getJobHistorySync === 'function' ? getJobHistorySync() : [];
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            const monthPrefix = todayStr.substring(0, 7);
+            const weekAgo = new Date(now.getTime() - 7 * 86400000);
+
+            const jobs = allJobs.filter(j => {
+                if (period === 'ALL') return true;
+                const dStr = String(j.date || '');
+                if (period === 'TODAY') return dStr === todayStr;
+                if (period === 'THIS_MONTH') return dStr.startsWith(monthPrefix);
+                if (period === 'THIS_WEEK') {
+                    const d = new Date(dStr + 'T00:00:00');
+                    return !isNaN(d.getTime()) && d >= weekAgo;
+                }
+                return true;
+            });
+
+            const completed = jobs.filter(j => (j.status || j.jobStatus) === 'Completed');
+            const pendingOrWaiting = jobs.filter(j => {
+                const st = j.status || j.jobStatus;
+                return st === 'Pending' || st === 'Waiting Parts';
+            });
+
+            let totalRev = 0;
+            let totalTravel = 0;
+            let ratingSum = 0;
+            let ratingCount = 0;
+            let slaMinsSum = 0;
+            let slaCount = 0;
+
+            jobs.forEach(j => {
+                const gt = parseFloat(String(j.grandTotal || '0').replace(/,/g, '')) || 0;
+                totalRev += gt;
+                const fuel = parseFloat(j.expFuel || 0) || 0;
+                const toll = parseFloat(j.expToll || 0) || 0;
+                const allow = parseFloat(j.expAllowance || 0) || 0;
+                totalTravel += (fuel + toll + allow);
+
+                const r = parseFloat(j.rating || 0);
+                if (r > 0) { ratingSum += r; ratingCount++; }
+
+                if (j.timeIn && j.timeOut && j.timeIn.includes(':') && j.timeOut.includes(':')) {
+                    const [h1, m1] = j.timeIn.split(':').map(Number);
+                    const [h2, m2] = j.timeOut.split(':').map(Number);
+                    const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+                    if (diff > 0 && diff < 720) {
+                        slaMinsSum += diff;
+                        slaCount++;
+                    }
+                }
+            });
+
+            const compRate = jobs.length > 0 ? Math.round((completed.length / jobs.length) * 100) : 0;
+            const avgSla = slaCount > 0 ? Math.round(slaMinsSum / slaCount) : 0;
+            const avgRating = ratingCount > 0 ? (ratingSum / ratingCount).toFixed(1) : '5.0';
+
+            if (document.getElementById('kpiTotalJobs')) document.getElementById('kpiTotalJobs').innerText = jobs.length;
+            if (document.getElementById('kpiCompletedJobs')) document.getElementById('kpiCompletedJobs').innerText = completed.length;
+            if (document.getElementById('kpiCompletionRate')) document.getElementById('kpiCompletionRate').innerText = compRate + '%';
+            if (document.getElementById('kpiPendingWaitingJobs')) document.getElementById('kpiPendingWaitingJobs').innerText = pendingOrWaiting.length;
+            if (document.getElementById('kpiTotalRevenue')) document.getElementById('kpiTotalRevenue').innerText = totalRev.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            if (document.getElementById('kpiTotalTravelExpense')) document.getElementById('kpiTotalTravelExpense').innerText = totalTravel.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            if (document.getElementById('kpiAvgSlaTime')) document.getElementById('kpiAvgSlaTime').innerText = avgSla > 0 ? `${avgSla} นาที` : '-';
+            if (document.getElementById('kpiAvgRating')) document.getElementById('kpiAvgRating').innerText = `${avgRating} ★`;
+
+            // Overdue > 3 days alert (from allJobs)
+            const overdueAll = (typeof getWaitingAndPendingJobs === 'function' ? getWaitingAndPendingJobs() : [])
+                .filter(x => x.waitDays > 3);
+            const overdueSec = document.getElementById('kpiOverdueAlertSection');
+            const overdueList = document.getElementById('kpiOverdueList');
+            if (document.getElementById('kpiOverdueCount')) document.getElementById('kpiOverdueCount').innerText = overdueAll.length;
+            if (overdueSec && overdueList) {
+                if (overdueAll.length === 0) {
+                    overdueSec.classList.add('hidden');
+                } else {
+                    overdueSec.classList.remove('hidden');
+                    overdueList.innerHTML = overdueAll.slice(0, 6).map(item => `
+                        <div class="bg-white border border-rose-200 rounded-lg p-2 flex items-center justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="font-bold text-rose-950 truncate">${item.jobNo} — ${item.store || '-'} <span class="text-rose-600">(รอ ${item.waitDays} วัน)</span></div>
+                                <div class="text-[10px] text-gray-600 truncate">ช่าง: ${item.responsibleTech || '-'} | อาการ: ${item.symptom || '-'}</div>
+                            </div>
+                            <button type="button" onclick="scheduleRoundTwoDispatchFromBackorder('${String(item.jobNo).replace(/'/g, "\'")}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded text-[10px] font-bold flex-shrink-0">
+                                นัดซ่อมรอบ 2
+                            </button>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Technician Leaderboard
+            const techDir = typeof getTechnicianDirectory === 'function' ? getTechnicianDirectory() : [];
+            const tbody = document.getElementById('execTechKpiTableBody');
+            if (tbody) {
+                tbody.innerHTML = techDir.map(t => {
+                    const soloJobs = jobs.filter(j => j.responsibleTech === t.name);
+                    const teamJobs = jobs.filter(j => j.responsibleTech !== t.name && Array.isArray(j.selectedTechs) && j.selectedTechs.includes(t.name));
+                    const allTechJobs = [...soloJobs, ...teamJobs];
+                    const doneCnt = allTechJobs.filter(j => (j.status || j.jobStatus) === 'Completed').length;
+
+                    let rev = 0, travel = 0, rSum = 0, rCnt = 0, mSum = 0, mCnt = 0;
+                    soloJobs.forEach(j => {
+                        rev += parseFloat(String(j.grandTotal || '0').replace(/,/g, '')) || 0;
+                        travel += (parseFloat(j.expFuel || 0) || 0) + (parseFloat(j.expToll || 0) || 0) + (parseFloat(j.expAllowance || 0) || 0);
+                        const rt = parseFloat(j.rating || 0);
+                        if (rt > 0) { rSum += rt; rCnt++; }
+                        if (j.timeIn && j.timeOut && j.timeIn.includes(':') && j.timeOut.includes(':')) {
+                            const [h1, m1] = j.timeIn.split(':').map(Number);
+                            const [h2, m2] = j.timeOut.split(':').map(Number);
+                            const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+                            if (diff > 0 && diff < 720) { mSum += diff; mCnt++; }
+                        }
+                    });
+
+                    return `
+                        <tr class="hover:bg-blue-50/50">
+                            <td class="p-2.5 font-bold text-hoshizaki-navy">[${t.code || '-'}] ${t.name}</td>
+                            <td class="p-2.5 text-center font-extrabold text-sky-700">${soloJobs.length}</td>
+                            <td class="p-2.5 text-center font-semibold text-indigo-600">${teamJobs.length}</td>
+                            <td class="p-2.5 text-center font-bold text-emerald-700">${doneCnt}</td>
+                            <td class="p-2.5 text-center text-gray-600">${mCnt > 0 ? Math.round(mSum / mCnt) + ' นาที' : '-'}</td>
+                            <td class="p-2.5 text-center font-bold text-amber-600">${rCnt > 0 ? (rSum / rCnt).toFixed(1) + ' ★' : '5.0 ★'}</td>
+                            <td class="p-2.5 text-right font-bold text-gray-800">${rev.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td class="p-2.5 text-right font-semibold text-amber-800">${travel.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Enhance openWaitingPartsBackorderModal to include Round-2 Auto-Dispatch button per row
+        if (typeof openWaitingPartsBackorderModal === 'function') {
+            const _origOpenWp = openWaitingPartsBackorderModal;
+            openWaitingPartsBackorderModal = function() {
+                _origOpenWp();
+                const tbody = document.getElementById('waitingPartsTableBody');
+                if (!tbody) return;
+                tbody.querySelectorAll('tr').forEach(tr => {
+                    const firstCell = tr.querySelector('td');
+                    const lastCell = tr.querySelector('td:last-child');
+                    if (firstCell && lastCell) {
+                        const jNo = firstCell.innerText.trim().split('
+')[0].trim();
+                        if (jNo && !lastCell.querySelector('.btn-round2-dispatch')) {
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'btn-round2-dispatch mt-1 w-full bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded text-[10px] font-bold block';
+                            btn.innerHTML = '<i class="fa-solid fa-calendar-check mr-0.5"></i> อะไหล่เข้า &rarr; นัดรอบ 2';
+                            btn.onclick = () => scheduleRoundTwoDispatchFromBackorder(jNo);
+                            lastCell.appendChild(btn);
+                        }
+                    }
+                });
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshOfflineQueueBadge();
+            updateTechExpressBarVisibility();
+            if (navigator.onLine) {
+                setTimeout(() => processOfflineSyncQueue(false), 3000);
+            }
+        });
+        document.addEventListener('click', () => {
+            document.getElementById('universalOmniResultsBox')?.classList.add('hidden');
+        });
+    </script>
 </body>
 </html>

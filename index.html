@@ -350,6 +350,23 @@
         </button>
     </div>
 
+    <!-- แถบแจ้งเตือนสำรองข้อมูลประจำสัปดาห์ (แสดงเมื่อมีใบงานและไม่ได้สำรองเกิน 7 วัน) -->
+    <div id="weeklyBackupReminderBanner" class="hidden no-print max-w-4xl mx-auto mb-3 bg-sky-50 border border-sky-300 text-sky-950 p-3 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+        <div class="flex items-start gap-2">
+            <i class="fa-solid fa-cloud-arrow-up text-sky-600 text-base mt-0.5"></i>
+            <div>
+                <div class="font-bold">แจ้งเตือนสำรองข้อมูลใบงานประจำสัปดาห์ (Weekly Backup)</div>
+                <div class="text-sky-800" id="weeklyBackupReminderText">คุณมีประวัติใบงานที่ยังไม่ได้สำรองข้อมูลเกิน 7 วัน แนะนำให้สำรองไฟล์หรือส่งเข้า Google Sheets ส่วนกลาง</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end flex-shrink-0">
+            <button type="button" onclick="exportBackupJSON()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-xs flex items-center gap-1">
+                <i class="fa-solid fa-download"></i> <span>สำรอง (.json)</span>
+            </button>
+            <button type="button" onclick="dismissWeeklyBackupBanner()" class="bg-white hover:bg-sky-100 text-sky-800 border border-sky-300 px-2.5 py-1.5 rounded-lg font-medium">ไว้ทีหลัง</button>
+        </div>
+    </div>
+
     <!-- Top Action Toolbar (Responsive สำหรับมือถือ แท็บเล็ต และพีซี) -->
     <header class="relative max-w-4xl mx-auto mb-3 sm:mb-4 bg-hoshizaki-navy text-white p-3 sm:p-4 rounded-xl shadow-lg no-print">
         <div class="flex justify-between items-center gap-2">
@@ -440,6 +457,10 @@
             </button>
             <button type="button" onclick="printCurrentDocument('JOB')" class="flex-1 sm:flex-none justify-center bg-purple-600 hover:bg-purple-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-print"></i> <span>พิมพ์</span>
+            </button>
+
+            <button type="button" onclick="openTeamCloudSyncModal()" class="flex-1 sm:flex-none justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ Sheets / แชร์ทีม</span>
             </button>
 
             <!-- ปุ่มเปิดเมนูค้นหา Service Manual / Instruction Manual / Parts List (PDF) -->
@@ -5547,6 +5568,10 @@
                 localStorage.setItem('hoshizaki_job_history', JSON.stringify(history));
                 saveCustomerProfileToDirectory(jobData);
                 showToast(`บันทึกใบงาน ${jobData.jobNo} สำเร็จแล้ว`);
+                const autoSyncEnabled = localStorage.getItem('hoshizaki_auto_sync_sheets') !== 'false';
+                if (autoSyncEnabled && getGoogleSheetsWebhookUrl()) {
+                    syncCurrentJobToGoogleSheets(false);
+                }
             } catch (err) {
                 console.error(err);
                 showToast('พื้นที่จัดเก็บเต็ม กรุณาลดจำนวนรูปภาพหรือสำรองข้อมูล');
@@ -5719,6 +5744,8 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
+            localStorage.setItem('hoshizaki_last_backup_at', new Date().toISOString());
+            document.getElementById('weeklyBackupReminderBanner')?.classList.add('hidden');
             showToast('ดาวน์โหลดไฟล์สำรองข้อมูล (.json) สำเร็จ');
         }
 
@@ -7536,6 +7563,238 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             window.location.href = url.toString();
         }
 
+
+        // --- GOOGLE SHEETS CLOUD SYNC, WEEKLY BACKUP REMINDER & TEAM QR CODE ---
+        const TEAM_PRODUCTION_URL = 'https://serviceshth.github.io/hoshizaki-service/?openExternalBrowser=1';
+
+        function getGoogleSheetsWebhookUrl() {
+            return (localStorage.getItem('hoshizaki_sheets_webhook_url') || '').trim();
+        }
+
+        function openTeamCloudSyncModal() {
+            const modal = document.getElementById('teamCloudSyncModal');
+            const input = document.getElementById('googleSheetsWebhookInput');
+            const autoChk = document.getElementById('autoSyncSheetsCheckbox');
+            const url = getGoogleSheetsWebhookUrl();
+
+            if (input) input.value = url;
+            if (autoChk) autoChk.checked = localStorage.getItem('hoshizaki_auto_sync_sheets') !== 'false';
+            updateCloudSyncBadge();
+
+            if (typeof QRious !== 'undefined') {
+                const qrCanvas = document.getElementById('teamShareQrCanvas');
+                if (qrCanvas) {
+                    new QRious({
+                        element: qrCanvas,
+                        value: TEAM_PRODUCTION_URL,
+                        size: 130,
+                        level: 'M',
+                        foreground: '#002B49',
+                        background: '#ffffff'
+                    });
+                }
+            }
+
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeTeamCloudSyncModal() {
+            document.getElementById('teamCloudSyncModal')?.classList.add('hidden');
+        }
+
+        function updateCloudSyncBadge() {
+            const badge = document.getElementById('cloudSyncBadgeStatus');
+            if (!badge) return;
+            const url = getGoogleSheetsWebhookUrl();
+            if (url) {
+                badge.innerText = 'เชื่อมต่อ Sheets แล้ว ✓';
+                badge.className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800';
+            } else {
+                badge.innerText = 'ยังไม่เชื่อมต่อ';
+                badge.className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-gray-200 text-gray-700';
+            }
+        }
+
+        function saveGoogleSheetsWebhookUrl() {
+            const input = document.getElementById('googleSheetsWebhookInput');
+            const val = (input?.value || '').trim();
+            if (!val) {
+                localStorage.removeItem('hoshizaki_sheets_webhook_url');
+                updateCloudSyncBadge();
+                if (typeof showToast === 'function') showToast('ล้างการเชื่อมต่อ Google Sheets แล้ว');
+                return;
+            }
+            if (!val.startsWith('https://script.google.com/')) {
+                if (typeof showToast === 'function') showToast('กรุณาวางลิงก์ที่ขึ้นต้นด้วย https://script.google.com/');
+                return;
+            }
+            localStorage.setItem('hoshizaki_sheets_webhook_url', val);
+            updateCloudSyncBadge();
+            if (typeof showToast === 'function') showToast('บันทึกลิงก์เชื่อมต่อ Google Sheets สำเร็จ!');
+        }
+
+        function toggleAutoSyncSheets() {
+            const chk = document.getElementById('autoSyncSheetsCheckbox');
+            localStorage.setItem('hoshizaki_auto_sync_sheets', chk?.checked ? 'true' : 'false');
+        }
+
+        async function syncCurrentJobToGoogleSheets(manualTrigger = false) {
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (!webhookUrl) {
+                if (manualTrigger && typeof showToast === 'function') {
+                    showToast('กรุณาวาง Web App URL ของ Google Apps Script และกดบันทึกก่อนครับ');
+                }
+                return;
+            }
+
+            const jobData = collectFullJobData();
+            // ตัดข้อมูลรูปภาพขนาดใหญ่ออกเพื่อส่งข้อมูลข้อความและรายการอะไหล่เข้า Google Sheets ได้รวดเร็ว
+            const cloudPayload = {
+                ...jobData,
+                photosCount: Array.isArray(jobData.photos) ? jobData.photos.length : 0,
+                photos: undefined,
+                signatures: undefined,
+                partsSummary: (jobData.parts || [])
+                    .filter(p => p.desc)
+                    .map(p => `${p.desc} (x${p.qty})`)
+                    .join(', '),
+                techniciansSummary: Array.isArray(jobData.selectedTechs) ? jobData.selectedTechs.join(', ') : ''
+            };
+
+            try {
+                if (manualTrigger && typeof showToast === 'function') {
+                    showToast(`กำลังส่งใบงาน ${jobData.jobNo} เข้า Google Sheets...`);
+                }
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(cloudPayload)
+                });
+                localStorage.setItem('hoshizaki_last_backup_at', new Date().toISOString());
+                document.getElementById('weeklyBackupReminderBanner')?.classList.add('hidden');
+                if (typeof showToast === 'function') {
+                    showToast(`ส่งใบงาน ${jobData.jobNo} เข้า Google Sheets ส่วนกลางเรียบร้อย ✓`);
+                }
+            } catch (err) {
+                console.error('Google Sheets sync error:', err);
+                if (manualTrigger && typeof showToast === 'function') {
+                    showToast('ไม่สามารถเชื่อมต่อ Google Sheets ได้ กรุณาตรวจสอบอินเทอร์เน็ต');
+                }
+            }
+        }
+
+        function copyTeamExternalLink() {
+            const input = document.getElementById('teamExternalLineUrlInput');
+            const url = input ? input.value : TEAM_PRODUCTION_URL;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(() => {
+                    if (typeof showToast === 'function') showToast('คัดลอกลิงก์สำหรับแชร์เข้า LINE เรียบร้อยแล้ว');
+                });
+            } else if (input) {
+                input.select();
+                document.execCommand('copy');
+                if (typeof showToast === 'function') showToast('คัดลอกลิงก์เรียบร้อยแล้ว');
+            }
+        }
+
+        function shareTeamInviteToLine() {
+            const inviteText = [
+                '📲 ระบบใบแจ้งบริการ HOSHIZAKI (THAILAND)',
+                'กดลิงก์ด้านล่างเพื่อเปิดใช้งานเต็มหน้าจอ (รองรับสแกน S/N, GPS และค้นหาคู่มือ PDF):',
+                TEAM_PRODUCTION_URL,
+                '',
+                '💡 แนะนำ: เปิดแล้วกด "เพิ่มไปยังหน้าจอโฮม" (Add to Home Screen) เพื่อใช้งานเหมือนแอปครับ'
+            ].join('\n');
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'HOSHIZAKI Service App',
+                    text: inviteText
+                }).catch(() => {});
+            } else {
+                const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(inviteText)}`;
+                window.open(lineUrl, '_blank');
+            }
+        }
+
+        function downloadTeamQrPoster() {
+            const qrCanvas = document.getElementById('teamShareQrCanvas');
+            if (!qrCanvas) return;
+            const poster = document.createElement('canvas');
+            poster.width = 420;
+            poster.height = 500;
+            const ctx = poster.getContext('2d');
+
+            ctx.fillStyle = '#002B49';
+            ctx.fillRect(0, 0, poster.width, poster.height);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(24, 24, 372, 452, 20);
+            ctx.fill();
+
+            ctx.fillStyle = '#002B49';
+            ctx.font = 'bold 22px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('HOSHIZAKI (THAILAND)', 210, 72);
+
+            ctx.fillStyle = '#0082C8';
+            ctx.font = 'bold 15px sans-serif';
+            ctx.fillText('Job Service & Manual System', 210, 98);
+
+            ctx.drawImage(qrCanvas, 95, 125, 230, 230);
+
+            ctx.fillStyle = '#1F2937';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.fillText('สแกน QR Code เพื่อเปิดใช้งานระบบ', 210, 392);
+
+            ctx.fillStyle = '#4B5563';
+            ctx.font = '13px sans-serif';
+            ctx.fillText('รองรับ iOS (Safari) / Android (Chrome) / PC', 210, 418);
+            ctx.fillText('กด "เพิ่มไปยังหน้าจอโฮม" เพื่อติดตั้งเป็นแอป', 210, 442);
+
+            const link = document.createElement('a');
+            link.download = 'Hoshizaki_Service_QR_Code.png';
+            link.href = poster.toDataURL('image/png');
+            link.click();
+            if (typeof showToast === 'function') showToast('ดาวน์โหลดรูปโปสเตอร์ QR Code เรียบร้อยแล้ว');
+        }
+
+        function dismissWeeklyBackupBanner() {
+            localStorage.setItem('hoshizaki_backup_dismissed_at', new Date().toISOString());
+            document.getElementById('weeklyBackupReminderBanner')?.classList.add('hidden');
+        }
+
+        function checkWeeklyBackupReminder() {
+            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            if (history.length === 0) return;
+
+            const lastBackupStr = localStorage.getItem('hoshizaki_last_backup_at');
+            const dismissedStr = localStorage.getItem('hoshizaki_backup_dismissed_at');
+            const now = Date.now();
+            const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+            const oneDayMs = 24 * 60 * 60 * 1000;
+
+            if (dismissedStr && (now - new Date(dismissedStr).getTime()) < oneDayMs) {
+                return;
+            }
+
+            const needsBackup = !lastBackupStr || (now - new Date(lastBackupStr).getTime()) > sevenDaysMs;
+            if (needsBackup) {
+                const banner = document.getElementById('weeklyBackupReminderBanner');
+                const textEl = document.getElementById('weeklyBackupReminderText');
+                if (textEl) {
+                    textEl.innerText = `คุณมีใบงานบันทึกไว้ในเครื่อง ${history.length} รายการ แนะนำให้สำรองไฟล์ (.json) หรือส่งเข้า Google Sheets เพื่อป้องกันข้อมูลสูญหาย`;
+                }
+                if (banner) banner.classList.remove('hidden');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(checkWeeklyBackupReminder, 800);
+        });
+
         (function initPwaAndLineCheck() {
             const ua = navigator.userAgent || '';
             if (/Line\//i.test(ua)) {
@@ -7551,5 +7810,77 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
         })();
     </script>
+
+    <!-- Google Sheets Cloud Sync & Team QR Code Poster Modal -->
+    <div id="teamCloudSyncModal" class="no-print fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-4 sm:p-5 space-y-4 max-h-[92vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-2.5">
+                <h3 class="text-sm sm:text-base font-bold text-hoshizaki-navy flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i> เชื่อมต่อ Google Sheets ส่วนกลาง & ลิงก์แจกทีมช่าง
+                </h3>
+                <button type="button" onclick="closeTeamCloudSyncModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+
+            <!-- ส่วนที่ 1: เชื่อมต่อ Google Apps Script / Google Sheets -->
+            <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3.5 space-y-2.5 text-xs">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-indigo-950 flex items-center gap-1.5">
+                        <i class="fa-solid fa-table text-emerald-600"></i> 1. เชื่อมต่อ Google Sheets ส่วนกลาง (Real-time Sync)
+                    </span>
+                    <span id="cloudSyncBadgeStatus" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-gray-200 text-gray-700">ยังไม่เชื่อมต่อ</span>
+                </div>
+                <p class="text-[11px] text-gray-600 leading-relaxed">
+                    วางลิงก์ <b>Web App URL</b> จาก Google Apps Script ของคุณด้านล่าง เมื่อช่างกด <b>"บันทึก"</b> ใบงาน ข้อมูลจะถูกส่งเข้าตาราง Google Sheets ส่วนกลางของออฟฟิศอัตโนมัติทันที
+                </p>
+                <div class="flex flex-col sm:flex-row gap-1.5">
+                    <input type="text" id="googleSheetsWebhookInput" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 border border-indigo-300 rounded-lg px-2.5 py-2 bg-white text-gray-800 focus:outline-none focus:border-indigo-600">
+                    <button type="button" onclick="saveGoogleSheetsWebhookUrl()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-lg font-bold flex-shrink-0">บันทึก URL</button>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <label class="flex items-center gap-1.5 text-[11px] text-indigo-900 font-medium cursor-pointer">
+                        <input type="checkbox" id="autoSyncSheetsCheckbox" onchange="toggleAutoSyncSheets()" checked class="w-4 h-4 rounded text-indigo-600">
+                        <span>ส่งเข้า Google Sheets อัตโนมัติทุกครั้งที่กด "บันทึก"</span>
+                    </label>
+                    <button type="button" onclick="syncCurrentJobToGoogleSheets(true)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-paper-plane"></i> <span>ส่งใบงานนี้เข้า Sheets ทันที</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ส่วนที่ 2: ลิงก์เปิดนอก LINE & QR Code สำหรับแจกทีมช่าง -->
+            <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5 space-y-3 text-xs">
+                <div class="font-bold text-emerald-950 flex items-center gap-1.5">
+                    <i class="fa-solid fa-qrcode text-hoshizaki-navy"></i> 2. ลิงก์และ QR Code แจกทีมช่าง (บังคับเปิดนอก LINE อัตโนมัติ)
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-3">
+                    <div class="bg-white p-2 rounded-xl border border-emerald-300 shadow-xs flex-shrink-0 text-center">
+                        <canvas id="teamShareQrCanvas" width="130" height="130"></canvas>
+                        <div class="text-[10px] font-bold text-hoshizaki-navy mt-1">สแกนเพื่อเปิดแอป</div>
+                    </div>
+                    <div class="flex-1 space-y-2 w-full">
+                        <p class="text-[11px] text-gray-600 leading-relaxed">
+                            ส่งลิงก์ด้านล่างปักหมุดในกลุ่ม LINE ทีมช่าง เมื่อแตะเปิดจะเด้งไปที่ <b>Safari / Chrome</b> ทันที (ใช้กล้องสแกน S/N และ GPS ได้ 100%)
+                        </p>
+                        <div class="flex gap-1">
+                            <input type="text" id="teamExternalLineUrlInput" readonly value="https://serviceshth.github.io/hoshizaki-service/?openExternalBrowser=1" class="flex-1 border border-emerald-300 rounded-lg px-2 py-1.5 bg-white text-[11px] font-mono text-gray-800">
+                            <button type="button" onclick="copyTeamExternalLink()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex-shrink-0">คัดลอก</button>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 pt-0.5">
+                            <button type="button" onclick="shareTeamInviteToLine()" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-xs">
+                                <i class="fa-brands fa-line text-sm"></i> <span>ส่งข้อความแนะนำลง LINE</span>
+                            </button>
+                            <button type="button" onclick="downloadTeamQrPoster()" class="bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-3 py-1.5 rounded-lg font-semibold text-[11px] flex items-center gap-1">
+                                <i class="fa-solid fa-download"></i> <span>โหลดรูป QR Code</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-1">
+                <button type="button" onclick="closeTeamCloudSyncModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-5 py-2 rounded-xl font-semibold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

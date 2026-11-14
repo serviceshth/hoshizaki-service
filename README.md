@@ -1,4 +1,4 @@
-# HOSHIZAKI (THAILAND) — Job Service Management System (v18.2 LINE OA + Spec)
+# HOSHIZAKI (THAILAND) — Job Service Management System (v18.3.2 LINE OA + Drive Auto-Rename & Spec Search)
 
 ระบบบริหารจัดการงานบริการภาคสนาม (Service Report PWA) เชื่อมต่อ **Google Apps Script**, **Google Drive**, **Google Sheets** และ **LINE Official Account**
 
@@ -9,14 +9,11 @@
 4. `serial_db.json` — ฐานข้อมูล Serial Number และสถานะการรับประกัน (6,749 รายการ)
 5. `parts_catalog.json` — ฐานข้อมูลอะไหล่มาตรฐาน Hoshizaki (2,127 รายการ)
 6. `quotation_archive.json` — ฐานข้อมูลใบเสนอราคาเก่าสำหรับค้นหาและออกบิลซ้ำ (2,486 ฉบับ)
-7. `Hoshizaki_Google_AppsScript_v18_2.js` — โค้ด Backend สำหรับนำไปวางใน Google Apps Script (ไม่จำเป็นต้องรันบน GitHub Pages แต่เก็บสำรองใน Repo ได้)
+7. `Hoshizaki_Google_AppsScript_v18_3_2.js` — โค้ด Backend ล่าสุดสำหรับ Google Apps Script (รองรับ Batch Auto-Rename ไฟล์ PDF ใน Drive แยกตามโฟลเดอร์หลัก + ค้นหา Spec Sheet PDF ใน LINE OA)
+8. `README.md` — เอกสารสรุปโครงสร้างไฟล์และบันทึกการอัปเดตประจำ Repository
 
-## สรุปการอัปเดตในเวอร์ชัน v18.2
-- **LINE OA Bot ค้นหา Spec Sheet & คู่มือ PDF ใน Google Drive อัตโนมัติ:** พิมพ์ `SPEC <รุ่นเครื่อง>` หรือ `MANUAL <รุ่นเครื่อง>` บอทจะค้นหาไฟล์ PDF ในโฟลเดอร์ Spec Sheet (`1J-8iMryohfrHaD9gc_iiIRtZrqMECVPV`) และโฟลเดอร์คู่มือหลักทั้ง 3 โฟลเดอร์ (รวมโฟลเดอร์ย่อยทั้งหมด) พร้อมส่งลิงก์เปิดไฟล์ PDF กลับมาในแชททันที
-- **ปุ่มเปิด Spec Sheet PDF ในหน้าเว็บแอป PWA:** เพิ่มปุ่ม **Spec Sheet PDF** บนการ์ดค่ามาตรฐานโรงงาน และเพิ่มหมวดหมู่ค้นหา **Spec Sheet / Catalogue** ในเมนูค้นหาคู่มือ Google Drive
-
-## ขั้นตอนอัปโหลดขึ้น GitHub Pages
-1. เปิด Repository ของโปรเจกต์บน GitHub → กด **Add file** → **Upload files**
-2. ลากไฟล์ทั้งหมด (`index.html`, `sw.js`, `manifest.json`, `serial_db.json`, `parts_catalog.json`, `quotation_archive.json`, `README.md`, `Hoshizaki_Google_AppsScript_v18_2.js`) วางลงในหน้าอัปโหลด
-3. พิมพ์ข้อความ Commit เช่น `Release v18.2: LINE OA + Google Drive Spec Sheet Search` แล้วกด **Commit changes**
-4. รอประมาณ 1–2 นาที ระบบ GitHub Pages จะอัปเดตหน้าเว็บแอปเป็นเวอร์ชัน `v18.2 LINE OA + Spec` อัตโนมัติ
+## การแยกประเภทโฟลเดอร์ Google Drive สำหรับเปลี่ยนชื่อ PDF อัตโนมัติ (v18.3.2)
+- โฟลเดอร์ `1J-8iMryohfrHaD9gc_iiIRtZrqMECVPV` → `Spec Sheet_<Models>.pdf`
+- โฟลเดอร์ `1gxzMZ4l5wjXKoRTM0TRIH_l505y8AVsj` (คู่มือ 1) → `Service Manual_<Models>.pdf`
+- โฟลเดอร์ `16FbLyB9eredvW8RH-dmk_NwhyaCOkiDR` (คู่มือ 2) → `Instruction Manual_<Models>.pdf`
+- โฟลเดอร์ `1HVU-f-05Ts8ipWxwXdsXoI20TossTeL4` (คู่มือ 3) → `Parts List_<Models>.pdf`

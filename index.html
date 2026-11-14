@@ -466,6 +466,23 @@
         </button>
     </div>
 
+    <!-- แถบแจ้งเตือนสรุปรายงานประจำสัปดาห์วันศุกร์สำหรับหัวหน้าทีม (v13.2) -->
+    <div id="fridayWeeklyReportBanner" class="hidden no-print max-w-4xl mx-auto mb-3 bg-emerald-50 border-2 border-emerald-400 text-emerald-950 p-3 rounded-xl shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+        <div class="flex items-start gap-2">
+            <i class="fa-solid fa-calendar-check text-emerald-700 text-base mt-0.5"></i>
+            <div>
+                <div class="font-extrabold">ถึงรอบออกรายงานสรุปประจำสัปดาห์ของแผนก (Friday Weekly Report)</div>
+                <div class="text-emerald-800" id="fridayWeeklyReportText">วันนี้วันศุกร์ แนะนำให้หัวหน้าทีมกดส่งออกไฟล์ Excel <b>สรุปประจำสัปดาห์ (4 ชีต)</b> และดึงข้อมูลล่าสุดจากส่วนกลางเก็บไว้เป็นรายงานแผนก</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end flex-shrink-0">
+            <button type="button" onclick="exportWeeklyMultiSheetExcel(); markWeeklyReportExportedToday();" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3.5 py-1.5 rounded-lg shadow-xs flex items-center gap-1">
+                <i class="fa-solid fa-file-excel"></i> <span>ส่งออกสรุปประจำสัปดาห์ (4 ชีต)</span>
+            </button>
+            <button type="button" onclick="dismissFridayWeeklyReportBanner()" class="bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-1.5 rounded-lg font-medium">ปิด</button>
+        </div>
+    </div>
+
     <!-- แถบแจ้งเตือนสำรองข้อมูลประจำสัปดาห์ (แสดงเมื่อมีใบงานและไม่ได้สำรองเกิน 7 วัน) -->
     <div id="weeklyBackupReminderBanner" class="hidden no-print max-w-4xl mx-auto mb-3 bg-sky-50 border border-sky-300 text-sky-950 p-3 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
         <div class="flex items-start gap-2">
@@ -12769,6 +12786,130 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             if (typeof updateOnSiteDuration === 'function') updateOnSiteDuration();
         }, 500);
 
+    
+        // =========================================================================
+        // V13.2 TEAM REAL-TIME SYNC & FRIDAY WEEKLY REPORT WORKFLOW
+        // =========================================================================
+
+        function applyWebhookFromUrlParamsIfPresent() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const incomingWebhook = (params.get('webhook') || '').trim();
+                if (incomingWebhook && incomingWebhook.startsWith('https://script.google.com/')) {
+                    localStorage.setItem('hoshizaki_sheets_webhook_url', incomingWebhook);
+                    localStorage.setItem('hoshizaki_auto_sync_sheets', 'true');
+                    if (typeof updateCloudSyncBadge === 'function') updateCloudSyncBadge();
+                    // ลบพารามิเตอร์ webhook ออกจากแถบ URL เพื่อความสวยงาม
+                    params.delete('webhook');
+                    const cleanQuery = params.toString();
+                    const cleanUrl = window.location.pathname + (cleanQuery ? '?' + cleanQuery : '') + window.location.hash;
+                    window.history.replaceState({}, document.title, cleanUrl);
+                    setTimeout(() => showToast('เชื่อมต่อ Google Sheets ส่วนกลางของทีมอัตโนมัติเรียบร้อย ✓'), 700);
+                }
+            } catch (e) {}
+        }
+
+        function copyConfiguredTeamWebhookLink() {
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            const baseUrl = TEAM_PRODUCTION_URL.split('?')[0];
+            const fullShareUrl = webhookUrl
+                ? `${baseUrl}?openExternalBrowser=1&webhook=${encodeURIComponent(webhookUrl)}`
+                : `${baseUrl}?openExternalBrowser=1`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(fullShareUrl).then(() => {
+                    showToast('คัดลอกลิงก์พร้อมตั้งค่า Google Sheets Webhook ให้ทีมช่างแล้ว ✓');
+                }).catch(() => {
+                    prompt('คัดลอกลิงก์นี้ส่งในกลุ่ม LINE ทีมช่าง:', fullShareUrl);
+                });
+            } else {
+                prompt('คัดลอกลิงก์นี้ส่งในกลุ่ม LINE ทีมช่าง:', fullShareUrl);
+            }
+        }
+
+        async function pullTeamJobsFromGoogleSheets() {
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (!webhookUrl) {
+                showToast('กรุณาวางลิงก์ Google Sheets Webhook URL ก่อนดึงข้อมูล');
+                return;
+            }
+            showToast('กำลังดึงข้อมูลใบงานล่าสุดของช่างทุกคนจาก Google Sheets ส่วนกลาง...');
+            try {
+                const res = await fetch(`${webhookUrl}?action=getAllJobs`);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                const remoteJobs = Array.isArray(data?.jobs) ? data.jobs : (Array.isArray(data?.records) ? data.records : []);
+                if (remoteJobs.length === 0) {
+                    showToast('เชื่อมต่อส่วนกลางสำเร็จ (ยังไม่มีรายการใหม่เพิ่มเติมในชีต)');
+                    return;
+                }
+                const localHistory = getJobHistorySync();
+                const byJobNo = {};
+                localHistory.forEach(j => { if (j.jobNo) byJobNo[j.jobNo] = j; });
+                let added = 0;
+                let updated = 0;
+                remoteJobs.forEach(rj => {
+                    if (!rj.jobNo) return;
+                    if (!byJobNo[rj.jobNo]) {
+                        byJobNo[rj.jobNo] = rj;
+                        added++;
+                    } else {
+                        byJobNo[rj.jobNo] = { ...byJobNo[rj.jobNo], ...rj, photos: byJobNo[rj.jobNo].photos || [] };
+                        updated++;
+                    }
+                });
+                const mergedList = Object.values(byJobNo).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+                await persistJobHistoryEverywhere(mergedList);
+                if (typeof renderHistoryTable === 'function') renderHistoryTable();
+                if (typeof refreshPmDueAlertBadge === 'function') refreshPmDueAlertBadge();
+                showToast(`รวมข้อมูลทีมจาก Google Sheets สำเร็จ (เพิ่มใหม่ ${added} งาน, อัปเดต ${updated} งาน) ✓`);
+            } catch (err) {
+                console.warn('Pull team jobs note:', err);
+                showToast('ซิงค์ขาขึ้นพร้อมทำงาน (หากต้องการดึงข้อมูลขากลับ กรุณาอัปเดต Apps Script เวอร์ชันล่าสุดและ Deploy ใหม่)');
+            }
+        }
+
+        function markWeeklyReportExportedToday() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            localStorage.setItem('hoshizaki_last_weekly_excel_date', todayStr);
+            const banner = document.getElementById('fridayWeeklyReportBanner');
+            if (banner) banner.classList.add('hidden');
+            updateLastWeeklyReportBadge();
+        }
+
+        function dismissFridayWeeklyReportBanner() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            sessionStorage.setItem('hoshizaki_dismissed_friday_banner', todayStr);
+            document.getElementById('fridayWeeklyReportBanner')?.classList.add('hidden');
+        }
+
+        function updateLastWeeklyReportBadge() {
+            const badge = document.getElementById('lastWeeklyReportStatusBadge');
+            if (!badge) return;
+            const lastDate = localStorage.getItem('hoshizaki_last_weekly_excel_date') || '';
+            badge.innerText = lastDate ? `ออกรายงานล่าสุด: ${lastDate}` : 'ยังไม่ออกรายงานสัปดาห์นี้';
+        }
+
+        function checkFridayWeeklyReportReminder() {
+            updateLastWeeklyReportBadge();
+            if (currentUserRoleMode !== 'MANAGER') return;
+            const now = new Date();
+            const isFriday = now.getDay() === 5; // 5 = Friday
+            const todayStr = now.toISOString().split('T')[0];
+            const lastExported = localStorage.getItem('hoshizaki_last_weekly_excel_date') || '';
+            const dismissedToday = sessionStorage.getItem('hoshizaki_dismissed_friday_banner') === todayStr;
+
+            if (isFriday && lastExported !== todayStr && !dismissedToday) {
+                const banner = document.getElementById('fridayWeeklyReportBanner');
+                if (banner) banner.classList.remove('hidden');
+            }
+        }
+
+        applyWebhookFromUrlParamsIfPresent();
+        setTimeout(() => {
+            checkFridayWeeklyReportReminder();
+        }, 650);
+
     </script>
 
     <!-- Google Sheets Cloud Sync & Team QR Code Poster Modal -->
@@ -12832,8 +12973,32 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                             <button type="button" onclick="downloadTeamQrPoster()" class="bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-3 py-1.5 rounded-lg font-semibold text-[11px] flex items-center gap-1">
                                 <i class="fa-solid fa-download"></i> <span>โหลดรูป QR Code</span>
                             </button>
+                            <button type="button" onclick="copyConfiguredTeamWebhookLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-xs" title="สร้างลิงก์ที่ฝังค่า Google Sheets Webhook ไปในตัว เมื่อช่างเปิดลิงก์นี้จะเชื่อมต่อส่วนกลางให้อัตโนมัติ">
+                                <i class="fa-solid fa-link"></i> <span>คัดลอกลิงก์พร้อมตั้งค่า Sheets ให้ช่าง</span>
+                            </button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- ส่วนที่ 3: รวมข้อมูลจากช่างทุกคน & รายงานประจำสัปดาห์วันศุกร์ (v13.2) -->
+            <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 space-y-2 text-xs">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-amber-950 flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-excel text-emerald-700"></i> 3. รวมข้อมูลทีมส่วนกลาง & รายงานประจำสัปดาห์ทุกวันศุกร์
+                    </span>
+                    <span id="lastWeeklyReportStatusBadge" class="text-[10px] bg-white border border-amber-300 text-amber-900 px-2 py-0.5 rounded-full font-bold">พร้อมออกรายงาน</span>
+                </div>
+                <p class="text-[11px] text-gray-700 leading-relaxed">
+                    หัวหน้าทีมสามารถกดดึงใบงานล่าสุดของช่างทุกคนจาก Google Sheets ส่วนกลางมารวม แล้วส่งออกเป็นไฟล์ Excel <b>สรุปประจำสัปดาห์ (4 ชีต)</b> ทุกวันศุกร์เย็นได้ในคลิกเดียว
+                </p>
+                <div class="flex flex-wrap items-center gap-2 pt-0.5">
+                    <button type="button" onclick="pullTeamJobsFromGoogleSheets()" class="bg-sky-700 hover:bg-sky-800 text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> <span>ดึงข้อมูลช่างทุกคนจาก Sheets มารวม</span>
+                    </button>
+                    <button type="button" onclick="exportWeeklyMultiSheetExcel(); markWeeklyReportExportedToday();" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-file-excel"></i> <span>ส่งออกสรุปประจำสัปดาห์ (4 ชีต)</span>
+                    </button>
                 </div>
             </div>
 

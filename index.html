@@ -718,7 +718,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.4 Enterprise + Flex OA</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.5 Full-Screen Spec + Flex OA</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -879,6 +879,9 @@
                     <div class="tb-btn-grid">
                         <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openErrorCodeModal()" class="tb-action-item bg-slate-700 hover:bg-slate-800 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-triangle-exclamation text-amber-300"></i> <span>คู่มือ &amp; Error Code</span>
+                        </button>
+                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openFullScreenSpecViewerModal()" class="tb-action-item bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-table-list text-amber-200"></i> <span>ตาราง Spec Sheet เต็มจอ</span>
                         </button>
                         <button type="button" data-tb-cat="MANUAL_TEAM" id="btnManualSearchTrigger" onclick="toggleManualSearchMenu(event)" class="tb-action-item bg-cyan-600 hover:bg-cyan-700 text-white font-semibold shadow-sm">
                             <i class="fa-solid fa-book-open"></i> <span>ค้นหาคู่มือ / Parts (PDF)</span>
@@ -3611,6 +3614,9 @@
                         <div class="flex-1 flex items-center gap-1">
                             <input type="text" id="eqModel" list="hoshizakiModelsList" placeholder="พิมพ์หรือเลือกรุ่น เช่น IM-100NE, RTC-120SDB" class="flex-1 font-semibold border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
                             <span id="customModelCountBadge" class="no-print hidden text-[10px] bg-blue-100 text-hoshizaki-navy px-1.5 py-0.5 rounded font-semibold flex-shrink-0" title="จำนวนรุ่นเครื่องที่นำเข้าจาก Excel"></span>
+                            <button type="button" onclick="openFullScreenSpecViewerModal()" title="เปิดตาราง Spec Sheet เต็มหน้าจอ + รูปภาพจาก Drive" class="no-print bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 shadow-xs transition">
+                                <i class="fa-solid fa-table-list"></i> <span>Spec</span>
+                            </button>
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:items-center gap-1">
@@ -18248,6 +18254,382 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
         });
     </script>
+
+    <!-- Full-Screen Spec Sheet Viewer Modal (v18.5.0) -->
+    <div id="fullScreenSpecViewerModal" class="no-print fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[75] flex items-center justify-center p-1.5 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[95dvh] flex flex-col overflow-hidden border border-sky-300">
+            <!-- Header Bar -->
+            <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-sky-500/25 border border-sky-300/40 flex items-center justify-center text-sky-300">
+                        <i class="fa-solid fa-snowflake text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
+                            <span>HOSHIZAKI FULL-SCREEN SPECIFICATION SHEET</span>
+                            <span class="text-[10px] bg-emerald-500/30 border border-emerald-300/40 px-2 py-0.5 rounded-full text-emerald-200">v18.5</span>
+                        </h3>
+                        <p class="text-[11px] text-sky-200">ตารางสเปกมาตรฐาน Hoshizaki + ภาพหน้าปก Spec Sheet PDF จาก Google Drive</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="exportFullSpecSheetPng()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-image"></i> <span>บันทึกเป็นภาพ PNG</span>
+                    </button>
+                    <button type="button" onclick="sendCurrentSpecSheetToLineGroup()" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-brands fa-line"></i> <span>ส่งเข้ากลุ่ม LINE</span>
+                    </button>
+                    <button type="button" onclick="closeFullScreenSpecViewerModal()" class="bg-white/15 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
+                        <i class="fa-solid fa-xmark"></i> ปิด
+                    </button>
+                </div>
+            </div>
+
+            <!-- Model Search & Quick Switch Bar -->
+            <div class="bg-sky-50 border-b border-sky-200 px-4 py-2.5 flex flex-col md:flex-row items-stretch md:items-center gap-2 flex-shrink-0">
+                <div class="flex-1 flex items-center gap-1.5">
+                    <input type="text" id="fullSpecModelSearchInput" list="hoshizakiModelsList" onkeydown="if(event.key==='Enter'){event.preventDefault();loadFullScreenSpecSheet(this.value);}" placeholder="พิมพ์รุ่นเครื่อง เช่น IM-240DNE, IM-100NE, KM-150B, FM-300AKE..." class="flex-1 bg-white border border-sky-300 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold text-hoshizaki-navy focus:outline-none focus:border-hoshizaki-blue">
+                    <button type="button" onclick="loadFullScreenSpecSheet(document.getElementById('fullSpecModelSearchInput').value)" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-magnifying-glass"></i> <span>ค้นหาสเปก</span>
+                    </button>
+                </div>
+                <div class="flex flex-wrap items-center gap-1 text-[11px]">
+                    <span class="text-gray-500 font-semibold mr-1">รุ่นยอดนิยม:</span>
+                    <button type="button" onclick="loadFullScreenSpecSheet('IM-240DNE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">IM-240DNE</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('IM-130NE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">IM-130NE</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('IM-100NE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">IM-100NE</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('IM-65NE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">IM-65NE</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('KM-150B')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">KM-150B</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('FM-300AKE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">FM-300AKE</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Full-Screen Spec Sheet Body -->
+            <div class="flex-1 overflow-y-auto p-3 sm:p-5 space-y-4 bg-slate-100">
+                <!-- Capture Card Area (Exportable as crisp PNG) -->
+                <div id="fullSpecPrintableCard" class="bg-white rounded-xl border-2 border-hoshizaki-blue/60 shadow-md overflow-hidden">
+                    <div id="fullSpecStructuredTableContainer"></div>
+                </div>
+
+                <!-- Drive PDF High-Res Image Preview & PDF Links -->
+                <div id="fullSpecDriveCloudSection" class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+                        <h4 class="text-xs sm:text-sm font-extrabold text-hoshizaki-navy flex items-center gap-1.5">
+                            <i class="fa-brands fa-google-drive text-emerald-600"></i>
+                            <span>เอกสาร Spec Sheet PDF และภาพหน้าปกจาก Google Drive ของบริษัท</span>
+                        </h4>
+                        <a href="https://drive.google.com/drive/folders/1J-8iMryohfrHaD9gc_iiIRtZrqMECVPV" target="_blank" rel="noopener" class="text-xs bg-sky-50 hover:bg-sky-100 text-hoshizaki-darkblue border border-sky-300 px-2.5 py-1 rounded-lg font-bold">
+                            <i class="fa-solid fa-folder-open mr-1"></i> เปิดโฟลเดอร์ Spec Sheet ทั้งหมด
+                        </a>
+                    </div>
+                    <div id="fullSpecDriveCloudContent" class="text-xs text-gray-500">
+                        กำลังตรวจสอบเอกสาร Spec Sheet ใน Google Drive...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // V18.5.0 FULL-SCREEN SPEC SHEET VIEWER & PNG / LINE SHARE ENGINE
+        // =========================================================================
+        const HOSHIZAKI_SPEC_TABLE_CATALOG = [
+            {
+                match: /^IM-240DNE/i,
+                title: 'IM-240DNE SERIES — CUBE ICE MAKER (MODULAR)',
+                columns: ['IM-240DNE', 'IM-240DNE-21', 'IM-240DNE-23', 'IM-240DNE-32'],
+                rows: [
+                    { label: 'ICE DIMENSIONS (MM)', values: ['28 x 28 x 32', '21 x 21 x 14', '28 x 28 x 23', '32 x 32 x 32'] },
+                    { label: 'DIMENSIONS (MM)', colspan: '1084 x 700 x 500' },
+                    { label: 'PACKED DIMENSIONS (MM)', colspan: '1196 x 825 x 640' },
+                    { label: 'WEIGHT (NETT / GROSS)', colspan: '88 KG / 101 KG' },
+                    { label: 'AMPERAGE / STARTING AMPERAGE', colspan: '6.6A / 35A' },
+                    { label: 'ELECTRICAL CONSUMPTION', colspan: '1330 W' },
+                    { label: 'REFRIGERANT CHARGE', colspan: 'R404a (High: 210-265 PSI | Low: 28-42 PSI)' },
+                    { label: 'HEAT REJECTION (AT32°C/WT21°C)', colspan: '2870 W (2470 kcal/h)' },
+                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', values: ['240 KG', '217 KG (7mm)', '225 KG', '220 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', values: ['220 KG', '210 KG (7mm)', '215 KG', '210 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', values: ['190 KG', '190 KG (7mm)', '195 KG', '190 KG'] },
+                    { label: 'WATER CONSUMPTION PER 24H (AT32°C/WT21°C)', values: ['0.42 m³ (2.21L/1KG)', '0.43 m³ (2.26L/1KG)', '0.38 m³ (1.95L/1KG)', '0.34 m³ (1.79L/1KG)'] },
+                    { label: 'FREEZE CYCLE TIME (AT32°C/WT21°C)', values: ['29 MIN', '25 MIN', '26 MIN', '33 MIN'] },
+                    { label: 'ICE PRODUCTION PER CYCLE (AT32°C/WT21°C)', values: ['3.2 KG / 140 PCS', '2.1 KG / 360 PCS', '2.38 KG / 140 PCS', '3.3 KG / 108 PCS'] },
+                    { label: 'MODE', colspan: 'Available also in Water Cooled models.' }
+                ],
+                note: 'All dimensions indicated are Width x Depth x Height in mm. *60Hz units are available upon request.',
+                operating: 'Voltage Range: 198V-254V • Ambient Temperature: 1°-40°C • Water Supply: 5°-35°C / 0.07-0.8 Mpa / 7.25-116 PSI • AC Supply Voltage: 1/220-240V / 50 Hz'
+            },
+            {
+                match: /^IM-130NE/i,
+                title: 'IM-130NE SERIES — SELF-CONTAINED CUBE ICE MAKER',
+                columns: ['IM-130NE', 'IM-130NE-21', 'IM-130NE-23', 'IM-130NE-HC'],
+                rows: [
+                    { label: 'ICE DIMENSIONS (MM)', values: ['28 x 28 x 32', '21 x 21 x 14', '28 x 28 x 23', '28 x 28 x 32'] },
+                    { label: 'DIMENSIONS (MM)', colspan: '704 x 506 x 1200' },
+                    { label: 'WEIGHT (NETT / GROSS)', colspan: '76 KG / 84 KG' },
+                    { label: 'AMPERAGE / STARTING AMPERAGE', colspan: '4.3A / 24A' },
+                    { label: 'ELECTRICAL CONSUMPTION', colspan: '700 W' },
+                    { label: 'REFRIGERANT CHARGE', values: ['R134a', 'R134a', 'R134a', 'R290 (HC)'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', colspan: '130 KG' },
+                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', colspan: '118 KG' },
+                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', colspan: '100 KG' },
+                    { label: 'WATER CONSUMPTION PER 24H', colspan: '0.26 m³ (2.20 L / 1KG ICE)' },
+                    { label: 'FREEZE CYCLE TIME / PER CYCLE', colspan: '22 - 26 MIN (1.6 KG / 80 PCS)' }
+                ],
+                note: 'All dimensions indicated are Width x Depth x Height in mm.',
+                operating: 'Voltage Range: 198V-254V • Ambient Temperature: 1°-40°C • Water Supply: 5°-35°C / 0.07-0.8 Mpa • AC Supply Voltage: 1/220-240V / 50 Hz'
+            },
+            {
+                match: /^IM-100NE/i,
+                title: 'IM-100NE SERIES — SELF-CONTAINED CUBE ICE MAKER',
+                columns: ['IM-100NE', 'IM-100NE-21', 'IM-100NE-23', 'IM-100NE-HC'],
+                rows: [
+                    { label: 'ICE DIMENSIONS (MM)', values: ['28 x 28 x 32', '21 x 21 x 14', '28 x 28 x 23', '28 x 28 x 32'] },
+                    { label: 'DIMENSIONS (MM)', colspan: '704 x 506 x 1200' },
+                    { label: 'WEIGHT (NETT / GROSS)', colspan: '73 KG / 81 KG' },
+                    { label: 'AMPERAGE / STARTING AMPERAGE', colspan: '3.8A / 21A' },
+                    { label: 'ELECTRICAL CONSUMPTION', colspan: '630 W' },
+                    { label: 'REFRIGERANT CHARGE', values: ['R134a', 'R134a', 'R134a', 'R290 (HC)'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', colspan: '105 KG' },
+                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', colspan: '95 KG' },
+                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', colspan: '82 KG' },
+                    { label: 'WATER CONSUMPTION PER 24H', colspan: '0.22 m³ (2.30 L / 1KG ICE)' },
+                    { label: 'FREEZE CYCLE TIME / PER CYCLE', colspan: '22 - 26 MIN (1.35 KG / 70 PCS)' }
+                ],
+                note: 'All dimensions indicated are Width x Depth x Height in mm.',
+                operating: 'Voltage Range: 198V-254V • Ambient Temperature: 1°-40°C • Water Supply: 5°-35°C / 0.07-0.8 Mpa • AC Supply Voltage: 1/220-240V / 50 Hz'
+            },
+            {
+                match: /^IM-65NE/i,
+                title: 'IM-65NE SERIES — SELF-CONTAINED CUBE ICE MAKER',
+                columns: ['IM-65NE', 'IM-65NE-21', 'IM-65NE-23', 'IM-65NE-HC'],
+                rows: [
+                    { label: 'ICE DIMENSIONS (MM)', values: ['28 x 28 x 32', '21 x 21 x 14', '28 x 28 x 23', '28 x 28 x 32'] },
+                    { label: 'DIMENSIONS (MM)', colspan: '633 x 506 x 840' },
+                    { label: 'WEIGHT (NETT / GROSS)', colspan: '53 KG / 60 KG' },
+                    { label: 'AMPERAGE / STARTING AMPERAGE', colspan: '2.7A / 16A' },
+                    { label: 'ELECTRICAL CONSUMPTION', colspan: '400 W' },
+                    { label: 'REFRIGERANT CHARGE', values: ['R134a', 'R134a', 'R134a', 'R290 (HC)'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', colspan: '65 KG' },
+                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', colspan: '58 KG' },
+                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', colspan: '50 KG' },
+                    { label: 'WATER CONSUMPTION PER 24H', colspan: '0.14 m³ (2.40 L / 1KG ICE)' },
+                    { label: 'FREEZE CYCLE TIME / PER CYCLE', colspan: '20 - 25 MIN (0.85 KG / 42 PCS)' }
+                ],
+                note: 'All dimensions indicated are Width x Depth x Height in mm.',
+                operating: 'Voltage Range: 198V-254V • Ambient Temperature: 1°-40°C • Water Supply: 5°-35°C / 0.07-0.8 Mpa • AC Supply Voltage: 1/220-240V / 50 Hz'
+            }
+        ];
+
+        function openFullScreenSpecViewerModal(presetModel) {
+            const modal = document.getElementById('fullScreenSpecViewerModal');
+            const input = document.getElementById('fullSpecModelSearchInput');
+            if (!modal) return;
+            const currentModel = (presetModel || document.getElementById('eqModel')?.value || 'IM-240DNE').trim().toUpperCase();
+            if (input) input.value = currentModel;
+            modal.classList.remove('hidden');
+            loadFullScreenSpecSheet(currentModel);
+        }
+
+        function closeFullScreenSpecViewerModal() {
+            document.getElementById('fullScreenSpecViewerModal')?.classList.add('hidden');
+        }
+
+        function renderFullSpecHtmlTable(modelName, cloudStructured) {
+            const q = String(modelName || 'IM-240DNE').trim().toUpperCase();
+            const found = HOSHIZAKI_SPEC_TABLE_CATALOG.find(item => item.match.test(q));
+            if (found) {
+                const colCount = found.columns.length;
+                const headCols = found.columns.map(c => `<th class="p-2.5 text-center font-extrabold text-slate-900 border border-sky-400/70 bg-sky-50/70 text-xs sm:text-sm">${c}</th>`).join('');
+                const bodyRows = found.rows.map(r => {
+                    if (r.colspan) {
+                        return `<tr>
+                            <td class="p-2 sm:p-2.5 font-bold text-hoshizaki-darkblue border border-sky-400/70 bg-white text-[11px] sm:text-xs w-1/3">${r.label}</td>
+                            <td colspan="${colCount}" class="p-2 sm:p-2.5 text-center font-semibold text-slate-800 border border-sky-400/70 bg-white text-xs sm:text-sm">${r.colspan}</td>
+                        </tr>`;
+                    }
+                    const tds = r.values.map(v => `<td class="p-2 sm:p-2.5 text-center font-semibold text-slate-800 border border-sky-400/70 bg-white text-xs sm:text-sm">${v}</td>`).join('');
+                    return `<tr>
+                        <td class="p-2 sm:p-2.5 font-bold text-hoshizaki-darkblue border border-sky-400/70 bg-white text-[11px] sm:text-xs w-1/3">${r.label}</td>
+                        ${tds}
+                    </tr>`;
+                }).join('');
+
+                return `
+                    <div class="bg-hoshizaki-navy text-white px-4 py-2 flex items-center justify-between text-xs font-extrabold">
+                        <span>${found.title}</span>
+                        <span class="text-sky-300">HOSHIZAKI STANDARD SPEC</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr>
+                                    <th class="p-2.5 text-left font-extrabold text-hoshizaki-darkblue border border-sky-400/70 bg-sky-50 text-xs sm:text-sm">MODEL NAME</th>
+                                    ${headCols}
+                                </tr>
+                            </thead>
+                            <tbody>${bodyRows}</tbody>
+                        </table>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 border-t border-sky-400/70 bg-sky-50/40 text-[11px] sm:text-xs">
+                        <div class="md:col-span-4 p-2.5 border-b md:border-b-0 md:border-r border-sky-400/70 font-semibold text-slate-700">
+                            <span class="font-extrabold text-hoshizaki-navy">NOTE:</span> ${found.note}
+                        </div>
+                        <div class="md:col-span-8 p-2.5 font-semibold text-slate-800">
+                            <span class="font-extrabold text-hoshizaki-navy">OPERATING CONDITIONS:</span> ${found.operating}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Generic / Cloud Structured Spec Card for KM, FM, HR, RT, etc.
+            const cs = cloudStructured || {};
+            return `
+                <div class="bg-hoshizaki-navy text-white px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm font-extrabold">
+                    <span>MODEL SPECIFICATION: ${q}</span>
+                    <span class="text-sky-300">${cs.series || 'HOSHIZAKI EQUIPMENT'}</span>
+                </div>
+                <table class="w-full border-collapse text-xs sm:text-sm">
+                    <tbody>
+                        <tr><td class="p-2.5 font-bold text-hoshizaki-darkblue border border-sky-300 w-1/3">MODEL NAME</td><td class="p-2.5 font-extrabold text-slate-900 border border-sky-300">${q}</td></tr>
+                        <tr><td class="p-2.5 font-bold text-hoshizaki-darkblue border border-sky-300">ICE / TEMP SPEC</td><td class="p-2.5 font-semibold text-slate-800 border border-sky-300">${cs.iceDim || 'ตรวจสอบรายละเอียดตาม Spec Sheet PDF ด้านล่าง'}</td></tr>
+                        <tr><td class="p-2.5 font-bold text-hoshizaki-darkblue border border-sky-300">DIMENSIONS (MM)</td><td class="p-2.5 font-semibold text-slate-800 border border-sky-300">${cs.dimensions || 'ดูขนาดกว้าง x ลึก x สูง ในไฟล์ PDF ด้านล่าง'}</td></tr>
+                        <tr><td class="p-2.5 font-bold text-hoshizaki-darkblue border border-sky-300">AMPERAGE / POWER</td><td class="p-2.5 font-semibold text-slate-800 border border-sky-300">${cs.ampStart || '-'} | ${cs.watt || '-'}</td></tr>
+                        <tr><td class="p-2.5 font-bold text-hoshizaki-darkblue border border-sky-300">REFRIGERANT &amp; PRESSURE</td><td class="p-2.5 font-semibold text-slate-800 border border-sky-300">${cs.refrigerant || 'R404A / R134a / R290 (ดูเนมเพลตหน้าเครื่อง)'}</td></tr>
+                        <tr><td class="p-2.5 font-bold text-hoshizaki-darkblue border border-sky-300">PRODUCTION / CYCLE</td><td class="p-2.5 font-semibold text-slate-800 border border-sky-300">${cs.iceProd || '-'} | ${cs.cycleTime || '-'}</td></tr>
+                        <tr><td class="p-2.5 font-bold text-hoshizaki-darkblue border border-sky-300">OPERATING CONDITIONS</td><td class="p-2.5 font-semibold text-slate-800 border border-sky-300">${cs.operating || '1/220-240V / 50 Hz • Ambient 1°-40°C • Water 5°-35°C'}</td></tr>
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function loadFullScreenSpecSheet(modelRaw) {
+            const q = String(modelRaw || 'IM-240DNE').trim().toUpperCase();
+            const tableEl = document.getElementById('fullSpecStructuredTableContainer');
+            const cloudEl = document.getElementById('fullSpecDriveCloudContent');
+            if (tableEl) tableEl.innerHTML = renderFullSpecHtmlTable(q, null);
+
+            const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+            if (!webhookUrl) {
+                if (cloudEl) {
+                    cloudEl.innerHTML = `<div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900">
+                        ยังไม่ได้เชื่อมต่อ Google Apps Script URL — สามารถกดปุ่ม <b>"เปิดโฟลเดอร์ Spec Sheet ทั้งหมด"</b> ด้านบนขวาเพื่อค้นหาไฟล์ PDF รุ่น <b>${q}</b> ใน Google Drive ได้ทันที
+                    </div>`;
+                }
+                return;
+            }
+
+            if (cloudEl) {
+                cloudEl.innerHTML = `<div class="flex items-center gap-2 text-hoshizaki-darkblue font-semibold py-2">
+                    <i class="fa-solid fa-spinner fa-spin"></i> กำลังดึงภาพหน้าปกและไฟล์ Spec Sheet PDF รุ่น <b>${q}</b> จาก Google Drive...
+                </div>`;
+            }
+
+            try {
+                const res = await fetch(`${webhookUrl}?action=getModelSpecSheet&model=${encodeURIComponent(q)}`);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                if (tableEl && data.structuredSpec) {
+                    tableEl.innerHTML = renderFullSpecHtmlTable(q, data.structuredSpec);
+                }
+
+                const files = Array.isArray(data.files) ? data.files : [];
+                if (files.length === 0) {
+                    if (cloudEl) {
+                        cloudEl.innerHTML = `<div class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-700">
+                            ไม่พบไฟล์ PDF ที่ตรงกับ <b>${q}</b> ในดัชนีอัตโนมัติ — กดปุ่ม <b>"เปิดโฟลเดอร์ Spec Sheet ทั้งหมด"</b> เพื่อเปิดค้นหาใน Google Drive
+                        </div>`;
+                    }
+                    return;
+                }
+
+                const imgHtml = data.primaryImageUrl
+                    ? `<div class="border border-sky-200 rounded-xl overflow-hidden bg-slate-50 p-2">
+                        <div class="text-[11px] font-bold text-hoshizaki-navy mb-1.5 flex items-center justify-between">
+                            <span><i class="fa-solid fa-image text-sky-600 mr-1"></i> ภาพตัวอย่าง Spec Sheet จาก Drive (${files[0].name})</span>
+                            <a href="${files[0].url}" target="_blank" rel="noopener" class="text-sky-700 underline">เปิดไฟล์เต็มจอ ↗</a>
+                        </div>
+                        <img src="${data.primaryImageUrl}" alt="Spec Sheet ${q}" onerror="this.parentElement.style.display='none'" class="w-full max-h-[75vh] object-contain mx-auto rounded-lg shadow-xs bg-white">
+                       </div>`
+                    : '';
+
+                const linksHtml = files.map((f, i) => `
+                    <a href="${f.url}" target="_blank" rel="noopener" class="flex items-center justify-between p-2.5 rounded-lg border ${i === 0 ? 'bg-sky-50 border-sky-300 text-hoshizaki-navy font-bold' : 'bg-white border-gray-200 text-gray-800 hover:bg-gray-50'} transition">
+                        <span class="truncate pr-2"><i class="fa-solid fa-file-pdf text-rose-600 mr-1.5"></i>${f.name} <span class="text-[10px] text-gray-500">(${f.folder || 'Drive'})</span></span>
+                        <span class="text-xs bg-hoshizaki-navy text-white px-2.5 py-1 rounded-md flex-shrink-0">เปิด PDF ↗</span>
+                    </a>
+                `).join('');
+
+                if (cloudEl) {
+                    cloudEl.innerHTML = `<div class="space-y-3">${imgHtml}<div class="space-y-1.5">${linksHtml}</div></div>`;
+                }
+            } catch (err) {
+                if (cloudEl) {
+                    cloudEl.innerHTML = `<div class="p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-800">
+                        ไม่สามารถดึงภาพตัวอย่างจาก Cloud ได้ในขณะนี้ (${err.message}) — กดปุ่ม <b>"เปิดโฟลเดอร์ Spec Sheet ทั้งหมด"</b> ด้านบนขวาเพื่อดูไฟล์ใน Drive
+                    </div>`;
+                }
+            }
+        }
+
+        async function exportFullSpecSheetPng() {
+            const card = document.getElementById('fullSpecPrintableCard');
+            const modelName = (document.getElementById('fullSpecModelSearchInput')?.value || 'Hoshizaki_Spec').trim().toUpperCase();
+            if (!card || typeof html2canvas === 'undefined') {
+                showToast('ไม่พร้อมสำหรับการส่งออกภาพ PNG');
+                return;
+            }
+            showToast(`กำลังสร้างภาพ PNG ตารางสเปก ${modelName}...`);
+            const canvas = await html2canvas(card, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+            const link = document.createElement('a');
+            link.download = `Spec_Sheet_${modelName}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast(`ดาวน์โหลดภาพ Spec_Sheet_${modelName}.png เรียบร้อย ✓`);
+        }
+
+        async function sendCurrentSpecSheetToLineGroup() {
+            const modelName = (document.getElementById('fullSpecModelSearchInput')?.value || '').trim().toUpperCase();
+            const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+            if (!modelName) {
+                showToast('กรุณาระบุรุ่นเครื่องก่อนส่งเข้ากลุ่ม LINE');
+                return;
+            }
+            if (!webhookUrl) {
+                showToast('กรุณาตั้งค่า Google Apps Script URL ก่อนส่งเข้า LINE');
+                return;
+            }
+            const cfg = typeof getGlobalEnterpriseConfig === 'function' ? getGlobalEnterpriseConfig() : {};
+            showToast(`กำลังส่งการ์ด Spec Sheet รุ่น ${modelName} เข้ากลุ่ม LINE...`);
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SEND_LINE_PUSH',
+                        apiSecretKey: cfg.apiSecretKey || 'HTH-SECURE-2026',
+                        message: `❄️ ขอข้อมูล Spec Sheet รุ่น ${modelName}\nพิมพ์คำสั่งในแชทกลุ่ม: SPEC ${modelName}\nหรือเปิดโฟลเดอร์ Spec Sheet รวม: https://drive.google.com/drive/folders/1J-8iMryohfrHaD9gc_iiIRtZrqMECVPV`
+                    })
+                });
+                showToast(`ส่งแจ้งเตือนสเปกรุ่น ${modelName} เข้ากลุ่ม LINE เรียบร้อย ✓`);
+            } catch (e) {
+                showToast('เกิดข้อผิดพลาดในการส่งเข้า LINE');
+            }
+        }
+
+        // รองรับการเปิดหน้าต่าง Spec Sheet เต็มจออัตโนมัติเมื่อกดลิงก์ ?specModel=... จาก LINE OA
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const specModel = (params.get('specModel') || '').trim();
+                if (specModel) {
+                    setTimeout(() => openFullScreenSpecViewerModal(specModel), 600);
+                }
+            } catch (e) {}
+        });
+    </script>
+
 </body>
                 </html>
             `);

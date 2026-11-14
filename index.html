@@ -560,6 +560,8 @@
 </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
     
     <!-- Organized 4-Category Responsive Toolbar Grid (v17.6) -->
     <style id="v17-6-toolbar-grid">
@@ -716,7 +718,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.2 LINE OA + Spec</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.4 Enterprise + Flex OA</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -5054,33 +5056,79 @@ Website : www.hoshizaki-sea.com</p>
                     }
                 }
 
+                const handleDetectedBarcodeValue = (rawVal) => {
+                    const cleanVal = String(rawVal || '').trim();
+                    if (!cleanVal) return false;
+                    // รองรับทั้งรูปแบบ Serial เดี่ยว และรูปแบบ "MODEL|SERIAL" หรือ "S/N: XXXX"
+                    let parsedSerial = cleanVal;
+                    let parsedModel = '';
+                    const snMatch = cleanVal.match(/(?:S\/?N|SERIAL)[:\s#-]*([A-Z0-9-]{4,20})/i);
+                    const modMatch = cleanVal.match(/\b((?:IM|KM|KMD|FM|HR|HF|HRF|HRW|HW|RT|RTC|RTF|RTS|RW|RF|RR|RRF|RFT|DCM|DIM|AM|HNC|DBF|HSU|B|G)-[A-Z0-9-]{2,15})\b/i);
+                    if (snMatch && snMatch[1]) parsedSerial = snMatch[1].toUpperCase();
+                    if (modMatch && modMatch[1]) parsedModel = modMatch[1].toUpperCase();
+                    if (cleanVal.includes('|')) {
+                        const parts = cleanVal.split('|').map(s => s.trim());
+                        if (parts[0]) parsedModel = parts[0].toUpperCase();
+                        if (parts[1]) parsedSerial = parts[1].toUpperCase();
+                    }
+                    applyScannedSerialAndModel({ serial: parsedSerial, model: parsedModel });
+                    if (typeof handleSerialAutoLookup === 'function') handleSerialAutoLookup(parsedSerial);
+                    closeBarcodeScannerModal();
+                    showToast(`สแกนบาร์โค้ด/QR สำเร็จ: ${parsedSerial}${parsedModel ? ' (' + parsedModel + ')' : ''} ✓`);
+                    return true;
+                };
+
                 if ('BarcodeDetector' in window) {
                     const detector = new BarcodeDetector({
                         formats: ['code_128', 'code_39', 'ean_13', 'ean_8', 'qr_code', 'data_matrix', 'upc_a']
                     });
                     if (statusEl) {
-                        statusEl.innerHTML = 'สแกนบาร์โค้ดอัตโนมัติพร้อมทำงาน หรือกด <b>"ถ่ายรูปเนมเพลต & อ่านข้อมูล"</b> เพื่อบันทึกภาพและดึงข้อมูลเครื่อง';
+                        statusEl.innerHTML = 'กล้องพร้อมสแกน Barcode / QR Code อัตโนมัติ เล็งไปที่บาร์โค้ดป้ายเนมเพลต Hoshizaki ได้เลยครับ';
                     }
 
                     const scanLoop = async () => {
                         if (!barcodeStream) return;
                         try {
                             const barcodes = await detector.detect(videoEl);
-                            if (barcodes && barcodes.length > 0) {
-                                const detectedCode = (barcodes[0].rawValue || '').trim();
-                                if (detectedCode) {
-                                    applyScannedSerialAndModel({ serial: detectedCode });
-                                    closeBarcodeScannerModal();
-                                    showToast(`สแกนบาร์โค้ดสำเร็จ: ${detectedCode}`);
-                                    return;
-                                }
+                            if (barcodes && barcodes.length > 0 && handleDetectedBarcodeValue(barcodes[0].rawValue)) {
+                                return;
                             }
-                        } catch (e) {
-                            // ข้ามเฟรมที่ยังอ่านไม่ชัด
-                        }
+                        } catch (e) {}
                         barcodeScanRafId = requestAnimationFrame(scanLoop);
                     };
                     barcodeScanRafId = requestAnimationFrame(scanLoop);
+                } else if (typeof ZXing !== 'undefined' || typeof jsQR !== 'undefined') {
+                    if (statusEl) {
+                        statusEl.innerHTML = 'เปิดโหมดสแกนกล้องสากล (iOS/Safari/Firefox) เล็งไปที่บาร์โค้ดหรือ QR Code ป้ายเครื่องได้เลยครับ';
+                    }
+                    const offCanvas = document.createElement('canvas');
+                    const offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
+                    const zxingReader = (typeof ZXing !== 'undefined' && ZXing.BrowserMultiFormatReader)
+                        ? new ZXing.BrowserMultiFormatReader()
+                        : null;
+
+                    const universalScanLoop = async () => {
+                        if (!barcodeStream) return;
+                        try {
+                            if (videoEl.readyState >= 2 && videoEl.videoWidth > 0) {
+                                offCanvas.width = videoEl.videoWidth;
+                                offCanvas.height = videoEl.videoHeight;
+                                offCtx.drawImage(videoEl, 0, 0, offCanvas.width, offCanvas.height);
+
+                                if (typeof jsQR !== 'undefined') {
+                                    const imgData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height);
+                                    const qr = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: 'dontInvert' });
+                                    if (qr && qr.data && handleDetectedBarcodeValue(qr.data)) return;
+                                }
+                                if (zxingReader && typeof zxingReader.decodeFromCanvas === 'function') {
+                                    const res = zxingReader.decodeFromCanvas(offCanvas);
+                                    if (res && res.getText && handleDetectedBarcodeValue(res.getText())) return;
+                                }
+                            }
+                        } catch (e) {}
+                        barcodeScanRafId = requestAnimationFrame(universalScanLoop);
+                    };
+                    barcodeScanRafId = requestAnimationFrame(universalScanLoop);
                 } else {
                     if (statusEl) {
                         statusEl.innerHTML = 'กดปุ่ม <b>"ถ่ายรูปเนมเพลต & อ่านข้อมูล"</b> เพื่อจับภาพป้ายเนมเพลต บันทึกรูป และดึงข้อมูลรุ่น/Serial อัตโนมัติ';
@@ -13098,8 +13146,31 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
         }
 
-        function saveVanStockMap(map) {
+        function saveVanStockMap(map, syncToCloud = true) {
             localStorage.setItem('hoshizaki_van_stock_db', JSON.stringify(map));
+            if (syncToCloud) {
+                syncVanStockToGoogleSheets(map);
+            }
+        }
+
+        async function syncVanStockToGoogleSheets(mapObj) {
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (!webhookUrl) return;
+            const cfg = typeof getGlobalEnterpriseConfig === 'function' ? getGlobalEnterpriseConfig() : {};
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SYNC_VAN_STOCK',
+                        apiSecretKey: cfg.apiSecretKey || 'HTH-SECURE-2026',
+                        vanStockMap: mapObj || getVanStockMap()
+                    })
+                });
+            } catch (e) {
+                console.warn('Van stock cloud sync skipped:', e);
+            }
         }
 
         function openVanStockModal() {
@@ -18449,6 +18520,11 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 const data = await res.json();
 
+                if (data && data.vanStockMap && typeof data.vanStockMap === 'object' && Object.keys(data.vanStockMap).length > 0) {
+                    localStorage.setItem('hoshizaki_van_stock_db', JSON.stringify(data.vanStockMap));
+                    if (typeof renderVanStockTable === 'function') renderVanStockTable();
+                }
+
                 let mergedJobsCount = 0;
                 if (data && Array.isArray(data.jobs) && typeof getJobHistorySync === 'function') {
                     const localHistory = getJobHistorySync();
@@ -19124,7 +19200,10 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                             body: JSON.stringify({
                                 actionType: 'SAVE_GLOBAL_CONFIG',
                                 apiSecretKey: apiSecret,
-                                config: updatedCfg,
+                                config: {
+                                    ...updatedCfg,
+                                    pwaWebAppUrl: window.location.href.split('?')[0].split('#')[0]
+                                },
                                 technicians: typeof getTechnicianDirectory === 'function' ? getTechnicianDirectory() : [],
                                 coordinators: typeof getCoordinatorDirectory === 'function' ? getCoordinatorDirectory() : []
                             })

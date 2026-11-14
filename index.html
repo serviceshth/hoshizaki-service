@@ -710,17 +710,13 @@
                     <div class="flex flex-wrap items-center justify-between gap-1.5">
                         <h1 id="topHeaderCompanyTitle" class="font-bold text-sm sm:text-lg leading-tight tracking-wide truncate">HOSHIZAKI (THAILAND)</h1>
                         <div class="flex items-center gap-1">
-                            <div class="inline-flex rounded-full bg-white/15 p-0.5 border border-white/25 text-[10px] font-extrabold" title="Switch Language / สลับภาษา ไทย - English">
-                                <button type="button" id="btnLangTH" onclick="setAppLanguage('TH')" class="px-2 py-0.5 rounded-full bg-white text-hoshizaki-navy transition">TH</button>
-                                <button type="button" id="btnLangEN" onclick="setAppLanguage('EN')" class="px-2 py-0.5 rounded-full text-white hover:bg-white/20 transition">EN</button>
-                            </div>
                             <button type="button" onclick="openGlobalEnterpriseConfigModal()" class="text-[10px] bg-amber-400/20 hover:bg-amber-400/35 text-amber-200 border border-amber-300/40 px-2 py-0.5 rounded-full font-bold transition" title="ตั้งค่าสาขา/ประเทศ โลโก้บริษัท รหัส PIN และ API Secret Key">
-                                <i class="fa-solid fa-building-shield mr-0.5"></i> <span data-i18n="btnBranchSetup">ตั้งค่าสาขา/โลโก้</span>
+                                <i class="fa-solid fa-building-shield mr-0.5"></i> <span>ตั้งค่าสาขา/โลโก้</span>
                             </button>
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v17.8 Global</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v17.9 Global</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -8704,6 +8700,7 @@
         }
 
         function openReceiptInNewWindow() {
+            if (typeof applyGlobalCompanyConfigToUI === 'function') applyGlobalCompanyConfigToUI();
             showToast('กำลังเปิดเอกสาร PDF ใบเสนอราคาในหน้าต่างใหม่...');
             const element = document.getElementById('receiptContainer');
             const offerNo = document.getElementById('recOfferNo')?.innerText || 'Quotation';
@@ -13441,9 +13438,17 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             if (document.getElementById('wcDateCallReceived')) document.getElementById('wcDateCallReceived').value = jobDate;
             if (document.getElementById('wcDateRepaired')) document.getElementById('wcDateRepaired').value = jobDate;
             if (document.getElementById('wcAgencyContact')) document.getElementById('wcAgencyContact').value = tech;
+            const address = document.getElementById('custAddress')?.value || '';
+            const cfg = typeof getGlobalCompanyConfig === 'function' ? getGlobalCompanyConfig() : null;
+            if (cfg && cfg.companyName) {
+                if (document.getElementById('wcIssuedBy')) document.getElementById('wcIssuedBy').value = cfg.companyName;
+                if (document.getElementById('wcAgencyCompany')) document.getElementById('wcAgencyCompany').value = cfg.companyName;
+            }
             if (document.getElementById('wcCustomerName')) document.getElementById('wcCustomerName').value = store;
+            if (document.getElementById('wcCustomerAddress') && address) document.getElementById('wcCustomerAddress').value = address;
             if (document.getElementById('wcCustomerContact')) document.getElementById('wcCustomerContact').value = contact;
             if (document.getElementById('wcCustomerPhone')) document.getElementById('wcCustomerPhone').value = contact;
+            if (typeof applyGlobalCompanyConfigToUI === 'function') applyGlobalCompanyConfigToUI();
             if (document.getElementById('wcProblemRepairDesc')) {
                 document.getElementById('wcProblemRepairDesc').value = [symptom, detected, action].filter(Boolean).join(' | ');
             }
@@ -13772,6 +13777,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
                 customerPortalPhotos = [];
                 renderCustomerPortalPhotos();
+                if (typeof applyGlobalCompanyConfigToUI === 'function') applyGlobalCompanyConfigToUI();
                 document.getElementById('customerWarrantyPortalModal')?.classList.remove('hidden');
             } catch (err) {
                 console.warn('Invalid claimForm param:', err);
@@ -16749,12 +16755,10 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-4 sm:p-6 space-y-3 max-h-[94vh] flex flex-col">
             <div class="flex items-center justify-between border-b pb-2.5 flex-shrink-0">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-lg font-bold flex-shrink-0">
-                        <i class="fa-solid fa-file-shield"></i>
-                    </div>
+                    <img class="app-company-logo-sync w-11 h-11 object-contain flex-shrink-0" src="" alt="Company Logo">
                     <div>
                         <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">แบบฟอร์มแจ้งเคลมสินค้าและแนบหลักฐานภาพถ่าย (HOSHIZAKI WARRANTY CLAIM)</h3>
-                        <p class="text-[11px] text-gray-500">กรุณากรอกรายละเอียดอาการเสียและแนบรูปถ่ายเนมเพลต/จุดที่เสีย ระบบจะส่งข้อมูลเข้าฝ่ายบริการและอีเมลทีมงานอัตโนมัติ</p>
+                        <p class="text-[11px] text-gray-500"><span id="cpPortalCompanyName" class="font-bold text-hoshizaki-navy">HOSHIZAKI (THAILAND) LIMITED</span> • กรุณากรอกรายละเอียดอาการเสียและแนบรูปถ่ายเนมเพลต/จุดที่เสีย</p>
                     </div>
                 </div>
                 <button type="button" onclick="document.getElementById('customerWarrantyPortalModal')?.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
@@ -18426,7 +18430,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                         </div>
                         <div class="flex-1 space-y-2">
                             <p class="text-[11px] text-gray-600 leading-relaxed">
-                                รองรับไฟล์ <b>PNG, JPG, WebP, SVG</b> ระบบจะปรับขนาดและบีบอัดให้อัตโนมัติ (Max 320x320 px) เพื่อให้คมชัดบนเอกสาร A4 และส่งซิงค์ขึ้น Google Sheets ได้ทันที
+                                รองรับไฟล์ <b>PNG, JPG, WebP, SVG</b> ระบบจะปรับขนาดและบีบอัดให้อัตโนมัติ (รองรับทั้งทรงกลม/สี่เหลี่ยม และโลโก้แนวนอน Max 480x320 px) เพื่อให้คมชัดบนเอกสาร A4 และส่งซิงค์ขึ้น Google Sheets ได้ทันที
                             </p>
                             <label class="inline-flex items-center gap-1.5 bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-3.5 py-2 rounded-lg font-bold cursor-pointer shadow-xs transition">
                                 <i class="fa-solid fa-upload"></i> <span>อัปโหลดรูปโลโก้ใหม่ (ปรับขนาดอัตโนมัติ)</span>
@@ -18640,6 +18644,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             setTxt('recCompanyEmailWebDisplay', cfg.emailWeb);
             setTxt('arcSheetCompanyName', cfg.companyName);
             setTxt('arcSheetCompanyTelTax', `${cfg.telTax} | ${cfg.emailWeb}`);
+            setTxt('cpPortalCompanyName', cfg.companyName);
             if (cfg.bankInfo) {
                 setTxt('recBankTransferDisplay', cfg.bankInfo);
             }
@@ -18715,12 +18720,11 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             reader.onload = function(ev) {
                 const img = new Image();
                 img.onload = function() {
-                    const MAX_DIM = 320;
-                    let w = img.width, h = img.height;
-                    if (w > MAX_DIM || h > MAX_DIM) {
-                        if (w > h) { h = Math.round(h * MAX_DIM / w); w = MAX_DIM; }
-                        else { w = Math.round(w * MAX_DIM / h); h = MAX_DIM; }
-                    }
+                    const MAX_W = 480, MAX_H = 320;
+                    let w = img.width || 320, h = img.height || 320;
+                    const scaleRatio = Math.min(1, MAX_W / w, MAX_H / h);
+                    w = Math.max(1, Math.round(w * scaleRatio));
+                    h = Math.max(1, Math.round(h * scaleRatio));
                     const canvas = document.createElement('canvas');
                     canvas.width = w;
                     canvas.height = h;
@@ -18822,77 +18826,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
         }
 
-        // --- BILINGUAL TH / EN UI TRANSLATION ENGINE ---
-        const I18N_DICT = {
-            TH: {
-                btnBranchSetup: 'ตั้งค่าสาขา/โลโก้',
-                docTitle: 'SERVICE REPORT / ใบแจ้งบริการ',
-                secCustomer: 'ข้อมูลลูกค้า (Customer Information)',
-                secEquipment: 'ข้อมูลอุปกรณ์ (Equipment Information)',
-                secService: 'รายละเอียดบริการ (Service Details)',
-                secParts: 'รายการอะไหล่และค่าบริการ (Spare Parts & Billing)',
-                secPhotos: 'รูปถ่ายการปฏิบัติงาน (Inspection & Service Photos)',
-                lblStore: 'ชื่อร้าน/ลูกค้า:',
-                lblDealer: 'ตัวแทนจำหน่าย / Dealer:',
-                lblContact: 'ผู้ติดต่อ:',
-                lblAddress: 'ที่อยู่:',
-                lblLeadTech: 'ช่างผู้รับผิดชอบงาน / Technician:',
-                lblWarranty: 'การรับประกัน:',
-                btnSave: 'บันทึก',
-                btnNewJob: 'ใบงานใหม่',
-                btnHistory: 'ประวัติ',
-                btnSchedule: 'ตารางงานช่าง (Schedule)'
-            },
-            EN: {
-                btnBranchSetup: 'Branch / Logo Setup',
-                docTitle: 'SERVICE REPORT',
-                secCustomer: 'Customer Information',
-                secEquipment: 'Equipment Information',
-                secService: 'Service & Diagnostic Details',
-                secParts: 'Spare Parts & Billing Summary',
-                secPhotos: 'Inspection & Service Photos',
-                lblStore: 'Customer / Store:',
-                lblDealer: 'Authorized Dealer:',
-                lblContact: 'Contact Person:',
-                lblAddress: 'Site Address:',
-                lblLeadTech: 'Lead Technician:',
-                lblWarranty: 'Warranty Status:',
-                btnSave: 'Save Report',
-                btnNewJob: 'New Job',
-                btnHistory: 'Job History',
-                btnSchedule: 'Tech Schedule'
-            }
-        };
 
-        function setAppLanguage(lang) {
-            const targetLang = (lang === 'EN') ? 'EN' : 'TH';
-            localStorage.setItem(V17_LANG_KEY, targetLang);
-            const btnTH = document.getElementById('btnLangTH');
-            const btnEN = document.getElementById('btnLangEN');
-            if (btnTH && btnEN) {
-                btnTH.className = targetLang === 'TH' ? 'px-2 py-0.5 rounded-full bg-white text-hoshizaki-navy transition' : 'px-2 py-0.5 rounded-full text-white hover:bg-white/20 transition';
-                btnEN.className = targetLang === 'EN' ? 'px-2 py-0.5 rounded-full bg-white text-hoshizaki-navy transition' : 'px-2 py-0.5 rounded-full text-white hover:bg-white/20 transition';
-            }
-            const dict = I18N_DICT[targetLang];
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (dict[key]) el.innerText = dict[key];
-            });
-            // Translate key section labels smoothly
-            const mapText = [
-                ['#secCustomerCard span.flex.items-center.gap-2', `<i class="fa-solid fa-store text-hoshizaki-blue"></i> ${dict.secCustomer}`],
-                ['#secEquipmentCard span.flex.items-center.gap-2', `<i class="fa-solid fa-snowflake text-hoshizaki-blue"></i> ${dict.secEquipment}`],
-                ['#secServiceDetails span.flex.items-center.gap-2', `<i class="fa-solid fa-wrench text-hoshizaki-blue"></i> ${dict.secService}`],
-                ['#secSpareParts span.flex.items-center.gap-2', `<i class="fa-solid fa-list-check text-hoshizaki-blue"></i> ${dict.secParts}`]
-            ];
-            mapText.forEach(([sel, htmlStr]) => {
-                const el = document.querySelector(sel);
-                if (el) el.innerHTML = htmlStr;
-            });
-            if (typeof showToast === 'function') {
-                showToast(targetLang === 'EN' ? 'Switched interface to English (EN) ✓' : 'เปลี่ยนภาษาหน้าจอเป็น ภาษาไทย (TH) ✓');
-            }
-        }
 
         // --- EXPANDED STAFF DIRECTORY: AUTO-POPULATE MANAGER & PAYEE DROPDOWNS FROM STAFF DIRECTORY ---
         if (typeof refreshAllStaffUI === 'function') {
@@ -19097,8 +19031,6 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
         document.addEventListener('DOMContentLoaded', async () => {
             applyGlobalCompanyConfigToUI();
-            const savedLang = localStorage.getItem(V17_LANG_KEY) || 'TH';
-            if (savedLang === 'EN') setAppLanguage('EN');
             await Promise.all([loadSerialDbJson(), loadPartsCatalogJson()]);
             initV17InstantAutocompletes();
         });

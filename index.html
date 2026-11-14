@@ -463,13 +463,32 @@
                 </div>
             </div>
 
+            <!-- ปุ่มเปิดโฟลเดอร์คู่มือทั้ง 3 โฟลเดอร์ของ Hoshizaki (ฝังลิงก์ถาวรเรียบร้อย) -->
+            <div class="bg-emerald-50/80 border border-emerald-200 rounded-lg p-2 space-y-1.5">
+                <div class="flex items-center justify-between text-[10px] font-bold text-emerald-900">
+                    <span><i class="fa-solid fa-folder-tree mr-1"></i> โฟลเดอร์คู่มือหลักใน Google Drive (3 โฟลเดอร์):</span>
+                    <span class="text-emerald-700 font-normal">กดเปิดดูได้ทันที</span>
+                </div>
+                <div class="grid grid-cols-3 gap-1">
+                    <button type="button" onclick="openSpecificManualFolder(0)" class="bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 py-1 px-1.5 rounded text-[11px] font-semibold flex items-center justify-center gap-1 transition shadow-xs">
+                        <i class="fa-solid fa-folder text-amber-500"></i> <span>โฟลเดอร์ 1</span>
+                    </button>
+                    <button type="button" onclick="openSpecificManualFolder(1)" class="bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 py-1 px-1.5 rounded text-[11px] font-semibold flex items-center justify-center gap-1 transition shadow-xs">
+                        <i class="fa-solid fa-folder text-amber-500"></i> <span>โฟลเดอร์ 2</span>
+                    </button>
+                    <button type="button" onclick="openSpecificManualFolder(2)" class="bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 py-1 px-1.5 rounded text-[11px] font-semibold flex items-center justify-center gap-1 transition shadow-xs">
+                        <i class="fa-solid fa-folder text-amber-500"></i> <span>โฟลเดอร์ 3</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- กล่องตั้งค่าลิงก์โฟลเดอร์ Google Drive ของทีม (พับเก็บได้) -->
             <div id="manualFolderConfigBox" class="hidden bg-emerald-50/90 border border-emerald-200 rounded-lg p-2.5 space-y-1.5 text-[11px]">
                 <div class="font-bold text-emerald-900 flex items-center justify-between">
-                    <span>วางลิงก์โฟลเดอร์คู่มือ Google Drive (serviceshth@gmail.com):</span>
+                    <span>ตั้งค่าโฟลเดอร์เพิ่มเติม (ระบบฝัง 3 โฟลเดอร์หลักไว้แล้ว):</span>
                 </div>
                 <div class="flex gap-1">
-                    <input type="text" id="customDriveFolderInput" placeholder="วาง URL โฟลเดอร์ เช่น https://drive.google.com/drive/folders/..." class="flex-1 border border-emerald-300 rounded px-2 py-1 bg-white text-gray-800 focus:outline-none">
+                    <input type="text" id="customDriveFolderInput" placeholder="วาง URL โฟลเดอร์เพิ่มเติม (ถ้ามี)..." class="flex-1 border border-emerald-300 rounded px-2 py-1 bg-white text-gray-800 focus:outline-none">
                     <button type="button" onclick="saveCustomDriveFolderLink()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1 rounded font-bold">บันทึก</button>
                 </div>
                 <div id="savedFolderStatusText" class="text-[10px] text-emerald-800"></div>
@@ -7259,7 +7278,12 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         };
 
         // --- GOOGLE DRIVE MANUAL & PARTS LIST (PDF) SEARCH (SMART FLEXIBLE SEARCH) ---
-        const DEFAULT_MANUAL_FOLDER_ID = '';
+        const EMBEDDED_MANUAL_FOLDER_IDS = [
+            '1gxzMZ4l5wjXKoRTM0TRIH_l505y8AVsj',
+            '16FbLyB9eredvW8RH-dmk_NwhyaCOkiDR',
+            '1HVU-f-05Ts8ipWxwXdsXoI20TossTeL4'
+        ];
+        const DEFAULT_MANUAL_FOLDER_ID = EMBEDDED_MANUAL_FOLDER_IDS[0];
 
         function extractDriveFolderId(rawInput) {
             const val = (rawInput || '').trim();
@@ -7272,9 +7296,23 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             return '';
         }
 
-        function getSavedManualFolderId() {
+        function getSavedManualFolderIds() {
             const saved = localStorage.getItem('hoshizaki_manual_folder_id') || '';
-            return saved || DEFAULT_MANUAL_FOLDER_ID;
+            const ids = [...EMBEDDED_MANUAL_FOLDER_IDS];
+            if (saved && !ids.includes(saved)) {
+                ids.push(saved);
+            }
+            return ids;
+        }
+
+        function openSpecificManualFolder(idx) {
+            const folderId = EMBEDDED_MANUAL_FOLDER_IDS[idx] || DEFAULT_MANUAL_FOLDER_ID;
+            const targetUrl = `https://drive.google.com/drive/folders/${folderId}?usp=drive_link`;
+            window.open(targetUrl, '_blank');
+            document.getElementById('manualSearchMenu')?.classList.add('hidden');
+            if (typeof showToast === 'function') {
+                showToast(`กำลังเปิดโฟลเดอร์คู่มือ ${idx + 1} ใน Google Drive...`);
+            }
         }
 
         function toggleManualFolderConfig() {
@@ -7283,12 +7321,10 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             const status = document.getElementById('savedFolderStatusText');
             if (!box) return;
             box.classList.toggle('hidden');
-            const currentId = getSavedManualFolderId();
-            if (input && currentId) input.value = `https://drive.google.com/drive/folders/${currentId}`;
+            const saved = localStorage.getItem('hoshizaki_manual_folder_id') || '';
+            if (input && saved) input.value = `https://drive.google.com/drive/folders/${saved}`;
             if (status) {
-                status.innerText = currentId
-                    ? `✓ บันทึก Folder ID แล้ว (${currentId.slice(0, 10)}...)`
-                    : 'ยังไม่ได้ระบุโฟลเดอร์ (จะค้นหาจากไฟล์ทั้งหมดและไฟล์ที่แชร์กับฉัน)';
+                status.innerText = `✓ ฝังโฟลเดอร์หลัก 3 โฟลเดอร์ในโค้ดเรียบร้อยแล้ว${saved ? ' (+1 โฟลเดอร์เพิ่มเติม)' : ''}`;
             }
         }
 
@@ -7301,7 +7337,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 return;
             }
             localStorage.setItem('hoshizaki_manual_folder_id', folderId);
-            if (status) status.innerText = `✓ บันทึกโฟลเดอร์สำเร็จ! (${folderId.slice(0, 12)}...)`;
+            if (status) status.innerText = `✓ บันทึกโฟลเดอร์เพิ่มเติมสำเร็จ! (${folderId.slice(0, 12)}...)`;
             if (typeof showToast === 'function') showToast('บันทึกโฟลเดอร์คู่มือ Google Drive เรียบร้อยแล้ว');
         }
 
@@ -7415,28 +7451,26 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 queryParts.push('(Parts OR Part OR List OR Exploded)');
             }
 
-            const folderId = getSavedManualFolderId();
-            if (folderId) {
-                queryParts.push(`parent:${folderId}`);
+            const folderIds = getSavedManualFolderIds();
+            if (folderIds.length === 1) {
+                queryParts.push(`parent:${folderIds[0]}`);
+            } else if (folderIds.length > 1) {
+                const parentOrExpr = folderIds.map(id => `parent:${id}`).join(' OR ');
+                queryParts.push(`(${parentOrExpr})`);
             }
 
             const searchQuery = encodeURIComponent(queryParts.join(' '));
-            const driveSearchUrl = `https://drive.google.com/drive/search?q=${searchQuery}&authuser=serviceshth@gmail.com`;
+            const driveSearchUrl = `https://drive.google.com/drive/search?q=${searchQuery}`;
 
             window.open(driveSearchUrl, '_blank');
             document.getElementById('manualSearchMenu')?.classList.add('hidden');
             if (typeof showToast === 'function') {
-                showToast(`กำลังเปิดค้นหา PDF ใน Google Drive (${rawKeyword || 'ทุกไฟล์'})...`);
+                showToast(`กำลังค้นหา PDF ใน 3 โฟลเดอร์หลัก (${rawKeyword || 'ทุกไฟล์'})...`);
             }
         }
 
         function openSharedManualFolder() {
-            const folderId = getSavedManualFolderId();
-            const targetUrl = folderId
-                ? `https://drive.google.com/drive/folders/${folderId}?authuser=serviceshth@gmail.com`
-                : `https://drive.google.com/drive/shared-with-me?authuser=serviceshth@gmail.com`;
-            window.open(targetUrl, '_blank');
-            document.getElementById('manualSearchMenu')?.classList.add('hidden');
+            openSpecificManualFolder(0);
         }
 
         document.addEventListener('click', (e) => {

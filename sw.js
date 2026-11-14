@@ -1,8 +1,9 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v8';
+const CACHE_NAME = 'hoshizaki-service-pwa-v9';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './serial_db.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -46,7 +47,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first พร้อมอัปเดตเบื้องหลังสำหรับไฟล์ CSS/JS/Font
+  // Cache-first พร้อมอัปเดตเบื้องหลังสำหรับไฟล์ serial_db.json, CSS, JS, Font
   event.respondWith(
     caches.match(event.request).then((cached) => {
       const networkFetch = fetch(event.request)

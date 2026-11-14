@@ -3987,6 +3987,12 @@
                     <button type="button" onclick="exportReceiptExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
                         <i class="fa-solid fa-file-excel"></i> Excel
                     </button>
+                    <button type="button" onclick="shareReceiptPDFToLine()" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-file-pdf"></i> แชร์เข้า LINE
+                    </button>
+                    <button type="button" onclick="sendReceiptByEmail()" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-envelope"></i> ส่งอีเมล PDF
+                    </button>
                     <button type="button" onclick="printCurrentDocument('RECEIPT')" class="bg-purple-600 hover:bg-purple-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
                         <i class="fa-solid fa-print"></i> พิมพ์ใบเสร็จ
                     </button>
@@ -4961,9 +4967,21 @@
                 deleted: false,
                 isCustom: true
             });
+            const recPayload = {
+                serial,
+                productType,
+                model,
+                dateOut,
+                invoiceNo,
+                customer,
+                poNo,
+                deleted: false,
+                isCustom: true
+            };
             saveCustomSerialOverridesMap(overrides);
             loadSavedModelsIntoDatalist();
-            showToast(`บันทึก/อัปเดตข้อมูล S/N: ${serial} (ลูกค้า: ${customer || '-'}) เรียบร้อย ✓`);
+            pushSerialUpdateToCloud(recPayload);
+            showToast(`บันทึก/อัปเดตข้อมูล S/N: ${serial} (ลูกค้า: ${customer || '-'}) และซิงค์ขึ้น Cloud แล้ว ✓`);
         }
 
         function loadSavedModelsIntoDatalist() {
@@ -5079,6 +5097,7 @@
             saveCustomSerialOverridesMap(overrides);
             loadSavedModelsIntoDatalist();
             renderImportedModelsList();
+            pushSerialUpdateToCloud(recObj);
 
             // หากใบงานปัจจุบันเปิด S/N นี้อยู่ ให้อัปเดตหน้าฟอร์มทันที
             if ((document.getElementById('eqSerial')?.value.trim() || '').toUpperCase() === serial.toUpperCase()) {
@@ -7104,6 +7123,105 @@
             });
         }
 
+        async function buildReceiptPdfFile() {
+            const element = document.getElementById('receiptContainer');
+            const offerNo = document.getElementById('recOfferNo')?.innerText || 'Quotation';
+            const docPrefix = currentFinancialDocMode === 'RECEIPT' ? 'Hoshizaki_Receipt' : 'Hoshizaki_Quotation';
+            const filename = `${docPrefix}_${offerNo}.pdf`;
+
+            const history = JSON.parse(localStorage.getItem('hoshizaki_receipt_history') || '[]');
+            if (!history.some(h => h.offerNo === offerNo)) {
+                history.push({ offerNo, date: new Date().toISOString() });
+                localStorage.setItem('hoshizaki_receipt_history', JSON.stringify(history));
+            }
+
+            const opt = {
+                margin: [5, 5, 5, 5],
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 900 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+            const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+            return { pdfBlob, pdfFile, filename, offerNo };
+        }
+
+        async function shareReceiptPDFToLine() {
+            const docLabel = currentFinancialDocMode === 'RECEIPT' ? 'ใบเสร็จรับเงิน' : 'ใบเสนอราคา';
+            showToast(`กำลังสร้างไฟล์ PDF ${docLabel} เพื่อแชร์เข้า LINE...`);
+            try {
+                const { pdfBlob, pdfFile, filename, offerNo } = await buildReceiptPdfFile();
+                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                    try {
+                        await navigator.share({
+                            title: `HOSHIZAKI ${docLabel} - ${offerNo}`,
+                            text: `${docLabel} Hoshizaki เลขที่ ${offerNo}`,
+                            files: [pdfFile]
+                        });
+                        showToast(`แชร์ไฟล์ ${docLabel} PDF เรียบร้อยแล้ว`);
+                        return;
+                    } catch (err) {
+                        if (err.name === 'AbortError') return;
+                    }
+                }
+                triggerPdfDownload(pdfBlob, filename);
+                showToast(`ดาวน์โหลด ${filename} แล้ว สามารถส่งไฟล์เข้า LINE ได้ทันที`);
+            } catch (err) {
+                console.error(err);
+                showToast('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF');
+            }
+        }
+
+        async function sendReceiptByEmail() {
+            const docLabel = currentFinancialDocMode === 'RECEIPT' ? 'ใบเสร็จรับเงิน / ใบกำกับภาษี' : 'ใบเสนอราคา';
+            showToast(`กำลังพิมพ์${docLabel}เป็น PDF และจัดเตรียมอีเมล...`);
+            const custStore = document.getElementById('custStore')?.value || '';
+            const jobNo = document.getElementById('jobNo')?.value || '-';
+            const recTotal = document.getElementById('recTotal')?.innerText || '0.00';
+
+            try {
+                const { pdfBlob, pdfFile, filename, offerNo } = await buildReceiptPdfFile();
+                const subjectText = `[HOSHIZAKI] ${docLabel} เลขที่ ${offerNo} (อ้างอิงใบงาน ${jobNo}) - ${custStore}`;
+                const bodyText = `เรียน ลูกค้า/ผู้เกี่ยวข้อง,
+
+HOSHIZAKI (THAILAND) LIMITED ขอส่งเอกสาร${docLabel}
+
+รายละเอียดเอกสาร:
+- เลขที่เอกสาร: ${offerNo}
+- อ้างอิงใบงาน: ${jobNo}
+- ชื่อร้าน/ลูกค้า: ${custStore}
+- ยอดรวมสุทธิ: ${recTotal} THB
+
+ขอแสดงความนับถือ,
+ฝ่ายบริการลูกค้า HOSHIZAKI (THAILAND) LIMITED
+โทร: 02-005-9980-83`;
+
+                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                    try {
+                        await navigator.share({
+                            title: subjectText,
+                            text: bodyText,
+                            files: [pdfFile]
+                        });
+                        showToast('แนบไฟล์ PDF และเปิดแอปส่งอีเมลเรียบร้อยแล้ว');
+                        return;
+                    } catch (err) {
+                        if (err.name === 'AbortError') return;
+                    }
+                }
+
+                triggerPdfDownload(pdfBlob, filename);
+                const mailtoUrl = `mailto:?subject=${encodeURIComponent(subjectText)}&body=${encodeURIComponent(bodyText + `\n\n* หมายเหตุ: ไฟล์ PDF (${filename}) ถูกดาวน์โหลดลงในเครื่องแล้ว กรุณาแนบไฟล์ส่งออก`)}`;
+                showToast(`บันทึกไฟล์ ${filename} แล้ว กำลังเปิดโปรแกรมอีเมล...`);
+                setTimeout(() => { window.location.href = mailtoUrl; }, 800);
+            } catch (err) {
+                console.error(err);
+                showToast('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF สำหรับส่งอีเมล');
+            }
+        }
+
         // --- SEND JOB SERVICE PDF BY EMAIL ---
                 async function sendJobByEmail() {
             showToast('กำลังพิมพ์เป็นไฟล์ PDF และเตรียมแนบส่งอีเมล...');
@@ -7965,10 +8083,20 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
 
             const jobData = collectFullJobData();
-            // ตัดข้อมูลรูปภาพขนาดใหญ่ออกเพื่อส่งข้อมูลข้อความและรายการอะไหล่เข้า Google Sheets ได้รวดเร็ว
+            // ส่งรูปถ่ายหน้างาน (ย่อขนาดแล้วไม่เกิน 6 รูปต่อครั้ง) เพื่ออัปโหลดลงโฟลเดอร์ Google Drive อัตโนมัติ
+            const photosForCloud = Array.isArray(jobData.photos)
+                ? jobData.photos.slice(0, 6).map((p, idx) => ({
+                    name: `${jobData.jobNo || 'JOB'}_photo_${idx + 1}.jpg`,
+                    caption: p.caption || '',
+                    dataUrl: p.src || ''
+                }))
+                : [];
+
             const cloudPayload = {
                 ...jobData,
+                actionType: 'SAVE_JOB',
                 photosCount: Array.isArray(jobData.photos) ? jobData.photos.length : 0,
+                photosPayload: photosForCloud,
                 photos: undefined,
                 signatures: undefined,
                 partsSummary: (jobData.parts || [])
@@ -8108,8 +8236,67 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
         }
 
+        async function pushSerialUpdateToCloud(recObj) {
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (!webhookUrl || !recObj || !recObj.serial) return;
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'UPDATE_SERIAL',
+                        serial: recObj.serial,
+                        productType: recObj.productType || '',
+                        model: recObj.model || '',
+                        dateOut: recObj.dateOut || '',
+                        invoiceNo: recObj.invoiceNo || '',
+                        customer: recObj.customer || '',
+                        poNo: recObj.poNo || '',
+                        deleted: !!recObj.deleted
+                    })
+                });
+            } catch (err) {
+                console.warn('Serial cloud push skipped:', err);
+            }
+        }
+
+        async function syncSerialUpdatesFromCloud() {
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (!webhookUrl) return;
+            try {
+                const res = await fetch(`${webhookUrl}?action=getSerialUpdates`);
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data && Array.isArray(data.updates) && data.updates.length > 0) {
+                    const overrides = getCustomSerialOverridesMap();
+                    data.updates.forEach(item => {
+                        if (item && item.serial) {
+                            const key = String(item.serial).trim().toUpperCase();
+                            overrides.set(key, {
+                                serial: String(item.serial).trim(),
+                                productType: String(item.productType || '').trim(),
+                                model: String(item.model || '').trim(),
+                                dateOut: String(item.dateOut || '').trim(),
+                                invoiceNo: String(item.invoiceNo || '').trim(),
+                                customer: String(item.customer || '').trim(),
+                                poNo: String(item.poNo || '').trim(),
+                                deleted: !!item.deleted,
+                                isCustom: true
+                            });
+                        }
+                    });
+                    saveCustomSerialOverridesMap(overrides);
+                    loadSavedModelsIntoDatalist();
+                }
+            } catch (err) {
+                console.warn('Serial cloud pull skipped:', err);
+            }
+        }
+
         window.addEventListener('load', () => {
             setTimeout(checkWeeklyBackupReminder, 800);
+            loadExternalSerialDatabase();
         });
 
         (function initPwaAndLineCheck() {

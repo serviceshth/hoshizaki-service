@@ -404,7 +404,12 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-sm sm:text-lg leading-tight tracking-wide">HOSHIZAKI (THAILAND)</h1>
-                    <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System</p>
+                    <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System</p>
+                        <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="text-[10px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full font-bold transition" title="สลับโหมดหน้าจอระหว่าง ผู้จ่ายงาน/ผู้จัดการ และ ช่างหน้างาน">
+                            <i class="fa-solid fa-user-shield mr-0.5"></i> โหมด: ผู้จัดการ/จ่ายงาน
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -474,6 +479,9 @@
                 <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ Sheets / แชร์ทีม</span>
             </button>
 
+            <button type="button" onclick="openErrorCodeModal()" class="flex-1 sm:flex-none justify-center bg-rose-700 hover:bg-rose-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-triangle-exclamation"></i> <span>เช็ก Error Code</span>
+            </button>
             <!-- ปุ่มเปิดเมนูค้นหา Service Manual / Instruction Manual / Parts List (PDF) -->
             <button type="button" id="btnManualSearchTrigger" onclick="toggleManualSearchMenu(event)" class="flex-1 sm:flex-none justify-center bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-book-open"></i> <span>ค้นหาคู่มือ / Parts (PDF)</span>
@@ -3410,7 +3418,10 @@
         <div class="border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-3">
             <div class="flex justify-between items-center border-b border-gray-200 pb-1.5 text-hoshizaki-navy font-bold text-xs uppercase tracking-wider">
                 <span class="flex items-center gap-2"><i class="fa-solid fa-list-check text-hoshizaki-blue"></i> รายการอะไหล่และค่าบริการ (Spare Parts & Billing)</span>
-                <div class="no-print flex items-center gap-1.5">
+                <div class="no-print flex flex-wrap items-center gap-1.5">
+                    <button type="button" onclick="openPartPriceDbModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm" title="ตั้งค่า/นำเข้าตารางราคาอะไหล่มาตรฐานเพื่อดึงราคาอัตโนมัติ">
+                        <i class="fa-solid fa-tags"></i> ฐานราคาอะไหล่
+                    </button>
                     <button type="button" onclick="openPartsBatchScanner()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-medium transition shadow-sm">
                         <i class="fa-solid fa-barcode"></i> สแกนบาร์โค้ดอะไหล่
                     </button>
@@ -4680,6 +4691,7 @@
         function saveTechnicianDirectory(list) {
             localStorage.setItem('hoshizaki_tech_directory', JSON.stringify(list));
             refreshAllStaffUI();
+            applyUserRoleModeUI();
         }
 
         function getCoordinatorDirectory() {
@@ -5800,13 +5812,14 @@
 
         function autoFillPartPrice(inputEl) {
             const val = (inputEl.value || '').trim();
-            if (DEFAULT_PART_PRICES[val] !== undefined) {
+            const combinedPrices = { ...DEFAULT_PART_PRICES, ...getCustomPartPriceMap() };
+            if (combinedPrices[val] !== undefined) {
                 const row = inputEl.closest('tr');
                 const priceInput = row?.querySelector('.parts-price');
                 if (priceInput && (parseFloat(priceInput.value) === 0 || !priceInput.value)) {
-                    priceInput.value = DEFAULT_PART_PRICES[val].toFixed(2);
+                    priceInput.value = Number(combinedPrices[val]).toFixed(2);
                     calculateTotals();
-                    showToast(`เติมราคามาตรฐาน (${DEFAULT_PART_PRICES[val].toLocaleString()} บาท) อัตโนมัติ`);
+                    showToast(`เติมราคามาตรฐาน (${Number(combinedPrices[val]).toLocaleString()} บาท) อัตโนมัติ`);
                 }
             }
         }
@@ -6212,6 +6225,7 @@
 
                 localStorage.setItem('hoshizaki_job_history', JSON.stringify(history));
                 saveCustomerProfileToDirectory(jobData);
+                markMatchingScheduleItemDone(jobData);
                 showToast(`บันทึกใบงาน ${jobData.jobNo} สำเร็จแล้ว`);
                 const autoSyncEnabled = localStorage.getItem('hoshizaki_auto_sync_sheets') !== 'false';
                 if (autoSyncEnabled && getGoogleSheetsWebhookUrl()) {
@@ -9600,9 +9614,16 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                                 ${m.onsiteContact ? `<div class="text-[11px] text-gray-800 mt-0.5">📞 หน้างาน: <b>${m.onsiteContact}</b></div>` : ''}
                                 ${teamList.length > 1 ? `<div class="text-[10px] text-indigo-900 mt-0.5">👷 ร่วมทีม: ${teamList.join(', ')}</div>` : ''}
                                 <div class="flex flex-wrap items-center gap-1.5 mt-2 pt-1.5 border-t border-black/10">
-                                    ${mapLink !== '-' ? `<a href="${mapLink}" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1"><i class="fa-solid fa-location-dot"></i> นำทาง Maps</a>` : ''}
+                                    ${m.jobStatus === 'DONE' ? `<span class="bg-emerald-700 text-white text-[10px] font-extrabold px-2 py-1 rounded-lg"><i class="fa-solid fa-circle-check mr-0.5"></i> ปิดงานแล้ว</span>` : ''}
+                                    <button type="button" onclick="mobileCheckInScheduleJob('${m.id}')" class="bg-sky-600 hover:bg-sky-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1">
+                                        <i class="fa-solid fa-right-to-bracket"></i> ${m.checkedInTime ? 'เข้างาน ' + m.checkedInTime : 'เช็กอินเริ่มงาน'}
+                                    </button>
+                                    <button type="button" onclick="mobileCheckOutScheduleJob('${m.id}')" class="bg-amber-600 hover:bg-amber-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1">
+                                        <i class="fa-solid fa-flag-checkered"></i> ${m.checkedOutTime ? 'ออก ' + m.checkedOutTime : 'เช็กเอาต์ปิดงาน'}
+                                    </button>
+                                    ${mapLink !== '-' ? `<a href="${mapLink}" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1"><i class="fa-solid fa-location-dot"></i> แผนที่</a>` : ''}
                                     <button type="button" onclick="quickConvertIdToServiceReport('${m.id}')" class="bg-purple-600 hover:bg-purple-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1">
-                                        <i class="fa-solid fa-file-signature"></i> เปิดใบแจ้งบริการ
+                                        <i class="fa-solid fa-file-signature"></i> ใบแจ้งบริการ
                                     </button>
                                 </div>
                             </div>
@@ -9815,6 +9836,316 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 }, 'image/png');
             } catch (err) {
                 showToast('เกิดข้อผิดพลาดในการสร้างรูปภาพ');
+            }
+        }
+
+
+        // =========================================================================
+        // MODULE: WORKFLOW AUTOMATION, PART PRICES, ERROR CODES & ROLE MODE (v12.4)
+        // =========================================================================
+        let currentUserRoleMode = localStorage.getItem('hoshizaki_user_role') || 'MANAGER'; // 'MANAGER' | 'TECH'
+
+        function applyUserRoleModeUI() {
+            const btn = document.getElementById('roleModeToggleBtn');
+            if (btn) {
+                btn.innerHTML = currentUserRoleMode === 'TECH'
+                    ? '<i class="fa-solid fa-screwdriver-wrench mr-0.5"></i> โหมด: ช่างหน้างาน (กระชับ)'
+                    : '<i class="fa-solid fa-user-shield mr-0.5"></i> โหมด: ผู้จัดการ/จ่ายงาน';
+            }
+            const techSummary = document.getElementById('techSummaryPanel');
+            if (techSummary) {
+                techSummary.classList.toggle('hidden', currentUserRoleMode === 'TECH');
+            }
+        }
+
+        function toggleUserRoleMode() {
+            currentUserRoleMode = currentUserRoleMode === 'MANAGER' ? 'TECH' : 'MANAGER';
+            localStorage.setItem('hoshizaki_user_role', currentUserRoleMode);
+            applyUserRoleModeUI();
+            showToast(currentUserRoleMode === 'TECH' ? 'สลับเป็นโหมดช่างหน้างาน (แสดงเฉพาะส่วนที่จำเป็น)' : 'สลับเป็นโหมดผู้จัดการ / ผู้จ่ายงาน (แสดงครบทุกฟังก์ชัน)');
+        }
+
+        // --- Custom Part Price Database ---
+        function getCustomPartPriceMap() {
+            try {
+                return JSON.parse(localStorage.getItem('hoshizaki_custom_part_prices') || '{}');
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function openPartPriceDbModal() {
+            renderPartPriceDbTable();
+            document.getElementById('partPriceDbModal')?.classList.remove('hidden');
+        }
+
+        function closePartPriceDbModal() {
+            document.getElementById('partPriceDbModal')?.classList.add('hidden');
+        }
+
+        function saveCustomPartPriceEntry() {
+            const desc = (document.getElementById('newPartPriceCodeInput')?.value || '').trim();
+            const price = parseFloat(document.getElementById('newPartPriceValInput')?.value || '0');
+            if (!desc) {
+                showToast('กรุณาระบุรหัสหรือชื่ออะไหล่');
+                return;
+            }
+            const map = getCustomPartPriceMap();
+            map[desc] = isNaN(price) ? 0 : price;
+            localStorage.setItem('hoshizaki_custom_part_prices', JSON.stringify(map));
+            document.getElementById('newPartPriceCodeInput').value = '';
+            document.getElementById('newPartPriceValInput').value = '';
+            renderPartPriceDbTable();
+            showToast(`บันทึกราคาอะไหล่ ${desc} (${price.toLocaleString()} บาท) เรียบร้อย ✓`);
+        }
+
+        function deleteCustomPartPriceEntry(key) {
+            const map = getCustomPartPriceMap();
+            delete map[key];
+            localStorage.setItem('hoshizaki_custom_part_prices', JSON.stringify(map));
+            renderPartPriceDbTable();
+        }
+
+        function renderPartPriceDbTable() {
+            const tbody = document.getElementById('partPriceDbTableBody');
+            if (!tbody) return;
+            const q = (document.getElementById('partPriceSearchInput')?.value || '').trim().toLowerCase();
+            const combined = { ...DEFAULT_PART_PRICES, ...getCustomPartPriceMap() };
+            const keys = Object.keys(combined).filter(k => !q || k.toLowerCase().includes(q));
+            tbody.innerHTML = keys.map(k => `
+                <tr class="hover:bg-amber-50/40">
+                    <td class="p-2 font-medium text-gray-800">${k}</td>
+                    <td class="p-2 text-right font-bold text-hoshizaki-navy">${Number(combined[k] || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td class="p-2 text-center">
+                        ${getCustomPartPriceMap()[k] !== undefined
+                            ? `<button type="button" onclick="deleteCustomPartPriceEntry('${k.replace(/'/g, "\'")}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash-can"></i></button>`
+                            : '<span class="text-[10px] text-gray-400">มาตรฐาน</span>'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function importPartPricesFromExcel(event) {
+            const file = event.target.files?.[0];
+            if (!file || typeof XLSX === 'undefined') return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+                    const map = getCustomPartPriceMap();
+                    let count = 0;
+                    rows.forEach(r => {
+                        const code = String(r['Part No'] || r['Part No.'] || r['Code'] || r['รหัสอะไหล่'] || '').trim();
+                        const desc = String(r['Description'] || r['Part Name'] || r['รายการ'] || '').trim();
+                        const price = parseFloat(r['Price'] || r['Unit Price'] || r['ราคา'] || '0');
+                        const key = code && desc ? `${code} - ${desc}` : (code || desc);
+                        if (key && !isNaN(price) && price > 0) {
+                            map[key] = price;
+                            count++;
+                        }
+                    });
+                    localStorage.setItem('hoshizaki_custom_part_prices', JSON.stringify(map));
+                    renderPartPriceDbTable();
+                    showToast(`นำเข้าฐานราคาอะไหล่สำเร็จ ${count} รายการ ✓`);
+                } catch (err) {
+                    showToast('ไม่สามารถอ่านไฟล์ Excel ราคาอะไหล่ได้');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            event.target.value = '';
+        }
+
+        // --- Hoshizaki Error Code Troubleshooter ---
+        const HOSHIZAKI_ERROR_CODES = [
+            { code: 'E1', series: 'ICE_IM', title: 'IM Series: น้ำไม่เข้าถังหรือลูกลอยไม่ทำงานภายในเวลาที่กำหนด', cause: 'วาล์วน้ำเข้า (Water Valve) เสีย/อุดตัน, แรงดันน้ำต่ำ, ท่อน้ำพับ, หรือ Float Switch ค้าง', action: 'ตรวจเช็กแรงดันน้ำเข้าและไส้กรองน้ำ ทำความสะอาดตะแกรงวาล์วน้ำ ตรวจวัดไฟเลี้ยง Water Valve และทดสอบหน้าสัมผัส Float Switch' },
+            { code: 'E2', series: 'ICE_IM', title: 'IM Series: ถาดน้ำ (Water Pan) ไม่เปิดหรือปิดไม่สนิท (Actuator Error)', cause: 'มอเตอร์ถาดน้ำ (Actuator Motor) เสีย, สปริงหลุด/ล้า, หรือ Micro Switch ไม่ตัดต่อวงจร', action: 'ตรวจสอบกลไกถาดน้ำและสปริง ทดสอบการทำงานของ Actuator Motor และเช็กสถานะ Micro Switch บนบอร์ด' },
+            { code: 'E3', series: 'ICE_IM', title: 'IM Series: ระยะเวลาทำน้ำแข็งนานผิดปกติ (Freeze Cycle Timeout)', cause: 'แผงคอยล์ร้อนสกปรกอุดตัน, พัดลมระบายความร้อนไม่หมุน, น้ำยาขาด/รั่ว, หรืออุณหภูมิห้องสูงเกิน 40°C', action: 'ล้างทำความสะอาดคอยล์ร้อนและแผ่นกรองฝุ่น ตรวจเช็กมอเตอร์พัดลม และวัดแรงดันน้ำยา High/Low' },
+            { code: 'E4', series: 'ICE_IM', title: 'IM Series: ระยะเวลาละลายน้ำแข็งนานผิดปกติ (Harvest Cycle Timeout)', cause: 'วาล์ว Hot Gas ไม่เปิด, ถาดน้ำค้าง, หรือเซ็นเซอร์อุณหภูมิคอยล์เย็น (Thermistor) เพี้ยน', action: 'ตรวจวัดคอยล์วาล์ว Hot Gas ทดสอบค่าความต้านทาน Thermistor และเช็กการระบายน้ำทิ้ง' },
+            { code: 'E5 / High Temp', series: 'ICE_IM', title: 'IM Series: อุณหภูมิแผงคอยล์ร้อนสูงเกินกำหนด (High Condenser Temp)', cause: 'คอยล์ร้อนอุดตันหนัก, พัดลมคอยล์ร้อนเสีย, หรือพื้นที่ติดตั้งระบายอากาศไม่ถ่ายเท', action: 'ล้างคอยล์ร้อนด้วยน้ำสะอาด เป่าไล่ฝุ่น เช็กการหมุนของพัดลม และแนะนำลูกค้าเรื่องระยะห่างระบายอากาศ' },
+            { code: '1 / 2 Beep (KM)', series: 'ICE_KM', title: 'KM Series: ระบบตัดการทำงาน (Long Freeze / Long Harvest)', cause: 'ระดับน้ำในถังไม่ถึงโพรบ, ปั๊มน้ำไม่ฉีด, Hot Gas Valve ไม่ทำงาน, หรือน้ำยาต่ำ', action: 'ทำความสะอาดหัวฉีดสเปรย์และถังพักน้ำ ตรวจเช็กปั๊มน้ำและค่าความต้านทาน Thermistor' },
+            { code: 'E1 / E2 (FM)', series: 'ICE_FM', title: 'FM Series: กระแสไฟ Gear Motor สูงเกินหรือรอบหมุนผิดปกติ', cause: 'ชุดลูกปืน/ซีลแกนสว่าน (Auger Bearing/Seal) สึกหรอ, น้ำไม่เข้าถังทำให้น้ำแข็งจับตัวแน่นเกินไป', action: 'ตรวจสอบระบบน้ำเข้าและลูกลอย ตรวจเช็กกระแสไฟ Gear Motor และสภาพชุด Auger / Bearing' },
+            { code: 'E1 / E2 / Hi / Lo', series: 'FRIDGE', title: 'ตู้แช่เย็น/แช่แข็ง: เซ็นเซอร์อุณหภูมิ (Thermistor) ขาด/ลัดวงจร หรืออุณหภูมิเกินขอบเขต', cause: 'เซ็นเซอร์ตู้ (Cabinet Sensor) หรือเซ็นเซอร์ละลายน้ำแข็งเสีย, ยางขอบประตูรั่ว, คอยล์ร้อนสกปรก', action: 'ตรวจวัดค่าโอห์มของเซ็นเซอร์ ตรวจสอบยางขอบประตู พัดลมคอยล์เย็น และระบบละลายน้ำแข็ง (Defrost Heater)' }
+        ];
+
+        function openErrorCodeModal() {
+            renderErrorCodeList();
+            document.getElementById('errorCodeModal')?.classList.remove('hidden');
+        }
+
+        function closeErrorCodeModal() {
+            document.getElementById('errorCodeModal')?.classList.add('hidden');
+        }
+
+        function renderErrorCodeList() {
+            const container = document.getElementById('errorCodeListContainer');
+            if (!container) return;
+            const q = (document.getElementById('errorCodeSearchInput')?.value || '').trim().toLowerCase();
+            const series = document.getElementById('errorCodeSeriesFilter')?.value || 'ALL';
+
+            const filtered = HOSHIZAKI_ERROR_CODES.filter(item => {
+                const matchSeries = series === 'ALL' || item.series === series;
+                const matchQ = !q || item.code.toLowerCase().includes(q) || item.title.toLowerCase().includes(q) || item.cause.toLowerCase().includes(q);
+                return matchSeries && matchQ;
+            });
+
+            container.innerHTML = filtered.length === 0
+                ? '<div class="text-center text-gray-400 py-6">ไม่พบรหัส Error Code ที่ค้นหา</div>'
+                : filtered.map((it, idx) => `
+                    <div class="border border-gray-200 rounded-xl p-3 bg-gray-50/70 space-y-1.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <div>
+                                <span class="inline-block bg-rose-600 text-white font-extrabold px-2 py-0.5 rounded mr-1.5">${it.code}</span>
+                                <span class="font-bold text-hoshizaki-navy">${it.title}</span>
+                            </div>
+                            <button type="button" onclick="applyErrorCodeToJobForm(${idx})" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-[11px] px-2.5 py-1 rounded-lg font-bold flex-shrink-0">
+                                + ใส่ในใบแจ้งบริการ
+                            </button>
+                        </div>
+                        <div class="text-gray-700"><b>สาเหตุ:</b> ${it.cause}</div>
+                        <div class="text-emerald-900"><b>การแก้ไข:</b> ${it.action}</div>
+                    </div>
+                `).join('');
+        }
+
+        function applyErrorCodeToJobForm(filteredIndex) {
+            const q = (document.getElementById('errorCodeSearchInput')?.value || '').trim().toLowerCase();
+            const series = document.getElementById('errorCodeSeriesFilter')?.value || 'ALL';
+            const filtered = HOSHIZAKI_ERROR_CODES.filter(item => {
+                const matchSeries = series === 'ALL' || item.series === series;
+                const matchQ = !q || item.code.toLowerCase().includes(q) || item.title.toLowerCase().includes(q) || item.cause.toLowerCase().includes(q);
+                return matchSeries && matchQ;
+            });
+            const it = filtered[filteredIndex];
+            if (!it) return;
+            const symEl = document.getElementById('diagSymptom');
+            const detEl = document.getElementById('diagDetected');
+            const actEl = document.getElementById('diagAction');
+            if (symEl && !symEl.value.trim()) symEl.value = `Error ${it.code}: ${it.title}`;
+            if (detEl) detEl.value = it.cause;
+            if (actEl) actEl.value = it.action;
+            closeErrorCodeModal();
+            debounceAutoSave();
+            showToast(`นำข้อมูล Error ${it.code} ลงในใบแจ้งบริการเรียบร้อย ✓`);
+        }
+
+        // --- One-Tap Mobile Check-In / Check-Out & Auto-Sync Schedule Status ---
+        function mobileCheckInScheduleJob(itemId) {
+            const items = getScheduleItems();
+            const idx = items.findIndex(x => x.id === itemId);
+            if (idx < 0) return;
+            const now = new Date();
+            const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            items[idx].checkedInTime = hhmm;
+            saveScheduleItems(items);
+            renderWeeklyScheduleBoard();
+            showToast(`เช็กอินเริ่มงานเวลา ${hhmm} น. เรียบร้อย ✓`);
+        }
+
+        function mobileCheckOutScheduleJob(itemId) {
+            const items = getScheduleItems();
+            const idx = items.findIndex(x => x.id === itemId);
+            if (idx < 0) return;
+            const now = new Date();
+            const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            items[idx].checkedOutTime = hhmm;
+            items[idx].jobStatus = 'DONE';
+            saveScheduleItems(items);
+            renderWeeklyScheduleBoard();
+            showToast(`เช็กเอาต์ปิดงานเวลา ${hhmm} น. เรียบร้อย ✓`);
+        }
+
+        function markMatchingScheduleItemDone(jobData) {
+            if (!jobData || jobData.jobStatus !== 'Completed') return;
+            const items = getScheduleItems();
+            let changed = false;
+            items.forEach(it => {
+                if (it.slotType !== 'WAITING' && it.date === jobData.date) {
+                    const sameStore = it.store && jobData.store && it.store.trim().toLowerCase() === jobData.store.trim().toLowerCase();
+                    const sameSerial = it.serial && jobData.serial && it.serial.trim().toUpperCase() === jobData.serial.trim().toUpperCase();
+                    if (sameStore || sameSerial) {
+                        it.jobStatus = 'DONE';
+                        if (jobData.timeOut) it.checkedOutTime = jobData.timeOut;
+                        changed = true;
+                    }
+                }
+            });
+            if (changed) saveScheduleItems(items);
+        }
+
+        // --- Pull Upcoming PM & Waiting Parts Jobs into Waiting Plan ---
+        function pullUpcomingPmToWaitingPlan() {
+            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const items = getScheduleItems();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const in30Days = new Date(today.getTime() + 30 * 86400000);
+            let added = 0;
+
+            history.forEach(job => {
+                // 1. Waiting Parts jobs
+                if (job.jobStatus === 'Waiting Parts') {
+                    const exists = items.some(it => it.slotType === 'WAITING' && it.store === job.store && (it.workDetail || '').includes(job.jobNo));
+                    if (!exists && job.store) {
+                        items.unshift({
+                            id: 'SCH-WP-' + Date.now() + '-' + added,
+                            slotType: 'WAITING',
+                            date: document.getElementById('scheduleWeekStartInput')?.value || getMondayOfDate(),
+                            timeStart: '09:00',
+                            timeEnd: '12:00',
+                            techs: job.responsibleTech ? [job.responsibleTech] : [TECHNICIAN_DIRECTORY[0].name],
+                            store: job.store,
+                            onsiteContact: job.contact || '',
+                            address: job.address || '',
+                            serial: job.serial || '',
+                            model: job.model || '',
+                            jobCategory: 'ซ่อมแซม (Repair)',
+                            workDetail: `[รออะไหล่จาก ${job.jobNo}] ${job.symptom || ''}`.trim(),
+                            coordName: getCoordinatorDirectory()[0]?.name || '',
+                            coordPhone: getCoordinatorDirectory()[0]?.phone || '',
+                            dispatcherName: getCoordinatorDirectory()[1]?.name || '',
+                            dispatcherPhone: getCoordinatorDirectory()[1]?.phone || ''
+                        });
+                        added++;
+                    }
+                }
+                // 2. Upcoming Next PM within 30 days
+                if (job.nextPmDate) {
+                    const pmD = new Date(job.nextPmDate + 'T00:00:00');
+                    if (!isNaN(pmD.getTime()) && pmD >= today && pmD <= in30Days) {
+                        const existsPm = items.some(it => it.slotType === 'WAITING' && it.store === job.store && (it.workDetail || '').includes(job.nextPmDate));
+                        if (!existsPm && job.store) {
+                            items.unshift({
+                                id: 'SCH-PM-' + Date.now() + '-' + added,
+                                slotType: 'WAITING',
+                                date: job.nextPmDate,
+                                timeStart: '09:00',
+                                timeEnd: '12:00',
+                                techs: job.responsibleTech ? [job.responsibleTech] : [TECHNICIAN_DIRECTORY[0].name],
+                                store: job.store,
+                                onsiteContact: job.contact || '',
+                                address: job.address || '',
+                                serial: job.serial || '',
+                                model: job.model || '',
+                                jobCategory: 'บำรุงรักษา (PM)',
+                                workDetail: `[นัด PM รอบวันที่ ${job.nextPmDate}] เครื่องรุ่น ${job.model || '-'}`,
+                                coordName: getCoordinatorDirectory()[0]?.name || '',
+                                coordPhone: getCoordinatorDirectory()[0]?.phone || '',
+                                dispatcherName: getCoordinatorDirectory()[1]?.name || '',
+                                dispatcherPhone: getCoordinatorDirectory()[1]?.phone || ''
+                            });
+                            added++;
+                        }
+                    }
+                }
+            });
+
+            if (added > 0) {
+                saveScheduleItems(items);
+                renderWeeklyScheduleBoard();
+                showToast(`ดึงรายการนัด PM ล่วงหน้าและงานรออะไหล่เข้า Waiting Plan สำเร็จ ${added} รายการ ✓`);
+            } else {
+                showToast('ไม่มีรายการนัด PM ใน 30 วันข้างหน้าหรืองานรออะไหล่ค้างใหม่');
             }
         }
 
@@ -10598,6 +10929,9 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <button type="button" onclick="openDispatchEditorModal()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
                         <i class="fa-solid fa-plus-circle"></i> <span>เพิ่มงาน / จ่ายงานใหม่</span>
                     </button>
+                    <button type="button" onclick="pullUpcomingPmToWaitingPlan()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs" title="ดึงรายการนัดหมาย PM และงานรออะไหล่จากประวัติเข้า Waiting Plan อัตโนมัติ">
+                        <i class="fa-solid fa-calendar-plus"></i> <span>ดึงนัด PM / รออะไหล่เข้าคิว</span>
+                    </button>
                     <button type="button" onclick="openStaffManagerModal()" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
                         <i class="fa-solid fa-users-gear"></i> <span>เพิ่ม/ลด ช่าง & ผู้ประสานงาน</span>
                     </button>
@@ -11023,6 +11357,83 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             <!-- Live Mobile Preview Container (Also used directly by html2canvas so preview == exported image) -->
             <div class="overflow-y-auto flex-1 bg-slate-100 p-2 rounded-xl border border-slate-200">
                 <div id="mobileSchedulePosterCard" style="background: #ffffff; font-family: 'Prompt', 'Inter', sans-serif; color: #111827;" class="rounded-xl overflow-hidden border-2 border-hoshizaki-navy shadow-sm"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Hoshizaki Error Code Troubleshooter Modal (v12.4) -->
+    <div id="errorCodeModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[75] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-4 sm:p-5 space-y-3 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-2.5 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">คลังรหัส Error Code & แนวทางแก้ไข Hoshizaki</h3>
+                        <p class="text-[11px] text-gray-500">ค้นหารหัส Error (เช่น E1, E2, E3, E4, E5, 1, 2, 3, Hi, Lo) และกดนำข้อความลงใบแจ้งบริการได้ทันที</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeErrorCodeModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+            <div class="flex gap-2 text-xs flex-shrink-0">
+                <input type="text" id="errorCodeSearchInput" oninput="renderErrorCodeList()" placeholder="พิมพ์รหัส Error เช่น E1, E2, E4, High Temp, Drain, Pump..." class="flex-1 border border-gray-300 rounded-xl px-3 py-2 font-bold text-hoshizaki-navy focus:outline-none focus:border-hoshizaki-blue">
+                <select id="errorCodeSeriesFilter" onchange="renderErrorCodeList()" class="border border-gray-300 rounded-xl px-2.5 py-2 bg-gray-50 font-semibold text-gray-700">
+                    <option value="ALL">ทุกกลุ่มเครื่อง</option>
+                    <option value="ICE_IM">IM Series (น้ำแข็งก้อน)</option>
+                    <option value="ICE_KM">KM Series (เสี้ยวพระจันทร์)</option>
+                    <option value="ICE_FM">FM Series (เกล็ดน้ำแข็ง)</option>
+                    <option value="FRIDGE">ตู้แช่เย็น / ตู้แช่แข็ง</option>
+                </select>
+            </div>
+            <div id="errorCodeListContainer" class="overflow-y-auto flex-1 space-y-2 pr-1 text-xs"></div>
+            <div class="flex justify-end pt-2 border-t flex-shrink-0">
+                <button type="button" onclick="closeErrorCodeModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Spare Part Price Database Modal (v12.4) -->
+    <div id="partPriceDbModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[75] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-4 sm:p-5 space-y-3 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-2.5 flex-shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy"><i class="fa-solid fa-tags text-amber-600 mr-1"></i> ฐานข้อมูลราคาอะไหล่มาตรฐาน (Auto-Price Lookup)</h3>
+                    <p class="text-[11px] text-gray-500">บันทึกหรือนำเข้าไฟล์ Excel ราคาอะไหล่ เมื่อเลือก/สแกนรหัสอะไหล่ในใบงาน ระบบจะดึงราคาต่อหน่วยให้อัตโนมัติ</p>
+                </div>
+                <button type="button" onclick="closePartPriceDbModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+
+            <div class="grid grid-cols-12 gap-1.5 bg-amber-50/70 p-2.5 rounded-xl border border-amber-200 text-xs flex-shrink-0">
+                <input type="text" id="newPartPriceCodeInput" list="hoshizakiPartsList" placeholder="รหัสหรือชื่ออะไหล่ (เช่น 4A5251-06 หรือ Water Valve) *" class="col-span-7 border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold">
+                <input type="number" id="newPartPriceValInput" placeholder="ราคา/หน่วย (THB) *" step="10" class="col-span-3 border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white text-right font-bold">
+                <button type="button" onclick="saveCustomPartPriceEntry()" class="col-span-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold">บันทึก</button>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs flex-shrink-0">
+                <input type="text" id="partPriceSearchInput" oninput="renderPartPriceDbTable()" placeholder="ค้นหารหัสอะไหล่หรือชื่ออะไหล่..." class="flex-1 min-w-[180px] border border-gray-300 rounded-lg px-3 py-1.5">
+                <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold cursor-pointer flex items-center gap-1">
+                    <i class="fa-solid fa-file-excel"></i> <span>นำเข้า Excel ราคาอะไหล่</span>
+                    <input type="file" accept=".xlsx,.xls,.csv" onchange="importPartPricesFromExcel(event)" class="hidden">
+                </label>
+            </div>
+
+            <div class="overflow-y-auto flex-1 border border-gray-200 rounded-lg bg-white text-xs">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-100 text-gray-700 font-bold sticky top-0 border-b">
+                        <tr>
+                            <th class="p-2">รหัส / รายการอะไหล่</th>
+                            <th class="p-2 text-right w-32">ราคา/หน่วย (THB)</th>
+                            <th class="p-2 text-center w-16">ลบ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="partPriceDbTableBody" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-end pt-2 border-t flex-shrink-0">
+                <button type="button" onclick="closePartPriceDbModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>

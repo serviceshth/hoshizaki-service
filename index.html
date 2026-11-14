@@ -439,6 +439,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     </head>
 <body class="p-2 sm:p-4 md:p-6 pb-24 sm:pb-6 min-h-screen">
+
+    <!-- Batch Photo Upload Progress Banner (v12.7) -->
+    <div id="cloudBatchUploadBanner" class="hidden no-print fixed top-3 inset-x-3 sm:inset-x-auto sm:right-4 sm:w-96 bg-hoshizaki-navy text-white border border-hoshizaki-blue p-3 rounded-xl shadow-2xl z-[90] space-y-1.5 text-xs">
+        <div class="flex items-center justify-between font-bold">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-cloud-arrow-up text-hoshizaki-blue animate-bounce"></i> <span id="cloudBatchUploadTitle">กำลังอัปโหลดรูปขึ้น Google Drive...</span></span>
+            <span id="cloudBatchUploadPct" class="text-amber-300 font-extrabold">0%</span>
+        </div>
+        <div class="w-full bg-white/20 rounded-full h-2 overflow-hidden">
+            <div id="cloudBatchUploadBar" class="bg-emerald-400 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div id="cloudBatchUploadSub" class="text-[11px] text-blue-200">เตรียมส่งข้อมูล...</div>
+    </div>
+
     <!-- แถบแจ้งเตือนอัตโนมัติเมื่อเปิดผ่านแอป LINE เพื่อแนะนำให้เปิดใน Safari / Chrome -->
     <div id="lineBrowserWarningBanner" class="hidden no-print max-w-4xl mx-auto mb-3 bg-amber-50 border-2 border-amber-400 text-amber-950 p-3 rounded-xl shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
         <div class="flex items-start gap-2">
@@ -4066,9 +4079,14 @@
     <div id="historyModal" class="no-print fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
         <div class="bg-white rounded-xl shadow-2xl max-w-5xl w-full p-4 sm:p-6 space-y-3 max-h-[92vh] flex flex-col">
             <div class="flex flex-wrap justify-between items-center border-b pb-2.5 gap-2">
-                <h3 class="text-base sm:text-lg font-bold text-hoshizaki-navy flex items-center gap-2">
-                    <i class="fa-solid fa-clock-rotate-left text-hoshizaki-blue"></i> ประวัติใบแจ้งบริการ & สรุปผลงานรายช่าง (<span id="historyTotalCount">0</span> ใบงาน)
-                </h3>
+                <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="text-base sm:text-lg font-bold text-hoshizaki-navy flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-hoshizaki-blue"></i> ประวัติใบแจ้งบริการ & สรุปผลงานรายช่าง (<span id="historyTotalCount">0</span> ใบงาน)
+                    </h3>
+                    <span id="idbStorageBadge" class="text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-full font-bold" title="จัดเก็บข้อมูลขนาดใหญ่ผ่าน IndexedDB">
+                        <i class="fa-solid fa-database mr-0.5"></i> IndexedDB พร้อมใช้งาน
+                    </span>
+                </div>
                 <div class="flex items-center gap-1.5">
                     <button type="button" onclick="toggleQuickServiceReportEntryBox()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
                         <i class="fa-solid fa-keyboard"></i> <span>คีย์ข้อมูลจาก Service Report</span>
@@ -4258,7 +4276,13 @@
                         <input type="file" accept=".json,application/json" multiple onchange="importAndMergeTeamBackupJSON(event)" class="hidden">
                     </label>
                     <button type="button" onclick="syncAllHistoryToGoogleSheets()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded font-medium flex items-center gap-1">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> ซิงค์ทั้งหมดเข้า Sheets (ตารางหลักเดียว)
+                        <i class="fa-solid fa-cloud-arrow-up"></i> ซิงค์ทั้งหมดเข้า Sheets
+                    </button>
+                    <button type="button" onclick="purgeLocalPhotosFromSyncedJobs()" class="bg-teal-600 hover:bg-teal-700 text-white text-xs px-3 py-2 rounded font-medium flex items-center gap-1" title="ลบรูปภาพออกจากหน่วยความจำเครื่องสำหรับใบงานที่ซิงค์ขึ้น Google Drive แล้ว (ข้อมูลข้อความยังอยู่ครบ)">
+                        <i class="fa-solid fa-broom"></i> ล้างแคชรูปที่ซิงค์ Drive แล้ว
+                    </button>
+                    <button type="button" onclick="archiveOldLocalJobsByYear()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs px-3 py-2 rounded font-medium flex items-center gap-1" title="ส่งออกไฟล์ Archive (.json) และย้ายใบงานปีเก่าออกจากรายการหลัก">
+                        <i class="fa-solid fa-box-archive"></i> Archive รายปี
                     </button>
                 </div>
                 <button type="button" onclick="closeHistoryModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs px-4 py-2 rounded font-medium">ปิด</button>
@@ -5155,7 +5179,7 @@
             const techCode = getTechCodeByName(techName);
             const prefix = techCode ? `JOB-${dateStr}-${techCode}-` : `JOB-${dateStr}-`;
 
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             let maxSeq = 0;
 
             history.forEach(item => {
@@ -5322,7 +5346,7 @@
                 return;
             }
 
-            const localHistory = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const localHistory = getJobHistorySync();
             const matchedMap = new Map();
 
             localHistory.forEach(job => {
@@ -5868,7 +5892,7 @@
                 const photoContainer = document.getElementById('photoPreviewContainer');
                 if (photoContainer) photoContainer.innerHTML = '';
 
-                localStorage.removeItem('hoshizaki_draft_job');
+                localStorage.removeItem('hoshizaki_draft_job'); idbRemove('hoshizaki_draft_job');
                 loadDefaultTechSignatureIfEmpty();
             updateJobQrCode();
             calculateTotals();
@@ -6409,10 +6433,10 @@
         }
 
         // --- SAVE & LOAD HISTORY ---
-        function saveToHistory() {
+        async function saveToHistory() {
             try {
                 const jobData = collectFullJobData();
-                const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+                const history = getJobHistorySync();
 
                 const existingIdx = history.findIndex(h => h.jobNo === jobData.jobNo);
                 if (existingIdx >= 0) {
@@ -6421,17 +6445,17 @@
                     history.unshift(jobData);
                 }
 
-                localStorage.setItem('hoshizaki_job_history', JSON.stringify(history));
+                await persistJobHistoryEverywhere(history);
                 saveCustomerProfileToDirectory(jobData);
                 markMatchingScheduleItemDone(jobData);
-                showToast(`บันทึกใบงาน ${jobData.jobNo} สำเร็จแล้ว`);
+                showToast(`บันทึกใบงาน ${jobData.jobNo} ลง IndexedDB สำเร็จแล้ว (${(jobData.photos || []).length} รูป)`);
                 const autoSyncEnabled = localStorage.getItem('hoshizaki_auto_sync_sheets') !== 'false';
                 if (autoSyncEnabled && getGoogleSheetsWebhookUrl()) {
                     syncCurrentJobToGoogleSheets(false);
                 }
             } catch (err) {
                 console.error(err);
-                showToast('พื้นที่จัดเก็บเต็ม กรุณาลดจำนวนรูปภาพหรือสำรองข้อมูล');
+                showToast('เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง');
             }
         }
 
@@ -6553,14 +6577,14 @@
                 timestamp: new Date().toISOString()
             };
 
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             const existingIdx = history.findIndex(h => h.jobNo === jobRecord.jobNo);
             if (existingIdx >= 0) {
                 history[existingIdx] = jobRecord;
             } else {
                 history.unshift(jobRecord);
             }
-            localStorage.setItem('hoshizaki_job_history', JSON.stringify(history));
+            persistJobHistoryEverywhere(history);
             saveCustomerProfileToDirectory(jobRecord);
 
             // ส่งข้อมูลขึ้น Google Sheets (เข้าทั้งชีตรวมและชีตย่อยของช่างคนนั้นทันที)
@@ -6659,7 +6683,7 @@
                 showToast('ไม่พบไลบรารีสำหรับส่งออก Excel');
                 return;
             }
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             const periodFilter = document.getElementById('historyPeriodFilter')?.value || 'ALL';
             const periodJobs = history.filter(item => isDateInPeriod(item.date, periodFilter));
 
@@ -6716,7 +6740,7 @@
         }
 
         function renderHistoryTable() {
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             const tbody = document.getElementById('historyTableBody');
             const countEl = document.getElementById('historyTotalCount');
             const keyword = (document.getElementById('historySearchInput')?.value || '').trim().toLowerCase();
@@ -6794,7 +6818,7 @@
         }
 
         function duplicateHistoryItem(jobNo) {
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             const item = history.find(h => h.jobNo === jobNo);
             if (!item) return;
 
@@ -6825,7 +6849,7 @@
         }
 
         function loadHistoryItem(jobNo) {
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             const item = history.find(h => h.jobNo === jobNo);
             if (item) {
                 applyFullJobData(item);
@@ -6837,16 +6861,16 @@
         function deleteHistoryItem(jobNo) {
             showCustomConfirm(`ต้องการลบประวัติใบงาน ${jobNo} ใช่หรือไม่?`, (confirmed) => {
                 if (!confirmed) return;
-                let history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+                let history = getJobHistorySync();
                 history = history.filter(h => h.jobNo !== jobNo);
-                localStorage.setItem('hoshizaki_job_history', JSON.stringify(history));
+                persistJobHistoryEverywhere(history);
                 openHistoryModal();
                 showToast(`ลบประวัติใบงาน ${jobNo} แล้ว`);
             });
         }
 
         function exportCSV() {
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             if (history.length === 0) {
                 showToast('ไม่มีข้อมูลประวัติสำหรับส่งออก');
                 return;
@@ -6872,7 +6896,7 @@
 
         // --- BACKUP & RESTORE JSON FOR MOBILE DATA SAFETY ---
         function exportBackupJSON() {
-            const jobHistory = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const jobHistory = getJobHistorySync();
             const receiptHistory = JSON.parse(localStorage.getItem('hoshizaki_receipt_history') || '[]');
             if (jobHistory.length === 0 && receiptHistory.length === 0) {
                 showToast('ยังไม่มีข้อมูลประวัติสำหรับสำรอง');
@@ -6909,13 +6933,13 @@
                         showToast('รูปแบบไฟล์สำรองข้อมูลไม่ถูกต้อง');
                         return;
                     }
-                    const currentJobs = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+                    const currentJobs = getJobHistorySync();
                     const mergedMap = new Map();
                     currentJobs.forEach(item => mergedMap.set(item.jobNo, item));
                     parsed.jobHistory.forEach(item => mergedMap.set(item.jobNo, item));
 
                     const mergedList = Array.from(mergedMap.values());
-                    localStorage.setItem('hoshizaki_job_history', JSON.stringify(mergedList));
+                    persistJobHistoryEverywhere(mergedList);
 
                     if (Array.isArray(parsed.receiptHistory)) {
                         localStorage.setItem('hoshizaki_receipt_history', JSON.stringify(parsed.receiptHistory));
@@ -8192,14 +8216,17 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
         function debounceAutoSave() {
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => {
+            autoSaveTimer = setTimeout(async () => {
                 try {
                     const draft = collectFullJobData();
-                    localStorage.setItem('hoshizaki_draft_job', JSON.stringify(draft));
+                    await idbSet('hoshizaki_draft_job', draft);
+                    try {
+                        localStorage.setItem('hoshizaki_draft_job', JSON.stringify({ ...draft, photos: [] }));
+                    } catch (e) {}
                 } catch (e) {
-                    // ข้ามหากหน่วยความจำเต็ม
+                    console.warn('Draft autosave note:', e);
                 }
-            }, 600);
+            }, 700);
         }
 
         window.addEventListener('click', () => {
@@ -8470,7 +8497,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         function importAndMergeTeamBackupJSON(event) {
             const files = Array.from(event.target.files || []);
             if (files.length === 0) return;
-            let existing = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            let existing = getJobHistorySync();
             const mapByJobNo = new Map(existing.map(item => [item.jobNo, item]));
             let processed = 0;
             files.forEach(file => {
@@ -8491,7 +8518,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     processed++;
                     if (processed === files.length) {
                         const merged = Array.from(mapByJobNo.values());
-                        localStorage.setItem('hoshizaki_job_history', JSON.stringify(merged));
+                        persistJobHistoryEverywhere(merged);
                         renderHistoryTable();
                         showToast(`รวมข้อมูลทีมสำเร็จ รวมทั้งหมด ${merged.length} ใบงาน`);
                     }
@@ -8502,7 +8529,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         }
 
         function sendCentralBackupEmail() {
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             const customModels = JSON.parse(localStorage.getItem('hoshizaki_custom_models') || '[]');
             const customSerials = JSON.parse(localStorage.getItem('hoshizaki_custom_serials') || '{}');
             const payload = {
@@ -10273,7 +10300,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
         // --- Pull Upcoming PM & Waiting Parts Jobs into Waiting Plan ---
         function pullUpcomingPmToWaitingPlan() {
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             const items = getScheduleItems();
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -10356,6 +10383,209 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             setTimeout(() => el.classList.remove('ring-2', 'ring-hoshizaki-blue'), 1100);
         }
 
+
+        // =========================================================================
+        // MODULE: INDEXEDDB LARGE STORAGE ENGINE + BATCH PHOTO UPLOAD + YEARLY ARCHIVE (v12.7)
+        // =========================================================================
+        const IDB_DB_NAME = 'HoshizakiServiceProDB';
+        const IDB_DB_VERSION = 1;
+        const IDB_STORE_KV = 'kv_store';
+        let idbInstance = null;
+        let inMemoryJobHistoryCache = null;
+
+        function openHoshizakiIDB() {
+            return new Promise((resolve, reject) => {
+                if (idbInstance) return resolve(idbInstance);
+                if (!window.indexedDB) return reject(new Error('IndexedDB not supported'));
+                const req = indexedDB.open(IDB_DB_NAME, IDB_DB_VERSION);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(IDB_STORE_KV)) {
+                        db.createObjectStore(IDB_STORE_KV);
+                    }
+                };
+                req.onsuccess = (e) => {
+                    idbInstance = e.target.result;
+                    resolve(idbInstance);
+                };
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        async function idbGet(key) {
+            try {
+                const db = await openHoshizakiIDB();
+                return await new Promise((resolve, reject) => {
+                    const tx = db.transaction(IDB_STORE_KV, 'readonly');
+                    const req = tx.objectStore(IDB_STORE_KV).get(key);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            } catch (e) {
+                return undefined;
+            }
+        }
+
+        async function idbSet(key, val) {
+            try {
+                const db = await openHoshizakiIDB();
+                return await new Promise((resolve, reject) => {
+                    const tx = db.transaction(IDB_STORE_KV, 'readwrite');
+                    const req = tx.objectStore(IDB_STORE_KV).put(val, key);
+                    req.onsuccess = () => resolve(true);
+                    req.onerror = () => reject(req.error);
+                });
+            } catch (e) {
+                return false;
+            }
+        }
+
+        async function idbRemove(key) {
+            try {
+                const db = await openHoshizakiIDB();
+                return await new Promise((resolve, reject) => {
+                    const tx = db.transaction(IDB_STORE_KV, 'readwrite');
+                    const req = tx.objectStore(IDB_STORE_KV).delete(key);
+                    req.onsuccess = () => resolve(true);
+                    req.onerror = () => reject(req.error);
+                });
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function getJobHistorySync() {
+            if (Array.isArray(inMemoryJobHistoryCache)) return inMemoryJobHistoryCache;
+            try {
+                const raw = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+                inMemoryJobHistoryCache = Array.isArray(raw) ? raw : [];
+            } catch (e) {
+                inMemoryJobHistoryCache = [];
+            }
+            return inMemoryJobHistoryCache;
+        }
+
+        async function persistJobHistoryEverywhere(historyList) {
+            inMemoryJobHistoryCache = Array.isArray(historyList) ? historyList : [];
+            await idbSet('hoshizaki_job_history', inMemoryJobHistoryCache);
+
+            try {
+                localStorage.setItem('hoshizaki_job_history', JSON.stringify(inMemoryJobHistoryCache));
+            } catch (quotaErr) {
+                const lightweightList = inMemoryJobHistoryCache.map(item => ({
+                    ...item,
+                    photos: [],
+                    photosPurgedLocal: true
+                }));
+                try {
+                    localStorage.setItem('hoshizaki_job_history', JSON.stringify(lightweightList));
+                } catch (e2) {
+                    console.warn('localStorage fallback trimmed:', e2);
+                }
+            }
+            updateIndexedDbStorageBadge();
+        }
+
+        async function initIndexedDbMigrationAndHydration() {
+            try {
+                const idbHistory = await idbGet('hoshizaki_job_history');
+                const lsHistory = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+
+                if (Array.isArray(idbHistory) && idbHistory.length > 0) {
+                    const map = new Map();
+                    lsHistory.forEach(j => { if (j && j.jobNo) map.set(j.jobNo, j); });
+                    idbHistory.forEach(j => { if (j && j.jobNo) map.set(j.jobNo, j); });
+                    inMemoryJobHistoryCache = Array.from(map.values());
+                    await idbSet('hoshizaki_job_history', inMemoryJobHistoryCache);
+                } else if (Array.isArray(lsHistory) && lsHistory.length > 0) {
+                    inMemoryJobHistoryCache = lsHistory;
+                    await idbSet('hoshizaki_job_history', inMemoryJobHistoryCache);
+                } else {
+                    inMemoryJobHistoryCache = [];
+                }
+                updateIndexedDbStorageBadge();
+            } catch (err) {
+                console.warn('IDB init note:', err);
+            }
+        }
+
+        async function updateIndexedDbStorageBadge() {
+            const badge = document.getElementById('idbStorageBadge');
+            if (!badge) return;
+            const list = getJobHistorySync();
+            const totalPhotos = list.reduce((acc, j) => acc + (Array.isArray(j.photos) ? j.photos.length : 0), 0);
+            let usageText = `${list.length} ใบงาน / ${totalPhotos} รูปในเครื่อง`;
+            if (navigator.storage && navigator.storage.estimate) {
+                try {
+                    const est = await navigator.storage.estimate();
+                    const usedMb = ((est.usage || 0) / (1024 * 1024)).toFixed(1);
+                    usageText += ` (${usedMb} MB)`;
+                } catch (e) {}
+            }
+            badge.innerHTML = `<i class="fa-solid fa-database mr-0.5"></i> IndexedDB: ${usageText}`;
+        }
+
+        function purgeLocalPhotosFromSyncedJobs() {
+            const history = getJobHistorySync();
+            const candidates = history.filter(j => j.cloudSynced && Array.isArray(j.photos) && j.photos.length > 0);
+            if (candidates.length === 0) {
+                showToast('ไม่มีรูปภาพค้างในเครื่องสำหรับใบงานที่ซิงค์ขึ้น Google Drive แล้ว');
+                return;
+            }
+            const photoTotal = candidates.reduce((s, j) => s + j.photos.length, 0);
+            openCustomConfirm(
+                `พบรูปภาพในเครื่อง ${photoTotal} ภาพ จาก ${candidates.length} ใบงานที่ซิงค์ขึ้น Google Drive เรียบร้อยแล้ว ต้องการลบรูปออกจากเครื่องเพื่อคืนพื้นที่ (โดยยังคงข้อความใบงานครบถ้วน) ใช่หรือไม่?`,
+                async () => {
+                    const updated = history.map(j => {
+                        if (j.cloudSynced && Array.isArray(j.photos) && j.photos.length > 0) {
+                            return { ...j, photos: [], photosPurgedLocal: true };
+                        }
+                        return j;
+                    });
+                    await persistJobHistoryEverywhere(updated);
+                    renderHistoryTable();
+                    showToast(`ล้างแคชรูปภาพออก ${photoTotal} ภาพ เรียบร้อย ✓`);
+                }
+            );
+        }
+
+        function archiveOldLocalJobsByYear() {
+            const history = getJobHistorySync();
+            const currentYear = String(new Date().getFullYear());
+            const oldJobs = history.filter(j => {
+                const yr = String(j.date || '').slice(0, 4);
+                return yr && yr < currentYear;
+            });
+            if (oldJobs.length === 0) {
+                showToast(`ยังไม่มีใบงานปีเก่ากว่าปี ${currentYear} สำหรับทำ Archive`);
+                return;
+            }
+            openCustomConfirm(
+                `พบใบงานของปีเก่ากว่า ${currentYear} จำนวน ${oldJobs.length} ใบงาน ต้องการดาวน์โหลดไฟล์สำรอง Archive (.json) และนำออกจากรายการหลักเพื่อเพิ่มความเร็วใช่หรือไม่?`,
+                async () => {
+                    const archiveBlob = new Blob([JSON.stringify({
+                        archivedAt: new Date().toISOString(),
+                        count: oldJobs.length,
+                        jobHistory: oldJobs
+                    }, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(archiveBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Hoshizaki_Archive_Before_${currentYear}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+
+                    const remaining = history.filter(j => {
+                        const yr = String(j.date || '').slice(0, 4);
+                        return !yr || yr >= currentYear;
+                    });
+                    await persistJobHistoryEverywhere(remaining);
+                    renderHistoryTable();
+                    showToast(`Archive ใบงานปีเก่า ${oldJobs.length} รายการเรียบร้อย ✓`);
+                }
+            );
+        }
+
         window.onload = function() {
             const now = new Date();
             const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
@@ -10371,18 +10601,20 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             canvasIds.forEach(id => initCanvas(id));
             initFullscreenSigCanvas();
 
-            // กู้คืนข้อมูลร่างล่าสุดอัตโนมัติ (ถ้ามี)
-            try {
-                const savedDraft = localStorage.getItem('hoshizaki_draft_job');
-                if (savedDraft) {
-                    const parsedDraft = JSON.parse(savedDraft);
-                    if (parsedDraft && (parsedDraft.store || parsedDraft.model || parsedDraft.serial || parsedDraft.symptom)) {
+            // กู้คืนข้อมูลร่างล่าสุดและประวัติจาก IndexedDB อัตโนมัติ (รองรับรูปภาพขนาดใหญ่ไม่จำกัด 5MB)
+            (async () => {
+                await initIndexedDbMigrationAndHydration();
+                try {
+                    const idbDraft = await idbGet('hoshizaki_draft_job');
+                    const lsDraftRaw = localStorage.getItem('hoshizaki_draft_job');
+                    const parsedDraft = idbDraft || (lsDraftRaw ? JSON.parse(lsDraftRaw) : null);
+                    if (parsedDraft && (parsedDraft.store || parsedDraft.model || parsedDraft.serial || parsedDraft.symptom || (parsedDraft.photos && parsedDraft.photos.length > 0))) {
                         applyFullJobData(parsedDraft);
                     }
+                } catch (e) {
+                    console.error(e);
                 }
-            } catch (e) {
-                console.error(e);
-            }
+            })();
 
             calculateTotals();
 
@@ -10744,26 +10976,42 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             localStorage.setItem('hoshizaki_auto_sync_sheets', chk?.checked ? 'true' : 'false');
         }
 
-        async function pushSingleJobRecordToGoogleSheets(jobData, includePhotos = true) {
+        function updateCloudBatchProgress(visible, pct = 0, title = '', sub = '') {
+            const banner = document.getElementById('cloudBatchUploadBanner');
+            if (!banner) return;
+            if (!visible) {
+                banner.classList.add('hidden');
+                return;
+            }
+            banner.classList.remove('hidden');
+            const tEl = document.getElementById('cloudBatchUploadTitle');
+            const pEl = document.getElementById('cloudBatchUploadPct');
+            const bEl = document.getElementById('cloudBatchUploadBar');
+            const sEl = document.getElementById('cloudBatchUploadSub');
+            if (tEl && title) tEl.innerText = title;
+            if (pEl) pEl.innerText = `${Math.round(pct)}%`;
+            if (bEl) bEl.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+            if (sEl && sub) sEl.innerText = sub;
+        }
+
+        async function pushSingleJobRecordToGoogleSheets(jobData, includePhotos = true, showProgress = false) {
             const webhookUrl = getGoogleSheetsWebhookUrl();
             if (!webhookUrl || !jobData) return;
 
             const techCode = jobData.techCode || getTechCodeByName(jobData.responsibleTech || '');
-            const photosForCloud = (includePhotos && Array.isArray(jobData.photos))
-                ? jobData.photos.slice(0, 30).map((p, idx) => ({
-                    name: `${jobData.jobNo || 'JOB'}_photo_${idx + 1}.jpg`,
-                    caption: p.caption || '',
-                    dataUrl: p.src || ''
-                }))
-                : [];
+            const allPhotos = (includePhotos && Array.isArray(jobData.photos)) ? jobData.photos.slice(0, 30) : [];
 
-            const cloudPayload = {
+            if (showProgress) {
+                updateCloudBatchProgress(true, 10, `กำลังซิงค์ใบงาน ${jobData.jobNo}`, 'กำลังบันทึกข้อมูลใบแจ้งบริการลง Google Sheets...');
+            }
+
+            // 1. ส่งข้อมูลใบงานหลักก่อน (ไม่รวมรูปภาพก้อนใหญ่ เพื่อป้องกัน Timeout)
+            const basePayload = {
                 ...jobData,
                 techCode: techCode,
                 actionType: 'SAVE_JOB',
-                techCode: jobData.techCode || getTechCodeByName(jobData.responsibleTech || ''),
                 photosCount: Array.isArray(jobData.photos) ? jobData.photos.length : 0,
-                photosPayload: photosForCloud,
+                photosPayload: [],
                 photos: undefined,
                 signatures: undefined,
                 partsSummary: (jobData.parts || [])
@@ -10777,8 +11025,61 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(cloudPayload)
+                body: JSON.stringify(basePayload)
             });
+
+            // 2. แบ่งชุดอัปโหลดรูปภาพทีละ 5 ภาพ (สูงสุด 30 ภาพ) ลงโฟลเดอร์ ปี/เดือน ใน Google Drive
+            const BATCH_SIZE = 5;
+            if (allPhotos.length > 0) {
+                for (let start = 0; start < allPhotos.length; start += BATCH_SIZE) {
+                    const chunk = allPhotos.slice(start, start + BATCH_SIZE).map((p, idx) => ({
+                        name: `${jobData.jobNo || 'JOB'}_photo_${start + idx + 1}.jpg`,
+                        caption: p.caption || '',
+                        dataUrl: p.src || ''
+                    }));
+
+                    const pct = 15 + ((start + chunk.length) / allPhotos.length) * 85;
+                    if (showProgress) {
+                        updateCloudBatchProgress(
+                            true,
+                            pct,
+                            `อัปโหลดรูปขึ้น Google Drive (${jobData.jobNo})`,
+                            `กำลังส่งรูปภาพชุดที่ ${Math.floor(start / BATCH_SIZE) + 1} (รูปที่ ${start + 1}–${start + chunk.length} จาก ${allPhotos.length} ภาพ)...`
+                        );
+                    }
+
+                    await fetch(webhookUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            actionType: 'UPLOAD_PHOTO_BATCH',
+                            jobNo: jobData.jobNo || '',
+                            date: jobData.date || '',
+                            store: jobData.store || '',
+                            startIndex: start,
+                            batchIndex: Math.floor(start / BATCH_SIZE) + 1,
+                            photosPayload: chunk
+                        })
+                    });
+
+                    await new Promise(r => setTimeout(r, 350));
+                }
+            }
+
+            // ทำเครื่องหมายในประวัติ IndexedDB ว่าใบงานนี้ซิงค์ขึ้น Cloud/Drive เรียบร้อยแล้ว
+            const hist = getJobHistorySync();
+            const hIdx = hist.findIndex(h => h.jobNo === jobData.jobNo);
+            if (hIdx >= 0) {
+                hist[hIdx].cloudSynced = true;
+                hist[hIdx].cloudSyncedAt = new Date().toISOString();
+                await persistJobHistoryEverywhere(hist);
+            }
+
+            if (showProgress) {
+                updateCloudBatchProgress(true, 100, `อัปโหลดสำเร็จ (${jobData.jobNo})`, `ส่งข้อมูลและรูปภาพครบ ${allPhotos.length} ภาพเข้า Google Drive (แยกตามปี/เดือน) เรียบร้อย ✓`);
+                setTimeout(() => updateCloudBatchProgress(false), 3200);
+            }
         }
 
         async function syncAllHistoryToGoogleSheets() {
@@ -10787,7 +11088,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 showToast('ไม่พบลิงก์เชื่อมต่อ Google Sheets');
                 return;
             }
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             if (history.length === 0) {
                 showToast('ไม่มีประวัติใบงานสำหรับซิงค์');
                 return;
@@ -10795,7 +11096,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             showToast(`กำลังซิงค์ใบงานทั้งหมด ${history.length} รายการเข้าตารางหลัก Google Sheets...`);
             for (let i = 0; i < history.length; i++) {
                 try {
-                    await pushSingleJobRecordToGoogleSheets(history[i], false);
+                    await pushSingleJobRecordToGoogleSheets(history[i], false, false);
                     await new Promise(r => setTimeout(r, 250));
                 } catch (e) {
                     console.warn('Sync item error:', e);
@@ -10814,52 +11115,21 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
 
             const jobData = collectFullJobData();
-            // ส่งรูปถ่ายหน้างาน (ย่อขนาดแล้วไม่เกิน 6 รูปต่อครั้ง) เพื่ออัปโหลดลงโฟลเดอร์ Google Drive อัตโนมัติ
-            const photosForCloud = Array.isArray(jobData.photos)
-                ? jobData.photos.slice(0, 6).map((p, idx) => ({
-                    name: `${jobData.jobNo || 'JOB'}_photo_${idx + 1}.jpg`,
-                    caption: p.caption || '',
-                    dataUrl: p.src || ''
-                }))
-                : [];
-
-            const cloudPayload = {
-                ...jobData,
-                actionType: 'SAVE_JOB',
-                photosCount: Array.isArray(jobData.photos) ? jobData.photos.length : 0,
-                photosPayload: photosForCloud,
-                photos: undefined,
-                signatures: undefined,
-                partsSummary: (jobData.parts || [])
-                    .filter(p => p.desc)
-                    .map(p => `${p.desc} (x${p.qty})`)
-                    .join(', '),
-                techniciansSummary: Array.isArray(jobData.selectedTechs) ? jobData.selectedTechs.join(', ') : ''
-            };
-
             try {
-                if (manualTrigger && typeof showToast === 'function') {
-                    showToast(`กำลังส่งใบงาน ${jobData.jobNo} เข้า Google Sheets...`);
-                }
-                await fetch(webhookUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(cloudPayload)
-                });
+                await pushSingleJobRecordToGoogleSheets(jobData, true, true);
                 localStorage.setItem('hoshizaki_last_backup_at', new Date().toISOString());
                 document.getElementById('weeklyBackupReminderBanner')?.classList.add('hidden');
                 if (typeof showToast === 'function') {
-                    showToast(`ส่งใบงาน ${jobData.jobNo} เข้า Google Sheets ส่วนกลางเรียบร้อย ✓`);
+                    showToast(`ส่งใบงาน ${jobData.jobNo} และรูปภาพ (${(jobData.photos || []).length} ภาพ) เข้า Google Sheets/Drive เรียบร้อย ✓`);
                 }
             } catch (err) {
+                updateCloudBatchProgress(false);
                 console.error('Google Sheets sync error:', err);
                 if (manualTrigger && typeof showToast === 'function') {
-                    showToast('ไม่สามารถเชื่อมต่อ Google Sheets ได้ กรุณาตรวจสอบอินเทอร์เน็ต');
+                    showToast('ไม่สามารถส่งข้อมูลได้ กรุณาตรวจสอบอินเทอร์เน็ตหรือลิงก์ Apps Script');
                 }
             }
         }
-
         function copyTeamExternalLink() {
             const input = document.getElementById('teamExternalLineUrlInput');
             const url = input ? input.value : TEAM_PRODUCTION_URL;
@@ -10943,7 +11213,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         }
 
         function checkWeeklyBackupReminder() {
-            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const history = getJobHistorySync();
             if (history.length === 0) return;
 
             const lastBackupStr = localStorage.getItem('hoshizaki_last_backup_at');

@@ -106,6 +106,17 @@
 
     <!-- Cross-device responsive enhancements -->
     <style id="cross-device-enhancements">
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+        header, nav, main {
+            max-width: 100%;
+        }
         :root {
             color-scheme: light;
             --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -159,6 +170,7 @@
             overscroll-behavior: contain;
         }
         [id$="Modal"] > div {
+            max-width: calc(100vw - 1rem);
             max-height: calc(100dvh - 1.5rem - var(--safe-top) - var(--safe-bottom));
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
@@ -543,9 +555,9 @@
 
     <!-- Top Action Toolbar (Responsive สำหรับมือถือ แท็บเล็ต และพีซี) -->
     <header class="relative max-w-4xl mx-auto mb-3 sm:mb-4 bg-hoshizaki-navy text-white p-3 sm:p-4 rounded-xl shadow-lg no-print">
-        <div class="flex justify-between items-center gap-2">
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2.5">
             <!-- โลโก้และชื่อระบบ -->
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2.5 min-w-0">
                 <div class="w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center p-0.5 shadow flex-shrink-0">
                     <svg viewBox="0 0 300 300" class="w-full h-full">
                         <circle cx="150" cy="150" r="146" fill="none" stroke="#000000" stroke-width="4"/>
@@ -574,8 +586,8 @@
                         </text>
                     </svg>
                 </div>
-                <div>
-                    <h1 class="font-bold text-sm sm:text-lg leading-tight tracking-wide">HOSHIZAKI (THAILAND)</h1>
+                <div class="min-w-0 flex-1">
+                    <h1 class="font-bold text-sm sm:text-lg leading-tight tracking-wide truncate">HOSHIZAKI (THAILAND)</h1>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
                         <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System</p>
                         <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="text-[10px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full font-bold transition" title="สลับโหมดหน้าจอระหว่าง ผู้จ่ายงาน/ผู้จัดการ และ ช่างหน้างาน">
@@ -585,24 +597,24 @@
                 </div>
             </div>
 
-            <!-- ปุ่มด่วนด้านขวาบนสำหรับหน้าจอมือถือ -->
-            <div class="flex items-center gap-1.5 sm:hidden">
-                <button type="button" onclick="openInstallGuideModal()" class="bg-sky-700 active:bg-sky-800 text-white p-2.5 rounded-lg text-xs font-medium shadow-sm" title="เพิ่มลงหน้าจอมือถือ">
+            <!-- ปุ่มด่วนสำหรับหน้าจอมือถือ (จัดวางแบบ Grid 6 ช่อง พอดีความกว้างจอ 100%) -->
+            <div class="grid grid-cols-6 gap-1.5 w-full sm:hidden pt-1.5 border-t border-white/10">
+                <button type="button" onclick="openInstallGuideModal()" class="bg-sky-700 active:bg-sky-800 text-white py-2 rounded-lg text-xs font-medium shadow-sm flex items-center justify-center" title="เพิ่มลงหน้าจอมือถือ">
                     <i class="fa-solid fa-mobile-screen-button text-sm"></i>
                 </button>
-                <button type="button" onclick="openScheduleModal()" class="bg-amber-500 active:bg-amber-600 text-white p-2.5 rounded-lg text-xs font-medium shadow-sm" title="ตารางงานช่าง / จ่ายงาน">
+                <button type="button" onclick="openScheduleModal()" class="bg-amber-500 active:bg-amber-600 text-white py-2 rounded-lg text-xs font-medium shadow-sm flex items-center justify-center" title="ตารางงานช่าง / จ่ายงาน">
                     <i class="fa-solid fa-calendar-days text-sm"></i>
                 </button>
-                <button type="button" onclick="createNewJobForm()" class="bg-blue-600 active:bg-blue-700 text-white p-2.5 rounded-lg text-xs font-medium shadow-sm" title="ใบงานใหม่">
+                <button type="button" onclick="createNewJobForm()" class="bg-blue-600 active:bg-blue-700 text-white py-2 rounded-lg text-xs font-medium shadow-sm flex items-center justify-center" title="ใบงานใหม่">
                     <i class="fa-solid fa-file-circle-plus text-sm"></i>
                 </button>
-                <button type="button" onclick="toggleManualSearchMenu(event)" class="bg-cyan-600 active:bg-cyan-700 text-white p-2.5 rounded-lg text-xs font-medium shadow-sm" title="ค้นหาคู่มือ / Parts PDF">
+                <button type="button" onclick="toggleManualSearchMenu(event)" class="bg-cyan-600 active:bg-cyan-700 text-white py-2 rounded-lg text-xs font-medium shadow-sm flex items-center justify-center" title="ค้นหาคู่มือ / Parts PDF">
                     <i class="fa-solid fa-book-open text-sm"></i>
                 </button>
-                <button type="button" onclick="openHistoryModal()" class="bg-gray-700 active:bg-gray-800 text-white p-2.5 rounded-lg text-xs font-medium shadow-sm" title="ประวัติ">
+                <button type="button" onclick="openHistoryModal()" class="bg-gray-700 active:bg-gray-800 text-white py-2 rounded-lg text-xs font-medium shadow-sm flex items-center justify-center" title="ประวัติ">
                     <i class="fa-solid fa-clock-rotate-left text-sm"></i>
                 </button>
-                <button type="button" onclick="toggleMobileMenu()" class="bg-hoshizaki-blue active:bg-hoshizaki-darkblue text-white px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm">
+                <button type="button" onclick="toggleMobileMenu()" class="bg-hoshizaki-blue active:bg-hoshizaki-darkblue text-white py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 shadow-sm">
                     <i class="fa-solid fa-bars"></i> <span>เมนู</span>
                 </button>
             </div>
@@ -3221,20 +3233,20 @@
 
 
     <!-- Mobile Sticky Section Quick-Jump Bar (แสดงเฉพาะบนมือถือช่วยให้ข้ามหมวดได้ใน 1 แตะโดยไม่ต้องเลื่อนยาว) -->
-    <nav id="mobileSectionNav" class="no-print sm:hidden sticky top-1.5 z-30 max-w-4xl mx-auto mb-2.5 bg-white/95 backdrop-blur border border-gray-200 rounded-xl p-1.5 shadow-sm flex items-center justify-between gap-1 overflow-x-auto text-[11px] font-bold">
-        <button type="button" onclick="jumpToFormSection('secCustomerCard')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
+    <nav id="mobileSectionNav" class="no-print sm:hidden sticky top-1.5 z-30 max-w-4xl mx-auto mb-2.5 bg-white/95 backdrop-blur border border-gray-200 rounded-xl p-1 shadow-sm grid grid-cols-5 gap-1 text-[10px] font-bold">
+        <button type="button" onclick="jumpToFormSection('secCustomerCard')" class="py-1.5 px-1 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white flex items-center justify-center gap-1 truncate">
             <i class="fa-solid fa-store text-hoshizaki-blue"></i><span>ลูกค้า</span>
         </button>
-        <button type="button" onclick="jumpToFormSection('secEquipmentCard')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
-            <i class="fa-solid fa-snowflake text-hoshizaki-blue"></i><span>เครื่อง/S/N</span>
+        <button type="button" onclick="jumpToFormSection('secEquipmentCard')" class="py-1.5 px-1 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white flex items-center justify-center gap-1 truncate">
+            <i class="fa-solid fa-snowflake text-hoshizaki-blue"></i><span>เครื่อง</span>
         </button>
-        <button type="button" onclick="jumpToFormSection('secServiceDetails')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
-            <i class="fa-solid fa-wrench text-hoshizaki-blue"></i><span>ตรวจซ่อม</span>
+        <button type="button" onclick="jumpToFormSection('secServiceDetails')" class="py-1.5 px-1 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white flex items-center justify-center gap-1 truncate">
+            <i class="fa-solid fa-wrench text-hoshizaki-blue"></i><span>ซ่อม</span>
         </button>
-        <button type="button" onclick="jumpToFormSection('secSpareParts')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
+        <button type="button" onclick="jumpToFormSection('secSpareParts')" class="py-1.5 px-1 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white flex items-center justify-center gap-1 truncate">
             <i class="fa-solid fa-list-check text-hoshizaki-blue"></i><span>อะไหล่</span>
         </button>
-        <button type="button" onclick="jumpToFormSection('secPhotosAndSign')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
+        <button type="button" onclick="jumpToFormSection('secPhotosAndSign')" class="py-1.5 px-1 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white flex items-center justify-center gap-1 truncate">
             <i class="fa-solid fa-signature text-hoshizaki-blue"></i><span>รูป/เซ็น</span>
         </button>
     </nav>
@@ -3278,7 +3290,7 @@
                         </g>
                     </svg>
                 </div>
-                <div class="space-y-0.5 max-w-md">
+                <div class="space-y-0.5 max-w-md min-w-0 break-words">
                     <h2 class="text-sm sm:text-lg font-extrabold text-hoshizaki-navy leading-tight">HOSHIZAKI (THAILAND) LIMITED</h2>
                     <p class="text-[11px] sm:text-xs text-gray-600 leading-snug">Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen Subdistrict, Lak Si District, Bangkok 10210 Thailand.</p>
                     <p class="text-[11px] sm:text-xs text-gray-600">Tel: 02-005-9980-83 | Tax ID: 0135558002599</p>

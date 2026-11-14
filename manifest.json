@@ -1,22 +1,25 @@
 {
-  "name": "Hoshizaki Service Report",
-  "short_name": "Hoshizaki Job",
-  "description": "ระบบออกใบแจ้งบริการและตารางปฏิบัติงานช่าง Hoshizaki (Thailand) Limited",
+  "name": "HOSHIZAKI (THAILAND) - Job Service Management",
+  "short_name": "Hoshizaki Service",
+  "description": "ระบบบริหารจัดการงานบริการ ใบแจ้งบริการ ใบเสนอราคา และสต็อกอะไหล่สำหรับทีมช่าง HOSHIZAKI (THAILAND)",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#002B49",
   "theme_color": "#002B49",
-  "orientation": "any",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%23002B49'/%3E%3Ccircle cx='96' cy='96' r='70' fill='%2300A3E0'/%3E%3Ctext x='96' y='122' font-family='sans-serif' font-weight='bold' font-size='76' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%23002B49'/%3E%3Ccircle cx='96' cy='96' r='68' fill='%2300A3E0'/%3E%3Ctext x='96' y='118' font-family='sans-serif' font-weight='bold' font-size='72' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E",
       "sizes": "192x192",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%23002B49'/%3E%3Ccircle cx='256' cy='256' r='186' fill='%2300A3E0'/%3E%3Ctext x='256' y='324' font-family='sans-serif' font-weight='bold' font-size='200' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%23002B49'/%3E%3Ccircle cx='256' cy='256' r='180' fill='%2300A3E0'/%3E%3Ctext x='256' y='315' font-family='sans-serif' font-weight='bold' font-size='190' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E",
       "sizes": "512x512",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }

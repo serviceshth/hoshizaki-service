@@ -332,6 +332,107 @@
             }
             .mobile-scroll-x { overflow: visible !important; }
             .mobile-scroll-x table { min-width: 0 !important; }
+            .mobile-section-nav { display: none !important; }
+            .mobile-accordion-body { display: block !important; max-height: none !important; }
+        }
+
+        /* Responsive Mobile Card Layout for Spare Parts Table (< 640px) while keeping full table on Tablet & PC */
+        @media screen and (max-width: 639px) {
+            .parts-responsive-wrap {
+                border: none !important;
+                background: transparent !important;
+                overflow: visible !important;
+            }
+            .parts-responsive-wrap table {
+                min-width: 0 !important;
+                width: 100% !important;
+                display: block !important;
+            }
+            .parts-responsive-wrap thead {
+                display: none !important;
+            }
+            .parts-responsive-wrap tbody {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.65rem !important;
+            }
+            .parts-responsive-wrap tr.parts-row {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr auto !important;
+                gap: 0.45rem !important;
+                background: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 0.75rem !important;
+                padding: 0.65rem !important;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+                align-items: center !important;
+            }
+            .parts-responsive-wrap tr.parts-row td {
+                display: block !important;
+                padding: 0 !important;
+                border: none !important;
+                width: auto !important;
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(1) {
+                grid-column: 1 / 3 !important;
+                text-align: left !important;
+                font-weight: 700 !important;
+                color: #002B49 !important;
+                font-size: 12px !important;
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(1)::before {
+                content: "รายการที่ #";
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(6) {
+                grid-column: 3 / 4 !important;
+                grid-row: 1 / 2 !important;
+                text-align: right !important;
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(2) {
+                grid-column: 1 / 4 !important;
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(2)::before {
+                content: "ชื่ออะไหล่ / รายการ:";
+                display: block;
+                font-size: 11px;
+                color: #64748b;
+                margin-bottom: 2px;
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(3)::before {
+                content: "จำนวน (Qty):";
+                display: block;
+                font-size: 11px;
+                color: #64748b;
+                margin-bottom: 2px;
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(4)::before {
+                content: "ราคา/หน่วย (THB):";
+                display: block;
+                font-size: 11px;
+                color: #64748b;
+                margin-bottom: 2px;
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(5) {
+                grid-column: 1 / 4 !important;
+                background: #f0f9ff !important;
+                padding: 0.4rem 0.6rem !important;
+                border-radius: 0.5rem !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                margin-top: 2px !important;
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(5)::before {
+                content: "รวมรายการนี้:";
+                font-weight: 600;
+                color: #002B49;
+            }
+            .parts-responsive-wrap tr.parts-row td:nth-child(5)::after {
+                content: " THB";
+                font-size: 11px;
+                color: #0082C8;
+                margin-left: 3px;
+            }
         }
     </style>
 
@@ -2999,6 +3100,26 @@
     <datalist id="hoshizakiSerialsList"></datalist>
     <datalist id="hoshizakiCustomersList"></datalist>
 
+
+    <!-- Mobile Sticky Section Quick-Jump Bar (แสดงเฉพาะบนมือถือช่วยให้ข้ามหมวดได้ใน 1 แตะโดยไม่ต้องเลื่อนยาว) -->
+    <nav id="mobileSectionNav" class="no-print sm:hidden sticky top-1.5 z-30 max-w-4xl mx-auto mb-2.5 bg-white/95 backdrop-blur border border-gray-200 rounded-xl p-1.5 shadow-sm flex items-center justify-between gap-1 overflow-x-auto text-[11px] font-bold">
+        <button type="button" onclick="jumpToFormSection('secCustomerCard')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
+            <i class="fa-solid fa-store text-hoshizaki-blue"></i><span>ลูกค้า</span>
+        </button>
+        <button type="button" onclick="jumpToFormSection('secEquipmentCard')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
+            <i class="fa-solid fa-snowflake text-hoshizaki-blue"></i><span>เครื่อง/S/N</span>
+        </button>
+        <button type="button" onclick="jumpToFormSection('secServiceDetails')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
+            <i class="fa-solid fa-wrench text-hoshizaki-blue"></i><span>ตรวจซ่อม</span>
+        </button>
+        <button type="button" onclick="jumpToFormSection('secSpareParts')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
+            <i class="fa-solid fa-list-check text-hoshizaki-blue"></i><span>อะไหล่</span>
+        </button>
+        <button type="button" onclick="jumpToFormSection('secPhotosAndSign')" class="flex-1 py-1.5 px-2 rounded-lg bg-blue-50 text-hoshizaki-navy active:bg-hoshizaki-navy active:text-white whitespace-nowrap flex items-center justify-center gap-1">
+            <i class="fa-solid fa-signature text-hoshizaki-blue"></i><span>รูป/เซ็น</span>
+        </button>
+    </nav>
+
     <!-- Main Job Sheet Printable Container -->
     <main id="jobSheetContainer" class="print-container max-w-4xl mx-auto bg-white rounded-xl shadow-xl p-3.5 sm:p-6 space-y-4 border border-gray-200">
         
@@ -3080,7 +3201,7 @@
         <!-- Section 1: Customer & Equipment Info Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
             <!-- Customer Card -->
-            <div class="border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-2">
+            <div id="secCustomerCard" class="scroll-mt-14 border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-2">
                 <div class="flex items-center justify-between border-b border-gray-200 pb-1.5 text-hoshizaki-navy font-bold text-xs uppercase tracking-wider">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-store text-hoshizaki-blue"></i> ข้อมูลลูกค้า (Customer Information)</span>
                     <button type="button" id="btnLockJobSheet" onclick="toggleJobSheetLock()" title="ล็อก/ปลดล็อกข้อมูลใบงานป้องกันการแก้ไขโดยไม่ตั้งใจ" class="no-print text-[11px] bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 px-2 py-0.5 rounded font-semibold flex items-center gap-1 transition">
@@ -3130,7 +3251,7 @@
             </div>
 
             <!-- Equipment Card -->
-            <div class="border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-2">
+            <div id="secEquipmentCard" class="scroll-mt-14 border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-2">
                 <div class="flex items-center justify-between border-b border-gray-200 pb-1.5 text-hoshizaki-navy font-bold text-xs uppercase tracking-wider">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-snowflake text-hoshizaki-blue"></i> ข้อมูลอุปกรณ์ (Equipment Information)</span>
                     <button type="button" onclick="openModelDbModal()" title="นำเข้าฐานข้อมูลรุ่นเครื่อง / Serial No. จากไฟล์ Excel" class="no-print text-[11px] bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded font-semibold flex items-center gap-1 transition">
@@ -3214,7 +3335,7 @@
         </div>
 
         <!-- Section 2: Service Details -->
-        <div class="border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-3">
+        <div id="secServiceDetails" class="scroll-mt-14 border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-3">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-200 pb-2 text-hoshizaki-navy font-bold text-xs uppercase tracking-wider">
                 <span class="flex items-center gap-2"><i class="fa-solid fa-wrench text-hoshizaki-blue"></i> รายละเอียดบริการ (Service Details)</span>
                 <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3 pt-1 sm:pt-0">
@@ -3415,7 +3536,7 @@
         </div>
 
         <!-- Section 3: Spare Parts & Billing Table -->
-        <div class="border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-3">
+        <div id="secSpareParts" class="scroll-mt-14 border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-3">
             <div class="flex justify-between items-center border-b border-gray-200 pb-1.5 text-hoshizaki-navy font-bold text-xs uppercase tracking-wider">
                 <span class="flex items-center gap-2"><i class="fa-solid fa-list-check text-hoshizaki-blue"></i> รายการอะไหล่และค่าบริการ (Spare Parts & Billing)</span>
                 <div class="no-print flex flex-wrap items-center gap-1.5">
@@ -3431,7 +3552,7 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto mobile-scroll-x border border-gray-200 rounded-lg bg-white">
+            <div class="parts-responsive-wrap overflow-x-auto mobile-scroll-x border border-gray-200 rounded-lg bg-white">
                 <table class="w-full text-xs text-left border-collapse min-w-[580px]">
                     <thead>
                         <tr class="bg-gray-100 text-gray-700 font-semibold border-b border-gray-300">
@@ -3503,18 +3624,24 @@
         </div>
 
         <!-- Section 4: Photo Attachments (Camera Capture & Gallery Upload) -->
-        <div class="border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-2.5">
+        <div id="secPhotosAndSign" class="scroll-mt-14 border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-2.5">
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b border-gray-200 pb-2 text-hoshizaki-navy font-bold text-xs uppercase tracking-wider">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-camera text-hoshizaki-blue"></i> รูปถ่ายการปฏิบัติงาน (Inspection & Service Photos)</span>
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-camera text-hoshizaki-blue"></i> รูปถ่ายการปฏิบัติงาน (Inspection & Service Photos)
+                    <span id="photoCounterBadge" class="bg-blue-100 text-hoshizaki-navy px-2 py-0.5 rounded-full text-[11px] font-extrabold normal-case">0 / 30 ภาพ</span>
+                </span>
                 <div class="flex flex-wrap items-center gap-2 no-print">
                     <label class="flex-1 sm:flex-none justify-center bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs px-3 py-2 sm:py-1.5 rounded-lg cursor-pointer flex items-center gap-1.5 font-medium transition shadow-sm">
                         <i class="fa-solid fa-camera"></i> <span>เปิดกล้องถ่ายรูป</span>
                         <input type="file" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
                     </label>
                     <label class="flex-1 sm:flex-none justify-center bg-hoshizaki-blue hover:bg-hoshizaki-darkblue active:bg-hoshizaki-navy text-white text-xs px-3 py-2 sm:py-1.5 rounded-lg cursor-pointer flex items-center gap-1.5 font-medium transition shadow-sm">
-                        <i class="fa-solid fa-images"></i> <span>เลือกรูปจากเครื่อง</span>
+                        <i class="fa-solid fa-images"></i> <span>เลือกรูปหลายภาพ (สูงสุด 30)</span>
                         <input type="file" accept="image/*" multiple onchange="handlePhotoUpload(event)" class="hidden">
                     </label>
+                    <button type="button" id="btnClearAllPhotos" onclick="clearAllPhotosConfirm()" class="hidden bg-red-100 hover:bg-red-200 text-red-700 text-xs px-2.5 py-2 sm:py-1.5 rounded-lg font-semibold transition">
+                        <i class="fa-solid fa-trash-can"></i> ล้างรูปทั้งหมด
+                    </button>
                 </div>
             </div>
             <div id="photoPreviewContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
@@ -3639,16 +3766,19 @@
         </div>
     </main>
 
-    <!-- Mobile Sticky Bottom Quick Action Bar -->
-    <div class="no-print sm:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur border-t border-gray-200 px-3 py-2 z-40 flex items-center justify-between gap-2 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
-        <button type="button" onclick="saveToHistory()" class="flex-1 bg-emerald-600 active:bg-emerald-700 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-floppy-disk"></i> <span>บันทึก</span>
+    <!-- Mobile Sticky Bottom Quick Action Bar (Thumb-Zone 4-Action Ergonomic Bar) -->
+    <div class="no-print sm:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur border-t border-gray-200 px-2 py-2 z-40 grid grid-cols-4 gap-1.5 shadow-[0_-4px_14px_rgba(0,0,0,0.08)]">
+        <button type="button" onclick="saveToHistory()" class="bg-emerald-600 active:bg-emerald-700 text-white py-2 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 shadow-xs">
+            <i class="fa-solid fa-floppy-disk text-sm"></i> <span>บันทึกงาน</span>
         </button>
-        <button type="button" onclick="generateReceiptModal(false)" class="flex-1 bg-amber-600 active:bg-amber-700 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-file-invoice-dollar"></i> <span>ใบเสนอราคา</span>
+        <button type="button" onclick="openScheduleModal()" class="bg-hoshizaki-navy active:bg-hoshizaki-darkblue text-white py-2 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 shadow-xs">
+            <i class="fa-solid fa-calendar-days text-sm text-amber-400"></i> <span>ตารางงาน</span>
         </button>
-        <button type="button" onclick="sharePDFToLine()" class="flex-1 bg-[#06C755] active:bg-[#05b34c] text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-share-nodes"></i> <span>แชร์ PDF</span>
+        <button type="button" onclick="generateReceiptModal(false)" class="bg-amber-600 active:bg-amber-700 text-white py-2 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 shadow-xs">
+            <i class="fa-solid fa-file-invoice-dollar text-sm"></i> <span>ใบเสนอราคา</span>
+        </button>
+        <button type="button" onclick="sharePDFToLine()" class="bg-[#06C755] active:bg-[#05b34c] text-white py-2 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 shadow-xs">
+            <i class="fa-brands fa-line text-sm"></i> <span>แชร์ PDF</span>
         </button>
     </div>
 
@@ -5866,8 +5996,45 @@
             }
         }
 
-        // --- PHOTO CAPTURE & AUTO COMPRESSION ---
-        function compressImageFile(file, maxWidth = 1024, quality = 0.78) {
+        // --- PHOTO CAPTURE & AUTO COMPRESSION (UP TO 30 PHOTOS PER JOB) ---
+        const MAX_JOB_PHOTOS = 30;
+
+        function updatePhotoCounterBadge() {
+            const container = document.getElementById('photoPreviewContainer');
+            const badge = document.getElementById('photoCounterBadge');
+            const clearBtn = document.getElementById('btnClearAllPhotos');
+            if (!container) return;
+            const cards = container.querySelectorAll('.photo-card');
+            const count = cards.length;
+
+            // อัปเดตเลขลำดับภาพ #1..#30 บนการ์ดแต่ละใบ
+            cards.forEach((card, i) => {
+                const numBadge = card.querySelector('.photo-index-badge');
+                if (numBadge) numBadge.innerText = `#${i + 1}`;
+            });
+
+            if (badge) {
+                badge.innerText = `${count} / ${MAX_JOB_PHOTOS} ภาพ`;
+                badge.className = count >= MAX_JOB_PHOTOS
+                    ? 'bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full text-[11px] font-extrabold normal-case'
+                    : 'bg-blue-100 text-hoshizaki-navy px-2 py-0.5 rounded-full text-[11px] font-extrabold normal-case';
+            }
+            if (clearBtn) {
+                clearBtn.classList.toggle('hidden', count === 0);
+            }
+        }
+
+        function clearAllPhotosConfirm() {
+            openCustomConfirm('ต้องการลบรูปถ่ายทั้งหมดออกจากใบงานนี้ใช่หรือไม่?', () => {
+                const container = document.getElementById('photoPreviewContainer');
+                if (container) container.innerHTML = '';
+                updatePhotoCounterBadge();
+                debounceAutoSave();
+                showToast('ลบรูปถ่ายทั้งหมดออกจากใบงานแล้ว');
+            });
+        }
+
+        function compressImageFile(file, maxWidth = 840, quality = 0.72) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -5896,36 +6063,67 @@
 
         function appendPhotoCard(dataUrl, caption = '') {
             const container = document.getElementById('photoPreviewContainer');
-            if (!container) return;
+            if (!container) return false;
+
+            const currentCount = container.querySelectorAll('.photo-card').length;
+            if (currentCount >= MAX_JOB_PHOTOS) {
+                showToast(`สามารถแนบรูปภาพได้สูงสุด ${MAX_JOB_PHOTOS} ภาพต่อใบงาน`);
+                return false;
+            }
 
             const div = document.createElement('div');
             div.className = 'photo-card relative group border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white flex flex-col';
             div.innerHTML = `
                 <div class="relative h-28 bg-gray-100">
                     <img src="${dataUrl}" class="w-full h-full object-cover">
-                    <button type="button" onclick="this.closest('.photo-card').remove(); debounceAutoSave();" class="no-print absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow transition">&times;</button>
+                    <span class="photo-index-badge absolute top-1.5 left-1.5 bg-hoshizaki-navy/85 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">#${currentCount + 1}</span>
+                    <button type="button" onclick="this.closest('.photo-card').remove(); updatePhotoCounterBadge(); debounceAutoSave();" class="no-print absolute top-1.5 right-1.5 bg-red-600/90 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow transition">&times;</button>
                 </div>
                 <input type="text" value="${(caption || '').replace(/"/g, '&quot;')}" oninput="debounceAutoSave()" placeholder="คำอธิบายรูป (เช่น ก่อนซ่อม)" class="photo-caption text-[11px] px-2 py-1 border-t border-gray-200 focus:outline-none focus:bg-blue-50/40 text-gray-700">
             `;
             container.appendChild(div);
+            updatePhotoCounterBadge();
+            return true;
         }
 
         async function handlePhotoUpload(event) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
 
-            showToast('กำลังประมวลผลและย่อขนาดรูปภาพ...');
-            for (const file of Array.from(files)) {
+            const container = document.getElementById('photoPreviewContainer');
+            const existingCount = container ? container.querySelectorAll('.photo-card').length : 0;
+            const remainingSlots = MAX_JOB_PHOTOS - existingCount;
+
+            if (remainingSlots <= 0) {
+                showToast(`แนบรูปครบจำนวนสูงสุด ${MAX_JOB_PHOTOS} ภาพแล้ว`);
+                event.target.value = '';
+                return;
+            }
+
+            const allFiles = Array.from(files);
+            const filesToProcess = allFiles.slice(0, remainingSlots);
+            const skippedCount = allFiles.length - filesToProcess.length;
+
+            showToast(`กำลังประมวลผลรูปภาพ ${filesToProcess.length} ภาพ...`);
+            let addedCount = 0;
+            for (const file of filesToProcess) {
                 try {
-                    const compressedDataUrl = await compressImageFile(file);
-                    appendPhotoCard(compressedDataUrl, '');
+                    const compressedDataUrl = await compressImageFile(file, 840, 0.72);
+                    if (appendPhotoCard(compressedDataUrl, '')) {
+                        addedCount++;
+                    }
                 } catch (err) {
                     console.error(err);
                 }
             }
             event.target.value = '';
             debounceAutoSave();
-            showToast('เพิ่มรูปถ่ายเรียบร้อยแล้ว');
+
+            if (skippedCount > 0) {
+                showToast(`เพิ่มรูปภาพสำเร็จ ${addedCount} ภาพ (จำกัดสูงสุด ${MAX_JOB_PHOTOS} ภาพ จึงข้ามไป ${skippedCount} ภาพ)`);
+            } else {
+                showToast(`เพิ่มรูปภาพเรียบร้อยแล้ว (${existingCount + addedCount}/${MAX_JOB_PHOTOS} ภาพ) ✓`);
+            }
         }
 
         // --- FULL FORM STATE SERIALIZATION (SAVE / LOAD / AUTO-SAVE) ---
@@ -10149,6 +10347,15 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
         }
 
+
+        function jumpToFormSection(sectionId) {
+            const el = document.getElementById(sectionId);
+            if (!el) return;
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            el.classList.add('ring-2', 'ring-hoshizaki-blue');
+            setTimeout(() => el.classList.remove('ring-2', 'ring-hoshizaki-blue'), 1100);
+        }
+
         window.onload = function() {
             const now = new Date();
             const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
@@ -10543,7 +10750,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
             const techCode = jobData.techCode || getTechCodeByName(jobData.responsibleTech || '');
             const photosForCloud = (includePhotos && Array.isArray(jobData.photos))
-                ? jobData.photos.slice(0, 6).map((p, idx) => ({
+                ? jobData.photos.slice(0, 30).map((p, idx) => ({
                     name: `${jobData.jobNo || 'JOB'}_photo_${idx + 1}.jpg`,
                     caption: p.caption || '',
                     dataUrl: p.src || ''

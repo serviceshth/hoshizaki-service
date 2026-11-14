@@ -593,6 +593,16 @@
                 <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ Sheets / แชร์ทีม</span>
             </button>
 
+            <button type="button" onclick="openPmAndAnalyticsModal()" class="flex-1 sm:flex-none justify-center bg-violet-600 hover:bg-violet-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-chart-pie"></i> <span>PM แจ้งเตือน & สถิติ</span>
+                <span id="pmDueBadgeCount" class="hidden bg-amber-400 text-hoshizaki-navy text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
+            </button>
+            <button type="button" onclick="openVanStockModal()" class="flex-1 sm:flex-none justify-center bg-orange-600 hover:bg-orange-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-truck-ramp-box"></i> <span>สต็อกรถช่าง (Van Stock)</span>
+            </button>
+            <button type="button" onclick="exportWeeklyMultiSheetExcel()" class="flex-1 sm:flex-none justify-center bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-file-excel"></i> <span>สรุปประจำสัปดาห์ (4 ชีต)</span>
+            </button>
             <button type="button" onclick="openErrorCodeModal()" class="flex-1 sm:flex-none justify-center bg-rose-700 hover:bg-rose-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-triangle-exclamation"></i> <span>เช็ก Error Code</span>
             </button>
@@ -3370,16 +3380,19 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                 <div>
-                    <label class="block text-gray-500 font-medium mb-1">เวลาเข้า - ออกงาน:</label>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-gray-500 font-medium">เวลาเข้า - ออกงาน (SLA Timer):</label>
+                        <span id="onSiteDurationBadge" class="text-[10px] bg-blue-100 text-hoshizaki-navy px-1.5 py-0.5 rounded font-bold">0 ชม. 0 นาที</span>
+                    </div>
                     <div class="flex items-center gap-1.5">
                         <div class="flex-1 flex items-center gap-1">
-                            <input type="time" id="timeIn" class="border border-gray-300 rounded p-2 sm:p-1.5 w-full bg-white text-center">
-                            <button type="button" onclick="setNowTime('timeIn')" title="ลงเวลาเข้าปัจจุบัน" class="no-print bg-blue-100 hover:bg-blue-200 text-hoshizaki-navy px-2 py-2 sm:py-1.5 rounded text-[11px] font-semibold flex-shrink-0">เข้า</button>
+                            <input type="time" id="timeIn" onchange="updateOnSiteDuration()" class="border border-gray-300 rounded p-2 sm:p-1.5 w-full bg-white text-center">
+                            <button type="button" onclick="checkInOnSiteJob()" title="เช็กอินเริ่มงาน + บันทึก GPS อัตโนมัติ" class="no-print bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-2 sm:py-1.5 rounded text-[11px] font-bold flex-shrink-0">เริ่มงาน</button>
                         </div>
                         <span class="text-gray-500">-</span>
                         <div class="flex-1 flex items-center gap-1">
-                            <input type="time" id="timeOut" class="border border-gray-300 rounded p-2 sm:p-1.5 w-full bg-white text-center">
-                            <button type="button" onclick="setNowTime('timeOut')" title="ลงเวลาออกปัจจุบัน" class="no-print bg-blue-100 hover:bg-blue-200 text-hoshizaki-navy px-2 py-2 sm:py-1.5 rounded text-[11px] font-semibold flex-shrink-0">ออก</button>
+                            <input type="time" id="timeOut" onchange="updateOnSiteDuration()" class="border border-gray-300 rounded p-2 sm:p-1.5 w-full bg-white text-center">
+                            <button type="button" onclick="checkOutOnSiteJob()" title="เช็กเอาต์ปิดงาน" class="no-print bg-rose-600 hover:bg-rose-700 text-white px-2 py-2 sm:py-1.5 rounded text-[11px] font-bold flex-shrink-0">ปิดงาน</button>
                         </div>
                     </div>
                 </div>
@@ -3674,6 +3687,10 @@
                 <span class="flex items-center gap-2">
                     <i class="fa-solid fa-camera text-hoshizaki-blue"></i> รูปถ่ายการปฏิบัติงาน (Inspection & Service Photos)
                     <span id="photoCounterBadge" class="bg-blue-100 text-hoshizaki-navy px-2 py-0.5 rounded-full text-[11px] font-extrabold normal-case">0 / 30 ภาพ</span>
+                    <label class="no-print inline-flex items-center gap-1 bg-amber-50 border border-amber-300 text-amber-950 px-2 py-0.5 rounded-full text-[10px] font-bold normal-case cursor-pointer" title="ประทับตราวันที่ เวลา เลขที่ใบงาน และพิกัด GPS ลงบนรูปถ่ายอัตโนมัติ">
+                        <input type="checkbox" id="photoWatermarkToggle" checked class="w-3 h-3 rounded text-amber-600">
+                        <span>ประทับตราวันที่/Job No.</span>
+                    </label>
                 </span>
                 <div class="flex flex-wrap items-center gap-2 no-print">
                     <label class="flex-1 sm:flex-none justify-center bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs px-3 py-2 sm:py-1.5 rounded-lg cursor-pointer flex items-center gap-1.5 font-medium transition shadow-sm">
@@ -4297,6 +4314,9 @@
             </div>
             <div class="flex flex-wrap justify-between items-center gap-2 pt-2">
                 <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" onclick="exportWeeklyMultiSheetExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3 py-2 rounded font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-file-excel"></i> สรุปประจำสัปดาห์ (Multi-Sheet Excel)
+                    </button>
                     <button type="button" onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded font-medium flex items-center gap-1">
                         <i class="fa-solid fa-file-csv"></i> CSV
                     </button>
@@ -4334,6 +4354,12 @@
                     </div>
                     <label class="text-xs text-gray-600 flex items-center gap-1.5 font-medium cursor-pointer">
                         <input type="checkbox" id="whtCheckbox" onchange="renderReceiptDocument()" class="w-4 h-4 rounded text-hoshizaki-blue"> หัก ณ ที่จ่าย (WHT 3%)
+                    </label>
+                    <label class="text-xs text-gray-600 flex items-center gap-1.5 font-medium cursor-pointer" title="แสดงราคาขายตรง (List Price) เทียบกับราคาเกรดดีลเลอร์">
+                        <input type="checkbox" id="showListPriceCompareCheck" onchange="renderReceiptDocument()" class="w-4 h-4 rounded text-hoshizaki-blue"> เทียบราคาตั้ง (Direct)
+                    </label>
+                    <label class="text-xs text-gray-600 flex items-center gap-1.5 font-medium cursor-pointer" title="แสดง QR Code PromptPay สำหรับรับชำระเงิน">
+                        <input type="checkbox" id="showPromptPayQrCheck" checked onchange="renderReceiptDocument()" class="w-4 h-4 rounded text-hoshizaki-blue"> QR ชำระเงิน
                     </label>
                 </div>
                 <div class="flex flex-wrap items-center gap-1.5 text-xs">
@@ -4469,6 +4495,21 @@
                                 <span>TOTAL (THB):</span>
                                 <span id="recTotal">0.00</span>
                             </div>
+                            <div id="recBahtText" class="text-[11px] font-bold text-hoshizaki-darkblue bg-blue-50/80 px-2 py-1 rounded border border-blue-100 text-center">
+                                (ศูนย์บาทถ้วน)
+                            </div>
+                        </div>
+                    </div>
+                    <!-- PromptPay / Bank Transfer QR Box -->
+                    <div id="recPromptPayBox" class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[10px]">
+                        <div class="space-y-0.5 text-gray-700">
+                            <div class="font-bold text-hoshizaki-navy"><i class="fa-solid fa-qrcode text-hoshizaki-blue mr-1"></i> ชำระเงินผ่าน QR Payment / โอนเข้าบัญชีบริษัท</div>
+                            <div>ชื่อบัญชี: <b>บริษัท โฮชิซากิ (ประเทศไทย) จำกัด / HOSHIZAKI (THAILAND) LIMITED</b></div>
+                            <div>ธนาคารกรุงศรีอยุธยา สาขาฟิวเจอร์พาร์ค รังสิต เลขที่บัญชี <b>062-0-04476-2</b> | Tax ID: <b>0135558002599</b></div>
+                        </div>
+                        <div class="flex flex-col items-center flex-shrink-0">
+                            <canvas id="recPromptPayQrCanvas" width="68" height="68" class="border border-gray-300 bg-white p-0.5 rounded"></canvas>
+                            <span class="text-[9px] text-gray-500 mt-0.5">สแกนชำระเงิน</span>
                         </div>
                     </div>
 
@@ -6235,6 +6276,29 @@
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
+
+                        // ประทับตราวันที่ เวลา เลขที่ใบงาน และพิกัด GPS ลงมุมล่างของรูปภาพ (Photo Watermark)
+                        const wmEnabled = document.getElementById('photoWatermarkToggle')?.checked !== false;
+                        if (wmEnabled && width >= 240) {
+                            const jobNo = (document.getElementById('jobNo')?.value || 'JOB').trim();
+                            const gps = (document.getElementById('diagGps')?.value || '').trim();
+                            const nowStr = new Date().toLocaleString('th-TH', { hour12: false });
+                            const stampLine1 = `HOSHIZAKI SERVICE | ${jobNo} | ${nowStr}`;
+                            const stampLine2 = gps ? `GPS: ${gps}` : '';
+                            const barHeight = stampLine2 ? 36 : 22;
+
+                            ctx.fillStyle = 'rgba(0, 43, 73, 0.76)';
+                            ctx.fillRect(0, height - barHeight, width, barHeight);
+                            ctx.fillStyle = '#FFFFFF';
+                            ctx.font = 'bold 12px Prompt, sans-serif';
+                            ctx.fillText(stampLine1, 8, height - (stampLine2 ? 20 : 7));
+                            if (stampLine2) {
+                                ctx.fillStyle = '#FCD34D';
+                                ctx.font = '11px Prompt, sans-serif';
+                                ctx.fillText(stampLine2, 8, height - 6);
+                            }
+                        }
+
                         resolve(canvas.toDataURL('image/jpeg', quality));
                     };
                     img.onerror = reject;
@@ -6728,6 +6792,8 @@
                 await persistJobHistoryEverywhere(history);
                 saveCustomerProfileToDirectory(jobData);
                 markMatchingScheduleItemDone(jobData);
+                deductVanStockForSavedJob(jobData);
+                refreshPmDueAlertBadge();
                 showToast(`บันทึกใบงาน ${jobData.jobNo} ลง IndexedDB สำเร็จแล้ว (${(jobData.photos || []).length} รูป)`);
                 const autoSyncEnabled = localStorage.getItem('hoshizaki_auto_sync_sheets') !== 'false';
                 if (autoSyncEnabled && getGoogleSheetsWebhookUrl()) {
@@ -7795,10 +7861,16 @@
 
                 if (desc || amt > 0) {
                     partsSubtotal += amt;
+                    const showListCompare = document.getElementById('showListPriceCompareCheck')?.checked || false;
+                    const allPricesMap = typeof getAllNormalizedPartPrices === 'function' ? getAllNormalizedPartPrices() : {};
+                    const directListPrice = allPricesMap[desc]?.DIRECT || 0;
+                    const compareNote = (showListCompare && directListPrice > 0 && directListPrice !== price)
+                        ? `<div class="text-[10px] text-gray-500">ราคาตั้ง (Direct): ${directListPrice.toLocaleString('en-US', {minimumFractionDigits: 2})} ฿ (ประหยัด ${(directListPrice - price).toLocaleString('en-US', {minimumFractionDigits: 2})} ฿/ชิ้น)</div>`
+                        : '';
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td class="p-2 border-r border-gray-300 text-center font-medium">${itemIdx++}</td>
-                        <td class="p-2 border-r border-gray-300 font-medium">${desc || 'อะไหล่บริการซ่อมบำรุง'}</td>
+                        <td class="p-2 border-r border-gray-300 font-medium">${desc || 'อะไหล่บริการซ่อมบำรุง'}${compareNote}</td>
                         <td class="p-2 border-r border-gray-300 text-right">${price.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                         <td class="p-2 border-r border-gray-300 text-center">${qty}</td>
                         <td class="p-2 text-right font-semibold">${amt.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
@@ -7875,6 +7947,22 @@
             }
 
             document.getElementById('recTotal').innerText = grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const bahtTextEl = document.getElementById('recBahtText');
+            if (bahtTextEl) {
+                bahtTextEl.innerText = `(${numberToThaiBahtText(grandTotal)})`;
+            }
+            const qrBox = document.getElementById('recPromptPayBox');
+            const showQr = document.getElementById('showPromptPayQrCheck')?.checked !== false;
+            if (qrBox) qrBox.classList.toggle('hidden', !showQr);
+            const qrCanvas = document.getElementById('recPromptPayQrCanvas');
+            if (showQr && qrCanvas && typeof QRious !== 'undefined') {
+                new QRious({
+                    element: qrCanvas,
+                    value: `HOSHIZAKI-TH|TAX:0135558002599|REF:${offerNo}|AMT:${grandTotal.toFixed(2)}`,
+                    size: 68,
+                    foreground: '#002B49'
+                });
+            }
 
             // แสดงลายเซ็นและวันที่อนุมัติในช่อง Checked By และ Approved By หากมีการเลือกผู้ตรวจอนุมัติ
             const recSigBox = document.getElementById('recApprovedSigBox');
@@ -10368,37 +10456,62 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         // =========================================================================
         let currentUserRoleMode = localStorage.getItem('hoshizaki_user_role') || 'MANAGER'; // 'MANAGER' | 'TECH'
 
+        function getManagerPinCode() {
+            return localStorage.getItem('hoshizaki_manager_pin') || '1234';
+        }
+
         function applyUserRoleModeUI() {
             const isTech = currentUserRoleMode === 'TECH';
             const btn = document.getElementById('roleModeToggleBtn');
             if (btn) {
                 btn.innerHTML = isTech
-                    ? '<i class="fa-solid fa-screwdriver-wrench mr-0.5"></i> โหมด: ช่างหน้างาน (กระชับ)'
+                    ? '<i class="fa-solid fa-lock mr-0.5"></i> โหมด: ช่างหน้างาน (แตะปลดล็อกผู้จัดการ)'
                     : '<i class="fa-solid fa-user-shield mr-0.5"></i> โหมด: ผู้จัดการ/จ่ายงาน';
                 btn.className = isTech
                     ? 'text-[10px] bg-emerald-500/25 hover:bg-emerald-500/35 text-emerald-200 border border-emerald-400/50 px-2 py-0.5 rounded-full font-bold transition'
                     : 'text-[10px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full font-bold transition';
             }
 
-            // ซ่อน/แสดงปุ่มเฉพาะฝั่งผู้จัดการในแถบเครื่องมือบน (เช่น จัดการทีมช่าง, ออกใบเสนอราคา/ใบเสร็จ)
+            // ซ่อน/แสดงปุ่มเฉพาะฝั่งผู้จัดการในแถบเครื่องมือบน
             const toolbar = document.getElementById('toolbarActions');
             if (toolbar) {
                 toolbar.querySelectorAll('button').forEach(b => {
                     const oc = b.getAttribute('onclick') || '';
-                    if (oc.includes('openStaffManagerModal') || oc.includes('generateReceiptModal')) {
+                    if (oc.includes('openStaffManagerModal') || oc.includes('generateReceiptModal') || oc.includes('exportWeeklyMultiSheetExcel')) {
                         b.classList.toggle('hidden', isTech);
                     }
                 });
             }
 
-            // ซ่อน/แสดงกล่องข้อมูลประวัติการขายเชิงลึก (Date Out, Invoice, PO) ในส่วนอุปกรณ์ เพื่อให้ช่างหน้างานกรอกง่ายขึ้น
+            // Tech Privacy Mode: ซ่อนตัวเลขราคา/ยอดเงินในตารางอะไหล่และปุ่มฐานราคา 8 เกรดเมื่ออยู่ในโหมดช่างหน้างาน
+            const secParts = document.getElementById('secSpareParts');
+            if (secParts) {
+                secParts.querySelectorAll('button').forEach(b => {
+                    const oc = b.getAttribute('onclick') || '';
+                    if (oc.includes('openPartPriceDbModal') || oc.includes('openDealerGradeModal')) {
+                        b.classList.toggle('hidden', isTech);
+                    }
+                });
+                const tierBar = document.getElementById('customerPriceTierSelect')?.closest('.no-print');
+                if (tierBar) tierBar.classList.toggle('hidden', isTech);
+
+                // ซ่อนคอลัมน์ราคาต่อหน่วยและจำนวนเงินในตารางอะไหล่
+                secParts.querySelectorAll('thead th:nth-child(4), thead th:nth-child(5), tbody td:nth-child(4), tbody td:nth-child(5)').forEach(cell => {
+                    cell.classList.toggle('hidden', isTech);
+                });
+                // ซ่อนกล่องสรุปยอดเงินสุทธิ
+                const finSummaryBox = document.getElementById('grandTotalVal')?.closest('.grid');
+                if (finSummaryBox) finSummaryBox.classList.toggle('hidden', isTech);
+            }
+
+            // ซ่อน/แสดงกล่องข้อมูลประวัติการขายเชิงลึก (Date Out, Invoice, PO)
             ['eqDateOut', 'eqInvoiceNo', 'eqPoNo'].forEach(id => {
                 const el = document.getElementById(id);
                 const wrapper = el ? el.closest('.grid, .flex.flex-col.sm\:flex-row') : null;
                 if (wrapper) wrapper.classList.toggle('hidden', isTech);
             });
 
-            // ซ่อน/แสดงช่องลายเซ็นผู้อนุมัติ (Manager) และผู้รับเงิน (Payee) เมื่ออยู่ในโหมดช่างหน้างาน
+            // ซ่อน/แสดงช่องลายเซ็นผู้อนุมัติ (Manager) และผู้รับเงิน (Payee)
             ['nameManager', 'namePayee'].forEach(id => {
                 const el = document.getElementById(id);
                 const card = el ? el.closest('.border.border-gray-300.rounded-lg') : null;
@@ -10413,14 +10526,59 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         }
 
         function toggleUserRoleMode() {
-            currentUserRoleMode = currentUserRoleMode === 'MANAGER' ? 'TECH' : 'MANAGER';
-            localStorage.setItem('hoshizaki_user_role', currentUserRoleMode);
-            applyUserRoleModeUI();
-            showToast(
-                currentUserRoleMode === 'TECH'
-                    ? 'สลับเป็นโหมดช่างหน้างานแล้ว (ซ่อนส่วนบริหาร/อนุมัติ เหลือเฉพาะช่องปฏิบัติงาน)'
-                    : 'สลับเป็นโหมดผู้จัดการ / ผู้จ่ายงานแล้ว (แสดงครบทุกฟังก์ชันและช่องอนุมัติ)'
-            );
+            if (currentUserRoleMode === 'MANAGER') {
+                currentUserRoleMode = 'TECH';
+                localStorage.setItem('hoshizaki_user_role', 'TECH');
+                applyUserRoleModeUI();
+                showToast('สลับเป็นโหมดช่างหน้างานแล้ว (ล็อกสิทธิ์และซ่อนตารางราคาเกรดดีลเลอร์)');
+            } else {
+                const modal = document.getElementById('managerPinModal');
+                const inp = document.getElementById('managerPinVerifyInput');
+                const chgBox = document.getElementById('changeManagerPinBox');
+                if (chgBox) chgBox.classList.add('hidden');
+                if (inp) inp.value = '';
+                if (modal) modal.classList.remove('hidden');
+                setTimeout(() => inp?.focus(), 60);
+            }
+        }
+
+        function closeManagerPinModal() {
+            document.getElementById('managerPinModal')?.classList.add('hidden');
+        }
+
+        function verifyManagerPinAndUnlock() {
+            const entered = (document.getElementById('managerPinVerifyInput')?.value || '').trim();
+            if (entered === getManagerPinCode()) {
+                currentUserRoleMode = 'MANAGER';
+                localStorage.setItem('hoshizaki_user_role', 'MANAGER');
+                applyUserRoleModeUI();
+                closeManagerPinModal();
+                showToast('ยืนยันรหัส PIN สำเร็จ: เข้าสู่โหมดผู้จัดการ / ผู้จ่ายงานแล้ว ✓');
+            } else {
+                showToast('รหัส PIN ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+            }
+        }
+
+        function toggleChangeManagerPinBox() {
+            document.getElementById('changeManagerPinBox')?.classList.toggle('hidden');
+        }
+
+        function saveNewManagerPin() {
+            const oldPin = (document.getElementById('oldManagerPinInput')?.value || '').trim();
+            const newPin = (document.getElementById('newManagerPinInput')?.value || '').trim();
+            if (oldPin !== getManagerPinCode()) {
+                showToast('รหัส PIN เดิมไม่ถูกต้อง');
+                return;
+            }
+            if (newPin.length < 4) {
+                showToast('กรุณากำหนดรหัส PIN ใหม่อย่างน้อย 4 หลัก');
+                return;
+            }
+            localStorage.setItem('hoshizaki_manager_pin', newPin);
+            document.getElementById('oldManagerPinInput').value = '';
+            document.getElementById('newManagerPinInput').value = '';
+            document.getElementById('changeManagerPinBox')?.classList.add('hidden');
+            showToast('เปลี่ยนรหัส PIN ผู้จัดการเรียบร้อยแล้ว ✓');
         }
 
         // --- 8-Grade Multi-Tier Part Price Database + FX Rate & Auto-Rounding + Dealer Grade Directory (v13.0) ---
@@ -12077,6 +12235,540 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 });
             }
         })();
+    
+        // =========================================================================
+        // V13.1 ENTERPRISE SUITE:
+        // - Thai Baht Text Converter
+        // - On-Site SLA Timer (Check-in / Check-out)
+        // - Weekly Multi-Sheet Excel Export (4 Tabs: Overview, Technician, Parts, Full Jobs)
+        // - Upcoming PM Reminder & Executive Failure Analytics Dashboard
+        // - Technician Van Stock & Parts Requisition Management
+        // =========================================================================
+
+        function numberToThaiBahtText(amount) {
+            const num = Math.abs(Number(amount) || 0);
+            if (num === 0) return 'ศูนย์บาทถ้วน';
+            const digits = ['ศูนย์', 'หนึ่ง', 'สอง', 'สาม', 'สี่', 'ห้า', 'หก', 'เจ็ด', 'แปด', 'เก้า'];
+            const positions = ['', 'สิบ', 'ร้อย', 'พัน', 'หมื่น', 'แสน', 'ล้าน'];
+
+            function readIntGroup(nStr) {
+                let res = '';
+                const len = nStr.length;
+                for (let i = 0; i < len; i++) {
+                    const d = parseInt(nStr[i], 10);
+                    const pos = len - i - 1;
+                    if (d === 0) continue;
+                    if (pos === 1 && d === 1) {
+                        res += 'สิบ';
+                    } else if (pos === 1 && d === 2) {
+                        res += 'ยี่สิบ';
+                    } else if (pos === 0 && d === 1 && len > 1) {
+                        res += 'เอ็ด';
+                    } else {
+                        res += digits[d] + positions[pos];
+                    }
+                }
+                return res;
+            }
+
+            function readWholeNumber(intVal) {
+                if (intVal === 0) return '';
+                const str = String(intVal);
+                if (str.length <= 6) return readIntGroup(str);
+                const head = str.slice(0, str.length - 6);
+                const tail = str.slice(str.length - 6);
+                return readWholeNumber(parseInt(head, 10)) + 'ล้าน' + readIntGroup(tail);
+            }
+
+            const fixed = num.toFixed(2);
+            const [intPartStr, decPartStr] = fixed.split('.');
+            const intVal = parseInt(intPartStr, 10);
+            const decVal = parseInt(decPartStr, 10);
+
+            let out = '';
+            if (intVal > 0) {
+                out += readWholeNumber(intVal) + 'บาท';
+            }
+            if (decVal === 0) {
+                out += 'ถ้วน';
+            } else {
+                out += readWholeNumber(decVal) + 'สตางค์';
+            }
+            return out;
+        }
+
+        // --- On-Site SLA Timer ---
+        function updateOnSiteDuration() {
+            const tIn = document.getElementById('timeIn')?.value || '';
+            const tOut = document.getElementById('timeOut')?.value || '';
+            const badge = document.getElementById('onSiteDurationBadge');
+            if (!badge) return;
+            if (!tIn || !tOut) {
+                badge.innerText = '0 ชม. 0 นาที';
+                return;
+            }
+            const [h1, m1] = tIn.split(':').map(Number);
+            const [h2, m2] = tOut.split(':').map(Number);
+            let diffMins = (h2 * 60 + m2) - (h1 * 60 + m1);
+            if (diffMins < 0) diffMins += 24 * 60;
+            const hrs = Math.floor(diffMins / 60);
+            const mins = diffMins % 60;
+            badge.innerText = `${hrs} ชม. ${mins} นาที`;
+        }
+
+        function checkInOnSiteJob() {
+            setNowTime('timeIn');
+            updateOnSiteDuration();
+            const gpsEl = document.getElementById('diagGps');
+            if (gpsEl && !gpsEl.value.trim() && typeof getCurrentGPS === 'function') {
+                getCurrentGPS();
+            }
+            showToast('เช็กอินเริ่มงานหน้างานและบันทึกเวลาเข้าเรียบร้อย ✓');
+        }
+
+        function checkOutOnSiteJob() {
+            setNowTime('timeOut');
+            updateOnSiteDuration();
+            showToast('เช็กเอาต์ปิดงานหน้างานเรียบร้อย ✓');
+        }
+
+        // --- Weekly Multi-Sheet Excel Export (4 Tabs) ---
+        function exportWeeklyMultiSheetExcel() {
+            if (typeof XLSX === 'undefined') {
+                showToast('ไม่พบไลบรารีสำหรับส่งออก Excel');
+                return;
+            }
+            const history = getJobHistorySync();
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const dayOfWeek = today.getDay();
+            const diffToMon = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() + diffToMon);
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+            const fmtDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const startStr = fmtDate(startOfWeek);
+            const endStr = fmtDate(endOfWeek);
+
+            let weeklyJobs = history.filter(item => {
+                if (!item.date) return false;
+                const d = new Date(item.date + 'T00:00:00');
+                return !isNaN(d.getTime()) && d >= startOfWeek && d <= endOfWeek;
+            });
+
+            // หากสัปดาห์ปัจจุบันยังไม่มีข้อมูล ให้ดึงข้อมูลทั้งหมดที่มีมาออกรายงานเพื่อให้เห็นผลทันที
+            const isFallbackAll = weeklyJobs.length === 0 && history.length > 0;
+            if (isFallbackAll) {
+                weeklyJobs = history;
+            }
+
+            const parseMoney = (v) => parseFloat(String(v || '0').replace(/,/g, '')) || 0;
+
+            let totalPartsRev = 0;
+            let totalLaborRev = 0;
+            let totalTripRev = 0;
+            let totalDiscountAmt = 0;
+            let totalVatAmt = 0;
+            let totalGrandRev = 0;
+            let completedJobs = 0;
+
+            const partsUsageMap = {};
+
+            weeklyJobs.forEach(job => {
+                if ((job.jobStatus || 'Completed') === 'Completed') completedJobs++;
+                let jobParts = 0;
+                (job.parts || []).forEach(p => {
+                    const desc = (p.desc || '').trim();
+                    const qty = parseFloat(p.qty || '0') || 0;
+                    const price = parseFloat(p.price || '0') || 0;
+                    const amt = qty * price;
+                    jobParts += amt;
+                    if (desc) {
+                        if (!partsUsageMap[desc]) partsUsageMap[desc] = { desc, qty: 0, amount: 0, jobCount: 0 };
+                        partsUsageMap[desc].qty += qty;
+                        partsUsageMap[desc].amount += amt;
+                        partsUsageMap[desc].jobCount += 1;
+                    }
+                });
+
+                const labor = parseMoney(job.feeLabor);
+                const trip = parseMoney(job.feeTrip);
+                const rawDisc = parseMoney(job.feeDiscount);
+                const gross = jobParts + labor + trip;
+                const disc = (job.feeDiscountType === 'PERCENT')
+                    ? Math.min(gross, gross * (Math.min(100, rawDisc) / 100))
+                    : Math.min(gross, rawDisc);
+                const net = Math.max(0, gross - disc);
+                const vat = net * 0.07;
+                const grand = parseMoney(job.total) || (net + vat);
+
+                totalPartsRev += jobParts;
+                totalLaborRev += labor;
+                totalTripRev += trip;
+                totalDiscountAmt += disc;
+                totalVatAmt += vat;
+                totalGrandRev += grand;
+            });
+
+            const wb = XLSX.utils.book_new();
+
+            // แท็บที่ 1: สรุปภาพรวมรายได้ / ค่าแรง / ค่าอะไหล่ (1_Weekly_Overview)
+            const sheet1Rows = [
+                ['รายงานสรุปภาพรวมการบริการประจำสัปดาห์ - HOSHIZAKI (THAILAND) LIMITED'],
+                ['ช่วงวันที่รายงาน:', isFallbackAll ? 'ทั้งหมดที่มีในระบบ (All Recorded Jobs)' : `${startStr} ถึง ${endStr}`, 'วันที่ออกรายงาน:', fmtDate(today)],
+                [],
+                ['หัวข้อสรุป (Summary Metric)', 'จำนวน / ยอดรวม', 'หน่วย'],
+                ['จำนวนใบแจ้งบริการทั้งหมด (Total Jobs)', weeklyJobs.length, 'ใบงาน'],
+                ['งานเสร็จสมบูรณ์ (Completed Jobs)', completedJobs, 'ใบงาน'],
+                ['งานค้างดำเนินการ / รออะไหล่ (Pending / Waiting Parts)', weeklyJobs.length - completedJobs, 'ใบงาน'],
+                [],
+                ['สรุปรายได้แยกตามหมวดหมู่ (Revenue Breakdown)', 'จำนวนเงิน (THB)', 'สัดส่วน (%)'],
+                ['1. รายได้ค่าอะไหล่ (Spare Parts Revenue)', Math.round(totalPartsRev * 100) / 100, totalGrandRev > 0 ? ((totalPartsRev / totalGrandRev) * 100).toFixed(1) + '%' : '0%'],
+                ['2. รายได้ค่าแรงช่างบริการ (Labor Fee Revenue)', Math.round(totalLaborRev * 100) / 100, totalGrandRev > 0 ? ((totalLaborRev / totalGrandRev) * 100).toFixed(1) + '%' : '0%'],
+                ['3. รายได้ค่าเดินทางปฏิบัติงาน (Trip Fee Revenue)', Math.round(totalTripRev * 100) / 100, totalGrandRev > 0 ? ((totalTripRev / totalGrandRev) * 100).toFixed(1) + '%' : '0%'],
+                ['4. หักส่วนลดพิเศษรวม (Total Discount)', -Math.round(totalDiscountAmt * 100) / 100, '-'],
+                ['5. ภาษีมูลค่าเพิ่ม (VAT 7%)', Math.round(totalVatAmt * 100) / 100, '-'],
+                ['ยอดรายได้รวมสุทธิประจำสัปดาห์ (GRAND TOTAL)', Math.round(totalGrandRev * 100) / 100, '100.0%']
+            ];
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet1Rows), '1_Weekly_Overview');
+
+            // แท็บที่ 2: ผลงานรายช่าง (2_Technician_Summary)
+            const sheet2Rows = [
+                ['ตารางสรุปผลงานรายช่างประจำสัปดาห์ (Technician Weekly Performance)'],
+                ['รหัสช่าง', 'รายชื่อช่าง (Technician)', 'เบอร์ติดต่อ', 'จำนวนงานทั้งหมด', 'เสร็จสมบูรณ์', 'รอดำเนินการ/รออะไหล่', 'ยอดค่าบริการรวม (THB)']
+            ];
+            TECHNICIAN_DIRECTORY.forEach(tech => {
+                const tJobs = weeklyJobs.filter(j => j.responsibleTech === tech.name || (Array.isArray(j.selectedTechs) && j.selectedTechs.includes(tech.name)));
+                const comp = tJobs.filter(j => (j.jobStatus || 'Completed') === 'Completed').length;
+                const amt = tJobs.reduce((s, j) => s + parseMoney(j.total), 0);
+                sheet2Rows.push([tech.code, tech.name, tech.phone, tJobs.length, comp, tJobs.length - comp, Math.round(amt * 100) / 100]);
+            });
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet2Rows), '2_Technician_Summary');
+
+            // แท็บที่ 3: รายการอะไหล่ที่เบิกใช้ (3_Spare_Parts_Used)
+            const sheet3Rows = [
+                ['สรุปรายการอะไหล่ที่เบิกใช้ประจำสัปดาห์ (Weekly Spare Parts Usage)'],
+                ['ลำดับ', 'รหัส / รายการอะไหล่ (Description)', 'จำนวนครั้งที่เบิก (ใบงาน)', 'จำนวนชิ้นรวม (Qty)', 'มูลค่ารวมก่อน VAT (THB)']
+            ];
+            const sortedParts = Object.values(partsUsageMap).sort((a, b) => b.qty - a.qty);
+            if (sortedParts.length === 0) {
+                sheet3Rows.push([1, 'ไม่มีรายการเบิกอะไหล่ในช่วงเวลานี้', 0, 0, 0]);
+            } else {
+                sortedParts.forEach((p, idx) => {
+                    sheet3Rows.push([idx + 1, p.desc, p.jobCount, p.qty, Math.round(p.amount * 100) / 100]);
+                });
+            }
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet3Rows), '3_Spare_Parts_Used');
+
+            // แท็บที่ 4: รายละเอียดใบงานทั้งหมด (4_All_Job_Details)
+            const sheet4Rows = [
+                ['รายละเอียดใบแจ้งบริการทั้งหมด (Full Job Service Details)'],
+                ['Job No.', 'วันที่', 'สถานะ', 'ช่างหลัก', 'ทีมช่างร่วม', 'ชื่อร้าน/ลูกค้า', 'ดีลเลอร์ (Dealer)', 'เกรดราคา', 'รุ่นเครื่อง (Model)', 'Serial No.', 'อาการเสีย', 'การแก้ไข', 'ค่าอะไหล่ (THB)', 'ค่าแรง (THB)', 'ค่าเดินทาง (THB)', 'ส่วนลด (THB)', 'ยอดสุทธิรวม VAT (THB)']
+            ];
+            weeklyJobs.forEach(j => {
+                const pSum = (j.parts || []).reduce((s, p) => s + ((parseFloat(p.qty || '0') || 0) * (parseFloat(p.price || '0') || 0)), 0);
+                sheet4Rows.push([
+                    j.jobNo || '',
+                    j.date || '',
+                    j.jobStatus || 'Completed',
+                    j.responsibleTech || '',
+                    Array.isArray(j.selectedTechs) ? j.selectedTechs.join(', ') : '',
+                    j.store || '',
+                    j.dealer || '',
+                    PRICE_TIER_LABELS[j.priceTier] || j.priceTier || 'Direct',
+                    j.model || '',
+                    j.serial || '',
+                    j.symptom || '',
+                    j.action || '',
+                    Math.round(pSum * 100) / 100,
+                    parseMoney(j.feeLabor),
+                    parseMoney(j.feeTrip),
+                    parseMoney(j.feeDiscount),
+                    parseMoney(j.total)
+                ]);
+            });
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet4Rows), '4_All_Job_Details');
+
+            const fileName = `Hoshizaki_Weekly_Report_${startStr}_to_${endStr}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            showToast(`ส่งออกรายงานสรุปประจำสัปดาห์ 4 ชีต (${fileName}) เรียบร้อย ✓`);
+        }
+
+        // --- Upcoming PM Reminder & Executive Failure Analytics Dashboard ---
+        function getUpcomingPmJobsList() {
+            const history = getJobHistorySync();
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const limitDate = new Date(today);
+            limitDate.setDate(today.getDate() + 30);
+
+            const bySerialOrStore = {};
+            history.forEach(j => {
+                if (!j.nextPmDate) return;
+                const key = (j.serial || j.store || j.jobNo || '').trim().toLowerCase();
+                if (!bySerialOrStore[key] || (j.date || '') > (bySerialOrStore[key].date || '')) {
+                    bySerialOrStore[key] = j;
+                }
+            });
+
+            return Object.values(bySerialOrStore)
+                .map(j => {
+                    const pmD = new Date(j.nextPmDate + 'T00:00:00');
+                    const diffDays = Math.round((pmD - today) / (1000 * 60 * 60 * 24));
+                    return { ...j, pmDateObj: pmD, diffDays };
+                })
+                .filter(j => !isNaN(j.pmDateObj.getTime()) && j.pmDateObj <= limitDate)
+                .sort((a, b) => a.diffDays - b.diffDays);
+        }
+
+        function refreshPmDueAlertBadge() {
+            const dueList = getUpcomingPmJobsList();
+            const badge = document.getElementById('pmDueBadgeCount');
+            if (badge) {
+                badge.innerText = dueList.length;
+                badge.classList.toggle('hidden', dueList.length === 0);
+            }
+        }
+
+        function openPmAndAnalyticsModal() {
+            renderPmAndAnalyticsDashboard();
+            document.getElementById('pmAnalyticsModal')?.classList.remove('hidden');
+        }
+
+        function closePmAndAnalyticsModal() {
+            document.getElementById('pmAnalyticsModal')?.classList.add('hidden');
+        }
+
+        function startPmFollowupJob(sourceJobNo) {
+            const history = getJobHistorySync();
+            const src = history.find(h => h.jobNo === sourceJobNo);
+            if (!src) return;
+            closePmAndAnalyticsModal();
+            autoGenerateJobNo(false);
+            if (document.getElementById('jobDate')) document.getElementById('jobDate').value = new Date().toISOString().split('T')[0];
+            if (document.getElementById('custStore')) document.getElementById('custStore').value = src.store || '';
+            if (document.getElementById('custDealer')) document.getElementById('custDealer').value = src.dealer || '';
+            if (document.getElementById('custContact')) document.getElementById('custContact').value = src.contact || '';
+            if (document.getElementById('custAddress')) document.getElementById('custAddress').value = src.address || '';
+            if (document.getElementById('eqSerial')) document.getElementById('eqSerial').value = src.serial || '';
+            if (document.getElementById('eqModel')) document.getElementById('eqModel').value = src.model || '';
+            if (document.getElementById('eqProductType')) document.getElementById('eqProductType').value = src.productType || '';
+            if (document.getElementById('typePm')) document.getElementById('typePm').checked = true;
+            if (document.getElementById('diagSymptom')) document.getElementById('diagSymptom').value = `บำรุงรักษาตามรอบ (Scheduled PM จากใบงาน ${src.jobNo})`;
+            showToast(`สร้างใบงาน PM รอบถัดไปสำหรับ "${src.store || src.serial}" เรียบร้อย ✓`);
+        }
+
+        function renderPmAndAnalyticsDashboard() {
+            const dueList = getUpcomingPmJobsList();
+            const labelEl = document.getElementById('pmDueSummaryLabel');
+            if (labelEl) labelEl.innerText = `${dueList.length} รายการ`;
+
+            const pmTbody = document.getElementById('pmReminderTableBody');
+            if (pmTbody) {
+                if (dueList.length === 0) {
+                    pmTbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">ยังไม่มีรายการงาน PM ที่ครบกำหนดภายใน 30 วันนี้</td></tr>';
+                } else {
+                    pmTbody.innerHTML = dueList.map(item => {
+                        const statusBadge = item.diffDays < 0
+                            ? `<span class="bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold">เลยกำหนด ${Math.abs(item.diffDays)} วัน</span>`
+                            : (item.diffDays === 0
+                                ? `<span class="bg-amber-200 text-amber-950 px-2 py-0.5 rounded-full font-bold">ครบกำหนดวันนี้</span>`
+                                : `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">อีก ${item.diffDays} วัน</span>`);
+                        return `
+                            <tr class="hover:bg-amber-50/40">
+                                <td class="p-2 font-bold text-hoshizaki-navy">${item.nextPmDate}</td>
+                                <td class="p-2">${statusBadge}</td>
+                                <td class="p-2 font-semibold">${item.store || '-'}</td>
+                                <td class="p-2">${item.model || '-'} ${item.serial ? '(' + item.serial + ')' : ''}</td>
+                                <td class="p-2 text-gray-600">${item.responsibleTech || '-'}</td>
+                                <td class="p-2 text-center">
+                                    <button type="button" onclick="startPmFollowupJob('${(item.jobNo || '').replace(/'/g, "\'")}')" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-2.5 py-1 rounded text-[11px] font-bold">
+                                        สร้างใบงาน PM
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
+            // วิเคราะห์สถิติรุ่นเครื่องและอะไหล่
+            const history = getJobHistorySync();
+            const modelCount = {};
+            const partCount = {};
+            history.forEach(j => {
+                const m = (j.model || '').trim();
+                if (m) modelCount[m] = (modelCount[m] || 0) + 1;
+                (j.parts || []).forEach(p => {
+                    const d = (p.desc || '').trim();
+                    const q = parseFloat(p.qty || '0') || 0;
+                    if (d && q > 0) partCount[d] = (partCount[d] || 0) + q;
+                });
+            });
+
+            const renderBarList = (containerId, entries, unitText, barColor) => {
+                const el = document.getElementById(containerId);
+                if (!el) return;
+                if (entries.length === 0) {
+                    el.innerHTML = '<div class="text-gray-400 text-center py-4">ยังไม่มีข้อมูลสถิติเพียงพอ</div>';
+                    return;
+                }
+                const maxVal = entries[0][1] || 1;
+                el.innerHTML = entries.slice(0, 6).map(([name, val]) => {
+                    const pct = Math.max(8, Math.round((val / maxVal) * 100));
+                    return `
+                        <div class="space-y-0.5">
+                            <div class="flex justify-between font-semibold text-gray-800">
+                                <span class="truncate pr-2">${name}</span>
+                                <span class="font-extrabold text-hoshizaki-navy flex-shrink-0">${val} ${unitText}</span>
+                            </div>
+                            <div class="w-full bg-white rounded-full h-2 border border-gray-200 overflow-hidden">
+                                <div class="${barColor} h-2 rounded-full" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            };
+
+            renderBarList('analyticsTopModelsList', Object.entries(modelCount).sort((a, b) => b[1] - a[1]), 'ครั้ง', 'bg-violet-600');
+            renderBarList('analyticsTopPartsList', Object.entries(partCount).sort((a, b) => b[1] - a[1]), 'ชิ้น', 'bg-sky-600');
+        }
+
+        // --- Technician Van Stock & Parts Requisition Management ---
+        function getVanStockMap() {
+            try {
+                return JSON.parse(localStorage.getItem('hoshizaki_van_stock_db') || '{}');
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveVanStockMap(map) {
+            localStorage.setItem('hoshizaki_van_stock_db', JSON.stringify(map));
+        }
+
+        function openVanStockModal() {
+            const respTech = document.getElementById('responsibleTechSelect')?.value || '';
+            const code = getTechCodeByName(respTech);
+            const sel = document.getElementById('vanStockTechSelect');
+            if (sel && code) sel.value = code;
+            renderVanStockTable();
+            document.getElementById('vanStockModal')?.classList.remove('hidden');
+        }
+
+        function closeVanStockModal() {
+            document.getElementById('vanStockModal')?.classList.add('hidden');
+        }
+
+        function addOrTopupVanStockItem() {
+            const techCode = document.getElementById('vanStockTechSelect')?.value || 'T01';
+            const partName = (document.getElementById('vanStockPartInput')?.value || '').trim();
+            const qty = parseInt(document.getElementById('vanStockQtyInput')?.value || '0', 10);
+            if (!partName || isNaN(qty) || qty <= 0) {
+                showToast('กรุณาระบุชื่ออะไหล่และจำนวนที่ต้องการเติมสต็อก');
+                return;
+            }
+            const map = getVanStockMap();
+            if (!map[techCode]) map[techCode] = {};
+            map[techCode][partName] = (Number(map[techCode][partName]) || 0) + qty;
+            saveVanStockMap(map);
+            document.getElementById('vanStockPartInput').value = '';
+            renderVanStockTable();
+            showToast(`เติมสต็อกรถ [${techCode}] "${partName}" +${qty} ชิ้น เรียบร้อย ✓`);
+        }
+
+        function adjustVanStockQty(techCode, partName, delta) {
+            const map = getVanStockMap();
+            if (!map[techCode]) return;
+            const nextVal = (Number(map[techCode][partName]) || 0) + delta;
+            if (nextVal <= 0) {
+                delete map[techCode][partName];
+            } else {
+                map[techCode][partName] = nextVal;
+            }
+            saveVanStockMap(map);
+            renderVanStockTable();
+        }
+
+        function renderVanStockTable() {
+            const tbody = document.getElementById('vanStockTableBody');
+            const techCode = document.getElementById('vanStockTechSelect')?.value || 'T01';
+            if (!tbody) return;
+            const map = getVanStockMap();
+            const stockObj = map[techCode] || {};
+            const keys = Object.keys(stockObj);
+            if (keys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400">ยังไม่มีรายการอะไหล่ในสต็อกรถช่าง [${techCode}] (เพิ่มรายการด้านบนเพื่อเริ่มติดตามสต็อก)</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = keys.map(k => {
+                const qty = Number(stockObj[k]) || 0;
+                const safeK = k.replace(/'/g, "\'");
+                const badge = qty <= 1
+                    ? '<span class="bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold">ใกล้หมด (Low Stock)</span>'
+                    : '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">พร้อมใช้งาน</span>';
+                return `
+                    <tr class="hover:bg-orange-50/40">
+                        <td class="p-2 font-semibold text-gray-800">${k}</td>
+                        <td class="p-2 text-center font-extrabold text-hoshizaki-navy text-sm">${qty}</td>
+                        <td class="p-2 text-center">${badge}</td>
+                        <td class="p-2 text-center space-x-1">
+                            <button type="button" onclick="adjustVanStockQty('${techCode}', '${safeK}', -1)" class="bg-gray-200 hover:bg-gray-300 px-2 py-0.5 rounded font-bold">-1</button>
+                            <button type="button" onclick="adjustVanStockQty('${techCode}', '${safeK}', 1)" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold">+1</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function deductVanStockForSavedJob(jobData) {
+            const techCode = getTechCodeByName(jobData.responsibleTech);
+            if (!techCode) return;
+            const map = getVanStockMap();
+            if (!map[techCode]) return;
+            let deducted = 0;
+            (jobData.parts || []).forEach(p => {
+                const desc = (p.desc || '').trim();
+                const qty = parseInt(p.qty || '0', 10) || 0;
+                if (desc && qty > 0 && map[techCode][desc] !== undefined) {
+                    map[techCode][desc] = Math.max(0, (Number(map[techCode][desc]) || 0) - qty);
+                    deducted++;
+                }
+            });
+            if (deducted > 0) {
+                saveVanStockMap(map);
+            }
+        }
+
+        function exportVanStockRequisitionExcel() {
+            if (typeof XLSX === 'undefined') return;
+            const map = getVanStockMap();
+            const rows = [['รหัสช่าง', 'ชื่อช่าง', 'รายการอะไหล่ติดรถ', 'คงเหลือ (ชิ้น)', 'สถานะสต็อก']];
+            TECHNICIAN_DIRECTORY.forEach(t => {
+                const sObj = map[t.code] || {};
+                Object.keys(sObj).forEach(pk => {
+                    const q = Number(sObj[pk]) || 0;
+                    rows.push([t.code, t.name, pk, q, q <= 1 ? 'ควรเบิกเติม (Low Stock)' : 'ปกติ']);
+                });
+            });
+            if (rows.length === 1) {
+                rows.push(['-', '-', 'ยังไม่มีรายการในสต็อกรถช่าง', 0, '-']);
+            }
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Van_Stock_Summary');
+            XLSX.writeFile(wb, `Hoshizaki_Van_Stock_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast('ส่งออกรายงานสต็อกรถช่างเรียบร้อย ✓');
+        }
+
+        // เริ่มต้นอัปเดตตัวเลขแจ้งเตือน PM ทันทีที่เปิดหน้าเว็บ
+        setTimeout(() => {
+            if (typeof refreshPmDueAlertBadge === 'function') refreshPmDueAlertBadge();
+            if (typeof updateOnSiteDuration === 'function') updateOnSiteDuration();
+        }, 500);
+
     </script>
 
     <!-- Google Sheets Cloud Sync & Team QR Code Poster Modal -->
@@ -12914,6 +13606,162 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
             <div class="flex justify-end pt-1 border-t flex-shrink-0">
                 <button type="button" onclick="closeDealerGradeModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Manager PIN Security Modal (v13.1) -->
+    <div id="managerPinModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[85] flex items-center justify-center p-3 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-5 space-y-4">
+            <div class="flex items-center justify-between border-b pb-2.5">
+                <h3 class="text-sm font-extrabold text-hoshizaki-navy flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-amber-600"></i> ยืนยันรหัส PIN โหมดผู้จัดการ
+                </h3>
+                <button type="button" onclick="closeManagerPinModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+            </div>
+            <p class="text-xs text-gray-600">กรุณากรอกรหัส PIN 4 หลักเพื่อเข้าสู่ <b>โหมดผู้จัดการ / ผู้จ่ายงาน</b> (รหัสเริ่มต้น: <b>1234</b>)</p>
+            <input type="password" id="managerPinVerifyInput" maxlength="6" inputmode="numeric" placeholder="••••" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyManagerPinAndUnlock();}" class="w-full text-center text-2xl tracking-[0.5em] font-extrabold border-2 border-hoshizaki-blue rounded-xl py-2.5 focus:outline-none">
+            <div class="flex items-center justify-between pt-1">
+                <button type="button" onclick="toggleChangeManagerPinBox()" class="text-[11px] text-hoshizaki-darkblue underline">เปลี่ยนรหัส PIN</button>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeManagerPinModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-4 py-2 rounded-lg font-semibold">ยกเลิก</button>
+                    <button type="button" onclick="verifyManagerPinAndUnlock()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-xs px-5 py-2 rounded-lg font-bold">ยืนยัน</button>
+                </div>
+            </div>
+            <div id="changeManagerPinBox" class="hidden pt-2 border-t space-y-2 text-xs">
+                <div class="font-bold text-gray-700">ตั้งรหัส PIN ใหม่:</div>
+                <div class="flex gap-1.5">
+                    <input type="password" id="oldManagerPinInput" maxlength="6" inputmode="numeric" placeholder="PIN เดิม" class="w-1/2 border rounded-lg px-2.5 py-1.5 text-center">
+                    <input type="password" id="newManagerPinInput" maxlength="6" inputmode="numeric" placeholder="PIN ใหม่ 4 หลัก" class="w-1/2 border rounded-lg px-2.5 py-1.5 text-center">
+                </div>
+                <button type="button" onclick="saveNewManagerPin()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 rounded-lg font-bold">บันทึกรหัส PIN ใหม่</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming PM Reminder & Executive Failure Analytics Modal (v13.1) -->
+    <div id="pmAnalyticsModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[78] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full p-4 sm:p-5 space-y-3 max-h-[92vh] flex flex-col">
+            <div class="flex flex-wrap items-center justify-between border-b pb-2.5 gap-2 flex-shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">
+                        <i class="fa-solid fa-chart-pie text-violet-600 mr-1"></i> แจ้งเตือนงาน PM ครบกำหนด & วิเคราะห์สถิติรุ่นเครื่อง/อะไหล่ (v13.1)
+                    </h3>
+                    <p class="text-[11px] text-gray-500">ติดตามรอบบำรุงรักษา (Next PM) ล่วงหน้า 30 วัน พร้อมวิเคราะห์รุ่นเครื่องและอะไหล่ที่ถูกเปลี่ยนสูงสุด</p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="exportWeeklyMultiSheetExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-file-excel"></i> <span>ส่งออกรายงานประจำสัปดาห์ (4 ชีต)</span>
+                    </button>
+                    <button type="button" onclick="closePmAndAnalyticsModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+                </div>
+            </div>
+
+            <div class="overflow-y-auto flex-1 space-y-4 pr-1">
+                <!-- 1. รายการแจ้งเตือน PM ครบกำหนด -->
+                <div class="border border-amber-200 bg-amber-50/60 rounded-xl p-3 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-amber-950"><i class="fa-solid fa-bell text-amber-600 mr-1"></i> รายการลูกค้าที่ครบกำหนดบำรุงรักษา (PM Due Within 30 Days / Overdue)</span>
+                        <span id="pmDueSummaryLabel" class="text-[11px] font-bold text-amber-900">0 รายการ</span>
+                    </div>
+                    <div class="overflow-x-auto border border-amber-200 rounded-lg bg-white text-xs">
+                        <table class="w-full text-left border-collapse min-w-[640px]">
+                            <thead class="bg-amber-900 text-white">
+                                <tr>
+                                    <th class="p-2">วันครบกำหนด PM</th>
+                                    <th class="p-2">สถานะ</th>
+                                    <th class="p-2">ชื่อร้าน / ลูกค้า</th>
+                                    <th class="p-2">รุ่น / S/N</th>
+                                    <th class="p-2">ช่างดูแลเดิม</th>
+                                    <th class="p-2 text-center">เปิดใบงาน PM</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pmReminderTableBody" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. กราฟสถิติรุ่นเครื่องที่ซ่อมบ่อย & อะไหล่ที่ถูกเปลี่ยนสูงสุด -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <div class="border border-violet-200 bg-violet-50/50 rounded-xl p-3 space-y-2">
+                        <div class="font-extrabold text-hoshizaki-navy"><i class="fa-solid fa-snowflake text-violet-600 mr-1"></i> อันดับรุ่นเครื่องที่มีประวัติแจ้งซ่อมสูงสุด (Top Models)</div>
+                        <div id="analyticsTopModelsList" class="space-y-2"></div>
+                    </div>
+                    <div class="border border-sky-200 bg-sky-50/50 rounded-xl p-3 space-y-2">
+                        <div class="font-extrabold text-hoshizaki-navy"><i class="fa-solid fa-gears text-sky-600 mr-1"></i> อันดับอะไหล่ที่ถูกเบิกเปลี่ยนสูงสุด (Top Spare Parts)</div>
+                        <div id="analyticsTopPartsList" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2 border-t flex-shrink-0">
+                <button type="button" onclick="closePmAndAnalyticsModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technician Van Stock & Parts Requisition Modal (v13.1) -->
+    <div id="vanStockModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[79] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-4 sm:p-5 space-y-3 max-h-[92vh] flex flex-col">
+            <div class="flex flex-wrap items-center justify-between border-b pb-2.5 gap-2 flex-shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">
+                        <i class="fa-solid fa-truck-ramp-box text-orange-600 mr-1"></i> ระบบสต็อกอะไหล่ประจำรถช่าง (Technician Van Stock)
+                    </h3>
+                    <p class="text-[11px] text-gray-500">บันทึกยอดอะไหล่ติดรถช่างแต่ละคน ตัดสต็อกอัตโนมัติเมื่อบันทึกใบงาน และแจ้งเตือนเมื่อสต็อกต่ำกว่าเกณฑ์</p>
+                </div>
+                <button type="button" onclick="closeVanStockModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 bg-orange-50/80 border border-orange-200 rounded-xl p-2.5 text-xs flex-shrink-0">
+                <div class="sm:col-span-3">
+                    <label class="block text-[10px] font-bold text-gray-600 mb-0.5">เลือกรถช่าง (Technician):</label>
+                    <select id="vanStockTechSelect" onchange="renderVanStockTable()" class="w-full border border-orange-300 rounded-lg px-2 py-1.5 bg-white font-bold text-hoshizaki-navy">
+                        <option value="T01">[T01] Mr.Thanakrit</option>
+                        <option value="T02">[T02] Mr.Noparin</option>
+                        <option value="T03">[T03] Mr.Surin S.</option>
+                        <option value="T04">[T04] Mr.Jeerapan</option>
+                        <option value="T05">[T05] Mr.Nirun</option>
+                        <option value="T06">[T06] Mr. Surin T.</option>
+                        <option value="T07">[T07] Mr.Pawat</option>
+                        <option value="T08">[T08] Ms.Wanwipha</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-5">
+                    <label class="block text-[10px] font-bold text-gray-600 mb-0.5">รหัส / รายการอะไหล่ *</label>
+                    <input type="text" id="vanStockPartInput" list="hoshizakiPartsList" placeholder="เช่น Water Valve / วาล์วน้ำเข้า" class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-[10px] font-bold text-gray-600 mb-0.5">จำนวนเติมเข้า (ชิ้น)</label>
+                    <input type="number" id="vanStockQtyInput" value="2" min="1" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-center font-bold">
+                </div>
+                <div class="sm:col-span-2 flex items-end">
+                    <button type="button" onclick="addOrTopupVanStockItem()" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-1.5 px-2.5 rounded-lg font-bold shadow-xs">
+                        <i class="fa-solid fa-plus mr-1"></i> เติมสต็อก
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-auto flex-1 border border-gray-200 rounded-lg bg-white text-xs min-h-[180px]">
+                <table class="w-full text-left border-collapse min-w-[560px]">
+                    <thead class="bg-hoshizaki-navy text-white sticky top-0">
+                        <tr>
+                            <th class="p-2">รายการอะไหล่ติดรถ</th>
+                            <th class="p-2 text-center w-28">คงเหลือ (ชิ้น)</th>
+                            <th class="p-2 text-center w-32">สถานะสต็อก</th>
+                            <th class="p-2 text-center w-28">ปรับยอด / ลบ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vanStockTableBody" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+
+            <div class="flex flex-wrap justify-between items-center gap-2 pt-1 border-t flex-shrink-0 text-xs">
+                <button type="button" onclick="exportVanStockRequisitionExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-file-excel"></i> ส่งออกใบสรุปสต็อก & เบิกอะไหล่รถช่าง
+                </button>
+                <button type="button" onclick="closeVanStockModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>

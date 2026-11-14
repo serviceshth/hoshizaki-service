@@ -3088,16 +3088,16 @@
                     <div class="flex flex-col sm:flex-row sm:items-start gap-1.5 pt-1 border-t border-gray-200/80">
                         <span class="sm:w-36 text-gray-500 font-medium sm:pt-1.5 flex-shrink-0">ช่างผู้รับผิดชอบงาน / Technician:</span>
                         <div class="flex-1 space-y-1">
-                            <select id="responsibleTechSelect" onchange="updateResponsibleTechPhone()" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-xs font-semibold text-hoshizaki-navy bg-white focus:outline-none focus:border-hoshizaki-blue">
+                            <select id="responsibleTechSelect" onchange="updateResponsibleTechPhone(true)" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-xs font-semibold text-hoshizaki-navy bg-white focus:outline-none focus:border-hoshizaki-blue">
                                 <option value="">-- เลือกช่างผู้รับผิดชอบงาน --</option>
-                                <option value="Mr.Thanakrit Chanmokonpanit" data-phone="096-804-3989">Mr.Thanakrit Chanmokonpanit (096-804-3989)</option>
-                                <option value="Mr.Noparin Homhoul" data-phone="097-230-5941">Mr.Noparin Homhoul (097-230-5941)</option>
-                                <option value="Mr.Surin Sarawong" data-phone="091-767-2018">Mr.Surin Sarawong (091-767-2018)</option>
-                                <option value="Mr.Jeerapan Phrasawang" data-phone="091-767-2079">Mr.Jeerapan Phrasawang (091-767-2079)</option>
-                                <option value="Mr.Nirun Sornrat" data-phone="091-767-2038">Mr.Nirun Sornrat (091-767-2038)</option>
-                                <option value="Mr. Surin Tharapai" data-phone="063-865-5442">Mr. Surin Tharapai (063-865-5442)</option>
-                                <option value="Mr.Pawat Warongtheradet" data-phone="099-508-1908">Mr.Pawat Warongtheradet (099-508-1908)</option>
-                                <option value="Ms.Wanwipha Nakamrod" data-phone="093-827-8132">Ms.Wanwipha Nakamrod (093-827-8132)</option>
+                                <option value="Mr.Thanakrit Chanmokonpanit" data-code="T01" data-phone="096-804-3989">[T01] Mr.Thanakrit Chanmokonpanit (096-804-3989)</option>
+                                <option value="Mr.Noparin Homhoul" data-code="T02" data-phone="097-230-5941">[T02] Mr.Noparin Homhoul (097-230-5941)</option>
+                                <option value="Mr.Surin Sarawong" data-code="T03" data-phone="091-767-2018">[T03] Mr.Surin Sarawong (091-767-2018)</option>
+                                <option value="Mr.Jeerapan Phrasawang" data-code="T04" data-phone="091-767-2079">[T04] Mr.Jeerapan Phrasawang (091-767-2079)</option>
+                                <option value="Mr.Nirun Sornrat" data-code="T05" data-phone="091-767-2038">[T05] Mr.Nirun Sornrat (091-767-2038)</option>
+                                <option value="Mr. Surin Tharapai" data-code="T06" data-phone="063-865-5442">[T06] Mr. Surin Tharapai (063-865-5442)</option>
+                                <option value="Mr.Pawat Warongtheradet" data-code="T07" data-phone="099-508-1908">[T07] Mr.Pawat Warongtheradet (099-508-1908)</option>
+                                <option value="Ms.Wanwipha Nakamrod" data-code="T08" data-phone="093-827-8132">[T08] Ms.Wanwipha Nakamrod (093-827-8132)</option>
                             </select>
                             <div id="responsibleTechPhoneBox" class="hidden flex items-center justify-between text-[11px] text-hoshizaki-darkblue bg-blue-50/80 border border-blue-100 rounded px-2 py-1">
                                 <span><i class="fa-solid fa-phone-volume mr-1"></i> เบอร์โทรติดต่อ: <strong id="responsibleTechPhoneText">-</strong></span>
@@ -3166,6 +3166,16 @@
                                 <i class="fa-solid fa-floppy-disk"></i> บันทึก S/N
                             </button>
                         </div>
+                    </div>
+                    <!-- ประวัติการซ่อมย้อนหลังของ Serial No. นี้ (ดึงจากประวัติในเครื่อง + Google Sheets ส่วนกลาง) -->
+                    <div id="serialServiceHistoryBox" class="hidden bg-amber-50/80 border border-amber-200 rounded-lg p-2 space-y-1.5 text-[11px]">
+                        <div class="flex items-center justify-between font-bold text-amber-950">
+                            <span><i class="fa-solid fa-clock-rotate-left text-amber-600 mr-1"></i> ประวัติการซ่อมย้อนหลังของ S/N นี้ (<span id="serialServiceHistoryCount">0</span> ครั้ง):</span>
+                            <button type="button" onclick="fetchSerialServiceHistoryFromCloud()" class="no-print text-[10px] bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.5 rounded font-semibold">
+                                <i class="fa-solid fa-rotate"></i> รีเฟรช
+                            </button>
+                        </div>
+                        <div id="serialServiceHistoryList" class="space-y-1 max-h-28 overflow-y-auto text-gray-800"></div>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 pt-1">
                         <span class="sm:w-24 text-gray-500 font-medium">การรับประกัน:</span>
@@ -3900,23 +3910,163 @@
         </div>
     </div>
 
-    <!-- Modal History Table -->
-    <div id="historyModal" class="no-print fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full p-4 sm:p-6 space-y-3.5 max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center border-b pb-3">
+    <!-- Modal History Table & Technician Performance / Service Report Entry -->
+    <div id="historyModal" class="no-print fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-5xl w-full p-4 sm:p-6 space-y-3 max-h-[92vh] flex flex-col">
+            <div class="flex flex-wrap justify-between items-center border-b pb-2.5 gap-2">
                 <h3 class="text-base sm:text-lg font-bold text-hoshizaki-navy flex items-center gap-2">
-                    <i class="fa-solid fa-clock-rotate-left text-hoshizaki-blue"></i> ประวัติใบงานที่บันทึกไว้ (<span id="historyTotalCount">0</span>)
+                    <i class="fa-solid fa-clock-rotate-left text-hoshizaki-blue"></i> ประวัติใบแจ้งบริการ & สรุปผลงานรายช่าง (<span id="historyTotalCount">0</span> ใบงาน)
                 </h3>
-                <button type="button" onclick="closeHistoryModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="toggleQuickServiceReportEntryBox()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-keyboard"></i> <span>คีย์ข้อมูลจาก Service Report</span>
+                    </button>
+                    <button type="button" onclick="toggleTechSummaryPanel()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-chart-column"></i> <span>สรุปผลงานรายช่าง</span>
+                    </button>
+                    <button type="button" onclick="closeHistoryModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+                </div>
             </div>
 
-            <!-- Search & Status Filter Bar -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                <div class="sm:col-span-2 relative">
+            <!-- ฟอร์มคีย์ข้อมูลด่วนจาก Service Report / ใบแจ้งบริการกระดาษ ลงระบบและแยกตามรหัสช่างทันที -->
+            <div id="quickServiceReportEntryBox" class="hidden bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 space-y-2 text-xs">
+                <div class="flex items-center justify-between border-b border-emerald-200 pb-1">
+                    <span class="font-bold text-emerald-950"><i class="fa-solid fa-file-pen text-emerald-600 mr-1"></i> บันทึกข้อมูลจากใบแจ้งบริการ (Service Report Key-in) แยกตามรหัสช่าง</span>
+                    <button type="button" onclick="toggleQuickServiceReportEntryBox()" class="text-gray-500 hover:text-gray-800 font-bold">&times;</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">ช่างผู้รับผิดชอบหลัก (Lead Tech) *</label>
+                        <select id="qrEntryTech" onchange="updateQuickEntryJobNoPreview()" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white font-semibold text-hoshizaki-navy">
+                            <option value="Mr.Thanakrit Chanmokonpanit">[T01] Mr.Thanakrit Chanmokonpanit</option>
+                            <option value="Mr.Noparin Homhoul">[T02] Mr.Noparin Homhoul</option>
+                            <option value="Mr.Surin Sarawong">[T03] Mr.Surin Sarawong</option>
+                            <option value="Mr.Jeerapan Phrasawang">[T04] Mr.Jeerapan Phrasawang</option>
+                            <option value="Mr.Nirun Sornrat">[T05] Mr.Nirun Sornrat</option>
+                            <option value="Mr. Surin Tharapai">[T06] Mr. Surin Tharapai</option>
+                            <option value="Mr.Pawat Warongtheradet">[T07] Mr.Pawat Warongtheradet</option>
+                            <option value="Ms.Wanwipha Nakamrod">[T08] Ms.Wanwipha Nakamrod</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">วันที่ปฏิบัติงาน *</label>
+                        <input type="date" id="qrEntryDate" onchange="updateQuickEntryJobNoPreview()" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">เลขที่ใบแจ้งบริการ (Job No.) *</label>
+                        <input type="text" id="qrEntryJobNo" placeholder="JOB-YYYYMMDD-T01-001" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white font-bold text-hoshizaki-navy">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">สถานะใบงาน</label>
+                        <select id="qrEntryStatus" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white font-semibold">
+                            <option value="Completed">เสร็จสมบูรณ์ (Completed)</option>
+                            <option value="Pending">รอดำเนินการ (Pending)</option>
+                            <option value="Waiting Parts">รออะไหล่ (Waiting Parts)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="bg-white/90 border border-emerald-200 rounded-lg p-2 space-y-1">
+                    <div class="text-[10px] font-bold text-emerald-900">ช่างร่วมทีม (กรณีไปหน้างาน 2–3 คน สามารถติ๊กเลือกเพิ่มเติมได้):</div>
+                    <div class="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+                        <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr.Thanakrit Chanmokonpanit" class="qr-coteach-cb rounded text-emerald-600"> [T01] Thanakrit</label>
+                        <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr.Noparin Homhoul" class="qr-coteach-cb rounded text-emerald-600"> [T02] Noparin</label>
+                        <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr.Surin Sarawong" class="qr-coteach-cb rounded text-emerald-600"> [T03] Surin S.</label>
+                        <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr.Jeerapan Phrasawang" class="qr-coteach-cb rounded text-emerald-600"> [T04] Jeerapan</label>
+                        <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr.Nirun Sornrat" class="qr-coteach-cb rounded text-emerald-600"> [T05] Nirun</label>
+                        <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr. Surin Tharapai" class="qr-coteach-cb rounded text-emerald-600"> [T06] Surin T.</label>
+                        <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr.Pawat Warongtheradet" class="qr-coteach-cb rounded text-emerald-600"> [T07] Pawat</label>
+                        <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Ms.Wanwipha Nakamrod" class="qr-coteach-cb rounded text-emerald-600"> [T08] Wanwipha</label>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">Serial No. (ดึงรุ่นอัตโนมัติ)</label>
+                        <input type="text" id="qrEntrySerial" list="hoshizakiSerialsList" oninput="autoFillQuickEntryFromSerial(this.value)" placeholder="พิมพ์ Serial No." class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">รุ่นเครื่อง (Model)</label>
+                        <input type="text" id="qrEntryModel" list="hoshizakiModelsList" placeholder="เช่น IM-100NE" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">ชื่อร้าน / ลูกค้า *</label>
+                        <input type="text" id="qrEntryStore" list="hoshizakiCustomersList" placeholder="ระบุชื่อร้านค้าหรือบริษัทลูกค้า" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+                    <div class="sm:col-span-4">
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">อาการเสีย (Symptom)</label>
+                        <input type="text" id="qrEntrySymptom" placeholder="ระบุอาการเสียที่รับแจ้ง" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white">
+                    </div>
+                    <div class="sm:col-span-4">
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">การแก้ไข / อะไหล่ที่ใช้</label>
+                        <input type="text" id="qrEntryAction" placeholder="ระบุรายละเอียดการซ่อมหรืออะไหล่" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[10px] font-semibold text-gray-700 mb-0.5">ยอดรวมสุทธิ (THB)</label>
+                        <input type="number" id="qrEntryTotal" value="0.00" step="50" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white text-right font-bold">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <button type="button" onclick="saveQuickServiceReportEntry()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 px-3 rounded-lg font-bold shadow-xs">
+                            <i class="fa-solid fa-plus-circle mr-1"></i> บันทึกใบงาน
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ตารางสรุปผลงานรายช่าง (รายสัปดาห์ / รายเดือน / ทั้งหมด) -->
+            <div id="techSummaryPanel" class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3 space-y-2 text-xs">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-bold text-hoshizaki-navy"><i class="fa-solid fa-users-gear text-indigo-600 mr-1"></i> สรุปจำนวนงานและใบแจ้งบริการแยกตามรายชื่อ/รหัสช่าง</span>
+                    <div class="flex items-center gap-1.5">
+                        <select id="historyPeriodFilter" onchange="renderHistoryTable()" class="border border-indigo-300 rounded-lg px-2 py-1 bg-white font-semibold text-hoshizaki-navy">
+                            <option value="ALL">ช่วงเวลา: ทั้งหมด (All Time)</option>
+                            <option value="THIS_WEEK">สัปดาห์นี้ (This Week)</option>
+                            <option value="THIS_MONTH" selected>เดือนนี้ (This Month)</option>
+                            <option value="LAST_MONTH">เดือนที่แล้ว (Last Month)</option>
+                        </select>
+                        <button type="button" onclick="exportTechnicianSummaryExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-file-excel"></i> <span>ส่งออกรายงานรายช่าง</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto border border-indigo-100 rounded-lg bg-white">
+                    <table class="w-full text-[11px] text-left border-collapse min-w-[640px]">
+                        <thead class="bg-indigo-900 text-white">
+                            <tr>
+                                <th class="p-2">รหัสช่าง</th>
+                                <th class="p-2">รายชื่อช่าง (Technician)</th>
+                                <th class="p-2 text-center">จำนวนใบงานทั้งหมด</th>
+                                <th class="p-2 text-center">เสร็จสมบูรณ์</th>
+                                <th class="p-2 text-center">รอดำเนินการ/รออะไหล่</th>
+                                <th class="p-2 text-right">ยอดค่าบริการรวม (THB)</th>
+                                <th class="p-2 text-center">ดูงานของช่าง</th>
+                            </tr>
+                        </thead>
+                        <tbody id="techSummaryTableBody" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Search, Technician Filter & Status Filter Bar -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+                <div class="sm:col-span-5 relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     <input type="text" id="historySearchInput" oninput="renderHistoryTable()" placeholder="ค้นหา Job No., ชื่อลูกค้า, รุ่นเครื่อง, Serial No..." class="w-full border border-gray-300 rounded-lg pl-8 pr-3 py-2 focus:outline-none focus:border-hoshizaki-blue">
                 </div>
-                <div>
+                <div class="sm:col-span-4">
+                    <select id="historyTechFilter" onchange="renderHistoryTable()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 bg-white font-semibold text-hoshizaki-navy focus:outline-none focus:border-hoshizaki-blue">
+                        <option value="ALL">ช่างทั้งหมด (All Technicians)</option>
+                        <option value="Mr.Thanakrit Chanmokonpanit">[T01] Mr.Thanakrit Chanmokonpanit</option>
+                        <option value="Mr.Noparin Homhoul">[T02] Mr.Noparin Homhoul</option>
+                        <option value="Mr.Surin Sarawong">[T03] Mr.Surin Sarawong</option>
+                        <option value="Mr.Jeerapan Phrasawang">[T04] Mr.Jeerapan Phrasawang</option>
+                        <option value="Mr.Nirun Sornrat">[T05] Mr.Nirun Sornrat</option>
+                        <option value="Mr. Surin Tharapai">[T06] Mr. Surin Tharapai</option>
+                        <option value="Mr.Pawat Warongtheradet">[T07] Mr.Pawat Warongtheradet</option>
+                        <option value="Ms.Wanwipha Nakamrod">[T08] Ms.Wanwipha Nakamrod</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-3">
                     <select id="historyStatusFilter" onchange="renderHistoryTable()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 bg-white focus:outline-none focus:border-hoshizaki-blue">
                         <option value="ALL">สถานะทั้งหมด (All Status)</option>
                         <option value="Completed">เสร็จสมบูรณ์ (Completed)</option>
@@ -3927,11 +4077,12 @@
             </div>
 
             <div class="overflow-auto mobile-scroll-x flex-1 border rounded-lg">
-                <table class="w-full text-xs text-left border-collapse min-w-[660px]">
+                <table class="w-full text-xs text-left border-collapse min-w-[760px]">
                     <thead class="bg-hoshizaki-navy text-white sticky top-0">
                         <tr>
                             <th class="p-2.5">JOB NO</th>
                             <th class="p-2.5">DATE</th>
+                            <th class="p-2.5">TECHNICIAN</th>
                             <th class="p-2.5">CUSTOMER</th>
                             <th class="p-2.5">MODEL / S/N</th>
                             <th class="p-2.5 text-center">STATUS</th>
@@ -3954,8 +4105,8 @@
                         <i class="fa-solid fa-upload"></i> นำเข้า/รวมข้อมูลทีม
                         <input type="file" accept=".json,application/json" multiple onchange="importAndMergeTeamBackupJSON(event)" class="hidden">
                     </label>
-                    <button type="button" onclick="sendCentralBackupEmail()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded font-medium flex items-center gap-1">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> ส่งสำรองเข้าศูนย์กลาง
+                    <button type="button" onclick="syncAllHistoryToGoogleSheets()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> ซิงค์ทั้งหมดเข้า Sheets (ตารางหลักเดียว)
                     </button>
                 </div>
                 <button type="button" onclick="closeHistoryModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs px-4 py-2 rounded font-medium">ปิด</button>
@@ -4480,7 +4631,25 @@
             debounceAutoSave();
         }
 
-        function updateResponsibleTechPhone() {
+        const TECHNICIAN_DIRECTORY = [
+            { code: 'T01', name: 'Mr.Thanakrit Chanmokonpanit', phone: '096-804-3989' },
+            { code: 'T02', name: 'Mr.Noparin Homhoul', phone: '097-230-5941' },
+            { code: 'T03', name: 'Mr.Surin Sarawong', phone: '091-767-2018' },
+            { code: 'T04', name: 'Mr.Jeerapan Phrasawang', phone: '091-767-2079' },
+            { code: 'T05', name: 'Mr.Nirun Sornrat', phone: '091-767-2038' },
+            { code: 'T06', name: 'Mr. Surin Tharapai', phone: '063-865-5442' },
+            { code: 'T07', name: 'Mr.Pawat Warongtheradet', phone: '099-508-1908' },
+            { code: 'T08', name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132' }
+        ];
+
+        function getTechCodeByName(techName) {
+            const clean = String(techName || '').trim().toLowerCase();
+            if (!clean) return '';
+            const found = TECHNICIAN_DIRECTORY.find(t => t.name.toLowerCase() === clean);
+            return found ? found.code : '';
+        }
+
+        function updateResponsibleTechPhone(updateJobNoWithCode = false) {
             const selectEl = document.getElementById('responsibleTechSelect');
             const phoneBox = document.getElementById('responsibleTechPhoneBox');
             const phoneText = document.getElementById('responsibleTechPhoneText');
@@ -4489,14 +4658,23 @@
 
             const selectedOption = selectEl.options[selectEl.selectedIndex];
             const phone = selectedOption ? selectedOption.getAttribute('data-phone') : '';
+            const techCode = selectedOption ? (selectedOption.getAttribute('data-code') || getTechCodeByName(selectEl.value)) : '';
 
             if (phone) {
-                phoneText.innerText = phone;
+                phoneText.innerText = `${techCode ? '[' + techCode + '] ' : ''}${phone}`;
                 if (callLink) callLink.href = `tel:${phone.replace(/[^0-9]/g, '')}`;
                 phoneBox.classList.remove('hidden');
             } else {
                 phoneText.innerText = '-';
                 phoneBox.classList.add('hidden');
+            }
+
+            // อัปเดตรหัสช่างลงในเลขที่ใบงานอัตโนมัติ (เช่น JOB-20261114-T01-001) เพื่อป้องกันเลขซ้ำระหว่างช่าง
+            if (updateJobNoWithCode) {
+                const jobNoEl = document.getElementById('jobNo');
+                if (jobNoEl && /^JOB-\d{8}-([A-Z0-9]+-)?\d{3}$/.test(jobNoEl.value.trim())) {
+                    jobNoEl.value = getNextJobNo();
+                }
             }
             debounceAutoSave();
         }
@@ -4768,11 +4946,17 @@
             debounceAutoSave();
         }
 
-        // --- AUTO-INCREMENT JOB & OFFER NUMBER LOGIC ---
-        function getNextJobNo() {
+        // --- AUTO-INCREMENT JOB & OFFER NUMBER LOGIC (WITH TECHNICIAN CODE LOCK) ---
+        function getNextJobNo(overrideTechName = null, overrideDateStr = null) {
             const dateInput = document.getElementById('jobDate');
-            const dateStr = (dateInput && dateInput.value ? dateInput.value : new Date().toISOString().split('T')[0]).replace(/-/g, '');
-            const prefix = `JOB-${dateStr}-`;
+            const rawDate = overrideDateStr || (dateInput && dateInput.value ? dateInput.value : new Date().toISOString().split('T')[0]);
+            const dateStr = rawDate.replace(/-/g, '');
+
+            const techName = overrideTechName !== null
+                ? overrideTechName
+                : (document.getElementById('responsibleTechSelect')?.value || '');
+            const techCode = getTechCodeByName(techName);
+            const prefix = techCode ? `JOB-${dateStr}-${techCode}-` : `JOB-${dateStr}-`;
 
             const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
             let maxSeq = 0;
@@ -4922,6 +5106,103 @@
 
                 debounceAutoSave();
                 showToast(`พบ S/N: ${matched.serial} | ${matched.model} (${matched.customer || 'ไม่ระบุลูกค้า'})`);
+            }
+            renderSerialServiceHistory(query);
+        }
+
+        // --- SERVICE HISTORY BY SERIAL NO. (LOCAL + GOOGLE SHEETS CLOUD) ---
+        let cloudSerialHistoryCache = {};
+
+        function renderSerialServiceHistory(rawSerial) {
+            const serial = (rawSerial || document.getElementById('eqSerial')?.value || '').trim().toUpperCase();
+            const box = document.getElementById('serialServiceHistoryBox');
+            const listEl = document.getElementById('serialServiceHistoryList');
+            const countEl = document.getElementById('serialServiceHistoryCount');
+            if (!box || !listEl || !countEl) return;
+
+            if (!serial || serial.length < 3) {
+                box.classList.add('hidden');
+                return;
+            }
+
+            const localHistory = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const matchedMap = new Map();
+
+            localHistory.forEach(job => {
+                if (String(job.serial || '').trim().toUpperCase() === serial) {
+                    matchedMap.set(job.jobNo, {
+                        jobNo: job.jobNo,
+                        date: job.date || '-',
+                        status: job.jobStatus || 'Completed',
+                        tech: job.responsibleTech || (Array.isArray(job.selectedTechs) ? job.selectedTechs.join(', ') : '-'),
+                        symptom: job.symptom || '-',
+                        action: job.action || '-',
+                        parts: Array.isArray(job.parts) ? job.parts.filter(p => p.desc).map(p => `${p.desc} (x${p.qty})`).join(', ') : '-',
+                        total: job.total || '0.00',
+                        isLocal: true
+                    });
+                }
+            });
+
+            const cloudItems = cloudSerialHistoryCache[serial] || [];
+            cloudItems.forEach(c => {
+                if (c && c.jobNo && !matchedMap.has(c.jobNo)) {
+                    matchedMap.set(c.jobNo, {
+                        jobNo: c.jobNo,
+                        date: c.date || '-',
+                        status: c.status || 'Completed',
+                        tech: c.tech || '-',
+                        symptom: c.symptom || '-',
+                        action: c.action || '-',
+                        parts: c.parts || '-',
+                        total: c.total || '0.00',
+                        isLocal: false
+                    });
+                }
+            });
+
+            const records = Array.from(matchedMap.values()).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+            countEl.innerText = records.length;
+
+            if (records.length === 0) {
+                listEl.innerHTML = '<div class="text-gray-500 italic">ยังไม่มีประวัติการซ่อมของหมายเลขเครื่องนี้ (กด "รีเฟรช" เพื่อดึงจาก Google Sheets)</div>';
+                box.classList.remove('hidden');
+                return;
+            }
+
+            listEl.innerHTML = records.map(r => `
+                <div class="bg-white border border-amber-200 rounded p-1.5 space-y-0.5">
+                    <div class="flex items-center justify-between font-bold text-hoshizaki-navy">
+                        <span>${r.date} • ${r.jobNo}</span>
+                        <span class="text-[10px] px-1.5 py-0.2 rounded ${r.status === 'Completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${r.status}</span>
+                    </div>
+                    <div class="text-gray-700"><b>อาการ:</b> ${r.symptom} | <b>แก้ไข:</b> ${r.action}</div>
+                    <div class="text-gray-600 flex flex-wrap justify-between">
+                        <span><b>อะไหล่:</b> ${r.parts || '-'}</span>
+                        <span><b>ช่าง:</b> ${r.tech || '-'} (${r.total} ฿)</span>
+                    </div>
+                </div>
+            `).join('');
+            box.classList.remove('hidden');
+        }
+
+        async function fetchSerialServiceHistoryFromCloud() {
+            const serial = (document.getElementById('eqSerial')?.value || '').trim().toUpperCase();
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (!serial || !webhookUrl) return;
+
+            showToast(`กำลังค้นหาประวัติซ่อมของ S/N: ${serial} จาก Google Sheets...`);
+            try {
+                const res = await fetch(`${webhookUrl}?action=getSerialHistory&serial=${encodeURIComponent(serial)}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data && Array.isArray(data.records)) {
+                    cloudSerialHistoryCache[serial] = data.records;
+                    renderSerialServiceHistory(serial);
+                    showToast(`พบประวัติการซ่อมจาก Cloud จำนวน ${data.records.length} รายการ`);
+                }
+            } catch (err) {
+                console.warn('Could not fetch serial service history from cloud:', err);
             }
         }
 
@@ -5623,6 +5904,7 @@
                 eqSoldCustomer: document.getElementById('eqSoldCustomer')?.value || '',
                 warranty: document.getElementById('warrantyYes')?.checked ? 'Yes' : 'No',
                 responsibleTech: document.getElementById('responsibleTechSelect')?.value || '',
+                techCode: getTechCodeByName(document.getElementById('responsibleTechSelect')?.value || ''),
                 responsibleTechPhone: document.getElementById('responsibleTechPhoneText')?.innerText || '',
                 typeCheck: document.getElementById('typeCheck')?.checked || false,
                 typeRepair: document.getElementById('typeRepair')?.checked || false,
@@ -5888,12 +6170,281 @@
         function openHistoryModal() {
             const searchEl = document.getElementById('historySearchInput');
             const filterEl = document.getElementById('historyStatusFilter');
+            const techFilterEl = document.getElementById('historyTechFilter');
+            const periodEl = document.getElementById('historyPeriodFilter');
             if (searchEl) searchEl.value = '';
             if (filterEl) filterEl.value = 'ALL';
+            if (techFilterEl) techFilterEl.value = 'ALL';
+            if (periodEl) periodEl.value = 'THIS_MONTH';
+
+            const qrDate = document.getElementById('qrEntryDate');
+            if (qrDate && !qrDate.value) {
+                qrDate.value = new Date().toISOString().split('T')[0];
+            }
+            updateQuickEntryJobNoPreview();
             renderHistoryTable();
 
             const modal = document.getElementById('historyModal');
             if (modal) modal.classList.remove('hidden');
+        }
+
+        function toggleQuickServiceReportEntryBox() {
+            const box = document.getElementById('quickServiceReportEntryBox');
+            if (!box) return;
+            box.classList.toggle('hidden');
+            if (!box.classList.contains('hidden')) {
+                const qrDate = document.getElementById('qrEntryDate');
+                if (qrDate && !qrDate.value) {
+                    qrDate.value = new Date().toISOString().split('T')[0];
+                }
+                updateQuickEntryJobNoPreview();
+            }
+        }
+
+        function toggleTechSummaryPanel() {
+            const panel = document.getElementById('techSummaryPanel');
+            if (panel) panel.classList.toggle('hidden');
+        }
+
+        function updateQuickEntryJobNoPreview() {
+            const tech = document.getElementById('qrEntryTech')?.value || '';
+            const dateVal = document.getElementById('qrEntryDate')?.value || new Date().toISOString().split('T')[0];
+            const jobNoInput = document.getElementById('qrEntryJobNo');
+            if (jobNoInput) {
+                jobNoInput.value = getNextJobNo(tech, dateVal);
+            }
+        }
+
+        function autoFillQuickEntryFromSerial(rawSerial) {
+            const query = (rawSerial || '').trim().toUpperCase();
+            if (!query) return;
+            const serialMap = getMergedSerialMap();
+            const matched = serialMap.get(query);
+            if (matched) {
+                const modelEl = document.getElementById('qrEntryModel');
+                const storeEl = document.getElementById('qrEntryStore');
+                if (modelEl && matched.model) modelEl.value = matched.model;
+                if (storeEl && !storeEl.value.trim() && matched.customer) storeEl.value = matched.customer;
+            }
+        }
+
+        function saveQuickServiceReportEntry() {
+            const techName = document.getElementById('qrEntryTech')?.value || '';
+            const techCode = getTechCodeByName(techName);
+            const dateVal = document.getElementById('qrEntryDate')?.value || new Date().toISOString().split('T')[0];
+            const jobNoVal = (document.getElementById('qrEntryJobNo')?.value || '').trim() || getNextJobNo(techName, dateVal);
+            const statusVal = document.getElementById('qrEntryStatus')?.value || 'Completed';
+            const serialVal = (document.getElementById('qrEntrySerial')?.value || '').trim();
+            const modelVal = (document.getElementById('qrEntryModel')?.value || '').trim();
+            const storeVal = (document.getElementById('qrEntryStore')?.value || '').trim();
+            const symptomVal = (document.getElementById('qrEntrySymptom')?.value || '').trim();
+            const actionVal = (document.getElementById('qrEntryAction')?.value || '').trim();
+            const totalNum = parseFloat(document.getElementById('qrEntryTotal')?.value || '0') || 0;
+
+            if (!storeVal) {
+                showToast('กรุณาระบุชื่อร้าน / ลูกค้า ก่อนบันทึกใบแจ้งบริการ');
+                return;
+            }
+
+            const coTechs = Array.from(document.querySelectorAll('.qr-coteach-cb:checked')).map(cb => cb.value);
+            const fullTeamList = Array.from(new Set([techName, ...coTechs].filter(Boolean)));
+
+            const serialRec = serialVal ? getMergedSerialMap().get(serialVal.toUpperCase()) : null;
+            const jobRecord = {
+                jobNo: jobNoVal,
+                date: dateVal,
+                store: storeVal,
+                dealer: '',
+                contact: '',
+                address: '',
+                model: modelVal || (serialRec ? serialRec.model : ''),
+                serial: serialVal,
+                productType: serialRec ? serialRec.productType : inferProductTypeFromModel(modelVal),
+                warranty: 'No',
+                responsibleTech: techName,
+                techCode: techCode,
+                responsibleTechPhone: (TECHNICIAN_DIRECTORY.find(t => t.name === techName)?.phone || ''),
+                typeCheck: false,
+                typeRepair: true,
+                typePm: false,
+                typeInstall: false,
+                timeIn: '',
+                timeOut: '',
+                gps: '',
+                symptom: symptomVal,
+                detected: '',
+                action: actionVal,
+                parts: [],
+                feeLabor: totalNum.toFixed(2),
+                feeTrip: '0.00',
+                feeDiscount: '0.00',
+                jobStatus: statusVal,
+                total: totalNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                photos: [],
+                selectedTechs: fullTeamList,
+                timestamp: new Date().toISOString()
+            };
+
+            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const existingIdx = history.findIndex(h => h.jobNo === jobRecord.jobNo);
+            if (existingIdx >= 0) {
+                history[existingIdx] = jobRecord;
+            } else {
+                history.unshift(jobRecord);
+            }
+            localStorage.setItem('hoshizaki_job_history', JSON.stringify(history));
+            saveCustomerProfileToDirectory(jobRecord);
+
+            // ส่งข้อมูลขึ้น Google Sheets (เข้าทั้งชีตรวมและชีตย่อยของช่างคนนั้นทันที)
+            pushSingleJobRecordToGoogleSheets(jobRecord, false);
+
+            // ล้างช่องกรอกข้อมูลและรันเลขใบงานถัดไป
+            ['qrEntrySerial', 'qrEntryModel', 'qrEntryStore', 'qrEntrySymptom', 'qrEntryAction'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            const totEl = document.getElementById('qrEntryTotal');
+            if (totEl) totEl.value = '0.00';
+            document.querySelectorAll('.qr-coteach-cb').forEach(cb => { cb.checked = false; });
+            updateQuickEntryJobNoPreview();
+            renderHistoryTable();
+            showToast(`บันทึกใบแจ้งบริการ ${jobRecord.jobNo} (${techCode ? '[' + techCode + '] ' : ''}${techName}) เรียบร้อย ✓`);
+        }
+
+        function isDateInPeriod(dateStr, period) {
+            if (!period || period === 'ALL') return true;
+            if (!dateStr) return false;
+            const d = new Date(dateStr + 'T00:00:00');
+            if (isNaN(d.getTime())) return false;
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            if (period === 'THIS_WEEK') {
+                const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon...
+                const diffToMon = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+                const startOfWeek = new Date(today);
+                startOfWeek.setDate(today.getDate() + diffToMon);
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(startOfWeek.getDate() + 6);
+                return d >= startOfWeek && d <= endOfWeek;
+            }
+            if (period === 'THIS_MONTH') {
+                return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth();
+            }
+            if (period === 'LAST_MONTH') {
+                const lastMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                return d.getFullYear() === lastMonthDate.getFullYear() && d.getMonth() === lastMonthDate.getMonth();
+            }
+            return true;
+        }
+
+        function filterHistoryByTech(techName) {
+            const techFilterEl = document.getElementById('historyTechFilter');
+            if (techFilterEl) {
+                techFilterEl.value = techName;
+                renderHistoryTable();
+            }
+        }
+
+        function renderTechnicianSummaryTable(history, periodFilter) {
+            const tbody = document.getElementById('techSummaryTableBody');
+            if (!tbody) return;
+
+            const periodJobs = history.filter(item => isDateInPeriod(item.date, periodFilter));
+
+            const rowsHtml = TECHNICIAN_DIRECTORY.map(tech => {
+                const techJobs = periodJobs.filter(job => {
+                    const resp = String(job.responsibleTech || '').trim();
+                    const team = Array.isArray(job.selectedTechs) ? job.selectedTechs : [];
+                    return resp === tech.name || team.includes(tech.name);
+                });
+
+                const totalJobs = techJobs.length;
+                const completedJobs = techJobs.filter(j => (j.jobStatus || 'Completed') === 'Completed').length;
+                const pendingJobs = totalJobs - completedJobs;
+                const totalAmount = techJobs.reduce((sum, j) => {
+                    const num = parseFloat(String(j.total || '0').replace(/,/g, '')) || 0;
+                    return sum + num;
+                }, 0);
+
+                return `
+                    <tr class="hover:bg-indigo-50/50">
+                        <td class="p-2 font-bold text-indigo-800">${tech.code}</td>
+                        <td class="p-2 font-medium text-gray-800">${tech.name}</td>
+                        <td class="p-2 text-center font-extrabold text-hoshizaki-navy">${totalJobs} ใบงาน</td>
+                        <td class="p-2 text-center text-emerald-700 font-semibold">${completedJobs}</td>
+                        <td class="p-2 text-center text-amber-700 font-semibold">${pendingJobs}</td>
+                        <td class="p-2 text-right font-semibold">${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td class="p-2 text-center">
+                            <button type="button" onclick="filterHistoryByTech('${tech.name.replace(/'/g, "\'")}')" class="text-[10px] bg-indigo-100 hover:bg-indigo-200 text-indigo-900 px-2 py-0.5 rounded font-bold">กรองดูงาน</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = rowsHtml;
+        }
+
+        function exportTechnicianSummaryExcel() {
+            if (typeof XLSX === 'undefined') {
+                showToast('ไม่พบไลบรารีสำหรับส่งออก Excel');
+                return;
+            }
+            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            const periodFilter = document.getElementById('historyPeriodFilter')?.value || 'ALL';
+            const periodJobs = history.filter(item => isDateInPeriod(item.date, periodFilter));
+
+            const wb = XLSX.utils.book_new();
+            const summaryRows = [
+                ['รายงานสรุปจำนวนงานและใบแจ้งบริการรายช่าง - HOSHIZAKI (THAILAND) LIMITED'],
+                ['ช่วงเวลาที่ออกรายงาน:', periodFilter, 'วันที่ออกรายงาน:', new Date().toISOString().split('T')[0]],
+                [],
+                ['รหัสช่าง (Tech Code)', 'รายชื่อช่าง (Technician Name)', 'เบอร์ติดต่อ', 'จำนวนใบงานทั้งหมด', 'เสร็จสมบูรณ์ (Completed)', 'รอดำเนินการ/รออะไหล่', 'ยอดค่าบริการรวม (THB)']
+            ];
+
+            TECHNICIAN_DIRECTORY.forEach(tech => {
+                const techJobs = periodJobs.filter(job => {
+                    const resp = String(job.responsibleTech || '').trim();
+                    const team = Array.isArray(job.selectedTechs) ? job.selectedTechs : [];
+                    return resp === tech.name || team.includes(tech.name);
+                });
+                const completed = techJobs.filter(j => (j.jobStatus || 'Completed') === 'Completed').length;
+                const pending = techJobs.length - completed;
+                const amount = techJobs.reduce((sum, j) => sum + (parseFloat(String(j.total || '0').replace(/,/g, '')) || 0), 0);
+                summaryRows.push([tech.code, tech.name, tech.phone, techJobs.length, completed, pending, amount]);
+            });
+
+            const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
+            XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary_By_Technician');
+
+            // สร้างชีตตารางหลักตารางเดียว (Master_Service_Log) ที่ระบุทั้งช่างหลักและทีมช่าง 2-3 คนครบถ้วน
+            const masterRows = [
+                ['Job No', 'Date', 'Status', 'Lead Tech Code', 'Lead Technician', 'Team Technicians (All)', 'Customer / Store', 'Model', 'Serial No', 'Symptom', 'Action', 'Total (THB)']
+            ];
+            periodJobs.forEach(j => {
+                const resp = String(j.responsibleTech || '').trim();
+                const team = Array.isArray(j.selectedTechs) && j.selectedTechs.length > 0 ? j.selectedTechs.join(', ') : resp;
+                masterRows.push([
+                    j.jobNo || '',
+                    j.date || '',
+                    j.jobStatus || 'Completed',
+                    j.techCode || getTechCodeByName(resp),
+                    resp,
+                    team,
+                    j.store || '',
+                    j.model || '',
+                    j.serial || '',
+                    j.symptom || '',
+                    j.action || '',
+                    parseFloat(String(j.total || '0').replace(/,/g, '')) || 0
+                ]);
+            });
+            const wsMaster = XLSX.utils.aoa_to_sheet(masterRows);
+            XLSX.utils.book_append_sheet(wb, wsMaster, 'Master_Service_Log');
+
+            XLSX.writeFile(wb, `Hoshizaki_Technician_Report_${periodFilter}_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast('ส่งออกไฟล์ Excel สรุปผลงานรายช่าง + ตารางหลักตารางเดียวเรียบร้อยแล้ว');
         }
 
         function renderHistoryTable() {
@@ -5902,22 +6453,32 @@
             const countEl = document.getElementById('historyTotalCount');
             const keyword = (document.getElementById('historySearchInput')?.value || '').trim().toLowerCase();
             const statusFilter = document.getElementById('historyStatusFilter')?.value || 'ALL';
+            const techFilter = document.getElementById('historyTechFilter')?.value || 'ALL';
+            const periodFilter = document.getElementById('historyPeriodFilter')?.value || 'ALL';
+
+            renderTechnicianSummaryTable(history, periodFilter);
 
             if (!tbody) return;
             tbody.innerHTML = '';
 
             const filtered = history.filter(item => {
+                if (!isDateInPeriod(item.date, periodFilter)) return false;
                 const itemStatus = item.jobStatus || 'Completed';
                 if (statusFilter !== 'ALL' && itemStatus !== statusFilter) return false;
+                if (techFilter !== 'ALL') {
+                    const resp = String(item.responsibleTech || '').trim();
+                    const team = Array.isArray(item.selectedTechs) ? item.selectedTechs : [];
+                    if (resp !== techFilter && !team.includes(techFilter)) return false;
+                }
                 if (!keyword) return true;
-                const haystack = `${item.jobNo || ''} ${item.date || ''} ${item.store || ''} ${item.dealer || ''} ${item.model || ''} ${item.serial || ''}`.toLowerCase();
+                const haystack = `${item.jobNo || ''} ${item.date || ''} ${item.responsibleTech || ''} ${item.store || ''} ${item.dealer || ''} ${item.model || ''} ${item.serial || ''}`.toLowerCase();
                 return haystack.includes(keyword);
             });
 
             if (countEl) countEl.innerText = filtered.length;
 
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400">ไม่พบประวัติใบงานที่ตรงกับเงื่อนไข</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-gray-400">ไม่พบประวัติใบงานที่ตรงกับเงื่อนไข</td></tr>';
                 return;
             }
 
@@ -5930,10 +6491,23 @@
                     badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">Waiting Parts</span>';
                 }
 
+                const techName = item.responsibleTech || (Array.isArray(item.selectedTechs) && item.selectedTechs[0]) || '-';
+                const tCode = item.techCode || getTechCodeByName(techName);
+                const coTechNames = Array.isArray(item.selectedTechs)
+                    ? item.selectedTechs.filter(n => n && n !== techName)
+                    : [];
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="p-2.5 font-bold text-hoshizaki-navy whitespace-nowrap">${item.jobNo}</td>
                     <td class="p-2.5 whitespace-nowrap">${item.date || '-'}</td>
+                    <td class="p-2.5">
+                        <div class="whitespace-nowrap">
+                            ${tCode ? `<span class="inline-block bg-indigo-100 text-indigo-900 font-bold text-[10px] px-1.5 py-0.2 rounded mr-1">${tCode}</span>` : ''}
+                            <span class="font-medium text-gray-800">${techName}</span>
+                        </div>
+                        ${coTechNames.length > 0 ? `<div class="text-[10px] text-indigo-700 mt-0.5">+ ร่วมทีม: ${coTechNames.map(n => (getTechCodeByName(n) ? '[' + getTechCodeByName(n) + '] ' : '') + n).join(', ')}</div>` : ''}
+                    </td>
                     <td class="p-2.5">${item.store || '-'}</td>
                     <td class="p-2.5">
                         <div class="font-medium">${item.model || '-'}</div>
@@ -5963,7 +6537,7 @@
             const dateElem = document.getElementById('jobDate');
             if (dateElem) dateElem.value = today;
 
-            cloned.jobNo = getNextJobNo();
+            cloned.jobNo = getNextJobNo(cloned.responsibleTech || '', today);
             cloned.jobStatus = 'Pending';
             cloned.signatures = {};
             cloned.nameManager = '';
@@ -8071,6 +8645,66 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         function toggleAutoSyncSheets() {
             const chk = document.getElementById('autoSyncSheetsCheckbox');
             localStorage.setItem('hoshizaki_auto_sync_sheets', chk?.checked ? 'true' : 'false');
+        }
+
+        async function pushSingleJobRecordToGoogleSheets(jobData, includePhotos = true) {
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (!webhookUrl || !jobData) return;
+
+            const techCode = jobData.techCode || getTechCodeByName(jobData.responsibleTech || '');
+            const photosForCloud = (includePhotos && Array.isArray(jobData.photos))
+                ? jobData.photos.slice(0, 6).map((p, idx) => ({
+                    name: `${jobData.jobNo || 'JOB'}_photo_${idx + 1}.jpg`,
+                    caption: p.caption || '',
+                    dataUrl: p.src || ''
+                }))
+                : [];
+
+            const cloudPayload = {
+                ...jobData,
+                techCode: techCode,
+                actionType: 'SAVE_JOB',
+                techCode: jobData.techCode || getTechCodeByName(jobData.responsibleTech || ''),
+                photosCount: Array.isArray(jobData.photos) ? jobData.photos.length : 0,
+                photosPayload: photosForCloud,
+                photos: undefined,
+                signatures: undefined,
+                partsSummary: (jobData.parts || [])
+                    .filter(p => p.desc)
+                    .map(p => `${p.desc} (x${p.qty})`)
+                    .join(', '),
+                techniciansSummary: Array.isArray(jobData.selectedTechs) ? jobData.selectedTechs.join(', ') : ''
+            };
+
+            await fetch(webhookUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(cloudPayload)
+            });
+        }
+
+        async function syncAllHistoryToGoogleSheets() {
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (!webhookUrl) {
+                showToast('ไม่พบลิงก์เชื่อมต่อ Google Sheets');
+                return;
+            }
+            const history = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+            if (history.length === 0) {
+                showToast('ไม่มีประวัติใบงานสำหรับซิงค์');
+                return;
+            }
+            showToast(`กำลังซิงค์ใบงานทั้งหมด ${history.length} รายการเข้าตารางหลัก Google Sheets...`);
+            for (let i = 0; i < history.length; i++) {
+                try {
+                    await pushSingleJobRecordToGoogleSheets(history[i], false);
+                    await new Promise(r => setTimeout(r, 250));
+                } catch (e) {
+                    console.warn('Sync item error:', e);
+                }
+            }
+            showToast(`ซิงค์ประวัติทั้งหมด ${history.length} ใบงานเข้าตารางหลัก Google Sheets เรียบร้อย ✓`);
         }
 
         async function syncCurrentJobToGoogleSheets(manualTrigger = false) {

@@ -6403,24 +6403,52 @@
         }
 
         // --- SHARE PDF TO LINE / MOBILE WEB SHARE ---
-        function sharePDFToLine() {
-            showToast('กำลังสร้างไฟล์ PDF เพื่อแชร์เข้า LINE...');
+                async function buildJobSheetPdfFile(prefix = 'Hoshizaki_JobSheet') {
             const element = document.getElementById('jobSheetContainer');
             const jobNo = document.getElementById('jobNo')?.value || 'Service_Report';
             const date = document.getElementById('jobDate')?.value || '';
-            const filename = `Hoshizaki_JobSheet_${jobNo}_${date}.pdf`;
+            const filename = `${prefix}_${jobNo}_${date}.pdf`;
+
+            // ปิดหน้าต่างซ้อนทับที่อาจบังหน้ากระดาษก่อนสร้าง PDF
+            document.getElementById('fullPreviewModal')?.classList.add('hidden');
+            document.getElementById('manualSearchMenu')?.classList.add('hidden');
 
             const opt = {
                 margin: [5, 5, 5, 5],
                 filename: filename,
                 image: { type: 'jpeg', quality: 0.96 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    scrollY: 0,
+                    windowWidth: 1024
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(element).outputPdf('blob').then(async (pdfBlob) => {
-                const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+            const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+            const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+            return { pdfBlob, pdfFile, filename, jobNo, date };
+        }
 
+        function triggerPdfDownload(pdfBlob, filename) {
+            const blobUrl = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+        }
+
+        async function sharePDFToLine() {
+            showToast('กำลังสร้างไฟล์ PDF เพื่อแชร์เข้า LINE...');
+            try {
+                const { pdfBlob, pdfFile, filename, jobNo } = await buildJobSheetPdfFile('Hoshizaki_JobSheet');
+
+                // 1. บนมือถือ (iOS / Android) เรียก Native Share Sheet พร้อมแนบไฟล์ PDF จริงให้เลือกแอป LINE ได้ทันที
                 if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
                     try {
                         await navigator.share({
@@ -6435,20 +6463,13 @@
                     }
                 }
 
-                // Fallback สำหรับพีซีหรือเบราว์เซอร์ที่ยังไม่รองรับการแชร์ไฟล์ตรง
-                const blobUrl = URL.createObjectURL(pdfBlob);
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-                showToast('ดาวน์โหลด PDF แล้ว สามารถส่งไฟล์เข้า LINE ได้ทันที');
-            }).catch(err => {
+                // 2. Fallback กรณีเปิดบน PC หรือเบราว์เซอร์ที่ไม่รองรับการส่งไฟล์ตรง: บันทึกไฟล์ PDF ลงเครื่องให้ทันที
+                triggerPdfDownload(pdfBlob, filename);
+                showToast(`สร้างและบันทึกไฟล์ ${filename} เรียบร้อยแล้ว สามารถลากส่งเข้า LINE ได้ทันที`);
+            } catch (err) {
                 console.error(err);
                 showToast('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF');
-            });
+            }
         }
 
         // --- OFFICIAL RECEIPT & QUOTATION LOGIC ---
@@ -7084,28 +7105,19 @@
         }
 
         // --- SEND JOB SERVICE PDF BY EMAIL ---
-        function sendJobByEmail() {
-            showToast('กำลังสร้างไฟล์ PDF และจัดเตรียมอีเมล...');
-            const element = document.getElementById('jobSheetContainer');
-            const jobNo = document.getElementById('jobNo')?.value || 'Service_Report';
-            const date = document.getElementById('jobDate')?.value || '';
+                async function sendJobByEmail() {
+            showToast('กำลังพิมพ์เป็นไฟล์ PDF และเตรียมแนบส่งอีเมล...');
             const custStore = document.getElementById('custStore')?.value || '';
             const custDealer = document.getElementById('custDealer')?.value || '';
             const custContact = document.getElementById('custContact')?.value || '';
             const eqModel = document.getElementById('eqModel')?.value || '';
             const grandTotal = document.getElementById('grandTotalVal')?.innerText || '0.00';
 
-            const opt = {
-                margin: [5, 5, 5, 5],
-                filename: `JobSheet_${jobNo}_${date}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+            try {
+                const { pdfBlob, pdfFile, filename, jobNo, date } = await buildJobSheetPdfFile('Hoshizaki_JobSheet');
 
-            html2pdf().set(opt).from(element).save().then(() => {
-                const subject = encodeURIComponent(`[HOSHIZAKI SERVICE REPORT] ใบแจ้งบริการเลขที่ ${jobNo} - ${custStore}`);
-                const bodyText = `เรียน ลูกค้า/ผู้เกี่ยวข้อง,
+                const emailSubjectText = `[HOSHIZAKI SERVICE REPORT] ใบแจ้งบริการเลขที่ ${jobNo} - ${custStore}`;
+                const emailBodyText = `เรียน ลูกค้า/ผู้เกี่ยวข้อง,
 
 HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้งบริการ (Service Report) สำหรับการปฏิบัติงานซ่อมบำรุงรักษา
 
@@ -7118,22 +7130,36 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 - อุปกรณ์/รุ่น: ${eqModel}
 - ยอดรวมสุทธิ: ${grandTotal} THB
 
-* หมายเหตุ: ไฟล์ PDF ใบแจ้งบริการฉบับเต็ม (JobSheet_${jobNo}_${date}.pdf) ได้ถูกดาวน์โหลดลงในเครื่องของท่านเรียบร้อยแล้ว กรุณาแนบไฟล์ดังกล่าวตอบกลับอีเมลนี้
-
 ขอแสดงความนับถือ,
 ฝ่ายบริการลูกค้า HOSHIZAKI (THAILAND) LIMITED
 โทร: 02-005-9980-83`;
 
-                const mailtoUrl = `mailto:?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
-                
-                showToast('ดาวน์โหลด PDF และเปิดโปรแกรมอีเมลแล้ว กรุณาแนบไฟล์ PDF ที่ดาวน์โหลดส่งออก');
+                // 1. บนมือถือ / แท็บเล็ต / เบราว์เซอร์ที่รองรับ Web Share File API: แนบไฟล์ PDF จริงไปกับหน้าต่างเลือกแอปอีเมล (Gmail / Mail / Outlook) ทันที
+                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                    try {
+                        await navigator.share({
+                            title: emailSubjectText,
+                            text: emailBodyText,
+                            files: [pdfFile]
+                        });
+                        showToast('แนบไฟล์ PDF และเปิดแอปส่งอีเมลเรียบร้อยแล้ว');
+                        return;
+                    } catch (err) {
+                        if (err.name === 'AbortError') return;
+                    }
+                }
+
+                // 2. Fallback สำหรับเครื่อง PC: บันทึกไฟล์ PDF ลงเครื่องอัตโนมัติ แล้วเปิดโปรแกรมอีเมลพร้อมหัวข้อและเนื้อหา
+                triggerPdfDownload(pdfBlob, filename);
+                const mailtoUrl = `mailto:?subject=${encodeURIComponent(emailSubjectText)}&body=${encodeURIComponent(emailBodyText + `\n\n* หมายเหตุ: ไฟล์ PDF (${filename}) ถูกดาวน์โหลดลงในเครื่องแล้ว กรุณาแนบไฟล์ส่งออก`)}`;
+                showToast(`บันทึกไฟล์ ${filename} แล้ว กำลังเปิดโปรแกรมอีเมล...`);
                 setTimeout(() => {
                     window.location.href = mailtoUrl;
-                }, 1000);
-            }).catch(err => {
+                }, 800);
+            } catch (err) {
                 console.error(err);
                 showToast('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF สำหรับส่งอีเมล');
-            });
+            }
         }
 
         // --- TOAST NOTIFICATION UTILITY ---

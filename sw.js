@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v14-9';
+const CACHE_NAME = 'hoshizaki-service-pwa-v14-10';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -27,7 +27,6 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
-  // Network-first for HTML navigation & index.html
   if (event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === '/') {
     event.respondWith(
       fetch(event.request)
@@ -41,7 +40,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for static assets & quotation_archive.json
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;

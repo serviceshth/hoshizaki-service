@@ -109,9 +109,15 @@
         *, *::before, *::after {
             box-sizing: border-box;
         }
-        html, body {
+        html {
             max-width: 100%;
-            overflow-x: hidden;
+            overflow-x: clip;
+            overflow-y: auto;
+        }
+        body {
+            max-width: 100%;
+            overflow-x: clip;
+            overflow-y: visible;
             position: relative;
         }
         header, nav, main {
@@ -131,8 +137,8 @@
         body {
             min-height: 100vh;
             min-height: 100dvh;
-            overscroll-behavior-y: contain;
             padding-bottom: calc(6rem + var(--safe-bottom));
+            touch-action: pan-x pan-y;
         }
         button, input, select, textarea {
             font: inherit;
@@ -165,14 +171,34 @@
             user-select: none;
             -webkit-user-select: none;
         }
-        /* Modals stay within the visible browser viewport, including mobile browser chrome. */
+        /* Modals & Nested Scrollable Panels: smooth scrolling on Mobile, Tablet & PC */
         [id$="Modal"]:not(.hidden) {
             overscroll-behavior: contain;
+            touch-action: pan-y;
         }
         [id$="Modal"] > div {
             max-width: calc(100vw - 1rem);
             max-height: calc(100dvh - 1.5rem - var(--safe-top) - var(--safe-bottom));
+            min-height: 0;
+        }
+        [id$="Modal"] > div:not(.flex) {
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        [id$="Modal"] > div.flex {
+            overflow: hidden;
+        }
+        [id$="Modal"] > div.flex > .overflow-y-auto,
+        [id$="Modal"] > div.flex > .overflow-auto {
+            min-height: 0;
+            flex: 1 1 auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+        }
+        .overflow-y-auto,
+        .overflow-auto {
+            min-height: 0;
             -webkit-overflow-scrolling: touch;
         }
         #fullscreenSigModal {
@@ -16596,5 +16622,27 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         </div>
     </div>
 
+<script>
+        // =========================================================================
+        // v14.10: UNIFIED SCROLL & MODAL VIEWPORT CONTROLLER (PC / TABLET / MOBILE)
+        // =========================================================================
+        function syncBodyModalScrollLock() {
+            const openModals = Array.from(document.querySelectorAll('[id$="Modal"]')).filter(el => !el.classList.contains('hidden'));
+            if (openModals.length > 0) {
+                document.documentElement.style.overflow = 'hidden';
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.documentElement.style.overflow = '';
+                document.body.style.overflow = '';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver(() => syncBodyModalScrollLock());
+            document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+                observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+            });
+            syncBodyModalScrollLock();
+        });
+</script>
 </body>
 </html>

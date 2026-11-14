@@ -5895,6 +5895,7 @@
                 localStorage.removeItem('hoshizaki_draft_job'); idbRemove('hoshizaki_draft_job');
                 loadDefaultTechSignatureIfEmpty();
             updateJobQrCode();
+            if (typeof applyUserRoleModeUI === 'function') applyUserRoleModeUI();
             calculateTotals();
                 showToast('เริ่มต้นใบงานใหม่เรียบร้อยแล้ว');
             });
@@ -6049,7 +6050,7 @@
         }
 
         function clearAllPhotosConfirm() {
-            openCustomConfirm('ต้องการลบรูปถ่ายทั้งหมดออกจากใบงานนี้ใช่หรือไม่?', () => {
+            showCustomConfirm('ต้องการลบรูปถ่ายทั้งหมดออกจากใบงานนี้ใช่หรือไม่?', () => {
                 const container = document.getElementById('photoPreviewContainer');
                 if (container) container.innerHTML = '';
                 updatePhotoCounterBadge();
@@ -8609,13 +8610,21 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
         function openScheduleModal() {
             const modal = document.getElementById('scheduleModal');
-            if (!modal) return;
+            if (!modal) {
+                alert('ไม่พบหน้าต่างตารางงาน กรุณากดรีเฟรชหน้าเว็บ 1 ครั้ง');
+                return;
+            }
             const startInput = document.getElementById('scheduleWeekStartInput');
             if (startInput && !startInput.value) {
                 startInput.value = getMondayOfDate();
             }
             modal.classList.remove('hidden');
-            renderWeeklyScheduleBoard();
+            try {
+                renderWeeklyScheduleBoard();
+            } catch (err) {
+                console.error('Schedule render error:', err);
+                showToast('โหลดตารางงานเรียบร้อย (กำลังอัปเดตข้อมูล)');
+            }
         }
 
         function closeScheduleModal() {
@@ -8888,8 +8897,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 `📝 รายละเอียดงาน: ${obj.workDetail || '-'}`,
                 `👩‍💼 ผู้ประสานงาน: ${obj.coordName || '-'} (${obj.coordPhone || '-'})`,
                 `🧑‍💼 ผู้จ่ายงาน: ${obj.dispatcherName || '-'} (${obj.dispatcherPhone || '-'})`
-            ].filter(Boolean).join('
-');
+            ].filter(Boolean).join('\n');
         }
 
         function getAssignedTechObjects(techNames) {
@@ -10071,15 +10079,46 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         let currentUserRoleMode = localStorage.getItem('hoshizaki_user_role') || 'MANAGER'; // 'MANAGER' | 'TECH'
 
         function applyUserRoleModeUI() {
+            const isTech = currentUserRoleMode === 'TECH';
             const btn = document.getElementById('roleModeToggleBtn');
             if (btn) {
-                btn.innerHTML = currentUserRoleMode === 'TECH'
+                btn.innerHTML = isTech
                     ? '<i class="fa-solid fa-screwdriver-wrench mr-0.5"></i> โหมด: ช่างหน้างาน (กระชับ)'
                     : '<i class="fa-solid fa-user-shield mr-0.5"></i> โหมด: ผู้จัดการ/จ่ายงาน';
+                btn.className = isTech
+                    ? 'text-[10px] bg-emerald-500/25 hover:bg-emerald-500/35 text-emerald-200 border border-emerald-400/50 px-2 py-0.5 rounded-full font-bold transition'
+                    : 'text-[10px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full font-bold transition';
             }
+
+            // ซ่อน/แสดงปุ่มเฉพาะฝั่งผู้จัดการในแถบเครื่องมือบน (เช่น จัดการทีมช่าง, ออกใบเสนอราคา/ใบเสร็จ)
+            const toolbar = document.getElementById('toolbarActions');
+            if (toolbar) {
+                toolbar.querySelectorAll('button').forEach(b => {
+                    const oc = b.getAttribute('onclick') || '';
+                    if (oc.includes('openStaffManagerModal') || oc.includes('generateReceiptModal')) {
+                        b.classList.toggle('hidden', isTech);
+                    }
+                });
+            }
+
+            // ซ่อน/แสดงกล่องข้อมูลประวัติการขายเชิงลึก (Date Out, Invoice, PO) ในส่วนอุปกรณ์ เพื่อให้ช่างหน้างานกรอกง่ายขึ้น
+            ['eqDateOut', 'eqInvoiceNo', 'eqPoNo'].forEach(id => {
+                const el = document.getElementById(id);
+                const wrapper = el ? el.closest('.grid, .flex.flex-col.sm\:flex-row') : null;
+                if (wrapper) wrapper.classList.toggle('hidden', isTech);
+            });
+
+            // ซ่อน/แสดงช่องลายเซ็นผู้อนุมัติ (Manager) และผู้รับเงิน (Payee) เมื่ออยู่ในโหมดช่างหน้างาน
+            ['nameManager', 'namePayee'].forEach(id => {
+                const el = document.getElementById(id);
+                const card = el ? el.closest('.border.border-gray-300.rounded-lg') : null;
+                if (card) card.classList.toggle('hidden', isTech);
+            });
+
+            // ซ่อน/แสดงแผงสรุปผลงานรายช่างในหน้าต่างประวัติ
             const techSummary = document.getElementById('techSummaryPanel');
             if (techSummary) {
-                techSummary.classList.toggle('hidden', currentUserRoleMode === 'TECH');
+                techSummary.classList.toggle('hidden', isTech);
             }
         }
 
@@ -10087,7 +10126,11 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             currentUserRoleMode = currentUserRoleMode === 'MANAGER' ? 'TECH' : 'MANAGER';
             localStorage.setItem('hoshizaki_user_role', currentUserRoleMode);
             applyUserRoleModeUI();
-            showToast(currentUserRoleMode === 'TECH' ? 'สลับเป็นโหมดช่างหน้างาน (แสดงเฉพาะส่วนที่จำเป็น)' : 'สลับเป็นโหมดผู้จัดการ / ผู้จ่ายงาน (แสดงครบทุกฟังก์ชัน)');
+            showToast(
+                currentUserRoleMode === 'TECH'
+                    ? 'สลับเป็นโหมดช่างหน้างานแล้ว (ซ่อนส่วนบริหาร/อนุมัติ เหลือเฉพาะช่องปฏิบัติงาน)'
+                    : 'สลับเป็นโหมดผู้จัดการ / ผู้จ่ายงานแล้ว (แสดงครบทุกฟังก์ชันและช่องอนุมัติ)'
+            );
         }
 
         // --- Custom Part Price Database ---
@@ -10533,7 +10576,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 return;
             }
             const photoTotal = candidates.reduce((s, j) => s + j.photos.length, 0);
-            openCustomConfirm(
+            showCustomConfirm(
                 `พบรูปภาพในเครื่อง ${photoTotal} ภาพ จาก ${candidates.length} ใบงานที่ซิงค์ขึ้น Google Drive เรียบร้อยแล้ว ต้องการลบรูปออกจากเครื่องเพื่อคืนพื้นที่ (โดยยังคงข้อความใบงานครบถ้วน) ใช่หรือไม่?`,
                 async () => {
                     const updated = history.map(j => {
@@ -10560,7 +10603,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 showToast(`ยังไม่มีใบงานปีเก่ากว่าปี ${currentYear} สำหรับทำ Archive`);
                 return;
             }
-            openCustomConfirm(
+            showCustomConfirm(
                 `พบใบงานของปีเก่ากว่า ${currentYear} จำนวน ${oldJobs.length} ใบงาน ต้องการดาวน์โหลดไฟล์สำรอง Archive (.json) และนำออกจากรายการหลักเพื่อเพิ่มความเร็วใช่หรือไม่?`,
                 async () => {
                     const archiveBlob = new Blob([JSON.stringify({

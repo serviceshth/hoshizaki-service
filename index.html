@@ -334,6 +334,47 @@
             .mobile-scroll-x table { min-width: 0 !important; }
             .mobile-section-nav { display: none !important; }
             .mobile-accordion-body { display: block !important; max-height: none !important; }
+
+            /* โหมดพิมพ์ใบเคลมประกัน Hoshizaki Warranty Claim Form & Defective Part Tag (#warrantyClaimModal) */
+            body.printing-warranty #jobSheetContainer,
+            body.printing-warranty header {
+                display: none !important;
+            }
+            body.printing-warranty #warrantyClaimModal {
+                display: block !important;
+                position: static !important;
+                inset: auto !important;
+                background: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            body.printing-warranty #warrantyClaimModal > div {
+                display: block !important;
+                position: static !important;
+                max-height: none !important;
+                height: auto !important;
+                overflow: visible !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            body.printing-warranty .warranty-no-print {
+                display: none !important;
+            }
+            body.printing-warranty #warrantyClaimPrintableArea {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 4px !important;
+                min-width: 0 !important;
+                width: 100% !important;
+            }
         }
 
         /* Responsive Mobile Card Layout for Spare Parts Table (< 640px) while keeping full table on Tablet & PC */
@@ -620,8 +661,11 @@
             <button type="button" onclick="exportWeeklyMultiSheetExcel()" class="flex-1 sm:flex-none justify-center bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-file-excel"></i> <span>สรุปประจำสัปดาห์ (4 ชีต)</span>
             </button>
-            <button type="button" onclick="openErrorCodeModal()" class="flex-1 sm:flex-none justify-center bg-rose-700 hover:bg-rose-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-triangle-exclamation"></i> <span>เช็ก Error Code</span>
+            <button type="button" onclick="openWarrantyClaimModal()" class="flex-1 sm:flex-none justify-center bg-rose-600 hover:bg-rose-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm" title="ใบเคลมประกัน Hoshizaki Warranty Claim Form + เช็กลิสต์ 21 ข้อ + ป้ายส่งคืนอะไหล่เสีย">
+                <i class="fa-solid fa-file-shield"></i> <span>ใบเคลมประกัน (Warranty)</span>
+            </button>
+            <button type="button" onclick="openErrorCodeModal()" class="flex-1 sm:flex-none justify-center bg-slate-700 hover:bg-slate-800 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-triangle-exclamation"></i> <span>คู่มือซ่อม & Error Code</span>
             </button>
             <!-- ปุ่มเปิดเมนูค้นหา Service Manual / Instruction Manual / Parts List (PDF) -->
             <button type="button" id="btnManualSearchTrigger" onclick="toggleManualSearchMenu(event)" class="flex-1 sm:flex-none justify-center bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
@@ -3577,6 +3621,49 @@
                     </div>
                 </div>
             </div>
+
+            <!-- บันทึกเลขไมล์ & ค่าใช้จ่ายเดินทางช่าง (ส่งออกเข้า Excel แท็บที่ 5 อัตโนมัติ) + ปุ่มเปิดเช็กลิสต์ 21 ข้อ & ใบเคลม -->
+            <div class="bg-slate-100/90 border border-slate-200 rounded-lg p-2.5 space-y-2 text-xs">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-bold text-hoshizaki-navy flex items-center gap-1.5">
+                        <i class="fa-solid fa-car-side text-hoshizaki-blue"></i> บันทึกเลขไมล์ & เบิกค่าเดินทางช่าง (Mileage & Expense Claim)
+                    </span>
+                    <div class="no-print flex flex-wrap items-center gap-1.5">
+                        <button type="button" onclick="openWarrantyClaimModal('CHECKLIST')" class="bg-sky-700 hover:bg-sky-800 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-xs">
+                            <i class="fa-solid fa-list-check"></i> <span>เช็กลิสต์ตรวจเบื้องต้น 21 ข้อ</span>
+                        </button>
+                        <button type="button" onclick="openWarrantyClaimModal('CLAIM')" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-xs">
+                            <i class="fa-solid fa-file-shield"></i> <span>ออกใบเคลม & ป้ายคืนอะไหล่เสีย</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-6 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">เลขไมล์เริ่มต้น (กม.)</label>
+                        <input type="number" id="odoStart" oninput="updateOdometerDistance()" placeholder="0" class="w-full border border-gray-300 rounded px-2 py-1 bg-white text-center font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">เลขไมล์สิ้นสุด (กม.)</label>
+                        <input type="number" id="odoEnd" oninput="updateOdometerDistance()" placeholder="0" class="w-full border border-gray-300 rounded px-2 py-1 bg-white text-center font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">ระยะทางรวม (กม.)</label>
+                        <input type="text" id="odoDistance" readonly value="0 กม." class="w-full border border-gray-200 rounded px-2 py-1 bg-gray-100 text-center font-bold text-hoshizaki-navy">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">ค่าน้ำมัน (THB)</label>
+                        <input type="number" id="expFuel" value="0" step="10" class="w-full border border-gray-300 rounded px-2 py-1 bg-white text-right font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">ค่าทางด่วน (THB)</label>
+                        <input type="number" id="expToll" value="0" step="10" class="w-full border border-gray-300 rounded px-2 py-1 bg-white text-right font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">ค่าที่พัก/เบี้ยเลี้ยง (THB)</label>
+                        <input type="number" id="expAllowance" value="0" step="50" class="w-full border border-gray-300 rounded px-2 py-1 bg-white text-right font-semibold">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Section 3: Spare Parts & Billing Table (v13.0 Multi-Tier 8 Grades + Dealer Auto-Link) -->
@@ -4382,6 +4469,9 @@
                 <div class="flex flex-wrap items-center gap-1.5 text-xs">
                     <button type="button" onclick="autoGenerateOfferNo(true)" title="รันเลขที่ใบเสนอราคาใหม่" class="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
                         <i class="fa-solid fa-rotate"></i> รันเลขใหม่
+                    </button>
+                    <button type="button" onclick="copyCustomerQuotationApprovalLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded font-bold flex items-center gap-1 shadow-sm" title="สร้างลิงก์ให้ลูกค้าเปิดดูใบเสนอราคาและกดอนุมัติสั่งซ่อมออนไลน์ผ่านมือถือ">
+                        <i class="fa-solid fa-signature"></i> ลิงก์อนุมัติออนไลน์
                     </button>
                     <button type="button" onclick="openReceiptInNewWindow()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> เปิด PDF หน้าต่างใหม่
@@ -6458,6 +6548,11 @@
                 checklistItems: [1,2,3,4,5,6,7].map(i => document.getElementById(`chkItem${i}`)?.value || ''),
                 custRecommendation: document.getElementById('custRecommendation')?.value || '',
                 nextPmDate: document.getElementById('nextPmDate')?.value || '',
+                odoStart: document.getElementById('odoStart')?.value || '',
+                odoEnd: document.getElementById('odoEnd')?.value || '',
+                expFuel: document.getElementById('expFuel')?.value || '0',
+                expToll: document.getElementById('expToll')?.value || '0',
+                expAllowance: document.getElementById('expAllowance')?.value || '0',
                 customerRating: document.getElementById('customerRatingVal')?.value || '5',
                 symptom: document.getElementById('diagSymptom')?.value || '',
                 detected: document.getElementById('diagDetected')?.value || '',
@@ -6531,6 +6626,12 @@
             if (Array.isArray(data.checklistItems) && data.checklistItems[6] && document.getElementById('chkItem7')) document.getElementById('chkItem7').value = data.checklistItems[6];
             if (document.getElementById('custRecommendation')) document.getElementById('custRecommendation').value = data.custRecommendation || '';
             if (document.getElementById('nextPmDate')) document.getElementById('nextPmDate').value = data.nextPmDate || '';
+            if (document.getElementById('odoStart')) document.getElementById('odoStart').value = data.odoStart || '';
+            if (document.getElementById('odoEnd')) document.getElementById('odoEnd').value = data.odoEnd || '';
+            if (typeof updateOdometerDistance === 'function') updateOdometerDistance();
+            if (document.getElementById('expFuel')) document.getElementById('expFuel').value = data.expFuel || '0';
+            if (document.getElementById('expToll')) document.getElementById('expToll').value = data.expToll || '0';
+            if (document.getElementById('expAllowance')) document.getElementById('expAllowance').value = data.expAllowance || '0';
             setCustomerRating(parseInt(data.customerRating || '5', 10));
             updateJobQrCode();
             if (document.getElementById('diagSymptom')) document.getElementById('diagSymptom').value = data.symptom || '';
@@ -11131,6 +11232,14 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             { code: 'E1 / E2 / Hi / Lo', series: 'FRIDGE', title: 'ตู้แช่เย็น/แช่แข็ง: เซ็นเซอร์อุณหภูมิ (Thermistor) ขาด/ลัดวงจร หรืออุณหภูมิเกินขอบเขต', cause: 'เซ็นเซอร์ตู้ (Cabinet Sensor) หรือเซ็นเซอร์ละลายน้ำแข็งเสีย, ยางขอบประตูรั่ว, คอยล์ร้อนสกปรก', action: 'ตรวจวัดค่าโอห์มของเซ็นเซอร์ ตรวจสอบยางขอบประตู พัดลมคอยล์เย็น และระบบละลายน้ำแข็ง (Defrost Heater)' }
         ];
 
+        // คลังความรู้วิธีตรวจซ่อมเชิงลึกตามรุ่นและอาการเสีย (Symptom-to-Solution Knowledge Base v14.0)
+        HOSHIZAKI_ERROR_CODES.push(
+            { code: 'EE / E1 (Fridge)', series: 'FRIDGE', title: 'ตู้แช่เย็น/แข็ง (HR/HF/RTW): เซ็นเซอร์อุณหภูมิห้องแช่ (Cabinet Thermistor) ขาดหรือช็อต', cause: 'สายเซ็นเซอร์ขาด, ขั้วต่อหลวมบนบอร์ด, หรือค่าความต้านทาน Thermistor เพี้ยน', action: 'Step 1: ถอดปลั๊กและวัดค่าโอห์ม Thermistor (ปกติ ~2.0–2.5 kΩ ที่ 25°C) | Step 2: ตรวจขั้วต่อ CN บนบอร์ด | Step 3: เปลี่ยน Thermistor ใหม่ (P04878-02)' },
+            { code: 'dF / Defrost', series: 'FRIDGE', title: 'ตู้แช่แข็ง (HF/FTW): น้ำแข็งเกาะคอยล์เย็นหนา / ระบบละลายน้ำแข็งไม่ทำงาน', cause: 'ฮีตเตอร์ละลายน้ำแข็ง (Defrost Heater) ขาด, Thermal Fuse ขาด, หรือพัดลมคอยล์เย็นไม่หมุน', action: 'Step 1: วัดความต้านทาน Defrost Heater และเช็กความต่อเนื่อง Thermal Fuse | Step 2: ตรวจเช็กพัดลมคอยล์เย็นและยางขอบประตู (Door Gasket)' },
+            { code: 'Low Ice / น้ำแข็งบาง', series: 'ICE_IM', title: 'IM Series: น้ำแข็งก้อนเล็ก/บาง หรือเป็นโพรง', cause: 'น้ำเข้าถังน้อย (Water Valve ตัน/แรงดันน้ำต่ำ), ถาดน้ำปิดไม่สนิท, หรือตั้งเวลาทำน้ำแข็งสั้นไป', action: 'Step 1: ล้างตะแกรงวาล์วน้ำเข้าและไส้กรองน้ำ | Step 2: เช็กสปริงดึงถาดน้ำ (Water Pan Spring) | Step 3: ตรวจวัดระดับน้ำในถาดและปรับตั้งค่าตามคู่มือ' },
+            { code: 'Water Leak / น้ำรั่ว', series: 'ICE_KM', title: 'KM Series: น้ำรั่วลงถังเก็บน้ำแข็งหรือล้นออกใต้เครื่อง', cause: 'ท่อน้ำทิ้งอุดตัน, ลูกลอย (Float Switch) ค้างไม่ตัดน้ำ, หรือซีลปั๊มน้ำ (Mechanical Seal) รั่ว', action: 'Step 1: ล้างท่อระบายน้ำทิ้งและวาล์วเดรน | Step 2: ทดสอบการตัดต่อของ Float Switch | Step 3: ตรวจเช็กซีลแกนปั๊มน้ำและท่อซิลิโคน' }
+        );
+
         function openErrorCodeModal() {
             renderErrorCodeList();
             document.getElementById('errorCodeModal')?.classList.remove('hidden');
@@ -12508,9 +12617,44 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             });
             XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet4Rows), '4_All_Job_Details');
 
+            // แท็บที่ 5: สรุปเลขไมล์และค่าใช้จ่ายเดินทางช่าง (5_Tech_Expenses)
+            const sheet5Rows = [
+                ['รายงานสรุปเลขไมล์และค่าใช้จ่ายเดินทางช่างบริการ (Technician Mileage & Expense Claim)'],
+                ['Job No.', 'วันที่', 'รหัสช่าง', 'รายชื่อช่าง', 'สถานที่/ลูกค้า', 'ไมล์เริ่มต้น (กม.)', 'ไมล์สิ้นสุด (กม.)', 'ระยะทางรวม (กม.)', 'ค่าน้ำมัน (THB)', 'ค่าทางด่วน (THB)', 'ค่าที่พัก/เบี้ยเลี้ยง (THB)', 'รวมค่าใช้จ่ายเบิก (THB)']
+            ];
+            let sumDist = 0, sumFuel = 0, sumToll = 0, sumAllow = 0, sumExpAll = 0;
+            weeklyJobs.forEach(j => {
+                const oStart = parseFloat(j.odoStart || '0') || 0;
+                const oEnd = parseFloat(j.odoEnd || '0') || 0;
+                const dist = oEnd > oStart ? (oEnd - oStart) : 0;
+                const fuel = parseMoney(j.expFuel);
+                const toll = parseMoney(j.expToll);
+                const allow = parseMoney(j.expAllowance);
+                const totExp = fuel + toll + allow;
+                if (dist > 0 || totExp > 0) {
+                    sumDist += dist; sumFuel += fuel; sumToll += toll; sumAllow += allow; sumExpAll += totExp;
+                    sheet5Rows.push([
+                        j.jobNo || '',
+                        j.date || '',
+                        getTechCodeByName(j.responsibleTech || '') || '-',
+                        j.responsibleTech || '',
+                        j.store || '',
+                        oStart,
+                        oEnd,
+                        dist,
+                        fuel,
+                        toll,
+                        allow,
+                        totExp
+                    ]);
+                }
+            });
+            sheet5Rows.push(['รวมทั้งหมด', '', '', '', '', '', '', sumDist, sumFuel, sumToll, sumAllow, sumExpAll]);
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet5Rows), '5_Tech_Expenses');
+
             const fileName = `Hoshizaki_Weekly_Report_${startStr}_to_${endStr}.xlsx`;
             XLSX.writeFile(wb, fileName);
-            showToast(`ส่งออกรายงานสรุปประจำสัปดาห์ 4 ชีต (${fileName}) เรียบร้อย ✓`);
+            showToast(`ส่งออกรายงานสรุปประจำสัปดาห์ 5 ชีต (${fileName}) เรียบร้อย ✓`);
         }
 
         // --- Upcoming PM Reminder & Executive Failure Analytics Dashboard ---
@@ -12910,6 +13054,704 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             checkFridayWeeklyReportReminder();
         }, 650);
 
+    
+        // =========================================================================
+        // V14.0 COMPLETE ENTERPRISE FIELD SERVICE SUITE:
+        // 1. Official HOSHIZAKI WARRANTY CLAIM FORM + 21-Point Checklist + Defective Tag + Claim Tracker
+        // 2. Customer Online Quotation Approval Link (`?approveQuote=...`)
+        // 3. Daily Route & Map Clustering
+        // 4. Technician Mileage & Expense Calculation
+        // =========================================================================
+
+        function updateOdometerDistance() {
+            const s = parseFloat(document.getElementById('odoStart')?.value || '0') || 0;
+            const e = parseFloat(document.getElementById('odoEnd')?.value || '0') || 0;
+            const dist = e > s ? (e - s) : 0;
+            const outEl = document.getElementById('odoDistance');
+            if (outEl) outEl.value = `${dist.toLocaleString()} กม.`;
+        }
+
+        const CHECKLIST_21_ITEMS = [
+            { num: 1, label: 'รุ่นของเครื่องที่มีปัญหา & Serial No. / การรับประกัน', type: 'auto_eq' },
+            { num: 2, label: 'ตรวจสภาพสายไฟแหล่งจ่าย (ขนาดสาย Sqm / ลักษณะ ดี/ไม่ดี)', options: ['ดี (Good)', 'ไม่ดี (Damaged)'], hasText: true, placeholder: 'ขนาดสาย Sqm' },
+            { num: 3, label: 'แรงดันไฟฟ้าแหล่งจ่าย (V) & พิกัดกระแสไฟฟ้า (Amp / N-G VAC)', hasText: true, placeholder: 'เช่น 220V / 4.2A / N-G 0.5V' },
+            { num: 4, label: 'ตรวจสอบการทำงานของ HEATER', options: ['ปกติ', 'ไม่ปกติ'] },
+            { num: 5, label: 'ขดลวดคอมเพรสเซอร์ (ปกติ/ไม่ปกติ & ค่า SCR Ohm)', options: ['ปกติ', 'ไม่ปกติ'], hasText: true, placeholder: 'SCR Ohm' },
+            { num: 6, label: 'ตรวจสอบการทำงานของ TEMPERATURE', options: ['ปกติ', 'ไม่ปกติ'] },
+            { num: 7, label: 'การทำงานของ COMPRESSOR', options: ['ปกติ', 'ไม่ปกติ'] },
+            { num: 8, label: 'การทำงานของ MOTOR CONDENSOR', options: ['ปกติ', 'ไม่ปกติ'] },
+            { num: 9, label: 'การทำงานของ MOTOR EVAPORATOR', options: ['ปกติ', 'ไม่ปกติ'] },
+            { num: 10, label: 'ตรวจเช็คระดับเสียงว่าดังปกติหรือไม่', options: ['ปกติ', 'ไม่ปกติ'] },
+            { num: 11, label: 'โครงสร้าง BODY บุบหรือไม่', options: ['ไม่บุบ', 'บุบ'] },
+            { num: 12, label: 'ชนิดน้ำยาทำความเย็น & แรงดันน้ำยา (psig) / แรงดันน้ำ (psig/bar)', hasText: true, placeholder: 'เช่น R404A / 240-35 psig / น้ำ 2.5 bar' },
+            { num: 13, label: 'ตรวจสอบรอยรั่วน้ำยา & สาเหตุ', options: ['ไม่พบรอยรั่ว', 'พบรอยรั่ว'], hasText: true, placeholder: 'ระบุจุดที่รั่ว (ถ้ามี)' },
+            { num: 14, label: 'ตรวจสอบรอยรั่วของน้ำ & สภาพเครื่องกรองน้ำ (ตัน/ไม่ตัน)', options: ['ไม่พบรอยรั่ว / กรองไม่ตัน', 'พบรอยรั่ว / กรองตัน'], hasText: true, placeholder: 'ยี่ห้อกรองน้ำ / จุดรั่ว' },
+            { num: 15, label: 'ตรวจสอบสภาพของ FILTER (สกปรก / ไม่สกปรก)', options: ['ไม่สกปรก', 'สกปรก'] },
+            { num: 16, label: 'สายท่อน้ำทิ้ง (ถูกลักษณะ / ไม่ถูกลักษณะ) & ค่ากรด-ด่างน้ำ (pH)', options: ['ถูกลักษณะ', 'ไม่ถูกลักษณะ'], hasText: true, placeholder: 'ค่า pH น้ำ' },
+            { num: 17, label: 'PARAMETER แสดงการทำงานถูกต้องหรือไม่ / SHOW ERROR CODE / Set temp', options: ['ถูกต้อง', 'ไม่ถูกต้อง'], hasText: true, placeholder: 'Error Code / Set temp °C' },
+            { num: 18, label: 'ตรวจสอบการเป็นสนิมของ BODY', options: ['น้อย', 'ปานกลาง', 'มาก'] },
+            { num: 19, label: 'อุณหภูมิ EVAPORATOR (Inlet °C / Outlet °C)', hasText: true, placeholder: 'Inlet °C / Outlet °C' },
+            { num: 20, label: 'อุณหภูมิ CONDENSOR (Inlet °C / Outlet °C / Ambient °C)', hasText: true, placeholder: 'In / Out / Ambient °C' },
+            { num: 21, label: 'หลักฐานภาพถ่ายก่อนทำ และ ภาพถ่ายหลังทำ', options: ['แนบภาพก่อน-หลังครบถ้วน', 'แนบภาพบางส่วน'] }
+        ];
+
+        function renderChecklist21Items() {
+            const container = document.getElementById('checklist21ItemsContainer');
+            if (!container) return;
+            const jobNo = document.getElementById('jobNo')?.value || 'JOB-001';
+            const model = document.getElementById('eqModel')?.value || '-';
+            const serial = document.getElementById('eqSerial')?.value || '-';
+            const wStatus = document.getElementById('warrantyYes')?.checked ? 'อยู่ในประกัน (Yes)' : 'ไม่อยู่ในประกัน (No)';
+            const headerJob = document.getElementById('chk21HeaderJob');
+            if (headerJob) headerJob.innerText = `JOB: ${jobNo}`;
+
+            const saved21 = JSON.parse(localStorage.getItem(`hoshizaki_chk21_${jobNo}`) || '{}');
+
+            container.innerHTML = CHECKLIST_21_ITEMS.map(item => {
+                if (item.type === 'auto_eq') {
+                    return `
+                        <div class="border border-gray-200 rounded-lg p-2 bg-blue-50/40 sm:col-span-2">
+                            <div class="font-bold text-hoshizaki-navy">1. ${item.label}</div>
+                            <div class="text-gray-800 mt-0.5">รุ่น: <b>${model}</b> | Serial No.: <b>${serial}</b> | สถานะ: <b>${wStatus}</b></div>
+                        </div>
+                    `;
+                }
+                const curOpt = saved21[`opt_${item.num}`] || (item.options ? item.options[0] : '');
+                const curTxt = saved21[`txt_${item.num}`] || '';
+                const optHtml = item.options
+                    ? `<select onchange="saveChecklist21Field('${jobNo}', 'opt_${item.num}', this.value)" class="border border-gray-300 rounded px-2 py-1 bg-white font-semibold text-hoshizaki-navy">
+                        ${item.options.map(o => `<option value="${o}" ${o === curOpt ? 'selected' : ''}>${o}</option>`).join('')}
+                       </select>`
+                    : '';
+                const txtHtml = item.hasText
+                    ? `<input type="text" value="${curTxt.replace(/"/g, '&quot;')}" oninput="saveChecklist21Field('${jobNo}', 'txt_${item.num}', this.value)" placeholder="${item.placeholder || ''}" class="flex-1 border border-gray-300 rounded px-2 py-1 bg-white">`
+                    : '';
+                return `
+                    <div class="border border-gray-200 rounded-lg p-2 bg-white space-y-1">
+                        <div class="font-bold text-gray-800">${item.num}. ${item.label}</div>
+                        <div class="flex items-center gap-1.5">${optHtml}${txtHtml}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function saveChecklist21Field(jobNo, fieldKey, val) {
+            const key = `hoshizaki_chk21_${jobNo}`;
+            const cur = JSON.parse(localStorage.getItem(key) || '{}');
+            cur[fieldKey] = val;
+            localStorage.setItem(key, JSON.stringify(cur));
+        }
+
+        function openWarrantyClaimModal(defaultTab = 'CLAIM') {
+            const jobNo = document.getElementById('jobNo')?.value || 'JOB-001';
+            const jobDate = document.getElementById('jobDate')?.value || new Date().toISOString().split('T')[0];
+            const store = document.getElementById('custStore')?.value || '';
+            const contact = document.getElementById('custContact')?.value || '';
+            const model = document.getElementById('eqModel')?.value || '';
+            const serial = document.getElementById('eqSerial')?.value || '';
+            const dateOut = document.getElementById('eqDateOut')?.value || '';
+            const tech = document.getElementById('responsibleTechSelect')?.value || '';
+            const symptom = document.getElementById('diagSymptom')?.value || '';
+            const detected = document.getElementById('diagDetected')?.value || '';
+            const action = document.getElementById('diagAction')?.value || '';
+
+            const partsLines = [];
+            let partsCostSum = 0;
+            document.querySelectorAll('.parts-row').forEach(r => {
+                const d = r.querySelector('.parts-desc')?.value.trim() || '';
+                const q = parseFloat(r.querySelector('.parts-qty')?.value || '0') || 0;
+                const p = parseFloat(r.querySelector('.parts-price')?.value || '0') || 0;
+                if (d) {
+                    partsLines.push(`- ${d} (QTY: ${q}) @ ${p.toLocaleString()} THB`);
+                    partsCostSum += (q * p);
+                }
+            });
+
+            if (document.getElementById('wcDateOfClaim') && !document.getElementById('wcDateOfClaim').value) {
+                document.getElementById('wcDateOfClaim').value = jobDate;
+            }
+            if (document.getElementById('wcClaimNo') && !document.getElementById('wcClaimNo').value) {
+                document.getElementById('wcClaimNo').value = `CLM-${jobDate.replace(/-/g, '')}-001`;
+            }
+            if (document.getElementById('wcServiceReportNo')) document.getElementById('wcServiceReportNo').value = jobNo;
+            if (document.getElementById('wcModelName')) document.getElementById('wcModelName').value = model;
+            if (document.getElementById('wcSerialNo')) document.getElementById('wcSerialNo').value = serial;
+            if (document.getElementById('wcDateInstall')) document.getElementById('wcDateInstall').value = dateOut;
+            if (document.getElementById('wcDateFailed')) document.getElementById('wcDateFailed').value = jobDate;
+            if (document.getElementById('wcDateCallReceived')) document.getElementById('wcDateCallReceived').value = jobDate;
+            if (document.getElementById('wcDateRepaired')) document.getElementById('wcDateRepaired').value = jobDate;
+            if (document.getElementById('wcAgencyContact')) document.getElementById('wcAgencyContact').value = tech;
+            if (document.getElementById('wcCustomerName')) document.getElementById('wcCustomerName').value = store;
+            if (document.getElementById('wcCustomerContact')) document.getElementById('wcCustomerContact').value = contact;
+            if (document.getElementById('wcCustomerPhone')) document.getElementById('wcCustomerPhone').value = contact;
+            if (document.getElementById('wcProblemRepairDesc')) {
+                document.getElementById('wcProblemRepairDesc').value = [symptom, detected, action].filter(Boolean).join(' | ');
+            }
+            if (document.getElementById('wcClaimPartsDesc')) {
+                document.getElementById('wcClaimPartsDesc').value = partsLines.join('\n');
+            }
+            if (document.getElementById('wcCostF')) {
+                document.getElementById('wcCostF').value = partsCostSum;
+            }
+            calcWarrantyReimbursement();
+
+            // เติมข้อมูลลงป้ายส่งคืนอะไหล่เสีย (Defective Part Tag)
+            document.getElementById('tagClaimNo').innerText = document.getElementById('wcClaimNo')?.value || '-';
+            document.getElementById('tagJobNo').innerText = jobNo;
+            document.getElementById('tagDate').innerText = jobDate;
+            document.getElementById('tagTech').innerText = tech || '-';
+            document.getElementById('tagModel').innerText = model || '-';
+            document.getElementById('tagSerial').innerText = serial || '-';
+            document.getElementById('tagCustomer').innerText = store || '-';
+            document.getElementById('tagPartsList').innerText = partsLines.length > 0 ? partsLines.join(' | ') : 'ระบุรายการอะไหล่ที่ส่งคืน';
+            document.getElementById('tagSymptom').innerText = [symptom, detected].filter(Boolean).join(' / ') || '-';
+
+            renderChecklist21Items();
+            renderWarrantyTrackerTable();
+            switchWarrantyTab(defaultTab);
+            document.getElementById('warrantyClaimModal')?.classList.remove('hidden');
+        }
+
+        function closeWarrantyClaimModal() {
+            document.getElementById('warrantyClaimModal')?.classList.add('hidden');
+        }
+
+        function switchWarrantyTab(tabKey) {
+            const tabs = {
+                CLAIM: { panel: 'warrantyTabClaimForm', btn: 'tabBtnWarrantyForm' },
+                CHECKLIST: { panel: 'warrantyTabChecklist21', btn: 'tabBtnChecklist21' },
+                TAG: { panel: 'warrantyTabDefectiveTag', btn: 'tabBtnDefectiveTag' },
+                TRACKER: { panel: 'warrantyTabClaimTracker', btn: 'tabBtnClaimTracker' }
+            };
+            Object.entries(tabs).forEach(([k, cfg]) => {
+                const p = document.getElementById(cfg.panel);
+                const b = document.getElementById(cfg.btn);
+                const active = (k === tabKey);
+                if (p) p.classList.toggle('hidden', !active);
+                if (b) {
+                    b.className = active
+                        ? 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white transition'
+                        : 'px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition';
+                }
+            });
+        }
+
+        function calcWarrantyReimbursement() {
+            const e = parseFloat(document.getElementById('wcCostE')?.value || '0') || 0;
+            const f = parseFloat(document.getElementById('wcCostF')?.value || '0') || 0;
+            const g = parseFloat(document.getElementById('wcCostG')?.value || '0') || 0;
+            const tot = e + f + g;
+            const el = document.getElementById('wcTotalReimbursement');
+            if (el) el.innerText = `${tot.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} THB`;
+            return tot;
+        }
+
+        function saveCurrentWarrantyClaimRecord() {
+            const claimNo = (document.getElementById('wcClaimNo')?.value || '').trim();
+            const jobNo = (document.getElementById('wcServiceReportNo')?.value || '').trim();
+            if (!claimNo) {
+                showToast('กรุณาระบุเลขที่ใบเคลม (CLAIM NO)');
+                return;
+            }
+            const statusChecked = document.querySelector('input[name="wcStatus"]:checked')?.value || 'Pending Review';
+            const rec = {
+                claimNo,
+                jobNo,
+                dateOfClaim: document.getElementById('wcDateOfClaim')?.value || '',
+                model: document.getElementById('wcModelName')?.value || '',
+                serial: document.getElementById('wcSerialNo')?.value || '',
+                customer: document.getElementById('wcCustomerName')?.value || '',
+                status: statusChecked,
+                totalAmount: calcWarrantyReimbursement()
+            };
+            const list = JSON.parse(localStorage.getItem('hoshizaki_warranty_claims') || '[]');
+            const idx = list.findIndex(x => x.claimNo === claimNo);
+            if (idx >= 0) list[idx] = rec;
+            else list.unshift(rec);
+            localStorage.setItem('hoshizaki_warranty_claims', JSON.stringify(list));
+            renderWarrantyTrackerTable();
+            showToast(`บันทึกใบเคลมประกัน ${claimNo} เรียบร้อย ✓`);
+        }
+
+        function renderWarrantyTrackerTable() {
+            const tbody = document.getElementById('warrantyTrackerTableBody');
+            if (!tbody) return;
+            const list = JSON.parse(localStorage.getItem('hoshizaki_warranty_claims') || '[]');
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400">ยังไม่มีประวัติการบันทึกใบเคลมประกัน</td></tr>';
+                return;
+            }
+            tbody.innerHTML = list.map(c => `
+                <tr class="hover:bg-blue-50/40">
+                    <td class="p-2 font-bold text-hoshizaki-navy">${c.claimNo}</td>
+                    <td class="p-2">${c.jobNo || '-'}</td>
+                    <td class="p-2">${c.dateOfClaim || '-'}</td>
+                    <td class="p-2">${c.model || '-'} / ${c.serial || '-'}</td>
+                    <td class="p-2 font-semibold">${c.customer || '-'}</td>
+                    <td class="p-2 text-center"><span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold">${c.status}</span></td>
+                    <td class="p-2 text-right font-bold">${Number(c.totalAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                </tr>
+            `).join('');
+        }
+
+        function printWarrantyClaimDocument() {
+            document.body.classList.add('printing-warranty');
+            showToast('กำลังเตรียมหน้ากระดาษสำหรับพิมพ์ใบเคลม / เอกสาร...');
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => {
+                    document.body.classList.remove('printing-warranty');
+                }, 1200);
+            }, 300);
+        }
+
+        // --- 2. Customer Online Quotation Approval Link ---
+        function copyCustomerQuotationApprovalLink() {
+            const offerNo = currentOfferNo || getNextOfferNo();
+            const jobNo = document.getElementById('jobNo')?.value || 'JOB-001';
+            const store = document.getElementById('custStore')?.value || 'ลูกค้าทั่วไป';
+            const model = document.getElementById('eqModel')?.value || '-';
+            const serial = document.getElementById('eqSerial')?.value || '-';
+            const totalTxt = document.getElementById('recTotal')?.innerText || document.getElementById('grandTotalVal')?.innerText || '0.00';
+
+            const payloadObj = { offerNo, jobNo, store, model, serial, total: totalTxt };
+            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payloadObj))));
+            const baseUrl = TEAM_PRODUCTION_URL.split('?')[0];
+            const approvalUrl = `${baseUrl}?openExternalBrowser=1&approveQuote=${encodeURIComponent(encoded)}`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(approvalUrl).then(() => {
+                    showToast(`คัดลอกลิงก์อนุมัติใบเสนอราคา ${offerNo} สำหรับส่งให้ลูกค้าแล้ว ✓`);
+                }).catch(() => prompt('คัดลอกลิงก์ส่งให้ลูกค้าอนุมัติ:', approvalUrl));
+            } else {
+                prompt('คัดลอกลิงก์ส่งให้ลูกค้าอนุมัติ:', approvalUrl);
+            }
+        }
+
+        function checkCustomerOnlineApprovalParam() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const rawQ = params.get('approveQuote');
+                if (!rawQ) return;
+                const decoded = JSON.parse(decodeURIComponent(escape(atob(rawQ))));
+                const card = document.getElementById('onlineQuoteSummaryCard');
+                if (card && decoded) {
+                    card.innerHTML = `
+                        <div><b>เลขที่ใบเสนอราคา (Quotation No.):</b> <span class="text-hoshizaki-navy font-extrabold">${decoded.offerNo}</span></div>
+                        <div><b>อ้างอิงใบแจ้งบริการ (Job No.):</b> ${decoded.jobNo}</div>
+                        <div><b>ชื่อร้าน / ลูกค้า:</b> ${decoded.store}</div>
+                        <div><b>รุ่นเครื่อง / S/N:</b> ${decoded.model} (${decoded.serial})</div>
+                        <div class="text-sm font-extrabold text-emerald-800 pt-1 border-t border-blue-200">ยอดรวมสุทธิ (Grand Total): ${decoded.total} THB</div>
+                    `;
+                    window.__pendingOnlineApprovalQuote = decoded;
+                    document.getElementById('customerOnlineApprovalModal')?.classList.remove('hidden');
+                }
+            } catch (e) {}
+        }
+
+        function confirmCustomerOnlineApproval() {
+            const approver = (document.getElementById('onlineApproverNameInput')?.value || '').trim();
+            if (!approver) {
+                showToast('กรุณาระบุชื่อผู้อนุมัติสั่งซ่อม');
+                return;
+            }
+            const q = window.__pendingOnlineApprovalQuote || {};
+            if (document.getElementById('nameCustomer')) {
+                document.getElementById('nameCustomer').value = `${approver} (Approved Online)`;
+            }
+            document.getElementById('customerOnlineApprovalModal')?.classList.add('hidden');
+            showToast(`บันทึกการอนุมัติใบเสนอราคา ${q.offerNo || ''} โดย "${approver}" เรียบร้อย ✓`);
+        }
+
+        // --- 3. Daily Route & Map Clustering ---
+        function openDailyRouteMapModal() {
+            const dateInp = document.getElementById('routeMapDateInput');
+            if (dateInp && !dateInp.value) {
+                dateInp.value = document.getElementById('jobDate')?.value || new Date().toISOString().split('T')[0];
+            }
+            renderDailyRouteStops();
+            document.getElementById('dailyRouteMapModal')?.classList.remove('hidden');
+        }
+
+        function getDailyScheduledStops(targetDate) {
+            const items = JSON.parse(localStorage.getItem('hoshizaki_service_schedule') || '[]');
+            return items.filter(it => it.date === targetDate && it.slotType !== 'WAITING');
+        }
+
+        function renderDailyRouteStops() {
+            const targetDate = document.getElementById('routeMapDateInput')?.value || '';
+            const container = document.getElementById('dailyRouteStopsList');
+            if (!container) return;
+            const stops = getDailyScheduledStops(targetDate);
+            if (stops.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-gray-400">ยังไม่มีตารางงานที่ลงวันนัดหมายในวันที่ ${targetDate}</div>`;
+                return;
+            }
+            container.innerHTML = stops.map((s, idx) => `
+                <div class="border border-gray-200 rounded-xl p-3 bg-gray-50/70 flex items-center justify-between gap-2">
+                    <div>
+                        <div class="font-extrabold text-hoshizaki-navy">จุดที่ ${idx + 1}: ${s.store || 'ไม่ระบุชื่อร้าน'} (${s.timeStart || '-'} - ${s.timeEnd || '-'})</div>
+                        <div class="text-gray-600">${s.address || '-'} | ทีมช่าง: <b>${Array.isArray(s.techs) ? s.techs.join(', ') : '-'}</b></div>
+                    </div>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((s.store || '') + ' ' + (s.address || ''))}" target="_blank" class="bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-2.5 py-1.5 rounded-lg font-bold flex-shrink-0">
+                        เปิดแผนที่
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        function openCombinedGoogleMapsRoute() {
+            const targetDate = document.getElementById('routeMapDateInput')?.value || '';
+            const stops = getDailyScheduledStops(targetDate);
+            if (stops.length === 0) {
+                showToast('ไม่มีจุดหมายในวันที่เลือก');
+                return;
+            }
+            const waypoints = stops.map(s => encodeURIComponent(`${s.store || ''} ${s.address || ''}`.trim()));
+            const dest = waypoints[waypoints.length - 1];
+            const mid = waypoints.slice(0, -1).join('|');
+            const url = mid
+                ? `https://www.google.com/maps/dir/?api=1&destination=${dest}&waypoints=${mid}`
+                : `https://www.google.com/maps/search/?api=1&query=${dest}`;
+            window.open(url, '_blank');
+        }
+
+        checkCustomerOnlineApprovalParam();
+
+    
+        // =========================================================================
+        // V14.1 SHAREABLE CUSTOMER WARRANTY CLAIM LINK & AUTO EMAIL TO KHUN THANAKRIT + CC ALL
+        // =========================================================================
+        let customerPortalPhotos = [];
+
+        function getWarrantyClaimEmailRecipients() {
+            const primaryTo = 'thanakrit@hoshizaki.co.th';
+            const ccSet = new Set();
+
+            // รวบรวมอีเมลของทีมช่างทุกคน (ยกเว้นอีเมลหลักของคุณธนกิจ)
+            getTechnicianDirectory().forEach(t => {
+                const em = String(t.email || '').trim().toLowerCase();
+                if (em && em !== primaryTo) ccSet.add(em);
+            });
+            // รวบรวมอีเมลของผู้ประสานงานทุกคน
+            getCoordinatorDirectory().forEach(c => {
+                const em = String(c.email || '').trim().toLowerCase();
+                if (em && em !== primaryTo) ccSet.add(em);
+            });
+            // อีเมลกลางแผนกบริการ
+            ccSet.add('services@hoshizaki.co.th');
+
+            return {
+                to: primaryTo,
+                ccList: Array.from(ccSet),
+                ccString: Array.from(ccSet).join(',')
+            };
+        }
+
+        function copyCustomerWarrantyClaimLink() {
+            const jobNo = (document.getElementById('wcServiceReportNo')?.value || document.getElementById('jobNo')?.value || 'JOB-001').trim();
+            const claimNo = (document.getElementById('wcClaimNo')?.value || `CLM-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-001`).trim();
+            const store = (document.getElementById('wcCustomerName')?.value || document.getElementById('custStore')?.value || '').trim();
+            const contact = (document.getElementById('wcCustomerContact')?.value || document.getElementById('custContact')?.value || '').trim();
+            const address = (document.getElementById('custAddress')?.value || '').trim();
+            const model = (document.getElementById('wcModelName')?.value || document.getElementById('eqModel')?.value || '').trim();
+            const serial = (document.getElementById('wcSerialNo')?.value || document.getElementById('eqSerial')?.value || '').trim();
+            const dateInstall = (document.getElementById('wcDateInstall')?.value || document.getElementById('eqDateOut')?.value || '').trim();
+            const dealer = (document.getElementById('custDealer')?.value || '').trim();
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+
+            const payload = {
+                claimNo,
+                jobNo,
+                store,
+                contact,
+                address,
+                model,
+                serial,
+                dateInstall,
+                dealer,
+                wh: webhookUrl
+            };
+            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+            const baseUrl = TEAM_PRODUCTION_URL.split('?')[0];
+            const shareUrl = `${baseUrl}?openExternalBrowser=1&claimForm=${encodeURIComponent(encoded)}`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    showToast(`คัดลอกลิงก์ใบเคลม (${claimNo} / ${jobNo}) สำหรับส่งให้ลูกค้ากรอกข้อมูลและแนบรูปแล้ว ✓`);
+                }).catch(() => {
+                    prompt('คัดลอกลิงก์ใบเคลมนี้ส่งให้ลูกค้า:', shareUrl);
+                });
+            } else {
+                prompt('คัดลอกลิงก์ใบเคลมนี้ส่งให้ลูกค้า:', shareUrl);
+            }
+        }
+
+        function checkCustomerWarrantyClaimPortalParam() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const rawClaim = params.get('claimForm');
+                if (!rawClaim) return;
+
+                const data = JSON.parse(decodeURIComponent(escape(atob(rawClaim))));
+                if (data.wh && String(data.wh).startsWith('https://script.google.com/')) {
+                    localStorage.setItem('hoshizaki_sheets_webhook_url', data.wh);
+                }
+
+                const todayStr = new Date().toISOString().split('T')[0];
+                if (document.getElementById('cpClaimNo')) document.getElementById('cpClaimNo').value = data.claimNo || `CLM-${todayStr.replace(/-/g, '')}-001`;
+                if (document.getElementById('cpJobNo')) document.getElementById('cpJobNo').value = data.jobNo || '';
+                if (document.getElementById('cpDateFailed')) document.getElementById('cpDateFailed').value = todayStr;
+                if (document.getElementById('cpCustomerName')) document.getElementById('cpCustomerName').value = data.store || '';
+                if (document.getElementById('cpContactPhone')) document.getElementById('cpContactPhone').value = data.contact || '';
+                if (document.getElementById('cpAddress')) document.getElementById('cpAddress').value = data.address || '';
+                if (document.getElementById('cpModelName')) document.getElementById('cpModelName').value = data.model || '';
+                if (document.getElementById('cpSerialNo')) document.getElementById('cpSerialNo').value = data.serial || '';
+                if (document.getElementById('cpDateInstall')) document.getElementById('cpDateInstall').value = data.dateInstall || '';
+                if (document.getElementById('cpDealerName')) document.getElementById('cpDealerName').value = data.dealer || '';
+
+                customerPortalPhotos = [];
+                renderCustomerPortalPhotos();
+                document.getElementById('customerWarrantyPortalModal')?.classList.remove('hidden');
+            } catch (err) {
+                console.warn('Invalid claimForm param:', err);
+            }
+        }
+
+        async function handleCustomerClaimPhotoUpload(event) {
+            const files = Array.from(event.target.files || []);
+            if (files.length === 0) return;
+            const remaining = 12 - customerPortalPhotos.length;
+            if (remaining <= 0) {
+                showToast('แนบรูปภาพได้สูงสุด 12 ภาพ');
+                return;
+            }
+            const toProcess = files.slice(0, remaining);
+            showToast(`กำลังย่อขนาดและเตรียมรูปถ่าย ${toProcess.length} ภาพ...`);
+            for (const f of toProcess) {
+                try {
+                    const dataUrl = await compressImageFile(f, 1200, 0.8);
+                    customerPortalPhotos.push({
+                        dataUrl,
+                        caption: `หลักฐานเคลม_${customerPortalPhotos.length + 1}`
+                    });
+                } catch (e) {}
+            }
+            renderCustomerPortalPhotos();
+            event.target.value = '';
+        }
+
+        function renderCustomerPortalPhotos() {
+            const grid = document.getElementById('cpPhotoPreviewGrid');
+            const badge = document.getElementById('cpPhotoCountBadge');
+            if (badge) badge.innerText = `${customerPortalPhotos.length} / 12 ภาพ`;
+            if (!grid) return;
+
+            if (customerPortalPhotos.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-3 text-[11px]">ยังไม่มีรูปภาพแนบ (แนะนำให้ถ่ายรูปป้ายเนมเพลต S/N และจุดที่เสีย)</div>';
+                return;
+            }
+            grid.innerHTML = customerPortalPhotos.map((p, idx) => `
+                <div class="border border-amber-300 rounded-lg bg-white p-1.5 space-y-1 relative">
+                    <img src="${p.dataUrl}" class="w-full h-24 object-cover rounded">
+                    <input type="text" value="${p.caption.replace(/"/g, '&quot;')}" oninput="customerPortalPhotos[${idx}].caption=this.value" class="w-full text-[10px] border-b border-gray-200 px-1 py-0.5">
+                    <button type="button" onclick="customerPortalPhotos.splice(${idx},1);renderCustomerPortalPhotos();" class="absolute top-2 right-2 bg-red-600 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center shadow">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        async function submitCustomerWarrantyClaimPortal(openMailClientOnly = false) {
+            const claimNo = (document.getElementById('cpClaimNo')?.value || '').trim();
+            const jobNo = (document.getElementById('cpJobNo')?.value || '').trim();
+            const dateFailed = (document.getElementById('cpDateFailed')?.value || '').trim();
+            const customerName = (document.getElementById('cpCustomerName')?.value || '').trim();
+            const contactPhone = (document.getElementById('cpContactPhone')?.value || '').trim();
+            const modelName = (document.getElementById('cpModelName')?.value || '').trim().toUpperCase();
+            const serialNo = (document.getElementById('cpSerialNo')?.value || '').trim().toUpperCase();
+            const dateInstall = (document.getElementById('cpDateInstall')?.value || '').trim();
+            const dealerName = (document.getElementById('cpDealerName')?.value || '').trim();
+            const address = (document.getElementById('cpAddress')?.value || '').trim();
+            const symptom = (document.getElementById('cpSymptom')?.value || '').trim();
+            const claimParts = (document.getElementById('cpClaimParts')?.value || '').trim();
+
+            if (!customerName || !modelName || !serialNo || !symptom) {
+                showToast('กรุณากรอก ชื่อร้าน/ลูกค้า, รุ่นเครื่อง, Serial No. และอาการเสียให้ครบถ้วน');
+                return;
+            }
+
+            const recipients = getWarrantyClaimEmailRecipients();
+            const subject = `งานเคลม / เคลม Job ${jobNo || claimNo} - ${customerName} (${modelName} S/N: ${serialNo})`;
+            const bodyLines = [
+                'เรียน คุณธนกิจ และทีมบริการ Hoshizaki (Thailand) Limited,',
+                '',
+                'แจ้งรายละเอียดการขอเคลมสินค้า (HOSHIZAKI WARRANTY CLAIM):',
+                `- เลขที่ใบเคลม (Claim No.): ${claimNo}`,
+                `- อ้างอิงใบงาน (Job No.): ${jobNo || '-'}`,
+                `- วันที่พบปัญหา (Date Failed): ${dateFailed || '-'}`,
+                `- ชื่อร้านค้า / ลูกค้า: ${customerName}`,
+                `- ผู้ติดต่อ / เบอร์โทร: ${contactPhone || '-'}`,
+                `- ตัวแทนจำหน่าย / ผู้แจ้ง: ${dealerName || '-'}`,
+                `- สถานที่ติดตั้ง: ${address || '-'}`,
+                `- รุ่นเครื่อง (Model Name): ${modelName}`,
+                `- หมายเลขเครื่อง (Serial No.): ${serialNo}`,
+                `- วันที่ติดตั้ง/ซื้อเครื่อง: ${dateInstall || '-'}`,
+                `- อาการเสียที่พบ (Reported Complaint): ${symptom}`,
+                `- รายการอะไหล่ที่ขอเคลม: ${claimParts || '-'}`,
+                `- จำนวนรูปถ่ายหลักฐานที่แนบเข้าระบบ: ${customerPortalPhotos.length} ภาพ`,
+                '',
+                'ส่งข้อมูลจากระบบบริการ Hoshizaki Service Management'
+            ];
+            const emailBody = bodyLines.join('\n');
+
+            if (openMailClientOnly) {
+                const mailtoUrl = `mailto:${encodeURIComponent(recipients.to)}?cc=${encodeURIComponent(recipients.ccString)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+                window.location.href = mailtoUrl;
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmitCustomerClaimAuto');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>กำลังส่งข้อมูลและรูปถ่ายอัตโนมัติ...</span>';
+            }
+
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            const payload = {
+                actionType: 'SUBMIT_WARRANTY_CLAIM',
+                claimNo,
+                jobNo,
+                dateOfClaim: new Date().toISOString().split('T')[0],
+                dateFailed,
+                customerName,
+                contactPhone,
+                dealerName,
+                address,
+                modelName,
+                serialNo,
+                dateInstall,
+                symptom,
+                claimParts,
+                emailTo: recipients.to,
+                emailCc: recipients.ccString,
+                emailSubject: subject,
+                photosCount: customerPortalPhotos.length,
+                photosPayload: customerPortalPhotos
+            };
+
+            try {
+                if (webhookUrl) {
+                    await fetch(webhookUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+
+                // บันทึกลงทะเบียนติดตามสถานะเคลมในเครื่องด้วย
+                const localClaims = JSON.parse(localStorage.getItem('hoshizaki_warranty_claims') || '[]');
+                localClaims.unshift({
+                    claimNo,
+                    jobNo,
+                    dateOfClaim: payload.dateOfClaim,
+                    model: modelName,
+                    serial: serialNo,
+                    customer: customerName,
+                    status: 'Submitted by Customer',
+                    totalAmount: 0
+                });
+                localStorage.setItem('hoshizaki_warranty_claims', JSON.stringify(localClaims));
+
+                showToast('ส่งข้อมูลใบเคลม รูปถ่าย และแจ้งอีเมลถึงคุณธนกิจ + CC ทีมงานทุกคนเรียบร้อยแล้ว ✓');
+                document.getElementById('customerWarrantyPortalModal')?.classList.add('hidden');
+            } catch (err) {
+                console.error(err);
+                showToast('กำลังเปิดแอปอีเมลเพื่อส่งใบเคลมให้คุณธนกิจและทีมงาน...');
+                const mailtoUrl = `mailto:${encodeURIComponent(recipients.to)}?cc=${encodeURIComponent(recipients.ccString)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+                window.location.href = mailtoUrl;
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>ส่งข้อมูลใบเคลมอัตโนมัติ</span>';
+                }
+            }
+        }
+
+        async function sendWarrantyClaimEmailToTeam() {
+            saveCurrentWarrantyClaimRecord();
+            const claimNo = (document.getElementById('wcClaimNo')?.value || '').trim();
+            const jobNo = (document.getElementById('wcServiceReportNo')?.value || document.getElementById('jobNo')?.value || '').trim();
+            const dateFailed = (document.getElementById('wcDateFailed')?.value || '').trim();
+            const customerName = (document.getElementById('wcCustomerName')?.value || '').trim();
+            const contactPhone = (document.getElementById('wcCustomerPhone')?.value || '').trim();
+            const modelName = (document.getElementById('wcModelName')?.value || '').trim();
+            const serialNo = (document.getElementById('wcSerialNo')?.value || '').trim();
+            const dateInstall = (document.getElementById('wcDateInstall')?.value || '').trim();
+            const problemDesc = (document.getElementById('wcProblemRepairDesc')?.value || '').trim();
+            const partsDesc = (document.getElementById('wcClaimPartsDesc')?.value || '').trim();
+            const totalAmt = calcWarrantyReimbursement();
+
+            const recipients = getWarrantyClaimEmailRecipients();
+            const subject = `งานเคลม / เคลม Job ${jobNo || claimNo} - ${customerName || 'ลูกค้า'} (${modelName || '-'} S/N: ${serialNo || '-'})`;
+            const bodyLines = [
+                'เรียน คุณธนกิจ และทีมบริการ Hoshizaki (Thailand) Limited,',
+                '',
+                'ขอส่งรายละเอียดเอกสารเคลมประกัน (HOSHIZAKI WARRANTY CLAIM FORM):',
+                `- CLAIM NO: ${claimNo}`,
+                `- SERVICE REPORT / JOB NO: ${jobNo}`,
+                `- DATE FAILED: ${dateFailed}`,
+                `- CUSTOMER NAME: ${customerName}`,
+                `- CONTACT / TEL: ${contactPhone}`,
+                `- MODEL NAME: ${modelName}`,
+                `- SERIAL NO: ${serialNo}`,
+                `- DATE OF INSTALLATION: ${dateInstall}`,
+                `- (A) PROBLEM & REPAIR: ${problemDesc}`,
+                `- (B) PARTS FOR CLAIM:\n${partsDesc}`,
+                `- TOTAL AMOUNT REIMBURSEMENT: ${totalAmt.toLocaleString('en-US', { minimumFractionDigits: 2 })} THB`,
+                '',
+                'จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติงานเคลมครับ'
+            ];
+            const emailBody = bodyLines.join('\n');
+
+            // ส่งเข้า Apps Script เพื่อให้ระบบส่งอีเมลอัตโนมัติ (To: คุณธนกิจ + CC ทุกคน) และบันทึกลงชีต Warranty_Claims
+            const webhookUrl = getGoogleSheetsWebhookUrl();
+            if (webhookUrl) {
+                try {
+                    await fetch(webhookUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            actionType: 'SUBMIT_WARRANTY_CLAIM',
+                            claimNo,
+                            jobNo,
+                            dateOfClaim: document.getElementById('wcDateOfClaim')?.value || '',
+                            dateFailed,
+                            customerName,
+                            contactPhone,
+                            modelName,
+                            serialNo,
+                            dateInstall,
+                            symptom: problemDesc,
+                            claimParts: partsDesc,
+                            totalAmount: totalAmt,
+                            emailTo: recipients.to,
+                            emailCc: recipients.ccString,
+                            emailSubject: subject,
+                            photosCount: 0,
+                            photosPayload: []
+                        })
+                    });
+                } catch (e) {}
+            }
+
+            showToast(`กำลังเปิดอีเมลส่งถึงคุณธนกิจ (${recipients.to}) และ CC ทีมงาน ${recipients.ccList.length} ท่าน...`);
+            const mailtoUrl = `mailto:${encodeURIComponent(recipients.to)}?cc=${encodeURIComponent(recipients.ccString)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+            window.location.href = mailtoUrl;
+        }
+
+        checkCustomerWarrantyClaimPortalParam();
+
     </script>
 
     <!-- Google Sheets Cloud Sync & Team QR Code Poster Modal -->
@@ -13025,6 +13867,9 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 <div class="flex flex-wrap items-center gap-1.5 text-xs">
                     <button type="button" onclick="openDispatchEditorModal()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
                         <i class="fa-solid fa-plus-circle"></i> <span>เพิ่มงาน / จ่ายงานใหม่</span>
+                    </button>
+                    <button type="button" onclick="openDailyRouteMapModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs" title="รวมจุดหมายลูกค้าทั้งหมดของวันเพื่อวางแผนเส้นทางวิ่งงาน">
+                        <i class="fa-solid fa-route"></i> <span>แผนที่เส้นทางรายวัน</span>
                     </button>
                     <button type="button" onclick="pullUpcomingPmToWaitingPlan()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs" title="ดึงรายการนัดหมาย PM และงานรออะไหล่จากประวัติเข้า Waiting Plan อัตโนมัติ">
                         <i class="fa-solid fa-calendar-plus"></i> <span>ดึงนัด PM / รออะไหล่เข้าคิว</span>
@@ -13927,6 +14772,366 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <i class="fa-solid fa-file-excel"></i> ส่งออกใบสรุปสต็อก & เบิกอะไหล่รถช่าง
                 </button>
                 <button type="button" onclick="closeVanStockModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Official HOSHIZAKI WARRANTY CLAIM FORM + 21-Point Pre-Check + Defective Part Tag + Claim Tracker Modal (v14.0) -->
+    <div id="warrantyClaimModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[82] flex items-center justify-center p-1.5 sm:p-3 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full p-3.5 sm:p-5 space-y-3 max-h-[95vh] flex flex-col">
+            <!-- Top Navigation & Print Toolbar -->
+            <div class="warranty-no-print flex flex-wrap items-center justify-between border-b pb-2.5 gap-2 flex-shrink-0">
+                <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold">
+                    <button type="button" id="tabBtnWarrantyForm" onclick="switchWarrantyTab('CLAIM')" class="px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white transition">
+                        1. HOSHIZAKI WARRANTY CLAIM FORM
+                    </button>
+                    <button type="button" id="tabBtnChecklist21" onclick="switchWarrantyTab('CHECKLIST')" class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition">
+                        2. เช็กลิสต์เบื้องต้น 21 ข้อ (ส่ง Hoshizaki)
+                    </button>
+                    <button type="button" id="tabBtnDefectiveTag" onclick="switchWarrantyTab('TAG')" class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition">
+                        3. ป้ายส่งคืนอะไหล่เสีย (Defective Tag)
+                    </button>
+                    <button type="button" id="tabBtnClaimTracker" onclick="switchWarrantyTab('TRACKER')" class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition">
+                        4. ทะเบียนติดตามสถานะเคลม
+                    </button>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                    <button type="button" onclick="copyCustomerWarrantyClaimLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs" title="สร้างลิงก์ส่งให้ลูกค้ากรอกข้อมูล แนบรูปถ่าย และส่งเคลมเข้ามาอัตโนมัติ">
+                        <i class="fa-solid fa-share-nodes"></i> <span>แชร์ลิงก์ให้ลูกค้ากรอกเคลม</span>
+                    </button>
+                    <button type="button" onclick="sendWarrantyClaimEmailToTeam()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs" title="ส่งอีเมลถึงคุณธนกิจ (thanakrit@hoshizaki.co.th) และ CC ทีมช่าง/ผู้ประสานงานทุกคน">
+                        <i class="fa-solid fa-envelope"></i> <span>ส่งอีเมลเคลม (ถึงคุณธนกิจ + CC ทีม)</span>
+                    </button>
+                    <button type="button" onclick="saveCurrentWarrantyClaimRecord()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-floppy-disk"></i> <span>บันทึกใบเคลม</span>
+                    </button>
+                    <button type="button" onclick="printWarrantyClaimDocument()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-print"></i> <span>พิมพ์เอกสาร A4</span>
+                    </button>
+                    <button type="button" onclick="closeWarrantyClaimModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+                </div>
+            </div>
+
+            <!-- Printable Document Area -->
+            <div class="overflow-y-auto flex-1 bg-gray-100 p-2 sm:p-3 rounded-xl">
+                <div id="warrantyClaimPrintableArea" class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-300 text-xs text-gray-900 space-y-4">
+
+                    <!-- TAB 1: OFFICIAL HOSHIZAKI WARRANTY CLAIM FORM (Exact Layout from HOSHIZAKI WARRANTY CLAIM FORM.pdf) -->
+                    <div id="warrantyTabClaimForm" class="space-y-3">
+                        <div class="flex justify-between items-start border-b-2 border-black pb-2">
+                            <div>
+                                <h2 class="text-base sm:text-lg font-extrabold tracking-wide text-black">HOSHIZAKI WARRANTY CLAIM FORM</h2>
+                                <p class="text-[10px] font-bold text-gray-700">PLEASE COMPLETE IN CAPITALS BLOCK LETTERS FOR ALL SECTIONS</p>
+                            </div>
+                            <div class="text-right text-[11px] space-y-1">
+                                <div><b>ISSUED BY:</b> <input type="text" id="wcIssuedBy" value="HOSHIZAKI (THAILAND) LIMITED" class="border-b border-black font-bold w-48 text-right uppercase"></div>
+                                <div><b>DATE OF CLAIM:</b> <input type="date" id="wcDateOfClaim" class="border-b border-black font-bold w-36 text-center"></div>
+                                <div><b>CLAIM NO:</b> <input type="text" id="wcClaimNo" placeholder="CLM-YYYYMMDD-001" class="border-b border-black font-bold w-40 text-right uppercase"></div>
+                                <div><b>SERVICE REPORT NO:</b> <input type="text" id="wcServiceReportNo" class="border-b border-black font-bold w-40 text-right uppercase"></div>
+                            </div>
+                        </div>
+
+                        <!-- 1. Equipment -->
+                        <div class="border border-black p-2.5 space-y-2">
+                            <div class="font-extrabold bg-gray-200 px-2 py-1 border-b border-black">1. Equipment</div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <div><span class="font-bold">Model Name:</span> <input type="text" id="wcModelName" class="w-full border-b border-gray-400 font-bold uppercase py-0.5"></div>
+                                <div><span class="font-bold">Serial No:</span> <input type="text" id="wcSerialNo" class="w-full border-b border-gray-400 font-bold uppercase py-0.5"></div>
+                                <div><span class="font-bold">Date of Installation:</span> <input type="text" id="wcDateInstall" placeholder="YYYY-MM-DD" class="w-full border-b border-gray-400 py-0.5"></div>
+                                <div><span class="font-bold">Date Failed:</span> <input type="date" id="wcDateFailed" class="w-full border-b border-gray-400 py-0.5"></div>
+                                <div><span class="font-bold">Date of Service call received:</span> <input type="date" id="wcDateCallReceived" class="w-full border-b border-gray-400 py-0.5"></div>
+                                <div><span class="font-bold">Date Repaired:</span> <input type="date" id="wcDateRepaired" class="w-full border-b border-gray-400 py-0.5"></div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Information of Distributor and/or Service Agency & 3. Information of Customer -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="border border-black p-2.5 space-y-1.5">
+                                <div class="font-extrabold bg-gray-200 px-2 py-1 border-b border-black">2. Information of Distributor and/or Service Agency</div>
+                                <div><span class="font-bold">Company Name:</span> <input type="text" id="wcAgencyCompany" value="HOSHIZAKI (THAILAND) LIMITED" class="w-full border-b border-gray-400 uppercase py-0.5"></div>
+                                <div><span class="font-bold">Contact Person:</span> <input type="text" id="wcAgencyContact" class="w-full border-b border-gray-400 uppercase py-0.5"></div>
+                            </div>
+                            <div class="border border-black p-2.5 space-y-1.5">
+                                <div class="font-extrabold bg-gray-200 px-2 py-1 border-b border-black">3. Information of Customer</div>
+                                <div><span class="font-bold">Customer Name:</span> <input type="text" id="wcCustomerName" class="w-full border-b border-gray-400 uppercase py-0.5"></div>
+                                <div><span class="font-bold">Contact Person:</span> <input type="text" id="wcCustomerContact" class="w-full border-b border-gray-400 uppercase py-0.5"></div>
+                                <div><span class="font-bold">Telephone no:</span> <input type="text" id="wcCustomerPhone" class="w-full border-b border-gray-400 py-0.5"></div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Reported Complaint -->
+                        <div class="border border-black p-2.5 space-y-2">
+                            <div class="font-extrabold bg-gray-200 px-2 py-1 border-b border-black">4. Reported Complaint</div>
+                            <div>
+                                <div class="font-bold mb-1">(A) Give specific description of each problem repair:</div>
+                                <textarea id="wcProblemRepairDesc" rows="2" class="w-full border border-gray-300 rounded p-1.5 uppercase"></textarea>
+                            </div>
+                            <div>
+                                <div class="font-bold mb-1">(B) Give specific description of check part for claim (Part No. / Description / Cost):</div>
+                                <textarea id="wcClaimPartsDesc" rows="3" class="w-full border border-gray-300 rounded p-1.5 uppercase"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- 5. Hoshizaki Use Only -->
+                        <div class="border-2 border-black p-2.5 space-y-2 bg-gray-50/60">
+                            <div class="font-extrabold bg-hoshizaki-navy text-white px-2 py-1">5. Hoshizaki Use Only</div>
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                                <div class="sm:col-span-5 space-y-1">
+                                    <div class="font-bold">Claim Status:</div>
+                                    <div class="flex flex-wrap gap-3">
+                                        <label class="inline-flex items-center gap-1"><input type="radio" name="wcStatus" value="Approved"> Approved</label>
+                                        <label class="inline-flex items-center gap-1"><input type="radio" name="wcStatus" value="Adjusted"> Adjusted</label>
+                                        <label class="inline-flex items-center gap-1"><input type="radio" name="wcStatus" value="Denied"> Denied</label>
+                                        <label class="inline-flex items-center gap-1"><input type="radio" name="wcStatus" value="Returned"> Returned</label>
+                                    </div>
+                                    <div class="pt-1 font-bold">Send Payment To:
+                                        <label class="ml-2 font-normal"><input type="radio" name="wcPayTo" value="Distributor" checked> Distributor</label>
+                                        <label class="ml-2 font-normal"><input type="radio" name="wcPayTo" value="Agency"> Agency</label>
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-7 space-y-1 border-l pl-3 border-gray-300">
+                                    <div class="flex justify-between"><span>Total Warranty Claim (E):</span> <input type="number" id="wcCostE" value="0" oninput="calcWarrantyReimbursement()" class="w-28 text-right border-b border-gray-400 font-bold"></div>
+                                    <div class="flex justify-between"><span>Total Warranty Parts Claim (F):</span> <input type="number" id="wcCostF" value="0" oninput="calcWarrantyReimbursement()" class="w-28 text-right border-b border-gray-400 font-bold"></div>
+                                    <div class="flex justify-between"><span>Miscellaneous Claim (G):</span> <input type="number" id="wcCostG" value="0" oninput="calcWarrantyReimbursement()" class="w-28 text-right border-b border-gray-400 font-bold"></div>
+                                    <div class="flex justify-between font-extrabold text-hoshizaki-navy pt-1 border-t border-black">
+                                        <span>Total Amount Reimbursement = (E)+(F)+(G):</span>
+                                        <span id="wcTotalReimbursement">0.00 THB</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 pt-2 border-t border-gray-300 text-[11px]">
+                                <div>Processed by: ______________________ Date: ___________</div>
+                                <div>Reviewed by: ______________________ Date: ___________</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: 21-POINT PRE-SERVICE INSPECTION CHECKLIST (From Check list PDF.pdf) -->
+                    <div id="warrantyTabChecklist21" class="hidden space-y-2.5">
+                        <div class="border-b-2 border-hoshizaki-navy pb-2 flex justify-between items-center">
+                            <div>
+                                <h3 class="text-base font-extrabold text-hoshizaki-navy">C: ข้อมูลการตรวจสอบเบื้องต้น 21 รายการ (ส่งเอกสารแนบให้ HOSHIZAKI)</h3>
+                                <p class="text-[11px] text-gray-600">บันทึกค่าตรวจวัดทางเทคนิคและสภาพหน้างานเพื่อประกอบการขออนุมัติเคลมประกัน</p>
+                            </div>
+                            <span class="bg-blue-100 text-hoshizaki-navy px-2.5 py-1 rounded font-bold text-xs" id="chk21HeaderJob">JOB NO</span>
+                        </div>
+                        <div id="checklist21ItemsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
+                    </div>
+
+                    <!-- TAB 3: DEFECTIVE PART RETURN TAG (ป้ายส่งคืนอะไหล่เสีย) -->
+                    <div id="warrantyTabDefectiveTag" class="hidden space-y-3">
+                        <div class="border-2 border-dashed border-black p-4 rounded-xl max-w-xl mx-auto space-y-2.5">
+                            <div class="bg-hoshizaki-navy text-white text-center py-2 rounded font-extrabold text-sm tracking-wider">
+                                HOSHIZAKI DEFECTIVE PART RETURN TAG / ป้ายส่งคืนอะไหล่เสียเคลมประกัน
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs border-b pb-2">
+                                <div><b>CLAIM NO:</b> <span id="tagClaimNo">-</span></div>
+                                <div><b>SERVICE REPORT NO:</b> <span id="tagJobNo">-</span></div>
+                                <div><b>DATE FAILED:</b> <span id="tagDate">-</span></div>
+                                <div><b>TECHNICIAN:</b> <span id="tagTech">-</span></div>
+                            </div>
+                            <div class="space-y-1 text-xs border-b pb-2">
+                                <div><b>MODEL NAME:</b> <span id="tagModel" class="font-bold text-hoshizaki-navy">-</span></div>
+                                <div><b>SERIAL NO:</b> <span id="tagSerial" class="font-bold text-hoshizaki-navy">-</span></div>
+                                <div><b>CUSTOMER:</b> <span id="tagCustomer">-</span></div>
+                            </div>
+                            <div class="space-y-1 text-xs">
+                                <div class="font-bold">DEFECTIVE PART NO. & DESCRIPTION (รายการอะไหล่ที่ส่งคืน):</div>
+                                <div id="tagPartsList" class="p-2 bg-gray-50 border rounded font-semibold min-h-[48px]">-</div>
+                                <div class="font-bold pt-1">SYMPTOM / ROOT CAUSE (อาการเสียที่ตรวจพบ):</div>
+                                <div id="tagSymptom" class="p-2 bg-gray-50 border rounded min-h-[40px]">-</div>
+                            </div>
+                            <div class="text-[10px] text-center text-gray-500 pt-1">
+                                กรุณาติดป้ายนี้บนกล่องอะไหล่เสียก่อนส่งคืนคลังอะไหล่ HOSHIZAKI (THAILAND) LIMITED
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: WARRANTY CLAIM TRACKER (ทะเบียนติดตามสถานะเคลมประกัน) -->
+                    <div id="warrantyTabClaimTracker" class="hidden space-y-2">
+                        <div class="font-extrabold text-hoshizaki-navy text-sm">ทะเบียนติดตามสถานะใบเคลมประกันและการส่งคืนอะไหล่เสีย</div>
+                        <div class="overflow-x-auto border rounded-lg">
+                            <table class="w-full text-left border-collapse text-xs min-w-[680px]">
+                                <thead class="bg-hoshizaki-navy text-white">
+                                    <tr>
+                                        <th class="p-2">Claim No.</th>
+                                        <th class="p-2">Job No.</th>
+                                        <th class="p-2">วันที่เคลม</th>
+                                        <th class="p-2">Model / S/N</th>
+                                        <th class="p-2">ลูกค้า</th>
+                                        <th class="p-2 text-center">สถานะเคลม</th>
+                                        <th class="p-2 text-right">ยอดเคลม (THB)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="warrantyTrackerTableBody" class="divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Online Quotation Approval Modal (v14.0) -->
+    <div id="customerOnlineApprovalModal" class="no-print fixed inset-0 bg-black/85 backdrop-blur-sm z-[88] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-4 sm:p-6 space-y-3 max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b pb-2.5">
+                <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy flex items-center gap-2">
+                    <i class="fa-solid fa-file-signature text-emerald-600"></i> อนุมัติใบเสนอราคาซ่อมออนไลน์ (Hoshizaki)
+                </h3>
+                <button type="button" onclick="document.getElementById('customerOnlineApprovalModal')?.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+            <div id="onlineQuoteSummaryCard" class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 space-y-1.5 text-xs"></div>
+            <div class="space-y-1.5 text-xs">
+                <label class="font-bold text-gray-700">ลงชื่อผู้อนุมัติสั่งซ่อม (Customer / Approver Name) *:</label>
+                <input type="text" id="onlineApproverNameInput" placeholder="พิมพ์ชื่อ-นามสกุล หรือตำแหน่งผู้อนุมัติ" class="w-full border border-gray-300 rounded-lg px-3 py-2 font-semibold">
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="document.getElementById('customerOnlineApprovalModal')?.classList.add('hidden')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-4 py-2 rounded-xl font-semibold">ปิด</button>
+                <button type="button" onclick="confirmCustomerOnlineApproval()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-5 py-2 rounded-xl font-bold shadow-sm">
+                    <i class="fa-solid fa-check-circle mr-1"></i> ยืนยันอนุมัติสั่งซ่อม (Approve)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Route & Map Clustering Modal (v14.0) -->
+    <div id="dailyRouteMapModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[84] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-4 sm:p-5 space-y-3 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-2.5 flex-shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">
+                        <i class="fa-solid fa-route text-sky-600 mr-1"></i> วางแผนเส้นทางปฏิบัติงานรายวัน (Daily Route & Map Clustering)
+                    </h3>
+                    <p class="text-[11px] text-gray-500">รวมพิกัดและสถานที่หน้างานทั้งหมดของวันที่เลือก เพื่อจัดลำดับเส้นทางเข้าซ่อมให้ประหยัดเวลาและค่าน้ำมัน</p>
+                </div>
+                <button type="button" onclick="document.getElementById('dailyRouteMapModal')?.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-xs flex-shrink-0">
+                <label class="font-bold text-gray-700">เลือกวันที่ปฏิบัติงาน:</label>
+                <input type="date" id="routeMapDateInput" onchange="renderDailyRouteStops()" class="border border-gray-300 rounded-lg px-2.5 py-1.5 font-semibold">
+                <button type="button" onclick="openCombinedGoogleMapsRoute()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
+                    <i class="fa-solid fa-map-location-dot"></i> <span>เปิดเส้นทางรวมใน Google Maps</span>
+                </button>
+            </div>
+            <div id="dailyRouteStopsList" class="overflow-y-auto flex-1 space-y-2 text-xs"></div>
+        </div>
+    </div>
+
+
+    <!-- Customer / Dealer Self-Service Warranty Claim Portal Modal (v14.1) -->
+    <div id="customerWarrantyPortalModal" class="no-print fixed inset-0 bg-black/85 backdrop-blur-sm z-[92] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-4 sm:p-6 space-y-3 max-h-[94vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-2.5 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-lg font-bold flex-shrink-0">
+                        <i class="fa-solid fa-file-shield"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">แบบฟอร์มแจ้งเคลมสินค้าและแนบหลักฐานภาพถ่าย (HOSHIZAKI WARRANTY CLAIM)</h3>
+                        <p class="text-[11px] text-gray-500">กรุณากรอกรายละเอียดอาการเสียและแนบรูปถ่ายเนมเพลต/จุดที่เสีย ระบบจะส่งข้อมูลเข้าฝ่ายบริการและอีเมลทีมงานอัตโนมัติ</p>
+                    </div>
+                </div>
+                <button type="button" onclick="document.getElementById('customerWarrantyPortalModal')?.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+
+            <div class="overflow-y-auto flex-1 space-y-3 pr-1 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-blue-50/70 border border-blue-200 rounded-xl p-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">เลขที่ใบเคลม (Claim No.)</label>
+                        <input type="text" id="cpClaimNo" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white font-bold text-hoshizaki-navy uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">อ้างอิงใบงาน (Job / Service Report No.)</label>
+                        <input type="text" id="cpJobNo" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white font-bold text-hoshizaki-navy uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">วันที่พบปัญหา (Date Failed) *</label>
+                        <input type="date" id="cpDateFailed" class="w-full border border-gray-300 rounded px-2 py-1.5 bg-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-0.5">ชื่อร้านค้า / บริษัทลูกค้า (Customer Name) *</label>
+                        <input type="text" id="cpCustomerName" placeholder="ระบุชื่อร้านหรือบริษัท" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 font-semibold">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-0.5">ชื่อผู้ติดต่อ และ เบอร์โทรศัพท์ (Contact & Tel.) *</label>
+                        <input type="text" id="cpContactPhone" placeholder="เช่น คุณสมชาย 081-234-5678" class="w-full border border-gray-300 rounded-lg px-2.5 py-2">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-0.5">รุ่นเครื่อง (Model Name) *</label>
+                        <input type="text" id="cpModelName" list="hoshizakiModelsList" placeholder="เช่น IM-100NE, KM-50B" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 font-bold uppercase">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-0.5">หมายเลขเครื่อง (Serial No.) *</label>
+                        <input type="text" id="cpSerialNo" placeholder="ดูจากป้ายเนมเพลตด้านข้าง/หลังเครื่อง" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 font-bold uppercase">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-0.5">วันที่ติดตั้ง / ซื้อสินค้า (Date of Installation)</label>
+                        <input type="text" id="cpDateInstall" placeholder="เช่น 2026-01-15 หรือ เดือน/ปี" class="w-full border border-gray-300 rounded-lg px-2.5 py-2">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-0.5">ตัวแทนจำหน่าย / ผู้แจ้งเรื่อง (Dealer / Issued By)</label>
+                        <input type="text" id="cpDealerName" placeholder="ระบุชื่อดีลเลอร์หรือผู้แจ้งเคลม" class="w-full border border-gray-300 rounded-lg px-2.5 py-2">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-gray-700 mb-0.5">สถานที่ติดตั้งเครื่อง (Installation Address) *</label>
+                    <textarea id="cpAddress" rows="2" placeholder="ระบุที่อยู่สถานที่ตั้งเครื่องเพื่อให้ทีมช่างเข้าตรวจสอบ" class="w-full border border-gray-300 rounded-lg p-2"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-0.5">อาการเสียที่พบ / รหัส Error Code (Reported Complaint) *</label>
+                        <textarea id="cpSymptom" rows="3" placeholder="อธิบายอาการเสีย เช่น เครื่องไม่ทำน้ำแข็ง, ขึ้นโค้ด E1, น้ำรั่ว..." class="w-full border border-gray-300 rounded-lg p-2"></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-0.5">รายการอะไหล่ที่ขอเคลม / หมายเหตุเพิ่มเติม (Parts / Notes)</label>
+                        <textarea id="cpClaimParts" rows="3" placeholder="ระบุชื่ออะไหล่ที่ต้องการเคลม (ถ้าทราบ) หรือรายละเอียดเพิ่มเติม" class="w-full border border-gray-300 rounded-lg p-2"></textarea>
+                    </div>
+                </div>
+
+                <!-- แนบรูปถ่ายประกอบการเคลม (ป้ายเนมเพลต, S/N, จุดที่เสีย, หน้าจอ Error) -->
+                <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-3 space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="font-bold text-amber-950 flex items-center gap-1.5">
+                            <i class="fa-solid fa-camera text-amber-600"></i> แนบรูปถ่ายประกอบการเคลม (เนมเพลต S/N, หน้าจอ Error, จุดที่เสีย)
+                            <span id="cpPhotoCountBadge" class="bg-amber-200 text-amber-950 px-2 py-0.5 rounded-full text-[10px]">0 / 12 ภาพ</span>
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold cursor-pointer flex items-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-camera"></i> <span>ถ่ายรูป</span>
+                                <input type="file" accept="image/*" capture="environment" onchange="handleCustomerClaimPhotoUpload(event)" class="hidden">
+                            </label>
+                            <label class="bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg font-bold cursor-pointer flex items-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-images"></i> <span>เลือกรูปหลายภาพ</span>
+                                <input type="file" accept="image/*" multiple onchange="handleCustomerClaimPhotoUpload(event)" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+                    <div id="cpPhotoPreviewGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[11px] text-gray-600">
+                    <i class="fa-solid fa-envelope-circle-check text-rose-600 mr-1"></i> เมื่อกดปุ่ม <b>"ส่งข้อมูลใบเคลมอัตโนมัติ"</b> ระบบจะบันทึกข้อมูลพร้อมรูปถ่ายเข้าส่วนกลางและส่งอีเมลแจ้งไปยัง <b>คุณธนกิจ (thanakrit@hoshizaki.co.th)</b> พร้อม CC ทีมงานบริการทุกคนทันที
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t flex-shrink-0">
+                <button type="button" onclick="document.getElementById('customerWarrantyPortalModal')?.classList.add('hidden')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-4 py-2.5 rounded-xl font-semibold">ปิดหน้าต่าง</button>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="submitCustomerWarrantyClaimPortal(true)" class="bg-sky-700 hover:bg-sky-800 text-white text-xs px-4 py-2.5 rounded-xl font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-envelope"></i> <span>ส่งผ่านแอปอีเมล (Mail)</span>
+                    </button>
+                    <button type="button" id="btnSubmitCustomerClaimAuto" onclick="submitCustomerWarrantyClaimPortal(false)" class="bg-rose-600 hover:bg-rose-700 text-white text-xs px-5 py-2.5 rounded-xl font-extrabold flex items-center gap-1.5 shadow-md">
+                        <i class="fa-solid fa-paper-plane"></i> <span>ส่งข้อมูลใบเคลมอัตโนมัติ</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

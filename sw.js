@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v17-9';
+const CACHE_NAME = 'hoshizaki-service-pwa-v18-0';
 const STATIC_ASSETS = [
   './',
   './index.html',

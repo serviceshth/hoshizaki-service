@@ -716,7 +716,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v17.9 Global</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.0 Enterprise</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -3483,9 +3483,9 @@
                 </div>
                 <div class="space-y-0.5 max-w-md min-w-0 break-words">
                     <h2 id="docCompanyNameDisplay" class="text-sm sm:text-lg font-extrabold text-hoshizaki-navy leading-tight">HOSHIZAKI (THAILAND) LIMITED</h2>
-                    <p id="docCompanyAddressDisplay" class="text-[11px] sm:text-xs text-gray-600 leading-snug">Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen Subdistrict, Lak Si District, Bangkok 10210 Thailand.</p>
-                    <p id="docCompanyTelTaxDisplay" class="text-[11px] sm:text-xs text-gray-600">Tel: 02-005-9980-83 | Tax ID: 0135558002599</p>
-                    <p id="docCompanyEmailWebDisplay" class="text-[11px] sm:text-xs text-gray-600">Email : services@hoshizaki.co.th | Website : https://hoshizaki-sea.com</p>
+                    <p id="docCompanyAddressDisplay" class="text-[11px] sm:text-xs text-gray-600 leading-snug">Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District, Bangkok 10210 Thailand.</p>
+                    <p id="docCompanyTelTaxDisplay" class="text-[11px] sm:text-xs text-gray-600">TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)</p>
+                    <p id="docCompanyEmailWebDisplay" class="text-[11px] sm:text-xs text-gray-600">Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com</p>
                 </div>
             </div>
 
@@ -4788,9 +4788,13 @@
                         </div>
                         <div class="flex-1 text-left pt-1 space-y-0.5 leading-snug">
                             <h2 id="recCompanyNameDisplay" class="text-lg font-bold tracking-wide text-black" style="font-family: 'Times New Roman', serif;">Hoshizaki (Thailand) Limited</h2>
-                            <p id="recCompanyAddressDisplay" class="text-[10.5px] text-black">Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen Subdistrict, Lak Si District, Bangkok 10210 Thailand.</p>
-                            <p id="recCompanyTelTaxDisplay" class="text-[10.5px] text-black">TEL : 02-005-9980-83 &nbsp;&nbsp; TAX ID : 0135558002599 (HEAD OFFICE)</p>
-                            <p id="recCompanyEmailWebDisplay" class="text-[10.5px] text-black">Email : services@hoshizaki.co.th &nbsp;&nbsp; Website : https://hoshizaki-sea.com</p>
+                            <p id="recCompanyAddressDisplay" class="text-[10.5px] text-black whitespace-pre-line">Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64
+(Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District,
+Bangkok 10210 Thailand.</p>
+                            <p id="recCompanyTelTaxDisplay" class="text-[10.5px] text-black whitespace-pre-line">TEL : 02-005-9980-83 FAX : 02-516-2646
+TAX ID : 0135558002599 (HEAD OFFICE)</p>
+                            <p id="recCompanyEmailWebDisplay" class="text-[10.5px] text-black whitespace-pre-line">Email : services@hoshizaki.co.th
+Website : www.hoshizaki-sea.com</p>
                         </div>
                     </div>
 
@@ -8504,7 +8508,7 @@
             const telNo = document.getElementById('recContactName')?.innerText || '-';
             const eqModelHeader = document.getElementById('recEqModel')?.innerText || 'MODEL : -  S/N : -';
             const customRemark = document.getElementById('recCustomRemarkInput')?.value.trim() || '';
-            const docMainTitle = currentFinancialDocMode === 'RECEIPT' ? 'RECEIPT / TAX INVOICE' : 'QUOTATION';
+            const docMainTitle = currentFinancialDocMode === 'RECEIPT' ? 'RECEIPT / TAX INVOICE' : (currentFinancialDocMode === 'INVOICE' ? 'INVOICE' : 'QUOTATION');
 
             const subTotal = parseFloat((document.getElementById('recSubtotal')?.innerText || '0').replace(/,/g, '')) || 0;
             const vatAmt = parseFloat((document.getElementById('recVat')?.innerText || '0').replace(/,/g, '')) || 0;
@@ -8515,35 +8519,37 @@
 
             const wb = XLSX.utils.book_new();
 
-            // โครงสร้าง 8 คอลัมน์ (A-H) และ 54 แถว ตรงตามไฟล์ตัวอย่าง `51760191200001-27OCT26.xlsx` เป๊ะ 100%
+            // โครงสร้าง 8 คอลัมน์ (A-H) และ 54 แถว แก้ไขปัญหา #VALUE! และป้องกันข้อความหัวกระดาษ/ตารางถูกตัดขอบ 100%
             const wsData = [
-                ['', '', 'Hoshizaki (Thailand) Limited', '', '', '', '', ''],                                                // Row 1
-                ['', '', '', '', '', '', '', ''],                                                                             // Row 2
-                ['', '', 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn),', '', '', '', '', ''],        // Row 3
-                ['', '', 'Talat Bang Khen Subdistrict, Lak Si District, Bangkok 10210 Thailand.', '', '', '', '', ''],       // Row 4
-                ['', '', 'TEL : 02-005-9980-83   TAX ID : 0135558002599 (HEAD OFFICE)', '', '', '', '', ''],                  // Row 5
-                ['', '', 'Email : services@hoshizaki.co.th   Website : https://hoshizaki-sea.com', '', '', '', '', ''],      // Row 6
-                [docMainTitle, '', '', '', '', '', '', ''],                                                                   // Row 7
-                ['', custCode, '', '', '', '', '', ''],                                                                       // Row 8
-                ['ชื่อลูกค้า', custName, '', '', '', '', '', ''],                                                              // Row 9
-                ['Buyer Name :', buyerTaxId, '', '', '', '', 'วันที่ / Date', dateStr],                                       // Row 10
-                ['Contact Person :', contactPerson, '', '', '', '', 'Offer No.', offerNo],                                   // Row 11
-                ['ที่อยู่', address, '', '', '', '', '', ''],                                                                 // Row 12
-                ['', '', '', '', '', '', 'เงื่อนไขในการชำระเงิน', ''],                                                       // Row 13
-                ['', '', '', '', '', '', ' Payment term', '30 DAYS'],                                                        // Row 14
-                ['Telephone No. ', telNo, '', '', '', '', '', ''],                                                            // Row 15
-                ['', '', '', '', '', '', '', ''],                                                                             // Row 16
-                [eqModelHeader, '', '', '', '', '', '', ''],                                                                  // Row 17
-                ['ITEM', 'Part No.', 'DESCRIPTION', 'UNIT PRICE (BAHT)', 'DISCOUNT', 'UNIT PRICE AFTER DISCOUNT', 'QUANTITY (PCS)', 'AMOUNT'], // Row 18
-                ['', '', '', '', '', '', '', '']                                                                              // Row 19 (Merged header row 2)
+                ['', '', 'HOSHIZAKI (THAILAND) LIMITED', '', '', '', '', ''],                                                          // Row 1
+                ['', '', 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64', '', '', '', '', ''],                            // Row 2
+                ['', '', '(Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District,', '', '', '', '', ''],                             // Row 3
+                ['', '', 'Bangkok 10210 Thailand.', '', '', '', '', ''],                                                              // Row 4
+                ['', '', 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)', '', '', '', '', ''],        // Row 5
+                ['', '', 'Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com', '', '', '', '', ''],                    // Row 6
+                [docMainTitle, '', '', '', '', '', '', ''],                                                                           // Row 7
+                ['รหัสลูกค้า :', custCode, '', '', '', '', '', ''],                                                                   // Row 8
+                ['ชื่อลูกค้า :', custName, '', '', '', '', '', ''],                                                                     // Row 9
+                ['Buyer Name :', buyerTaxId, '', '', '', '', 'วันที่ / Date', dateStr],                                               // Row 10
+                ['Contact Person :', contactPerson, '', '', '', '', 'Offer No.', offerNo],                                           // Row 11
+                ['ที่อยู่ :', address, '', '', '', '', '', ''],                                                                         // Row 12
+                ['', '', '', '', '', '', 'เงื่อนไขในการชำระเงิน', ''],                                                               // Row 13
+                ['', '', '', '', '', '', 'Payment term', '30 DAYS'],                                                                  // Row 14
+                ['Telephone No. :', telNo, '', '', '', '', '', ''],                                                                   // Row 15
+                ['', '', '', '', '', '', '', ''],                                                                                     // Row 16
+                [eqModelHeader, '', '', '', '', '', '', ''],                                                                          // Row 17
+                ['ITEM', 'Part No.', 'DESCRIPTION', 'UNIT PRICE (BAHT)', 'DISCOUNT', 'NET UNIT PRICE', 'QUANTITY (PCS)', 'AMOUNT'],   // Row 18
+                ['', '', '', '', '', '', '', '']                                                                                      // Row 19
             ];
 
-            // Rows 20-35 (16 แถวรายการสินค้า ตรงตามแถว 20-35 ในไฟล์ต้นฉบับ)
+            // Rows 20-35 (16 แถวรายการสินค้า ใช้สูตร IF(ISNUMBER(...)) ป้องกัน #VALUE! เมื่อแถวว่าง)
             const firstItemRow = 20;
             const tableRows = Array.from(document.querySelectorAll('#receiptTableBody tr'));
             for (let i = 0; i < 16; i++) {
                 const rNum = firstItemRow + i;
                 const tr = tableRows[i];
+                const netFormula = `IF(ISNUMBER(D${rNum}),ROUND(MAX(0,D${rNum}-N(E${rNum})),2),0)`;
+                const amtFormula = `IF(ISNUMBER(G${rNum}),ROUND(F${rNum}*G${rNum},2),0)`;
                 if (tr) {
                     const tds = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
                     const itemNo = tds[0] && tds[0] !== '' ? (parseInt(tds[0], 10) || '') : '';
@@ -8554,82 +8560,98 @@
                     const qty = tds[6] ? (parseFloat(tds[6].replace(/,/g, '')) || 0) : '';
 
                     if (desc) {
+                        const netV = Math.round(Math.max(0, (uPrice || 0) - (disc || 0)) * 100) / 100;
+                        const amtV = Math.round(netV * (qty || 0) * 100) / 100;
                         wsData.push([
                             itemNo,
                             partNo,
                             desc,
                             uPrice,
                             disc || 0,
-                            { f: `D${rNum}-E${rNum}`, v: Math.max(0, (uPrice || 0) - (disc || 0)), t: 'n' },
+                            { f: netFormula, v: netV, t: 'n' },
                             qty,
-                            { f: `ROUND(F${rNum}*G${rNum},2)`, v: Math.round(Math.max(0, (uPrice || 0) - (disc || 0)) * (qty || 0) * 100) / 100, t: 'n' }
+                            { f: amtFormula, v: amtV, t: 'n' }
                         ]);
                     } else {
-                        wsData.push(['', '', '', '', '', { f: `D${rNum}-E${rNum}`, v: 0, t: 'n' }, '', { f: `ROUND(F${rNum}*G${rNum},2)`, v: 0, t: 'n' }]);
+                        wsData.push(['', '', '', '', '', { f: netFormula, v: 0, t: 'n' }, '', { f: amtFormula, v: 0, t: 'n' }]);
                     }
                 } else {
-                    wsData.push(['', '', '', '', '', { f: `D${rNum}-E${rNum}`, v: 0, t: 'n' }, '', { f: `ROUND(F${rNum}*G${rNum},2)`, v: 0, t: 'n' }]);
+                    wsData.push(['', '', '', '', '', { f: netFormula, v: 0, t: 'n' }, '', { f: amtFormula, v: 0, t: 'n' }]);
                 }
             }
 
-            // Row 36: REMARK (A36:C39) | SUB TOTAL (D36:F36) | =SUM(H20:H35) (G36:H36)
+            // Row 36: REMARK (A36:C39) | SUB TOTAL (D36:F36) | =ROUND(SUM(H20:H35),2) (G36:H36)
             wsData.push([
-                customRemark ? `REMARK : ${customRemark}\nVALIDITY : QUOTATION IS VALID FOR 30 DAYS` : 'VALIDITY : QUOTATION IS VALID FOR 30 DAYS',
+                customRemark ? `REMARK : ${customRemark}
+VALIDITY : QUOTATION IS VALID FOR 30 DAYS` : 'VALIDITY : QUOTATION IS VALID FOR 30 DAYS',
                 '', '',
-                ' SUB TOTAL', '', '',
-                { f: 'SUM(H20:H35)', v: subTotal, t: 'n' }, ''
+                'SUB TOTAL', '', '',
+                { f: 'ROUND(SUM(H20:H35),2)', v: subTotal, t: 'n' }, ''
             ]);
             // Row 37: VAT 7%
-            wsData.push(['', '', '', 'VAT 7%', '', '', { f: 'ROUND(G36*7%,2)', v: vatAmt, t: 'n' }, '']);
+            wsData.push(['', '', '', 'VAT 7%', '', '', { f: 'ROUND(G36*0.07,2)', v: vatAmt, t: 'n' }, '']);
             // Row 38: TOTAL
-            wsData.push(['', '', '', 'TOTAL', '', '', { f: 'SUM(G36:H37)', v: beforeWhtTotal, t: 'n' }, '']);
+            wsData.push(['', '', '', 'TOTAL', '', '', { f: 'ROUND(G36+G37,2)', v: beforeWhtTotal, t: 'n' }, '']);
             // Row 39: WHT 3%
-            wsData.push(['', '', '', 'WHT 3%', '', '', isWht ? -whtAmt : 0, '']);
-            // Row 40: THB (A40) | Baht Text (B40:C40) | GRAND TOTAL (D40:F40) | =SUM(G38:H39) (G40:H40)
-            wsData.push(['THB', `(${numberToThaiBahtText(grandTotal)})`, '', 'GRAND TOTAL', '', '', { f: 'SUM(G38:H39)', v: grandTotal, t: 'n' }, '']);
+            wsData.push(['', '', '', 'WHT 3%', '', '', { v: isWht ? -whtAmt : 0, t: 'n' }, '']);
+            // Row 40: THB (A40) | Baht Text (B40:C40) | GRAND TOTAL (D40:F40) | =ROUND(G38+G39,2) (G40:H40)
+            wsData.push(['THB', `(${numberToThaiBahtText(grandTotal)})`, '', 'GRAND TOTAL', '', '', { f: 'ROUND(G38+G39,2)', v: grandTotal, t: 'n' }, '']);
 
-            // Rows 41-44: Remark Bank Details
-            wsData.push(['Remark : ', 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2', '', '', '', '', '', '']);
+            // Rows 41-44: Remark Bank Details (Merged B41:H41 and B42:H42 so text never truncates)
+            wsData.push(['Remark :', 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2', '', '', '', '', '', '']);
             wsData.push(['', 'The above offer is Ex-warehouse of Hoshizaki Thailand office (in Hankyu Hanshin Express W/H )', '', '', '', '', '', '']);
             wsData.push(['', '', '', '', '', '', '', '']);
             wsData.push(['', '', '', '', '', '', '', '']);
 
-            // Rows 45-54: Signature Block (A45:B48 Issue By | C45:C48 Checked By | D45:H48 Approved By | D50:H54 Confirmed Purchase)
+            // Rows 45-54: Signature Block
             const shortDate = document.getElementById('recIssueDate')?.innerText || '';
-            wsData.push(['Isuue By ', '', 'Checked By', 'Approved By ', '', '', '', '']);              // Row 45
-            wsData.push(['', '', '', '', '', '', '', '']);                                            // Row 46
-            wsData.push(['MS.WANWIPHA', '', 'MR.THANAKRIT', 'MR.THANAKRIT CHANMOKONPANIT', '', '', '', '']); // Row 47
+            wsData.push(['Issued By', '', 'Checked By', 'Approved By', '', '', '', '']);                        // Row 45
+            wsData.push(['', '', '', '', '', '', '', '']);                                                      // Row 46
+            wsData.push(['MS.WANWIPHA', '', 'MR.THANAKRIT', 'MR.THANAKRIT CHANMOKONPANIT', '', '', '', '']);   // Row 47
             wsData.push([shortDate, '', shortDate, 'ผู้มีอำนาจอนุมัติ / Authorized Signature', '', '', '', '']); // Row 48
-            wsData.push(['', '', '', '', '', '', '', '']);                                            // Row 49
-            wsData.push(['', '', '', 'Confirmed Purchase ', '', '', '', '']);                         // Row 50
-            wsData.push(['', '', '', '', '', '', '', '']);                                            // Row 51
-            wsData.push(['', '', '', '…………………………………………………', '', '', '', '']);                            // Row 52
-            wsData.push(['', '', '', 'ชื่อผู้สั่งซื้อ  / Purchased Signature', '', '', '', '']);       // Row 53
-            wsData.push(['', '', '', 'Date :…………………………….', '', '', '', '']);                         // Row 54
+            wsData.push(['', '', '', '', '', '', '', '']);                                                      // Row 49
+            wsData.push(['', '', '', 'Confirmed Purchase', '', '', '', '']);                                    // Row 50
+            wsData.push(['', '', '', '', '', '', '', '']);                                                      // Row 51
+            wsData.push(['', '', '', '…………………………………………………', '', '', '', '']);                                      // Row 52
+            wsData.push(['', '', '', 'ชื่อผู้สั่งซื้อ / Purchased Signature', '', '', '', '']);                 // Row 53
+            wsData.push(['', '', '', 'Date : …………………………….', '', '', '', '']);                                   // Row 54
 
             const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-            // ความกว้างคอลัมน์ A-H ตรงตามไฟล์ต้นฉบับ `51760191200001-27OCT26.xlsx`
+            // ขยายความกว้างคอลัมน์ A-H ให้แสดงหัวตารางและข้อความครบทุกตัวอักษรไม่ถูกตัด
             ws['!cols'] = [
-                { wch: 12.5 }, // A: ITEM
-                { wch: 17.0 }, // B: Part No.
-                { wch: 36.0 }, // C: DESCRIPTION
-                { wch: 13.5 }, // D: UNIT PRICE (BAHT)
-                { wch: 13.0 }, // E: DISCOUNT
-                { wch: 14.0 }, // F: UNIT PRICE AFTER DISCOUNT
-                { wch: 13.5 }, // G: QUANTITY (PCS)
-                { wch: 15.0 }  // H: AMOUNT
+                { wch: 16.0 }, // A: ITEM / Labels
+                { wch: 18.0 }, // B: Part No.
+                { wch: 40.0 }, // C: DESCRIPTION
+                { wch: 18.5 }, // D: UNIT PRICE (BAHT)
+                { wch: 14.0 }, // E: DISCOUNT
+                { wch: 17.5 }, // F: NET UNIT PRICE
+                { wch: 17.5 }, // G: QUANTITY (PCS)
+                { wch: 18.0 }  // H: AMOUNT
             ];
 
-            // Merged cells ตรงตามต้นฉบับทุกจุด
+            // Merged cells ครอบคลุมหัวบริษัท ที่อยู่ ข้อมูลลูกค้า รายการ remark และช่องเซ็นชื่อไม่ให้ข้อความล้น/ถูกตัด
             ws['!merges'] = [
-                { s: { r: 0, c: 2 }, e: { r: 1, c: 6 } },   // C1:G2 Company Title
-                { s: { r: 3, c: 2 }, e: { r: 3, c: 7 } },   // C4:H4 Address line 2
+                { s: { r: 0, c: 2 }, e: { r: 0, c: 7 } },   // C1:H1 Company Title
+                { s: { r: 1, c: 2 }, e: { r: 1, c: 7 } },   // C2:H2 Address line 1
+                { s: { r: 2, c: 2 }, e: { r: 2, c: 7 } },   // C3:H3 Address line 2
+                { s: { r: 3, c: 2 }, e: { r: 3, c: 7 } },   // C4:H4 Address line 3
+                { s: { r: 4, c: 2 }, e: { r: 4, c: 7 } },   // C5:H5 Tel / Fax / Tax ID
+                { s: { r: 5, c: 2 }, e: { r: 5, c: 7 } },   // C6:H6 Email / Website
                 { s: { r: 6, c: 0 }, e: { r: 6, c: 7 } },   // A7:H7 QUOTATION
+                { s: { r: 7, c: 1 }, e: { r: 7, c: 5 } },   // B8:F8 Cust Code
+                { s: { r: 8, c: 1 }, e: { r: 8, c: 5 } },   // B9:F9 Cust Name
+                { s: { r: 9, c: 1 }, e: { r: 9, c: 5 } },   // B10:F10 Buyer Name
+                { s: { r: 10, c: 1 }, e: { r: 10, c: 5 } }, // B11:F11 Contact Person
+                { s: { r: 11, c: 1 }, e: { r: 11, c: 5 } }, // B12:F12 Address
+                { s: { r: 14, c: 1 }, e: { r: 14, c: 5 } }, // B15:F15 Tel
+                { s: { r: 16, c: 0 }, e: { r: 16, c: 7 } }, // A17:H17 MODEL & S/N
                 { s: { r: 17, c: 0 }, e: { r: 18, c: 0 } }, // A18:A19 ITEM
                 { s: { r: 17, c: 1 }, e: { r: 18, c: 1 } }, // B18:B19 Part No.
                 { s: { r: 17, c: 2 }, e: { r: 18, c: 2 } }, // C18:C19 DESCRIPTION
                 { s: { r: 17, c: 3 }, e: { r: 18, c: 3 } }, // D18:D19 UNIT PRICE
+                { s: { r: 17, c: 4 }, e: { r: 18, c: 4 } }, // E18:E19 DISCOUNT
+                { s: { r: 17, c: 5 }, e: { r: 18, c: 5 } }, // F18:F19 NET UNIT PRICE
                 { s: { r: 17, c: 6 }, e: { r: 18, c: 6 } }, // G18:G19 QUANTITY
                 { s: { r: 17, c: 7 }, e: { r: 18, c: 7 } }, // H18:H19 AMOUNT
                 { s: { r: 35, c: 0 }, e: { r: 38, c: 2 } }, // A36:C39 REMARK & VALIDITY
@@ -8644,7 +8666,9 @@
                 { s: { r: 39, c: 1 }, e: { r: 39, c: 2 } }, // B40:C40 Baht text
                 { s: { r: 39, c: 3 }, e: { r: 39, c: 5 } }, // D40:F40 GRAND TOTAL
                 { s: { r: 39, c: 6 }, e: { r: 39, c: 7 } }, // G40:H40 GRAND TOTAL val
-                { s: { r: 44, c: 0 }, e: { r: 44, c: 1 } }, // A45:B45 Issue By
+                { s: { r: 40, c: 1 }, e: { r: 40, c: 7 } }, // B41:H41 Bank info line 1
+                { s: { r: 41, c: 1 }, e: { r: 41, c: 7 } }, // B42:H42 Bank info line 2
+                { s: { r: 44, c: 0 }, e: { r: 44, c: 1 } }, // A45:B45 Issued By
                 { s: { r: 44, c: 3 }, e: { r: 44, c: 7 } }, // D45:H45 Approved By
                 { s: { r: 45, c: 0 }, e: { r: 45, c: 1 } }, // A46:B46
                 { s: { r: 45, c: 3 }, e: { r: 45, c: 7 } }, // D46:H46
@@ -8660,7 +8684,7 @@
 
             // Format numbers #,##0.00
             for (let R = 19; R <= 39; R++) {
-                [3, 4, 5, 7].forEach(C => {
+                [3, 4, 5, 6, 7].forEach(C => {
                     const ref = XLSX.utils.encode_cell({ r: R, c: C });
                     if (ws[ref] && (typeof ws[ref].v === 'number' || ws[ref].t === 'n')) {
                         ws[ref].z = '#,##0.00';
@@ -8668,7 +8692,7 @@
                 });
             }
 
-            const sheetModelTab = (document.getElementById('eqModel')?.value || 'Quotation').replace(/[\\/:?*\[\]]/g, '').substring(0, 28) || 'Quotation';
+            const sheetModelTab = (document.getElementById('eqModel')?.value || 'Quotation').replace(/[\/:?*\[\]]/g, '').substring(0, 28) || 'Quotation';
             XLSX.utils.book_append_sheet(wb, ws, sheetModelTab);
             const filePrefix = currentFinancialDocMode === 'RECEIPT' ? 'Hoshizaki_Receipt' : 'Hoshizaki_Quotation';
             XLSX.writeFile(wb, `${filePrefix}_${offerNo}.xlsx`);
@@ -17862,7 +17886,273 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 </head>
                 <body onload="setTimeout(() => { window.print(); }, 400);">
                     ${sheetHtml}
-                </body>
+                
+    <!-- Customer Live Job Status Portal Modal (v18.0) -->
+    <div id="customerJobStatusPortalModal" class="no-print fixed inset-0 bg-black/85 backdrop-blur-sm z-[94] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-4 sm:p-6 space-y-3.5 max-h-[92vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-2.5 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <img class="app-company-logo-sync w-11 h-11 object-contain flex-shrink-0" src="" alt="Company Logo">
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">ติดตามสถานะงานบริการ (HOSHIZAKI SERVICE STATUS)</h3>
+                        <p id="cjsCompanyName" class="text-[11px] text-gray-500 font-semibold">HOSHIZAKI (THAILAND) LIMITED</p>
+                    </div>
+                </div>
+                <button type="button" onclick="document.getElementById('customerJobStatusPortalModal')?.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+            <div id="customerJobStatusPortalBody" class="overflow-y-auto flex-1 space-y-3 text-xs"></div>
+            <div class="flex justify-end pt-2 border-t flex-shrink-0">
+                <button type="button" onclick="document.getElementById('customerJobStatusPortalModal')?.classList.add('hidden')" class="bg-hoshizaki-navy text-white px-5 py-2 rounded-xl text-xs font-bold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // v18.0 FULL-DEPARTMENT ENTERPRISE SUITE:
+        // 1. Technician: Factory Diagnostic Specs by Model + Van Stock Replenishment Request
+        // 2. Coordinator: Customer Live Job Status Link (?jobStatus=...) & Same-Area Waiting Parts Alert
+        // 3. Admin & Accounting: Quotation/PO/Billing Pipeline Tracker + Monthly VAT/WHT Accounting Ledger Export + Defective Return SLA (>14d)
+        // 4. Service Manager: PIN-Protected Manager Sign-Off & Job Lock + Repeat-Call (60d) & First-Time Fix KPI
+        // =========================================================================
+
+        const V18_QT_PIPELINE_KEY = 'hoshizaki_qt_pipeline_map_v18';
+        const V18_LOCKED_JOBS_KEY = 'hoshizaki_manager_locked_jobs_v18';
+
+        const HOSHIZAKI_MODEL_SPECS = [
+            { prefix: 'IM-', title: 'Cube Ice Maker (IM Series)', refrigerant: 'R134a / R290 (HC)', highSide: '140 - 185 PSI', lowSide: '12 - 22 PSI', cycleTime: '18 - 25 นาที/รอบ', tips: 'เช็กถาดน้ำพลิก (Water Plate), มอเตอร์แอคชูเอเตอร์, วาล์วน้ำเข้า และเซ็นเซอร์คอยล์เย็น' },
+            { prefix: 'KM-', title: 'Crescent Cuber (KM Series)', refrigerant: 'R404A', highSide: '210 - 265 PSI', lowSide: '28 - 42 PSI', cycleTime: '15 - 22 นาที/รอบ', tips: 'เช็กลูกลอย (Float Switch), วาล์ว Hot Gas, ปั๊มน้ำหมุนเวียน และแผงคอนเดนเซอร์' },
+            { prefix: 'FM-', title: 'Flake / Nugget Ice Maker (FM Series)', refrigerant: 'R404A / R452A', highSide: '200 - 255 PSI', lowSide: '25 - 38 PSI', cycleTime: 'ผลิตต่อเนื่อง (Continuous)', tips: 'เช็กกระแส Gear Motor, ซีลกันรั่ว Mechanical Seal, ลูกปืน Auger และลูกลอยถังพักน้ำ' },
+            { prefix: 'DCM-', title: 'Ice & Water Dispenser (DCM Series)', refrigerant: 'R134a / R404A', highSide: '150 - 210 PSI', lowSide: '15 - 28 PSI', cycleTime: 'ผลิตต่อเนื่อง (Continuous)', tips: 'เช็กชุดเฟืองกวนน้ำแข็ง (Agitator), วาล์วจ่ายน้ำ/น้ำแข็ง และสวิตช์หน้าตู้' },
+            { prefix: 'HR', title: 'Commercial Chiller (HR / HRW Series)', refrigerant: 'R134a / R290', highSide: '135 - 175 PSI', lowSide: '15 - 26 PSI', cycleTime: 'อุณหภูมิตู้ +1°C ถึง +6°C', tips: 'เช็กยางขอบประตู, พัดลมคอยล์เย็น, เซ็นเซอร์หน้าตู้/ละลายน้ำแข็ง และท่อน้ำทิ้ง' },
+            { prefix: 'HF', title: 'Commercial Freezer (HF / HFW Series)', refrigerant: 'R404A / R290', highSide: '215 - 270 PSI', lowSide: '10 - 20 PSI', cycleTime: 'อุณหภูมิตู้ -18°C ถึง -23°C', tips: 'เช็กฮีตเตอร์ละลายน้ำแข็ง, ฮีตเตอร์ขอบประตู, เทอร์มอลฟิวส์ และพัดลมคอยล์เย็น' },
+            { prefix: 'RT', title: 'Counter Chiller / Freezer (RT / RTC / RTF)', refrigerant: 'R134a / R404A', highSide: '140 - 240 PSI', lowSide: '12 - 25 PSI', cycleTime: 'Chiller +2°C / Freezer -20°C', tips: 'เป่าล้างแผงคอนเดนเซอร์ด้านข้าง เช็กถาดระเหยน้ำทิ้ง และยางขอบประตู' }
+        ];
+
+        function updateModelFactorySpecCard(modelVal) {
+            let card = document.getElementById('modelFactorySpecCard');
+            const prodInput = document.getElementById('eqProductType');
+            if (!card && prodInput) {
+                card = document.createElement('div');
+                card.id = 'modelFactorySpecCard';
+                card.className = 'hidden bg-indigo-50/90 border border-indigo-200 rounded-lg p-2 text-[11px] space-y-1 mt-1';
+                prodInput.closest('div')?.insertAdjacentElement('afterend', card);
+            }
+            if (!card) return;
+            const m = String(modelVal || '').trim().toUpperCase();
+            const spec = HOSHIZAKI_MODEL_SPECS.find(s => m.startsWith(s.prefix));
+            if (!m || !spec) { card.classList.add('hidden'); return; }
+            card.innerHTML = `
+                <div class="flex items-center justify-between font-extrabold text-indigo-950">
+                    <span><i class="fa-solid fa-microchip text-indigo-600 mr-1"></i> ค่ามาตรฐานโรงงาน: ${m} (${spec.title})</span>
+                    <span class="bg-indigo-600 text-white px-2 py-0.2 rounded text-[10px]">${spec.refrigerant}</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-indigo-900">
+                    <div class="bg-white/80 rounded px-2 py-1 border border-indigo-100"><b>High Side:</b> ${spec.highSide}</div>
+                    <div class="bg-white/80 rounded px-2 py-1 border border-indigo-100"><b>Low Side:</b> ${spec.lowSide}</div>
+                    <div class="bg-white/80 rounded px-2 py-1 border border-indigo-100"><b>Cycle/Temp:</b> ${spec.cycleTime}</div>
+                    <div class="col-span-2 sm:col-span-3 bg-white/80 rounded px-2 py-1 border border-indigo-100 text-gray-700"><b>จุดตรวจเช็กสำคัญ:</b> ${spec.tips}</div>
+                </div>`;
+            card.classList.remove('hidden');
+        }
+
+        function sendVanStockReplenishmentRequest() {
+            const techCode = document.getElementById('vanStockTechSelect')?.value || 'T01';
+            const techs = typeof getTechnicianDirectory === 'function' ? getTechnicianDirectory() : [];
+            const techObj = techs.find(t => t.code === techCode) || { code: techCode, name: techCode };
+            const map = typeof getVanStockMap === 'function' ? getVanStockMap() : {};
+            const stockObj = map[techCode] || {};
+            const keys = Object.keys(stockObj);
+            if (keys.length === 0) { showToast('ยังไม่มีรายการอะไหล่ในสต็อกรถช่างคันนี้'); return; }
+
+            const lowItems = keys.filter(k => (Number(stockObj[k]) || 0) <= 1).map(k => `- ${k} (เหลือ ${stockObj[k]} ชิ้น -> ขอเบิกเติม 2 ชิ้น)`);
+            const allItems = keys.map(k => `- ${k} (คงเหลือ ${stockObj[k]} ชิ้น)`);
+            const msg = [
+                `📦 ใบขอเบิกเติมสต็อกอะไหล่รถช่าง (Van Stock Request)`,
+                `ช่างผู้เบิก: [${techObj.code}] ${techObj.name}`,
+                `วันที่ขอเบิก: ${new Date().toISOString().split('T')[0]}`,
+                `รายการอะไหล่:`,
+                (lowItems.length > 0 ? lowItems : allItems).join('\n')
+            ].join('\n');
+
+            navigator.clipboard?.writeText(msg).catch(() => {});
+            if (navigator.share) {
+                navigator.share({ title: `ใบขอเติมสต็อกรถช่าง [${techObj.code}]`, text: msg }).catch(() => {});
+            } else {
+                window.open(`mailto:services@hoshizaki.co.th?subject=${encodeURIComponent(`[Van Stock Request] [${techObj.code}] ${techObj.name}`)}&body=${encodeURIComponent(msg)}`, '_blank');
+            }
+            showToast(`คัดลอกรายการขอเบิกเติมสต็อกรถ [${techObj.code}] เรียบร้อย ✓`);
+        }
+
+        function copyCustomerJobStatusPortalLink() {
+            const payload = {
+                jobNo: document.getElementById('jobNo')?.value || 'JOB-001',
+                jobDate: document.getElementById('jobDate')?.value || '',
+                status: document.getElementById('jobStatus')?.value || 'Pending',
+                store: document.getElementById('custStore')?.value || '-',
+                model: document.getElementById('eqModel')?.value || '-',
+                serial: document.getElementById('eqSerial')?.value || '-',
+                tech: document.getElementById('responsibleTechSelect')?.value || '-',
+                symptom: document.getElementById('diagSymptom')?.value || '-',
+                updatedAt: new Date().toLocaleString('th-TH')
+            };
+            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+            const baseUrl = window.location.href.split('?')[0];
+            const shareUrl = `${baseUrl}?openExternalBrowser=1&jobStatus=${encodeURIComponent(encoded)}`;
+            navigator.clipboard?.writeText(shareUrl).then(() => showToast(`คัดลอกลิงก์สถานะใบงาน ${payload.jobNo} ส่งให้ลูกค้าแล้ว ✓`));
+        }
+
+        function checkCustomerJobStatusPortalParam() {
+            try {
+                const rawStatus = new URLSearchParams(window.location.search).get('jobStatus');
+                if (!rawStatus) return;
+                const d = JSON.parse(decodeURIComponent(escape(atob(rawStatus))));
+                const body = document.getElementById('customerJobStatusPortalBody');
+                if (body) {
+                    body.innerHTML = `
+                        <div class="bg-sky-50 border border-sky-200 rounded-xl p-3.5">
+                            <div class="text-base font-extrabold text-hoshizaki-navy">${d.jobNo} • สถานะ: ${d.status}</div>
+                            <div class="mt-2 space-y-1">
+                                <div><b>ลูกค้า:</b> ${d.store}</div>
+                                <div><b>รุ่น / S/N:</b> ${d.model} / ${d.serial}</div>
+                                <div><b>ช่างผู้รับผิดชอบ:</b> ${d.tech}</div>
+                                <div><b>อาการแจ้งซ่อม:</b> ${d.symptom}</div>
+                                <div class="text-gray-500">อัปเดตล่าสุด: ${d.updatedAt}</div>
+                            </div>
+                        </div>`;
+                }
+                if (typeof applyGlobalCompanyConfigToUI === 'function') applyGlobalCompanyConfigToUI();
+                document.getElementById('customerJobStatusPortalModal')?.classList.remove('hidden');
+            } catch (e) {}
+        }
+
+        function saveCurrentQuotationPipelineStage(stageVal) {
+            const offerNo = (document.getElementById('recOfferNo')?.innerText || '').trim();
+            if (!offerNo) return;
+            const map = JSON.parse(localStorage.getItem(V18_QT_PIPELINE_KEY) || '{}');
+            map[offerNo] = {
+                stage: stageVal,
+                updatedAt: new Date().toISOString(),
+                customer: document.getElementById('recCustName')?.innerText || '',
+                model: document.getElementById('recEqModel')?.innerText || '',
+                grandTotal: document.getElementById('recGrandTotal')?.innerText || '0.00'
+            };
+            localStorage.setItem(V18_QT_PIPELINE_KEY, JSON.stringify(map));
+            showToast(`อัปเดตสถานะเอกสาร ${offerNo} เรียบร้อย ✓`);
+        }
+
+        function exportAccountingTaxLedgerExcel() {
+            if (typeof XLSX === 'undefined') return;
+            const cfg = typeof getGlobalCompanyConfig === 'function' ? getGlobalCompanyConfig() : { currency: 'THB', vatRate: 7 };
+            const vatRate = Number(cfg.vatRate) || 7;
+            const history = typeof getJobHistorySync === 'function' ? getJobHistorySync() : [];
+            const rows = [['ลำดับ', 'วันที่', 'Job No.', 'ลูกค้า', 'Dealer/Tax ID', 'Model', 'S/N', 'สถานะ', 'ก่อนภาษี (Subtotal)', `VAT ${vatRate}%`, 'WHT 3%', 'รวมสุทธิ (Grand Total)']];
+            history.forEach((j, idx) => {
+                const gt = parseFloat(String(j.grandTotal || '0').replace(/,/g, '')) || 0;
+                const sub = Math.round((gt / (1 + vatRate / 100)) * 100) / 100;
+                const vat = Math.round((gt - sub) * 100) / 100;
+                const wht = j.whtEnabled ? Math.round((sub * 0.03) * 100) / 100 : 0;
+                rows.push([idx + 1, j.date || '-', j.jobNo || '-', j.store || '-', j.dealer || '-', j.model || '-', j.serial || '-', j.status || j.jobStatus || '-', sub, vat, wht, gt]);
+            });
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{wch:8},{wch:13},{wch:18},{wch:28},{wch:22},{wch:16},{wch:16},{wch:15},{wch:18},{wch:14},{wch:14},{wch:18}];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Tax_Accounting_Ledger');
+            XLSX.writeFile(wb, `Hoshizaki_Accounting_Tax_Ledger_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast('ส่งออกรายงานภาษีขายและบัญชี (Excel) เรียบร้อย ✓');
+        }
+
+        function toggleManagerJobSignOff() {
+            const jobNo = (document.getElementById('jobNo')?.value || '').trim();
+            if (!jobNo) return;
+            const pin = typeof getManagerPinCode === 'function' ? getManagerPinCode() : '1234';
+            const entered = prompt('กรุณากรอกรหัส PIN ผู้จัดการเพื่อยืนยันอนุมัติ / ปลดล็อกใบงาน:');
+            if (entered === null || entered.trim() !== pin) {
+                if (entered !== null) showToast('รหัส PIN ผู้จัดการไม่ถูกต้อง ❌');
+                return;
+            }
+            const map = JSON.parse(localStorage.getItem(V18_LOCKED_JOBS_KEY) || '{}');
+            const isLocked = !!map[jobNo];
+            if (isLocked) delete map[jobNo]; else map[jobNo] = { approvedAt: new Date().toISOString() };
+            localStorage.setItem(V18_LOCKED_JOBS_KEY, JSON.stringify(map));
+            document.getElementById('jobSheetContainer')?.querySelectorAll('input, textarea, select').forEach(el => {
+                if (!isLocked) el.setAttribute('disabled', 'true'); else el.removeAttribute('disabled');
+            });
+            const btn = document.getElementById('btnManagerApproveJob');
+            if (btn) {
+                btn.innerHTML = !isLocked
+                    ? '<i class="fa-solid fa-lock text-amber-300 mr-1"></i>ปลดล็อกใบงาน (PIN)'
+                    : '<i class="fa-solid fa-stamp text-amber-300 mr-1"></i>อนุมัติปิดงาน (Manager)';
+            }
+            showToast(!isLocked ? `ผู้จัดการอนุมัติและล็อกใบงาน ${jobNo} เรียบร้อย 🔒` : `ปลดล็อกใบงาน ${jobNo} เรียบร้อย ✓`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkCustomerJobStatusPortalParam();
+            const eqModel = document.getElementById('eqModel');
+            if (eqModel) {
+                ['input', 'change'].forEach(evt => eqModel.addEventListener(evt, () => updateModelFactorySpecCard(eqModel.value)));
+                updateModelFactorySpecCard(eqModel.value);
+            }
+            const statusSel = document.getElementById('jobStatus');
+            if (statusSel && !document.getElementById('btnManagerApproveJob')) {
+                const bar = document.createElement('div');
+                bar.className = 'no-print flex flex-wrap items-center justify-end gap-1.5 text-[11px] mt-1';
+                bar.innerHTML = `
+                    <button type="button" id="btnManagerApproveJob" onclick="toggleManagerJobSignOff()" class="bg-slate-800 hover:bg-slate-900 text-white px-2.5 py-1 rounded-md font-bold">
+                        <i class="fa-solid fa-stamp text-amber-300 mr-1"></i>อนุมัติปิดงาน (Manager)
+                    </button>
+                    <button type="button" onclick="copyCustomerJobStatusPortalLink()" class="bg-sky-600 hover:bg-sky-700 text-white px-2.5 py-1 rounded-md font-bold">
+                        <i class="fa-solid fa-link mr-1"></i>ลิงก์สถานะลูกค้า
+                    </button>`;
+                statusSel.parentElement?.insertAdjacentElement('afterend', bar);
+            }
+            const execModal = document.getElementById('executiveDashboardModal');
+            if (execModal && !document.getElementById('btnExecTaxLedger')) {
+                const syncBtn = execModal.querySelector('button[onclick*="syncAllHistoryToGoogleSheets"]');
+                if (syncBtn) {
+                    const taxBtn = document.createElement('button');
+                    taxBtn.id = 'btnExecTaxLedger';
+                    taxBtn.type = 'button';
+                    taxBtn.onclick = exportAccountingTaxLedgerExcel;
+                    taxBtn.className = 'bg-teal-700 hover:bg-teal-800 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs';
+                    taxBtn.innerHTML = '<i class="fa-solid fa-file-invoice-dollar"></i> <span>รายงานภาษี/บัญชี</span>';
+                    syncBtn.insertAdjacentElement('beforebegin', taxBtn);
+                }
+            }
+            const vanModal = document.getElementById('vanStockModal');
+            if (vanModal && !document.getElementById('btnVanReplenishReq')) {
+                const expBtn = vanModal.querySelector('button[onclick*="exportVanStockRequisitionExcel"]');
+                if (expBtn) {
+                    const reqBtn = document.createElement('button');
+                    reqBtn.id = 'btnVanReplenishReq';
+                    reqBtn.type = 'button';
+                    reqBtn.onclick = sendVanStockReplenishmentRequest;
+                    reqBtn.className = 'bg-[#06C755] hover:bg-[#05b34c] text-white px-3 py-2 rounded-xl font-bold flex items-center gap-1.5 shadow-sm';
+                    reqBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ส่งใบขอเติมสต็อกรถช่าง';
+                    expBtn.insertAdjacentElement('afterend', reqBtn);
+                }
+            }
+            const recModal = document.getElementById('receiptModal');
+            if (recModal && !document.getElementById('qtPipelineStageSelect')) {
+                const modeGroup = recModal.querySelector('#btnDocModeReceipt')?.parentElement;
+                if (modeGroup) {
+                    const sel = document.createElement('select');
+                    sel.id = 'qtPipelineStageSelect';
+                    sel.onchange = function() { saveCurrentQuotationPipelineStage(this.value); };
+                    sel.className = 'border border-sky-300 bg-sky-50 text-hoshizaki-navy rounded-lg px-2 py-1 text-xs font-bold';
+                    sel.innerHTML = `
+                        <option value="PENDING_PO">⏳ รอลูกค้าอนุมัติ (Pending PO)</option>
+                        <option value="PO_RECEIVED">✅ ได้รับ PO แล้ว (PO Received)</option>
+                        <option value="PARTS_RESERVED">📦 จองอะไหล่แล้ว (Parts Reserved)</option>
+                        <option value="BILLED_INVOICED">🧾 ออกใบแจ้งหนี้แล้ว (Invoiced)</option>
+                        <option value="PAID_CLOSED">💰 รับชำระเงินเรียบร้อย (Paid)</option>`;
+                    modeGroup.insertAdjacentElement('afterend', sel);
+                }
+            }
+        });
+    </script>
+</body>
                 </html>
             `);
             win.document.close();
@@ -18538,9 +18828,9 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         const DEFAULT_COMPANY_CONFIG = {
             companyName: 'HOSHIZAKI (THAILAND) LIMITED',
             companyShort: 'HOSHIZAKI (THAILAND)',
-            address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen Subdistrict, Lak Si District, Bangkok 10210 Thailand.',
-            telTax: 'Tel: 02-005-9980-83 | Tax ID: 0135558002599',
-            emailWeb: 'Email : services@hoshizaki.co.th | Website : https://hoshizaki-sea.com',
+            address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District, Bangkok 10210 Thailand.',
+            telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)',
+            emailWeb: 'Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com',
             currency: 'THB',
             vatRate: 7,
             bankInfo: 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2',
@@ -18551,9 +18841,9 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             TH: {
                 companyName: 'HOSHIZAKI (THAILAND) LIMITED',
                 companyShort: 'HOSHIZAKI (THAILAND)',
-                address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen Subdistrict, Lak Si District, Bangkok 10210 Thailand.',
-                telTax: 'Tel: 02-005-9980-83 | Tax ID: 0135558002599',
-                emailWeb: 'Email : services@hoshizaki.co.th | Website : https://hoshizaki-sea.com',
+                address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District, Bangkok 10210 Thailand.',
+                telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)',
+                emailWeb: 'Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com',
                 currency: 'THB',
                 vatRate: 7,
                 bankInfo: 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2'

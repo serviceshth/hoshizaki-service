@@ -3228,7 +3228,8 @@
                     </div>
                     <div class="flex flex-col sm:flex-row sm:items-center gap-1">
                         <span class="sm:w-36 text-gray-500 font-medium flex-shrink-0">ตัวแทนจำหน่าย / Dealer:</span>
-                        <input type="text" id="custDealer" placeholder="ระบุชื่อตัวแทนจำหน่าย / Dealer" class="flex-1 border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
+                        <input type="text" id="custDealer" list="hoshizakiDealersList" oninput="handleDealerAutoLookup(this.value)" onchange="handleDealerAutoLookup(this.value)" placeholder="พิมพ์หรือเลือกชื่อตัวแทนจำหน่าย / Dealer" class="flex-1 font-medium border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
+                        <datalist id="hoshizakiDealersList"></datalist>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:items-center gap-1">
                         <span class="sm:w-36 text-gray-500 font-medium flex-shrink-0">ผู้ติดต่อ:</span>
@@ -3548,20 +3549,45 @@
             </div>
         </div>
 
-        <!-- Section 3: Spare Parts & Billing Table -->
+        <!-- Section 3: Spare Parts & Billing Table (v13.0 Multi-Tier 8 Grades + Dealer Auto-Link) -->
         <div id="secSpareParts" class="scroll-mt-14 border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-3">
-            <div class="flex justify-between items-center border-b border-gray-200 pb-1.5 text-hoshizaki-navy font-bold text-xs uppercase tracking-wider">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b border-gray-200 pb-2 text-hoshizaki-navy font-bold text-xs uppercase tracking-wider">
                 <span class="flex items-center gap-2"><i class="fa-solid fa-list-check text-hoshizaki-blue"></i> รายการอะไหล่และค่าบริการ (Spare Parts & Billing)</span>
                 <div class="no-print flex flex-wrap items-center gap-1.5">
-                    <button type="button" onclick="openPartPriceDbModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm" title="ตั้งค่า/นำเข้าตารางราคาอะไหล่มาตรฐานเพื่อดึงราคาอัตโนมัติ">
-                        <i class="fa-solid fa-tags"></i> ฐานราคาอะไหล่
+                    <button type="button" onclick="openDealerGradeModal()" class="bg-sky-700 hover:bg-sky-800 text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm" title="ผูกเกรดราคา (A+, A, B+, B, C+, C, Direct, Special) เข้ากับรายชื่อดีลเลอร์/ลูกค้า">
+                        <i class="fa-solid fa-address-book"></i> เกรดดีลเลอร์/ลูกค้า
+                    </button>
+                    <button type="button" onclick="openPartPriceDbModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm" title="จัดการตารางราคา 8 เกรด, ปรับตามอัตราแลกเปลี่ยน (FX) และปัดเศษอัตโนมัติ">
+                        <i class="fa-solid fa-tags"></i> ฐานราคาอะไหล่ (8 เกรด)
                     </button>
                     <button type="button" onclick="openPartsBatchScanner()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-medium transition shadow-sm">
-                        <i class="fa-solid fa-barcode"></i> สแกนบาร์โค้ดอะไหล่
+                        <i class="fa-solid fa-barcode"></i> สแกนบาร์โค้ด
                     </button>
                     <button type="button" onclick="addPartsRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 font-medium transition shadow-sm">
                         <i class="fa-solid fa-plus"></i> เพิ่มรายการ
                     </button>
+                </div>
+            </div>
+
+            <!-- แถบเลือกระดับราคาลูกค้า / ดีลเลอร์ 8 เกรด (Price Tier Bar) -->
+            <div class="no-print flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-amber-50/90 border border-amber-200 rounded-lg px-3 py-2 text-xs">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-bold text-amber-950 flex items-center gap-1">
+                        <i class="fa-solid fa-layer-group text-amber-600"></i> ระดับราคาลูกค้า (Price Tier):
+                    </span>
+                    <select id="customerPriceTierSelect" onchange="handlePriceTierChange(true)" class="border border-amber-400 bg-white text-hoshizaki-navy font-extrabold rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-hoshizaki-blue">
+                        <option value="DIRECT">ราคาขายตรง (Direct / End-User)</option>
+                        <option value="A_PLUS">ดีลเลอร์ เกรด A+ (Dealer A+)</option>
+                        <option value="A">ดีลเลอร์ เกรด A (Dealer A)</option>
+                        <option value="B_PLUS">ดีลเลอร์ เกรด B+ (Dealer B+)</option>
+                        <option value="B">ดีลเลอร์ เกรด B (Dealer B)</option>
+                        <option value="C_PLUS">ดีลเลอร์ เกรด C+ (Dealer C+)</option>
+                        <option value="C">ดีลเลอร์ เกรด C (Dealer C)</option>
+                        <option value="SPECIAL">ราคาส่วนลดพิเศษ (Special Discount)</option>
+                    </select>
+                </div>
+                <div id="priceTierLinkStatus" class="text-[11px] text-amber-900 font-medium">
+                    ดึงราคาตามเกรดที่เลือกอัตโนมัติ (ผูกกับชื่อดีลเลอร์/ลูกค้า)
                 </div>
             </div>
 
@@ -3610,8 +3636,14 @@
                         <input type="number" inputmode="decimal" id="feeTrip" value="0.00" step="50" oninput="calculateTotals()" class="w-36 text-right border border-gray-300 rounded p-1.5 font-semibold focus:outline-none bg-white">
                     </div>
                     <div class="flex items-center justify-between gap-2">
-                        <span class="text-rose-600 font-medium">ส่วนลดพิเศษ (Discount THB):</span>
-                        <input type="number" inputmode="decimal" id="feeDiscount" value="0.00" min="0" step="50" oninput="calculateTotals()" class="w-36 text-right border border-rose-200 rounded p-1.5 font-semibold text-rose-600 focus:outline-none bg-white">
+                        <span class="text-rose-600 font-medium">ส่วนลดพิเศษ (Special Discount):</span>
+                        <div class="flex items-center gap-1">
+                            <input type="number" inputmode="decimal" id="feeDiscount" value="0" min="0" step="1" oninput="calculateTotals()" class="w-24 text-right border border-rose-200 rounded p-1.5 font-semibold text-rose-600 focus:outline-none bg-white">
+                            <select id="feeDiscountType" onchange="calculateTotals()" class="border border-rose-300 bg-rose-50 text-rose-800 font-bold rounded p-1.5 text-xs focus:outline-none">
+                                <option value="THB">บาท (THB)</option>
+                                <option value="PERCENT">เปอร์เซ็นต์ (%)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -5870,6 +5902,10 @@
 
                 const feeLabor = document.getElementById('feeLabor');
                 if (feeLabor) feeLabor.value = '0.00';
+                const tierSel = document.getElementById('customerPriceTierSelect');
+                if (tierSel) { tierSel.value = 'DIRECT'; handlePriceTierChange(false); }
+                const discTypeSel = document.getElementById('feeDiscountType');
+                if (discTypeSel) discTypeSel.value = 'THB';
                 const feeTrip = document.getElementById('feeTrip');
                 if (feeTrip) feeTrip.value = '0.00';
                 const feeDiscount = document.getElementById('feeDiscount');
@@ -5945,38 +5981,161 @@
             }
         }
 
-        // --- SPARE PARTS ROW DYNAMICS & AUTO-PRICE LOOKUP ---
-        const DEFAULT_PART_PRICES = {
-            'Water Valve / วาล์วน้ำเข้า': 1850,
-            'Pump Motor / มอเตอร์ปั๊มน้ำ': 4200,
-            'Fan Motor / มอเตอร์พัดลมระบายความร้อน': 2400,
-            'Float Switch / ลูกลอยควบคุมระดับน้ำ': 1450,
-            'Bin Control Switch / สวิตช์ตัดน้ำแข็งเต็ม': 1250,
-            'Thermistor Sensor / เซ็นเซอร์วัดอุณหภูมิ': 1100,
-            'Control Board / แผงวงจรควบคุมหลัก': 6800,
-            'Hot Gas Valve / วาล์วละลายน้ำแข็ง': 2900,
-            'Compressor / คอมเพรสเซอร์ทำความเย็น': 12500,
-            'Starting Relay & Capacitor / รีเลย์และแคปาซิเตอร์': 950,
-            'Door Gasket / ยางขอบประตูตู้แช่': 1600,
-            'Air Filter / แผ่นกรองฝุ่นคอนเดนเซอร์': 650,
-            'Water Hose & Drain Pipe / ชุดท่อน้ำเข้า-น้ำทิ้ง': 550,
-            'Refrigerant R404A / น้ำยาทำความเย็น R404A': 1200,
-            'Refrigerant R134a / น้ำยาทำความเย็น R134a': 950,
-            'PM Cleaning Service / ค่าบริการล้างบำรุงรักษา': 1500
+        // --- SPARE PARTS ROW DYNAMICS & 8-GRADE MULTI-TIER AUTO-PRICE LOOKUP (v13.0) ---
+        const PRICE_TIER_LABELS = {
+            DIRECT: 'ราคาขายตรง (Direct)',
+            A_PLUS: 'ดีลเลอร์ เกรด A+',
+            A: 'ดีลเลอร์ เกรด A',
+            B_PLUS: 'ดีลเลอร์ เกรด B+',
+            B: 'ดีลเลอร์ เกรด B',
+            C_PLUS: 'ดีลเลอร์ เกรด C+',
+            C: 'ดีลเลอร์ เกรด C',
+            SPECIAL: 'ราคาส่วนลดพิเศษ (Special)'
         };
 
-        function autoFillPartPrice(inputEl) {
+        const PRICE_TIER_KEYS = ['DIRECT', 'A_PLUS', 'A', 'B_PLUS', 'B', 'C_PLUS', 'C', 'SPECIAL'];
+
+        function buildDefault8TierObject(directPrice) {
+            const d = Number(directPrice) || 0;
+            return {
+                DIRECT: d,
+                A_PLUS: Math.round(d * 0.70),
+                A:      Math.round(d * 0.75),
+                B_PLUS: Math.round(d * 0.78),
+                B:      Math.round(d * 0.80),
+                C_PLUS: Math.round(d * 0.85),
+                C:      Math.round(d * 0.88),
+                SPECIAL: Math.round(d * 0.65)
+            };
+        }
+
+        const DEFAULT_PART_PRICES = {
+            'Water Valve / วาล์วน้ำเข้า': buildDefault8TierObject(1850),
+            'Pump Motor / มอเตอร์ปั๊มน้ำ': buildDefault8TierObject(4200),
+            'Fan Motor / มอเตอร์พัดลมระบายความร้อน': buildDefault8TierObject(2400),
+            'Float Switch / ลูกลอยควบคุมระดับน้ำ': buildDefault8TierObject(1450),
+            'Bin Control Switch / สวิตช์ตัดน้ำแข็งเต็ม': buildDefault8TierObject(1250),
+            'Thermistor Sensor / เซ็นเซอร์วัดอุณหภูมิ': buildDefault8TierObject(1100),
+            'Control Board / แผงวงจรควบคุมหลัก': buildDefault8TierObject(6800),
+            'Hot Gas Valve / วาล์วละลายน้ำแข็ง': buildDefault8TierObject(2900),
+            'Compressor / คอมเพรสเซอร์ทำความเย็น': buildDefault8TierObject(12500),
+            'Starting Relay & Capacitor / รีเลย์และแคปาซิเตอร์': buildDefault8TierObject(950),
+            'Door Gasket / ยางขอบประตูตู้แช่': buildDefault8TierObject(1600),
+            'Air Filter / แผ่นกรองฝุ่นคอนเดนเซอร์': buildDefault8TierObject(650),
+            'Water Hose & Drain Pipe / ชุดท่อน้ำเข้า-น้ำทิ้ง': buildDefault8TierObject(550),
+            'Refrigerant R404A / น้ำยาทำความเย็น R404A': buildDefault8TierObject(1200),
+            'Refrigerant R134a / น้ำยาทำความเย็น R134a': buildDefault8TierObject(950),
+            'PM Cleaning Service / ค่าบริการล้างบำรุงรักษา': buildDefault8TierObject(1500)
+        };
+
+        function normalizePartPriceRecord(rawVal) {
+            if (typeof rawVal === 'number') {
+                return buildDefault8TierObject(rawVal);
+            }
+            if (rawVal && typeof rawVal === 'object') {
+                const direct = Number(rawVal.DIRECT ?? rawVal.direct ?? 0) || 0;
+                const fallback = direct > 0 ? buildDefault8TierObject(direct) : { DIRECT: 0, A_PLUS: 0, A: 0, B_PLUS: 0, B: 0, C_PLUS: 0, C: 0, SPECIAL: 0 };
+                return {
+                    DIRECT: Number(rawVal.DIRECT ?? fallback.DIRECT) || 0,
+                    A_PLUS: Number(rawVal.A_PLUS ?? fallback.A_PLUS) || 0,
+                    A:      Number(rawVal.A ?? fallback.A) || 0,
+                    B_PLUS: Number(rawVal.B_PLUS ?? fallback.B_PLUS) || 0,
+                    B:      Number(rawVal.B ?? fallback.B) || 0,
+                    C_PLUS: Number(rawVal.C_PLUS ?? fallback.C_PLUS) || 0,
+                    C:      Number(rawVal.C ?? fallback.C) || 0,
+                    SPECIAL: Number(rawVal.SPECIAL ?? fallback.SPECIAL) || 0
+                };
+            }
+            return { DIRECT: 0, A_PLUS: 0, A: 0, B_PLUS: 0, B: 0, C_PLUS: 0, C: 0, SPECIAL: 0 };
+        }
+
+        function getAllNormalizedPartPrices() {
+            const customRaw = getCustomPartPriceMap();
+            const merged = {};
+            Object.keys(DEFAULT_PART_PRICES).forEach(k => {
+                merged[k] = normalizePartPriceRecord(DEFAULT_PART_PRICES[k]);
+            });
+            Object.keys(customRaw).forEach(k => {
+                merged[k] = normalizePartPriceRecord(customRaw[k]);
+            });
+            return merged;
+        }
+
+        function getActivePriceTier() {
+            return document.getElementById('customerPriceTierSelect')?.value || 'DIRECT';
+        }
+
+        function resolvePartUnitPrice(partDesc, tierKey = null) {
+            const desc = (partDesc || '').trim();
+            if (!desc) return null;
+            const tier = tierKey || getActivePriceTier();
+
+            // 1. ตรวจสอบราคาเฉพาะรายดีลเลอร์/ลูกค้า (Dealer-Specific Override) ก่อนเป็นอันดับแรก
+            const dealerName = (document.getElementById('custDealer')?.value || '').trim().toLowerCase();
+            const storeName = (document.getElementById('custStore')?.value || '').trim().toLowerCase();
+            const dir = getDealerGradeDirectory();
+            const activeProfile = dir[dealerName] || dir[storeName];
+            if (activeProfile && activeProfile.overrides && activeProfile.overrides[desc] !== undefined) {
+                return {
+                    price: Number(activeProfile.overrides[desc]),
+                    sourceLabel: `ราคาเฉพาะดีลเลอร์ (${activeProfile.name})`
+                };
+            }
+
+            // 2. ค้นหาจากฐานข้อมูลราคาอะไหล่ 8 เกรด
+            const allPrices = getAllNormalizedPartPrices();
+            if (allPrices[desc] !== undefined) {
+                const rec = allPrices[desc];
+                const chosen = Number(rec[tier] ?? rec.DIRECT ?? 0);
+                return {
+                    price: chosen,
+                    sourceLabel: PRICE_TIER_LABELS[tier] || tier
+                };
+            }
+            return null;
+        }
+
+        function autoFillPartPrice(inputEl, forceOverwrite = false) {
             const val = (inputEl.value || '').trim();
-            const combinedPrices = { ...DEFAULT_PART_PRICES, ...getCustomPartPriceMap() };
-            if (combinedPrices[val] !== undefined) {
+            const resolved = resolvePartUnitPrice(val);
+            if (resolved !== null) {
                 const row = inputEl.closest('tr');
                 const priceInput = row?.querySelector('.parts-price');
-                if (priceInput && (parseFloat(priceInput.value) === 0 || !priceInput.value)) {
-                    priceInput.value = Number(combinedPrices[val]).toFixed(2);
+                if (priceInput && (forceOverwrite || parseFloat(priceInput.value) === 0 || !priceInput.value)) {
+                    priceInput.value = Number(resolved.price).toFixed(2);
                     calculateTotals();
-                    showToast(`เติมราคามาตรฐาน (${Number(combinedPrices[val]).toLocaleString()} บาท) อัตโนมัติ`);
+                    if (!forceOverwrite) {
+                        showToast(`เติมราคา [${resolved.sourceLabel}]: ${Number(resolved.price).toLocaleString()} บาท`);
+                    }
                 }
             }
+        }
+
+        function handlePriceTierChange(repriceExistingRows = true) {
+            const tier = getActivePriceTier();
+            const statusEl = document.getElementById('priceTierLinkStatus');
+            if (statusEl) {
+                statusEl.innerText = `กำลังใช้เรต: ${PRICE_TIER_LABELS[tier] || tier}`;
+            }
+            if (repriceExistingRows) {
+                let updatedCount = 0;
+                document.querySelectorAll('.parts-row').forEach(row => {
+                    const descInp = row.querySelector('.parts-desc');
+                    const priceInp = row.querySelector('.parts-price');
+                    if (descInp && descInp.value.trim() && priceInp) {
+                        const resolved = resolvePartUnitPrice(descInp.value.trim(), tier);
+                        if (resolved !== null) {
+                            priceInp.value = Number(resolved.price).toFixed(2);
+                            updatedCount++;
+                        }
+                    }
+                });
+                calculateTotals();
+                if (updatedCount > 0) {
+                    showToast(`อัปเดตราคาอะไหล่ ${updatedCount} รายการตามเรต "${PRICE_TIER_LABELS[tier]}" เรียบร้อย ✓`);
+                }
+            }
+            debounceAutoSave();
         }
 
         function addPartsRow(data = { desc: '', qty: 1, price: '0.00' }) {
@@ -6225,7 +6384,9 @@
                 parts: parts,
                 feeLabor: document.getElementById('feeLabor')?.value || '0.00',
                 feeTrip: document.getElementById('feeTrip')?.value || '0.00',
-                feeDiscount: document.getElementById('feeDiscount')?.value || '0.00',
+                priceTier: getActivePriceTier(),
+                feeDiscountType: document.getElementById('feeDiscountType')?.value || 'THB',
+                feeDiscount: document.getElementById('feeDiscount')?.value || '0',
                 jobStatus: document.getElementById('jobStatus')?.value || 'Completed',
                 total: document.getElementById('grandTotalVal')?.innerText || '0.00',
                 photos: photos,
@@ -6307,7 +6468,12 @@
 
             if (document.getElementById('feeLabor')) document.getElementById('feeLabor').value = data.feeLabor || '0.00';
             if (document.getElementById('feeTrip')) document.getElementById('feeTrip').value = data.feeTrip || '0.00';
-            if (document.getElementById('feeDiscount')) document.getElementById('feeDiscount').value = data.feeDiscount || '0.00';
+            if (document.getElementById('customerPriceTierSelect')) {
+                document.getElementById('customerPriceTierSelect').value = data.priceTier || 'DIRECT';
+                handlePriceTierChange(false);
+            }
+            if (document.getElementById('feeDiscountType')) document.getElementById('feeDiscountType').value = data.feeDiscountType || 'THB';
+            if (document.getElementById('feeDiscount')) document.getElementById('feeDiscount').value = data.feeDiscount || '0';
             if (document.getElementById('jobStatus')) {
                 document.getElementById('jobStatus').value = data.jobStatus || 'Completed';
                 updateJobStatusStyle();
@@ -6387,40 +6553,140 @@
             }
         }
 
-        function saveCustomerProfileToDirectory(jobData) {
-            const storeName = (jobData.store || '').trim();
-            if (!storeName) return;
-            const directory = JSON.parse(localStorage.getItem('hoshizaki_customer_directory') || '{}');
-            directory[storeName.toLowerCase()] = {
-                store: storeName,
-                dealer: (jobData.dealer || '').trim(),
-                contact: (jobData.contact || '').trim(),
-                address: (jobData.address || '').trim()
-            };
-            localStorage.setItem('hoshizaki_customer_directory', JSON.stringify(directory));
+        function getDealerGradeDirectory() {
+            try {
+                return JSON.parse(localStorage.getItem('hoshizaki_dealer_grade_directory') || '{}');
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveDealerGradeDirectory(dirObj) {
+            localStorage.setItem('hoshizaki_dealer_grade_directory', JSON.stringify(dirObj));
             loadSavedCustomersIntoDatalist();
         }
 
+        function saveCustomerProfileToDirectory(jobData) {
+            const storeName = (jobData.store || '').trim();
+            const dealerName = (jobData.dealer || '').trim();
+            const activeTier = jobData.priceTier || getActivePriceTier();
+
+            if (storeName) {
+                const directory = JSON.parse(localStorage.getItem('hoshizaki_customer_directory') || '{}');
+                directory[storeName.toLowerCase()] = {
+                    store: storeName,
+                    dealer: dealerName,
+                    contact: (jobData.contact || '').trim(),
+                    address: (jobData.address || '').trim(),
+                    priceTier: activeTier
+                };
+                localStorage.setItem('hoshizaki_customer_directory', JSON.stringify(directory));
+            }
+
+            // ผูกเกรดราคาเข้ากับสมุดรายชื่อดีลเลอร์/ลูกค้าอัตโนมัติ
+            const dgDir = getDealerGradeDirectory();
+            if (dealerName) {
+                const dKey = dealerName.toLowerCase();
+                dgDir[dKey] = {
+                    ...(dgDir[dKey] || {}),
+                    name: dealerName,
+                    type: 'DEALER',
+                    grade: activeTier,
+                    contact: dgDir[dKey]?.contact || (jobData.contact || '').trim(),
+                    address: dgDir[dKey]?.address || (jobData.address || '').trim()
+                };
+            } else if (storeName) {
+                const sKey = storeName.toLowerCase();
+                dgDir[sKey] = {
+                    ...(dgDir[sKey] || {}),
+                    name: storeName,
+                    type: dgDir[sKey]?.type || 'CUSTOMER',
+                    grade: activeTier,
+                    contact: (jobData.contact || '').trim(),
+                    address: (jobData.address || '').trim()
+                };
+            }
+            saveDealerGradeDirectory(dgDir);
+        }
+
         function loadSavedCustomersIntoDatalist() {
-            const datalist = document.getElementById('hoshizakiCustomersList');
-            if (!datalist) return;
+            const custDatalist = document.getElementById('hoshizakiCustomersList');
+            const dealerDatalist = document.getElementById('hoshizakiDealersList');
             const directory = JSON.parse(localStorage.getItem('hoshizaki_customer_directory') || '{}');
-            datalist.innerHTML = '';
-            Object.values(directory).forEach(cust => {
-                if (cust && cust.store) {
-                    const opt = document.createElement('option');
-                    opt.value = cust.store;
-                    opt.label = `${cust.dealer ? cust.dealer + ' | ' : ''}${cust.contact || ''}`;
-                    datalist.appendChild(opt);
+            const dgDir = getDealerGradeDirectory();
+
+            if (custDatalist) {
+                custDatalist.innerHTML = '';
+                const seen = new Set();
+                Object.values(directory).forEach(cust => {
+                    if (cust && cust.store && !seen.has(cust.store.toLowerCase())) {
+                        seen.add(cust.store.toLowerCase());
+                        const opt = document.createElement('option');
+                        opt.value = cust.store;
+                        const gLabel = cust.priceTier ? ` [${PRICE_TIER_LABELS[cust.priceTier] || cust.priceTier}]` : '';
+                        opt.label = `${cust.dealer ? cust.dealer + ' | ' : ''}${cust.contact || ''}${gLabel}`;
+                        custDatalist.appendChild(opt);
+                    }
+                });
+                Object.values(dgDir).forEach(entry => {
+                    if (entry && entry.name && !seen.has(entry.name.toLowerCase())) {
+                        seen.add(entry.name.toLowerCase());
+                        const opt = document.createElement('option');
+                        opt.value = entry.name;
+                        opt.label = `${PRICE_TIER_LABELS[entry.grade] || entry.grade} | ${entry.contact || ''}`;
+                        custDatalist.appendChild(opt);
+                    }
+                });
+            }
+
+            if (dealerDatalist) {
+                dealerDatalist.innerHTML = '';
+                Object.values(dgDir).forEach(entry => {
+                    if (entry && entry.name) {
+                        const opt = document.createElement('option');
+                        opt.value = entry.name;
+                        opt.label = `${PRICE_TIER_LABELS[entry.grade] || entry.grade}`;
+                        dealerDatalist.appendChild(opt);
+                    }
+                });
+            }
+        }
+
+        function applyLinkedGradeToForm(gradeKey, sourceName) {
+            const tierSelect = document.getElementById('customerPriceTierSelect');
+            if (tierSelect && gradeKey && PRICE_TIER_LABELS[gradeKey]) {
+                tierSelect.value = gradeKey;
+                const statusEl = document.getElementById('priceTierLinkStatus');
+                if (statusEl) {
+                    statusEl.innerHTML = `ผูกเกรดอัตโนมัติจาก <b>"${sourceName}"</b> → <span class="text-hoshizaki-navy font-extrabold">${PRICE_TIER_LABELS[gradeKey]}</span>`;
                 }
-            });
+                handlePriceTierChange(true);
+            }
+        }
+
+        function handleDealerAutoLookup(rawDealer) {
+            const key = (rawDealer || '').trim().toLowerCase();
+            if (!key) return;
+            const dgDir = getDealerGradeDirectory();
+            const matchedDealer = dgDir[key];
+            if (matchedDealer) {
+                const contactEl = document.getElementById('custContact');
+                const addressEl = document.getElementById('custAddress');
+                if (contactEl && matchedDealer.contact && !contactEl.value) contactEl.value = matchedDealer.contact;
+                if (addressEl && matchedDealer.address && !addressEl.value) addressEl.value = matchedDealer.address;
+                applyLinkedGradeToForm(matchedDealer.grade, matchedDealer.name);
+                showToast(`เชื่อมโยงดีลเลอร์ "${matchedDealer.name}" → ${PRICE_TIER_LABELS[matchedDealer.grade] || matchedDealer.grade}`);
+            }
         }
 
         function handleCustomerAutoLookup(rawName) {
             const key = (rawName || '').trim().toLowerCase();
             if (!key) return;
             const directory = JSON.parse(localStorage.getItem('hoshizaki_customer_directory') || '{}');
+            const dgDir = getDealerGradeDirectory();
             const matched = directory[key];
+            const matchedGradeEntry = dgDir[key];
+
             if (matched) {
                 const dealerEl = document.getElementById('custDealer');
                 const contactEl = document.getElementById('custContact');
@@ -6428,8 +6694,21 @@
                 if (dealerEl && matched.dealer && !dealerEl.value) dealerEl.value = matched.dealer;
                 if (contactEl && matched.contact && !contactEl.value) contactEl.value = matched.contact;
                 if (addressEl && matched.address && !addressEl.value) addressEl.value = matched.address;
+
+                const resolvedGrade = (matched.dealer && dgDir[matched.dealer.toLowerCase()]?.grade)
+                    || matchedGradeEntry?.grade
+                    || matched.priceTier;
+                if (resolvedGrade) {
+                    applyLinkedGradeToForm(resolvedGrade, matched.dealer || matched.store);
+                }
                 debounceAutoSave();
                 showToast(`ดึงข้อมูลลูกค้าประจำ "${matched.store}" อัตโนมัติ`);
+            } else if (matchedGradeEntry) {
+                const contactEl = document.getElementById('custContact');
+                const addressEl = document.getElementById('custAddress');
+                if (contactEl && matchedGradeEntry.contact && !contactEl.value) contactEl.value = matchedGradeEntry.contact;
+                if (addressEl && matchedGradeEntry.address && !addressEl.value) addressEl.value = matchedGradeEntry.address;
+                applyLinkedGradeToForm(matchedGradeEntry.grade, matchedGradeEntry.name);
             }
         }
 
@@ -7258,22 +7537,29 @@
             const laborInput = document.getElementById('feeLabor');
             const tripInput = document.getElementById('feeTrip');
             const discountInput = document.getElementById('feeDiscount');
+            const discountType = document.getElementById('feeDiscountType')?.value || 'THB';
             const laborFee = parseFloat(laborInput ? laborInput.value : 0) || 0;
             const tripFee = parseFloat(tripInput ? tripInput.value : 0) || 0;
-            const discountFee = Math.max(0, parseFloat(discountInput ? discountInput.value : 0) || 0);
+            const rawDiscountVal = Math.max(0, parseFloat(discountInput ? discountInput.value : 0) || 0);
+
+            const grossBeforeDiscount = partsTotal + laborFee + tripFee;
+            const discountFee = discountType === 'PERCENT'
+                ? Math.min(grossBeforeDiscount, grossBeforeDiscount * (Math.min(100, rawDiscountVal) / 100))
+                : Math.min(grossBeforeDiscount, rawDiscountVal);
 
             const discountRow = document.getElementById('discountDisplayRow');
             const discountValEl = document.getElementById('discountDisplayVal');
             if (discountRow && discountValEl) {
                 if (discountFee > 0) {
                     discountRow.classList.remove('hidden');
-                    discountValEl.innerText = `-${discountFee.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    const pctNote = discountType === 'PERCENT' ? ` (${rawDiscountVal}%)` : '';
+                    discountValEl.innerText = `-${discountFee.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}${pctNote}`;
                 } else {
                     discountRow.classList.add('hidden');
                 }
             }
 
-            const subtotalBeforeTax = Math.max(0, (partsTotal + laborFee + tripFee) - discountFee);
+            const subtotalBeforeTax = Math.max(0, grossBeforeDiscount - discountFee);
             const vat7 = subtotalBeforeTax * 0.07;
             const grandTotal = subtotalBeforeTax + vat7;
 
@@ -7554,8 +7840,12 @@
                 tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-gray-400">ยังไม่มีรายการบริการหรืออะไหล่</td></tr>`;
             }
 
-            // คำนวณยอดรวม SUB TOTAL, DISCOUNT, VAT 7%, WHT 3% และ TOTAL (THB)
-            const discountFee = Math.max(0, parseFloat(document.getElementById('feeDiscount')?.value || 0) || 0);
+            // คำนวณยอดรวม SUB TOTAL, DISCOUNT (% หรือ บาท), VAT 7%, WHT 3% และ TOTAL (THB)
+            const rawDiscountVal = Math.max(0, parseFloat(document.getElementById('feeDiscount')?.value || 0) || 0);
+            const discountType = document.getElementById('feeDiscountType')?.value || 'THB';
+            const discountFee = discountType === 'PERCENT'
+                ? Math.min(partsSubtotal, partsSubtotal * (Math.min(100, rawDiscountVal) / 100))
+                : Math.min(partsSubtotal, rawDiscountVal);
             const netBeforeVat = Math.max(0, partsSubtotal - discountFee);
             const vat = netBeforeVat * 0.07;
             const isWht = document.getElementById('whtCheckbox')?.checked || false;
@@ -10133,7 +10423,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             );
         }
 
-        // --- Custom Part Price Database ---
+        // --- 8-Grade Multi-Tier Part Price Database + FX Rate & Auto-Rounding + Dealer Grade Directory (v13.0) ---
         function getCustomPartPriceMap() {
             try {
                 return JSON.parse(localStorage.getItem('hoshizaki_custom_part_prices') || '{}');
@@ -10151,20 +10441,136 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             document.getElementById('partPriceDbModal')?.classList.add('hidden');
         }
 
-        function saveCustomPartPriceEntry() {
-            const desc = (document.getElementById('newPartPriceCodeInput')?.value || '').trim();
-            const price = parseFloat(document.getElementById('newPartPriceValInput')?.value || '0');
-            if (!desc) {
+        function toggleFxAdjustInputs() {
+            const mode = document.getElementById('fxAdjustMode')?.value || 'FX_RATE';
+            document.getElementById('fxRateOldBox')?.classList.toggle('hidden', mode !== 'FX_RATE');
+            document.getElementById('fxRateNewBox')?.classList.toggle('hidden', mode !== 'FX_RATE');
+            document.getElementById('fxPercentBox')?.classList.toggle('hidden', mode !== 'PERCENT');
+        }
+
+        function applyPriceRoundingRule(val, roundingMode) {
+            const num = Number(val) || 0;
+            if (roundingMode === 'INT') {
+                return Math.round(num);
+            }
+            if (roundingMode === 'TEN') {
+                return Math.round(num / 10) * 10;
+            }
+            return Math.round(num * 100) / 100;
+        }
+
+        function applyBulkFxPriceAdjustment() {
+            const mode = document.getElementById('fxAdjustMode')?.value || 'FX_RATE';
+            const targetTier = document.getElementById('fxTargetTierSelect')?.value || 'ALL';
+            const roundingMode = document.getElementById('fxRoundingModeSelect')?.value || 'INT';
+
+            let multiplier = 1;
+            let descLabel = '';
+
+            if (mode === 'FX_RATE') {
+                const oldRate = parseFloat(document.getElementById('fxOldRateInput')?.value || '0');
+                const newRate = parseFloat(document.getElementById('fxNewRateInput')?.value || '0');
+                if (oldRate <= 0 || newRate <= 0) {
+                    showToast('กรุณาระบุค่าเงินเดิมและค่าเงินใหม่ให้ถูกต้อง');
+                    return;
+                }
+                multiplier = newRate / oldRate;
+                descLabel = `ค่าเงิน ${oldRate} → ${newRate} (x${multiplier.toFixed(4)})`;
+            } else {
+                const pct = parseFloat(document.getElementById('fxPercentChangeInput')?.value || '0');
+                multiplier = 1 + (pct / 100);
+                descLabel = `ปรับ ${pct >= 0 ? '+' : ''}${pct}%`;
+            }
+
+            const roundText = roundingMode === 'TEN' ? 'ปัดหลักสิบ' : (roundingMode === 'INT' ? 'ปัดจำนวนเต็ม' : 'ไม่ปัดเศษ');
+            const targetText = targetTier === 'ALL' ? 'ทุกเกรดทั้ง 8 ระดับ' : (PRICE_TIER_LABELS[targetTier] || targetTier);
+
+            showCustomConfirm(
+                `ยืนยันปรับฐานราคาอะไหล่ทั้งหมด (${targetText}) ตามสูตร "${descLabel}" และ "${roundText}" ใช่หรือไม่?`,
+                (confirmed) => {
+                    if (!confirmed) return;
+                    const allPrices = getAllNormalizedPartPrices();
+                    const customMap = getCustomPartPriceMap();
+                    const tiersToUpdate = targetTier === 'ALL' ? PRICE_TIER_KEYS : [targetTier];
+
+                    let itemCount = 0;
+                    Object.keys(allPrices).forEach(partKey => {
+                        const rec = { ...allPrices[partKey] };
+                        tiersToUpdate.forEach(tk => {
+                            if (rec[tk] > 0) {
+                                rec[tk] = applyPriceRoundingRule(rec[tk] * multiplier, roundingMode);
+                            }
+                        });
+                        customMap[partKey] = rec;
+                        itemCount++;
+                    });
+
+                    localStorage.setItem('hoshizaki_custom_part_prices', JSON.stringify(customMap));
+                    renderPartPriceDbTable();
+                    handlePriceTierChange(true);
+                    showToast(`ปรับราคาอะไหล่ ${itemCount} รายการ (${roundText}) เรียบร้อย ✓`);
+                }
+            );
+        }
+
+        function autoSuggestTierPricesFromDirect(directValStr) {
+            const d = parseFloat(directValStr || '0');
+            if (isNaN(d) || d <= 0) return;
+            const suggested = buildDefault8TierObject(d);
+            PRICE_TIER_KEYS.forEach(tk => {
+                if (tk === 'DIRECT') return;
+                const el = document.getElementById(`editPrice${tk}`);
+                if (el && (!el.value || parseFloat(el.value) === 0)) {
+                    el.value = suggested[tk];
+                }
+            });
+        }
+
+        function resetPart8GradeEditor() {
+            const codeEl = document.getElementById('editPartCode8');
+            if (codeEl) codeEl.value = '';
+            PRICE_TIER_KEYS.forEach(tk => {
+                const el = document.getElementById(`editPrice${tk}`);
+                if (el) el.value = '';
+            });
+        }
+
+        function loadPartInto8GradeEditor(partKey) {
+            const allPrices = getAllNormalizedPartPrices();
+            const rec = allPrices[partKey];
+            if (!rec) return;
+            const codeEl = document.getElementById('editPartCode8');
+            if (codeEl) codeEl.value = partKey;
+            PRICE_TIER_KEYS.forEach(tk => {
+                const el = document.getElementById(`editPrice${tk}`);
+                if (el) el.value = rec[tk] ?? 0;
+            });
+            showToast(`โหลดราคา "${partKey}" เข้าสู่ช่องแก้ไขแล้ว`);
+        }
+
+        function saveCustomPartPrice8GradeEntry() {
+            const code = (document.getElementById('editPartCode8')?.value || '').trim();
+            if (!code) {
                 showToast('กรุณาระบุรหัสหรือชื่ออะไหล่');
                 return;
             }
+            const directVal = parseFloat(document.getElementById('editPriceDIRECT')?.value || '0') || 0;
+            const fallback = buildDefault8TierObject(directVal);
+            const rec = {};
+            PRICE_TIER_KEYS.forEach(tk => {
+                const raw = document.getElementById(`editPrice${tk}`)?.value;
+                rec[tk] = (raw !== '' && raw !== undefined && !isNaN(parseFloat(raw)))
+                    ? parseFloat(raw)
+                    : fallback[tk];
+            });
+
             const map = getCustomPartPriceMap();
-            map[desc] = isNaN(price) ? 0 : price;
+            map[code] = rec;
             localStorage.setItem('hoshizaki_custom_part_prices', JSON.stringify(map));
-            document.getElementById('newPartPriceCodeInput').value = '';
-            document.getElementById('newPartPriceValInput').value = '';
+            resetPart8GradeEditor();
             renderPartPriceDbTable();
-            showToast(`บันทึกราคาอะไหล่ ${desc} (${price.toLocaleString()} บาท) เรียบร้อย ✓`);
+            handlePriceTierChange(true);
+            showToast(`บันทึกราคา 8 เกรดของ "${code}" เรียบร้อย ✓`);
         }
 
         function deleteCustomPartPriceEntry(key) {
@@ -10172,25 +10578,42 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             delete map[key];
             localStorage.setItem('hoshizaki_custom_part_prices', JSON.stringify(map));
             renderPartPriceDbTable();
+            showToast(`ลบรายการที่แก้ไขเองของ "${key}" แล้ว`);
         }
 
         function renderPartPriceDbTable() {
             const tbody = document.getElementById('partPriceDbTableBody');
             if (!tbody) return;
             const q = (document.getElementById('partPriceSearchInput')?.value || '').trim().toLowerCase();
-            const combined = { ...DEFAULT_PART_PRICES, ...getCustomPartPriceMap() };
+            const combined = getAllNormalizedPartPrices();
+            const customMap = getCustomPartPriceMap();
             const keys = Object.keys(combined).filter(k => !q || k.toLowerCase().includes(q));
-            tbody.innerHTML = keys.map(k => `
-                <tr class="hover:bg-amber-50/40">
-                    <td class="p-2 font-medium text-gray-800">${k}</td>
-                    <td class="p-2 text-right font-bold text-hoshizaki-navy">${Number(combined[k] || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td class="p-2 text-center">
-                        ${getCustomPartPriceMap()[k] !== undefined
-                            ? `<button type="button" onclick="deleteCustomPartPriceEntry('${k.replace(/'/g, "\'")}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash-can"></i></button>`
-                            : '<span class="text-[10px] text-gray-400">มาตรฐาน</span>'}
-                    </td>
-                </tr>
-            `).join('');
+
+            const fmt = (n) => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            tbody.innerHTML = keys.map(k => {
+                const r = combined[k];
+                const safeKey = k.replace(/'/g, "\'");
+                return `
+                    <tr class="hover:bg-amber-50/50">
+                        <td class="p-2 font-medium text-gray-800">${k}</td>
+                        <td class="p-2 text-right font-bold text-hoshizaki-navy">${fmt(r.DIRECT)}</td>
+                        <td class="p-2 text-right text-blue-800 font-semibold">${fmt(r.A_PLUS)}</td>
+                        <td class="p-2 text-right text-blue-700">${fmt(r.A)}</td>
+                        <td class="p-2 text-right text-emerald-800 font-semibold">${fmt(r.B_PLUS)}</td>
+                        <td class="p-2 text-right text-emerald-700">${fmt(r.B)}</td>
+                        <td class="p-2 text-right text-amber-800 font-semibold">${fmt(r.C_PLUS)}</td>
+                        <td class="p-2 text-right text-amber-700">${fmt(r.C)}</td>
+                        <td class="p-2 text-right text-rose-700 font-bold">${fmt(r.SPECIAL)}</td>
+                        <td class="p-2 text-center whitespace-nowrap">
+                            <button type="button" onclick="loadPartInto8GradeEditor('${safeKey}')" title="แก้ไขราคา 8 เกรด" class="text-blue-600 hover:text-blue-800 px-1"><i class="fa-solid fa-pen"></i></button>
+                            ${customMap[k] !== undefined
+                                ? `<button type="button" onclick="deleteCustomPartPriceEntry('${safeKey}')" title="ลบราคาที่ปรับเอง" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash-can"></i></button>`
+                                : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function importPartPricesFromExcel(event) {
@@ -10206,22 +10629,319 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     rows.forEach(r => {
                         const code = String(r['Part No'] || r['Part No.'] || r['Code'] || r['รหัสอะไหล่'] || '').trim();
                         const desc = String(r['Description'] || r['Part Name'] || r['รายการ'] || '').trim();
-                        const price = parseFloat(r['Price'] || r['Unit Price'] || r['ราคา'] || '0');
                         const key = code && desc ? `${code} - ${desc}` : (code || desc);
-                        if (key && !isNaN(price) && price > 0) {
-                            map[key] = price;
-                            count++;
-                        }
+                        if (!key) return;
+
+                        const direct = parseFloat(r['Direct'] || r['DIRECT'] || r['ราคาขายตรง'] || r['Price'] || r['Unit Price'] || r['ราคา'] || '0') || 0;
+                        const fallback = buildDefault8TierObject(direct);
+
+                        const readCol = (names, fb) => {
+                            for (const n of names) {
+                                if (r[n] !== undefined && r[n] !== '') {
+                                    const v = parseFloat(r[n]);
+                                    if (!isNaN(v)) return v;
+                                }
+                            }
+                            return fb;
+                        };
+
+                        map[key] = {
+                            DIRECT: direct,
+                            A_PLUS: readCol(['A+', 'Grade A+', 'Dealer A+'], fallback.A_PLUS),
+                            A:      readCol(['A', 'Grade A', 'Dealer A'], fallback.A),
+                            B_PLUS: readCol(['B+', 'Grade B+', 'Dealer B+'], fallback.B_PLUS),
+                            B:      readCol(['B', 'Grade B', 'Dealer B'], fallback.B),
+                            C_PLUS: readCol(['C+', 'Grade C+', 'Dealer C+'], fallback.C_PLUS),
+                            C:      readCol(['C', 'Grade C', 'Dealer C'], fallback.C),
+                            SPECIAL: readCol(['Special', 'SPECIAL', 'ราคาพิเศษ', 'ส่วนลดพิเศษ'], fallback.SPECIAL)
+                        };
+                        count++;
                     });
                     localStorage.setItem('hoshizaki_custom_part_prices', JSON.stringify(map));
                     renderPartPriceDbTable();
-                    showToast(`นำเข้าฐานราคาอะไหล่สำเร็จ ${count} รายการ ✓`);
+                    handlePriceTierChange(true);
+                    showToast(`นำเข้าฐานราคาอะไหล่ 8 เกรดสำเร็จ ${count} รายการ ✓`);
                 } catch (err) {
                     showToast('ไม่สามารถอ่านไฟล์ Excel ราคาอะไหล่ได้');
                 }
             };
             reader.readAsArrayBuffer(file);
             event.target.value = '';
+        }
+
+        function exportPartPrices8GradeExcel() {
+            if (typeof XLSX === 'undefined') return;
+            const combined = getAllNormalizedPartPrices();
+            const rows = Object.keys(combined).map(k => {
+                const r = combined[k];
+                return {
+                    'Part No': k,
+                    'Direct': r.DIRECT,
+                    'A+': r.A_PLUS,
+                    'A': r.A,
+                    'B+': r.B_PLUS,
+                    'B': r.B,
+                    'C+': r.C_PLUS,
+                    'C': r.C,
+                    'Special': r.SPECIAL
+                };
+            });
+            const ws = XLSX.utils.json_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Part_Prices_8_Grades');
+            XLSX.writeFile(wb, 'Hoshizaki_Part_Prices_8_Grades.xlsx');
+            showToast('ส่งออกไฟล์ Excel ราคาอะไหล่ 8 เกรดเรียบร้อย ✓');
+        }
+
+        function downloadSamplePartPrices8GradeExcel() {
+            if (typeof XLSX === 'undefined') return;
+            const sample = [
+                { 'Part No': '4A5251-06', 'Description': 'WATER VALVE', 'Direct': 1850, 'A+': 1295, 'A': 1388, 'B+': 1443, 'B': 1480, 'C+': 1573, 'C': 1628, 'Special': 1200 },
+                { 'Part No': '2A2758-01', 'Description': 'PUMP MOTOR', 'Direct': 4200, 'A+': 2940, 'A': 3150, 'B+': 3276, 'B': 3360, 'C+': 3570, 'C': 3696, 'Special': 2730 }
+            ];
+            const ws = XLSX.utils.json_to_sheet(sample);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Template_8_Grades');
+            XLSX.writeFile(wb, 'Hoshizaki_Sample_8_Grade_Prices.xlsx');
+        }
+
+        // --- DEALER / CUSTOMER GRADE DIRECTORY & PER-DEALER PRICE OVERRIDE (v13.0) ---
+        function openDealerGradeModal() {
+            renderDealerGradeTable();
+            refreshDealerOverrideSelect();
+            document.getElementById('dealerGradeModal')?.classList.remove('hidden');
+        }
+
+        function closeDealerGradeModal() {
+            document.getElementById('dealerGradeModal')?.classList.add('hidden');
+        }
+
+        function refreshDealerOverrideSelect() {
+            const sel = document.getElementById('dgOverrideDealerSelect');
+            if (!sel) return;
+            const currentVal = sel.value;
+            const dir = getDealerGradeDirectory();
+            sel.innerHTML = '<option value="">-- เลือกดีลเลอร์/ลูกค้าที่จะกำหนดราคาเฉพาะ --</option>' +
+                Object.values(dir).map(d => `<option value="${d.name.replace(/"/g, '&quot;')}">${d.name} (${PRICE_TIER_LABELS[d.grade] || d.grade})</option>`).join('');
+            if (currentVal) sel.value = currentVal;
+            renderDealerOverrideList();
+        }
+
+        function saveDealerGradeRecord() {
+            const name = (document.getElementById('dgNameInput')?.value || '').trim();
+            if (!name) {
+                showToast('กรุณาระบุชื่อดีลเลอร์หรือชื่อลูกค้า');
+                return;
+            }
+            const type = document.getElementById('dgTypeInput')?.value || 'DEALER';
+            const grade = document.getElementById('dgGradeInput')?.value || 'DIRECT';
+            const contact = (document.getElementById('dgContactInput')?.value || '').trim();
+            const address = (document.getElementById('dgAddressInput')?.value || '').trim();
+
+            const dir = getDealerGradeDirectory();
+            const key = name.toLowerCase();
+            dir[key] = {
+                ...(dir[key] || {}),
+                name,
+                type,
+                grade,
+                contact,
+                address
+            };
+            saveDealerGradeDirectory(dir);
+            ['dgNameInput', 'dgContactInput', 'dgAddressInput'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            renderDealerGradeTable();
+            refreshDealerOverrideSelect();
+            showToast(`บันทึก "${name}" → เกรด ${PRICE_TIER_LABELS[grade] || grade} เรียบร้อย ✓`);
+        }
+
+        function editDealerGradeRecord(key) {
+            const dir = getDealerGradeDirectory();
+            const item = dir[key];
+            if (!item) return;
+            if (document.getElementById('dgNameInput')) document.getElementById('dgNameInput').value = item.name || '';
+            if (document.getElementById('dgTypeInput')) document.getElementById('dgTypeInput').value = item.type || 'DEALER';
+            if (document.getElementById('dgGradeInput')) document.getElementById('dgGradeInput').value = item.grade || 'DIRECT';
+            if (document.getElementById('dgContactInput')) document.getElementById('dgContactInput').value = item.contact || '';
+            if (document.getElementById('dgAddressInput')) document.getElementById('dgAddressInput').value = item.address || '';
+            const ovSel = document.getElementById('dgOverrideDealerSelect');
+            if (ovSel) {
+                ovSel.value = item.name;
+                renderDealerOverrideList();
+            }
+        }
+
+        function deleteDealerGradeRecord(key) {
+            const dir = getDealerGradeDirectory();
+            delete dir[key];
+            saveDealerGradeDirectory(dir);
+            renderDealerGradeTable();
+            refreshDealerOverrideSelect();
+            showToast('ลบรายชื่อดีลเลอร์/ลูกค้าเรียบร้อยแล้ว');
+        }
+
+        function saveDealerPartOverride() {
+            const dealerName = (document.getElementById('dgOverrideDealerSelect')?.value || '').trim();
+            const partCode = (document.getElementById('dgOverridePartInput')?.value || '').trim();
+            const priceVal = parseFloat(document.getElementById('dgOverridePriceInput')?.value || '0');
+            if (!dealerName || !partCode || isNaN(priceVal) || priceVal < 0) {
+                showToast('กรุณาเลือกดีลเลอร์ รหัสอะไหล่ และราคาเฉพาะให้ครบถ้วน');
+                return;
+            }
+            const dir = getDealerGradeDirectory();
+            const key = dealerName.toLowerCase();
+            if (!dir[key]) {
+                dir[key] = { name: dealerName, type: 'DEALER', grade: 'DIRECT', contact: '', address: '', overrides: {} };
+            }
+            if (!dir[key].overrides) dir[key].overrides = {};
+            dir[key].overrides[partCode] = priceVal;
+            saveDealerGradeDirectory(dir);
+
+            document.getElementById('dgOverridePartInput').value = '';
+            document.getElementById('dgOverridePriceInput').value = '';
+            renderDealerOverrideList();
+            renderDealerGradeTable();
+            handlePriceTierChange(true);
+            showToast(`บันทึกราคาเฉพาะของ "${dealerName}" สำหรับ "${partCode}" = ${priceVal.toLocaleString()} บาท ✓`);
+        }
+
+        function deleteDealerPartOverride(dealerKey, partCode) {
+            const dir = getDealerGradeDirectory();
+            if (dir[dealerKey] && dir[dealerKey].overrides) {
+                delete dir[dealerKey].overrides[partCode];
+                saveDealerGradeDirectory(dir);
+                renderDealerOverrideList();
+                renderDealerGradeTable();
+                handlePriceTierChange(true);
+            }
+        }
+
+        function renderDealerOverrideList() {
+            const container = document.getElementById('dealerOverrideChipsList');
+            const dealerName = (document.getElementById('dgOverrideDealerSelect')?.value || '').trim();
+            if (!container) return;
+            if (!dealerName) {
+                container.innerHTML = '<span class="text-gray-400 italic">เลือกชื่อดีลเลอร์ด้านบนเพื่อดูหรือแก้ไขราคาเฉพาะรายชิ้น</span>';
+                return;
+            }
+            const dir = getDealerGradeDirectory();
+            const key = dealerName.toLowerCase();
+            const overrides = (dir[key] && dir[key].overrides) ? dir[key].overrides : {};
+            const pKeys = Object.keys(overrides);
+            if (pKeys.length === 0) {
+                container.innerHTML = `<span class="text-gray-500">ยังไม่มีราคาเฉพาะรายชิ้นสำหรับ <b>${dealerName}</b> (จะใช้ราคาตามเกรดปกติ)</span>`;
+                return;
+            }
+            container.innerHTML = pKeys.map(pk => `
+                <span class="inline-flex items-center gap-1.5 bg-white border border-rose-300 text-rose-900 px-2.5 py-1 rounded-full font-semibold">
+                    <span>${pk}: <b>${Number(overrides[pk]).toLocaleString()} ฿</b></span>
+                    <button type="button" onclick="deleteDealerPartOverride('${key.replace(/'/g, "\'")}', '${pk.replace(/'/g, "\'")}')" class="text-red-500 hover:text-red-700 font-bold">&times;</button>
+                </span>
+            `).join('');
+        }
+
+        function renderDealerGradeTable() {
+            const tbody = document.getElementById('dealerGradeTableBody');
+            if (!tbody) return;
+            const q = (document.getElementById('dgSearchInput')?.value || '').trim().toLowerCase();
+            const dir = getDealerGradeDirectory();
+            const entries = Object.entries(dir).filter(([k, item]) => {
+                if (!q) return true;
+                const gText = (PRICE_TIER_LABELS[item.grade] || item.grade || '').toLowerCase();
+                return (item.name || '').toLowerCase().includes(q) || gText.includes(q) || (item.contact || '').toLowerCase().includes(q);
+            });
+
+            if (entries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">ยังไม่มีรายชื่อดีลเลอร์/ลูกค้าในสมุดเกรดราคา (ระบบจะบันทึกให้อัตโนมัติเมื่อสร้างใบงาน หรือเพิ่มด้านบน)</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = entries.map(([key, item]) => {
+                const safeKey = key.replace(/'/g, "\'");
+                const ovCount = item.overrides ? Object.keys(item.overrides).length : 0;
+                const ovBadge = ovCount > 0 ? `<span class="ml-1 bg-rose-100 text-rose-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold">ราคาเฉพาะ ${ovCount} ชิ้น</span>` : '';
+                return `
+                    <tr class="hover:bg-sky-50/50">
+                        <td class="p-2 font-bold text-hoshizaki-navy">${item.name}${ovBadge}</td>
+                        <td class="p-2 text-center">${item.type === 'CUSTOMER' ? '<span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-semibold">ลูกค้าตรง</span>' : '<span class="bg-blue-100 text-hoshizaki-navy px-2 py-0.5 rounded font-bold">Dealer</span>'}</td>
+                        <td class="p-2 text-center"><span class="bg-amber-100 text-amber-950 border border-amber-300 px-2 py-0.5 rounded-full font-extrabold">${PRICE_TIER_LABELS[item.grade] || item.grade}</span></td>
+                        <td class="p-2 text-gray-600">${item.contact || '-'} ${item.address ? '| ' + item.address : ''}</td>
+                        <td class="p-2 text-center whitespace-nowrap">
+                            <button type="button" onclick="editDealerGradeRecord('${safeKey}')" title="แก้ไขเกรด/ราคาเฉพาะ" class="text-blue-600 hover:text-blue-800 px-1.5"><i class="fa-solid fa-pen"></i></button>
+                            <button type="button" onclick="deleteDealerGradeRecord('${safeKey}')" title="ลบ" class="text-red-500 hover:text-red-700 px-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function normalizeImportedGradeKey(rawGrade) {
+            const g = String(rawGrade || '').trim().toUpperCase().replace(/\s+/g, '');
+            if (g === 'A+' || g === 'A_PLUS' || g === 'DEALERA+') return 'A_PLUS';
+            if (g === 'A' || g === 'DEALERA') return 'A';
+            if (g === 'B+' || g === 'B_PLUS' || g === 'DEALERB+') return 'B_PLUS';
+            if (g === 'B' || g === 'DEALERB') return 'B';
+            if (g === 'C+' || g === 'C_PLUS' || g === 'DEALERC+') return 'C_PLUS';
+            if (g === 'C' || g === 'DEALERC') return 'C';
+            if (g.includes('SPECIAL') || g.includes('พิเศษ')) return 'SPECIAL';
+            return 'DIRECT';
+        }
+
+        function importDealerGradesFromExcel(event) {
+            const file = event.target.files?.[0];
+            if (!file || typeof XLSX === 'undefined') return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+                    const dir = getDealerGradeDirectory();
+                    let count = 0;
+                    rows.forEach(r => {
+                        const name = String(r['Dealer'] || r['Customer'] || r['Name'] || r['ชื่อดีลเลอร์'] || r['ชื่อลูกค้า'] || '').trim();
+                        if (!name) return;
+                        const grade = normalizeImportedGradeKey(r['Grade'] || r['Price Grade'] || r['เกรด'] || 'DIRECT');
+                        const typeRaw = String(r['Type'] || r['ประเภท'] || 'DEALER').toUpperCase();
+                        dir[name.toLowerCase()] = {
+                            ...(dir[name.toLowerCase()] || {}),
+                            name,
+                            type: typeRaw.includes('CUST') ? 'CUSTOMER' : 'DEALER',
+                            grade,
+                            contact: String(r['Contact'] || r['Phone'] || r['ผู้ติดต่อ'] || '').trim(),
+                            address: String(r['Address'] || r['ที่อยู่'] || '').trim()
+                        };
+                        count++;
+                    });
+                    saveDealerGradeDirectory(dir);
+                    renderDealerGradeTable();
+                    refreshDealerOverrideSelect();
+                    showToast(`นำเข้ารายชื่อและเกรดดีลเลอร์/ลูกค้าสำเร็จ ${count} รายการ ✓`);
+                } catch (err) {
+                    showToast('ไม่สามารถอ่านไฟล์ Excel รายชื่อดีลเลอร์ได้');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            event.target.value = '';
+        }
+
+        function exportDealerGradesExcel() {
+            if (typeof XLSX === 'undefined') return;
+            const dir = getDealerGradeDirectory();
+            const rows = Object.values(dir).map(d => ({
+                'Name': d.name,
+                'Type': d.type || 'DEALER',
+                'Grade': d.grade || 'DIRECT',
+                'Grade Label': PRICE_TIER_LABELS[d.grade] || d.grade,
+                'Contact': d.contact || '',
+                'Address': d.address || ''
+            }));
+            const ws = XLSX.utils.json_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Dealer_Grades');
+            XLSX.writeFile(wb, 'Hoshizaki_Dealer_Customer_Grades.xlsx');
         }
 
         // --- Hoshizaki Error Code Troubleshooter ---
@@ -11914,46 +12634,286 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         </div>
     </div>
 
-    <!-- Custom Spare Part Price Database Modal (v12.4) -->
-    <div id="partPriceDbModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[75] flex items-center justify-center p-2 sm:p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-4 sm:p-5 space-y-3 max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between border-b pb-2.5 flex-shrink-0">
+    <!-- Multi-Tier 8-Grade Spare Part Price Database + FX Rate & Auto-Rounding Modal (v13.0) -->
+    <div id="partPriceDbModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[75] flex items-center justify-center p-1.5 sm:p-3 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full p-3.5 sm:p-5 space-y-3 max-h-[94vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-2 flex-shrink-0">
                 <div>
-                    <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy"><i class="fa-solid fa-tags text-amber-600 mr-1"></i> ฐานข้อมูลราคาอะไหล่มาตรฐาน (Auto-Price Lookup)</h3>
-                    <p class="text-[11px] text-gray-500">บันทึกหรือนำเข้าไฟล์ Excel ราคาอะไหล่ เมื่อเลือก/สแกนรหัสอะไหล่ในใบงาน ระบบจะดึงราคาต่อหน่วยให้อัตโนมัติ</p>
+                    <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">
+                        <i class="fa-solid fa-tags text-amber-600 mr-1"></i> ฐานข้อมูลราคาอะไหล่ 8 เกรด & ปรับราคาตามค่าเงิน (v13.0)
+                    </h3>
+                    <p class="text-[11px] text-gray-500">รองรับราคาขายตรง (Direct), ดีลเลอร์เกรด A+, A, B+, B, C+, C และราคาส่วนลดพิเศษ (Special) พร้อมปรับตามอัตราแลกเปลี่ยนและปัดเศษอัตโนมัติ</p>
                 </div>
                 <button type="button" onclick="closePartPriceDbModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
             </div>
 
-            <div class="grid grid-cols-12 gap-1.5 bg-amber-50/70 p-2.5 rounded-xl border border-amber-200 text-xs flex-shrink-0">
-                <input type="text" id="newPartPriceCodeInput" list="hoshizakiPartsList" placeholder="รหัสหรือชื่ออะไหล่ (เช่น 4A5251-06 หรือ Water Valve) *" class="col-span-7 border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold">
-                <input type="number" id="newPartPriceValInput" placeholder="ราคา/หน่วย (THB) *" step="10" class="col-span-3 border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white text-right font-bold">
-                <button type="button" onclick="saveCustomPartPriceEntry()" class="col-span-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold">บันทึก</button>
+            <!-- เครื่องมือปรับราคาทั้งตารางตามอัตราแลกเปลี่ยน (FX Rate) / เปอร์เซ็นต์ + ตัวเลือกปัดเศษอัตโนมัติ -->
+            <div class="bg-indigo-50/80 border border-indigo-200 rounded-xl p-2.5 space-y-2 text-xs flex-shrink-0">
+                <div class="flex flex-wrap items-center justify-between gap-1">
+                    <span class="font-extrabold text-hoshizaki-navy"><i class="fa-solid fa-money-bill-trend-up text-indigo-600 mr-1"></i> ปรับฐานราคาอัตโนมัติเมื่อค่าเงินเปลี่ยน (FX Rate / %) + ปัดเศษอัตโนมัติ</span>
+                    <span class="text-[10px] text-indigo-700 font-semibold">เลือกปรับเฉพาะเกรดหรือปรับทั้ง 8 เกรดพร้อมกันได้</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-12 gap-1.5 items-end">
+                    <div class="col-span-1 sm:col-span-2">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">รูปแบบการคำนวณ:</label>
+                        <select id="fxAdjustMode" onchange="toggleFxAdjustInputs()" class="w-full border border-indigo-300 rounded-lg px-2 py-1.5 bg-white font-semibold text-hoshizaki-navy">
+                            <option value="FX_RATE">อัตราแลกเปลี่ยน (เรตเก่า → ใหม่)</option>
+                            <option value="PERCENT">ปรับเพิ่ม/ลดเป็น % (+ / -)</option>
+                        </select>
+                    </div>
+                    <div id="fxRateOldBox" class="col-span-1 sm:col-span-2">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">ค่าเงินเดิม (เช่น 34.00):</label>
+                        <input type="number" id="fxOldRateInput" value="34.00" step="0.01" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-right font-bold">
+                    </div>
+                    <div id="fxRateNewBox" class="col-span-1 sm:col-span-2">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">ค่าเงินใหม่ (เช่น 35.50):</label>
+                        <input type="number" id="fxNewRateInput" value="35.50" step="0.01" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-right font-bold text-indigo-700">
+                    </div>
+                    <div id="fxPercentBox" class="hidden col-span-2 sm:col-span-4">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">เปอร์เซ็นต์ที่ปรับ (เช่น 5 หรือ -3.5):</label>
+                        <input type="number" id="fxPercentChangeInput" value="5" step="0.5" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-right font-bold text-indigo-700">
+                    </div>
+                    <div class="col-span-1 sm:col-span-2">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">เกรดที่ต้องการปรับ:</label>
+                        <select id="fxTargetTierSelect" class="w-full border border-indigo-300 rounded-lg px-2 py-1.5 bg-white font-semibold">
+                            <option value="ALL">ทุกเกรดทั้ง 8 ระดับ</option>
+                            <option value="DIRECT">เฉพาะ ขายตรง (Direct)</option>
+                            <option value="A_PLUS">เฉพาะ เกรด A+</option>
+                            <option value="A">เฉพาะ เกรด A</option>
+                            <option value="B_PLUS">เฉพาะ เกรด B+</option>
+                            <option value="B">เฉพาะ เกรด B</option>
+                            <option value="C_PLUS">เฉพาะ เกรด C+</option>
+                            <option value="C">เฉพาะ เกรด C</option>
+                            <option value="SPECIAL">เฉพาะ ส่วนลดพิเศษ</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1 sm:col-span-2">
+                        <label class="block text-[10px] font-bold text-emerald-800 mb-0.5">ปัดเศษราคาอัตโนมัติ:</label>
+                        <select id="fxRoundingModeSelect" class="w-full border border-emerald-400 rounded-lg px-2 py-1.5 bg-emerald-50/70 font-bold text-emerald-950">
+                            <option value="NONE">ไม่ปัดเศษ (ทศนิยม 2 ตำแหน่ง)</option>
+                            <option value="INT" selected>ปัดจำนวนเต็ม (เช่น 1,254 บาท)</option>
+                            <option value="TEN">ปัดหลักสิบ (เช่น 1,250 / 1,260)</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2 sm:col-span-2">
+                        <button type="button" onclick="applyBulkFxPriceAdjustment()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 px-2.5 rounded-lg font-bold shadow-xs transition">
+                            <i class="fa-solid fa-calculator mr-1"></i> คำนวณปรับราคา
+                        </button>
+                    </div>
+                </div>
             </div>
 
+            <!-- ฟอร์มเพิ่ม / แก้ไขราคาอะไหล่ครบทั้ง 8 เกรด -->
+            <div class="bg-amber-50/80 p-2.5 rounded-xl border border-amber-200 space-y-2 text-xs flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-amber-950"><i class="fa-solid fa-pen-to-square text-amber-600 mr-1"></i> เพิ่ม / แก้ไขราคาอะไหล่ 8 เกรด (คลิกแถวในตารางด้านล่างเพื่อดึงมาแก้ไขได้):</span>
+                    <button type="button" onclick="resetPart8GradeEditor()" class="text-[11px] text-gray-600 underline">ล้างช่องกรอก</button>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-12 gap-1.5 items-end">
+                    <div class="col-span-2 sm:col-span-4">
+                        <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">รหัส / ชื่ออะไหล่ *</label>
+                        <input type="text" id="editPartCode8" list="hoshizakiPartsList" placeholder="เช่น 4A5251-06 - WATER VALVE" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white font-bold text-hoshizaki-navy">
+                    </div>
+                    <div class="col-span-1 sm:col-span-1">
+                        <label class="block text-[10px] font-bold text-gray-700 mb-0.5">ขายตรง</label>
+                        <input type="number" id="editPriceDIRECT" placeholder="0" step="10" oninput="autoSuggestTierPricesFromDirect(this.value)" class="w-full border border-gray-300 rounded px-1.5 py-1.5 bg-white text-right font-bold">
+                    </div>
+                    <div class="col-span-1 sm:col-span-1">
+                        <label class="block text-[10px] font-bold text-blue-800 mb-0.5">เกรด A+</label>
+                        <input type="number" id="editPriceA_PLUS" placeholder="0" step="10" class="w-full border border-blue-200 rounded px-1.5 py-1.5 bg-white text-right font-semibold">
+                    </div>
+                    <div class="col-span-1 sm:col-span-1">
+                        <label class="block text-[10px] font-bold text-blue-700 mb-0.5">เกรด A</label>
+                        <input type="number" id="editPriceA" placeholder="0" step="10" class="w-full border border-blue-200 rounded px-1.5 py-1.5 bg-white text-right font-semibold">
+                    </div>
+                    <div class="col-span-1 sm:col-span-1">
+                        <label class="block text-[10px] font-bold text-emerald-800 mb-0.5">เกรด B+</label>
+                        <input type="number" id="editPriceB_PLUS" placeholder="0" step="10" class="w-full border border-emerald-200 rounded px-1.5 py-1.5 bg-white text-right font-semibold">
+                    </div>
+                    <div class="col-span-1 sm:col-span-1">
+                        <label class="block text-[10px] font-bold text-emerald-700 mb-0.5">เกรด B</label>
+                        <input type="number" id="editPriceB" placeholder="0" step="10" class="w-full border border-emerald-200 rounded px-1.5 py-1.5 bg-white text-right font-semibold">
+                    </div>
+                    <div class="col-span-1 sm:col-span-1">
+                        <label class="block text-[10px] font-bold text-amber-800 mb-0.5">เกรด C+</label>
+                        <input type="number" id="editPriceC_PLUS" placeholder="0" step="10" class="w-full border border-amber-200 rounded px-1.5 py-1.5 bg-white text-right font-semibold">
+                    </div>
+                    <div class="col-span-1 sm:col-span-1">
+                        <label class="block text-[10px] font-bold text-amber-700 mb-0.5">เกรด C</label>
+                        <input type="number" id="editPriceC" placeholder="0" step="10" class="w-full border border-amber-200 rounded px-1.5 py-1.5 bg-white text-right font-semibold">
+                    </div>
+                    <div class="col-span-1 sm:col-span-1">
+                        <label class="block text-[10px] font-bold text-rose-700 mb-0.5">พิเศษ</label>
+                        <input type="number" id="editPriceSPECIAL" placeholder="0" step="10" class="w-full border border-rose-200 rounded px-1.5 py-1.5 bg-white text-right font-semibold">
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+                    <span class="text-[10px] text-gray-500">เคล็ดลับ: เมื่อกรอกช่อง <b>ขายตรง</b> ระบบจะช่วยคำนวณราคาแนะนำของทุกเกรดให้เบื้องต้น และแก้ไขตัวเลขแต่ละช่องได้อิสระ</span>
+                    <button type="button" onclick="saveCustomPartPrice8GradeEntry()" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-1.5 rounded-lg font-bold shadow-xs">
+                        <i class="fa-solid fa-save mr-1"></i> บันทึกราคา 8 เกรด
+                    </button>
+                </div>
+            </div>
+
+            <!-- แถบค้นหา + นำเข้า/ส่งออก Excel 8 เกรด -->
             <div class="flex flex-wrap items-center justify-between gap-2 text-xs flex-shrink-0">
                 <input type="text" id="partPriceSearchInput" oninput="renderPartPriceDbTable()" placeholder="ค้นหารหัสอะไหล่หรือชื่ออะไหล่..." class="flex-1 min-w-[180px] border border-gray-300 rounded-lg px-3 py-1.5">
-                <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold cursor-pointer flex items-center gap-1">
-                    <i class="fa-solid fa-file-excel"></i> <span>นำเข้า Excel ราคาอะไหล่</span>
-                    <input type="file" accept=".xlsx,.xls,.csv" onchange="importPartPricesFromExcel(event)" class="hidden">
-                </label>
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold cursor-pointer flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-file-import"></i> <span>นำเข้า Excel (8 เกรด)</span>
+                        <input type="file" accept=".xlsx,.xls,.csv" onchange="importPartPricesFromExcel(event)" class="hidden">
+                    </label>
+                    <button type="button" onclick="exportPartPrices8GradeExcel()" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-file-export"></i> <span>ส่งออก Excel</span>
+                    </button>
+                    <button type="button" onclick="downloadSamplePartPrices8GradeExcel()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1.5 rounded-lg font-semibold border border-gray-300">
+                        ไฟล์ตัวอย่าง 8 เกรด
+                    </button>
+                </div>
             </div>
 
-            <div class="overflow-y-auto flex-1 border border-gray-200 rounded-lg bg-white text-xs">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-gray-100 text-gray-700 font-bold sticky top-0 border-b">
+            <!-- ตารางแสดงราคาอะไหล่ครบทั้ง 8 เกรด -->
+            <div class="overflow-auto flex-1 border border-gray-200 rounded-lg bg-white text-xs min-h-[170px]">
+                <table class="w-full text-left border-collapse min-w-[920px]">
+                    <thead class="bg-hoshizaki-navy text-white font-bold sticky top-0">
                         <tr>
                             <th class="p-2">รหัส / รายการอะไหล่</th>
-                            <th class="p-2 text-right w-32">ราคา/หน่วย (THB)</th>
-                            <th class="p-2 text-center w-16">ลบ</th>
+                            <th class="p-2 text-right">ขายตรง (Direct)</th>
+                            <th class="p-2 text-right text-sky-200">A+</th>
+                            <th class="p-2 text-right text-sky-200">A</th>
+                            <th class="p-2 text-right text-emerald-200">B+</th>
+                            <th class="p-2 text-right text-emerald-200">B</th>
+                            <th class="p-2 text-right text-amber-200">C+</th>
+                            <th class="p-2 text-right text-amber-200">C</th>
+                            <th class="p-2 text-right text-rose-200">ส่วนลดพิเศษ</th>
+                            <th class="p-2 text-center w-20">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody id="partPriceDbTableBody" class="divide-y divide-gray-200"></tbody>
                 </table>
             </div>
 
-            <div class="flex justify-end pt-2 border-t flex-shrink-0">
+            <div class="flex justify-end pt-1 border-t flex-shrink-0">
                 <button type="button" onclick="closePartPriceDbModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dealer & Customer Price Grade + Per-Dealer Price Override Directory Modal (v13.0) -->
+    <div id="dealerGradeModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[76] flex items-center justify-center p-1.5 sm:p-3 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full p-3.5 sm:p-5 space-y-3 max-h-[94vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-2 flex-shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">
+                        <i class="fa-solid fa-address-book text-sky-600 mr-1"></i> จัดการรายชื่อดีลเลอร์/ลูกค้า & ผูกเกรดราคา (A+, A, B+, B, C+, C, Direct, Special)
+                    </h3>
+                    <p class="text-[11px] text-gray-500">กำหนดเกรดประจำตัวของดีลเลอร์/ลูกค้า และสามารถกำหนดราคาพิเศษเฉพาะรายดีลเลอร์ (Override) สำหรับอะไหล่แต่ละชิ้นได้</p>
+                </div>
+                <button type="button" onclick="closeDealerGradeModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+
+            <!-- ฟอร์มเพิ่ม / แก้ไขรายชื่อดีลเลอร์/ลูกค้า + เกรดประจำตัว -->
+            <div class="bg-sky-50/80 border border-sky-200 rounded-xl p-3 space-y-2 text-xs flex-shrink-0">
+                <div class="font-bold text-hoshizaki-navy"><i class="fa-solid fa-user-tag text-sky-600 mr-1"></i> เพิ่ม / แก้ไขข้อมูลดีลเลอร์หรือลูกค้าประจำ</div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+                    <div class="sm:col-span-4">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">ชื่อดีลเลอร์ / ชื่อร้านค้าลูกค้า *</label>
+                        <input type="text" id="dgNameInput" placeholder="เช่น A.J Kitchen & Services CO.,Ltd" class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white font-bold text-hoshizaki-navy">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">ประเภท:</label>
+                        <select id="dgTypeInput" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white font-semibold">
+                            <option value="DEALER">ดีลเลอร์ (Dealer)</option>
+                            <option value="CUSTOMER">ลูกค้าตรง (Customer)</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">เกรดราคาประจำตัว (Price Grade) *</label>
+                        <select id="dgGradeInput" class="w-full border border-sky-400 rounded-lg px-2 py-1.5 bg-white font-extrabold text-hoshizaki-navy">
+                            <option value="DIRECT">ราคาขายตรง (Direct)</option>
+                            <option value="A_PLUS">ดีลเลอร์ เกรด A+</option>
+                            <option value="A">ดีลเลอร์ เกรด A</option>
+                            <option value="B_PLUS">ดีลเลอร์ เกรด B+</option>
+                            <option value="B">ดีลเลอร์ เกรด B</option>
+                            <option value="C_PLUS">ดีลเลอร์ เกรด C+</option>
+                            <option value="C">ดีลเลอร์ เกรด C</option>
+                            <option value="SPECIAL">ราคาส่วนลดพิเศษ (Special)</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">ผู้ติดต่อ / เบอร์โทร:</label>
+                        <input type="text" id="dgContactInput" placeholder="เบอร์โทรหรืออีเมล" class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+                    <div class="sm:col-span-9">
+                        <label class="block text-[10px] font-bold text-gray-600 mb-0.5">ที่อยู่ (Address):</label>
+                        <input type="text" id="dgAddressInput" placeholder="ที่อยู่สำนักงานหรือสถานที่ติดตั้ง" class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <button type="button" onclick="saveDealerGradeRecord()" class="w-full bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white py-1.5 px-3 rounded-lg font-bold shadow-xs">
+                            <i class="fa-solid fa-save mr-1"></i> บันทึกเกรดดีลเลอร์
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- กำหนดราคาเฉพาะรายดีลเลอร์ (Per-Dealer Price Override เมื่อค่าเงินเปลี่ยนหรือมีราคาตกลงพิเศษ) -->
+            <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-2.5 space-y-1.5 text-xs flex-shrink-0">
+                <div class="font-bold text-rose-950"><i class="fa-solid fa-sliders text-rose-600 mr-1"></i> กำหนด/แก้ไขราคาเฉพาะรายดีลเลอร์ (Dealer-Specific Override Price)</div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-1.5 items-end">
+                    <div class="sm:col-span-4">
+                        <select id="dgOverrideDealerSelect" onchange="renderDealerOverrideList()" class="w-full border border-rose-300 rounded-lg px-2 py-1.5 bg-white font-bold text-hoshizaki-navy">
+                            <option value="">-- เลือกดีลเลอร์/ลูกค้าที่จะกำหนดราคาเฉพาะ --</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-4">
+                        <input type="text" id="dgOverridePartInput" list="hoshizakiPartsList" placeholder="เลือก/พิมพ์รหัสอะไหล่..." class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white font-semibold">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <input type="number" id="dgOverridePriceInput" placeholder="ราคาเฉพาะ (THB)" step="10" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-right font-bold text-rose-700">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <button type="button" onclick="saveDealerPartOverride()" class="w-full bg-rose-600 hover:bg-rose-700 text-white py-1.5 px-2.5 rounded-lg font-bold">
+                            เพิ่มราคาเฉพาะ
+                        </button>
+                    </div>
+                </div>
+                <div id="dealerOverrideChipsList" class="flex flex-wrap gap-1.5 pt-0.5 text-[11px]"></div>
+            </div>
+
+            <!-- แถบค้นหา + นำเข้า/ส่งออกรายชื่อดีลเลอร์ Excel -->
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs flex-shrink-0">
+                <input type="text" id="dgSearchInput" oninput="renderDealerGradeTable()" placeholder="ค้นหาชื่อดีลเลอร์ / ลูกค้า / เกรด..." class="flex-1 min-w-[180px] border border-gray-300 rounded-lg px-3 py-1.5">
+                <div class="flex items-center gap-1.5">
+                    <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold cursor-pointer flex items-center gap-1">
+                        <i class="fa-solid fa-file-import"></i> <span>นำเข้า Excel ดีลเลอร์</span>
+                        <input type="file" accept=".xlsx,.xls,.csv" onchange="importDealerGradesFromExcel(event)" class="hidden">
+                    </label>
+                    <button type="button" onclick="exportDealerGradesExcel()" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-file-export"></i> <span>ส่งออก Excel</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ตารางรายชื่อดีลเลอร์ & เกรดราคา -->
+            <div class="overflow-auto flex-1 border border-gray-200 rounded-lg bg-white text-xs min-h-[160px]">
+                <table class="w-full text-left border-collapse min-w-[680px]">
+                    <thead class="bg-hoshizaki-navy text-white font-bold sticky top-0">
+                        <tr>
+                            <th class="p-2">ชื่อดีลเลอร์ / ลูกค้า</th>
+                            <th class="p-2 text-center w-24">ประเภท</th>
+                            <th class="p-2 text-center w-36">เกรดราคาประจำตัว</th>
+                            <th class="p-2">ผู้ติดต่อ / ที่อยู่</th>
+                            <th class="p-2 text-center w-24">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dealerGradeTableBody" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-end pt-1 border-t flex-shrink-0">
+                <button type="button" onclick="closeDealerGradeModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>

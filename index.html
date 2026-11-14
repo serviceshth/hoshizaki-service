@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- html2pdf.js Library for Browser PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- html2canvas Library for Exporting Crisp Schedule Images with Google Fonts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- SheetJS Library for Excel Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Google Fonts: Prompt & Inter -->
@@ -411,6 +413,9 @@
                 <button type="button" onclick="openInstallGuideModal()" class="bg-sky-700 active:bg-sky-800 text-white p-2.5 rounded-lg text-xs font-medium shadow-sm" title="เพิ่มลงหน้าจอมือถือ">
                     <i class="fa-solid fa-mobile-screen-button text-sm"></i>
                 </button>
+                <button type="button" onclick="openScheduleModal()" class="bg-amber-500 active:bg-amber-600 text-white p-2.5 rounded-lg text-xs font-medium shadow-sm" title="ตารางงานช่าง / จ่ายงาน">
+                    <i class="fa-solid fa-calendar-days text-sm"></i>
+                </button>
                 <button type="button" onclick="createNewJobForm()" class="bg-blue-600 active:bg-blue-700 text-white p-2.5 rounded-lg text-xs font-medium shadow-sm" title="ใบงานใหม่">
                     <i class="fa-solid fa-file-circle-plus text-sm"></i>
                 </button>
@@ -428,6 +433,9 @@
 
         <!-- แถบปุ่มคำสั่งหลัก (แสดงตลอดบนแท็บเล็ต/พีซี และพับเก็บได้บนมือถือ) -->
         <div id="toolbarActions" class="hidden sm:flex flex-wrap items-center gap-2 text-xs sm:text-sm mt-3 pt-3 border-t border-white/15">
+            <button type="button" onclick="openScheduleModal()" class="flex-1 sm:flex-none justify-center bg-amber-500 hover:bg-amber-600 text-white px-3 py-2.5 sm:py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-calendar-days"></i> <span>ตารางงานช่าง (Schedule)</span>
+            </button>
             <button type="button" onclick="createNewJobForm()" class="flex-1 sm:flex-none justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-file-circle-plus"></i> <span>ใบงานใหม่</span>
             </button>
@@ -459,6 +467,9 @@
                 <i class="fa-solid fa-print"></i> <span>พิมพ์</span>
             </button>
 
+            <button type="button" onclick="openStaffManagerModal()" class="flex-1 sm:flex-none justify-center bg-teal-600 hover:bg-teal-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-users-gear"></i> <span>จัดการทีมช่าง/ผู้ประสานงาน</span>
+            </button>
             <button type="button" onclick="openTeamCloudSyncModal()" class="flex-1 sm:flex-none justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2.5 sm:py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ Sheets / แชร์ทีม</span>
             </button>
@@ -3967,7 +3978,7 @@
                 </div>
                 <div class="bg-white/90 border border-emerald-200 rounded-lg p-2 space-y-1">
                     <div class="text-[10px] font-bold text-emerald-900">ช่างร่วมทีม (กรณีไปหน้างาน 2–3 คน สามารถติ๊กเลือกเพิ่มเติมได้):</div>
-                    <div class="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+                    <div id="qrCoTechCheckboxContainer" class="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
                         <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr.Thanakrit Chanmokonpanit" class="qr-coteach-cb rounded text-emerald-600"> [T01] Thanakrit</label>
                         <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr.Noparin Homhoul" class="qr-coteach-cb rounded text-emerald-600"> [T02] Noparin</label>
                         <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Mr.Surin Sarawong" class="qr-coteach-cb rounded text-emerald-600"> [T03] Surin S.</label>
@@ -4631,16 +4642,51 @@
             debounceAutoSave();
         }
 
-        const TECHNICIAN_DIRECTORY = [
-            { code: 'T01', name: 'Mr.Thanakrit Chanmokonpanit', phone: '096-804-3989' },
-            { code: 'T02', name: 'Mr.Noparin Homhoul', phone: '097-230-5941' },
-            { code: 'T03', name: 'Mr.Surin Sarawong', phone: '091-767-2018' },
-            { code: 'T04', name: 'Mr.Jeerapan Phrasawang', phone: '091-767-2079' },
-            { code: 'T05', name: 'Mr.Nirun Sornrat', phone: '091-767-2038' },
-            { code: 'T06', name: 'Mr. Surin Tharapai', phone: '063-865-5442' },
-            { code: 'T07', name: 'Mr.Pawat Warongtheradet', phone: '099-508-1908' },
-            { code: 'T08', name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132' }
+        const DEFAULT_TECHNICIAN_DIRECTORY = [
+            { code: 'T01', name: 'Mr.Thanakrit Chanmokonpanit', phone: '096-804-3989', isCoord: true, isDispatcher: true },
+            { code: 'T02', name: 'Mr.Noparin Homhoul', phone: '097-230-5941', isCoord: false, isDispatcher: false },
+            { code: 'T03', name: 'Mr.Surin Sarawong', phone: '091-767-2018', isCoord: true, isDispatcher: true },
+            { code: 'T04', name: 'Mr.Jeerapan Phrasawang', phone: '091-767-2079', isCoord: true, isDispatcher: true },
+            { code: 'T05', name: 'Mr.Nirun Sornrat', phone: '091-767-2038', isCoord: false, isDispatcher: false },
+            { code: 'T06', name: 'Mr. Surin Tharapai', phone: '063-865-5442', isCoord: false, isDispatcher: false },
+            { code: 'T07', name: 'Mr.Pawat Warongtheradet', phone: '099-508-1908', isCoord: false, isDispatcher: false },
+            { code: 'T08', name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132', isCoord: true, isDispatcher: true }
         ];
+
+        const DEFAULT_COORDINATOR_DIRECTORY = [
+            { name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132', role: 'Coordinator / Dispatcher' },
+            { name: 'Mr.Thanakrit Chanmokonpanit', phone: '096-804-3989', role: 'Manager / Dispatcher' },
+            { name: 'Mr.Jeerapan Phrasawang', phone: '091-767-2079', role: 'Coordinator / Dispatcher' },
+            { name: 'Mr.Surin Sarawong', phone: '091-767-2018', role: 'Coordinator / Dispatcher' }
+        ];
+
+        function getTechnicianDirectory() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('hoshizaki_tech_directory') || 'null');
+                if (Array.isArray(saved) && saved.length > 0) return saved;
+            } catch (e) {}
+            return JSON.parse(JSON.stringify(DEFAULT_TECHNICIAN_DIRECTORY));
+        }
+
+        function saveTechnicianDirectory(list) {
+            localStorage.setItem('hoshizaki_tech_directory', JSON.stringify(list));
+            refreshAllStaffUI();
+        }
+
+        function getCoordinatorDirectory() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('hoshizaki_coord_directory') || 'null');
+                if (Array.isArray(saved) && saved.length > 0) return saved;
+            } catch (e) {}
+            return JSON.parse(JSON.stringify(DEFAULT_COORDINATOR_DIRECTORY));
+        }
+
+        function saveCoordinatorDirectory(list) {
+            localStorage.setItem('hoshizaki_coord_directory', JSON.stringify(list));
+            refreshAllStaffUI();
+        }
+
+        let TECHNICIAN_DIRECTORY = getTechnicianDirectory();
 
         function getTechCodeByName(techName) {
             const clean = String(techName || '').trim().toLowerCase();
@@ -5619,7 +5665,8 @@
         function createNewJobForm() {
             showCustomConfirm('ต้องการล้างข้อมูลเพื่อเริ่มใบงานใหม่ใช่หรือไม่? (ข้อมูลปัจจุบันที่ไม่ถูกบันทึกจะหายไป)', (confirmed) => {
                 if (!confirmed) return;
-                autoGenerateJobNo(false);
+                refreshAllStaffUI();
+            autoGenerateJobNo(false);
                 currentOfferNo = '';
                 const idsToClear = ['custStore', 'custDealer', 'custContact', 'custAddress', 'eqModel', 'eqSerial', 'eqProductType', 'eqDateOut', 'eqInvoiceNo', 'eqPoNo', 'eqSoldCustomer', 'timeIn', 'timeOut', 'diagSymptom', 'diagDetected', 'diagGps', 'diagAction', 'tempDisplay', 'tempActual', 'nameCustomer', 'nameManager', 'namePayee'];
                 idsToClear.forEach(id => {
@@ -8259,6 +8306,1373 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             window.location.href = `mailto:serviceshth@gmail.com?subject=${subject}&body=${body}`;
         }
 
+
+        // =========================================================================
+        // MODULE: TECHNICIAN WEEKLY SERVICE SCHEDULE & DISPATCH SYSTEM (v12)
+        // =========================================================================
+        function getDispatchStaffPresetMap() {
+            const map = {};
+            getCoordinatorDirectory().forEach(c => {
+                if (c && c.name) map[c.name] = { name: c.name, phone: c.phone || '' };
+            });
+            getTechnicianDirectory().forEach(t => {
+                if (t && t.name && !map[t.name]) map[t.name] = { name: t.name, phone: t.phone || '' };
+            });
+            return map;
+        }
+
+        const SCHEDULE_TIME_SLOTS = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+
+        function getScheduleItems() {
+            try {
+                return JSON.parse(localStorage.getItem('hoshizaki_service_schedule') || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveScheduleItems(list) {
+            localStorage.setItem('hoshizaki_service_schedule', JSON.stringify(list));
+        }
+
+        function getMondayOfDate(dateStr) {
+            const d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            const mon = new Date(d.setDate(diff));
+            return `${mon.getFullYear()}-${String(mon.getMonth() + 1).padStart(2, '0')}-${String(mon.getDate()).padStart(2, '0')}`;
+        }
+
+        function addDaysToIsoDate(isoDate, days) {
+            const d = new Date(isoDate + 'T00:00:00');
+            d.setDate(d.getDate() + days);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function formatScheduleHeaderRange(mondayIso) {
+            const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const d1 = new Date(mondayIso + 'T00:00:00');
+            const d2 = new Date(addDaysToIsoDate(mondayIso, 6) + 'T00:00:00');
+            if (d1.getMonth() === d2.getMonth()) {
+                return `${d1.getDate()}-${d2.getDate()} ${monthsShort[d1.getMonth()]} ${d1.getFullYear()}`;
+            }
+            return `${d1.getDate()} ${monthsShort[d1.getMonth()]} - ${d2.getDate()} ${monthsShort[d2.getMonth()]} ${d2.getFullYear()}`;
+        }
+
+        function openScheduleModal() {
+            const modal = document.getElementById('scheduleModal');
+            if (!modal) return;
+            const startInput = document.getElementById('scheduleWeekStartInput');
+            if (startInput && !startInput.value) {
+                startInput.value = getMondayOfDate();
+            }
+            modal.classList.remove('hidden');
+            renderWeeklyScheduleBoard();
+        }
+
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal')?.classList.add('hidden');
+        }
+
+        function shiftScheduleWeek(deltaDays) {
+            const startInput = document.getElementById('scheduleWeekStartInput');
+            if (!startInput) return;
+            const currentStart = startInput.value || getMondayOfDate();
+            startInput.value = addDaysToIsoDate(currentStart, deltaDays);
+            renderWeeklyScheduleBoard();
+        }
+
+        function resetScheduleToCurrentWeek() {
+            const startInput = document.getElementById('scheduleWeekStartInput');
+            if (startInput) startInput.value = getMondayOfDate();
+            renderWeeklyScheduleBoard();
+        }
+
+        function addQuickWaitingPlanItem() {
+            const input = document.getElementById('quickWaitingPlanInput');
+            const title = (input?.value || '').trim();
+            if (!title) {
+                showToast('กรุณาพิมพ์ชื่อร้านหรืองานที่ต้องการเพิ่มใน Waiting Plan');
+                return;
+            }
+            const items = getScheduleItems();
+            items.unshift({
+                id: 'SCH-' + Date.now(),
+                slotType: 'WAITING',
+                date: document.getElementById('scheduleWeekStartInput')?.value || getMondayOfDate(),
+                timeStart: '09:00',
+                timeEnd: '12:00',
+                techs: ['Mr.Jeerapan Phrasawang'],
+                store: title,
+                onsiteContact: '',
+                address: '',
+                mapUrl: '',
+                serial: '',
+                model: '',
+                jobCategory: 'ซ่อมแซม (Repair)',
+                workDetail: title,
+                coordName: (getCoordinatorDirectory()[0]?.name || 'Ms.Wanwipha Nakamrod'),
+                coordPhone: (getCoordinatorDirectory()[0]?.phone || '093-827-8132'),
+                dispatcherName: (getCoordinatorDirectory()[1]?.name || getCoordinatorDirectory()[0]?.name || 'Mr.Thanakrit Chanmokonpanit'),
+                dispatcherPhone: (getCoordinatorDirectory()[1]?.phone || getCoordinatorDirectory()[0]?.phone || '096-804-3989'),
+                updatedAt: new Date().toISOString()
+            });
+            saveScheduleItems(items);
+            if (input) input.value = '';
+            renderWeeklyScheduleBoard();
+            showToast(`เพิ่ม "${title}" ลงใน Waiting Plan แล้ว`);
+        }
+
+        function applyStaffContactPreset(role, selectedVal) {
+            const preset = getDispatchStaffPresetMap()[selectedVal];
+            if (role === 'coord') {
+                const nameEl = document.getElementById('dispCoordName');
+                const phoneEl = document.getElementById('dispCoordPhone');
+                if (preset) {
+                    if (nameEl) nameEl.value = preset.name;
+                    if (phoneEl) phoneEl.value = preset.phone;
+                } else {
+                    if (nameEl) { nameEl.value = ''; nameEl.focus(); }
+                    if (phoneEl) phoneEl.value = '';
+                }
+            } else {
+                const nameEl = document.getElementById('dispDispatcherName');
+                const phoneEl = document.getElementById('dispDispatcherPhone');
+                if (preset) {
+                    if (nameEl) nameEl.value = preset.name;
+                    if (phoneEl) phoneEl.value = preset.phone;
+                } else {
+                    if (nameEl) { nameEl.value = ''; nameEl.focus(); }
+                    if (phoneEl) phoneEl.value = '';
+                }
+            }
+        }
+
+        function autoFillDispatchFromSerial(serialVal) {
+            const clean = String(serialVal || '').trim().toUpperCase();
+            if (!clean) return;
+            const rec = getMergedSerialMap().get(clean);
+            if (rec) {
+                const modelEl = document.getElementById('dispModel');
+                const storeEl = document.getElementById('dispStore');
+                if (modelEl && rec.model) modelEl.value = rec.model;
+                if (storeEl && !storeEl.value.trim() && rec.customer) storeEl.value = rec.customer;
+            }
+        }
+
+        function openDispatchEditorModal(itemId = null, presetTech = '', presetDate = '', presetTime = '09:00') {
+            const modal = document.getElementById('dispatchEditorModal');
+            const titleEl = document.getElementById('dispatchEditorTitle');
+            const delBtn = document.getElementById('btnDeleteDispatchItem');
+            if (!modal) return;
+
+            const items = getScheduleItems();
+            const existing = itemId ? items.find(x => x.id === itemId) : null;
+
+            document.getElementById('dispEditId').value = existing ? existing.id : '';
+            document.getElementById('dispSlotType').value = existing ? (existing.slotType || 'SITE_JOB') : 'SITE_JOB';
+            document.getElementById('dispDate').value = existing ? existing.date : (presetDate || document.getElementById('scheduleWeekStartInput')?.value || new Date().toISOString().split('T')[0]);
+            document.getElementById('dispTimeStart').value = existing ? (existing.timeStart || '09:00') : (presetTime || '09:00');
+            const startHour = parseInt((document.getElementById('dispTimeStart').value || '09:00').split(':')[0], 10);
+            const defaultEnd = String(Math.min(18, startHour + 2)).padStart(2, '0') + ':00';
+            document.getElementById('dispTimeEnd').value = existing ? (existing.timeEnd || defaultEnd) : defaultEnd;
+
+            const selectedTechs = existing ? (existing.techs || []) : (presetTech ? [presetTech] : []);
+            document.querySelectorAll('.disp-tech-cb').forEach(cb => {
+                cb.checked = selectedTechs.includes(cb.value);
+            });
+
+            document.getElementById('dispStore').value = existing ? (existing.store || '') : '';
+            document.getElementById('dispOnsiteContact').value = existing ? (existing.onsiteContact || '') : '';
+            document.getElementById('dispAddress').value = existing ? (existing.address || '') : '';
+            document.getElementById('dispMapUrl').value = existing ? (existing.mapUrl || '') : '';
+            document.getElementById('dispSerial').value = existing ? (existing.serial || '') : '';
+            document.getElementById('dispModel').value = existing ? (existing.model || '') : '';
+            document.getElementById('dispJobCategory').value = existing ? (existing.jobCategory || 'ซ่อมแซม (Repair)') : 'ซ่อมแซม (Repair)';
+            document.getElementById('dispWorkDetail').value = existing ? (existing.workDetail || '') : '';
+
+            // Coordinator & Dispatcher defaults from dynamic directory or preserved custom values
+            const presetMap = getDispatchStaffPresetMap();
+            const coordList = getCoordinatorDirectory();
+            const defCoord = coordList[0] || { name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132' };
+            const defDisp = coordList[1] || coordList[0] || { name: 'Mr.Thanakrit Chanmokonpanit', phone: '096-804-3989' };
+
+            const cName = existing ? (existing.coordName || '') : defCoord.name;
+            const cPhone = existing ? (existing.coordPhone || '') : defCoord.phone;
+            document.getElementById('dispCoordPreset').value = presetMap[cName] ? cName : 'CUSTOM';
+            document.getElementById('dispCoordName').value = cName;
+            document.getElementById('dispCoordPhone').value = cPhone;
+
+            const dName = existing ? (existing.dispatcherName || '') : defDisp.name;
+            const dPhone = existing ? (existing.dispatcherPhone || '') : defDisp.phone;
+            document.getElementById('dispDispatcherPreset').value = presetMap[dName] ? dName : 'CUSTOM';
+            document.getElementById('dispDispatcherName').value = dName;
+            document.getElementById('dispDispatcherPhone').value = dPhone;
+
+            if (titleEl) {
+                titleEl.innerHTML = existing
+                    ? '<i class="fa-solid fa-pen-to-square text-amber-500"></i> แก้ไข / ส่งแจ้งเตือนใบจ่ายงาน'
+                    : '<i class="fa-solid fa-calendar-plus text-hoshizaki-blue"></i> เพิ่มงานใหม่เข้าตารางช่าง';
+            }
+            if (delBtn) delBtn.classList.toggle('hidden', !existing);
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeDispatchEditorModal() {
+            document.getElementById('dispatchEditorModal')?.classList.add('hidden');
+        }
+
+        function collectDispatchFormObject() {
+            const techs = Array.from(document.querySelectorAll('.disp-tech-cb:checked')).map(cb => cb.value);
+            return {
+                id: document.getElementById('dispEditId').value || ('SCH-' + Date.now()),
+                slotType: document.getElementById('dispSlotType').value || 'SITE_JOB',
+                date: document.getElementById('dispDate').value || new Date().toISOString().split('T')[0],
+                timeStart: document.getElementById('dispTimeStart').value || '09:00',
+                timeEnd: document.getElementById('dispTimeEnd').value || '12:00',
+                techs: techs,
+                store: document.getElementById('dispStore').value.trim(),
+                onsiteContact: document.getElementById('dispOnsiteContact').value.trim(),
+                address: document.getElementById('dispAddress').value.trim(),
+                mapUrl: document.getElementById('dispMapUrl').value.trim(),
+                serial: document.getElementById('dispSerial').value.trim(),
+                model: document.getElementById('dispModel').value.trim(),
+                jobCategory: document.getElementById('dispJobCategory').value || 'ซ่อมแซม (Repair)',
+                workDetail: document.getElementById('dispWorkDetail').value.trim(),
+                coordName: document.getElementById('dispCoordName').value.trim(),
+                coordPhone: document.getElementById('dispCoordPhone').value.trim(),
+                dispatcherName: document.getElementById('dispDispatcherName').value.trim(),
+                dispatcherPhone: document.getElementById('dispDispatcherPhone').value.trim(),
+                updatedAt: new Date().toISOString()
+            };
+        }
+
+        function saveDispatchScheduleItem() {
+            const obj = collectDispatchFormObject();
+            if (!obj.store && obj.slotType === 'SITE_JOB') {
+                showToast('กรุณาระบุชื่อร้านค้า / สถานที่หน้างาน');
+                return;
+            }
+            if (!obj.store) {
+                const typeLabels = {
+                    'SERVICE_CENTER': 'Service Center',
+                    'ANNUAL_LEAVE': 'Annual Leave',
+                    'HOLIDAY_STANDBY': 'Holiday (Standby)',
+                    'WAITING': 'Waiting Plan'
+                };
+                obj.store = typeLabels[obj.slotType] || 'Service Task';
+            }
+            if (obj.techs.length === 0 && obj.slotType !== 'WAITING') {
+                showToast('กรุณาติ๊กเลือกช่างผู้ปฏิบัติงานอย่างน้อย 1 คน');
+                return;
+            }
+
+            const list = getScheduleItems();
+            const idx = list.findIndex(x => x.id === obj.id);
+            if (idx !== -1) {
+                list[idx] = obj;
+            } else {
+                list.unshift(obj);
+            }
+            saveScheduleItems(list);
+            closeDispatchEditorModal();
+            renderWeeklyScheduleBoard();
+            showToast('บันทึกข้อมูลลงตารางงานช่างเรียบร้อยแล้ว ✓');
+        }
+
+        function deleteCurrentDispatchItem() {
+            const id = document.getElementById('dispEditId').value;
+            if (!id) return;
+            const list = getScheduleItems().filter(x => x.id !== id);
+            saveScheduleItems(list);
+            closeDispatchEditorModal();
+            renderWeeklyScheduleBoard();
+            showToast('ลบรายการออกจากตารางงานแล้ว');
+        }
+
+        function openDispatchGoogleMap() {
+            const mapVal = document.getElementById('dispMapUrl').value.trim();
+            const storeVal = document.getElementById('dispStore').value.trim();
+            const addrVal = document.getElementById('dispAddress').value.trim();
+            if (mapVal.startsWith('http://') || mapVal.startsWith('https://')) {
+                window.open(mapVal, '_blank', 'noopener,noreferrer');
+            } else {
+                const q = encodeURIComponent(mapVal || `${storeVal} ${addrVal}`.trim());
+                if (!q) {
+                    showToast('กรุณาระบุชื่อร้าน หรือลิงก์ Google Maps ก่อนเปิดแผนที่');
+                    return;
+                }
+                window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, '_blank', 'noopener,noreferrer');
+            }
+        }
+
+        function getResolvedMapLink(obj) {
+            if (obj.mapUrl && (obj.mapUrl.startsWith('http://') || obj.mapUrl.startsWith('https://'))) {
+                return obj.mapUrl;
+            }
+            const q = encodeURIComponent(obj.mapUrl || `${obj.store} ${obj.address}`.trim());
+            return q ? `https://www.google.com/maps/search/?api=1&query=${q}` : '-';
+        }
+
+        function buildDispatchSummaryMessage(obj) {
+            const techNames = (obj.techs || []).map(n => {
+                const code = getTechCodeByName(n);
+                return code ? `[${code}] ${n}` : n;
+            }).join(', ') || '-';
+            const mapLink = getResolvedMapLink(obj);
+            return [
+                `📋 *ใบจ่ายงานบริการ HOSHIZAKI SERVICE*`,
+                `📅 วันที่: ${obj.date} | ⏰ เวลา: ${obj.timeStart} - ${obj.timeEnd} น.`,
+                `👷 ทีมช่าง: ${techNames}`,
+                `🏪 สถานที่/ร้าน: ${obj.store || '-'}`,
+                obj.address ? `📍 ที่อยู่: ${obj.address}` : '',
+                `🗺️ Google Maps: ${mapLink}`,
+                `📞 ผู้ติดต่อหน้างาน: ${obj.onsiteContact || '-'}`,
+                `❄️ รุ่นเครื่อง: ${obj.model || '-'} | S/N: ${obj.serial || '-'}`,
+                `🔧 ประเภทงาน: ${obj.jobCategory || '-'}`,
+                `📝 รายละเอียดงาน: ${obj.workDetail || '-'}`,
+                `👩‍💼 ผู้ประสานงาน: ${obj.coordName || '-'} (${obj.coordPhone || '-'})`,
+                `🧑‍💼 ผู้จ่ายงาน: ${obj.dispatcherName || '-'} (${obj.dispatcherPhone || '-'})`
+            ].filter(Boolean).join('
+');
+        }
+
+        // 1. Send to Google Calendar
+        function sendDispatchToGoogleCalendar() {
+            const obj = collectDispatchFormObject();
+            const cleanDate = (obj.date || new Date().toISOString().split('T')[0]).replace(/-/g, '');
+            const cleanStart = (obj.timeStart || '09:00').replace(':', '') + '00';
+            const cleanEnd = (obj.timeEnd || '12:00').replace(':', '') + '00';
+            const title = encodeURIComponent(`[Hoshizaki] ${obj.store || obj.slotType} (${obj.model || 'Service'})`);
+            const details = encodeURIComponent(buildDispatchSummaryMessage(obj));
+            const location = encodeURIComponent(`${obj.store || ''} ${obj.address || ''}`.trim());
+            const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${cleanDate}T${cleanStart}/${cleanDate}T${cleanEnd}&details=${details}&location=${location}&ctz=Asia/Bangkok`;
+            window.open(calUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // 2. Download .ICS File for Outlook / Apple Calendar / Mobile Calendar
+        function downloadDispatchOutlookICS() {
+            const obj = collectDispatchFormObject();
+            const cleanDate = (obj.date || new Date().toISOString().split('T')[0]).replace(/-/g, '');
+            const cleanStart = (obj.timeStart || '09:00').replace(':', '') + '00';
+            const cleanEnd = (obj.timeEnd || '12:00').replace(':', '') + '00';
+            const summaryText = `[Hoshizaki] ${obj.store || obj.slotType} (${obj.model || 'Service'})`;
+            const descText = buildDispatchSummaryMessage(obj).replace(/
+/g, '\n');
+            const locText = `${obj.store || ''} ${obj.address || ''}`.trim();
+
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Hoshizaki Thailand//Service Dispatch//TH',
+                'BEGIN:VEVENT',
+                `UID:${obj.id}@hoshizaki.co.th`,
+                `DTSTAMP:${cleanDate}T${cleanStart}`,
+                `DTSTART;TZID=Asia/Bangkok:${cleanDate}T${cleanStart}`,
+                `DTEND;TZID=Asia/Bangkok:${cleanDate}T${cleanEnd}`,
+                `SUMMARY:${summaryText}`,
+                `DESCRIPTION:${descText}`,
+                `LOCATION:${locText}`,
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('
+');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Hoshizaki_Job_${cleanDate}_${(obj.store || 'Schedule').replace(/[^a-zA-Z0-9ก-๙_-]/g, '_').substring(0, 20)}.ics`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('ดาวน์โหลดไฟล์นัดหมายปฏิทิน (.ics) สำหรับ Outlook เรียบร้อยแล้ว');
+        }
+
+        // 3. Share Text Dispatch Alert directly to LINE
+        function shareDispatchTextToLine() {
+            const obj = collectDispatchFormObject();
+            const msg = buildDispatchSummaryMessage(obj);
+            const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(msg)}`;
+            window.open(lineUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // 4. Convert Dispatch Schedule Card directly into a Pre-filled Service Report Form
+        function convertDispatchToServiceReport() {
+            const obj = collectDispatchFormObject();
+            saveDispatchScheduleItem();
+            closeDispatchEditorModal();
+            closeScheduleModal();
+
+            if (obj.date) document.getElementById('jobDate').value = obj.date;
+            if (obj.timeStart) document.getElementById('timeIn').value = obj.timeStart;
+            if (obj.timeEnd) document.getElementById('timeOut').value = obj.timeEnd;
+            if (obj.store) document.getElementById('custStore').value = obj.store;
+            if (obj.onsiteContact) document.getElementById('custContact').value = obj.onsiteContact;
+            if (obj.address) document.getElementById('custAddress').value = obj.address;
+            if (obj.mapUrl) document.getElementById('diagGps').value = obj.mapUrl;
+            if (obj.serial) {
+                document.getElementById('eqSerial').value = obj.serial;
+                handleSerialAutoLookup(obj.serial);
+            }
+            if (obj.model) document.getElementById('eqModel').value = obj.model;
+            if (obj.workDetail) document.getElementById('diagSymptom').value = obj.workDetail;
+
+            if (obj.techs && obj.techs.length > 0) {
+                document.getElementById('responsibleTechSelect').value = obj.techs[0];
+                updateResponsibleTechPhone(true);
+                setSelectedTechnicians(obj.techs);
+            }
+
+            debounceAutoSave();
+            showToast(`นำข้อมูลงาน "${obj.store}" มาใส่ในใบแจ้งบริการเรียบร้อยแล้ว ✓`);
+        }
+
+        function getSlotColorClasses(slotType) {
+            switch (slotType) {
+                case 'SERVICE_CENTER':
+                    return 'bg-sky-50 border-sky-300 text-sky-950';
+                case 'ANNUAL_LEAVE':
+                    return 'bg-emerald-100 border-emerald-400 text-emerald-950';
+                case 'HOLIDAY_STANDBY':
+                    return 'bg-slate-200 border-slate-400 text-slate-800';
+                default:
+                    return 'bg-orange-100/90 border-orange-300 text-orange-950';
+            }
+        }
+
+        function renderWeeklyScheduleBoard() {
+            const startInput = document.getElementById('scheduleWeekStartInput');
+            const mondayIso = getMondayOfDate(startInput?.value);
+            if (startInput && startInput.value !== mondayIso) startInput.value = mondayIso;
+
+            const allItems = getScheduleItems();
+
+            // 1. Render Waiting Plan Chips
+            const waitingItems = allItems.filter(x => x.slotType === 'WAITING');
+            const waitCountEl = document.getElementById('waitingPlanCount');
+            const waitListEl = document.getElementById('waitingPlanList');
+            if (waitCountEl) waitCountEl.innerText = waitingItems.length;
+            if (waitListEl) {
+                if (waitingItems.length === 0) {
+                    waitListEl.innerHTML = '<span class="text-gray-500 italic text-[11px]">- ยังไม่มีคิวงานรอจัดตาราง -</span>';
+                } else {
+                    waitListEl.innerHTML = waitingItems.map(w => `
+                        <button type="button" onclick="openDispatchEditorModal('${w.id}')" class="bg-white hover:bg-amber-100 text-amber-950 border border-amber-300 rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1.5 shadow-2xs transition">
+                            <span>- ${w.store}</span>
+                            <span class="text-[10px] bg-amber-200 text-amber-900 px-1.5 rounded">จัดลงตาราง</span>
+                        </button>
+                    `).join('');
+                }
+            }
+
+            // 2. Build 7 Days Header (Mon - Sun)
+            const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const weekDates = dayNames.map((name, idx) => {
+                const iso = addDaysToIsoDate(mondayIso, idx);
+                const dayNum = parseInt(iso.split('-')[2], 10);
+                return { name, iso, dayNum };
+            });
+
+            renderScheduleDayTabs(weekDates);
+
+            const filterTech = document.getElementById('scheduleBoardFilterTech')?.value || 'ALL';
+            const visibleTechs = filterTech === 'ALL'
+                ? TECHNICIAN_DIRECTORY
+                : TECHNICIAN_DIRECTORY.filter(t => t.name === filterTech);
+
+            const gridContainer = document.getElementById('weeklyScheduleGridContainer');
+            if (!gridContainer) return;
+
+            gridContainer.innerHTML = visibleTechs.map(tech => {
+                const techItems = allItems.filter(x =>
+                    x.slotType !== 'WAITING' &&
+                    Array.isArray(x.techs) &&
+                    x.techs.includes(tech.name)
+                );
+
+                if (currentScheduleViewMode === 'MOBILE_CARDS') {
+                    return buildMobileTimelineCardHtml(tech, weekDates, techItems);
+                }
+
+                const rowsHtml = SCHEDULE_TIME_SLOTS.map(slotHour => {
+                    const cellsHtml = weekDates.map(wd => {
+                        const matched = techItems.filter(it => {
+                            if (it.date !== wd.iso) return false;
+                            const sH = (it.timeStart || '09:00').substring(0, 2) + ':00';
+                            return sH === slotHour;
+                        });
+
+                        if (matched.length > 0) {
+                            return `<td class="border border-gray-300 p-1 align-top bg-white">
+                                ${matched.map(m => {
+                                    const cls = getSlotColorClasses(m.slotType);
+                                    const teamTag = (m.techs && m.techs.length > 1) ? `<span class="inline-block bg-indigo-700 text-white text-[9px] px-1 rounded ml-1">ทีม ${m.techs.length} คน</span>` : '';
+                                    return `
+                                        <div onclick="openDispatchEditorModal('${m.id}')" class="cursor-pointer border rounded p-1 text-[10px] leading-tight mb-1 shadow-2xs hover:opacity-90 ${cls}">
+                                            <div class="font-extrabold">${m.store}${teamTag}</div>
+                                            <div class="text-[9px] opacity-80">${m.timeStart}-${m.timeEnd} ${m.model ? '| ' + m.model : ''}</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </td>`;
+                        }
+
+                        return `<td onclick="openDispatchEditorModal(null, '${tech.name}', '${wd.iso}', '${slotHour}')" title="คลิกเพื่อเพิ่มงานวันที่ ${wd.iso} เวลา ${slotHour}" class="border border-gray-300 p-1 text-center text-[10px] text-gray-300 hover:bg-blue-50 hover:text-hoshizaki-blue cursor-pointer transition">+</td>`;
+                    }).join('');
+
+                    return `
+                        <tr>
+                            <td class="border border-gray-300 bg-gray-100 font-bold text-gray-700 text-center py-1 px-1.5 whitespace-nowrap">${slotHour}</td>
+                            ${cellsHtml}
+                        </tr>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="border-2 border-gray-400 rounded-xl overflow-hidden bg-white shadow-sm">
+                        <div class="bg-[#FDE68A] border-b-2 border-gray-400 px-3 py-1.5 flex items-center justify-between">
+                            <span class="font-extrabold text-sm text-gray-900">[${tech.code}] ${tech.name}</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[11px] font-semibold text-gray-700">${tech.phone}</span>
+                                <button type="button" onclick="document.getElementById('scheduleImageTechSelect').value='${tech.name}';exportTechScheduleImage(true);" title="แชร์รูปตารางงานของช่างคนนี้เข้า LINE" class="bg-[#06C755] hover:bg-[#05b34c] text-white text-[10px] px-2 py-0.5 rounded font-bold">
+                                    <i class="fa-brands fa-line"></i> รูปตาราง
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-[11px] border-collapse table-fixed min-w-[540px]">
+                                <thead>
+                                    <tr class="bg-gray-200 text-gray-800 font-bold">
+                                        <th class="border border-gray-300 py-1 px-1 w-12 text-center">Time</th>
+                                        ${weekDates.map(wd => `<th class="border border-gray-300 py-1 px-1 text-center">${wd.name}<br><span class="font-extrabold">${wd.dayNum}</span></th>`).join('')}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rowsHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Export High-Resolution Weekly Schedule Image (Matching Reference Excel Grid + Google Fonts Prompt) & Share to LINE
+        async function exportTechScheduleImage(shareToLine = true) {
+            if (typeof html2canvas === 'undefined') {
+                showToast('กำลังโหลดตัวสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง');
+                return;
+            }
+            const techName = document.getElementById('scheduleImageTechSelect')?.value || TECHNICIAN_DIRECTORY[0].name;
+            const techObj = TECHNICIAN_DIRECTORY.find(t => t.name === techName) || TECHNICIAN_DIRECTORY[0];
+            const mondayIso = getMondayOfDate(document.getElementById('scheduleWeekStartInput')?.value);
+            const rangeTitle = formatScheduleHeaderRange(mondayIso);
+
+            const allItems = getScheduleItems();
+            const waitingItems = allItems.filter(x => x.slotType === 'WAITING');
+            const techItems = allItems.filter(x =>
+                x.slotType !== 'WAITING' &&
+                Array.isArray(x.techs) &&
+                x.techs.includes(techObj.name)
+            );
+
+            const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const weekDates = dayNames.map((name, idx) => {
+                const iso = addDaysToIsoDate(mondayIso, idx);
+                return { name, iso, dayNum: parseInt(iso.split('-')[2], 10) };
+            });
+
+            // Ensure Google Fonts ('Prompt') are fully loaded before rendering canvas
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+            }
+
+            const sandbox = document.getElementById('scheduleImageRenderSandbox');
+            if (!sandbox) return;
+
+            const rowsHtml = SCHEDULE_TIME_SLOTS.map(slotHour => {
+                const cells = weekDates.map(wd => {
+                    const matched = techItems.filter(it => it.date === wd.iso && ((it.timeStart || '09:00').substring(0, 2) + ':00') === slotHour);
+                    if (matched.length === 0) {
+                        return `<td style="border: 1px solid #4B5563; height: 46px; padding: 4px; background: #FFFFFF;"></td>`;
+                    }
+                    const inner = matched.map(m => {
+                        let bg = '#FDE8D7';
+                        if (m.slotType === 'SERVICE_CENTER') bg = '#E0F2FE';
+                        if (m.slotType === 'ANNUAL_LEAVE') bg = '#DCFCE7';
+                        if (m.slotType === 'HOLIDAY_STANDBY') bg = '#E5E7EB';
+                        return `
+                            <div style="background: ${bg}; border: 1px solid #9CA3AF; border-radius: 4px; padding: 4px 6px; margin-bottom: 2px; text-align: center;">
+                                <div style="font-weight: 700; font-size: 13px; color: #111827; line-height: 1.25;">${m.store}</div>
+                                <div style="font-size: 11px; color: #374151; margin-top: 2px;">${m.timeStart}-${m.timeEnd}${m.model ? ' | ' + m.model : ''}</div>
+                                ${m.onsiteContact ? `<div style="font-size: 10px; color: #1F2937;">ติดต่อ: ${m.onsiteContact}</div>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                    return `<td style="border: 1px solid #4B5563; padding: 4px; vertical-align: middle; background: #FFFFFF;">${inner}</td>`;
+                }).join('');
+
+                return `
+                    <tr>
+                        <td style="border: 1px solid #4B5563; background: #F3F4F6; font-weight: 700; font-size: 13px; text-align: center; padding: 6px; color: #111827;">${slotHour}</td>
+                        ${cells}
+                    </tr>
+                `;
+            }).join('');
+
+            const waitingHtml = waitingItems.length > 0
+                ? waitingItems.slice(0, 6).map(w => `<span style="display: inline-block; margin-right: 18px; font-weight: 600;">- ${w.store}</span>`).join('')
+                : '<span style="color: #6B7280;">- ไม่มีคิวงานรอจัดตาราง -</span>';
+
+            sandbox.innerHTML = `
+                <div id="scheduleExportPoster" style="width: 1040px; padding: 20px; background: #FFFFFF; font-family: 'Prompt', 'Inter', sans-serif; color: #111827;">
+                    <table style="width: 100%; border-collapse: collapse; border: 2px solid #1F2937;">
+                        <tr>
+                            <td style="width: 28%; border: 1.5px solid #1F2937; padding: 10px; text-align: center; font-size: 22px; font-weight: 800; background: #FFFFFF; color: #002B49;">
+                                Service schedule
+                            </td>
+                            <td style="width: 72%; border: 1.5px solid #1F2937; padding: 8px 14px; font-size: 13px; background: #FFFFFF; vertical-align: top;" rowspan="2">
+                                <div style="font-weight: 700; color: #002B49; margin-bottom: 4px;">HOSHIZAKI (THAILAND) LIMITED — ตารางปฏิบัติงานบริการ</div>
+                                <div style="line-height: 1.5;">${waitingHtml}</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1.5px solid #1F2937; padding: 8px; text-align: center; font-size: 18px; font-weight: 800; background: #FEF3C7; color: #111827;">
+                                ${rangeTitle}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1.5px solid #1F2937; padding: 8px; text-align: center; font-size: 16px; font-weight: 800; background: #FFFFFF;">
+                                Waiting plan:
+                            </td>
+                            <td style="border: 1.5px solid #1F2937; padding: 8px 14px; font-size: 13px; font-weight: 600; background: #FFFBEB;">
+                                ผู้ประสานงาน: ${getCoordinatorDirectory()[0]?.name || "Ms.Wanwipha Nakamrod"} (${getCoordinatorDirectory()[0]?.phone || "093-827-8132"}) &nbsp;|&nbsp; ผู้จ่ายงาน: ${getCoordinatorDirectory()[1]?.name || getCoordinatorDirectory()[0]?.name || "Mr.Thanakrit Chanmokonpanit"} (${getCoordinatorDirectory()[1]?.phone || getCoordinatorDirectory()[0]?.phone || "096-804-3989"})
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div style="margin-top: 12px; border: 2px solid #1F2937;">
+                        <div style="background: #FDE68A; border-bottom: 2px solid #1F2937; padding: 8px 14px; text-align: center; font-size: 20px; font-weight: 800; color: #111827;">
+                            [${techObj.code}] ${techObj.name} &nbsp;(${techObj.phone})
+                        </div>
+                        <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+                            <thead>
+                                <tr style="background: #E5E7EB; font-size: 14px; font-weight: 800;">
+                                    <th style="border: 1px solid #4B5563; padding: 8px; width: 76px; text-align: center;">Time</th>
+                                    ${weekDates.map(wd => `<th style="border: 1px solid #4B5563; padding: 6px; text-align: center;">${wd.name}<br><span style="font-size: 16px;">${wd.dayNum}</span></th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            showToast('กำลังสร้างไฟล์ภาพตารางงาน (ความละเอียดสูง)...');
+            try {
+                const posterEl = document.getElementById('scheduleExportPoster');
+                const canvas = await html2canvas(posterEl, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#FFFFFF'
+                });
+                const fileName = `Schedule_${techObj.code}_${techObj.name.replace(/[^a-zA-Z0-9]/g, '_')}_${mondayIso}.png`;
+
+                canvas.toBlob(async (blob) => {
+                    if (!blob) return;
+                    const file = new File([blob], fileName, { type: 'image/png' });
+
+                    if (shareToLine && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: `ตารางงาน ${techObj.name}`,
+                                text: `ตารางปฏิบัติงาน [${techObj.code}] ${techObj.name} (${rangeTitle})`
+                            });
+                            showToast('แชร์รูปภาพตารางงานสำเร็จ ✓');
+                            return;
+                        } catch (shareErr) {
+                            // Fallback to image download + LINE share if cancelled or unsupported
+                        }
+                    }
+
+                    // Download PNG image directly
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    if (shareToLine) {
+                        showToast('บันทึกรูปภาพตารางงานลงเครื่องแล้ว สามารถส่งรูปเข้าแชต LINE ได้ทันที ✓');
+                    } else {
+                        showToast(`ดาวน์โหลดรูปภาพ ${fileName} เรียบร้อยแล้ว ✓`);
+                    }
+                }, 'image/png');
+            } catch (err) {
+                console.error(err);
+                showToast('เกิดข้อผิดพลาดในการสร้างรูปภาพตารางงาน');
+            }
+        }
+
+        // Sync Schedule & Waiting Plan to Google Sheets ("Service_Schedule" tab)
+        async function syncScheduleWithGoogleSheets() {
+            const url = getGoogleSheetsWebAppUrl();
+            if (!url) {
+                showToast('กรุณาตั้งค่า URL ของ Google Apps Script ก่อนซิงค์');
+                return;
+            }
+            const items = getScheduleItems();
+            showToast(`กำลังซิงค์ตารางงาน ${items.length} รายการเข้า Google Sheets...`);
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SYNC_SCHEDULE',
+                        items: items
+                    })
+                });
+                showToast('ซิงค์ตารางงานช่าง & Waiting Plan เข้า Google Sheets เรียบร้อย ✓');
+            } catch (err) {
+                showToast('ไม่สามารถเชื่อมต่อ Google Sheets ได้ในขณะนี้');
+            }
+        }
+
+        async function loadScheduleFromGoogleSheets() {
+            const url = getGoogleSheetsWebAppUrl();
+            if (!url) {
+                showToast('กรุณาตั้งค่า URL ของ Google Apps Script ก่อน');
+                return;
+            }
+            showToast('กำลังดึงตารางงานล่าสุดจาก Google Sheets...');
+            try {
+                const sep = url.includes('?') ? '&' : '?';
+                const res = await fetch(`${url}${sep}action=getSchedule`);
+                const data = await res.json();
+                if (data && data.status === 'ok' && Array.isArray(data.items)) {
+                    saveScheduleItems(data.items);
+                    renderWeeklyScheduleBoard();
+                    showToast(`ดึงตารางงานสำเร็จ (${data.items.length} รายการ) ✓`);
+                } else {
+                    showToast('ยังไม่มีข้อมูลตารางงานใน Google Sheets');
+                }
+            } catch (err) {
+                showToast('ดึงข้อมูลตารางงานไม่สำเร็จ กรุณาตรวจสอบการ Deploy Apps Script');
+            }
+        }
+
+
+        // =========================================================================
+        // MODULE: DYNAMIC TECHNICIAN & COORDINATOR DIRECTORY MANAGEMENT (v12.1)
+        // =========================================================================
+        function refreshAllStaffUI() {
+            TECHNICIAN_DIRECTORY = getTechnicianDirectory();
+            const coords = getCoordinatorDirectory();
+
+            // 1. Main Service Report Lead Technician Select
+            const respSelect = document.getElementById('responsibleTechSelect');
+            if (respSelect) {
+                const prevVal = respSelect.value;
+                respSelect.innerHTML = '<option value="">-- เลือกช่างผู้รับผิดชอบงาน --</option>' +
+                    TECHNICIAN_DIRECTORY.map(t => `<option value="${t.name}" data-code="${t.code}" data-phone="${t.phone || ''}">[${t.code}] ${t.name}${t.phone ? ' (' + t.phone + ')' : ''}</option>`).join('');
+                if (prevVal) respSelect.value = prevVal;
+            }
+
+            // 2. Main Service Report Signature Multi-Tech Dropdown
+            const techDropMenu = document.getElementById('techDropdownMenu');
+            if (techDropMenu) {
+                const prevChecked = Array.from(techDropMenu.querySelectorAll('.tech-checkbox:checked')).map(cb => cb.value);
+                techDropMenu.innerHTML = TECHNICIAN_DIRECTORY.map(t => `
+                    <label class="flex items-center gap-2 px-2 py-1.5 hover:bg-blue-50 rounded cursor-pointer text-xs text-gray-800">
+                        <input type="checkbox" value="${t.name}" ${prevChecked.includes(t.name) ? 'checked' : ''} onchange="updateSelectedTechnicians()" class="tech-checkbox w-4 h-4 rounded text-hoshizaki-blue">
+                        <span>[${t.code}] ${t.name}</span>
+                    </label>
+                `).join('');
+            }
+
+            // 3. History Modal Filters & Quick Service Report Entry
+            const qrTech = document.getElementById('qrEntryTech');
+            if (qrTech) {
+                const prevQr = qrTech.value;
+                qrTech.innerHTML = TECHNICIAN_DIRECTORY.map(t => `<option value="${t.name}">[${t.code}] ${t.name}</option>`).join('');
+                if (prevQr && TECHNICIAN_DIRECTORY.some(t => t.name === prevQr)) qrTech.value = prevQr;
+            }
+
+            const qrCoBox = document.getElementById('qrCoTechCheckboxContainer');
+            if (qrCoBox) {
+                const prevQrChecked = Array.from(qrCoBox.querySelectorAll('.qr-coteach-cb:checked')).map(cb => cb.value);
+                qrCoBox.innerHTML = TECHNICIAN_DIRECTORY.map(t => `
+                    <label class="inline-flex items-center gap-1 cursor-pointer">
+                        <input type="checkbox" value="${t.name}" ${prevQrChecked.includes(t.name) ? 'checked' : ''} class="qr-coteach-cb rounded text-emerald-600"> [${t.code}] ${t.name}
+                    </label>
+                `).join('');
+            }
+
+            const histTechFilter = document.getElementById('historyTechFilter');
+            if (histTechFilter) {
+                const prevHist = histTechFilter.value;
+                histTechFilter.innerHTML = '<option value="ALL">ช่างทั้งหมด (All Technicians)</option>' +
+                    TECHNICIAN_DIRECTORY.map(t => `<option value="${t.name}">[${t.code}] ${t.name}</option>`).join('');
+                if (prevHist) histTechFilter.value = prevHist;
+            }
+
+            // 4. Schedule Modal Selects & Dispatch Editor Checkboxes
+            const schImgSelect = document.getElementById('scheduleImageTechSelect');
+            if (schImgSelect) {
+                const prevImg = schImgSelect.value;
+                schImgSelect.innerHTML = TECHNICIAN_DIRECTORY.map(t => `<option value="${t.name}">[${t.code}] ${t.name}</option>`).join('');
+                if (prevImg && TECHNICIAN_DIRECTORY.some(t => t.name === prevImg)) schImgSelect.value = prevImg;
+            }
+
+            const schBoardFilter = document.getElementById('scheduleBoardFilterTech');
+            if (schBoardFilter) {
+                const prevBoard = schBoardFilter.value;
+                schBoardFilter.innerHTML = `<option value="ALL">แสดงครบทั้ง ${TECHNICIAN_DIRECTORY.length} คน (All Technicians)</option>` +
+                    TECHNICIAN_DIRECTORY.map(t => `<option value="${t.name}">[${t.code}] ${t.name}</option>`).join('');
+                if (prevBoard) schBoardFilter.value = prevBoard;
+            }
+
+            const dispTechBox = document.getElementById('dispTechCheckboxContainer');
+            if (dispTechBox) {
+                const prevDispChecked = Array.from(dispTechBox.querySelectorAll('.disp-tech-cb:checked')).map(cb => cb.value);
+                dispTechBox.innerHTML = TECHNICIAN_DIRECTORY.map(t => `
+                    <label class="inline-flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-blue-100 cursor-pointer">
+                        <input type="checkbox" value="${t.name}" ${prevDispChecked.includes(t.name) ? 'checked' : ''} class="disp-tech-cb rounded text-hoshizaki-blue">
+                        <span class="truncate">[${t.code}] ${t.name}</span>
+                    </label>
+                `).join('');
+            }
+
+            // 5. Coordinator & Dispatcher Preset Dropdowns
+            const coordPresetEl = document.getElementById('dispCoordPreset');
+            const dispPresetEl = document.getElementById('dispDispatcherPreset');
+            const optionsHtml = coords.map((c, idx) => `<option value="${c.name}">${c.name}${idx === 0 ? ' (ค่าเริ่มต้น)' : ''}</option>`).join('') +
+                '<option value="CUSTOM">-- พิมพ์ชื่อเอง --</option>';
+
+            if (coordPresetEl) {
+                const prevC = coordPresetEl.value;
+                coordPresetEl.innerHTML = optionsHtml;
+                if (prevC) coordPresetEl.value = prevC;
+            }
+            if (dispPresetEl) {
+                const prevD = dispPresetEl.value;
+                dispPresetEl.innerHTML = optionsHtml;
+                if (prevD) dispPresetEl.value = prevD;
+            }
+
+            // Refresh open schedule board if visible
+            if (!document.getElementById('scheduleModal')?.classList.contains('hidden')) {
+                renderWeeklyScheduleBoard();
+            }
+        }
+
+        function openStaffManagerModal() {
+            const modal = document.getElementById('staffManagerModal');
+            if (!modal) return;
+            // Suggest next tech code automatically (e.g., T09)
+            const list = getTechnicianDirectory();
+            const nextNum = list.length + 1;
+            const codeInp = document.getElementById('newTechCodeInput');
+            if (codeInp) codeInp.value = 'T' + String(nextNum).padStart(2, '0');
+            renderStaffManagerLists();
+            modal.classList.remove('hidden');
+        }
+
+        function closeStaffManagerModal() {
+            document.getElementById('staffManagerModal')?.classList.add('hidden');
+        }
+
+        function renderStaffManagerLists() {
+            const techs = getTechnicianDirectory();
+            const coords = getCoordinatorDirectory();
+
+            const techCountEl = document.getElementById('mgrTechCount');
+            const coordCountEl = document.getElementById('mgrCoordCount');
+            if (techCountEl) techCountEl.innerText = techs.length;
+            if (coordCountEl) coordCountEl.innerText = coords.length;
+
+            const techContainer = document.getElementById('mgrTechnicianListContainer');
+            if (techContainer) {
+                techContainer.innerHTML = techs.map((t, idx) => `
+                    <div class="flex items-center justify-between gap-2 bg-white border border-blue-100 rounded-lg px-2.5 py-1.5">
+                        <div class="min-w-0 flex-1">
+                            <span class="inline-block bg-indigo-100 text-indigo-900 font-bold text-[10px] px-1.5 rounded mr-1">${t.code}</span>
+                            <span class="font-bold text-gray-800">${t.name}</span>
+                            <div class="text-[10px] text-gray-500">${t.phone || '-'}</div>
+                        </div>
+                        <button type="button" onclick="removeTechnicianEntry(${idx})" title="ลบรายชื่อช่างคนนี้" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded text-[11px] font-bold flex-shrink-0">
+                            <i class="fa-solid fa-trash-can"></i> ลบ
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            const coordContainer = document.getElementById('mgrCoordinatorListContainer');
+            if (coordContainer) {
+                coordContainer.innerHTML = coords.map((c, idx) => `
+                    <div class="flex items-center justify-between gap-2 bg-white border border-amber-100 rounded-lg px-2.5 py-1.5">
+                        <div class="min-w-0 flex-1">
+                            <div class="font-bold text-gray-800">${c.name}</div>
+                            <div class="text-[10px] text-gray-500">${c.phone || '-'} ${c.role ? '• ' + c.role : ''}</div>
+                        </div>
+                        <button type="button" onclick="removeCoordinatorEntry(${idx})" title="ลบรายชื่อผู้ประสานงานคนนี้" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded text-[11px] font-bold flex-shrink-0">
+                            <i class="fa-solid fa-trash-can"></i> ลบ
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function addNewTechnicianEntry() {
+            const code = (document.getElementById('newTechCodeInput')?.value || '').trim().toUpperCase();
+            const name = (document.getElementById('newTechNameInput')?.value || '').trim();
+            const phone = (document.getElementById('newTechPhoneInput')?.value || '').trim();
+            if (!name) {
+                showToast('กรุณากรอกชื่อ-นามสกุลช่าง');
+                return;
+            }
+            const list = getTechnicianDirectory();
+            const finalCode = code || ('T' + String(list.length + 1).padStart(2, '0'));
+            if (list.some(t => t.name.toLowerCase() === name.toLowerCase())) {
+                showToast('มีรายชื่อช่างคนนี้อยู่ในระบบแล้ว');
+                return;
+            }
+            list.push({ code: finalCode, name, phone });
+            saveTechnicianDirectory(list);
+            document.getElementById('newTechNameInput').value = '';
+            document.getElementById('newTechPhoneInput').value = '';
+            document.getElementById('newTechCodeInput').value = 'T' + String(list.length + 1).padStart(2, '0');
+            renderStaffManagerLists();
+            showToast(`เพิ่มช่าง [${finalCode}] ${name} เรียบร้อยแล้ว ✓`);
+        }
+
+        function removeTechnicianEntry(index) {
+            const list = getTechnicianDirectory();
+            if (list.length <= 1) {
+                showToast('ต้องมีรายชื่อช่างอย่างน้อย 1 คนในระบบ');
+                return;
+            }
+            const removed = list.splice(index, 1)[0];
+            saveTechnicianDirectory(list);
+            renderStaffManagerLists();
+            showToast(`ลบรายชื่อช่าง ${removed?.name || ''} ออกจากรายการแล้ว`);
+        }
+
+        function resetDefaultTechnicians() {
+            saveTechnicianDirectory(JSON.parse(JSON.stringify(DEFAULT_TECHNICIAN_DIRECTORY)));
+            renderStaffManagerLists();
+            showToast('คืนค่ารายชื่อช่างมาตรฐาน 8 คนเรียบร้อยแล้ว');
+        }
+
+        function addNewCoordinatorEntry() {
+            const name = (document.getElementById('newCoordNameInput')?.value || '').trim();
+            const phone = (document.getElementById('newCoordPhoneInput')?.value || '').trim();
+            const role = (document.getElementById('newCoordRoleInput')?.value || '').trim() || 'Coordinator';
+            if (!name) {
+                showToast('กรุณากรอกชื่อ-นามสกุลผู้ประสานงาน');
+                return;
+            }
+            const list = getCoordinatorDirectory();
+            if (list.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+                showToast('มีรายชื่อผู้ประสานงานคนนี้อยู่ในระบบแล้ว');
+                return;
+            }
+            list.push({ name, phone, role });
+            saveCoordinatorDirectory(list);
+            document.getElementById('newCoordNameInput').value = '';
+            document.getElementById('newCoordPhoneInput').value = '';
+            renderStaffManagerLists();
+            showToast(`เพิ่มผู้ประสานงาน ${name} เรียบร้อยแล้ว ✓`);
+        }
+
+        function removeCoordinatorEntry(index) {
+            const list = getCoordinatorDirectory();
+            if (list.length <= 1) {
+                showToast('ต้องมีรายชื่อผู้ประสานงานอย่างน้อย 1 คนในระบบ');
+                return;
+            }
+            const removed = list.splice(index, 1)[0];
+            saveCoordinatorDirectory(list);
+            renderStaffManagerLists();
+            showToast(`ลบรายชื่อ ${removed?.name || ''} ออกจากรายการแล้ว`);
+        }
+
+        function resetDefaultCoordinators() {
+            saveCoordinatorDirectory(JSON.parse(JSON.stringify(DEFAULT_COORDINATOR_DIRECTORY)));
+            renderStaffManagerLists();
+            showToast('คืนค่ารายชื่อผู้ประสานงานเริ่มต้นเรียบร้อยแล้ว');
+        }
+
+        async function syncStaffDirectoryToGoogleSheets() {
+            const url = getGoogleSheetsWebAppUrl();
+            if (!url) {
+                showToast('กรุณาตั้งค่า URL ของ Google Apps Script ก่อน');
+                return;
+            }
+            const techs = getTechnicianDirectory();
+            const coords = getCoordinatorDirectory();
+            showToast('กำลังซิงค์รายชื่อช่างและผู้ประสานงานเข้า Google Sheets...');
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SYNC_STAFF_DIRECTORY',
+                        technicians: techs,
+                        coordinators: coords
+                    })
+                });
+                showToast('ซิงค์รายชื่อทีมช่างและผู้ประสานงานเข้า Google Sheets เรียบร้อย ✓');
+            } catch (err) {
+                showToast('ไม่สามารถเชื่อมต่อ Google Sheets ได้');
+            }
+        }
+
+        async function loadStaffDirectoryFromGoogleSheets() {
+            const url = getGoogleSheetsWebAppUrl();
+            if (!url) {
+                showToast('กรุณาตั้งค่า URL ของ Google Apps Script ก่อน');
+                return;
+            }
+            showToast('กำลังดึงรายชื่อทีมงานล่าสุดจาก Google Sheets...');
+            try {
+                const sep = url.includes('?') ? '&' : '?';
+                const res = await fetch(`${url}${sep}action=getStaffDirectory`);
+                const data = await res.json();
+                if (data && data.status === 'ok') {
+                    if (Array.isArray(data.technicians) && data.technicians.length > 0) {
+                        saveTechnicianDirectory(data.technicians);
+                    }
+                    if (Array.isArray(data.coordinators) && data.coordinators.length > 0) {
+                        saveCoordinatorDirectory(data.coordinators);
+                    }
+                    renderStaffManagerLists();
+                    showToast('อัปเดตรายชื่อช่างและผู้ประสานงานจาก Google Sheets เรียบร้อย ✓');
+                } else {
+                    showToast('ยังไม่มีข้อมูลรายชื่อที่บันทึกไว้ใน Google Sheets');
+                }
+            } catch (err) {
+                showToast('ดึงข้อมูลรายชื่อไม่สำเร็จ กรุณาตรวจสอบการ Deploy Apps Script');
+            }
+        }
+
+
+        // =========================================================================
+        // MOBILE-FIRST SCHEDULE PREVIEW & VERTICAL POSTER EXPORT (v12.2)
+        // =========================================================================
+        let currentScheduleViewMode = (typeof window !== 'undefined' && window.innerWidth < 768) ? 'MOBILE_CARDS' : 'MOBILE_CARDS';
+        let selectedScheduleDayFilter = 'ALL'; // 'ALL' or 'YYYY-MM-DD'
+
+        function setScheduleViewMode(mode) {
+            currentScheduleViewMode = mode;
+            const btnMob = document.getElementById('btnSchedViewMobile');
+            const btnGrid = document.getElementById('btnSchedViewGrid');
+            if (btnMob && btnGrid) {
+                if (mode === 'MOBILE_CARDS') {
+                    btnMob.className = 'px-2.5 py-1.5 bg-hoshizaki-navy text-white transition flex items-center gap-1';
+                    btnGrid.className = 'px-2.5 py-1.5 bg-gray-50 text-gray-700 hover:bg-gray-100 transition flex items-center gap-1';
+                } else {
+                    btnGrid.className = 'px-2.5 py-1.5 bg-hoshizaki-navy text-white transition flex items-center gap-1';
+                    btnMob.className = 'px-2.5 py-1.5 bg-gray-50 text-gray-700 hover:bg-gray-100 transition flex items-center gap-1';
+                }
+            }
+            renderWeeklyScheduleBoard();
+        }
+
+        function setScheduleDayFilter(dayIso) {
+            selectedScheduleDayFilter = dayIso;
+            renderWeeklyScheduleBoard();
+        }
+
+        function renderScheduleDayTabs(weekDates) {
+            const tabsEl = document.getElementById('scheduleMobileDayTabs');
+            if (!tabsEl) return;
+            const thaiDays = ['จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.', 'อา.'];
+            const todayIso = new Date().toISOString().split('T')[0];
+
+            let htmlTabs = `<button type="button" onclick="setScheduleDayFilter('ALL')" class="px-2.5 py-1.5 rounded-lg font-bold whitespace-nowrap border transition ${selectedScheduleDayFilter === 'ALL' ? 'bg-amber-500 text-white border-amber-600 shadow-2xs' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'}">ทั้งสัปดาห์ (7 วัน)</button>`;
+
+            weekDates.forEach((wd, idx) => {
+                const isToday = wd.iso === todayIso;
+                const isActive = selectedScheduleDayFilter === wd.iso;
+                htmlTabs += `<button type="button" onclick="setScheduleDayFilter('${wd.iso}')" class="px-2.5 py-1.5 rounded-lg font-bold whitespace-nowrap border transition ${isActive ? 'bg-hoshizaki-blue text-white border-hoshizaki-darkblue shadow-2xs' : (isToday ? 'bg-blue-50 text-hoshizaki-navy border-blue-300' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100')}">
+                    ${thaiDays[idx]} ${wd.dayNum} (${wd.name})
+                </button>`;
+            });
+            tabsEl.innerHTML = htmlTabs;
+        }
+
+        function buildMobileTimelineCardHtml(tech, weekDates, techItems) {
+            const thaiFullDays = ['วันจันทร์ (Mon)', 'วันอังคาร (Tue)', 'วันพุธ (Wed)', 'วันพฤหัสบดี (Thu)', 'วันศุกร์ (Fri)', 'วันเสาร์ (Sat)', 'วันอาทิตย์ (Sun)'];
+            const visibleDays = selectedScheduleDayFilter === 'ALL'
+                ? weekDates.map((wd, idx) => ({ ...wd, idx }))
+                : weekDates.map((wd, idx) => ({ ...wd, idx })).filter(d => d.iso === selectedScheduleDayFilter);
+
+            const daysBlockHtml = visibleDays.map(wd => {
+                const dayJobs = techItems
+                    .filter(it => it.date === wd.iso)
+                    .sort((a, b) => String(a.timeStart || '').localeCompare(String(b.timeStart || '')));
+
+                const jobsContent = dayJobs.length === 0
+                    ? `<div class="flex items-center justify-between text-[11px] text-gray-400 py-1">
+                            <span>- ว่าง (ไม่มีตารางงาน) -</span>
+                            <button type="button" onclick="openDispatchEditorModal(null, '${tech.name}', '${wd.iso}', '09:00')" class="text-hoshizaki-blue hover:underline font-bold">+ เพิ่มงาน</button>
+                       </div>`
+                    : dayJobs.map(m => {
+                        const cls = getSlotColorClasses(m.slotType);
+                        const teamList = (m.techs || []).map(n => {
+                            const c = getTechCodeByName(n);
+                            return c ? `[${c}] ${n.split(' ')[0]}` : n;
+                        });
+                        const mapLink = getResolvedMapLink(m);
+                        return `
+                            <div class="border-l-4 rounded-lg p-2.5 mb-2 shadow-2xs ${cls}">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div>
+                                        <span class="inline-block bg-hoshizaki-navy text-white text-[11px] font-extrabold px-2 py-0.5 rounded">
+                                            ⏰ ${m.timeStart} - ${m.timeEnd} น.
+                                        </span>
+                                        ${teamList.length > 1 ? `<span class="inline-block bg-indigo-700 text-white text-[10px] font-bold px-1.5 py-0.5 rounded ml-1">ทีม ${teamList.length} คน</span>` : ''}
+                                    </div>
+                                    <button type="button" onclick="openDispatchEditorModal('${m.id}')" class="bg-white/90 hover:bg-white text-gray-800 border border-gray-300 px-2 py-0.5 rounded text-[10px] font-bold">
+                                        แก้ไข / แชร์
+                                    </button>
+                                </div>
+                                <div class="font-extrabold text-sm text-gray-900 mt-1.5 leading-snug">${m.store}</div>
+                                ${m.model || m.serial ? `<div class="text-[11px] font-semibold text-hoshizaki-darkblue mt-0.5">❄️ รุ่น: ${m.model || '-'} ${m.serial ? '| S/N: ' + m.serial : ''}</div>` : ''}
+                                ${m.workDetail ? `<div class="text-[11px] text-gray-700 mt-0.5">🔧 ${m.workDetail}</div>` : ''}
+                                ${m.onsiteContact ? `<div class="text-[11px] text-gray-800 mt-0.5">📞 หน้างาน: <b>${m.onsiteContact}</b></div>` : ''}
+                                ${teamList.length > 1 ? `<div class="text-[10px] text-indigo-900 mt-0.5">👷 ร่วมทีม: ${teamList.join(', ')}</div>` : ''}
+                                <div class="flex flex-wrap items-center gap-1.5 mt-2 pt-1.5 border-t border-black/10">
+                                    ${mapLink !== '-' ? `<a href="${mapLink}" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1"><i class="fa-solid fa-location-dot"></i> นำทาง Maps</a>` : ''}
+                                    <button type="button" onclick="quickConvertIdToServiceReport('${m.id}')" class="bg-purple-600 hover:bg-purple-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1">
+                                        <i class="fa-solid fa-file-signature"></i> เปิดใบแจ้งบริการ
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                return `
+                    <div class="border-b border-gray-200 last:border-b-0 p-2.5">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-extrabold text-hoshizaki-navy">${thaiFullDays[wd.idx]} — วันที่ ${wd.dayNum}</span>
+                            <button type="button" onclick="openDispatchEditorModal(null, '${tech.name}', '${wd.iso}', '09:00')" class="text-[11px] bg-blue-50 hover:bg-blue-100 text-hoshizaki-darkblue px-2 py-0.5 rounded font-bold">+ เพิ่มงาน</button>
+                        </div>
+                        ${jobsContent}
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="border-2 border-gray-300 rounded-2xl overflow-hidden bg-white shadow-sm">
+                    <div class="bg-[#FDE68A] border-b-2 border-gray-300 px-3 py-2 flex items-center justify-between gap-2">
+                        <div>
+                            <div class="font-extrabold text-sm text-gray-900">[${tech.code}] ${tech.name}</div>
+                            <div class="text-[11px] font-semibold text-gray-700"><i class="fa-solid fa-phone mr-1"></i>${tech.phone || '-'} • งานสัปดาห์นี้ ${techItems.length} รายการ</div>
+                        </div>
+                        <button type="button" onclick="openMobileSchedulePreviewModal('${tech.name}')" class="bg-[#06C755] hover:bg-[#05b34c] text-white text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow-xs flex-shrink-0">
+                            <i class="fa-solid fa-mobile-screen"></i> <span>พรีวิว / แชร์ LINE</span>
+                        </button>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        ${daysBlockHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function quickConvertIdToServiceReport(itemId) {
+            const item = getScheduleItems().find(x => x.id === itemId);
+            if (!item) return;
+            openDispatchEditorModal(itemId);
+            convertDispatchToServiceReport();
+        }
+
+        function openMobileSchedulePreviewModal(presetTechName = null) {
+            const modal = document.getElementById('mobileSchedulePreviewModal');
+            const sel = document.getElementById('mobilePreviewTechSelect');
+            if (!modal || !sel) return;
+
+            sel.innerHTML = TECHNICIAN_DIRECTORY.map(t => `<option value="${t.name}">[${t.code}] ${t.name}</option>`).join('');
+            if (presetTechName && TECHNICIAN_DIRECTORY.some(t => t.name === presetTechName)) {
+                sel.value = presetTechName;
+            } else {
+                const topSel = document.getElementById('scheduleImageTechSelect')?.value;
+                if (topSel && TECHNICIAN_DIRECTORY.some(t => t.name === topSel)) sel.value = topSel;
+            }
+            renderMobileSchedulePreviewCard();
+            modal.classList.remove('hidden');
+        }
+
+        function closeMobileSchedulePreviewModal() {
+            document.getElementById('mobileSchedulePreviewModal')?.classList.add('hidden');
+        }
+
+        function renderMobileSchedulePreviewCard() {
+            const poster = document.getElementById('mobileSchedulePosterCard');
+            const techName = document.getElementById('mobilePreviewTechSelect')?.value || TECHNICIAN_DIRECTORY[0].name;
+            const techObj = TECHNICIAN_DIRECTORY.find(t => t.name === techName) || TECHNICIAN_DIRECTORY[0];
+            const mondayIso = getMondayOfDate(document.getElementById('scheduleWeekStartInput')?.value);
+            const rangeTitle = formatScheduleHeaderRange(mondayIso);
+
+            const allItems = getScheduleItems();
+            const waitingItems = allItems.filter(x => x.slotType === 'WAITING');
+            const techItems = allItems.filter(x =>
+                x.slotType !== 'WAITING' &&
+                Array.isArray(x.techs) &&
+                x.techs.includes(techObj.name)
+            );
+
+            const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const thaiFullDays = ['วันจันทร์ (Mon)', 'วันอังคาร (Tue)', 'วันพุธ (Wed)', 'วันพฤหัสบดี (Thu)', 'วันศุกร์ (Fri)', 'วันเสาร์ (Sat)', 'วันอาทิตย์ (Sun)'];
+            const weekDates = dayNames.map((name, idx) => {
+                const iso = addDaysToIsoDate(mondayIso, idx);
+                return { name, thaiName: thaiFullDays[idx], iso, dayNum: parseInt(iso.split('-')[2], 10) };
+            });
+
+            const coords = getCoordinatorDirectory();
+            const c0 = coords[0] || { name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132' };
+            const d0 = coords[1] || c0;
+
+            const dayBlocksHtml = weekDates.map(wd => {
+                const dayJobs = techItems
+                    .filter(it => it.date === wd.iso)
+                    .sort((a, b) => String(a.timeStart || '').localeCompare(String(b.timeStart || '')));
+
+                if (dayJobs.length === 0) {
+                    return `
+                        <div style="padding: 8px 12px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; background: #FAFAFA;">
+                            <span style="font-weight: 700; font-size: 12px; color: #4B5563;">${wd.thaiName} • ${wd.dayNum}</span>
+                            <span style="font-size: 11px; color: #9CA3AF;">ว่าง (No Job)</span>
+                        </div>
+                    `;
+                }
+
+                const cards = dayJobs.map(m => {
+                    let bg = '#FFF7ED';
+                    let borderCol = '#F97316';
+                    if (m.slotType === 'SERVICE_CENTER') { bg = '#F0F9FF'; borderCol = '#0284C7'; }
+                    if (m.slotType === 'ANNUAL_LEAVE') { bg = '#F0FDF4'; borderCol = '#16A34A'; }
+                    if (m.slotType === 'HOLIDAY_STANDBY') { bg = '#F3F4F6'; borderCol = '#6B7280'; }
+
+                    const teamNames = (m.techs || []).map(n => {
+                        const c = getTechCodeByName(n);
+                        return c ? `[${c}] ${n.split(' ')[0]}` : n;
+                    });
+
+                    return `
+                        <div style="background: ${bg}; border-left: 4px solid ${borderCol}; border-radius: 8px; padding: 8px 10px; margin-top: 6px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="background: #002B49; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 5px;">
+                                    ⏰ ${m.timeStart} - ${m.timeEnd} น.
+                                </span>
+                                ${teamNames.length > 1 ? `<span style="background: #4338CA; color: #FFFFFF; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 5px;">ทีม ${teamNames.length} คน</span>` : ''}
+                            </div>
+                            <div style="font-weight: 800; font-size: 14px; color: #111827; margin-top: 4px; line-height: 1.3;">${m.store}</div>
+                            ${m.model || m.serial ? `<div style="font-size: 12px; font-weight: 600; color: #005A8D; margin-top: 2px;">รุ่น: ${m.model || '-'} ${m.serial ? '| S/N: ' + m.serial : ''}</div>` : ''}
+                            ${m.workDetail ? `<div style="font-size: 12px; color: #1F2937; margin-top: 2px;">งาน: ${m.workDetail}</div>` : ''}
+                            ${m.onsiteContact ? `<div style="font-size: 11px; color: #374151; margin-top: 2px;">ติดต่อหน้างาน: <b>${m.onsiteContact}</b></div>` : ''}
+                            ${teamNames.length > 1 ? `<div style="font-size: 11px; color: #312E81; margin-top: 2px;">ทีมช่าง: ${teamNames.join(', ')}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div style="padding: 10px 12px; border-bottom: 1px solid #D1D5DB; background: #FFFFFF;">
+                        <div style="font-weight: 800; font-size: 13px; color: #002B49;">${wd.thaiName} — วันที่ ${wd.dayNum}</div>
+                        ${cards}
+                    </div>
+                `;
+            }).join('');
+
+            const waitingBoxHtml = waitingItems.length > 0
+                ? `<div style="background: #FFFBEB; border-top: 1px solid #FCD34D; padding: 8px 12px; font-size: 11px;">
+                        <div style="font-weight: 800; color: #92400E;">Waiting Plan (คิวรอจัดตาราง):</div>
+                        <div style="color: #78350F; margin-top: 2px;">${waitingItems.slice(0, 5).map(w => '• ' + w.store).join(' &nbsp; ')}</div>
+                   </div>`
+                : '';
+
+            poster.innerHTML = `
+                <div style="background: #002B49; color: #FFFFFF; padding: 12px 14px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #38BDF8; letter-spacing: 0.5px;">HOSHIZAKI (THAILAND) LIMITED</div>
+                    <div style="font-size: 17px; font-weight: 800; margin-top: 2px;">Service Schedule (${rangeTitle})</div>
+                </div>
+                <div style="background: #FDE68A; padding: 10px 14px; border-bottom: 2px solid #002B49;">
+                    <div style="font-size: 15px; font-weight: 800; color: #111827;">[${techObj.code}] ${techObj.name}</div>
+                    <div style="font-size: 12px; font-weight: 600; color: #374151; margin-top: 1px;">โทร: ${techObj.phone || '-'} | งานสัปดาห์นี้: ${techItems.length} งาน</div>
+                </div>
+                <div>${dayBlocksHtml}</div>
+                ${waitingBoxHtml}
+                <div style="background: #F1F5F9; padding: 8px 12px; font-size: 11px; color: #334155; border-top: 1px solid #CBD5E1; line-height: 1.45;">
+                    <div><b>ผู้ประสานงาน:</b> ${c0.name} (${c0.phone || '-'})</div>
+                    <div><b>ผู้จ่ายงาน:</b> ${d0.name} (${d0.phone || '-'})</div>
+                </div>
+            `;
+        }
+
+        async function exportMobilePortraitScheduleImage(shareToLine = true) {
+            if (typeof html2canvas === 'undefined') {
+                showToast('กำลังโหลดตัวสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง');
+                return;
+            }
+            const posterEl = document.getElementById('mobileSchedulePosterCard');
+            const techName = document.getElementById('mobilePreviewTechSelect')?.value || TECHNICIAN_DIRECTORY[0].name;
+            const techObj = TECHNICIAN_DIRECTORY.find(t => t.name === techName) || TECHNICIAN_DIRECTORY[0];
+            const mondayIso = getMondayOfDate(document.getElementById('scheduleWeekStartInput')?.value);
+            if (!posterEl) return;
+
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+            }
+            showToast('กำลังสร้างรูปตารางงานสำหรับมือถือ (แนวตั้ง)...');
+            try {
+                const canvas = await html2canvas(posterEl, {
+                    scale: 2.5,
+                    useCORS: true,
+                    backgroundColor: '#FFFFFF'
+                });
+                const fileName = `Mobile_Schedule_${techObj.code}_${mondayIso}.png`;
+                canvas.toBlob(async (blob) => {
+                    if (!blob) return;
+                    const file = new File([blob], fileName, { type: 'image/png' });
+                    if (shareToLine && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: `ตารางงาน ${techObj.name}`,
+                                text: `ตารางปฏิบัติงาน [${techObj.code}] ${techObj.name}`
+                            });
+                            showToast('แชร์รูปตารางงานแนวตั้งเข้า LINE เรียบร้อย ✓');
+                            return;
+                        } catch (e) {}
+                    }
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast(shareToLine ? 'บันทึกรูปตารางมือถือลงเครื่องแล้ว พร้อมส่งเข้าแชต LINE ทันที ✓' : `ดาวน์โหลด ${fileName} เรียบร้อย ✓`);
+                }, 'image/png');
+            } catch (err) {
+                showToast('เกิดข้อผิดพลาดในการสร้างรูปภาพ');
+            }
+        }
+
         window.onload = function() {
             const now = new Date();
             const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
@@ -9020,5 +10434,411 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             </div>
         </div>
     </div>
+
+    <!-- Technician Service Schedule & Dispatch Modal (v12) -->
+    <div id="scheduleModal" class="no-print fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-1.5 sm:p-3 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full p-3 sm:p-5 space-y-3 max-h-[95vh] flex flex-col">
+            <!-- Header Bar -->
+            <div class="flex flex-wrap justify-between items-center border-b pb-2.5 gap-2 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-calendar-week"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">ตารางปฏิบัติงานช่าง & จ่ายงานหน้างาน (Service Schedule & Dispatch)</h3>
+                        <p class="text-[11px] text-gray-500">จัดตารางรายสัปดาห์ • คิวงานรอจัด (Waiting Plan) • ส่งออกรูปภาพแชร์ LINE • Google Calendar & Outlook</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                    <button type="button" onclick="openDispatchEditorModal()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-plus-circle"></i> <span>เพิ่มงาน / จ่ายงานใหม่</span>
+                    </button>
+                    <button type="button" onclick="openStaffManagerModal()" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-users-gear"></i> <span>เพิ่ม/ลด ช่าง & ผู้ประสานงาน</span>
+                    </button>
+                    <button type="button" onclick="syncScheduleWithGoogleSheets()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ตารางลง Sheets</span>
+                    </button>
+                    <button type="button" onclick="loadScheduleFromGoogleSheets()" class="bg-sky-600 hover:bg-sky-700 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 shadow-xs" title="ดึงตารางงานล่าสุดจาก Google Sheets">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> <span>ดึงจาก Sheets</span>
+                    </button>
+                    <button type="button" onclick="closeScheduleModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1.5">&times;</button>
+                </div>
+            </div>
+
+            <!-- Week Navigator & Export Image Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs flex-shrink-0">
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" onclick="shiftScheduleWeek(-7)" class="bg-white hover:bg-gray-100 border border-gray-300 px-2.5 py-1.5 rounded-lg font-bold text-gray-700">
+                        <i class="fa-solid fa-chevron-left"></i> สัปดาห์ก่อน
+                    </button>
+                    <div class="flex items-center gap-1 bg-white border border-gray-300 rounded-lg px-2 py-1">
+                        <span class="text-gray-500 font-medium">สัปดาห์เริ่มวันที่:</span>
+                        <input type="date" id="scheduleWeekStartInput" onchange="renderWeeklyScheduleBoard()" class="font-bold text-hoshizaki-navy focus:outline-none bg-transparent">
+                    </div>
+                    <button type="button" onclick="shiftScheduleWeek(7)" class="bg-white hover:bg-gray-100 border border-gray-300 px-2.5 py-1.5 rounded-lg font-bold text-gray-700">
+                        สัปดาห์ถัดไป <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <button type="button" onclick="resetScheduleToCurrentWeek()" class="bg-blue-50 hover:bg-blue-100 text-hoshizaki-darkblue border border-blue-200 px-2.5 py-1.5 rounded-lg font-semibold">
+                        สัปดาห์นี้
+                    </button>
+                </div>
+
+                <!-- Export Individual Technician Schedule Image for LINE -->
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <select id="scheduleImageTechSelect" class="border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-bold text-hoshizaki-navy">
+                        <option value="Mr.Thanakrit Chanmokonpanit">[T01] Mr.Thanakrit Chanmokonpanit</option>
+                        <option value="Mr.Noparin Homhoul">[T02] Mr.Noparin Homhoul</option>
+                        <option value="Mr.Surin Sarawong">[T03] Mr.Surin Sarawong</option>
+                        <option value="Mr.Jeerapan Phrasawang">[T04] Mr.Jeerapan Phrasawang</option>
+                        <option value="Mr.Nirun Sornrat">[T05] Mr.Nirun Sornrat</option>
+                        <option value="Mr. Surin Tharapai">[T06] Mr. Surin Tharapai</option>
+                        <option value="Mr.Pawat Warongtheradet">[T07] Mr.Pawat Warongtheradet</option>
+                        <option value="Ms.Wanwipha Nakamrod">[T08] Ms.Wanwipha Nakamrod</option>
+                    </select>
+                    <button type="button" onclick="exportTechScheduleImage(true)" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-brands fa-line text-sm"></i> <span>แชร์รูปตารางงานเข้า LINE</span>
+                    </button>
+                    <button type="button" onclick="exportTechScheduleImage(false)" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 shadow-xs" title="ดาวน์โหลดไฟล์ภาพ PNG ตารางงานของช่างที่เลือก">
+                        <i class="fa-solid fa-image"></i> <span>โหลดรูป PNG</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Board Container -->
+            <div class="overflow-auto flex-1 space-y-3 pr-1">
+                <!-- Waiting Plan Box (คิวงานรอจัดลงตาราง เหมือนแถบ Waiting plan ด้านบนของรูปตัวอย่าง) -->
+                <div class="bg-amber-50/80 border-2 border-amber-300 rounded-xl p-2.5 space-y-2 text-xs">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="font-extrabold text-amber-950 flex items-center gap-1.5">
+                            <i class="fa-solid fa-hourglass-half text-amber-600"></i>
+                            <span>Waiting Plan / คิวงานรอลงตาราง (<span id="waitingPlanCount">0</span> รายการ)</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <input type="text" id="quickWaitingPlanInput" onkeydown="if(event.key==='Enter'){event.preventDefault();addQuickWaitingPlanItem();}" placeholder="พิมพ์ชื่องานรอคิว เช่น Sushiro Seacon Sq.Srinakarin..." class="border border-amber-300 rounded-lg px-2.5 py-1 bg-white w-56 sm:w-72 focus:outline-none">
+                            <button type="button" onclick="addQuickWaitingPlanItem()" class="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded-lg font-bold">+ เพิ่มคิวรอ</button>
+                        </div>
+                    </div>
+                    <div id="waitingPlanList" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <!-- Mobile-Friendly View Mode & Day Selector Bar -->
+                <div class="bg-white border border-gray-200 rounded-xl p-2.5 space-y-2 text-xs shadow-2xs">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="font-bold text-gray-600">ช่าง:</span>
+                            <select id="scheduleBoardFilterTech" onchange="renderWeeklyScheduleBoard()" class="border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white font-bold text-hoshizaki-navy">
+                                <option value="ALL">แสดงช่างทั้งหมด</option>
+                            </select>
+                            <!-- View Mode Switcher: Mobile Cards (Default on Mobile) vs Full Weekly Grid -->
+                            <div class="inline-flex rounded-lg border border-hoshizaki-navy/30 overflow-hidden font-bold">
+                                <button type="button" id="btnSchedViewMobile" onclick="setScheduleViewMode('MOBILE_CARDS')" class="px-2.5 py-1.5 bg-hoshizaki-navy text-white transition flex items-center gap-1">
+                                    <i class="fa-solid fa-mobile-screen"></i> <span>มุมมองมือถือ (การ์ดอ่านง่าย)</span>
+                                </button>
+                                <button type="button" id="btnSchedViewGrid" onclick="setScheduleViewMode('WEEKLY_GRID')" class="px-2.5 py-1.5 bg-gray-50 text-gray-700 hover:bg-gray-100 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-table-cells"></i> <span>ตารางรวมทั้งสัปดาห์</span>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="openMobileSchedulePreviewModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow-xs">
+                            <i class="fa-solid fa-eye"></i> <span>พรีวิวตารางมือถือ / แชร์รูปแนวตั้ง</span>
+                        </button>
+                    </div>
+
+                    <!-- Day Filter Tabs (จันทร์ - อาทิตย์ + ทั้งสัปดาห์) สำหรับเลื่อนดูทีละวันบนมือถือได้ง่าย -->
+                    <div id="scheduleMobileDayTabs" class="flex items-center gap-1 overflow-x-auto pb-0.5"></div>
+                </div>
+
+                <!-- Grid of Technician Weekly Timetables (09:00 - 18:00, Mon - Sun) -->
+                <div id="weeklyScheduleGridContainer" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dispatch & Schedule Job Editor / Detail Modal -->
+    <div id="dispatchEditorModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-4 sm:p-5 space-y-3 max-h-[94vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-2.5 flex-shrink-0">
+                <h3 id="dispatchEditorTitle" class="text-sm sm:text-base font-extrabold text-hoshizaki-navy flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-plus text-hoshizaki-blue"></i> บันทึกและจ่ายงานเข้าตารางช่าง
+                </h3>
+                <button type="button" onclick="closeDispatchEditorModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+
+            <div class="overflow-y-auto flex-1 space-y-3 pr-1 text-xs">
+                <input type="hidden" id="dispEditId" value="">
+
+                <!-- Row 1: Status / Slot Category, Date, Time Start - End -->
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-700 mb-0.5">สถานะ / ประเภทตาราง *</label>
+                        <select id="dispSlotType" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white font-bold text-hoshizaki-navy">
+                            <option value="SITE_JOB">ออกหน้างานลูกค้า (Site Job)</option>
+                            <option value="WAITING">คิวรอจัดตาราง (Waiting Plan)</option>
+                            <option value="SERVICE_CENTER">เข้า Service Center / ออฟฟิศ</option>
+                            <option value="ANNUAL_LEAVE">ลาพักร้อน / ลากิจ (Annual Leave)</option>
+                            <option value="HOLIDAY_STANDBY">วันหยุด / Standby (Holiday)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-700 mb-0.5">วันที่ปฏิบัติงาน *</label>
+                        <input type="date" id="dispDate" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-700 mb-0.5">เวลาเริ่ม (Start Time) *</label>
+                        <input type="time" id="dispTimeStart" value="09:00" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-700 mb-0.5">เวลาสิ้นสุด (End Time) *</label>
+                        <input type="time" id="dispTimeEnd" value="12:00" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 bg-white font-semibold">
+                    </div>
+                </div>
+
+                <!-- Row 2: Assigned Technicians (All 8 selectable, supports 1-3 techs) -->
+                <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-2.5 space-y-1.5">
+                    <div class="text-[11px] font-extrabold text-hoshizaki-navy">เลือกช่างผู้ปฏิบัติงาน (เลือกได้ 1 คน หรือทีม 2–3 คน):</div>
+                    <div id="dispTechCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px]">
+                        <label class="inline-flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-blue-100 cursor-pointer"><input type="checkbox" value="Mr.Thanakrit Chanmokonpanit" class="disp-tech-cb rounded text-hoshizaki-blue"> <span>[T01] Thanakrit</span></label>
+                        <label class="inline-flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-blue-100 cursor-pointer"><input type="checkbox" value="Mr.Noparin Homhoul" class="disp-tech-cb rounded text-hoshizaki-blue"> <span>[T02] Noparin</span></label>
+                        <label class="inline-flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-blue-100 cursor-pointer"><input type="checkbox" value="Mr.Surin Sarawong" class="disp-tech-cb rounded text-hoshizaki-blue"> <span>[T03] Surin</span></label>
+                        <label class="inline-flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-blue-100 cursor-pointer"><input type="checkbox" value="Mr.Jeerapan Phrasawang" class="disp-tech-cb rounded text-hoshizaki-blue"> <span>[T04] Jeerapan</span></label>
+                        <label class="inline-flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-blue-100 cursor-pointer"><input type="checkbox" value="Mr.Nirun Sornrat" class="disp-tech-cb rounded text-hoshizaki-blue"> <span>[T05] Nirun (Pui)</span></label>
+                        <label class="inline-flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-blue-100 cursor-pointer"><input type="checkbox" value="Mr. Surin Tharapai" class="disp-tech-cb rounded text-hoshizaki-blue"> <span>[T06] Surin.T (Beer)</span></label>
+                        <label class="inline-flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-blue-100 cursor-pointer"><input type="checkbox" value="Mr.Pawat Warongtheradet" class="disp-tech-cb rounded text-hoshizaki-blue"> <span>[T07] Pawat</span></label>
+                        <label class="inline-flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-blue-100 cursor-pointer"><input type="checkbox" value="Ms.Wanwipha Nakamrod" class="disp-tech-cb rounded text-hoshizaki-blue"> <span>[T08] Wanwipha</span></label>
+                    </div>
+                </div>
+
+                <!-- Row 3: Customer / Location / Onsite Contact / Google Maps Link -->
+                <div class="border border-gray-200 rounded-xl p-2.5 space-y-2">
+                    <div class="font-bold text-hoshizaki-navy border-b pb-1"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> ข้อมูลสถานที่ & การติดต่อหน้างาน</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">ชื่อร้าน / สถานที่หน้างาน *</label>
+                            <input type="text" id="dispStore" list="hoshizakiCustomersList" placeholder="เช่น Maruzen : Sushiro Central Rama 2" class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">ผู้ติดต่อหน้างาน & เบอร์โทร (Onsite Contact)</label>
+                            <input type="text" id="dispOnsiteContact" placeholder="เช่น คุณเอ ผู้จัดการร้าน (081-234-5678)" class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">ที่อยู่ / จุดสังเกต (Address)</label>
+                            <input type="text" id="dispAddress" placeholder="ชั้น / โซน / ถนน / จังหวัด" class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">ลิงก์โลเคชั่น Google Maps (URL หรือ พิกัด)</label>
+                            <div class="flex gap-1">
+                                <input type="text" id="dispMapUrl" placeholder="วางลิงก์ https://maps.app.goo.gl/... หรือพิกัด" class="flex-1 border border-gray-300 rounded-lg px-2.5 py-1.5">
+                                <button type="button" onclick="openDispatchGoogleMap()" title="เปิดดูใน Google Maps" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 rounded-lg font-bold">
+                                    <i class="fa-solid fa-map-location-dot"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Machine Serial No., Model & Work Description -->
+                <div class="border border-gray-200 rounded-xl p-2.5 space-y-2">
+                    <div class="font-bold text-hoshizaki-navy border-b pb-1"><i class="fa-solid fa-screwdriver-wrench text-hoshizaki-blue mr-1"></i> ข้อมูลเครื่องจักร & รายละเอียดสิ่งที่ต้องทำ</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">Serial Number (ดึงรุ่นอัตโนมัติ)</label>
+                            <input type="text" id="dispSerial" list="hoshizakiSerialsList" oninput="autoFillDispatchFromSerial(this.value)" placeholder="พิมพ์ Serial No." class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">รุ่นเครื่อง (Model)</label>
+                            <input type="text" id="dispModel" list="hoshizakiModelsList" placeholder="เช่น IM-100NE, HNC-180BE" class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">ประเภทงาน (Job Category)</label>
+                            <select id="dispJobCategory" class="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold">
+                                <option value="ซ่อมแซม (Repair)">ซ่อมแซม (Repair)</option>
+                                <option value="ตรวจเช็ค (Check)">ตรวจเช็ค (Check)</option>
+                                <option value="บำรุงรักษา (PM)">บำรุงรักษา (PM)</option>
+                                <option value="ติดตั้งเครื่องใหม่ (Install)">ติดตั้งเครื่องใหม่ (Install)</option>
+                                <option value="ส่งมอบ / เทรนนิ่ง">ส่งมอบ / เทรนนิ่ง</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-600 mb-0.5">รายละเอียดงานที่ต้องทำ / อาการเสีย / อะไหล่ที่ต้องเตรียม *</label>
+                        <textarea id="dispWorkDetail" rows="2" placeholder="ระบุอาการเสีย ขั้นตอนการแก้ไข หรืออะไหล่ที่ช่างต้องเบิกติดรถไป..." class="w-full border border-gray-300 rounded-lg p-2 resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Row 5: Coordinator & Dispatcher Auto-fill + Editable Name & Phone -->
+                <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-2.5 space-y-2">
+                    <div class="font-bold text-amber-950 border-b border-amber-200 pb-1"><i class="fa-solid fa-headset text-amber-600 mr-1"></i> ข้อมูลผู้ประสานงาน & ผู้จ่ายงาน (เลือกจากรายชื่อหรือแก้ไขเพิ่มเองได้)</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <!-- Coordinator -->
+                        <div class="bg-white p-2 rounded-lg border border-amber-200 space-y-1">
+                            <label class="block text-[10px] font-bold text-gray-700">ผู้ประสานงาน (Coordinator):</label>
+                            <select id="dispCoordPreset" onchange="applyStaffContactPreset('coord', this.value)" class="w-full border border-gray-300 rounded px-2 py-1 bg-amber-50/40 font-semibold text-hoshizaki-navy">
+                                <option value="Ms.Wanwipha Nakamrod">Ms.Wanwipha Nakamrod (ค่าเริ่มต้น)</option>
+                                <option value="Mr.Thanakrit Chanmokonpanit">Mr.Thanakrit Chanmokonpanit</option>
+                                <option value="Mr.Jeerapan Phrasawang">Mr.Jeerapan Phrasawang</option>
+                                <option value="Mr.Surin Sarawong">Mr.Surin Sarawong</option>
+                                <option value="CUSTOM">-- พิมพ์ชื่อผู้ประสานงานเอง --</option>
+                            </select>
+                            <div class="grid grid-cols-2 gap-1">
+                                <input type="text" id="dispCoordName" placeholder="ชื่อผู้ประสานงาน" class="border border-gray-300 rounded px-2 py-1 text-[11px] font-medium">
+                                <input type="text" id="dispCoordPhone" placeholder="เบอร์โทรติดต่อ" class="border border-gray-300 rounded px-2 py-1 text-[11px] font-medium">
+                            </div>
+                        </div>
+
+                        <!-- Dispatcher -->
+                        <div class="bg-white p-2 rounded-lg border border-amber-200 space-y-1">
+                            <label class="block text-[10px] font-bold text-gray-700">ผู้จ่ายงาน (Dispatcher):</label>
+                            <select id="dispDispatcherPreset" onchange="applyStaffContactPreset('dispatcher', this.value)" class="w-full border border-gray-300 rounded px-2 py-1 bg-amber-50/40 font-semibold text-hoshizaki-navy">
+                                <option value="Mr.Thanakrit Chanmokonpanit">Mr.Thanakrit Chanmokonpanit (ค่าเริ่มต้น)</option>
+                                <option value="Mr.Jeerapan Phrasawang">Mr.Jeerapan Phrasawang</option>
+                                <option value="Ms.Wanwipha Nakamrod">Ms.Wanwipha Nakamrod</option>
+                                <option value="Mr.Surin Sarawong">Mr.Surin Sarawong</option>
+                                <option value="CUSTOM">-- พิมพ์ชื่อผู้จ่ายงานเอง --</option>
+                            </select>
+                            <div class="grid grid-cols-2 gap-1">
+                                <input type="text" id="dispDispatcherName" placeholder="ชื่อผู้จ่ายงาน" class="border border-gray-300 rounded px-2 py-1 text-[11px] font-medium">
+                                <input type="text" id="dispDispatcherPhone" placeholder="เบอร์โทรติดต่อ" class="border border-gray-300 rounded px-2 py-1 text-[11px] font-medium">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Footer: Save, Delete, Open Job Form, Google Calendar, Outlook (.ics), LINE -->
+            <div class="border-t pt-2.5 space-y-2 flex-shrink-0 text-xs">
+                <div class="flex flex-wrap items-center justify-between gap-1.5">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <button type="button" onclick="sendDispatchToGoogleCalendar()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1">
+                            <i class="fa-brands fa-google"></i> <span>Google Calendar</span>
+                        </button>
+                        <button type="button" onclick="downloadDispatchOutlookICS()" class="bg-sky-700 hover:bg-sky-800 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-calendar-check"></i> <span>Outlook / ปฏิทิน (.ics)</span>
+                        </button>
+                        <button type="button" onclick="shareDispatchTextToLine()" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                            <i class="fa-brands fa-line"></i> <span>ส่งแจ้งเตือนเข้า LINE</span>
+                        </button>
+                        <button type="button" onclick="convertDispatchToServiceReport()" class="bg-purple-600 hover:bg-purple-700 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-file-signature"></i> <span>เปิดเป็นใบแจ้งบริการ</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" id="btnDeleteDispatchItem" onclick="deleteCurrentDispatchItem()" class="hidden bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg font-bold">ลบงานนี้</button>
+                        <button type="button" onclick="saveDispatchScheduleItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg font-bold shadow-sm">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกลงตาราง
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Off-screen High-Resolution Export Canvas Wrapper for Technician Weekly Schedule Image (LINE Share) -->
+    <div id="scheduleImageRenderSandbox" style="position: fixed; left: -9999px; top: 0; width: 1080px; background: #ffffff; font-family: 'Prompt', 'Inter', sans-serif; z-index: -1;"></div>
+
+
+    <!-- Dynamic Technician & Coordinator Directory Manager Modal (v12.1) -->
+    <div id="staffManagerModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-4 sm:p-5 space-y-3 max-h-[92vh] flex flex-col">
+            <div class="flex flex-wrap justify-between items-center border-b pb-2.5 gap-2 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-users-gear"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">จัดการรายชื่อช่างบริการ & ผู้ประสานงาน / ผู้จ่ายงาน</h3>
+                        <p class="text-[11px] text-gray-500">เพิ่ม / แก้ไข / ลบรายชื่อได้ตลอดเวลา และซิงค์เข้า Google Sheets ส่วนกลางเพื่อให้ทุกเครื่องอัปเดตตรงกัน</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs">
+                    <button type="button" onclick="syncStaffDirectoryToGoogleSheets()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์รายชื่อเข้า Sheets</span>
+                    </button>
+                    <button type="button" onclick="loadStaffDirectoryFromGoogleSheets()" class="bg-sky-600 hover:bg-sky-700 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> <span>ดึงจาก Sheets</span>
+                    </button>
+                    <button type="button" onclick="closeStaffManagerModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+                </div>
+            </div>
+
+            <div class="overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 pr-1 text-xs">
+                <!-- Left Column: Technicians List -->
+                <div class="border border-blue-200 rounded-xl p-3 bg-blue-50/40 space-y-2.5">
+                    <div class="flex items-center justify-between border-b border-blue-200 pb-1.5">
+                        <span class="font-extrabold text-hoshizaki-navy"><i class="fa-solid fa-screwdriver-wrench text-hoshizaki-blue mr-1"></i> รายชื่อช่างบริการ (<span id="mgrTechCount">0</span> คน)</span>
+                        <button type="button" onclick="resetDefaultTechnicians()" class="text-[10px] text-gray-500 hover:text-gray-800 underline">คืนค่าเริ่มต้น</button>
+                    </div>
+                    <!-- Add New Technician Form -->
+                    <div class="grid grid-cols-12 gap-1.5 bg-white p-2 rounded-lg border border-blue-200">
+                        <input type="text" id="newTechCodeInput" placeholder="รหัส (T09)" class="col-span-3 border border-gray-300 rounded px-2 py-1.5 font-bold text-center uppercase">
+                        <input type="text" id="newTechNameInput" placeholder="ชื่อ-นามสกุล ช่างใหม่ *" class="col-span-5 border border-gray-300 rounded px-2 py-1.5 font-medium">
+                        <input type="text" id="newTechPhoneInput" placeholder="เบอร์โทร" class="col-span-4 border border-gray-300 rounded px-2 py-1.5">
+                        <button type="button" onclick="addNewTechnicianEntry()" class="col-span-12 bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white py-1.5 rounded-lg font-bold mt-0.5">
+                            <i class="fa-solid fa-user-plus mr-1"></i> เพิ่มรายชื่อช่างใหม่
+                        </button>
+                    </div>
+                    <div id="mgrTechnicianListContainer" class="space-y-1.5 max-h-64 overflow-y-auto"></div>
+                </div>
+
+                <!-- Right Column: Coordinators & Dispatchers List -->
+                <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40 space-y-2.5">
+                    <div class="flex items-center justify-between border-b border-amber-200 pb-1.5">
+                        <span class="font-extrabold text-amber-950"><i class="fa-solid fa-headset text-amber-600 mr-1"></i> รายชื่อผู้ประสานงาน & ผู้จ่ายงาน (<span id="mgrCoordCount">0</span> คน)</span>
+                        <button type="button" onclick="resetDefaultCoordinators()" class="text-[10px] text-gray-500 hover:text-gray-800 underline">คืนค่าเริ่มต้น</button>
+                    </div>
+                    <!-- Add New Coordinator/Dispatcher Form -->
+                    <div class="grid grid-cols-12 gap-1.5 bg-white p-2 rounded-lg border border-amber-200">
+                        <input type="text" id="newCoordNameInput" placeholder="ชื่อ-นามสกุล ผู้ประสานงาน *" class="col-span-5 border border-gray-300 rounded px-2 py-1.5 font-medium">
+                        <input type="text" id="newCoordPhoneInput" placeholder="เบอร์โทรติดต่อ" class="col-span-4 border border-gray-300 rounded px-2 py-1.5">
+                        <input type="text" id="newCoordRoleInput" placeholder="ตำแหน่ง" value="Coordinator" class="col-span-3 border border-gray-300 rounded px-2 py-1.5">
+                        <button type="button" onclick="addNewCoordinatorEntry()" class="col-span-12 bg-amber-600 hover:bg-amber-700 text-white py-1.5 rounded-lg font-bold mt-0.5">
+                            <i class="fa-solid fa-user-plus mr-1"></i> เพิ่มรายชื่อผู้ประสานงาน / ผู้จ่ายงาน
+                        </button>
+                    </div>
+                    <div id="mgrCoordinatorListContainer" class="space-y-1.5 max-h-64 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2 border-t flex-shrink-0">
+                <button type="button" onclick="closeStaffManagerModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Mobile-Optimized Vertical Schedule Preview Modal (v12.2) -->
+    <div id="mobileSchedulePreviewModal" class="no-print fixed inset-0 bg-black/85 backdrop-blur-sm z-[75] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-3 sm:p-4 space-y-3 max-h-[94vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-2 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-mobile-screen-button text-hoshizaki-blue text-lg"></i>
+                    <div>
+                        <h3 class="text-sm font-extrabold text-hoshizaki-navy">พรีวิวตารางงานสำหรับมือถือ (แนวตั้ง)</h3>
+                        <p class="text-[10px] text-gray-500">ตัวอักษรใหญ่ อ่านง่ายบนหน้าจอมือถือ และแชร์เป็นรูปเข้า LINE ได้ทันที</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeMobileSchedulePreviewModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+            </div>
+
+            <!-- Select Technician inside Preview -->
+            <div class="flex items-center gap-1.5 text-xs flex-shrink-0">
+                <select id="mobilePreviewTechSelect" onchange="renderMobileSchedulePreviewCard()" class="flex-1 border border-gray-300 rounded-lg px-2.5 py-2 bg-gray-50 font-bold text-hoshizaki-navy"></select>
+                <button type="button" onclick="exportMobilePortraitScheduleImage(true)" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-3 py-2 rounded-lg font-bold flex items-center gap-1 shadow-xs flex-shrink-0">
+                    <i class="fa-brands fa-line"></i> <span>แชร์รูปเข้า LINE</span>
+                </button>
+                <button type="button" onclick="exportMobilePortraitScheduleImage(false)" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-2.5 py-2 rounded-lg font-bold flex items-center gap-1 shadow-xs flex-shrink-0" title="บันทึกภาพ PNG แนวตั้ง">
+                    <i class="fa-solid fa-download"></i>
+                </button>
+            </div>
+
+            <!-- Live Mobile Preview Container (Also used directly by html2canvas so preview == exported image) -->
+            <div class="overflow-y-auto flex-1 bg-slate-100 p-2 rounded-xl border border-slate-200">
+                <div id="mobileSchedulePosterCard" style="background: #ffffff; font-family: 'Prompt', 'Inter', sans-serif; color: #111827;" class="rounded-xl overflow-hidden border-2 border-hoshizaki-navy shadow-sm"></div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

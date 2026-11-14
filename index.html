@@ -718,7 +718,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.6 Full-Screen Spec + Deep Audited</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.7 Model Error Matrix + Flex OA</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -3614,8 +3614,11 @@
                         <div class="flex-1 flex items-center gap-1">
                             <input type="text" id="eqModel" list="hoshizakiModelsList" placeholder="พิมพ์หรือเลือกรุ่น เช่น IM-100NE, RTC-120SDB" class="flex-1 font-semibold border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
                             <span id="customModelCountBadge" class="no-print hidden text-[10px] bg-blue-100 text-hoshizaki-navy px-1.5 py-0.5 rounded font-semibold flex-shrink-0" title="จำนวนรุ่นเครื่องที่นำเข้าจาก Excel"></span>
-                            <button type="button" onclick="openFullScreenSpecViewerModal()" title="เปิดตาราง Spec Sheet เต็มหน้าจอ + รูปภาพจาก Drive" class="no-print bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 shadow-xs transition">
+                            <button type="button" onclick="openFullScreenSpecViewerModal()" title="เปิดตาราง Spec Sheet เต็มหน้าจอ + รูปภาพจาก Drive" class="no-print bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white px-2 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 shadow-xs transition">
                                 <i class="fa-solid fa-table-list"></i> <span>Spec</span>
+                            </button>
+                            <button type="button" onclick="openErrorCodeModal(document.getElementById('eqModel')?.value || '')" title="เปิดตาราง Error Code แยกรุ่นของเครื่องนี้" class="no-print bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white px-2 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 shadow-xs transition">
+                                <i class="fa-solid fa-triangle-exclamation"></i> <span>Err</span>
                             </button>
                         </div>
                     </div>
@@ -11562,86 +11565,483 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             XLSX.writeFile(wb, 'Hoshizaki_Dealer_Customer_Grades.xlsx');
         }
 
-        // --- Hoshizaki Error Code Troubleshooter ---
+        // --- Hoshizaki Model-Specific Error Code Diagnostic Matrix (v18.7.0) ---
         const HOSHIZAKI_ERROR_CODES = [
-            { code: 'E1', series: 'ICE_IM', title: 'IM Series: น้ำไม่เข้าถังหรือลูกลอยไม่ทำงานภายในเวลาที่กำหนด', cause: 'วาล์วน้ำเข้า (Water Valve) เสีย/อุดตัน, แรงดันน้ำต่ำ, ท่อน้ำพับ, หรือ Float Switch ค้าง', action: 'ตรวจเช็กแรงดันน้ำเข้าและไส้กรองน้ำ ทำความสะอาดตะแกรงวาล์วน้ำ ตรวจวัดไฟเลี้ยง Water Valve และทดสอบหน้าสัมผัส Float Switch' },
-            { code: 'E2', series: 'ICE_IM', title: 'IM Series: ถาดน้ำ (Water Pan) ไม่เปิดหรือปิดไม่สนิท (Actuator Error)', cause: 'มอเตอร์ถาดน้ำ (Actuator Motor) เสีย, สปริงหลุด/ล้า, หรือ Micro Switch ไม่ตัดต่อวงจร', action: 'ตรวจสอบกลไกถาดน้ำและสปริง ทดสอบการทำงานของ Actuator Motor และเช็กสถานะ Micro Switch บนบอร์ด' },
-            { code: 'E3', series: 'ICE_IM', title: 'IM Series: ระยะเวลาทำน้ำแข็งนานผิดปกติ (Freeze Cycle Timeout)', cause: 'แผงคอยล์ร้อนสกปรกอุดตัน, พัดลมระบายความร้อนไม่หมุน, น้ำยาขาด/รั่ว, หรืออุณหภูมิห้องสูงเกิน 40°C', action: 'ล้างทำความสะอาดคอยล์ร้อนและแผ่นกรองฝุ่น ตรวจเช็กมอเตอร์พัดลม และวัดแรงดันน้ำยา High/Low' },
-            { code: 'E4', series: 'ICE_IM', title: 'IM Series: ระยะเวลาละลายน้ำแข็งนานผิดปกติ (Harvest Cycle Timeout)', cause: 'วาล์ว Hot Gas ไม่เปิด, ถาดน้ำค้าง, หรือเซ็นเซอร์อุณหภูมิคอยล์เย็น (Thermistor) เพี้ยน', action: 'ตรวจวัดคอยล์วาล์ว Hot Gas ทดสอบค่าความต้านทาน Thermistor และเช็กการระบายน้ำทิ้ง' },
-            { code: 'E5 / High Temp', series: 'ICE_IM', title: 'IM Series: อุณหภูมิแผงคอยล์ร้อนสูงเกินกำหนด (High Condenser Temp)', cause: 'คอยล์ร้อนอุดตันหนัก, พัดลมคอยล์ร้อนเสีย, หรือพื้นที่ติดตั้งระบายอากาศไม่ถ่ายเท', action: 'ล้างคอยล์ร้อนด้วยน้ำสะอาด เป่าไล่ฝุ่น เช็กการหมุนของพัดลม และแนะนำลูกค้าเรื่องระยะห่างระบายอากาศ' },
-            { code: '1 / 2 Beep (KM)', series: 'ICE_KM', title: 'KM Series: ระบบตัดการทำงาน (Long Freeze / Long Harvest)', cause: 'ระดับน้ำในถังไม่ถึงโพรบ, ปั๊มน้ำไม่ฉีด, Hot Gas Valve ไม่ทำงาน, หรือน้ำยาต่ำ', action: 'ทำความสะอาดหัวฉีดสเปรย์และถังพักน้ำ ตรวจเช็กปั๊มน้ำและค่าความต้านทาน Thermistor' },
-            { code: 'E1 / E2 (FM)', series: 'ICE_FM', title: 'FM Series: กระแสไฟ Gear Motor สูงเกินหรือรอบหมุนผิดปกติ', cause: 'ชุดลูกปืน/ซีลแกนสว่าน (Auger Bearing/Seal) สึกหรอ, น้ำไม่เข้าถังทำให้น้ำแข็งจับตัวแน่นเกินไป', action: 'ตรวจสอบระบบน้ำเข้าและลูกลอย ตรวจเช็กกระแสไฟ Gear Motor และสภาพชุด Auger / Bearing' },
-            { code: 'E1 / E2 / Hi / Lo', series: 'FRIDGE', title: 'ตู้แช่เย็น/แช่แข็ง: เซ็นเซอร์อุณหภูมิ (Thermistor) ขาด/ลัดวงจร หรืออุณหภูมิเกินขอบเขต', cause: 'เซ็นเซอร์ตู้ (Cabinet Sensor) หรือเซ็นเซอร์ละลายน้ำแข็งเสีย, ยางขอบประตูรั่ว, คอยล์ร้อนสกปรก', action: 'ตรวจวัดค่าโอห์มของเซ็นเซอร์ ตรวจสอบยางขอบประตู พัดลมคอยล์เย็น และระบบละลายน้ำแข็ง (Defrost Heater)' }
+            // 1. IM SERIES (Cube Ice Maker: IM-21CNE / 30CNE / 45NE / 65NE / 100NE / 130NE / 240DNE)
+            {
+                code: 'E1',
+                series: 'ICE_IM',
+                seriesLabel: 'IM Series (Cube Ice Maker)',
+                models: ['IM-21CNE', 'IM-30CNE', 'IM-45NE', 'IM-45CNE', 'IM-65NE', 'IM-100NE', 'IM-130NE', 'IM-240DNE', 'IM-240ANE'],
+                title: 'Water Supply / Float Switch Timeout (น้ำไม่เข้าถังหรือลูกลอยไม่ตัดในเวลา)',
+                cause: 'วาล์วน้ำเข้า (Water Valve) อุดตัน/คอยล์ขาด, แรงดันน้ำต่ำกว่า 0.07 MPa, ท่อน้ำพับ, หรือ Float Switch ค้าง',
+                parts: 'Water Valve (P01872-01 / 452138-01), Strainer (P00812-01), Float Switch',
+                action: 'Step 1: ปิด-เปิดสวิตช์เครื่อง 3 นาทีเพื่อรีเซ็ต | Step 2: ล้างตะแกรงกรองทางน้ำเข้าและวัดแรงดันน้ำ (0.07-0.8 MPa) | Step 3: วัดไฟ AC 220V ที่ขั้ว Water Valve และทดสอบหน้าสัมผัส Float Switch'
+            },
+            {
+                code: 'E2',
+                series: 'ICE_IM',
+                seriesLabel: 'IM Series (Cube Ice Maker)',
+                models: ['IM-21CNE', 'IM-30CNE', 'IM-45NE', 'IM-45CNE', 'IM-65NE', 'IM-100NE', 'IM-130NE', 'IM-240DNE', 'IM-240ANE'],
+                title: 'Water Pan / Actuator Motor Error (ถาดน้ำพลิกเปิด-ปิดไม่สุดรอบ)',
+                cause: 'มอเตอร์ถาดน้ำ (Actuator Motor) เฟืองรูด/คอยล์ขาด, สปริงดึงถาดหลุด/ล้า, หรือ Micro Switch ตำแหน่งถาดไม่ตัดต่อ',
+                parts: 'Actuator Motor (P03755-01 / P01869-01), Micro Switch (456432-01), Cam A/B, Spring',
+                action: 'Step 1: ตรวจเศษน้ำแข็งขวางถาดน้ำ (Water Pan) | Step 2: เช็กสปริงดึงถาดและลูกเบี้ยว Cam A/B | Step 3: ทดสอบความต่อเนื่อง Micro Switch และวัดไฟเลี้ยง Actuator Motor'
+            },
+            {
+                code: 'E3',
+                series: 'ICE_IM',
+                seriesLabel: 'IM Series (Cube Ice Maker)',
+                models: ['IM-21CNE', 'IM-30CNE', 'IM-45NE', 'IM-45CNE', 'IM-65NE', 'IM-100NE', 'IM-130NE', 'IM-240DNE', 'IM-240ANE'],
+                title: 'Freeze Cycle Backup Timer (รอบทำน้ำแข็งนานเกินกำหนด > 60 นาที)',
+                cause: 'แผงคอยล์ร้อนสกปรกอุดตัน, พัดลมระบายความร้อนไม่หมุน, น้ำยา R134a/R404A/R290 รั่ว/ขาด, หรืออุณหภูมิห้องเกิน 40°C',
+                parts: 'Condenser Fan Motor, Air Filter, Evaporator Thermistor (P00350-01), Compressor',
+                action: 'Step 1: ล้างทำความสะอาดแผงคอยล์ร้อนและแผ่นกรองฝุ่น | Step 2: ตรวจเช็กมอเตอร์พัดลมระบายความร้อน | Step 3: วัดแรงดันน้ำยา High/Low และค่าโอห์ม Thermistor คอยล์เย็น'
+            },
+            {
+                code: 'E4',
+                series: 'ICE_IM',
+                seriesLabel: 'IM Series (Cube Ice Maker)',
+                models: ['IM-21CNE', 'IM-30CNE', 'IM-45NE', 'IM-45CNE', 'IM-65NE', 'IM-100NE', 'IM-130NE', 'IM-240DNE', 'IM-240ANE'],
+                title: 'Harvest / Defrost Cycle Timeout (ละลายน้ำแข็งนานเกิน 20-30 นาที)',
+                cause: 'วาล์ว Hot Gas ไม่เปิด, Thermistor คอยล์เย็นเพี้ยน, หรือถาดน้ำไม่พลิกเทน้ำแข็ง',
+                parts: 'Hot Gas Valve (P02539-01 / P04242-01), Evaporator Thermistor, Actuator Motor',
+                action: 'Step 1: ตรวจวัดคอยล์โซลินอยด์ Hot Gas Valve ขณะเข้า Harvest | Step 2: วัดค่าความต้านทาน kΩ ของ Thermistor คอยล์เย็น | Step 3: เช็กกลไกเปิดถาดน้ำ'
+            },
+            {
+                code: 'E5',
+                series: 'ICE_IM',
+                seriesLabel: 'IM Series (Cube Ice Maker)',
+                models: ['IM-65NE', 'IM-100NE', 'IM-130NE', 'IM-240DNE', 'IM-240ANE', 'IM-240XNE'],
+                title: 'High Condenser Temperature (อุณหภูมิคอยล์ร้อนสูงเกิน 60°C)',
+                cause: 'แผงคอนเดนเซอร์อุดตันหนัก, พัดลมคอยล์ร้อนเสีย, หรือตั้งเครื่องชิดผนังระบายอากาศไม่ได้',
+                parts: 'Condenser Thermistor (4Y4859G01), Fan Motor, Air Filter',
+                action: 'Step 1: ล้างแผงรังผึ้งคอยล์ร้อนด้วยน้ำสะอาด | Step 2: เช็กการหมุนของพัดลมระบายความร้อน | Step 3: จัดระยะห่างระบายอากาศรอบเครื่องอย่างน้อย 15-30 ซม.'
+            },
+
+            // 2. KM / KMD SERIES (Crescent Cube Ice Maker)
+            {
+                code: '1 BEEP / E1',
+                series: 'ICE_KM',
+                seriesLabel: 'KM / KMD Series (Crescent Cube)',
+                models: ['KM-40B', 'KM-60B', 'KM-80B', 'KM-100B', 'KM-150B', 'KM-231BAJ', 'KM-515MAH', 'KM-660MAJ', 'KM-901MAJ', 'KM-1301SAJ'],
+                title: 'Low Water / Float Switch Open (ระดับน้ำในถังไม่ถึงโพรบในเวลา — EverCheck™)',
+                cause: 'วาล์วน้ำเข้า (Water Valve) ตัน, Float Switch สกปรก/ค้าง, หรือ Drain Valve ปิดไม่สนิททำให้น้ำรั่วทิ้ง',
+                parts: 'Water Valve (4A5251-06 / 3U0111-04), Float Switch (4A3624-01), Drain Valve (389140P01)',
+                action: 'Step 1: ถอดล้าง Float Switch และตะแกรงวาล์วน้ำเข้า | Step 2: ตรวจเช็กวาล์วเดรนไม่ให้รั่วซึม | Step 3: ทำความสะอาดโพรบวัดระดับน้ำ'
+            },
+            {
+                code: '2 BEEPS / E2',
+                series: 'ICE_KM',
+                seriesLabel: 'KM / KMD Series (Crescent Cube)',
+                models: ['KM-40B', 'KM-60B', 'KM-80B', 'KM-100B', 'KM-150B', 'KM-231BAJ', 'KM-515MAH', 'KM-660MAJ', 'KM-901MAJ', 'KM-1301SAJ'],
+                title: 'Harvest Backup Timer (รอบละลายน้ำแข็งนานเกิน 20 นาที — EverCheck™)',
+                cause: 'Hot Gas Valve ไม่เปิด, Thermistor คอยล์เย็นเพี้ยน, แรงดันน้ำยาต่ำ, หรือแผ่นน้ำแข็งติดค้างบน Evaporator',
+                parts: 'Hot Gas Valve (4A3978-01), Thermistor (429006-03), Control Board (2A1410-02 / 2A7664-02)',
+                action: 'Step 1: เช็กคอยล์ Hot Gas Valve ขณะเข้า Harvest | Step 2: วัดค่า kΩ ของ Thermistor (429006-03) | Step 3: ล้างทำความสะอาดผิว Evaporator สเตนเลส'
+            },
+            {
+                code: '3 BEEPS / E3',
+                series: 'ICE_KM',
+                seriesLabel: 'KM / KMD Series (Crescent Cube)',
+                models: ['KM-40B', 'KM-60B', 'KM-80B', 'KM-100B', 'KM-150B', 'KM-231BAJ', 'KM-515MAH', 'KM-660MAJ', 'KM-901MAJ', 'KM-1301SAJ'],
+                title: 'Freeze Backup Timer (รอบทำน้ำแข็งนานเกิน 60 นาที — EverCheck™)',
+                cause: 'ปั๊มน้ำไม่ฉีดน้ำขึ้น Evaporator, แผงคอยล์ร้อนสกปรก, พัดลมคอยล์ร้อนไม่หมุน, หรือน้ำยาขาด',
+                parts: 'Pump Motor (PA0613 / 2A2758-01), Spray Tube (1A0260-01), Condenser, Compressor',
+                action: 'Step 1: ตรวจเช็กการฉีดน้ำของ Pump Motor และรูท่อ Spray Tube | Step 2: ล้างคอยล์ร้อนและเช็กพัดลม | Step 3: วัดแรงดันน้ำยา R404A'
+            },
+            {
+                code: '4 BEEPS / HP',
+                series: 'ICE_KM',
+                seriesLabel: 'KM / KMD Series (Crescent Cube)',
+                models: ['KM-231BAJ', 'KM-515MAH', 'KM-660MAJ', 'KM-901MAJ', 'KM-1301SAJ', 'KM-1601SAJ', 'KM-2200SAJ3'],
+                title: 'High Pressure Switch Cutout (สวิตช์แรงดันสูงตัดการทำงาน)',
+                cause: 'คอยล์ร้อนอุดตันหนัก, พัดลมคอยล์ร้อนเสีย (หรือน้ำหล่อเย็นไม่ไหลในรุ่น SWJ), สวิตช์ HP ตัด',
+                parts: 'High Pressure Switch (433441-07 / 463180-04), Fan Motor, Water Regulator',
+                action: 'Step 1: กดปุ่มรีเซ็ตบน High Pressure Switch (รุ่น Manual Reset) | Step 2: ล้างคอยล์ร้อนและตรวจพัดลมระบายความร้อน | Step 3: เช็กกระแสคอมเพรสเซอร์'
+            },
+
+            // 3. FM SERIES (Flake & Nugget Ice Maker)
+            {
+                code: 'E1 / E2',
+                series: 'ICE_FM',
+                seriesLabel: 'FM Series (Flake & Nugget Ice)',
+                models: ['FM-80KE', 'FM-120FE', 'FM-150KE', 'FM-170AKE', 'FM-300AKE', 'FM-480AKE', 'FM-600AKE', 'FM-750AKE', 'FM-1000AKE'],
+                title: 'Low Water / Float Switch Error (น้ำไม่เข้าถังพักหรือลูกลอยไม่ยก)',
+                cause: 'วาล์วน้ำเข้าเสีย/กรองตัน, ท่อน้ำเข้าถังคอยล์อุดตันตะกรัน, หรือ Float Switch ค้าง',
+                parts: 'Water Valve (452993-01), Float Switch (458279-01 / -02), Drain Valve (3U0112-01)',
+                action: 'Step 1: ล้างตะแกรงวาล์วน้ำเข้าและกระปุก Float Switch | Step 2: ตรวจเช็กการเปิด-ปิดของ Drain Valve | Step 3: ล้างตะกรันระบบน้ำ'
+            },
+            {
+                code: 'E3 / E4',
+                series: 'ICE_FM',
+                seriesLabel: 'FM Series (Flake & Nugget Ice)',
+                models: ['FM-150KE', 'FM-170AKE', 'FM-300AKE', 'FM-480AKE', 'FM-600AKE', 'FM-750AKE', 'FM-1000AKE', 'FM-1800ALKE-N'],
+                title: 'Gear Motor Overload / Rotation Sensor Error (กระแสเกินหรือแกนสว่านหยุดหมุน)',
+                cause: 'น้ำขาดในกระบอกทำน้ำแข็งทำให้น้ำแข็งจับแกน Auger แน่น, ลูกปืน/ซีลแกนสว่านสึกหรอ, หรือ Rotation Sensor เสีย',
+                parts: 'Gear Motor (466223-01 / 469681-02), Rotation Sensor (459861-01), Mechanical Seal (432491-01), Current Sub-Board (461144-01)',
+                action: 'Step 1: ปิดเครื่องละลายน้ำแข็งในกระบอกให้หมดก่อนรีสตาร์ท | Step 2: วัดกระแส Gear Motor Amps เทียบเนมเพลต | Step 3: ตรวจเช็ก Mechanical Seal และลูกปืน Auger'
+            },
+            {
+                code: 'E5 / HP',
+                series: 'ICE_FM',
+                seriesLabel: 'FM Series (Flake & Nugget Ice)',
+                models: ['FM-300AKE', 'FM-480AKE', 'FM-600AKE', 'FM-750AKE', 'FM-1000AKE', 'FM-1800ALKE-N'],
+                title: 'High Pressure / High Condenser Temp (แรงดันสูงหรือคอยล์ร้อนเกิน)',
+                cause: 'คอยล์ร้อนอุดตัน, พัดลมคอยล์ร้อนเสีย, หรือความต้านทาน Thermistor ผิดปกติ',
+                parts: 'Pressure Switch (459863-01 / 459864-03), Fan Motor, Thermistor (476475G01)',
+                action: 'Step 1: ล้างแผงคอยล์ร้อนและแผ่นกรองอากาศ | Step 2: ตรวจการทำงานของพัดลมคอยล์ร้อนและ Pressure Switch'
+            },
+
+            // 4. HR / HF SERIES (Upright Reach-In Refrigerator & Freezer)
+            {
+                code: 'E1 / EE / P1',
+                series: 'FRIDGE_HR',
+                seriesLabel: 'HR / HF Series (ตู้แช่ทรงยืน)',
+                models: ['HR-68MA-S', 'HF-68MA-S', 'HR-78MA-S', 'HF-78MA-S', 'HR-126MA-S', 'HF-126MA-S', 'HR-148MA-S', 'HF-148MA-S'],
+                title: 'Cabinet / Air Sensor Fault (เซ็นเซอร์อุณหภูมิภายในตู้ขาดหรือช็อต)',
+                cause: 'สายเซ็นเซอร์ห้องแช่ (Black Thermistor) ขาดใน, ขั้วต่อหลวมบน Controller, หรือตัวเซ็นเซอร์เสื่อม',
+                parts: 'Cabinet Thermistor Black (P04878-02 / P02267-01), Digital Controller (P04865-01 / P02224-01)',
+                action: 'Step 1: ถอดปลั๊กและวัดค่าโอห์ม Thermistor (ปกติ ~2.0-2.5 kΩ ที่ 25°C) | Step 2: ตรวจขั้วต่อหลังหน้าปัด Controller | Step 3: เปลี่ยนเซ็นเซอร์ใหม่'
+            },
+            {
+                code: 'E2 / P2 / dF',
+                series: 'FRIDGE_HR',
+                seriesLabel: 'HR / HF Series (ตู้แช่ทรงยืน)',
+                models: ['HF-68MA-S', 'HF-78MA-S', 'HF-126MA-S', 'HF-148MA-S', 'HF-186MA-S', 'HRF-126MA-S'],
+                title: 'Evaporator Sensor / Defrost Error (เซ็นเซอร์คอยล์เย็นเสียหรือน้ำแข็งเกาะคอยล์)',
+                cause: 'Evap Thermistor (White) เสีย, Defrost Heater ขาด, Thermal Fuse ขาด, หรือพัดลมคอยล์เย็นไม่หมุน',
+                parts: 'Evap Thermistor White (P04878-01 / P02267-02), Defrost Heater (P02930-01 / P02931-01), Thermal Fuse (P01103-01)',
+                action: 'Step 1: วัดค่าโอห์ม Evap Thermistor | Step 2: วัดความต่อเนื่องของ Defrost Heater และ Thermal Fuse | Step 3: ตรวจเช็กพัดลมคอยล์เย็นและยางขอบประตู'
+            },
+            {
+                code: 'Hi / Lo / E3',
+                series: 'FRIDGE_HR',
+                seriesLabel: 'HR / HF Series (ตู้แช่ทรงยืน)',
+                models: ['HR-68MA-S', 'HF-68MA-S', 'HR-126MA-S', 'HF-126MA-S', 'HR-148MA-S', 'HF-148MA-S'],
+                title: 'High / Low Cabinet Temp or Condenser Alert (อุณหภูมิตู้เกินขอบเขต / คอยล์ร้อนตัน)',
+                cause: 'เปิดประตูตู้บ่อย/ยางขอบประตูเสื่อม, แผงคอยล์ร้อนตันฝุ่น, หรือน้ำยารั่ว',
+                parts: 'Condenser Thermistor Gray (P04878-03), Door Gasket (260225G01 / 258160G01), Condenser Fan Motor',
+                action: 'Step 1: ล้างแผงคอยล์ร้อน | Step 2: ตรวจสอบความแนบสนิทของยางขอบประตู (Door Gasket) | Step 3: เช็กการทำงานของคอมเพรสเซอร์และพัดลมคอยล์เย็น'
+            },
+
+            // 5. RT / RTC / RTF SERIES (Undercounter Chiller & Freezer)
+            {
+                code: 'E1 / P1 / E2',
+                series: 'FRIDGE_RT',
+                seriesLabel: 'RT / RTC / RTF (ตู้แช่เคาน์เตอร์)',
+                models: ['RT-126MA-S', 'RT-156MA-S', 'RT-186MA-S', 'RTC-120SDB', 'RTC-150SDB', 'RTC-180SDB', 'RTF-120SDB', 'RTF-150SDB'],
+                title: 'Undercounter Sensor / Controller Fault (เซ็นเซอร์ตู้หรือคอยล์เย็นผิดปกติ)',
+                cause: 'เซ็นเซอร์ห้องแช่/คอยล์เย็นขาดหรือช็อต, หน้าปัด Digital Controller (Carel/ETC) ชื้นหรือเสีย',
+                parts: 'Temperature Probe (1507646), Controller (1505267 / 1504715 / P02224-01), Fan Motor',
+                action: 'Step 1: ตรวจสอบค่าความต้านทานโพรบวัดอุณหภูมิ | Step 2: ตรวจสายไฟและขั้วต่อหลัง Controller | Step 3: เช็กพัดลมระบายความร้อนใต้เคาน์เตอร์'
+            },
+            {
+                code: 'dF / Hi / Drain',
+                series: 'FRIDGE_RT',
+                seriesLabel: 'RT / RTC / RTF (ตู้แช่เคาน์เตอร์)',
+                models: ['RT-126MA-S', 'RT-156MA-S', 'RTC-120SDB', 'RTC-150SDB', 'RTF-120SDB', 'RTF-150SDB', 'RTF-180SDB'],
+                title: 'Defrost / High Temp / Evaporating Pan Overflow (น้ำแข็งเกาะคอยล์หรือถาดน้ำทิ้งล้น)',
+                cause: 'แผงคอยล์ร้อนใต้เคาน์เตอร์ตันฝุ่น, ฮีตเตอร์ละลายน้ำแข็งขาด, หรือท่อน้ำทิ้งอุดตัน',
+                parts: 'Defrost Heater (1508063 / 1508064), Evaporating Pan Assy (3S2001001), Door Gasket (1514306)',
+                action: 'Step 1: ล้างแผงคอยล์ร้อนและแผ่นกรองฝุ่นใต้เครื่อง | Step 2: ล้างท่อน้ำทิ้งและถาดระเหยน้ำทิ้ง | Step 3: ตรวจสอบยางขอบประตูและฮีตเตอร์ละลายน้ำแข็ง'
+            },
+
+            // 6. SPECIALTY EQUIPMENT (DCM / AM / HNC / DBF / HSU)
+            {
+                code: 'E1 / E2 / E3',
+                series: 'SPECIALTY',
+                seriesLabel: 'DCM / AM / HNC / DBF / HSU',
+                models: ['DCM-60KE', 'DCM-120KE', 'AM-50BAE', 'HNC-120BE', 'HNC-150BE', 'DBF-25SB', 'HSU-400'],
+                title: 'Specialty Equipment Fault (ระดับน้ำ / อะจีเตเตอร์ / อุณหภูมิ / ฮีตเตอร์ผิดปกติ)',
+                cause: 'DCM: วาล์วน้ำ/ลูกลอย/มอเตอร์กวน | HNC: คอยล์ร้อนตัน/เซ็นเซอร์ | DBF: ปั๊มกวนน้ำเย็น | HSU: ฮีตเตอร์ต้มน้ำ/ลูกลอย',
+                parts: 'DCM Agitator (348969G01), DBF Agitator (P04641-01), HSU Heater (P04856-01), HSU Float (449401-01)',
+                action: 'Step 1: ตรวจสอบระบบน้ำเข้าและระดับน้ำ | Step 2: ล้างคอยล์ร้อนและเช็กมอเตอร์กวน/ปั๊ม | Step 3: เปิดดู Wiring Diagram ในคู่มือ PDF เฉพาะรุ่น'
+            }
         ];
 
-        // คลังความรู้วิธีตรวจซ่อมเชิงลึกตามรุ่นและอาการเสีย (Symptom-to-Solution Knowledge Base v14.0)
-        HOSHIZAKI_ERROR_CODES.push(
-            { code: 'EE / E1 (Fridge)', series: 'FRIDGE', title: 'ตู้แช่เย็น/แข็ง (HR/HF/RTW): เซ็นเซอร์อุณหภูมิห้องแช่ (Cabinet Thermistor) ขาดหรือช็อต', cause: 'สายเซ็นเซอร์ขาด, ขั้วต่อหลวมบนบอร์ด, หรือค่าความต้านทาน Thermistor เพี้ยน', action: 'Step 1: ถอดปลั๊กและวัดค่าโอห์ม Thermistor (ปกติ ~2.0–2.5 kΩ ที่ 25°C) | Step 2: ตรวจขั้วต่อ CN บนบอร์ด | Step 3: เปลี่ยน Thermistor ใหม่ (P04878-02)' },
-            { code: 'dF / Defrost', series: 'FRIDGE', title: 'ตู้แช่แข็ง (HF/FTW): น้ำแข็งเกาะคอยล์เย็นหนา / ระบบละลายน้ำแข็งไม่ทำงาน', cause: 'ฮีตเตอร์ละลายน้ำแข็ง (Defrost Heater) ขาด, Thermal Fuse ขาด, หรือพัดลมคอยล์เย็นไม่หมุน', action: 'Step 1: วัดความต้านทาน Defrost Heater และเช็กความต่อเนื่อง Thermal Fuse | Step 2: ตรวจเช็กพัดลมคอยล์เย็นและยางขอบประตู (Door Gasket)' },
-            { code: 'Low Ice / น้ำแข็งบาง', series: 'ICE_IM', title: 'IM Series: น้ำแข็งก้อนเล็ก/บาง หรือเป็นโพรง', cause: 'น้ำเข้าถังน้อย (Water Valve ตัน/แรงดันน้ำต่ำ), ถาดน้ำปิดไม่สนิท, หรือตั้งเวลาทำน้ำแข็งสั้นไป', action: 'Step 1: ล้างตะแกรงวาล์วน้ำเข้าและไส้กรองน้ำ | Step 2: เช็กสปริงดึงถาดน้ำ (Water Pan Spring) | Step 3: ตรวจวัดระดับน้ำในถาดและปรับตั้งค่าตามคู่มือ' },
-            { code: 'Water Leak / น้ำรั่ว', series: 'ICE_KM', title: 'KM Series: น้ำรั่วลงถังเก็บน้ำแข็งหรือล้นออกใต้เครื่อง', cause: 'ท่อน้ำทิ้งอุดตัน, ลูกลอย (Float Switch) ค้างไม่ตัดน้ำ, หรือซีลปั๊มน้ำ (Mechanical Seal) รั่ว', action: 'Step 1: ล้างท่อระบายน้ำทิ้งและวาล์วเดรน | Step 2: ทดสอบการตัดต่อของ Float Switch | Step 3: ตรวจเช็กซีลแกนปั๊มน้ำและท่อซิลิโคน' }
-        );
-
-        function openErrorCodeModal() {
+        function openErrorCodeModal(presetModel) {
+            const modal = document.getElementById('errorCodeModal');
+            if (!modal) return;
+            const modelVal = String(presetModel || document.getElementById('eqModel')?.value || '').trim().toUpperCase();
+            const modelInput = document.getElementById('errorCodeModelFilter');
+            const seriesSel = document.getElementById('errorCodeSeriesFilter');
+            if (modelInput && modelVal) {
+                modelInput.value = modelVal;
+                if (seriesSel) {
+                    if (/^IM-/i.test(modelVal)) seriesSel.value = 'ICE_IM';
+                    else if (/^KMD?-/i.test(modelVal)) seriesSel.value = 'ICE_KM';
+                    else if (/^FM-/i.test(modelVal)) seriesSel.value = 'ICE_FM';
+                    else if (/^(HR|HF|HRF|HRW|HW)-/i.test(modelVal)) seriesSel.value = 'FRIDGE_HR';
+                    else if (/^(RT|RTC|RTF|RTS|RW|RF|RR|RRF|RFT)-/i.test(modelVal)) seriesSel.value = 'FRIDGE_RT';
+                    else if (/^(DCM|DIM|AM|HNC|DBF|HSU)-/i.test(modelVal)) seriesSel.value = 'SPECIALTY';
+                }
+            }
             renderErrorCodeList();
-            document.getElementById('errorCodeModal')?.classList.remove('hidden');
+            modal.classList.remove('hidden');
         }
 
         function closeErrorCodeModal() {
             document.getElementById('errorCodeModal')?.classList.add('hidden');
         }
 
+        function onErrorSeriesChanged() {
+            const modelInput = document.getElementById('errorCodeModelFilter');
+            if (modelInput) modelInput.value = '';
+            renderErrorCodeList();
+        }
+
+        function syncCurrentJobModelToErrorModal() {
+            const m = (document.getElementById('eqModel')?.value || '').trim().toUpperCase();
+            if (!m) {
+                showToast('ยังไม่ได้ระบุรุ่นเครื่องในใบงานปัจจุบัน');
+                return;
+            }
+            openErrorCodeModal(m);
+            showToast(`กรอง Error Code สำหรับรุ่น ${m} แล้ว ✓`);
+        }
+
+        function resetErrorCodeFilters() {
+            const s = document.getElementById('errorCodeSeriesFilter');
+            const m = document.getElementById('errorCodeModelFilter');
+            const q = document.getElementById('errorCodeSearchInput');
+            if (s) s.value = 'ALL';
+            if (m) m.value = '';
+            if (q) q.value = '';
+            renderErrorCodeList();
+        }
+
+        function quickFilterErrorCode(seriesVal, modelVal, codeVal) {
+            const s = document.getElementById('errorCodeSeriesFilter');
+            const m = document.getElementById('errorCodeModelFilter');
+            const q = document.getElementById('errorCodeSearchInput');
+            if (s) s.value = seriesVal || 'ALL';
+            if (m) m.value = modelVal || '';
+            if (q) q.value = codeVal || '';
+            renderErrorCodeList();
+        }
+
+        function getFilteredErrorCodes_() {
+            const q = (document.getElementById('errorCodeSearchInput')?.value || '').trim().toLowerCase();
+            const modelQ = (document.getElementById('errorCodeModelFilter')?.value || '').trim().toUpperCase();
+            const series = document.getElementById('errorCodeSeriesFilter')?.value || 'ALL';
+            const modelPrefix = modelQ ? modelQ.split('-')[0] : '';
+
+            return HOSHIZAKI_ERROR_CODES.filter(item => {
+                const matchSeries = series === 'ALL' || item.series === series;
+                let matchModel = true;
+                if (modelQ) {
+                    const inModels = (item.models || []).some(m =>
+                        m.includes(modelQ) || modelQ.includes(m) || (modelPrefix && m.startsWith(modelPrefix + '-'))
+                    );
+                    const inSeriesLabel = item.seriesLabel.toUpperCase().includes(modelPrefix);
+                    matchModel = inModels || inSeriesLabel;
+                }
+                const matchQ = !q ||
+                    item.code.toLowerCase().includes(q) ||
+                    item.title.toLowerCase().includes(q) ||
+                    item.cause.toLowerCase().includes(q) ||
+                    item.seriesLabel.toLowerCase().includes(q) ||
+                    (item.parts || '').toLowerCase().includes(q);
+                return matchSeries && matchModel && matchQ;
+            });
+        }
+
         function renderErrorCodeList() {
             const container = document.getElementById('errorCodeListContainer');
             if (!container) return;
-            const q = (document.getElementById('errorCodeSearchInput')?.value || '').trim().toLowerCase();
-            const series = document.getElementById('errorCodeSeriesFilter')?.value || 'ALL';
+            const filtered = getFilteredErrorCodes_();
+            const modelQ = (document.getElementById('errorCodeModelFilter')?.value || '').trim().toUpperCase();
+            const q = (document.getElementById('errorCodeSearchInput')?.value || '').trim().toUpperCase();
+            const headerSubtitle = modelQ
+                ? `MODEL FILTER: ${modelQ}`
+                : (q ? `CODE / KEYWORD: ${q}` : 'ALL HOSHIZAKI PRODUCT SERIES');
 
-            const filtered = HOSHIZAKI_ERROR_CODES.filter(item => {
-                const matchSeries = series === 'ALL' || item.series === series;
-                const matchQ = !q || item.code.toLowerCase().includes(q) || item.title.toLowerCase().includes(q) || item.cause.toLowerCase().includes(q);
-                return matchSeries && matchQ;
-            });
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-500 py-10 px-4">
+                    <i class="fa-solid fa-circle-info text-2xl text-sky-500 mb-2"></i>
+                    <div class="font-bold">ไม่พบรหัส Error Code ที่ตรงกับตัวกรอง</div>
+                    <div class="text-xs mt-1">ลองกดปุ่มล้างตัวกรองหรือค้นหาด้วยรหัส E1, E2, E3, E4, E5, dF, Hi</div>
+                </div>`;
+                return;
+            }
 
-            container.innerHTML = filtered.length === 0
-                ? '<div class="text-center text-gray-400 py-6">ไม่พบรหัส Error Code ที่ค้นหา</div>'
-                : filtered.map((it, idx) => `
-                    <div class="border border-gray-200 rounded-xl p-3 bg-gray-50/70 space-y-1.5">
-                        <div class="flex items-center justify-between gap-2">
-                            <div>
-                                <span class="inline-block bg-rose-600 text-white font-extrabold px-2 py-0.5 rounded mr-1.5">${it.code}</span>
-                                <span class="font-bold text-hoshizaki-navy">${it.title}</span>
+            // Spec-Sheet-Style Header + Responsive Desktop Table + Mobile/Tablet Structured Cards
+            const tableRowsHtml = filtered.map((it, idx) => {
+                const modelBadges = (it.models || []).slice(0, 5).map(m =>
+                    `<span class="inline-block bg-sky-100 text-hoshizaki-navy border border-sky-300 px-1.5 py-0.5 rounded text-[10px] font-bold">${m}</span>`
+                ).join(' ');
+                const extraCount = (it.models || []).length > 5 ? `<span class="text-[10px] text-gray-500 font-semibold">+${it.models.length - 5} รุ่น</span>` : '';
+
+                return `
+                    <tr class="border-b border-sky-300/70 hover:bg-sky-50/50 transition align-top">
+                        <td class="p-2.5 border-r border-sky-300/70 text-center w-28">
+                            <span class="inline-block bg-rose-600 text-white font-extrabold px-2.5 py-1 rounded-lg text-xs shadow-xs">${it.code}</span>
+                            <div class="text-[10px] font-bold text-hoshizaki-darkblue mt-1.5 leading-tight">${it.seriesLabel}</div>
+                        </td>
+                        <td class="p-2.5 border-r border-sky-300/70 w-52">
+                            <div class="flex flex-wrap gap-1">${modelBadges} ${extraCount}</div>
+                        </td>
+                        <td class="p-2.5 border-r border-sky-300/70">
+                            <div class="font-extrabold text-hoshizaki-navy text-xs mb-1">${it.title}</div>
+                            <div class="text-[11.5px] text-slate-700"><span class="font-bold text-rose-700">สาเหตุ:</span> ${it.cause}</div>
+                            <div class="text-[11px] text-sky-800 mt-1"><span class="font-bold">อะไหล่ที่เกี่ยวข้อง:</span> ${it.parts}</div>
+                        </td>
+                        <td class="p-2.5 border-r border-sky-300/70 text-[11.5px] text-emerald-950 bg-emerald-50/30">
+                            ${it.action}
+                        </td>
+                        <td class="p-2.5 text-center w-28">
+                            <button type="button" onclick="applyErrorCodeToJobForm(${idx})" class="w-full bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-[11px] px-2 py-2 rounded-lg font-bold shadow-xs transition">
+                                + ใส่ในใบงาน
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            const mobileCardsHtml = filtered.map((it, idx) => {
+                const modelBadges = (it.models || []).map(m =>
+                    `<span class="inline-block bg-sky-100 text-hoshizaki-navy border border-sky-300 px-1.5 py-0.5 rounded text-[10px] font-bold">${m}</span>`
+                ).join(' ');
+
+                return `
+                    <div class="border-b-2 border-sky-300/80 p-3 space-y-2 bg-white">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="bg-rose-600 text-white font-extrabold px-2.5 py-0.5 rounded-lg text-xs">${it.code}</span>
+                                <span class="text-xs font-extrabold text-hoshizaki-darkblue">${it.seriesLabel}</span>
                             </div>
-                            <button type="button" onclick="applyErrorCodeToJobForm(${idx})" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-[11px] px-2.5 py-1 rounded-lg font-bold flex-shrink-0">
-                                + ใส่ในใบแจ้งบริการ
+                            <button type="button" onclick="applyErrorCodeToJobForm(${idx})" class="bg-hoshizaki-navy active:bg-hoshizaki-darkblue text-white text-[11px] px-2.5 py-1.5 rounded-lg font-bold flex-shrink-0">
+                                + ใส่ในใบงาน
                             </button>
                         </div>
-                        <div class="text-gray-700"><b>สาเหตุ:</b> ${it.cause}</div>
-                        <div class="text-emerald-900"><b>การแก้ไข:</b> ${it.action}</div>
+                        <div class="font-extrabold text-hoshizaki-navy text-xs sm:text-sm">${it.title}</div>
+                        <div class="flex flex-wrap gap-1">${modelBadges}</div>
+                        <div class="grid grid-cols-1 gap-1.5 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                            <div class="text-slate-800"><span class="font-bold text-rose-700">📌 สาเหตุ:</span> ${it.cause}</div>
+                            <div class="text-emerald-950"><span class="font-bold text-emerald-700">🛠️ การแก้ไข:</span> ${it.action}</div>
+                            <div class="text-sky-900"><span class="font-bold text-sky-700">🔩 อะไหล่:</span> ${it.parts}</div>
+                        </div>
                     </div>
-                `).join('');
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="bg-hoshizaki-navy text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs font-extrabold">
+                    <span>HOSHIZAKI ERROR CODE & TROUBLESHOOTING MATRIX (${filtered.length} รายการ)</span>
+                    <span class="text-sky-300">${headerSubtitle}</span>
+                </div>
+                <!-- Desktop / Large Tablet Spec Table -->
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="w-full border-collapse text-left">
+                        <thead>
+                            <tr class="bg-sky-50 text-hoshizaki-darkblue border-b-2 border-sky-400 text-xs font-extrabold">
+                                <th class="p-2.5 border-r border-sky-300 text-center">ERROR CODE</th>
+                                <th class="p-2.5 border-r border-sky-300">APPLICABLE MODELS</th>
+                                <th class="p-2.5 border-r border-sky-300">MEANING, CAUSE &amp; SPARE PARTS</th>
+                                <th class="p-2.5 border-r border-sky-300">TROUBLESHOOTING STEPS</th>
+                                <th class="p-2.5 text-center">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRowsHtml}</tbody>
+                    </table>
+                </div>
+                <!-- Mobile / Portrait Tablet Structured Spec Cards -->
+                <div class="lg:hidden divide-y divide-sky-200">
+                    ${mobileCardsHtml}
+                </div>
+                <div class="bg-sky-50/70 border-t border-sky-300 px-4 py-2 text-[11px] text-slate-700 flex flex-wrap items-center justify-between gap-2">
+                    <span><b>หมายเหตุ:</b> รหัส Error เดียวกัน (เช่น E1, E2, E3) มีความหมายแตกต่างกันตามตระกูลเครื่อง กรุณาตรวจสอบให้ตรงรุ่นก่อนสั่งอะไหล่</span>
+                    <span class="font-bold text-hoshizaki-navy">HOSHIZAKI SERVICE STANDARD</span>
+                </div>
+            `;
         }
 
         function applyErrorCodeToJobForm(filteredIndex) {
-            const q = (document.getElementById('errorCodeSearchInput')?.value || '').trim().toLowerCase();
-            const series = document.getElementById('errorCodeSeriesFilter')?.value || 'ALL';
-            const filtered = HOSHIZAKI_ERROR_CODES.filter(item => {
-                const matchSeries = series === 'ALL' || item.series === series;
-                const matchQ = !q || item.code.toLowerCase().includes(q) || item.title.toLowerCase().includes(q) || item.cause.toLowerCase().includes(q);
-                return matchSeries && matchQ;
-            });
+            const filtered = getFilteredErrorCodes_();
             const it = filtered[filteredIndex];
             if (!it) return;
             const symEl = document.getElementById('diagSymptom');
             const detEl = document.getElementById('diagDetected');
             const actEl = document.getElementById('diagAction');
-            if (symEl && !symEl.value.trim()) symEl.value = `Error ${it.code}: ${it.title}`;
-            if (detEl) detEl.value = it.cause;
+            if (symEl && !symEl.value.trim()) symEl.value = `[${it.seriesLabel}] Error ${it.code}: ${it.title}`;
+            if (detEl) detEl.value = `${it.cause} (อะไหล่ที่เกี่ยวข้อง: ${it.parts})`;
             if (actEl) actEl.value = it.action;
             closeErrorCodeModal();
             debounceAutoSave();
-            showToast(`นำข้อมูล Error ${it.code} ลงในใบแจ้งบริการเรียบร้อย ✓`);
+            showToast(`นำข้อมูล Error ${it.code} (${it.seriesLabel}) ลงในใบแจ้งบริการเรียบร้อย ✓`);
         }
+
+        async function exportErrorSheetPng() {
+            const card = document.getElementById('errorSheetPrintableCard');
+            const modelQ = (document.getElementById('errorCodeModelFilter')?.value || 'All_Models').trim().toUpperCase();
+            if (!card || typeof html2canvas === 'undefined') {
+                showToast('ไม่พร้อมสำหรับการส่งออกภาพ PNG');
+                return;
+            }
+            showToast(`กำลังสร้างภาพ PNG ตาราง Error Code (${modelQ})...`);
+            const canvas = await html2canvas(card, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+            const link = document.createElement('a');
+            link.download = `Error_Codes_${modelQ}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast(`ดาวน์โหลดภาพ Error_Codes_${modelQ}.png เรียบร้อย ✓`);
+        }
+
+        async function sendCurrentErrorSheetToLineGroup() {
+            const modelQ = (document.getElementById('errorCodeModelFilter')?.value || '').trim().toUpperCase();
+            const codeQ = (document.getElementById('errorCodeSearchInput')?.value || '').trim().toUpperCase();
+            const queryTerm = [modelQ, codeQ].filter(Boolean).join(' ') || 'E1';
+            const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+            if (!webhookUrl) {
+                showToast('กรุณาตั้งค่า Google Apps Script URL ก่อนส่งเข้า LINE');
+                return;
+            }
+            const cfg = typeof getGlobalEnterpriseConfig === 'function' ? getGlobalEnterpriseConfig() : {};
+            const filtered = getFilteredErrorCodes_().slice(0, 3);
+            const summaryLines = filtered.map(r => `• [${r.code}] ${r.seriesLabel}: ${r.title}\n  แก้ไข: ${r.action}`).join('\n');
+            showToast(`กำลังส่งข้อมูล Error Code (${queryTerm}) เข้ากลุ่ม LINE...`);
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SEND_LINE_PUSH',
+                        apiSecretKey: cfg.apiSecretKey || 'HTH-SECURE-2026',
+                        message: `🚨 ตารางวิเคราะห์ Error Code HOSHIZAKI (${queryTerm})\n━━━━━━━━━━━━━━━━━━━━\n${summaryLines}\n\n💡 พิมพ์ในแชทกลุ่ม: ERR ${queryTerm}`
+                    })
+                });
+                showToast(`ส่งตาราง Error Code (${queryTerm}) เข้ากลุ่ม LINE เรียบร้อย ✓`);
+            } catch (e) {
+                showToast('เกิดข้อผิดพลาดในการส่งเข้า LINE');
+            }
+        }
+
+        // รองรับการเปิดตาราง Error Code แยกรุ่นอัตโนมัติจากลิงก์ ?errQuery=... ใน LINE OA
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const errQuery = (params.get('errQuery') || '').trim();
+                if (errQuery) {
+                    setTimeout(() => {
+                        openErrorCodeModal('');
+                        const tokens = errQuery.toUpperCase().split(/\s+/);
+                        const mTok = tokens.find(t => /^(IM|KM|KMD|FM|HR|HF|RT|RTC|RTF|DCM|AM|HNC|DBF|HSU)-/.test(t));
+                        if (mTok) {
+                            openErrorCodeModal(mTok);
+                            const rest = tokens.filter(t => t !== mTok).join(' ');
+                            const qEl = document.getElementById('errorCodeSearchInput');
+                            if (qEl) qEl.value = rest;
+                        } else {
+                            const qEl = document.getElementById('errorCodeSearchInput');
+                            if (qEl) qEl.value = errQuery;
+                        }
+                        renderErrorCodeList();
+                    }, 650);
+                }
+            } catch (e) {}
+        });
 
         // --- One-Tap Mobile Check-In / Check-Out & Auto-Sync Schedule Status ---
         function mobileCheckInScheduleJob(itemId) {
@@ -16135,34 +16535,85 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
     </div>
 
 
-    <!-- Hoshizaki Error Code Troubleshooter Modal (v12.4) -->
-    <div id="errorCodeModal" class="no-print fixed inset-0 bg-black/80 backdrop-blur-sm z-[75] flex items-center justify-center p-2 sm:p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-4 sm:p-5 space-y-3 max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between border-b pb-2.5 flex-shrink-0">
-                <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-lg font-bold">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
+    <!-- Hoshizaki Model-Specific Error Code Diagnostic Sheet Modal (v18.7) -->
+    <div id="errorCodeModal" class="no-print fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[75] flex items-center justify-center p-1.5 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[95dvh] flex flex-col overflow-hidden border border-rose-300">
+            <!-- Top Navy/Rose Header -->
+            <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-rose-500/25 border border-rose-300/40 flex items-center justify-center text-rose-300">
+                        <i class="fa-solid fa-triangle-exclamation text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm sm:text-base font-extrabold text-hoshizaki-navy">คลังรหัส Error Code & แนวทางแก้ไข Hoshizaki</h3>
-                        <p class="text-[11px] text-gray-500">ค้นหารหัส Error (เช่น E1, E2, E3, E4, E5, 1, 2, 3, Hi, Lo) และกดนำข้อความลงใบแจ้งบริการได้ทันที</p>
+                        <h3 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
+                            <span>HOSHIZAKI MODEL-SPECIFIC ERROR CODE DIAGNOSTIC SHEET</span>
+                            <span class="text-[10px] bg-rose-500/30 border border-rose-300/40 px-2 py-0.5 rounded-full text-rose-200">v18.7</span>
+                        </h3>
+                        <p class="text-[11px] text-sky-200">ตารางวิเคราะห์ Error Code แยกตามผลิตภัณฑ์และรุ่นย่อย (เปรียบเทียบความหมายของรหัสเดียวกันในแต่ละโมเดล)</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeErrorCodeModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="exportErrorSheetPng()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-image"></i> <span>บันทึกภาพ PNG</span>
+                    </button>
+                    <button type="button" onclick="sendCurrentErrorSheetToLineGroup()" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-brands fa-line"></i> <span>ส่งเข้ากลุ่ม LINE</span>
+                    </button>
+                    <button type="button" onclick="closeErrorCodeModal()" class="bg-white/15 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
+                        <i class="fa-solid fa-xmark"></i> ปิด
+                    </button>
+                </div>
             </div>
-            <div class="flex gap-2 text-xs flex-shrink-0">
-                <input type="text" id="errorCodeSearchInput" oninput="renderErrorCodeList()" placeholder="พิมพ์รหัส Error เช่น E1, E2, E4, High Temp, Drain, Pump..." class="flex-1 border border-gray-300 rounded-xl px-3 py-2 font-bold text-hoshizaki-navy focus:outline-none focus:border-hoshizaki-blue">
-                <select id="errorCodeSeriesFilter" onchange="renderErrorCodeList()" class="border border-gray-300 rounded-xl px-2.5 py-2 bg-gray-50 font-semibold text-gray-700">
-                    <option value="ALL">ทุกกลุ่มเครื่อง</option>
-                    <option value="ICE_IM">IM Series (น้ำแข็งก้อน)</option>
-                    <option value="ICE_KM">KM Series (เสี้ยวพระจันทร์)</option>
-                    <option value="ICE_FM">FM Series (เกล็ดน้ำแข็ง)</option>
-                    <option value="FRIDGE">ตู้แช่เย็น / ตู้แช่แข็ง</option>
-                </select>
+
+            <!-- Filter & Model Selector Bar -->
+            <div class="bg-rose-50/80 border-b border-rose-200 px-3 sm:px-4 py-2.5 space-y-2 flex-shrink-0">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 text-xs">
+                    <div class="md:col-span-4 flex items-center gap-1.5">
+                        <select id="errorCodeSeriesFilter" onchange="onErrorSeriesChanged()" class="w-full border border-rose-300 rounded-xl px-2.5 py-2 bg-white font-bold text-hoshizaki-navy focus:outline-none">
+                            <option value="ALL">ทุกกลุ่มผลิตภัณฑ์ (All Product Lines)</option>
+                            <option value="ICE_IM">1. IM Series — Cube Ice Maker (น้ำแข็งก้อน)</option>
+                            <option value="ICE_KM">2. KM / KMD Series — Crescent Cube (เสี้ยวพระจันทร์)</option>
+                            <option value="ICE_FM">3. FM Series — Flake &amp; Nugget Ice (เกล็ด/นักเก็ต)</option>
+                            <option value="FRIDGE_HR">4. HR / HF Series — ตู้แช่ทรงยืน (Upright Reach-In)</option>
+                            <option value="FRIDGE_RT">5. RT / RTC / RTF — ตู้แช่เคาน์เตอร์ (Undercounter)</option>
+                            <option value="SPECIALTY">6. DCM / AM / HNC / DBF / HSU — ตู้จ่าย/ซูชิ/เบียร์/ล้างจาน</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-4 flex items-center gap-1">
+                        <input type="text" id="errorCodeModelFilter" list="hoshizakiModelsList" oninput="renderErrorCodeList()" placeholder="ระบุรุ่นเฉพาะ เช่น IM-240DNE, KM-901MAJ, FM-480AKE..." class="flex-1 border border-rose-300 rounded-xl px-3 py-2 bg-white font-bold text-hoshizaki-navy focus:outline-none">
+                        <button type="button" onclick="syncCurrentJobModelToErrorModal()" title="ดึงรุ่นจากใบงานปัจจุบัน" class="bg-white hover:bg-rose-100 text-hoshizaki-navy border border-rose-300 px-2.5 py-2 rounded-xl font-bold">
+                            <i class="fa-solid fa-rotate"></i>
+                        </button>
+                    </div>
+                    <div class="md:col-span-4 flex items-center gap-1">
+                        <input type="text" id="errorCodeSearchInput" oninput="renderErrorCodeList()" placeholder="ค้นหารหัส Error หรืออาการ เช่น E1, E2, E3, E4, E5, Beep, dF, Hi..." class="flex-1 border border-rose-300 rounded-xl px-3 py-2 bg-white font-bold text-rose-900 focus:outline-none">
+                        <button type="button" onclick="resetErrorCodeFilters()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-2.5 py-2 rounded-xl font-bold" title="ล้างตัวกรอง">
+                            <i class="fa-solid fa-eraser"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Series & Code Chips -->
+                <div class="flex flex-wrap items-center gap-1 text-[11px]">
+                    <span class="text-gray-600 font-bold mr-1">เทียบความหมายรหัสเดียวกันข้ามรุ่น:</span>
+                    <button type="button" onclick="quickFilterErrorCode('ALL', '', 'E1')" class="bg-rose-600 hover:bg-rose-700 text-white px-2 py-0.5 rounded-md font-bold">เทียบ E1 ทุกรุ่น</button>
+                    <button type="button" onclick="quickFilterErrorCode('ALL', '', 'E2')" class="bg-rose-600 hover:bg-rose-700 text-white px-2 py-0.5 rounded-md font-bold">เทียบ E2 ทุกรุ่น</button>
+                    <button type="button" onclick="quickFilterErrorCode('ALL', '', 'E3')" class="bg-rose-600 hover:bg-rose-700 text-white px-2 py-0.5 rounded-md font-bold">เทียบ E3 ทุกรุ่น</button>
+                    <button type="button" onclick="quickFilterErrorCode('ALL', '', 'E4')" class="bg-rose-600 hover:bg-rose-700 text-white px-2 py-0.5 rounded-md font-bold">เทียบ E4 ทุกรุ่น</button>
+                    <span class="text-gray-300 mx-1">|</span>
+                    <button type="button" onclick="quickFilterErrorCode('ICE_IM', 'IM-240DNE', '')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-0.5 rounded-md font-bold">IM-240DNE / 100NE</button>
+                    <button type="button" onclick="quickFilterErrorCode('ICE_KM', 'KM-901MAJ', '')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-0.5 rounded-md font-bold">KM-150B / 901MAJ</button>
+                    <button type="button" onclick="quickFilterErrorCode('ICE_FM', 'FM-480AKE', '')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-0.5 rounded-md font-bold">FM-300 / 480 / 750AKE</button>
+                    <button type="button" onclick="quickFilterErrorCode('FRIDGE_HR', 'HF-126MA-S', '')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-0.5 rounded-md font-bold">HR / HF ตู้ยืน</button>
+                    <button type="button" onclick="quickFilterErrorCode('FRIDGE_RT', 'RTC-150SDB', '')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-0.5 rounded-md font-bold">RT / RTC เคาน์เตอร์</button>
+                </div>
             </div>
-            <div id="errorCodeListContainer" class="overflow-y-auto flex-1 space-y-2 pr-1 text-xs"></div>
-            <div class="flex justify-end pt-2 border-t flex-shrink-0">
-                <button type="button" onclick="closeErrorCodeModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-5 py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
+
+            <!-- Scrollable Spec-Sheet-Style Diagnostic Matrix Body -->
+            <div class="flex-1 overflow-y-auto p-2.5 sm:p-5 bg-slate-100">
+                <div id="errorSheetPrintableCard" class="bg-white rounded-xl border-2 border-hoshizaki-blue/60 shadow-md overflow-hidden">
+                    <div id="errorCodeListContainer"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -18267,7 +18718,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <div>
                         <h3 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
                             <span>HOSHIZAKI FULL-SCREEN SPECIFICATION SHEET</span>
-                            <span class="text-[10px] bg-emerald-500/30 border border-emerald-300/40 px-2 py-0.5 rounded-full text-emerald-200">v18.6</span>
+                            <span class="text-[10px] bg-emerald-500/30 border border-emerald-300/40 px-2 py-0.5 rounded-full text-emerald-200">v18.7</span>
                         </h3>
                         <p class="text-[11px] text-sky-200">ตารางสเปกมาตรฐาน Hoshizaki + ภาพหน้าปก Spec Sheet PDF จาก Google Drive</p>
                     </div>

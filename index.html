@@ -3389,7 +3389,12 @@
                 <div class="space-y-2 text-xs">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-1">
                         <span class="sm:w-36 text-gray-500 font-medium flex-shrink-0">ชื่อร้าน/ลูกค้า:</span>
-                        <input type="text" id="custStore" list="hoshizakiCustomersList" oninput="handleCustomerAutoLookup(this.value)" onchange="handleCustomerAutoLookup(this.value)" placeholder="พิมพ์หรือเลือกชื่อร้านค้า / ลูกค้าประจำ" class="flex-1 font-semibold border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
+                        <div class="flex-1 flex items-center gap-1">
+                            <input type="text" id="custStore" list="hoshizakiCustomersList" oninput="handleCustomerAutoLookup(this.value)" onchange="handleCustomerAutoLookup(this.value)" placeholder="พิมพ์หรือเลือกชื่อร้านค้า / ลูกค้าประจำ" class="flex-1 font-semibold border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
+                            <button type="button" onclick="openCustomerDirectoryModal()" title="ค้นหาลูกค้า/ดีลเลอร์ 862 ราย พร้อม Tax ID และประวัติยอดซื้อ" class="no-print bg-sky-600 hover:bg-sky-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 flex-shrink-0 shadow-xs">
+                                <i class="fa-solid fa-address-book"></i> <span>ค้นหา (862)</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:items-center gap-1">
                         <span class="sm:w-36 text-gray-500 font-medium flex-shrink-0">ตัวแทนจำหน่าย / Dealer:</span>
@@ -3778,6 +3783,9 @@
                 <div class="no-print flex flex-wrap items-center gap-1.5">
                     <button type="button" onclick="openDealerGradeModal()" class="bg-sky-700 hover:bg-sky-800 text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm" title="ผูกเกรดราคา (A+, A, B+, B, C+, C, Direct, Special) เข้ากับรายชื่อดีลเลอร์/ลูกค้า">
                         <i class="fa-solid fa-address-book"></i> เกรดดีลเลอร์/ลูกค้า
+                    </button>
+                    <button type="button" onclick="openPartPriceTrendModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm" title="ดูประวัติราคาอะไหล่ย้อนหลัง 1,127 รายการ ว่าเคยเสนอให้ลูกค้าเจ้าไหน ราคาเท่าไหร่">
+                        <i class="fa-solid fa-chart-line"></i> ประวัติราคา (1,127)
                     </button>
                     <button type="button" onclick="openPartPriceDbModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm" title="จัดการตารางราคา 8 เกรด, ปรับตามอัตราแลกเปลี่ยน (FX) และปัดเศษอัตโนมัติ">
                         <i class="fa-solid fa-tags"></i> ฐานราคาอะไหล่ (8 เกรด)
@@ -4578,6 +4586,9 @@
                     </button>
                     <button type="button" onclick="copyCustomerQuotationApprovalLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded font-bold flex items-center gap-1 shadow-sm" title="สร้างลิงก์ให้ลูกค้าเปิดดูใบเสนอราคาและกดอนุมัติสั่งซ่อมออนไลน์ผ่านมือถือ">
                         <i class="fa-solid fa-signature"></i> ลิงก์อนุมัติออนไลน์
+                    </button>
+                    <button type="button" onclick="syncCurrentQuotationToGoogleSheets()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-2.5 py-1.5 rounded font-bold flex items-center gap-1 shadow-sm" title="ส่งข้อมูลใบเสนอราคา/ใบแจ้งหนี้นี้เข้าแท็บ Quotations ใน Google Sheets ส่วนกลางทันที">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> ซิงค์ QT ขึ้น Sheets
                     </button>
                     <button type="button" onclick="convertApprovedQuoteToJobAndDeductStock()" class="bg-orange-600 hover:bg-orange-700 text-white px-2.5 py-1.5 rounded font-bold flex items-center gap-1 shadow-sm" title="ยืนยันอนุมัติสั่งซ่อม บันทึกเข้าประวัติใบงาน และตัดสต็อกอะไหล่รถช่างทันที">
                         <i class="fa-solid fa-truck-ramp-box"></i> แปลงเป็นใบงาน & ตัดสต็อกรถช่าง
@@ -14520,7 +14531,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     tbody.innerHTML = '';
                     pricedItems.forEach(it => {
                         if (typeof addPartsRow === 'function') {
-                            addPartsRow(it.d || it.p || '', it.q || 1, Number(it.u || 0).toFixed(2));
+                            addPartsRow({ desc: it.d || it.p || '', qty: it.q || 1, price: Number(it.u || 0).toFixed(2) });
                         }
                     });
                     if (typeof calculateTotals === 'function') calculateTotals();
@@ -14573,6 +14584,413 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         setTimeout(() => {
             ensureQuotationArchiveLoaded();
         }, 1200);
+
+        
+        // =========================================================================
+        // v14.9: CUSTOMER DIRECTORY SEARCH (862), PART PRICE TREND ANALYSIS (1,127)
+        //        & REAL-TIME QUOTATION SYNC TO GOOGLE SHEETS
+        // =========================================================================
+        let __custDirDisplayLimit = 50;
+        let __custDirAggregatedCache = null;
+        let __partTrendDisplayLimit = 50;
+        let __partTrendAggregatedCache = null;
+
+        function buildCustomerDirectoryAnalytics(data) {
+            if (__custDirAggregatedCache) return __custDirAggregatedCache;
+            if (!data) return [];
+
+            const statsByCust = new Map();
+            (data.quotations || []).forEach(q => {
+                const name = (q.s || '').trim();
+                if (!name) return;
+                const key = name.toLowerCase();
+                if (!statsByCust.has(key)) {
+                    statsByCust.set(key, {
+                        store: name,
+                        taxId: q.x || '',
+                        contact: q.c || '',
+                        address: q.a || '',
+                        email: q.e || '',
+                        quoteCount: 0,
+                        totalSpend: 0,
+                        lastDate: q.dt || '',
+                        lastOffer: q.o || '',
+                        models: new Set()
+                    });
+                }
+                const entry = statsByCust.get(key);
+                entry.quoteCount += 1;
+                entry.totalSpend += Number(q.gt || 0);
+                if (!entry.taxId && q.x) entry.taxId = q.x;
+                if (!entry.contact && q.c) entry.contact = q.c;
+                if (!entry.address && q.a) entry.address = q.a;
+                if (!entry.email && q.e) entry.email = q.e;
+                if (q.dt && q.dt > entry.lastDate) {
+                    entry.lastDate = q.dt;
+                    entry.lastOffer = q.o || entry.lastOffer;
+                }
+                if (q.m && q.m.length < 35 && !q.m.startsWith('MODEL')) entry.models.add(q.m);
+            });
+
+            (data.customers || []).forEach(c => {
+                const name = (c.s || '').trim();
+                if (!name) return;
+                const key = name.toLowerCase();
+                if (!statsByCust.has(key)) {
+                    statsByCust.set(key, {
+                        store: name,
+                        taxId: c.x || '',
+                        contact: [c.n, c.p].filter(Boolean).join(' '),
+                        address: c.a || '',
+                        email: c.e || '',
+                        quoteCount: 0,
+                        totalSpend: 0,
+                        lastDate: '',
+                        lastOffer: '',
+                        models: new Set()
+                    });
+                }
+            });
+
+            __custDirAggregatedCache = Array.from(statsByCust.values()).map(item => ({
+                ...item,
+                modelsList: Array.from(item.models).slice(0, 6)
+            }));
+            return __custDirAggregatedCache;
+        }
+
+        async function openCustomerDirectoryModal() {
+            const modal = document.getElementById('customerDirectoryModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            __custDirDisplayLimit = 50;
+            const data = await ensureQuotationArchiveLoaded();
+            const list = buildCustomerDirectoryAnalytics(data);
+            const badge = document.getElementById('custDirTotalBadge');
+            if (badge) badge.innerText = list.length.toLocaleString();
+            renderCustomerDirectoryList();
+        }
+
+        function closeCustomerDirectoryModal() {
+            document.getElementById('customerDirectoryModal')?.classList.add('hidden');
+        }
+
+        function loadMoreCustomerDirectoryRows() {
+            __custDirDisplayLimit += 50;
+            renderCustomerDirectoryList(true);
+        }
+
+        function matchesProvinceFilter(addr, filterVal) {
+            if (filterVal === 'ALL') return true;
+            const a = String(addr || '').toUpperCase();
+            if (filterVal === 'BANGKOK') return a.includes('BANGKOK') || a.includes('กรุงเทพ') || a.includes('กทม');
+            if (filterVal === 'SAMUTPRAKARN') return a.includes('SAMUTPRAKARN') || a.includes('SAMUT PRAKARN') || a.includes('สมุทรปราการ');
+            if (filterVal === 'PATHUMTHANI') return a.includes('PATHUM') || a.includes('NONTHABURI') || a.includes('ปทุมธานี') || a.includes('นนทบุรี');
+            if (filterVal === 'CHONBURI') return a.includes('CHONBURI') || a.includes('RAYONG') || a.includes('PATTAYA') || a.includes('ชลบุรี') || a.includes('ระยอง') || a.includes('พัทยา');
+            if (filterVal === 'PHUKET') return a.includes('PHUKET') || a.includes('SURAT') || a.includes('SAMUI') || a.includes('KRABI') || a.includes('SONGKHLA') || a.includes('ภูเก็ต') || a.includes('สุราษฎร์') || a.includes('สมุย') || a.includes('สงขลา');
+            if (filterVal === 'CHIANGMAI') return a.includes('CHIANG') || a.includes('เชียงใหม่') || a.includes('เชียงราย');
+            if (filterVal === 'ISAN') return a.includes('NAKHON RATCHASIMA') || a.includes('KHON KAEN') || a.includes('UDON') || a.includes('UBON') || a.includes('นครราชสีมา') || a.includes('ขอนแก่น') || a.includes('อุดร') || a.includes('อุบล');
+            return true;
+        }
+
+        function renderCustomerDirectoryList(keepLimit = false) {
+            if (!keepLimit) __custDirDisplayLimit = 50;
+            const container = document.getElementById('custDirResultsContainer');
+            const shownEl = document.getElementById('custDirShownCount');
+            const totalEl = document.getElementById('custDirFilteredTotal');
+            const loadMoreBtn = document.getElementById('custDirLoadMoreBtn');
+            if (!container) return;
+
+            const allCustomers = buildCustomerDirectoryAnalytics(__qtArchiveData);
+            const q = (document.getElementById('custDirSearchInput')?.value || '').trim().toLowerCase();
+            const prov = document.getElementById('custDirProvinceFilter')?.value || 'ALL';
+            const sortBy = document.getElementById('custDirSortSelect')?.value || 'SPEND_DESC';
+
+            let filtered = allCustomers.filter(c => {
+                if (!matchesProvinceFilter(c.address, prov)) return false;
+                if (!q) return true;
+                const hay = `${c.store} ${c.taxId} ${c.contact} ${c.address} ${c.email} ${c.modelsList.join(' ')}`.toLowerCase();
+                return hay.includes(q);
+            });
+
+            if (sortBy === 'SPEND_DESC') {
+                filtered.sort((a, b) => b.totalSpend - a.totalSpend);
+            } else if (sortBy === 'COUNT_DESC') {
+                filtered.sort((a, b) => b.quoteCount - a.quoteCount);
+            } else {
+                filtered.sort((a, b) => a.store.localeCompare(b.store));
+            }
+
+            if (totalEl) totalEl.innerText = filtered.length.toLocaleString();
+            const slice = filtered.slice(0, __custDirDisplayLimit);
+            if (shownEl) shownEl.innerText = slice.length.toLocaleString();
+            if (loadMoreBtn) loadMoreBtn.classList.toggle('hidden', slice.length >= filtered.length);
+
+            if (slice.length === 0) {
+                container.innerHTML = '<div class="p-6 text-center text-gray-400">ไม่พบรายชื่อลูกค้าที่ตรงกับเงื่อนไข</div>';
+                return;
+            }
+
+            container.innerHTML = slice.map(c => {
+                const safeStore = c.store.replace(/'/g, "\'");
+                return `
+                    <div class="bg-white border border-gray-200 hover:border-hoshizaki-blue rounded-xl p-3 shadow-2xs space-y-1.5 transition">
+                        <div class="flex flex-wrap items-center justify-between gap-1.5">
+                            <div class="font-extrabold text-hoshizaki-navy text-xs sm:text-sm">
+                                <i class="fa-solid fa-building text-sky-600 mr-1"></i> ${c.store}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[11px] bg-blue-50 text-hoshizaki-darkblue px-2 py-0.5 rounded font-bold">${c.quoteCount} ใบเสนอราคา</span>
+                                <span class="text-[11px] bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded font-extrabold">รวม ${c.totalSpend.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-gray-600">
+                            <div><b>Tax ID:</b> ${c.taxId || '-'} &nbsp;|&nbsp; <b>โทร/ผู้ติดต่อ:</b> ${c.contact || '-'}</div>
+                            <div class="sm:text-right"><b>ล่าสุด:</b> ${c.lastDate || '-'} ${c.lastOffer ? `(${c.lastOffer})` : ''}</div>
+                        </div>
+                        ${c.address ? `<div class="text-[11px] text-gray-500"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>${c.address}</div>` : ''}
+                        ${c.modelsList.length > 0 ? `<div class="flex flex-wrap gap-1 pt-0.5">${c.modelsList.map(m => `<span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px] font-semibold">${m}</span>`).join('')}</div>` : ''}
+                        <div class="flex flex-wrap items-center justify-end gap-1.5 pt-1 border-t border-gray-100">
+                            <button type="button" onclick="closeCustomerDirectoryModal(); openQuotationArchiveModal('${safeStore}');" class="bg-sky-50 hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 text-[11px] px-2.5 py-1 rounded-lg font-semibold">
+                                <i class="fa-solid fa-folder-open mr-1"></i> ดูใบเสนอราคาของเจ้านี้
+                            </button>
+                            <button type="button" onclick="selectCustomerFromDirectoryModal('${safeStore}')" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-[11px] px-3 py-1 rounded-lg font-bold">
+                                <i class="fa-solid fa-check mr-1"></i> เลือกลงใบงานปัจจุบัน
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectCustomerFromDirectoryModal(storeName) {
+            const allCustomers = buildCustomerDirectoryAnalytics(__qtArchiveData);
+            const found = allCustomers.find(x => x.store === storeName);
+            if (!found) return;
+            if (document.getElementById('custStore')) document.getElementById('custStore').value = found.store;
+            if (document.getElementById('custContact') && found.contact) document.getElementById('custContact').value = found.contact;
+            if (document.getElementById('custAddress') && found.address) document.getElementById('custAddress').value = found.address;
+            if (typeof handleCustomerAutoLookup === 'function') handleCustomerAutoLookup(found.store);
+            if (typeof debounceAutoSave === 'function') debounceAutoSave();
+            closeCustomerDirectoryModal();
+            showToast(`นำเข้าข้อมูลลูกค้า "${found.store}" เรียบร้อยแล้ว`);
+        }
+
+        // --- PART PRICE TREND ANALYSIS (1,127 PARTS) ---
+        function buildPartPriceTrendAnalytics(data) {
+            if (__partTrendAggregatedCache) return __partTrendAggregatedCache;
+            if (!data) return [];
+
+            const map = new Map();
+            (data.quotations || []).forEach(q => {
+                (q.it || []).forEach(it => {
+                    const pNo = (it.p || '').trim();
+                    const unitPrice = Number(it.u || 0);
+                    if (!pNo || pNo === '-' || pNo.startsWith('(') || pNo.startsWith('MODEL') || unitPrice <= 0) return;
+                    if (!map.has(pNo)) {
+                        map.set(pNo, {
+                            partNo: pNo,
+                            desc: it.d || pNo,
+                            minPrice: unitPrice,
+                            maxPrice: unitPrice,
+                            lastPrice: unitPrice,
+                            lastDate: q.dt || '',
+                            count: 0,
+                            history: []
+                        });
+                    }
+                    const rec = map.get(pNo);
+                    rec.count += 1;
+                    if (unitPrice < rec.minPrice) rec.minPrice = unitPrice;
+                    if (unitPrice > rec.maxPrice) rec.maxPrice = unitPrice;
+                    if (q.dt && q.dt >= rec.lastDate) {
+                        rec.lastDate = q.dt;
+                        rec.lastPrice = unitPrice;
+                        if (it.d && it.d.length > rec.desc.length) rec.desc = it.d;
+                    }
+                    if (rec.history.length < 8) {
+                        rec.history.push({
+                            dt: q.dt || '-',
+                            offerNo: q.o || '-',
+                            customer: q.s || '-',
+                            qty: it.q || 1,
+                            price: unitPrice
+                        });
+                    }
+                });
+            });
+
+            (data.parts || []).forEach(p => {
+                const pNo = (p.p || '').trim();
+                const u = Number(p.u || 0);
+                if (!pNo || map.has(pNo)) return;
+                map.set(pNo, {
+                    partNo: pNo,
+                    desc: p.d ? `${pNo} - ${p.d}` : pNo,
+                    minPrice: u,
+                    maxPrice: u,
+                    lastPrice: u,
+                    lastDate: '',
+                    count: 1,
+                    history: []
+                });
+            });
+
+            __partTrendAggregatedCache = Array.from(map.values());
+            return __partTrendAggregatedCache;
+        }
+
+        async function openPartPriceTrendModal(presetQuery = '') {
+            const modal = document.getElementById('partPriceTrendModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            const inp = document.getElementById('partTrendSearchInput');
+            if (inp && presetQuery) inp.value = presetQuery;
+            __partTrendDisplayLimit = 50;
+            const data = await ensureQuotationArchiveLoaded();
+            const list = buildPartPriceTrendAnalytics(data);
+            const badge = document.getElementById('partTrendTotalBadge');
+            if (badge) badge.innerText = list.length.toLocaleString();
+            renderPartPriceTrendList();
+        }
+
+        function closePartPriceTrendModal() {
+            document.getElementById('partPriceTrendModal')?.classList.add('hidden');
+        }
+
+        function loadMorePartTrendRows() {
+            __partTrendDisplayLimit += 50;
+            renderPartPriceTrendList(true);
+        }
+
+        function renderPartPriceTrendList(keepLimit = false) {
+            if (!keepLimit) __partTrendDisplayLimit = 50;
+            const container = document.getElementById('partTrendResultsContainer');
+            const shownEl = document.getElementById('partTrendShownCount');
+            const totalEl = document.getElementById('partTrendFilteredTotal');
+            const loadMoreBtn = document.getElementById('partTrendLoadMoreBtn');
+            if (!container) return;
+
+            const allParts = buildPartPriceTrendAnalytics(__qtArchiveData);
+            const q = (document.getElementById('partTrendSearchInput')?.value || '').trim().toLowerCase();
+            const sortBy = document.getElementById('partTrendSortSelect')?.value || 'FREQ_DESC';
+
+            let filtered = allParts.filter(p => {
+                if (!q) return true;
+                const custs = p.history.map(h => h.customer).join(' ');
+                return `${p.partNo} ${p.desc} ${custs}`.toLowerCase().includes(q);
+            });
+
+            if (sortBy === 'FREQ_DESC') {
+                filtered.sort((a, b) => b.count - a.count);
+            } else if (sortBy === 'PRICE_DESC') {
+                filtered.sort((a, b) => b.lastPrice - a.lastPrice);
+            } else {
+                filtered.sort((a, b) => a.partNo.localeCompare(b.partNo));
+            }
+
+            if (totalEl) totalEl.innerText = filtered.length.toLocaleString();
+            const slice = filtered.slice(0, __partTrendDisplayLimit);
+            if (shownEl) shownEl.innerText = slice.length.toLocaleString();
+            if (loadMoreBtn) loadMoreBtn.classList.toggle('hidden', slice.length >= filtered.length);
+
+            if (slice.length === 0) {
+                container.innerHTML = '<div class="p-6 text-center text-gray-400">ไม่พบประวัติราคาอะไหล่ที่ค้นหา</div>';
+                return;
+            }
+
+            container.innerHTML = slice.map(p => {
+                const safeDesc = p.desc.replace(/'/g, "\'");
+                const histHtml = p.history.slice(0, 4).map(h =>
+                    `<div class="flex flex-wrap items-center justify-between gap-1 text-[10.5px] bg-gray-50 px-2 py-1 rounded border border-gray-100">
+                        <span><b>${h.dt}</b> • ${h.offerNo} • <span class="text-sky-900 font-semibold">${h.customer}</span></span>
+                        <span class="font-bold text-gray-800">x${h.qty} @ ${h.price.toLocaleString()} ฿</span>
+                    </div>`
+                ).join('');
+                return `
+                    <div class="bg-white border border-gray-200 hover:border-hoshizaki-blue rounded-xl p-3 shadow-2xs space-y-1.5 transition">
+                        <div class="flex flex-wrap items-center justify-between gap-1.5">
+                            <div class="font-extrabold text-hoshizaki-navy text-xs sm:text-sm">${p.desc}</div>
+                            <span class="text-[11px] bg-amber-100 text-amber-950 px-2 py-0.5 rounded font-bold">เสนอราคาแล้ว ${p.count} ครั้ง</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1.5 bg-sky-50/70 border border-sky-200 rounded-lg p-2 text-center text-[11px]">
+                            <div><span class="text-gray-500 block text-[10px]">ราคาต่ำสุด (Min)</span><strong class="text-sky-800">${p.minPrice.toLocaleString()} ฿</strong></div>
+                            <div><span class="text-gray-500 block text-[10px]">ราคาล่าสุด (Latest)</span><strong class="text-emerald-700">${p.lastPrice.toLocaleString()} ฿</strong></div>
+                            <div><span class="text-gray-500 block text-[10px]">ราคาสูงสุด (Max)</span><strong class="text-rose-700">${p.maxPrice.toLocaleString()} ฿</strong></div>
+                        </div>
+                        ${histHtml ? `<div class="space-y-1 pt-0.5">${histHtml}</div>` : ''}
+                        <div class="flex justify-end pt-1 border-t border-gray-100">
+                            <button type="button" onclick="addPartFromTrendModal('${safeDesc}', ${p.lastPrice})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-3 py-1 rounded-lg font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-plus-circle"></i> เพิ่มลงตารางอะไหล่ (${p.lastPrice.toLocaleString()} ฿)
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addPartFromTrendModal(desc, unitPrice) {
+            if (typeof addPartsRow === 'function') {
+                addPartsRow({ desc: desc, qty: 1, price: Number(unitPrice || 0).toFixed(2) });
+                if (typeof calculateTotals === 'function') calculateTotals();
+                if (typeof debounceAutoSave === 'function') debounceAutoSave();
+            }
+            closePartPriceTrendModal();
+            showToast(`เพิ่มรายการ "${desc}" ลงตารางอะไหล่แล้ว`);
+        }
+
+        // --- REAL-TIME QUOTATION SYNC TO GOOGLE SHEETS ---
+        async function syncCurrentQuotationToGoogleSheets() {
+            const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+            if (!webhookUrl) {
+                showToast('กรุณาตั้งค่า Web App URL ของ Google Sheets ก่อนซิงค์ครับ');
+                return;
+            }
+            const jobData = typeof collectFullJobData === 'function' ? collectFullJobData() : {};
+            const offerNo = document.getElementById('recOfferNo')?.innerText || (typeof currentOfferNo !== 'undefined' ? currentOfferNo : '');
+            const docTitle = document.getElementById('receiptDocTitle')?.innerText || 'QUOTATION';
+            const subtotal = document.getElementById('recSubtotal')?.innerText || '0.00';
+            const vat = document.getElementById('recVat')?.innerText || '0.00';
+            const wht = document.getElementById('recWht')?.innerText || '0.00';
+            const grandTotal = document.getElementById('recTotal')?.innerText || '0.00';
+            const remark = document.getElementById('recCustomRemarkInput')?.value || '';
+
+            const payload = {
+                actionType: 'SAVE_QUOTATION',
+                offerNo: offerNo,
+                docType: docTitle,
+                refJobNo: jobData.jobNo || '',
+                date: jobData.date || new Date().toISOString().split('T')[0],
+                customerStore: jobData.store || '',
+                dealer: jobData.dealer || '',
+                contact: jobData.contact || '',
+                address: jobData.address || '',
+                model: jobData.model || '',
+                serial: jobData.serial || '',
+                priceTier: typeof getActivePriceTier === 'function' ? getActivePriceTier() : 'DIRECT',
+                partsSummary: (jobData.parts || []).filter(p => p.desc).map(p => `${p.desc} (x${p.qty} @ ${p.price})`).join(' | '),
+                subtotal: subtotal,
+                vat: vat,
+                wht: wht,
+                grandTotal: grandTotal,
+                remark: remark,
+                technician: jobData.responsibleTech || ''
+            };
+
+            try {
+                showToast(`กำลังส่งเอกสาร ${offerNo} ขึ้น Google Sheets...`);
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                showToast(`ซิงค์เอกสาร ${offerNo} ขึ้นแท็บ Quotations ใน Google Sheets เรียบร้อย ✓`);
+            } catch (err) {
+                console.error('Quotation sync error:', err);
+                showToast('ไม่สามารถส่งข้อมูลใบเสนอราคาขึ้น Google Sheets ได้');
+            }
+        }
 
         function loadJobFromHistory(jobNo) { return loadHistoryItem(jobNo); }
     </script>
@@ -14633,6 +15051,102 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                         โหลดเพิ่มอีก 50 รายการ
                     </button>
                     <button type="button" onclick="closeQuotationArchiveModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1.5 rounded-lg font-semibold">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Directory Search Modal (862 Customers/Dealers - v14.9) -->
+    <div id="customerDirectoryModal" class="no-print fixed inset-0 bg-black/75 backdrop-blur-sm z-[66] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-5xl w-full p-3.5 sm:p-6 space-y-3 max-h-[92dvh] flex flex-col">
+            <div class="flex flex-wrap items-center justify-between border-b pb-2.5 gap-2 flex-shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-lg font-extrabold text-hoshizaki-navy flex items-center gap-2">
+                        <i class="fa-solid fa-address-book text-sky-600"></i> คลังฐานข้อมูลลูกค้า & ดีลเลอร์ (<span id="custDirTotalBadge">862</span> ราย)
+                    </h3>
+                    <p class="text-[11px] text-gray-500">ค้นหาตามชื่อบริษัท, เลขผู้เสียภาษี (Tax ID), เบอร์โทร, ที่อยู่/จังหวัด หรือยอดเสนอราคาสะสม</p>
+                </div>
+                <button type="button" onclick="closeCustomerDirectoryModal()" class="text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none px-1.5">&times;</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs flex-shrink-0">
+                <div class="sm:col-span-6 relative">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-3 top-2.5"></i>
+                    <input type="text" id="custDirSearchInput" oninput="renderCustomerDirectoryList()" placeholder="พิมพ์ชื่อลูกค้า, Tax ID, เบอร์โทร, อีเมล หรือจังหวัด..." class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-hoshizaki-blue font-medium">
+                </div>
+                <div class="sm:col-span-3">
+                    <select id="custDirProvinceFilter" onchange="renderCustomerDirectoryList()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 bg-white font-semibold text-gray-700">
+                        <option value="ALL">ทุกจังหวัด / ทุกพื้นที่</option>
+                        <option value="BANGKOK">กรุงเทพมหานคร (Bangkok)</option>
+                        <option value="SAMUTPRAKARN">สมุทรปราการ</option>
+                        <option value="PATHUMTHANI">ปทุมธานี / นนทบุรี</option>
+                        <option value="CHONBURI">ชลบุรี / ระยอง / ภาคตะวันออก</option>
+                        <option value="PHUKET">ภูเก็ต / สุราษฎร์ฯ / ภาคใต้</option>
+                        <option value="CHIANGMAI">เชียงใหม่ / เชียงราย / ภาคเหนือ</option>
+                        <option value="ISAN">ภาคอีสาน (โคราช/ขอนแก่น/อุดรฯ)</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-3">
+                    <select id="custDirSortSelect" onchange="renderCustomerDirectoryList()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 bg-white font-semibold text-hoshizaki-navy">
+                        <option value="SPEND_DESC">เรียงตามยอดเสนอราคาสูงสุด</option>
+                        <option value="COUNT_DESC">เรียงตามจำนวนฉบับมากสุด</option>
+                        <option value="NAME_ASC">เรียงตามชื่อ ก-ฮ / A-Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="custDirResultsContainer" class="overflow-y-auto flex-1 border border-gray-200 rounded-xl bg-gray-50/70 p-2 space-y-2 text-xs">
+                <div class="p-6 text-center text-gray-400">กำลังโหลดข้อมูลลูกค้า...</div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t text-xs flex-shrink-0">
+                <span class="text-gray-600">แสดง <strong id="custDirShownCount" class="text-hoshizaki-navy">0</strong> จาก <strong id="custDirFilteredTotal" class="text-hoshizaki-navy">0</strong> ราย</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="custDirLoadMoreBtn" onclick="loadMoreCustomerDirectoryRows()" class="hidden bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg font-bold">
+                        โหลดเพิ่มอีก 50 ราย
+                    </button>
+                    <button type="button" onclick="closeCustomerDirectoryModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1.5 rounded-lg font-semibold">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historical Part Price Trend Modal (1,127 Parts - v14.9) -->
+    <div id="partPriceTrendModal" class="no-print fixed inset-0 bg-black/75 backdrop-blur-sm z-[67] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-5xl w-full p-3.5 sm:p-6 space-y-3 max-h-[92dvh] flex flex-col">
+            <div class="flex flex-wrap items-center justify-between border-b pb-2.5 gap-2 flex-shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-lg font-extrabold text-hoshizaki-navy flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-sky-600"></i> วิเคราะห์ประวัติราคาอะไหล่ย้อนหลัง (<span id="partTrendTotalBadge">1,127</span> รายการ)
+                    </h3>
+                    <p class="text-[11px] text-gray-500">ตรวจสอบราคาต่ำสุด–สูงสุด–ราคาล่าสุด พร้อมรายชื่อลูกค้าและเลขที่ใบเสนอราคาที่เคยเสนอขายจริง</p>
+                </div>
+                <button type="button" onclick="closePartPriceTrendModal()" class="text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none px-1.5">&times;</button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2 text-xs flex-shrink-0">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-3 top-2.5"></i>
+                    <input type="text" id="partTrendSearchInput" oninput="renderPartPriceTrendList()" placeholder="พิมพ์รหัสอะไหล่ (Part No.) หรือชื่ออะไหล่ เช่น P02715-02, PUMP MOTOR, EV965516..." class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-hoshizaki-blue font-medium">
+                </div>
+                <select id="partTrendSortSelect" onchange="renderPartPriceTrendList()" class="border border-gray-300 rounded-lg px-2.5 py-2 bg-white font-semibold text-hoshizaki-navy">
+                    <option value="FREQ_DESC">เรียงตามความถี่ที่เสนอราคาบ่อยสุด</option>
+                    <option value="PRICE_DESC">เรียงตามราคาสูงสุด</option>
+                    <option value="CODE_ASC">เรียงตามรหัสอะไหล่ A-Z</option>
+                </select>
+            </div>
+
+            <div id="partTrendResultsContainer" class="overflow-y-auto flex-1 border border-gray-200 rounded-xl bg-gray-50/70 p-2 space-y-2 text-xs">
+                <div class="p-6 text-center text-gray-400">กำลังโหลดข้อมูลราคาอะไหล่...</div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t text-xs flex-shrink-0">
+                <span class="text-gray-600">แสดง <strong id="partTrendShownCount" class="text-hoshizaki-navy">0</strong> จาก <strong id="partTrendFilteredTotal" class="text-hoshizaki-navy">0</strong> รายการ</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="partTrendLoadMoreBtn" onclick="loadMorePartTrendRows()" class="hidden bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg font-bold">
+                        โหลดเพิ่มอีก 50 รายการ
+                    </button>
+                    <button type="button" onclick="closePartPriceTrendModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1.5 rounded-lg font-semibold">ปิด</button>
                 </div>
             </div>
         </div>

@@ -718,7 +718,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.5 Full-Screen Spec + Flex OA</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.6 Full-Screen Spec + Deep Audited</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -18267,7 +18267,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <div>
                         <h3 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
                             <span>HOSHIZAKI FULL-SCREEN SPECIFICATION SHEET</span>
-                            <span class="text-[10px] bg-emerald-500/30 border border-emerald-300/40 px-2 py-0.5 rounded-full text-emerald-200">v18.5</span>
+                            <span class="text-[10px] bg-emerald-500/30 border border-emerald-300/40 px-2 py-0.5 rounded-full text-emerald-200">v18.6</span>
                         </h3>
                         <p class="text-[11px] text-sky-200">ตารางสเปกมาตรฐาน Hoshizaki + ภาพหน้าปก Spec Sheet PDF จาก Google Drive</p>
                     </div>
@@ -18299,8 +18299,13 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <button type="button" onclick="loadFullScreenSpecSheet('IM-130NE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">IM-130NE</button>
                     <button type="button" onclick="loadFullScreenSpecSheet('IM-100NE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">IM-100NE</button>
                     <button type="button" onclick="loadFullScreenSpecSheet('IM-65NE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">IM-65NE</button>
-                    <button type="button" onclick="loadFullScreenSpecSheet('KM-150B')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">KM-150B</button>
-                    <button type="button" onclick="loadFullScreenSpecSheet('FM-300AKE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">FM-300AKE</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('KM-150B')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">KM-40B~150B</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('KM-901MAJ')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">KM-231~1301</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('FM-300AKE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">FM-150~480</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('FM-750AKE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">FM-600~1000</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('HR-126MA-S')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">HR/HF ตู้ยืน</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('RTC-150SDB')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">RT/RTC เคาน์เตอร์</button>
+                    <button type="button" onclick="loadFullScreenSpecSheet('DCM-120KE')" class="bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-1 rounded-lg font-bold">DCM/AM/HNC/DBF</button>
                 </div>
             </div>
 
@@ -18336,8 +18341,8 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         // =========================================================================
         const HOSHIZAKI_SPEC_TABLE_CATALOG = [
             {
-                match: /^IM-240DNE/i,
-                title: 'IM-240DNE SERIES — CUBE ICE MAKER (MODULAR)',
+                match: /^IM-240/i,
+                title: 'IM-240 SERIES — MODULAR CUBE ICE MAKER (IM-240DNE / -21 / -23 / -32)',
                 columns: ['IM-240DNE', 'IM-240DNE-21', 'IM-240DNE-23', 'IM-240DNE-32'],
                 rows: [
                     { label: 'ICE DIMENSIONS (MM)', values: ['28 x 28 x 32', '21 x 21 x 14', '28 x 28 x 23', '32 x 32 x 32'] },
@@ -18346,7 +18351,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     { label: 'WEIGHT (NETT / GROSS)', colspan: '88 KG / 101 KG' },
                     { label: 'AMPERAGE / STARTING AMPERAGE', colspan: '6.6A / 35A' },
                     { label: 'ELECTRICAL CONSUMPTION', colspan: '1330 W' },
-                    { label: 'REFRIGERANT CHARGE', colspan: 'R404a (High: 210-265 PSI | Low: 28-42 PSI)' },
+                    { label: 'REFRIGERANT CHARGE', colspan: 'R404A (High: 210-265 PSI | Low: 28-42 PSI)' },
                     { label: 'HEAT REJECTION (AT32°C/WT21°C)', colspan: '2870 W (2470 kcal/h)' },
                     { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', values: ['240 KG', '217 KG (7mm)', '225 KG', '220 KG'] },
                     { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', values: ['220 KG', '210 KG (7mm)', '215 KG', '210 KG'] },
@@ -18380,12 +18385,12 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 operating: 'Voltage Range: 198V-254V • Ambient Temperature: 1°-40°C • Water Supply: 5°-35°C / 0.07-0.8 Mpa • AC Supply Voltage: 1/220-240V / 50 Hz'
             },
             {
-                match: /^IM-100NE/i,
+                match: /^IM-100/i,
                 title: 'IM-100NE SERIES — SELF-CONTAINED CUBE ICE MAKER',
                 columns: ['IM-100NE', 'IM-100NE-21', 'IM-100NE-23', 'IM-100NE-HC'],
                 rows: [
                     { label: 'ICE DIMENSIONS (MM)', values: ['28 x 28 x 32', '21 x 21 x 14', '28 x 28 x 23', '28 x 28 x 32'] },
-                    { label: 'DIMENSIONS (MM)', colspan: '704 x 506 x 1200' },
+                    { label: 'DIMENSIONS (MM)', colspan: '704 x 506 x 1200 (IM-100CNE: 1004 x 600 x 800)' },
                     { label: 'WEIGHT (NETT / GROSS)', colspan: '73 KG / 81 KG' },
                     { label: 'AMPERAGE / STARTING AMPERAGE', colspan: '3.8A / 21A' },
                     { label: 'ELECTRICAL CONSUMPTION', colspan: '630 W' },
@@ -18400,28 +18405,157 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 operating: 'Voltage Range: 198V-254V • Ambient Temperature: 1°-40°C • Water Supply: 5°-35°C / 0.07-0.8 Mpa • AC Supply Voltage: 1/220-240V / 50 Hz'
             },
             {
-                match: /^IM-65NE/i,
-                title: 'IM-65NE SERIES — SELF-CONTAINED CUBE ICE MAKER',
-                columns: ['IM-65NE', 'IM-65NE-21', 'IM-65NE-23', 'IM-65NE-HC'],
+                match: /^IM-(21|30|45|65)/i,
+                title: 'IM-21CNE / 30CNE / 45NE / 65NE — COMPACT UNDERCOUNTER CUBE SERIES',
+                columns: ['IM-21CNE / 30CNE', 'IM-45CNE', 'IM-45NE', 'IM-65NE'],
                 rows: [
-                    { label: 'ICE DIMENSIONS (MM)', values: ['28 x 28 x 32', '21 x 21 x 14', '28 x 28 x 23', '28 x 28 x 32'] },
-                    { label: 'DIMENSIONS (MM)', colspan: '633 x 506 x 840' },
-                    { label: 'WEIGHT (NETT / GROSS)', colspan: '53 KG / 60 KG' },
-                    { label: 'AMPERAGE / STARTING AMPERAGE', colspan: '2.7A / 16A' },
-                    { label: 'ELECTRICAL CONSUMPTION', colspan: '400 W' },
-                    { label: 'REFRIGERANT CHARGE', values: ['R134a', 'R134a', 'R134a', 'R290 (HC)'] },
-                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', colspan: '65 KG' },
-                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', colspan: '58 KG' },
-                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', colspan: '50 KG' },
-                    { label: 'WATER CONSUMPTION PER 24H', colspan: '0.14 m³ (2.40 L / 1KG ICE)' },
-                    { label: 'FREEZE CYCLE TIME / PER CYCLE', colspan: '20 - 25 MIN (0.85 KG / 42 PCS)' }
+                    { label: 'ICE DIMENSIONS (MM)', colspan: '28 x 28 x 32 (Full Cube) | 21 x 21 x 14 (-21) | 28 x 28 x 23 (-23)' },
+                    { label: 'DIMENSIONS (W x D x H MM)', values: ['398 x 451 x 695', '633 x 511 x 690', '503 x 456 x 840', '633 x 506 x 840'] },
+                    { label: 'WEIGHT (NETT / GROSS)', values: ['34 / 39 KG', '48 / 54 KG', '46 / 52 KG', '53 / 60 KG'] },
+                    { label: 'AMPERAGE / STARTING AMPERAGE', values: ['1.8A / 11A', '2.3A / 14A', '2.3A / 14A', '2.7A / 16A'] },
+                    { label: 'ELECTRICAL CONSUMPTION', values: ['240 W', '330 W', '330 W', '400 W'] },
+                    { label: 'REFRIGERANT CHARGE', colspan: 'R134a / R290 (-HC) • High: 135-180 PSI | Low: 12-22 PSI' },
+                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', values: ['21 / 30 KG', '47 KG', '47 KG', '65 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', values: ['18 / 27 KG', '42 KG', '42 KG', '58 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', values: ['15 / 23 KG', '36 KG', '36 KG', '50 KG'] },
+                    { label: 'WATER CONSUMPTION PER 24H', values: ['0.08 m³ (2.6L/KG)', '0.11 m³ (2.5L/KG)', '0.11 m³ (2.5L/KG)', '0.14 m³ (2.4L/KG)'] },
+                    { label: 'FREEZE CYCLE TIME / PER CYCLE', values: ['20-24 MIN (0.36 KG)', '20-25 MIN (0.60 KG)', '20-25 MIN (0.60 KG)', '20-25 MIN (0.85 KG)'] }
                 ],
-                note: 'All dimensions indicated are Width x Depth x Height in mm.',
+                note: 'All dimensions indicated are Width x Depth x Height in mm. Add +90mm to +150mm for adjustable legs.',
                 operating: 'Voltage Range: 198V-254V • Ambient Temperature: 1°-40°C • Water Supply: 5°-35°C / 0.07-0.8 Mpa • AC Supply Voltage: 1/220-240V / 50 Hz'
+            },
+            {
+                match: /^KM-(35|40|50|55|60|65|80|100|150)/i,
+                title: 'KM SELF-CONTAINED CRESCENT CUBE SERIES (KM-40B / 60B / 100B / 150B)',
+                columns: ['KM-40B', 'KM-60B', 'KM-100B', 'KM-150B'],
+                rows: [
+                    { label: 'ICE SHAPE & DIMENSIONS', colspan: 'Crescent Cube (30 x 37 x 13 mm) — Double-Sided Stainless Steel Evaporator' },
+                    { label: 'DIMENSIONS (W x D x H MM)', values: ['452 x 617 x 842', '605 x 617 x 842', '770 x 617 x 950', '935 x 617 x 1080'] },
+                    { label: 'BIN STORAGE CAPACITY', values: ['16 KG', '23 KG', '38 KG', '55 KG'] },
+                    { label: 'WEIGHT (NETT / GROSS)', values: ['42 / 49 KG', '49 / 57 KG', '62 / 72 KG', '78 / 90 KG'] },
+                    { label: 'AMPERAGE / STARTING AMPERAGE', values: ['2.2A / 13A', '2.6A / 15A', '3.6A / 21A', '4.8A / 28A'] },
+                    { label: 'ELECTRICAL CONSUMPTION', values: ['320 W', '390 W', '560 W', '780 W'] },
+                    { label: 'REFRIGERANT & WORKING PRESSURE', colspan: 'R134a / R404A / R290 • High: 210-260 PSI | Low: 28-40 PSI' },
+                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', values: ['43 KG', '63 KG', '104 KG', '155 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', values: ['40 KG', '60 KG', '100 KG', '150 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', values: ['34 KG', '51 KG', '86 KG', '130 KG'] },
+                    { label: 'WATER CONSUMPTION PER 24H', values: ['0.08 m³ (2.1L/KG)', '0.12 m³ (2.0L/KG)', '0.19 m³ (1.9L/KG)', '0.26 m³ (1.7L/KG)'] },
+                    { label: 'HARVEST / FREEZE CYCLE TIME', colspan: '16 - 22 MIN (CycleSaver™ Design — Fewer Cycles, Longer Compressor Life)' }
+                ],
+                note: 'All dimensions indicated are Width x Depth x Height in mm (including 150mm adjustable legs).',
+                operating: 'Voltage Range: 198V-254V • Ambient Temperature: 7°-38°C • Water Supply: 7°-32°C / 0.07-0.8 Mpa • AC Supply Voltage: 1/220-240V / 50 Hz'
+            },
+            {
+                match: /^KM-(231|515|660|901|1301|1340|1601|1900|2200|2600)|^KMD-/i,
+                title: 'KM / KMD MODULAR CRESCENT CUBE SERIES (KM-231BAJ to KM-1301SAJ)',
+                columns: ['KM-231BAJ', 'KM-515MAH / 660MAJ', 'KM-901MAJ', 'KM-1301SAJ'],
+                rows: [
+                    { label: 'ICE SHAPE & DIMENSIONS', colspan: 'Crescent Cube (30 x 37 x 13 mm) — EverCheck™ Diagnostic Alert System' },
+                    { label: 'DIMENSIONS (W x D x H MM)', values: ['560 x 625 x 610', '762 x 620 x 762', '762 x 620 x 1050', '1220 x 620 x 1050'] },
+                    { label: 'WEIGHT (NETT / GROSS)', values: ['55 / 63 KG', '82 / 94 KG', '108 / 122 KG', '145 / 165 KG'] },
+                    { label: 'AMPERAGE / BREAKER', values: ['4.5A (15A)', '6.8A - 8.2A (20A)', '10.2A (20A)', '13.5A (30A)'] },
+                    { label: 'ELECTRICAL CONSUMPTION', values: ['680 W', '1,120 - 1,350 W', '1,780 W', '2,450 W'] },
+                    { label: 'REFRIGERANT & WORKING PRESSURE', colspan: 'R404A • High: 215-265 PSI | Low: 28-42 PSI (Air-Cooled / Water-Cooled options)' },
+                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', values: ['215 KG', '240 / 300 KG', '410 KG', '590 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', values: ['195 KG', '220 / 275 KG', '375 KG', '545 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', values: ['165 KG', '185 / 235 KG', '320 KG', '470 KG'] },
+                    { label: 'WATER CONSUMPTION PER 24H', values: ['0.32 m³ (1.7L/KG)', '0.42 m³ (1.6L/KG)', '0.58 m³ (1.5L/KG)', '0.82 m³ (1.4L/KG)'] },
+                    { label: 'CYCLE TIME & CONTROL', colspan: '15 - 20 MIN • Board LED Status + Float Switch + Hot Gas Harvest' }
+                ],
+                note: 'Modular head only — requires compatible Hoshizaki Storage Bin (B-301SA, B-501SA, B-801SA, etc.).',
+                operating: 'Voltage Range: 198V-254V (or 3-Phase 380-415V for 2200/2600) • Ambient: 7°-38°C • Water: 7°-32°C / 0.07-0.8 Mpa'
+            },
+            {
+                match: /^FM-(80|120|150|170|300|480)/i,
+                title: 'FM SERIES — FLAKE & NUGGET ICE MAKER (FM-150KE to FM-480AKE)',
+                columns: ['FM-150KE / 170AKE', 'FM-300AKE / -N', 'FM-480AKE / -N', 'FM-480ALKE'],
+                rows: [
+                    { label: 'ICE TYPE', values: ['Flake / Nugget (-N)', 'Flake / Nugget (-N)', 'Flake / Nugget (-N)', 'Flake (Remote Cond.)'] },
+                    { label: 'DIMENSIONS (W x D x H MM)', values: ['560 x 600 x 800', '560 x 700 x 780', '560 x 700 x 780', '560 x 700 x 780'] },
+                    { label: 'WEIGHT (NETT / GROSS)', values: ['66 / 74 KG', '81 / 91 KG', '92 / 103 KG', '86 / 97 KG'] },
+                    { label: 'AMPERAGE / GEAR MOTOR AMPS', values: ['3.4A (GM: 0.9A)', '5.1A (GM: 1.2A)', '7.4A (GM: 1.4A)', '6.8A (GM: 1.4A)'] },
+                    { label: 'ELECTRICAL CONSUMPTION', values: ['490 W', '820 W', '1,280 W', '1,150 W'] },
+                    { label: 'REFRIGERANT & WORKING PRESSURE', colspan: 'R404A / R452A • High: 200-255 PSI | Low: 25-38 PSI' },
+                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', values: ['150 - 170 KG', '300 KG', '480 KG', '480 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', values: ['135 - 150 KG', '265 KG', '425 KG', '430 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', values: ['115 - 130 KG', '225 KG', '360 KG', '370 KG'] },
+                    { label: 'WATER CONSUMPTION PER 24H', values: ['0.15 m³ (1.05L/KG)', '0.28 m³ (1.05L/KG)', '0.44 m³ (1.05L/KG)', '0.44 m³ (1.05L/KG)'] },
+                    { label: 'AUGER & FLUSH SYSTEM', colspan: 'Continuous Auger Extrusion • Auto Water Flush Every 12 Hours' }
+                ],
+                note: 'Check Gear Motor Amps & Mechanical Seal condition during PM service.',
+                operating: 'Voltage Range: 198V-254V • Ambient Temperature: 5°-40°C • Water Supply: 5°-35°C / 0.05-0.8 Mpa • AC Supply: 1/220-240V / 50 Hz'
+            },
+            {
+                match: /^FM-(600|750|1000|1800)/i,
+                title: 'FM HEAVY-DUTY SERIES — FLAKE & NUGGET ICE MAKER (FM-600AKE to FM-1800ALKE)',
+                columns: ['FM-600AKE / -N', 'FM-750AKE / -N', 'FM-1000AKE / -N', 'FM-1800ALKE-N'],
+                rows: [
+                    { label: 'ICE TYPE', values: ['Flake / Nugget (-N)', 'Flake / Nugget (-N)', 'Flake / Nugget (-N)', 'Nugget (Remote)'] },
+                    { label: 'DIMENSIONS (W x D x H MM)', values: ['762 x 700 x 780', '762 x 700 x 780', '762 x 700 x 780', '1080 x 700 x 850'] },
+                    { label: 'WEIGHT (NETT / GROSS)', values: ['108 / 121 KG', '118 / 132 KG', '132 / 147 KG', '185 / 210 KG'] },
+                    { label: 'AMPERAGE / GEAR MOTOR AMPS', values: ['8.6A (GM: 1.6A)', '10.2A (GM: 1.8A)', '12.4A (GM: 2.1A)', '16.5A (GM: 2.8A)'] },
+                    { label: 'ELECTRICAL CONSUMPTION', values: ['1,520 W', '1,850 W', '2,250 W', '3,100 W'] },
+                    { label: 'REFRIGERANT & WORKING PRESSURE', colspan: 'R404A / R452A • High: 200-255 PSI | Low: 25-38 PSI' },
+                    { label: 'ICE PRODUCTION PER 24H (AT10°C/WT10°C)', values: ['600 KG', '750 KG', '1,000 KG', '1,800 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT21°C/WT15°C)', values: ['530 KG', '665 KG', '890 KG', '1,620 KG'] },
+                    { label: 'ICE PRODUCTION PER 24H (AT32°C/WT21°C)', values: ['450 KG', '565 KG', '760 KG', '1,400 KG'] },
+                    { label: 'WATER CONSUMPTION PER 24H', values: ['0.54 m³ (1.05L/KG)', '0.68 m³ (1.05L/KG)', '0.90 m³ (1.05L/KG)', '1.65 m³ (1.05L/KG)'] },
+                    { label: 'AUGER & SAFETY SENSORS', colspan: 'Rotation Sensor + Current Sub-Board + Float Switch + Auto Flush' }
+                ],
+                note: 'Heavy-duty commercial/industrial production models — verify condenser airflow clearance.',
+                operating: 'Voltage Range: 198V-254V • Ambient Temperature: 5°-40°C • Water Supply: 5°-35°C / 0.05-0.8 Mpa • AC Supply: 1/220-240V / 50 Hz'
+            },
+            {
+                match: /^(HR|HF|HRF|HRW|HW)-/i,
+                title: 'UPRIGHT REACH-IN REFRIGERATOR & FREEZER SERIES (HR / HF / HRF / HRW)',
+                columns: ['HR-68MA-S (2D Chiller)', 'HF-68MA-S (2D Freezer)', 'HR-126MA-S (4D Chiller)', 'HF-126MA-S (4D Freezer)'],
+                rows: [
+                    { label: 'TEMPERATURE RANGE', values: ['+1°C to +6°C', '-18°C to -23°C', '+1°C to +6°C', '-18°C to -23°C'] },
+                    { label: 'DIMENSIONS (W x D x H MM)', values: ['680 x 800 x 2050', '680 x 800 x 2050', '1200 x 650 x 2050', '1200 x 650 x 2050'] },
+                    { label: 'EFFECTIVE CAPACITY', values: ['540 Liters', '540 Liters', '830 Liters', '830 Liters'] },
+                    { label: 'WEIGHT (NETT / GROSS)', values: ['96 / 112 KG', '104 / 120 KG', '138 / 158 KG', '148 / 168 KG'] },
+                    { label: 'AMPERAGE / POWER', values: ['2.1A / 260 W', '3.8A / 520 W', '2.8A / 360 W', '5.2A / 740 W'] },
+                    { label: 'REFRIGERANT CHARGE', values: ['R134a / R290', 'R404A / R290', 'R134a / R290', 'R404A / R290'] },
+                    { label: 'DEFROST SYSTEM', values: ['Off-Cycle Air Defrost', 'Electric Heater Defrost', 'Off-Cycle Air Defrost', 'Electric Heater Defrost'] },
+                    { label: 'DRAIN EVAPORATION', colspan: 'Built-in Automatic Evaporating Pan (Heater / Hot Gas Loop)' }
+                ],
+                note: 'Also applies to 78/96/98/146/148/186/188MA-S models (width 700 / 900 / 1400 / 1800 mm).',
+                operating: 'Voltage Range: 198V-254V • Ambient Temperature: up to 38°-43°C • AC Supply Voltage: 1/220-240V / 50 Hz'
+            },
+            {
+                match: /^(RT|RTC|RTF|RTS|RW|RF|RR|RRF|RFT)-/i,
+                title: 'UNDERCOUNTER CHILLER & FREEZER SERIES (RT / RTC / RTF / RTS / RW)',
+                columns: ['RT-126MA-S / RTC-120SDB', 'RT-156MA-S / RTC-150SDB', 'RT-186MA-S / RTC-180SDB', 'RTF-120 / 150 / 180SDB'],
+                rows: [
+                    { label: 'TEMPERATURE RANGE', values: ['+1°C to +6°C', '+1°C to +6°C', '+1°C to +6°C', '-18°C to -23°C'] },
+                    { label: 'DIMENSIONS (W x D x H MM)', values: ['1200 x 600/750 x 850', '1500 x 600/750 x 850', '1800 x 600/750 x 850', '1200/1500/1800 x 750 x 850'] },
+                    { label: 'EFFECTIVE CAPACITY', values: ['240 - 310 Liters', '320 - 410 Liters', '400 - 510 Liters', '305 - 495 Liters'] },
+                    { label: 'WEIGHT (NETT)', values: ['76 - 88 KG', '89 - 102 KG', '104 - 118 KG', '94 - 126 KG'] },
+                    { label: 'AMPERAGE / POWER', values: ['1.8A / 220 W', '2.1A / 260 W', '2.4A / 310 W', '3.6 - 4.6A / 490 - 620 W'] },
+                    { label: 'REFRIGERANT CHARGE', values: ['R134a / R290', 'R134a / R290', 'R134a / R290', 'R404A / R290'] },
+                    { label: 'DEFROST & CONTROLLER', colspan: 'Digital Electronic Controller (ETC / Carel) • Auto Defrost & Drain Pan' }
+                ],
+                note: 'SDB-D = Drawer Type | SDB-G = Glass Door Type | MA-S = Standard Stainless Undercounter.',
+                operating: 'Voltage Range: 198V-254V • Ambient Temperature: up to 38°-43°C • AC Supply Voltage: 1/220-240V / 50 Hz'
+            },
+            {
+                match: /^DCM-|^DIM-|^AM-|^HNC-|^DBF-|^HSU-/i,
+                title: 'SPECIALTY EQUIPMENT — DISPENSER / TOP-HAT CUBE / SUSHI CASE / BEER DISPENSER',
+                columns: ['DCM-60KE / 120KE', 'AM-50BAE / DIM-30DE', 'HNC-120BE / 150BE / 180BE', 'DBF-25SB / 43WD'],
+                rows: [
+                    { label: 'EQUIPMENT TYPE', values: ['Ice & Water Dispenser', 'Gourmet / Top-Hat Cube', 'Sushi Display Case (L/R)', 'Draft Beer Dispenser'] },
+                    { label: 'DIMENSIONS (W x D x H MM)', values: ['350x585x695 / 815', '384x476x848 / 350x475x750', '1200/1500/1800 x 345 x 280', '255x553x682 / 430x553x745'] },
+                    { label: 'PRODUCTION / TEMP', values: ['60 / 120 KG per 24h', '51 / 30 KG per 24h', '+2°C to +6°C (Static)', '+1°C to +4°C (Ice Bank)'] },
+                    { label: 'AMPERAGE / POWER', values: ['2.4A / 340 W', '2.1A / 310 W', '1.4A / 170 W', '1.9A / 240 W'] },
+                    { label: 'REFRIGERANT', values: ['R134a / R404A', 'R134a / R290', 'R134a / R600a', 'R134a'] },
+                    { label: 'KEY SERVICE CHECKS', values: ['Dispense Shutter & Auger', 'Spray Nozzle & Water Pan', 'Door Glass & Condenser', 'Agitator Motor & Beer Tap'] }
+                ],
+                note: 'Refer to model-specific PDF below for exploded parts diagrams and wiring schematics.',
+                operating: 'Voltage Range: 198V-254V • AC Supply Voltage: 1/220-240V / 50 Hz'
             }
         ];
 
-        function openFullScreenSpecViewerModal(presetModel) {
+function openFullScreenSpecViewerModal(presetModel) {
             const modal = document.getElementById('fullScreenSpecViewerModal');
             const input = document.getElementById('fullSpecModelSearchInput');
             if (!modal) return;

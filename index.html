@@ -4643,27 +4643,36 @@
         }
 
         const DEFAULT_TECHNICIAN_DIRECTORY = [
-            { code: 'T01', name: 'Mr.Thanakrit Chanmokonpanit', phone: '096-804-3989', isCoord: true, isDispatcher: true },
-            { code: 'T02', name: 'Mr.Noparin Homhoul', phone: '097-230-5941', isCoord: false, isDispatcher: false },
-            { code: 'T03', name: 'Mr.Surin Sarawong', phone: '091-767-2018', isCoord: true, isDispatcher: true },
-            { code: 'T04', name: 'Mr.Jeerapan Phrasawang', phone: '091-767-2079', isCoord: true, isDispatcher: true },
-            { code: 'T05', name: 'Mr.Nirun Sornrat', phone: '091-767-2038', isCoord: false, isDispatcher: false },
-            { code: 'T06', name: 'Mr. Surin Tharapai', phone: '063-865-5442', isCoord: false, isDispatcher: false },
-            { code: 'T07', name: 'Mr.Pawat Warongtheradet', phone: '099-508-1908', isCoord: false, isDispatcher: false },
-            { code: 'T08', name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132', isCoord: true, isDispatcher: true }
+            { code: 'T01', name: 'Mr.Thanakrit Chanmokonpanit', phone: '096-804-3989', email: 'thanakrit@hoshizaki.co.th', lineUserId: '', isCoord: true, isDispatcher: true },
+            { code: 'T02', name: 'Mr.Noparin Homhoul', phone: '097-230-5941', email: 'noparin@hoshizaki.co.th', lineUserId: '', isCoord: false, isDispatcher: false },
+            { code: 'T03', name: 'Mr.Surin Sarawong', phone: '091-767-2018', email: 'surin.s@hoshizaki.co.th', lineUserId: '', isCoord: true, isDispatcher: true },
+            { code: 'T04', name: 'Mr.Jeerapan Phrasawang', phone: '091-767-2079', email: 'jeerapan@hoshizaki.co.th', lineUserId: '', isCoord: true, isDispatcher: true },
+            { code: 'T05', name: 'Mr.Nirun Sornrat', phone: '091-767-2038', email: 'nirun@hoshizaki.co.th', lineUserId: '', isCoord: false, isDispatcher: false },
+            { code: 'T06', name: 'Mr. Surin Tharapai', phone: '063-865-5442', email: 'surin.t@hoshizaki.co.th', lineUserId: '', isCoord: false, isDispatcher: false },
+            { code: 'T07', name: 'Mr.Pawat Warongtheradet', phone: '099-508-1908', email: 'pawat@hoshizaki.co.th', lineUserId: '', isCoord: false, isDispatcher: false },
+            { code: 'T08', name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132', email: 'wanwipha@hoshizaki.co.th', lineUserId: '', isCoord: true, isDispatcher: true }
         ];
 
         const DEFAULT_COORDINATOR_DIRECTORY = [
-            { name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132', role: 'Coordinator / Dispatcher' },
-            { name: 'Mr.Thanakrit Chanmokonpanit', phone: '096-804-3989', role: 'Manager / Dispatcher' },
-            { name: 'Mr.Jeerapan Phrasawang', phone: '091-767-2079', role: 'Coordinator / Dispatcher' },
-            { name: 'Mr.Surin Sarawong', phone: '091-767-2018', role: 'Coordinator / Dispatcher' }
+            { name: 'Ms.Wanwipha Nakamrod', phone: '093-827-8132', email: 'wanwipha@hoshizaki.co.th', role: 'Coordinator / Dispatcher' },
+            { name: 'Mr.Thanakrit Chanmokonpanit', phone: '096-804-3989', email: 'thanakrit@hoshizaki.co.th', role: 'Manager / Dispatcher' },
+            { name: 'Mr.Jeerapan Phrasawang', phone: '091-767-2079', email: 'jeerapan@hoshizaki.co.th', role: 'Coordinator / Dispatcher' },
+            { name: 'Mr.Surin Sarawong', phone: '091-767-2018', email: 'surin.s@hoshizaki.co.th', role: 'Coordinator / Dispatcher' }
         ];
 
         function getTechnicianDirectory() {
             try {
                 const saved = JSON.parse(localStorage.getItem('hoshizaki_tech_directory') || 'null');
-                if (Array.isArray(saved) && saved.length > 0) return saved;
+                if (Array.isArray(saved) && saved.length > 0) {
+                    return saved.map(item => {
+                        const def = DEFAULT_TECHNICIAN_DIRECTORY.find(d => d.name.toLowerCase() === String(item.name || '').trim().toLowerCase());
+                        return {
+                            ...item,
+                            email: item.email || (def ? def.email : ''),
+                            lineUserId: item.lineUserId || ''
+                        };
+                    });
+                }
             } catch (e) {}
             return JSON.parse(JSON.stringify(DEFAULT_TECHNICIAN_DIRECTORY));
         }
@@ -8480,7 +8489,12 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             const selectedTechs = existing ? (existing.techs || []) : (presetTech ? [presetTech] : []);
             document.querySelectorAll('.disp-tech-cb').forEach(cb => {
                 cb.checked = selectedTechs.includes(cb.value);
+                cb.onchange = updateDispatchAssignedEmailsPreview;
             });
+            if (document.getElementById('dispReminderMinutes')) {
+                document.getElementById('dispReminderMinutes').value = String(existing?.reminderMinutes || 60);
+            }
+            updateDispatchAssignedEmailsPreview();
 
             document.getElementById('dispStore').value = existing ? (existing.store || '') : '';
             document.getElementById('dispOnsiteContact').value = existing ? (existing.onsiteContact || '') : '';
@@ -8544,6 +8558,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 coordPhone: document.getElementById('dispCoordPhone').value.trim(),
                 dispatcherName: document.getElementById('dispDispatcherName').value.trim(),
                 dispatcherPhone: document.getElementById('dispDispatcherPhone').value.trim(),
+                reminderMinutes: parseInt(document.getElementById('dispReminderMinutes')?.value || '60', 10) || 60,
                 updatedAt: new Date().toISOString()
             };
         }
@@ -8638,7 +8653,24 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 ');
         }
 
-        // 1. Send to Google Calendar
+        function getAssignedTechObjects(techNames) {
+            const dir = getTechnicianDirectory();
+            return (techNames || []).map(name => {
+                const found = dir.find(t => t.name.toLowerCase() === String(name || '').trim().toLowerCase());
+                return found || { code: '', name, phone: '', email: '', lineUserId: '' };
+            });
+        }
+
+        function updateDispatchAssignedEmailsPreview() {
+            const previewEl = document.getElementById('dispAssignedEmailsPreview');
+            if (!previewEl) return;
+            const techs = Array.from(document.querySelectorAll('.disp-tech-cb:checked')).map(cb => cb.value);
+            const objs = getAssignedTechObjects(techs);
+            const emails = objs.map(o => o.email).filter(Boolean);
+            previewEl.innerText = emails.length > 0 ? `อีเมลผู้รับนัดหมาย: ${emails.join(', ')}` : 'ยังไม่ได้เลือกช่าง';
+        }
+
+        // 1. Send to Google Calendar (Auto-adds Assigned Technicians' Emails as Guests!)
         function sendDispatchToGoogleCalendar() {
             const obj = collectDispatchFormObject();
             const cleanDate = (obj.date || new Date().toISOString().split('T')[0]).replace(/-/g, '');
@@ -8647,25 +8679,55 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             const title = encodeURIComponent(`[Hoshizaki] ${obj.store || obj.slotType} (${obj.model || 'Service'})`);
             const details = encodeURIComponent(buildDispatchSummaryMessage(obj));
             const location = encodeURIComponent(`${obj.store || ''} ${obj.address || ''}`.trim());
-            const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${cleanDate}T${cleanStart}/${cleanDate}T${cleanEnd}&details=${details}&location=${location}&ctz=Asia/Bangkok`;
+
+            const assignedObjs = getAssignedTechObjects(obj.techs);
+            const guestEmails = assignedObjs.map(t => t.email).filter(Boolean);
+            const addParam = guestEmails.length > 0 ? `&add=${encodeURIComponent(guestEmails.join(','))}` : '';
+
+            const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${cleanDate}T${cleanStart}/${cleanDate}T${cleanEnd}&details=${details}&location=${location}&ctz=Asia/Bangkok${addParam}`;
             window.open(calUrl, '_blank', 'noopener,noreferrer');
+            if (guestEmails.length > 0) {
+                showToast(`เปิด Google Calendar พร้อมเชิญอีเมลช่าง: ${guestEmails.join(', ')}`);
+            }
         }
 
-        // 2. Download .ICS File for Outlook / Apple Calendar / Mobile Calendar
+        // 1.5 Send to Outlook Calendar Web (Office 365 / Outlook.com with Guests)
+        function sendDispatchToOutlookWeb() {
+            const obj = collectDispatchFormObject();
+            const dateIso = obj.date || new Date().toISOString().split('T')[0];
+            const startIso = `${dateIso}T${obj.timeStart || '09:00'}:00+07:00`;
+            const endIso = `${dateIso}T${obj.timeEnd || '12:00'}:00+07:00`;
+            const subject = encodeURIComponent(`[Hoshizaki] ${obj.store || obj.slotType} (${obj.model || 'Service'})`);
+            const body = encodeURIComponent(buildDispatchSummaryMessage(obj));
+            const location = encodeURIComponent(`${obj.store || ''} ${obj.address || ''}`.trim());
+            const assignedObjs = getAssignedTechObjects(obj.techs);
+            const toEmails = assignedObjs.map(t => t.email).filter(Boolean).join(',');
+            const toParam = toEmails ? `&to=${encodeURIComponent(toEmails)}` : '';
+            const outlookUrl = `https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=${subject}&startdt=${encodeURIComponent(startIso)}&enddt=${encodeURIComponent(endIso)}&body=${body}&location=${location}${toParam}`;
+            window.open(outlookUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // 2. Download .ICS File for Outlook / Apple Calendar with Attendees & VALARM Reminder
         function downloadDispatchOutlookICS() {
             const obj = collectDispatchFormObject();
             const cleanDate = (obj.date || new Date().toISOString().split('T')[0]).replace(/-/g, '');
             const cleanStart = (obj.timeStart || '09:00').replace(':', '') + '00';
             const cleanEnd = (obj.timeEnd || '12:00').replace(':', '') + '00';
             const summaryText = `[Hoshizaki] ${obj.store || obj.slotType} (${obj.model || 'Service'})`;
-            const descText = buildDispatchSummaryMessage(obj).replace(/
-/g, '\n');
+            const descText = buildDispatchSummaryMessage(obj).replace(/\n/g, '\\n');
             const locText = `${obj.store || ''} ${obj.address || ''}`.trim();
+            const reminderMins = parseInt(document.getElementById('dispReminderMinutes')?.value || '60', 10) || 60;
+
+            const assignedObjs = getAssignedTechObjects(obj.techs);
+            const attendeeLines = assignedObjs
+                .filter(t => t.email)
+                .map(t => `ATTENDEE;CN="${t.name}";RSVP=TRUE:mailto:${t.email}`);
 
             const icsContent = [
                 'BEGIN:VCALENDAR',
                 'VERSION:2.0',
                 'PRODID:-//Hoshizaki Thailand//Service Dispatch//TH',
+                'METHOD:REQUEST',
                 'BEGIN:VEVENT',
                 `UID:${obj.id}@hoshizaki.co.th`,
                 `DTSTAMP:${cleanDate}T${cleanStart}`,
@@ -8674,10 +8736,15 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 `SUMMARY:${summaryText}`,
                 `DESCRIPTION:${descText}`,
                 `LOCATION:${locText}`,
+                ...attendeeLines,
+                'BEGIN:VALARM',
+                'ACTION:DISPLAY',
+                `DESCRIPTION:แจ้งเตือนงานบริการ Hoshizaki ในอีก ${reminderMins} นาที`,
+                `TRIGGER:-PT${reminderMins}M`,
+                'END:VALARM',
                 'END:VEVENT',
                 'END:VCALENDAR'
-            ].join('
-');
+            ].join('\r\n');
 
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const url = URL.createObjectURL(blob);
@@ -8688,15 +8755,44 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showToast('ดาวน์โหลดไฟล์นัดหมายปฏิทิน (.ics) สำหรับ Outlook เรียบร้อยแล้ว');
+            showToast(`ดาวน์โหลดไฟล์ปฏิทิน Outlook (.ics) พร้อมเชิญทีมช่างและแจ้งเตือนล่วงหน้า ${reminderMins} นาที ✓`);
         }
 
-        // 3. Share Text Dispatch Alert directly to LINE
+        // 3. Share Text Dispatch Alert directly to LINE (Choose Group or Individual Tech Chat)
         function shareDispatchTextToLine() {
             const obj = collectDispatchFormObject();
-            const msg = buildDispatchSummaryMessage(obj);
+            const reminderMins = document.getElementById('dispReminderMinutes')?.value || '60';
+            const msg = `🔔 [แจ้งเตือนล่วงหน้า ${reminderMins} นาทีก่อนนัด]\n` + buildDispatchSummaryMessage(obj);
             const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(msg)}`;
             window.open(lineUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // 3.5 Push Automated LINE Notification via Google Apps Script (Personal LINE + Group LINE)
+        async function sendAutoLinePushAlertNow() {
+            const url = getGoogleSheetsWebAppUrl();
+            if (!url) {
+                showToast('กรุณาตั้งค่า URL ของ Google Apps Script ก่อน');
+                return;
+            }
+            const obj = collectDispatchFormObject();
+            obj.reminderMinutes = parseInt(document.getElementById('dispReminderMinutes')?.value || '60', 10) || 60;
+            saveDispatchScheduleItem();
+            showToast('กำลังส่งแจ้งเตือนเข้า LINE กลุ่ม และ LINE ส่วนตัวของช่างที่รับผิดชอบ...');
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SEND_LINE_DISPATCH_NOW',
+                        item: obj,
+                        technicians: getTechnicianDirectory()
+                    })
+                });
+                showToast('ส่งคำสั่งแจ้งเตือนเข้า LINE (รายบุคคลและกลุ่ม) เรียบร้อยแล้ว ✓');
+            } catch (err) {
+                showToast('ไม่สามารถเชื่อมต่อ Google Apps Script ได้');
+            }
         }
 
         // 4. Convert Dispatch Schedule Card directly into a Pre-filled Service Report Form
@@ -9184,6 +9280,15 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             const nextNum = list.length + 1;
             const codeInp = document.getElementById('newTechCodeInput');
             if (codeInp) codeInp.value = 'T' + String(nextNum).padStart(2, '0');
+            try {
+                const lineCfg = JSON.parse(localStorage.getItem('hoshizaki_line_config') || '{}');
+                if (document.getElementById('lineChannelAccessTokenInput') && lineCfg.token) {
+                    document.getElementById('lineChannelAccessTokenInput').value = lineCfg.token;
+                }
+                if (document.getElementById('lineTeamGroupIdInput') && lineCfg.groupId) {
+                    document.getElementById('lineTeamGroupIdInput').value = lineCfg.groupId;
+                }
+            } catch (e) {}
             renderStaffManagerLists();
             modal.classList.remove('hidden');
         }
@@ -9204,15 +9309,20 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             const techContainer = document.getElementById('mgrTechnicianListContainer');
             if (techContainer) {
                 techContainer.innerHTML = techs.map((t, idx) => `
-                    <div class="flex items-center justify-between gap-2 bg-white border border-blue-100 rounded-lg px-2.5 py-1.5">
-                        <div class="min-w-0 flex-1">
-                            <span class="inline-block bg-indigo-100 text-indigo-900 font-bold text-[10px] px-1.5 rounded mr-1">${t.code}</span>
-                            <span class="font-bold text-gray-800">${t.name}</span>
-                            <div class="text-[10px] text-gray-500">${t.phone || '-'}</div>
+                    <div class="bg-white border border-blue-100 rounded-lg p-2 space-y-1">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="min-w-0 flex-1">
+                                <span class="inline-block bg-indigo-100 text-indigo-900 font-bold text-[10px] px-1.5 rounded mr-1">${t.code}</span>
+                                <span class="font-bold text-gray-800">${t.name}</span>
+                                <div class="text-[10px] text-gray-600">📞 ${t.phone || '-'} | ✉️ ${t.email || '-'}</div>
+                            </div>
+                            <button type="button" onclick="removeTechnicianEntry(${idx})" title="ลบรายชื่อช่างคนนี้" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded text-[11px] font-bold flex-shrink-0">
+                                <i class="fa-solid fa-trash-can"></i> ลบ
+                            </button>
                         </div>
-                        <button type="button" onclick="removeTechnicianEntry(${idx})" title="ลบรายชื่อช่างคนนี้" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded text-[11px] font-bold flex-shrink-0">
-                            <i class="fa-solid fa-trash-can"></i> ลบ
-                        </button>
+                        <div class="flex items-center gap-1">
+                            <input type="text" value="${t.lineUserId || ''}" onchange="updateTechLineUserId(${idx}, this.value)" placeholder="ใส่ LINE User ID ส่วนตัว (U...) เพื่อแจ้งเตือนรายบุคคล" class="flex-1 border border-gray-200 rounded px-2 py-0.5 text-[10px] font-mono bg-gray-50">
+                        </div>
                     </div>
                 `).join('');
             }
@@ -9237,6 +9347,8 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             const code = (document.getElementById('newTechCodeInput')?.value || '').trim().toUpperCase();
             const name = (document.getElementById('newTechNameInput')?.value || '').trim();
             const phone = (document.getElementById('newTechPhoneInput')?.value || '').trim();
+            const email = (document.getElementById('newTechEmailInput')?.value || '').trim();
+            const lineUserId = (document.getElementById('newTechLineIdInput')?.value || '').trim();
             if (!name) {
                 showToast('กรุณากรอกชื่อ-นามสกุลช่าง');
                 return;
@@ -9247,13 +9359,46 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 showToast('มีรายชื่อช่างคนนี้อยู่ในระบบแล้ว');
                 return;
             }
-            list.push({ code: finalCode, name, phone });
+            list.push({ code: finalCode, name, phone, email, lineUserId });
             saveTechnicianDirectory(list);
             document.getElementById('newTechNameInput').value = '';
             document.getElementById('newTechPhoneInput').value = '';
+            if (document.getElementById('newTechEmailInput')) document.getElementById('newTechEmailInput').value = '';
+            if (document.getElementById('newTechLineIdInput')) document.getElementById('newTechLineIdInput').value = '';
             document.getElementById('newTechCodeInput').value = 'T' + String(list.length + 1).padStart(2, '0');
             renderStaffManagerLists();
             showToast(`เพิ่มช่าง [${finalCode}] ${name} เรียบร้อยแล้ว ✓`);
+        }
+
+        function updateTechLineUserId(index, newLineId) {
+            const list = getTechnicianDirectory();
+            if (list[index]) {
+                list[index].lineUserId = String(newLineId || '').trim();
+                saveTechnicianDirectory(list);
+                showToast(`อัปเดต LINE User ID ของ ${list[index].name} แล้ว`);
+            }
+        }
+
+        async function saveLineNotificationConfig() {
+            const token = (document.getElementById('lineChannelAccessTokenInput')?.value || '').trim();
+            const groupId = (document.getElementById('lineTeamGroupIdInput')?.value || '').trim();
+            localStorage.setItem('hoshizaki_line_config', JSON.stringify({ token, groupId }));
+            const url = getGoogleSheetsWebAppUrl();
+            if (url) {
+                try {
+                    await fetch(url, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            actionType: 'SAVE_LINE_CONFIG',
+                            lineToken: token,
+                            lineGroupId: groupId
+                        })
+                    });
+                } catch (e) {}
+            }
+            showToast('บันทึกการตั้งค่า LINE แจ้งเตือนเรียบร้อยแล้ว ✓');
         }
 
         function removeTechnicianEntry(index) {
@@ -10707,21 +10852,42 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 </div>
             </div>
 
-            <!-- Action Footer: Save, Delete, Open Job Form, Google Calendar, Outlook (.ics), LINE -->
+            <!-- Reminder Lead Time & Multi-Channel Calendar / LINE Dispatch Bar (v12.3) -->
             <div class="border-t pt-2.5 space-y-2 flex-shrink-0 text-xs">
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-indigo-50/70 border border-indigo-200 rounded-xl px-2.5 py-1.5">
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-bell text-amber-500"></i>
+                        <span class="font-bold text-hoshizaki-navy">แจ้งเตือนล่วงหน้าก่อนถึงเวลานัดหมาย:</span>
+                        <select id="dispReminderMinutes" class="border border-indigo-300 rounded px-2 py-1 bg-white font-bold text-hoshizaki-navy">
+                            <option value="15">15 นาทีก่อนนัด</option>
+                            <option value="30">30 นาทีก่อนนัด</option>
+                            <option value="60" selected>1 ชั่วโมงก่อนนัด (แนะนำ)</option>
+                            <option value="120">2 ชั่วโมงก่อนนัด</option>
+                            <option value="1440">1 วันล่วงหน้า (24 ชม.)</option>
+                        </select>
+                    </div>
+                    <span id="dispAssignedEmailsPreview" class="text-[11px] text-indigo-800 font-medium truncate max-w-xs"></span>
+                </div>
+
                 <div class="flex flex-wrap items-center justify-between gap-1.5">
                     <div class="flex flex-wrap items-center gap-1.5">
-                        <button type="button" onclick="sendDispatchToGoogleCalendar()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1">
-                            <i class="fa-brands fa-google"></i> <span>Google Calendar</span>
+                        <button type="button" onclick="sendDispatchToGoogleCalendar()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1" title="เปิด Google Calendar พร้อมเชิญอีเมลทีมช่างที่เลือกอัตโนมัติ">
+                            <i class="fa-brands fa-google"></i> <span>Google Calendar (เชิญอีเมลช่าง)</span>
                         </button>
-                        <button type="button" onclick="downloadDispatchOutlookICS()" class="bg-sky-700 hover:bg-sky-800 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1">
-                            <i class="fa-solid fa-calendar-check"></i> <span>Outlook / ปฏิทิน (.ics)</span>
+                        <button type="button" onclick="sendDispatchToOutlookWeb()" class="bg-sky-600 hover:bg-sky-700 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1" title="เปิด Outlook Calendar บนเว็บพร้อมใส่อีเมลทีมช่างและแจ้งเตือนล่วงหน้า">
+                            <i class="fa-solid fa-envelope-open-text"></i> <span>Outlook Web</span>
                         </button>
-                        <button type="button" onclick="shareDispatchTextToLine()" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1">
-                            <i class="fa-brands fa-line"></i> <span>ส่งแจ้งเตือนเข้า LINE</span>
+                        <button type="button" onclick="downloadDispatchOutlookICS()" class="bg-sky-800 hover:bg-sky-900 text-white px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1" title="ดาวน์โหลดไฟล์ปฏิทิน .ics พร้อมผู้เข้าร่วม (ATTENDEE) และแจ้งเตือนล่วงหน้า (VALARM)">
+                            <i class="fa-solid fa-calendar-check"></i> <span>ไฟล์ปฏิทิน (.ics)</span>
+                        </button>
+                        <button type="button" onclick="shareDispatchTextToLine()" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1" title="เลือกส่งเข้าแชตกลุ่ม LINE หรือแชตส่วนตัวช่าง">
+                            <i class="fa-brands fa-line"></i> <span>ส่ง LINE (กลุ่ม / รายคน)</span>
+                        </button>
+                        <button type="button" onclick="sendAutoLinePushAlertNow()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1" title="ยิงแจ้งเตือนอัตโนมัติผ่าน LINE Messaging API ไปยังกลุ่มและ LINE ส่วนตัวของช่างที่รับผิดชอบ">
+                            <i class="fa-solid fa-paper-plane"></i> <span>ยิงแจ้งเตือน LINE ทันที</span>
                         </button>
                         <button type="button" onclick="convertDispatchToServiceReport()" class="bg-purple-600 hover:bg-purple-700 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-file-signature"></i> <span>เปิดเป็นใบแจ้งบริการ</span>
+                            <i class="fa-solid fa-file-signature"></i> <span>เปิดใบแจ้งบริการ</span>
                         </button>
                     </div>
                     <div class="flex items-center gap-1.5">
@@ -10770,11 +10936,13 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                         <span class="font-extrabold text-hoshizaki-navy"><i class="fa-solid fa-screwdriver-wrench text-hoshizaki-blue mr-1"></i> รายชื่อช่างบริการ (<span id="mgrTechCount">0</span> คน)</span>
                         <button type="button" onclick="resetDefaultTechnicians()" class="text-[10px] text-gray-500 hover:text-gray-800 underline">คืนค่าเริ่มต้น</button>
                     </div>
-                    <!-- Add New Technician Form -->
+                    <!-- Add New Technician Form (Code, Name, Phone, Email, LINE User ID) -->
                     <div class="grid grid-cols-12 gap-1.5 bg-white p-2 rounded-lg border border-blue-200">
                         <input type="text" id="newTechCodeInput" placeholder="รหัส (T09)" class="col-span-3 border border-gray-300 rounded px-2 py-1.5 font-bold text-center uppercase">
                         <input type="text" id="newTechNameInput" placeholder="ชื่อ-นามสกุล ช่างใหม่ *" class="col-span-5 border border-gray-300 rounded px-2 py-1.5 font-medium">
                         <input type="text" id="newTechPhoneInput" placeholder="เบอร์โทร" class="col-span-4 border border-gray-300 rounded px-2 py-1.5">
+                        <input type="email" id="newTechEmailInput" placeholder="อีเมล (เช่น name@hoshizaki.co.th)" class="col-span-7 border border-gray-300 rounded px-2 py-1.5">
+                        <input type="text" id="newTechLineIdInput" placeholder="LINE User ID ส่วนตัว (ถ้ามี)" class="col-span-5 border border-gray-300 rounded px-2 py-1.5 font-mono text-[11px]">
                         <button type="button" onclick="addNewTechnicianEntry()" class="col-span-12 bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white py-1.5 rounded-lg font-bold mt-0.5">
                             <i class="fa-solid fa-user-plus mr-1"></i> เพิ่มรายชื่อช่างใหม่
                         </button>
@@ -10798,6 +10966,25 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                         </button>
                     </div>
                     <div id="mgrCoordinatorListContainer" class="space-y-1.5 max-h-64 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <!-- LINE Automated Reminder Settings (Personal & Group LINE Messaging API) -->
+            <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 space-y-2 text-xs flex-shrink-0">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-extrabold text-emerald-950"><i class="fa-brands fa-line text-[#06C755] text-sm mr-1"></i> ตั้งค่าแจ้งเตือนอัตโนมัติล่วงหน้าผ่าน LINE (กลุ่มทีมช่าง & รายบุคคล)</span>
+                    <span class="text-[10px] text-emerald-800">ทำงานร่วมกับ Google Apps Script Trigger ตรวจสอบทุก 15 นาที</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                    <div class="sm:col-span-6">
+                        <input type="password" id="lineChannelAccessTokenInput" placeholder="วาง LINE Channel Access Token (LINE Official Account)..." class="w-full border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
+                    </div>
+                    <div class="sm:col-span-4">
+                        <input type="text" id="lineTeamGroupIdInput" placeholder="LINE Group ID กลุ่มทีมช่าง (ขึ้นต้นด้วย C...)" class="w-full border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <button type="button" onclick="saveLineNotificationConfig()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 px-3 rounded-lg font-bold shadow-xs">บันทึก LINE</button>
+                    </div>
                 </div>
             </div>
 

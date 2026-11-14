@@ -1,8 +1,10 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v16-0';
+const CACHE_NAME = 'hoshizaki-service-pwa-v17-0';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './serial_db.json',
+  './parts_catalog.json',
   './quotation_archive.json'
 ];
 

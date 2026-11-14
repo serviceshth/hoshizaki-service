@@ -487,7 +487,51 @@
                 margin-left: 3px;
             }
         }
-    </style>
+    
+        /* v14.8 Mobile Responsive & Quotation Archive Polish */
+        @media screen and (max-width: 639px) {
+            #toolbarActions.flex {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0.5rem !important;
+            }
+            #toolbarActions .tb-cat-btn {
+                flex: 1 1 auto !important;
+                text-align: center !important;
+                font-size: 11px !important;
+                padding: 0.45rem 0.5rem !important;
+            }
+            #toolbarActions .tb-action-item:not(.hidden) {
+                display: flex !important;
+                width: 100% !important;
+                flex: none !important;
+                justify-content: flex-start !important;
+                padding-left: 0.85rem !important;
+            }
+            #mobileSectionNav {
+                top: max(0.25rem, var(--safe-top)) !important;
+            }
+            #receiptModal > div {
+                padding: 0.65rem !important;
+                max-width: 100vw !important;
+                width: 100% !important;
+            }
+            #receiptContainer {
+                min-width: 640px !important;
+                padding: 0.85rem !important;
+            }
+            #quotationArchiveModal > div {
+                padding: 0.75rem !important;
+                width: 100% !important;
+            }
+            .archive-mobile-card {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.35rem !important;
+            }
+        }
+</style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     </head>
@@ -670,6 +714,9 @@
                 </button>
 
                 <!-- หมวด 2: เอกสารการเงิน & งานเคลม -->
+                <button type="button" data-tb-cat="DOCS" onclick="openQuotationArchiveModal()" class="tb-action-item flex-1 sm:flex-none justify-center bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm" title="ค้นหาและดึงใบเสนอราคาเก่า 2,486 ฉบับ ลูกค้า 862 ราย และราคาอะไหล่">
+                    <i class="fa-solid fa-folder-open"></i> <span>ใบเสนอราคาเก่า (<span id="qtArchiveToolbarCount">2,486</span>)</span>
+                </button>
                 <button type="button" data-tb-cat="DOCS" onclick="generateReceiptModal(false)" class="tb-action-item flex-1 sm:flex-none justify-center bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
                     <i class="fa-solid fa-file-invoice-dollar"></i> <span>ใบเสนอราคา / ใบแจ้งหนี้ / ใบเสร็จ</span>
                 </button>
@@ -3441,6 +3488,16 @@
                         </div>
                     </div>
                     <!-- ประวัติการซ่อมย้อนหลังของ Serial No. นี้ (ดึงจากประวัติในเครื่อง + Google Sheets ส่วนกลาง) -->
+                                        <!-- ประวัติใบเสนอราคาเก่าของ Serial No. นี้ (รองรับหลายบริษัท/หลายดีลเลอร์สอบถามราคาเครื่องเดียวกัน) -->
+                    <div id="serialQuotationInquiryBox" class="hidden bg-sky-50/90 border border-sky-300 rounded-lg p-2 space-y-1.5 text-[11px]">
+                        <div class="flex flex-wrap items-center justify-between gap-1 font-bold text-hoshizaki-navy">
+                            <span><i class="fa-solid fa-file-invoice-dollar text-sky-600 mr-1"></i> ประวัติเสนอราคาเก่าของ S/N นี้ (<span id="serialQtInquiryCount">0</span> ฉบับ / <span id="serialQtCustCount">0</span> บริษัท):</span>
+                            <button type="button" onclick="openQuotationArchiveModal(document.getElementById('eqSerial')?.value || '')" class="no-print text-[10px] bg-white hover:bg-sky-100 text-hoshizaki-navy border border-sky-300 px-2 py-0.5 rounded font-semibold">
+                                <i class="fa-solid fa-up-right-from-square"></i> ดูทั้งหมด
+                            </button>
+                        </div>
+                        <div id="serialQuotationInquiryList" class="space-y-1 max-h-36 overflow-y-auto text-gray-800"></div>
+                    </div>
                     <div id="serialServiceHistoryBox" class="hidden bg-amber-50/80 border border-amber-200 rounded-lg p-2 space-y-1.5 text-[11px]">
                         <div class="flex items-center justify-between font-bold text-amber-950">
                             <span><i class="fa-solid fa-clock-rotate-left text-amber-600 mr-1"></i> ประวัติการซ่อมย้อนหลังของ S/N นี้ (<span id="serialServiceHistoryCount">0</span> ครั้ง):</span>
@@ -14145,10 +14202,443 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         }, 650);
 
     
+        
+        // =========================================================================
+        // v14.8: QUOTATION ARCHIVE (2,486 QUOTES), 862 CUSTOMERS, 1,127 PART PRICES
+        //        & MULTI-CUSTOMER SERIAL NUMBER INQUIRY LOOKUP
+        // =========================================================================
+        let __qtArchiveData = null;
+        let __qtArchiveLoadPromise = null;
+        let __qtArchiveDisplayLimit = 50;
+
+        async function ensureQuotationArchiveLoaded(forceReload = false) {
+            if (__qtArchiveData && !forceReload) return __qtArchiveData;
+            if (__qtArchiveLoadPromise && !forceReload) return __qtArchiveLoadPromise;
+
+            __qtArchiveLoadPromise = (async () => {
+                try {
+                    // 1. Check IndexedDB cache first if user imported an updated JSON
+                    if (!forceReload && typeof idbGet === 'function') {
+                        const cached = await idbGet('hoshizaki_quotation_archive_v1');
+                        if (cached && Array.isArray(cached.quotations) && cached.quotations.length > 0) {
+                            __qtArchiveData = cached;
+                            hydrateCustomerAndPartMasterFromArchive(cached);
+                            return cached;
+                        }
+                    }
+                } catch (e) {}
+
+                try {
+                    const resp = await fetch('./quotation_archive.json', { cache: 'no-cache' });
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        __qtArchiveData = data;
+                        hydrateCustomerAndPartMasterFromArchive(data);
+                        return data;
+                    }
+                } catch (err) {
+                    console.warn('Could not fetch quotation_archive.json:', err);
+                }
+                return null;
+            })();
+
+            return __qtArchiveLoadPromise;
+        }
+
+        function hydrateCustomerAndPartMasterFromArchive(data) {
+            if (!data) return;
+            try {
+                // 1. Merge 862 customers into hoshizaki_customer_directory (without overwriting user edits)
+                if (Array.isArray(data.customers) && data.customers.length > 0) {
+                    const dir = JSON.parse(localStorage.getItem('hoshizaki_customer_directory') || '{}');
+                    let addedCust = 0;
+                    data.customers.forEach(c => {
+                        const name = (c.s || '').trim();
+                        if (!name) return;
+                        const k = name.toLowerCase();
+                        if (!dir[k]) {
+                            const contactCombo = [c.n, c.p].filter(Boolean).join(' ').trim();
+                            dir[k] = {
+                                store: name,
+                                dealer: '',
+                                contact: contactCombo,
+                                address: (c.a || '').trim(),
+                                taxId: (c.x || '').trim(),
+                                priceTier: 'DIRECT'
+                            };
+                            addedCust++;
+                        } else {
+                            if (!dir[k].address && c.a) dir[k].address = c.a;
+                            if (!dir[k].contact && (c.n || c.p)) dir[k].contact = [c.n, c.p].filter(Boolean).join(' ').trim();
+                            if (!dir[k].taxId && c.x) dir[k].taxId = c.x;
+                        }
+                    });
+                    if (addedCust > 0) {
+                        localStorage.setItem('hoshizaki_customer_directory', JSON.stringify(dir));
+                        if (typeof loadSavedCustomersIntoDatalist === 'function') {
+                            loadSavedCustomersIntoDatalist();
+                        }
+                    }
+                }
+
+                // 2. Merge 1,127 historical part prices into HOSHIZAKI_PARTS_CATALOG_2026 & datalist
+                if (Array.isArray(data.parts) && data.parts.length > 0 && typeof HOSHIZAKI_PARTS_CATALOG_2026 === 'object') {
+                    const dl = document.getElementById('hoshizakiPartsList');
+                    const existingOptVals = dl ? new Set(Array.from(dl.options).map(o => o.value)) : new Set();
+                    const frag = document.createDocumentFragment();
+                    data.parts.forEach(p => {
+                        const pNo = (p.p || '').trim();
+                        if (!pNo) return;
+                        const pDesc = (p.d || '').trim();
+                        const pPrice = Number(p.u || 0);
+                        if (!HOSHIZAKI_PARTS_CATALOG_2026[pNo]) {
+                            HOSHIZAKI_PARTS_CATALOG_2026[pNo] = {
+                                partNo: pNo,
+                                desc: pDesc || pNo,
+                                price: pPrice,
+                                models: []
+                            };
+                        } else if ((!HOSHIZAKI_PARTS_CATALOG_2026[pNo].price || HOSHIZAKI_PARTS_CATALOG_2026[pNo].price === 0) && pPrice > 0) {
+                            HOSHIZAKI_PARTS_CATALOG_2026[pNo].price = pPrice;
+                        }
+                        const label = pDesc ? `${pNo} - ${pDesc}` : pNo;
+                        if (dl && !existingOptVals.has(label)) {
+                            existingOptVals.add(label);
+                            const opt = document.createElement('option');
+                            opt.value = label;
+                            frag.appendChild(opt);
+                        }
+                    });
+                    if (dl && frag.childNodes.length > 0) {
+                        dl.appendChild(frag);
+                    }
+                }
+
+                const badgeEl = document.getElementById('qtArchiveToolbarCount');
+                if (badgeEl && Array.isArray(data.quotations)) {
+                    badgeEl.innerText = data.quotations.length.toLocaleString();
+                }
+                const subEl = document.getElementById('qtArchiveSummarySubtitle');
+                if (subEl && Array.isArray(data.quotations)) {
+                    subEl.innerText = `ใบเสนอราคา ${data.quotations.length.toLocaleString()} ฉบับ • ลูกค้า/ดีลเลอร์ ${(data.customers || []).length.toLocaleString()} ราย • อะไหล่ ${(data.parts || []).length.toLocaleString()} รายการ`;
+                }
+            } catch (e) {
+                console.warn('Archive hydration warning:', e);
+            }
+        }
+
+        async function renderSerialQuotationInquiries(rawSerial) {
+            const serial = (rawSerial || document.getElementById('eqSerial')?.value || '').trim().toUpperCase();
+            const box = document.getElementById('serialQuotationInquiryBox');
+            const listEl = document.getElementById('serialQuotationInquiryList');
+            const countEl = document.getElementById('serialQtInquiryCount');
+            const custCountEl = document.getElementById('serialQtCustCount');
+            if (!box || !listEl || !countEl || !custCountEl) return;
+
+            if (!serial || serial.length < 4) {
+                box.classList.add('hidden');
+                return;
+            }
+
+            const data = await ensureQuotationArchiveLoaded();
+            if (!data || !data.serialInquiries) {
+                box.classList.add('hidden');
+                return;
+            }
+
+            const matches = data.serialInquiries[serial] || [];
+            if (matches.length === 0) {
+                box.classList.add('hidden');
+                return;
+            }
+
+            const uniqueCustomers = Array.from(new Set(matches.map(m => (m.s || '').trim()).filter(Boolean)));
+            countEl.innerText = matches.length;
+            custCountEl.innerText = uniqueCustomers.length;
+
+            listEl.innerHTML = matches.map(m => {
+                const safeOffer = String(m.o || '').replace(/'/g, "\'");
+                const safeCust = String(m.s || '').replace(/'/g, "\'");
+                return `
+                    <div class="bg-white border border-sky-200 rounded-lg p-2 space-y-1 shadow-2xs">
+                        <div class="flex flex-wrap items-center justify-between gap-1">
+                            <span class="font-bold text-hoshizaki-navy">${m.dt || '-'} • ${m.o}</span>
+                            <span class="font-extrabold text-emerald-700">${Number(m.gt || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿</span>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-1 text-[11px]">
+                            <span class="font-semibold text-sky-900"><i class="fa-solid fa-building text-sky-600 mr-1"></i>${m.s || '-'}</span>
+                            <div class="flex items-center gap-1">
+                                ${m.s ? `<button type="button" onclick="applyArchivedCustomerNameToForm('${safeCust}')" class="no-print text-[10px] bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-300 px-1.5 py-0.5 rounded font-semibold">ใช้ชื่อลูกค้านี้</button>` : ''}
+                                <button type="button" onclick="applyArchivedQuotationToForm('${safeOffer}')" class="no-print text-[10px] bg-amber-500 hover:bg-amber-600 text-white px-2 py-0.5 rounded font-bold">ดึงรายการ/ราคา</button>
+                            </div>
+                        </div>
+                        ${m.sum ? `<div class="text-[10px] text-gray-600 truncate" title="${m.sum}">${m.sum}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            box.classList.remove('hidden');
+        }
+
+        function applyArchivedCustomerNameToForm(custName) {
+            const storeEl = document.getElementById('custStore');
+            if (storeEl && custName) {
+                storeEl.value = custName;
+                if (typeof handleCustomerAutoLookup === 'function') {
+                    handleCustomerAutoLookup(custName);
+                }
+                if (typeof debounceAutoSave === 'function') debounceAutoSave();
+                showToast(`เลือกบริษัท "${custName}" ลงใบงานแล้ว`);
+            }
+        }
+
+        async function openQuotationArchiveModal(presetSearch = '') {
+            const modal = document.getElementById('quotationArchiveModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            const searchEl = document.getElementById('qtArchiveSearchInput');
+            if (searchEl && presetSearch) {
+                searchEl.value = presetSearch;
+            }
+            __qtArchiveDisplayLimit = 50;
+            await ensureQuotationArchiveLoaded();
+            renderQuotationArchiveList();
+        }
+
+        function closeQuotationArchiveModal() {
+            document.getElementById('quotationArchiveModal')?.classList.add('hidden');
+        }
+
+        function loadMoreQuotationArchiveRows() {
+            __qtArchiveDisplayLimit += 50;
+            renderQuotationArchiveList(true);
+        }
+
+        function renderQuotationArchiveList(keepLimit = false) {
+            if (!keepLimit) __qtArchiveDisplayLimit = 50;
+            const container = document.getElementById('qtArchiveResultsContainer');
+            const shownEl = document.getElementById('qtArchiveShownCount');
+            const totalEl = document.getElementById('qtArchiveFilteredTotal');
+            const loadMoreBtn = document.getElementById('qtArchiveLoadMoreBtn');
+            if (!container) return;
+
+            if (!__qtArchiveData || !Array.isArray(__qtArchiveData.quotations)) {
+                container.innerHTML = '<div class="p-6 text-center text-gray-500">ไม่พบไฟล์ quotation_archive.json (กรุณากดปุ่ม "อัปเดต JSON" ด้านบนเพื่อนำเข้าไฟล์)</div>';
+                return;
+            }
+
+            const q = (document.getElementById('qtArchiveSearchInput')?.value || '').trim().toLowerCase();
+            const yearFilter = document.getElementById('qtArchiveYearFilter')?.value || 'ALL';
+            const onlySn = document.getElementById('qtArchiveOnlyWithSnCheck')?.checked || false;
+
+            const filtered = __qtArchiveData.quotations.filter(rec => {
+                if (onlySn && (!rec.sn || rec.sn === '-' || rec.sn === 'NO' || rec.sn === 'XXX')) return false;
+                if (yearFilter !== 'ALL') {
+                    const dt = String(rec.dt || '');
+                    if (yearFilter === 'OLDER') {
+                        if (dt.startsWith('2026') || dt.startsWith('2025') || dt.startsWith('2024') || dt.startsWith('2023') || dt.startsWith('2022')) return false;
+                    } else if (!dt.startsWith(yearFilter)) {
+                        return false;
+                    }
+                }
+                if (!q) return true;
+                const itemsStr = Array.isArray(rec.it) ? rec.it.map(x => x.d || x.p || '').join(' ') : '';
+                const hay = `${rec.o || ''} ${rec.dt || ''} ${rec.s || ''} ${rec.m || ''} ${rec.sn || ''} ${rec.ml || ''} ${itemsStr}`.toLowerCase();
+                return hay.includes(q);
+            });
+
+            if (totalEl) totalEl.innerText = filtered.length.toLocaleString();
+            const slice = filtered.slice(0, __qtArchiveDisplayLimit);
+            if (shownEl) shownEl.innerText = slice.length.toLocaleString();
+
+            if (loadMoreBtn) {
+                loadMoreBtn.classList.toggle('hidden', slice.length >= filtered.length);
+            }
+
+            if (slice.length === 0) {
+                container.innerHTML = '<div class="p-6 text-center text-gray-400">ไม่พบใบเสนอราคาที่ตรงกับคำค้นหา</div>';
+                return;
+            }
+
+            container.innerHTML = slice.map(rec => {
+                const safeOffer = String(rec.o || '').replace(/'/g, "\'");
+                const itemsHtml = (rec.it || []).filter(it => (it.u > 0 || it.a > 0 || it.p)).slice(0, 4).map(it =>
+                    `<span class="inline-block bg-gray-100 text-gray-700 border border-gray-200 rounded px-1.5 py-0.5 text-[10px] mr-1 mb-1">${it.d} (x${it.q} @ ${Number(it.u || 0).toLocaleString()})</span>`
+                ).join('');
+                return `
+                    <div class="bg-white border border-gray-200 hover:border-hoshizaki-blue rounded-xl p-3 shadow-2xs space-y-1.5 transition">
+                        <div class="flex flex-wrap items-center justify-between gap-1.5">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="font-extrabold text-hoshizaki-navy text-xs sm:text-sm">${rec.o || '-'}</span>
+                                <span class="text-[11px] bg-blue-50 text-hoshizaki-darkblue px-2 py-0.5 rounded font-semibold">${rec.dt || '-'}</span>
+                                ${rec.sn && rec.sn !== '-' && rec.sn !== 'NO' ? `<span class="text-[11px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-bold">S/N: ${rec.sn}</span>` : ''}
+                            </div>
+                            <div class="font-extrabold text-emerald-700 text-xs sm:text-sm">
+                                รวมสุทธิ ${Number(rec.gt || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท
+                            </div>
+                        </div>
+                        <div class="text-xs font-bold text-gray-800">
+                            <i class="fa-solid fa-building text-sky-600 mr-1"></i> ${rec.s || '(ไม่ระบุชื่อลูกค้า)'}
+                        </div>
+                        ${rec.ml ? `<div class="text-[11px] text-gray-600"><i class="fa-solid fa-snowflake text-hoshizaki-blue mr-1"></i> ${rec.ml}</div>` : ''}
+                        <div class="pt-0.5">${itemsHtml || '<span class="text-[10px] text-gray-400">ไม่มีรายการอะไหล่</span>'}</div>
+                        <div class="flex flex-wrap items-center justify-end gap-1.5 pt-1 border-t border-gray-100">
+                            <button type="button" onclick="applyArchivedQuotationToForm('${safeOffer}', false)" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-[11px] px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-file-import"></i> ดึงลงใบงานปัจจุบัน
+                            </button>
+                            <button type="button" onclick="applyArchivedQuotationToForm('${safeOffer}', true)" class="bg-amber-600 hover:bg-amber-700 text-white text-[11px] px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-file-invoice-dollar"></i> เปิดออกใบเสนอราคาใหม่
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function applyArchivedQuotationToForm(offerNo, openReceiptAfter = false) {
+            const data = await ensureQuotationArchiveLoaded();
+            if (!data || !Array.isArray(data.quotations)) return;
+            const rec = data.quotations.find(x => x.o === offerNo);
+            if (!rec) {
+                showToast('ไม่พบข้อมูลใบเสนอราคา ' + offerNo);
+                return;
+            }
+
+            if (document.getElementById('custStore') && rec.s) document.getElementById('custStore').value = rec.s;
+            if (document.getElementById('custContact') && rec.c) document.getElementById('custContact').value = rec.c;
+            if (document.getElementById('custAddress') && rec.a) document.getElementById('custAddress').value = rec.a;
+            if (document.getElementById('eqModel') && rec.m) document.getElementById('eqModel').value = rec.m;
+            if (document.getElementById('eqSerial') && rec.sn && rec.sn !== '-' && rec.sn !== 'NO') {
+                document.getElementById('eqSerial').value = rec.sn;
+            }
+
+            // Populate spare parts rows
+            const tbody = document.getElementById('partsTableBody');
+            if (tbody && Array.isArray(rec.it)) {
+                const pricedItems = rec.it.filter(it => (it.u > 0 || it.a > 0 || (it.p && it.p !== '-')));
+                if (pricedItems.length > 0) {
+                    tbody.innerHTML = '';
+                    pricedItems.forEach(it => {
+                        if (typeof addPartsRow === 'function') {
+                            addPartsRow(it.d || it.p || '', it.q || 1, Number(it.u || 0).toFixed(2));
+                        }
+                    });
+                    if (typeof calculateTotals === 'function') calculateTotals();
+                }
+            }
+
+            closeQuotationArchiveModal();
+            if (typeof debounceAutoSave === 'function') debounceAutoSave();
+            showToast(`ดึงข้อมูลจาก ${rec.o} (${rec.s || 'ลูกค้า'}) เรียบร้อยแล้ว`);
+
+            if (openReceiptAfter && typeof generateReceiptModal === 'function') {
+                setTimeout(() => generateReceiptModal(false), 180);
+            }
+        }
+
+        async function handleImportQuotationArchiveFile(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            try {
+                const text = await file.text();
+                const parsed = JSON.parse(text);
+                if (!parsed || !Array.isArray(parsed.quotations)) {
+                    showToast('รูปแบบไฟล์ quotation_archive.json ไม่ถูกต้อง');
+                    return;
+                }
+                __qtArchiveData = parsed;
+                if (typeof idbSet === 'function') {
+                    await idbSet('hoshizaki_quotation_archive_v1', parsed);
+                }
+                hydrateCustomerAndPartMasterFromArchive(parsed);
+                renderQuotationArchiveList();
+                showToast(`อัปเดตคลังใบเสนอราคาสำเร็จ (${parsed.quotations.length.toLocaleString()} ฉบับ)`);
+            } catch (err) {
+                console.error(err);
+                showToast('เกิดข้อผิดพลาดในการอ่านไฟล์ JSON');
+            }
+            event.target.value = '';
+        }
+
+        // Hook into handleSerialAutoLookup so typing/scanning any Serial No. also shows historical quotations across multiple companies
+        const _prevHandleSerialAutoLookup = typeof handleSerialAutoLookup === 'function' ? handleSerialAutoLookup : null;
+        handleSerialAutoLookup = function(rawSerial) {
+            if (_prevHandleSerialAutoLookup) {
+                _prevHandleSerialAutoLookup(rawSerial);
+            }
+            renderSerialQuotationInquiries(rawSerial);
+        };
+
+        // Preload quotation archive silently in background after initial render so mobile startup stays instant
+        setTimeout(() => {
+            ensureQuotationArchiveLoaded();
+        }, 1200);
+
         function loadJobFromHistory(jobNo) { return loadHistoryItem(jobNo); }
     </script>
 
-    <!-- Google Sheets Cloud Sync & Team QR Code Poster Modal -->
+        <!-- Quotation Archive & Customer/Price Master Modal (v14.8) -->
+    <div id="quotationArchiveModal" class="no-print fixed inset-0 bg-black/75 backdrop-blur-sm z-[65] flex items-center justify-center p-2 sm:p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-5xl w-full p-3.5 sm:p-6 space-y-3 max-h-[92dvh] flex flex-col">
+            <div class="flex flex-wrap items-center justify-between border-b pb-2.5 gap-2 flex-shrink-0">
+                <div>
+                    <h3 class="text-sm sm:text-lg font-extrabold text-hoshizaki-navy flex items-center gap-2">
+                        <i class="fa-solid fa-box-archive text-sky-600"></i> คลังใบเสนอราคาเก่า & ฐานข้อมูลลูกค้า/ราคา (2020–2026)
+                    </h3>
+                    <p id="qtArchiveSummarySubtitle" class="text-[11px] text-gray-500">กำลังเตรียมข้อมูลใบเสนอราคา 2,486 ฉบับ • ลูกค้า/ดีลเลอร์ 862 ราย • อะไหล่ 1,127 รายการ</p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <label class="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-xs" title="อัปเดตไฟล์ quotation_archive.json เวอร์ชันใหม่ในอนาคต">
+                        <i class="fa-solid fa-file-import"></i> <span>อัปเดต JSON</span>
+                        <input type="file" accept=".json,application/json" onchange="handleImportQuotationArchiveFile(event)" class="hidden">
+                    </label>
+                    <button type="button" onclick="closeQuotationArchiveModal()" class="text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none px-1.5">&times;</button>
+                </div>
+            </div>
+
+            <!-- Search & Filter Bar -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs flex-shrink-0">
+                <div class="sm:col-span-6 relative">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-3 top-2.5"></i>
+                    <input type="text" id="qtArchiveSearchInput" oninput="renderQuotationArchiveList()" placeholder="ค้นหา Offer No., ชื่อลูกค้า/ดีลเลอร์, Serial No., รุ่นเครื่อง, Part No..." class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-hoshizaki-blue font-medium">
+                </div>
+                <div class="sm:col-span-3">
+                    <select id="qtArchiveYearFilter" onchange="renderQuotationArchiveList()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 bg-white font-semibold text-gray-700">
+                        <option value="ALL">ทุกปี (2020–2026)</option>
+                        <option value="2026">ปี 2026</option>
+                        <option value="2025">ปี 2025</option>
+                        <option value="2024">ปี 2024</option>
+                        <option value="2023">ปี 2023</option>
+                        <option value="2022">ปี 2022</option>
+                        <option value="OLDER">ปี 2020–2021 / อื่นๆ</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-3 flex items-center gap-1.5">
+                    <label class="flex items-center gap-1.5 text-[11px] font-semibold text-hoshizaki-navy bg-sky-50 border border-sky-200 px-2.5 py-2 rounded-lg w-full cursor-pointer">
+                        <input type="checkbox" id="qtArchiveOnlyWithSnCheck" onchange="renderQuotationArchiveList()" class="rounded text-hoshizaki-blue">
+                        <span>เฉพาะที่มี S/N</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Results List (Responsive Cards on Mobile + Table on Desktop) -->
+            <div id="qtArchiveResultsContainer" class="overflow-y-auto flex-1 border border-gray-200 rounded-xl bg-gray-50/70 p-2 space-y-2 text-xs">
+                <div class="p-6 text-center text-gray-400">กำลังโหลดคลังข้อมูลใบเสนอราคา...</div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t text-xs flex-shrink-0">
+                <span class="text-gray-600">แสดง <strong id="qtArchiveShownCount" class="text-hoshizaki-navy">0</strong> จาก <strong id="qtArchiveFilteredTotal" class="text-hoshizaki-navy">0</strong> รายการ</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="qtArchiveLoadMoreBtn" onclick="loadMoreQuotationArchiveRows()" class="hidden bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg font-bold">
+                        โหลดเพิ่มอีก 50 รายการ
+                    </button>
+                    <button type="button" onclick="closeQuotationArchiveModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1.5 rounded-lg font-semibold">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Google Sheets Cloud Sync & Team QR Code Poster Modal -->
     <div id="teamCloudSyncModal" class="no-print fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
         <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-4 sm:p-5 space-y-4 max-h-[92vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2.5">

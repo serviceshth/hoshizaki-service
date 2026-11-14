@@ -1,8 +1,9 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v14-7';
+const CACHE_NAME = 'hoshizaki-service-pwa-v14-8';
 const STATIC_ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './quotation_archive.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -40,7 +41,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for static assets
+  // Cache-first for static assets & quotation_archive.json
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;

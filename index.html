@@ -14568,31 +14568,43 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
             container.innerHTML = slice.map(rec => {
                 const safeOffer = String(rec.o || '').replace(/'/g, "\'");
+                const hasSn = rec.sn && rec.sn !== '-' && rec.sn !== 'NO' && rec.sn !== 'XXX';
+                const modelText = (rec.m || '').trim();
                 const itemsHtml = (rec.it || []).filter(it => (it.u > 0 || it.a > 0 || it.p)).slice(0, 4).map(it =>
                     `<span class="inline-block bg-gray-100 text-gray-700 border border-gray-200 rounded px-1.5 py-0.5 text-[10px] mr-1 mb-1">${it.d} (x${it.q} @ ${Number(it.u || 0).toLocaleString()})</span>`
                 ).join('');
                 return `
-                    <div class="bg-white border border-gray-200 hover:border-hoshizaki-blue rounded-xl p-3 shadow-2xs space-y-1.5 transition">
+                    <div class="bg-white border border-gray-200 hover:border-hoshizaki-blue rounded-xl p-3 shadow-2xs space-y-2 transition">
                         <div class="flex flex-wrap items-center justify-between gap-1.5">
                             <div class="flex flex-wrap items-center gap-1.5">
                                 <span class="font-extrabold text-hoshizaki-navy text-xs sm:text-sm">${rec.o || '-'}</span>
                                 <span class="text-[11px] bg-blue-50 text-hoshizaki-darkblue px-2 py-0.5 rounded font-semibold">${rec.dt || '-'}</span>
-                                ${rec.sn && rec.sn !== '-' && rec.sn !== 'NO' ? `<span class="text-[11px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-bold">S/N: ${rec.sn}</span>` : ''}
                             </div>
                             <div class="font-extrabold text-emerald-700 text-xs sm:text-sm">
                                 รวมสุทธิ ${Number(rec.gt || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท
                             </div>
                         </div>
+
+                        <!-- Highlighted Model & Serial Number Bar -->
+                        ${(modelText || hasSn || rec.ml) ? `
+                        <div class="flex flex-wrap items-center gap-1.5 bg-gradient-to-r from-sky-50 via-amber-50/70 to-rose-50/60 border border-sky-200/80 rounded-lg px-2.5 py-1.5">
+                            ${modelText ? `<span class="inline-flex items-center gap-1 bg-sky-600 text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded-md shadow-2xs tracking-wide"><i class="fa-solid fa-snowflake"></i> MODEL: ${modelText}</span>` : ''}
+                            ${hasSn ? `<span class="inline-flex items-center gap-1 bg-amber-400 text-amber-950 border border-amber-500/60 text-[11px] font-extrabold px-2.5 py-0.5 rounded-md shadow-2xs tracking-wide"><i class="fa-solid fa-barcode"></i> S/N: ${rec.sn}</span>` : '<span class="text-[10px] text-gray-400 italic">ไม่ระบุ S/N</span>'}
+                            ${(!modelText && rec.ml) ? `<span class="text-[11px] font-bold text-sky-900">${rec.ml}</span>` : ''}
+                        </div>` : ''}
+
                         <div class="text-xs font-bold text-gray-800">
                             <i class="fa-solid fa-building text-sky-600 mr-1"></i> ${rec.s || '(ไม่ระบุชื่อลูกค้า)'}
                         </div>
-                        ${rec.ml ? `<div class="text-[11px] text-gray-600"><i class="fa-solid fa-snowflake text-hoshizaki-blue mr-1"></i> ${rec.ml}</div>` : ''}
                         <div class="pt-0.5">${itemsHtml || '<span class="text-[10px] text-gray-400">ไม่มีรายการอะไหล่</span>'}</div>
-                        <div class="flex flex-wrap items-center justify-end gap-1.5 pt-1 border-t border-gray-100">
-                            <button type="button" onclick="applyArchivedQuotationToForm('${safeOffer}', false)" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-[11px] px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                        <div class="flex flex-wrap items-center justify-end gap-1.5 pt-1.5 border-t border-gray-100">
+                            <button type="button" onclick="openArchivedQuotationFullscreenPreview('${safeOffer}')" class="bg-sky-600 hover:bg-sky-700 text-white text-[11px] px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-2xs">
+                                <i class="fa-solid fa-expand"></i> พรีวิวเต็มหน้าจอ
+                            </button>
+                            <button type="button" onclick="applyArchivedQuotationToForm('${safeOffer}', false)" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white text-[11px] px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-2xs">
                                 <i class="fa-solid fa-file-import"></i> ดึงลงใบงานปัจจุบัน
                             </button>
-                            <button type="button" onclick="applyArchivedQuotationToForm('${safeOffer}', true)" class="bg-amber-600 hover:bg-amber-700 text-white text-[11px] px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                            <button type="button" onclick="applyArchivedQuotationToForm('${safeOffer}', true)" class="bg-amber-600 hover:bg-amber-700 text-white text-[11px] px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-2xs">
                                 <i class="fa-solid fa-file-invoice-dollar"></i> เปิดออกใบเสนอราคาใหม่
                             </button>
                         </div>
@@ -17406,6 +17418,239 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         document.addEventListener('click', () => {
             document.getElementById('universalOmniResultsBox')?.classList.add('hidden');
         });
+    </script>
+
+    <!-- ========================================================================= -->
+    <!-- v15.1 FULLSCREEN ARCHIVED QUOTATION PREVIEW MODAL                         -->
+    <!-- ========================================================================= -->
+    <div id="archivedQtFullscreenModal" class="no-print fixed inset-0 bg-black/85 backdrop-blur-sm z-[95] flex items-center justify-center p-1 sm:p-3 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[96dvh] max-h-[96dvh] flex flex-col overflow-hidden">
+            <!-- Top Action Bar -->
+            <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 flex-shrink-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <i class="fa-solid fa-file-invoice-dollar text-amber-300 text-lg"></i>
+                    <div class="min-w-0">
+                        <h3 class="text-sm sm:text-base font-extrabold truncate">พรีวิวใบเสนอราคาเก่าเต็มหน้าจอ: <span id="arcPrevOfferNoTitle" class="text-amber-300">-</span></h3>
+                        <p class="text-[11px] text-sky-200 truncate" id="arcPrevCustomerSubtitle">ตรวจสอบรายละเอียดลูกค้า รุ่นเครื่อง S/N และรายการอะไหล่ย้อนหลัง</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                    <button type="button" id="btnArcPrevPullToJob" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-file-import"></i> <span>ดึงลงใบงานปัจจุบัน</span>
+                    </button>
+                    <button type="button" id="btnArcPrevOpenNewQt" class="bg-amber-500 hover:bg-amber-400 text-hoshizaki-navy px-3 py-1.5 rounded-lg font-extrabold flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> <span>เปิดออกใบเสนอราคาใหม่</span>
+                    </button>
+                    <button type="button" onclick="printArchivedQuotationPreview()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-print"></i> <span>พิมพ์เอกสาร</span>
+                    </button>
+                    <button type="button" onclick="closeArchivedQuotationFullscreenPreview()" class="bg-white/15 hover:bg-white/25 text-white px-3 py-1.5 rounded-lg font-bold">
+                        <i class="fa-solid fa-xmark mr-1"></i> ปิด
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Document Sheet Area -->
+            <div class="flex-1 min-h-0 overflow-auto bg-slate-200/80 p-2 sm:p-5">
+                <div id="archivedQtPrintableSheet" class="bg-white max-w-4xl mx-auto p-5 sm:p-8 rounded-xl shadow-lg border border-gray-300 text-xs text-black space-y-4">
+                    <!-- Company Header -->
+                    <div class="flex flex-col sm:flex-row items-start justify-between gap-3 border-b-2 border-hoshizaki-navy pb-3">
+                        <div>
+                            <h2 class="text-base sm:text-lg font-extrabold text-hoshizaki-navy">HOSHIZAKI (THAILAND) LIMITED</h2>
+                            <p class="text-[11px] text-gray-600">Building A, 1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen, Lak Si, Bangkok 10210</p>
+                            <p class="text-[11px] text-gray-600">TEL: 02-005-9980-83 | TAX ID: 0135558002599 | Email: services@hoshizaki.co.th</p>
+                        </div>
+                        <div class="sm:text-right">
+                            <span class="inline-block bg-amber-100 text-amber-950 border border-amber-300 px-2.5 py-0.5 rounded font-extrabold text-[11px]">ARCHIVED QUOTATION / สำเนาใบเสนอราคาเก่า</span>
+                            <div class="mt-1 font-extrabold text-sm text-hoshizaki-navy" id="arcSheetOfferNo">-</div>
+                            <div class="text-[11px] text-gray-600">วันที่เอกสาร: <b id="arcSheetDate">-</b></div>
+                        </div>
+                    </div>
+
+                    <!-- Highlighted Equipment Banner (Model & Serial Number) -->
+                    <div class="bg-gradient-to-r from-sky-50 via-amber-50 to-rose-50 border-2 border-sky-300 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 bg-sky-700 text-white text-xs sm:text-sm font-extrabold px-3 py-1 rounded-lg shadow-xs">
+                                <i class="fa-solid fa-snowflake"></i> MODEL: <span id="arcSheetModel">-</span>
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 bg-amber-400 text-amber-950 border border-amber-500 text-xs sm:text-sm font-extrabold px-3 py-1 rounded-lg shadow-xs">
+                                <i class="fa-solid fa-barcode"></i> SERIAL NO: <span id="arcSheetSerial">-</span>
+                            </span>
+                        </div>
+                        <div class="text-[11px] font-bold text-gray-700" id="arcSheetModelLine"></div>
+                    </div>
+
+                    <!-- Customer Info Box -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-gray-50 border border-gray-200 rounded-xl p-3">
+                        <div class="space-y-1">
+                            <div class="text-[10px] font-bold text-gray-400 uppercase">ข้อมูลลูกค้า (Customer)</div>
+                            <div class="font-extrabold text-sm text-hoshizaki-navy" id="arcSheetCustName">-</div>
+                            <div class="text-xs text-gray-700"><span class="text-gray-500">ผู้ติดต่อ / โทร:</span> <b id="arcSheetContact">-</b></div>
+                            <div class="text-xs text-gray-700"><span class="text-gray-500">ที่อยู่:</span> <span id="arcSheetAddress">-</span></div>
+                        </div>
+                        <div class="space-y-1 sm:border-l sm:pl-3 border-gray-200">
+                            <div class="text-[10px] font-bold text-gray-400 uppercase">ข้อมูลอ้างอิงเอกสาร (Reference)</div>
+                            <div class="text-xs text-gray-700"><span class="text-gray-500">เลขที่ใบเสนอราคา:</span> <b class="text-hoshizaki-navy" id="arcSheetRefOffer">-</b></div>
+                            <div class="text-xs text-gray-700"><span class="text-gray-500">วันที่เสนอราคา:</span> <b id="arcSheetRefDate">-</b></div>
+                            <div class="text-xs text-gray-700"><span class="text-gray-500">หมายเหตุ (Remark):</span> <span id="arcSheetRemark" class="text-gray-800">-</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div class="overflow-x-auto border border-gray-300 rounded-lg">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-hoshizaki-navy text-white">
+                                    <th class="p-2 w-10 text-center">#</th>
+                                    <th class="p-2 w-28">Part No.</th>
+                                    <th class="p-2">รายการอะไหล่ / บริการ (Description)</th>
+                                    <th class="p-2 w-16 text-center">จำนวน</th>
+                                    <th class="p-2 w-28 text-right">ราคา/หน่วย</th>
+                                    <th class="p-2 w-28 text-right">จำนวนเงิน (THB)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="arcSheetItemsBody" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Totals Summary -->
+                    <div class="flex justify-end">
+                        <div class="w-full sm:w-80 bg-slate-50 border border-gray-300 rounded-xl p-3 space-y-1.5 text-xs">
+                            <div class="flex justify-between text-gray-600">
+                                <span>รวมเป็นเงิน (Subtotal):</span>
+                                <span class="font-bold" id="arcSheetSubtotal">0.00</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
+                                <span class="font-bold" id="arcSheetVat">0.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm font-extrabold text-hoshizaki-navy pt-1.5 border-t border-gray-300">
+                                <span>ยอดรวมสุทธิ (GRAND TOTAL):</span>
+                                <span class="text-emerald-700"><span id="arcSheetGrandTotal">0.00</span> THB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // v15.1 FULLSCREEN ARCHIVED QUOTATION PREVIEW CONTROLLER
+        // =========================================================================
+        async function openArchivedQuotationFullscreenPreview(offerNo) {
+            const data = await ensureQuotationArchiveLoaded();
+            if (!data || !Array.isArray(data.quotations)) {
+                if (typeof showToast === 'function') showToast('ไม่พบฐานข้อมูลใบเสนอราคาเก่า');
+                return;
+            }
+            const rec = data.quotations.find(x => x.o === offerNo);
+            if (!rec) {
+                if (typeof showToast === 'function') showToast('ไม่พบข้อมูลใบเสนอราคา ' + offerNo);
+                return;
+            }
+
+            const hasSn = rec.sn && rec.sn !== '-' && rec.sn !== 'NO' && rec.sn !== 'XXX';
+            const modelVal = (rec.m || '').trim() || '-';
+            const serialVal = hasSn ? rec.sn : '-';
+
+            document.getElementById('arcPrevOfferNoTitle').innerText = rec.o || '-';
+            document.getElementById('arcPrevCustomerSubtitle').innerText = `${rec.s || 'ไม่ระบุชื่อลูกค้า'} • วันที่ ${rec.dt || '-'}`;
+            document.getElementById('arcSheetOfferNo').innerText = rec.o || '-';
+            document.getElementById('arcSheetDate').innerText = rec.dt || '-';
+            document.getElementById('arcSheetModel').innerText = modelVal;
+            document.getElementById('arcSheetSerial').innerText = serialVal;
+            document.getElementById('arcSheetModelLine').innerText = rec.ml && rec.ml !== modelVal ? rec.ml : '';
+
+            document.getElementById('arcSheetCustName').innerText = rec.s || '-';
+            document.getElementById('arcSheetContact').innerText = rec.c || '-';
+            document.getElementById('arcSheetAddress').innerText = rec.a || '-';
+            document.getElementById('arcSheetRefOffer').innerText = rec.o || '-';
+            document.getElementById('arcSheetRefDate').innerText = rec.dt || '-';
+            document.getElementById('arcSheetRemark').innerText = rec.rm || '-';
+
+            const items = Array.isArray(rec.it) ? rec.it : [];
+            const tbody = document.getElementById('arcSheetItemsBody');
+            let calcSub = 0;
+            if (tbody) {
+                if (items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">ไม่มีรายการอะไหล่ในเอกสารฉบับนี้</td></tr>';
+                } else {
+                    tbody.innerHTML = items.map((it, idx) => {
+                        const qty = Number(it.q || 1);
+                        const unit = Number(it.u || 0);
+                        const amt = Number(it.a || (qty * unit));
+                        calcSub += amt;
+                        return `
+                            <tr class="hover:bg-blue-50/40">
+                                <td class="p-2 text-center text-gray-500 font-semibold">${idx + 1}</td>
+                                <td class="p-2 font-mono font-bold text-sky-900">${it.p || '-'}</td>
+                                <td class="p-2 font-medium text-gray-800">${it.d || '-'}</td>
+                                <td class="p-2 text-center font-bold">${qty}</td>
+                                <td class="p-2 text-right">${unit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                <td class="p-2 text-right font-bold text-gray-900">${amt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
+            const subVal = Number(rec.sub || calcSub || 0);
+            const vatVal = Number(rec.vat || (subVal * 0.07));
+            const gtVal = Number(rec.gt || (subVal + vatVal));
+
+            document.getElementById('arcSheetSubtotal').innerText = subVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('arcSheetVat').innerText = vatVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('arcSheetGrandTotal').innerText = gtVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            const btnPull = document.getElementById('btnArcPrevPullToJob');
+            const btnNewQt = document.getElementById('btnArcPrevOpenNewQt');
+            if (btnPull) {
+                btnPull.onclick = () => {
+                    closeArchivedQuotationFullscreenPreview();
+                    applyArchivedQuotationToForm(rec.o, false);
+                };
+            }
+            if (btnNewQt) {
+                btnNewQt.onclick = () => {
+                    closeArchivedQuotationFullscreenPreview();
+                    applyArchivedQuotationToForm(rec.o, true);
+                };
+            }
+
+            document.getElementById('archivedQtFullscreenModal')?.classList.remove('hidden');
+        }
+
+        function closeArchivedQuotationFullscreenPreview() {
+            document.getElementById('archivedQtFullscreenModal')?.classList.add('hidden');
+        }
+
+        function printArchivedQuotationPreview() {
+            const sheetHtml = document.getElementById('archivedQtPrintableSheet')?.innerHTML;
+            if (!sheetHtml) return;
+            const win = window.open('', '_blank', 'width=900,height=800');
+            if (!win) {
+                if (typeof showToast === 'function') showToast('กรุณาอนุญาตป๊อปอัปเพื่อพิมพ์เอกสาร');
+                return;
+            }
+            win.document.write(`
+                <!DOCTYPE html>
+                <html lang="th">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Archived Quotation Preview</title>
+                    <script src="https://cdn.tailwindcss.com"><\/script>
+                    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet">
+                    <style>body { font-family: 'Prompt', sans-serif; padding: 16px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }</style>
+                </head>
+                <body onload="setTimeout(() => { window.print(); }, 400);">
+                    ${sheetHtml}
+                </body>
+                </html>
+            `);
+            win.document.close();
+        }
     </script>
 </body>
 </html>

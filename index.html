@@ -718,7 +718,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.8 Dishwasher Err + Thermistor + Tech Docs</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.9 Board Pinout & LED + Error Matrix</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -11850,8 +11850,32 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     else if (/^(DCM|DIM|AM|HNC|DBF)-/i.test(modelVal)) seriesSel.value = 'SPECIALTY';
                 }
             }
+            if (typeof switchBoardPinoutTab === 'function') {
+                if (/^IM-/i.test(modelVal)) switchBoardPinoutTab('IM');
+                else if (/^KMD?-/i.test(modelVal)) switchBoardPinoutTab('KM');
+                else if (/^FM-/i.test(modelVal)) switchBoardPinoutTab('FM');
+                else switchBoardPinoutTab('ALL');
+            }
             renderErrorCodeList();
             modal.classList.remove('hidden');
+        }
+
+        function switchBoardPinoutTab(seriesKey) {
+            document.querySelectorAll('.bp-tab-btn').forEach(btn => {
+                btn.className = 'bp-tab-btn bg-white/15 hover:bg-white/25 text-white px-2 py-0.5 rounded text-[11px] font-bold';
+            });
+            const active = document.getElementById('bpTab_' + seriesKey);
+            if (active) {
+                active.className = 'bp-tab-btn bg-sky-500 text-white px-2 py-0.5 rounded text-[11px] font-bold';
+            }
+            document.querySelectorAll('.bp-board-card').forEach(card => {
+                const s = card.getAttribute('data-board-series');
+                if (seriesKey === 'ALL' || s === seriesKey) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
         }
 
         function closeErrorCodeModal() {
@@ -16620,7 +16644,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <div>
                         <h3 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
                             <span>HOSHIZAKI MODEL-SPECIFIC ERROR CODE DIAGNOSTIC SHEET</span>
-                            <span class="text-[10px] bg-rose-500/30 border border-rose-300/40 px-2 py-0.5 rounded-full text-rose-200">v18.8</span>
+                            <span class="text-[10px] bg-rose-500/30 border border-rose-300/40 px-2 py-0.5 rounded-full text-rose-200">v18.9</span>
                         </h3>
                         <p class="text-[11px] text-sky-200">ตารางวิเคราะห์ Error Code แยกตามผลิตภัณฑ์และรุ่นย่อย (เปรียบเทียบความหมายของรหัสเดียวกันในแต่ละโมเดล)</p>
                     </div>
@@ -16683,6 +16707,9 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <button type="button" onclick="quickFilterErrorCode('DISHWASHER', 'HSU-400', '')" class="bg-white hover:bg-rose-100 text-rose-900 border border-rose-300 px-2 py-0.5 rounded-md font-bold">HSU / JWE ล้างจาน</button>
                     <button type="button" onclick="document.getElementById('thermistorReferenceSection')?.scrollIntoView({behavior:'smooth'})" class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-0.5 rounded-md font-bold">
                         <i class="fa-solid fa-temperature-half mr-0.5"></i> ตารางค่าโอห์ม Thermistor (kΩ vs °C)
+                    </button>
+                    <button type="button" onclick="document.getElementById('controlBoardPinoutSection')?.scrollIntoView({behavior:'smooth'})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-0.5 rounded-md font-bold">
+                        <i class="fa-solid fa-microchip mr-0.5"></i> ผังขั้วต่อบอร์ด &amp; LED Blink (IM / KM / FM)
                     </button>
                 </div>
             </div>
@@ -16774,6 +16801,136 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                         <div class="px-4 py-2 bg-slate-50 border-t border-sky-200 text-[11px] text-slate-600 flex flex-wrap justify-between gap-2">
                             <span><b>วิธีตรวจเช็ก:</b> ถอดปลั๊กไฟและถอดแจ็ก Thermistor ออกจากบอร์ดก่อนวัดค่า Ω • หากวัดได้ <b>0 Ω (Short)</b> หรือ <b>∞ / OL (Open)</b> แสดงว่าเซ็นเซอร์ขาดหรือลัดวงจร</span>
                             <span class="font-bold text-rose-700">ค่าคลาดเคลื่อนที่ยอมรับได้: ±5% ถึง ±10%</span>
+                        </div>
+                    </div>
+
+                    <!-- Control Board Terminal Pinout & LED Status Blink Codes (IM / KM / FM) -->
+                    <div id="controlBoardPinoutSection" class="border-t-2 border-hoshizaki-navy bg-white">
+                        <div class="bg-hoshizaki-navy text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs font-extrabold">
+                            <span><i class="fa-solid fa-microchip text-sky-300 mr-1.5"></i> HOSHIZAKI CONTROL BOARD TERMINAL PINOUT &amp; LED STATUS BLINK CODES (IM / KM / FM)</span>
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="switchBoardPinoutTab('ALL')" id="bpTab_ALL" class="bp-tab-btn bg-sky-500 text-white px-2 py-0.5 rounded text-[11px] font-bold">ทั้งหมด</button>
+                                <button type="button" onclick="switchBoardPinoutTab('IM')" id="bpTab_IM" class="bp-tab-btn bg-white/15 hover:bg-white/25 text-white px-2 py-0.5 rounded text-[11px] font-bold">IM Board</button>
+                                <button type="button" onclick="switchBoardPinoutTab('KM')" id="bpTab_KM" class="bp-tab-btn bg-white/15 hover:bg-white/25 text-white px-2 py-0.5 rounded text-[11px] font-bold">KM EverCheck™</button>
+                                <button type="button" onclick="switchBoardPinoutTab('FM')" id="bpTab_FM" class="bp-tab-btn bg-white/15 hover:bg-white/25 text-white px-2 py-0.5 rounded text-[11px] font-bold">FM Board</button>
+                            </div>
+                        </div>
+
+                        <div class="p-3 sm:p-4 space-y-4 text-xs">
+                            <!-- 1. IM SERIES CONTROL BOARD -->
+                            <div class="bp-board-card border-2 border-sky-300 rounded-xl overflow-hidden" data-board-series="IM">
+                                <div class="bg-sky-100/90 px-3.5 py-2 border-b border-sky-300 flex flex-wrap items-center justify-between gap-2">
+                                    <span class="font-extrabold text-hoshizaki-navy">1. IM Series Control Board (Cube Ice: P01873-01 / P00225-87 / R209A0522)</span>
+                                    <span class="text-[11px] font-bold text-sky-900 bg-white px-2 py-0.5 rounded border border-sky-300">IM-21CNE ~ IM-240DNE</span>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-sky-200">
+                                    <div class="lg:col-span-7 p-3 space-y-1.5">
+                                        <div class="font-extrabold text-hoshizaki-darkblue mb-1"><i class="fa-solid fa-plug mr-1"></i> ผังขั้วต่อสายไฟหลัก (Connector Pinout)</div>
+                                        <table class="w-full border-collapse text-left text-[11.5px]">
+                                            <thead>
+                                                <tr class="bg-slate-100 text-slate-800 border-b border-slate-300">
+                                                    <th class="p-1.5 border-r border-slate-300 w-24">ขั้วต่อ</th>
+                                                    <th class="p-1.5 border-r border-slate-300 w-36">Pin / สีสาย</th>
+                                                    <th class="p-1.5">หน้าที่และค่าแรงดันมาตรฐาน</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-200">
+                                                <tr><td class="p-1.5 border-r font-bold text-rose-800">CN1 (Power)</td><td class="p-1.5 border-r">Pin 1 (L) / Pin 3 (N)</td><td class="p-1.5">ไฟเลี้ยงหลัก <b>220-240 VAC 50Hz</b> เข้าแผงควบคุม</td></tr>
+                                                <tr><td class="p-1.5 border-r font-bold text-hoshizaki-navy">CN2 (Loads)</td><td class="p-1.5 border-r">Pin 1-2 / 3-4 / 5-6 / 7-8 / 9-10</td><td class="p-1.5">Output 220VAC ไปยัง: <b>Comp</b> (1-2), <b>Water Pump</b> (3-4), <b>Hot Gas Valve</b> (5-6), <b>Water Valve</b> (7-8), <b>Actuator Motor</b> (9-10)</td></tr>
+                                                <tr><td class="p-1.5 border-r font-bold text-emerald-800">CN3 (Sensors)</td><td class="p-1.5 border-r">Pin 1-2 / 3-4 / 5-6</td><td class="p-1.5">5VDC Signal: <b>Evap Thermistor</b> (1-2, 2kΩ@25°C), <b>Condenser Thermistor</b> (3-4), <b>Bin Control Switch</b> (5-6, Reed/Micro)</td></tr>
+                                                <tr><td class="p-1.5 border-r font-bold text-amber-800">CN4 (Cam/Float)</td><td class="p-1.5 border-r">Pin 1-2 / 3-4</td><td class="p-1.5">5VDC Signal: <b>Float Switch</b> (1-2), <b>Actuator Cam Micro Switch A/B</b> (3-4)</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="lg:col-span-5 p-3 bg-rose-50/40 space-y-1.5">
+                                        <div class="font-extrabold text-rose-800 mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> รหัสไฟ LED Status &amp; หน้าจอ E-Code</div>
+                                        <ul class="space-y-1 text-[11.5px] text-slate-800">
+                                            <li><span class="font-bold text-emerald-700">● LED เขียวติดค้าง:</span> สถานะปกติ (กำลังทำน้ำแข็ง / ละลายน้ำแข็ง)</li>
+                                            <li><span class="font-bold text-rose-700">● กะพริบ 1 ครั้ง (E1):</span> น้ำไม่เข้าถังหรือ Float Switch ไม่ตัดในเวลา</li>
+                                            <li><span class="font-bold text-rose-700">● กะพริบ 2 ครั้ง (E2):</span> ถาดน้ำ (Actuator Motor / Cam Switch) ไม่ครบรอบ</li>
+                                            <li><span class="font-bold text-rose-700">● กะพริบ 3 ครั้ง (E3):</span> รอบทำน้ำแข็งเกิน 60 นาที (Freeze Timeout)</li>
+                                            <li><span class="font-bold text-rose-700">● กะพริบ 4 ครั้ง (E4):</span> รอบละลายน้ำแข็งเกิน 20 นาที (Harvest Timeout)</li>
+                                            <li><span class="font-bold text-rose-700">● กะพริบ 5 ครั้ง (E5):</span> อุณหภูมิคอยล์ร้อนสูงเกิน 60°C (High Condenser Temp)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. KM / KMD EVERCHECK CONTROL BOARD -->
+                            <div class="bp-board-card border-2 border-indigo-300 rounded-xl overflow-hidden" data-board-series="KM">
+                                <div class="bg-indigo-100/90 px-3.5 py-2 border-b border-indigo-300 flex flex-wrap items-center justify-between gap-2">
+                                    <span class="font-extrabold text-hoshizaki-navy">2. KM / KMD EverCheck™ Control Board (Crescent Cube: 2A1410-02 / 2A7664-02 / P01771-01)</span>
+                                    <span class="text-[11px] font-bold text-indigo-900 bg-white px-2 py-0.5 rounded border border-indigo-300">KM-40B ~ KM-2600SRJ3</span>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-indigo-200">
+                                    <div class="lg:col-span-7 p-3 space-y-1.5">
+                                        <div class="font-extrabold text-indigo-900 mb-1"><i class="fa-solid fa-plug mr-1"></i> ผังขั้วต่อสายไฟหลัก (K-Connector &amp; Relays)</div>
+                                        <table class="w-full border-collapse text-left text-[11.5px]">
+                                            <thead>
+                                                <tr class="bg-slate-100 text-slate-800 border-b border-slate-300">
+                                                    <th class="p-1.5 border-r border-slate-300 w-24">ขั้วต่อ</th>
+                                                    <th class="p-1.5 border-r border-slate-300 w-36">Pin / ขั้วเสียบ</th>
+                                                    <th class="p-1.5">หน้าที่และค่าแรงดันมาตรฐาน</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-200">
+                                                <tr><td class="p-1.5 border-r font-bold text-rose-800">K3 (24VAC In)</td><td class="p-1.5 border-r">Pin 1-2 (10.5-12VAC / 24VAC)</td><td class="p-1.5">ไฟเลี้ยงจากหม้อแปลง Control Transformer เข้าบอร์ด</td></tr>
+                                                <tr><td class="p-1.5 border-r font-bold text-hoshizaki-navy">K4 / X-Relays</td><td class="p-1.5 border-r">X1 Comp / X2 Pump / X3 HGV / X4 WV</td><td class="p-1.5">รีเลย์จ่ายไฟ 220VAC: <b>Comp Contactor</b>, <b>Water Pump</b>, <b>Hot Gas Valve</b>, <b>Water &amp; Drain Valve</b></td></tr>
+                                                <tr><td class="p-1.5 border-r font-bold text-emerald-800">K1 (10-Pin Low V)</td><td class="p-1.5 border-r">Pin 1-2 / 3-4 / 5-6 / 7-8 / 9-10</td><td class="p-1.5"><b>Thermistor 429006-03</b> (1-2), <b>Float Switch</b> (3-4), <b>Bin Control</b> (5-6), <b>High Pressure Switch</b> (7-8)</td></tr>
+                                                <tr><td class="p-1.5 border-r font-bold text-amber-800">DIP Switch S4</td><td class="p-1.5 border-r">Switch 1-10</td><td class="p-1.5">ตั้งค่าโรงงาน: S1-S2 ตั้งเวลา Pump-Out / Harvest, S4-S5 ตั้งค่า Freeze Timer &amp; High Temp Safety</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="lg:col-span-5 p-3 bg-indigo-50/40 space-y-1.5">
+                                        <div class="font-extrabold text-indigo-900 mb-1"><i class="fa-solid fa-volume-high mr-1"></i> EverCheck™ Beep &amp; LED Status Codes</div>
+                                        <ul class="space-y-1 text-[11.5px] text-slate-800">
+                                            <li><span class="font-bold text-emerald-700">● 1 Beep / LED 1x:</span> Low Water — น้ำไม่ถึงลูกลอยในเวลาที่กำหนด (เช็ก Water Valve / Drain Valve)</li>
+                                            <li><span class="font-bold text-amber-800">● 2 Beeps / LED 2x:</span> Harvest Backup Timer — ละลายน้ำแข็งนานเกิน 20 นาที (เช็ก Hot Gas / Thermistor)</li>
+                                            <li><span class="font-bold text-rose-700">● 3 Beeps / LED 3x:</span> Freeze Backup Timer — ทำน้ำแข็งนานเกิน 60 นาที (เช็กปั๊มน้ำ / คอยล์ร้อน / น้ำยา)</li>
+                                            <li><span class="font-bold text-rose-700">● 4 Beeps / LED 4x:</span> High Pressure Cutout — สวิตช์แรงดันสูงตัด (เช็กพัดลมคอยล์ร้อน / กดรีเซ็ต HP)</li>
+                                            <li><span class="font-bold text-purple-800">● 6-7 Beeps / LED 6-7x:</span> Thermistor Open/Short หรือแรงดันไฟตก/เกินขอบเขต</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. FM SERIES CONTROL BOARD -->
+                            <div class="bp-board-card border-2 border-emerald-300 rounded-xl overflow-hidden" data-board-series="FM">
+                                <div class="bg-emerald-100/90 px-3.5 py-2 border-b border-emerald-300 flex flex-wrap items-center justify-between gap-2">
+                                    <span class="font-extrabold text-hoshizaki-navy">3. FM Series Control Board (Flake &amp; Nugget Ice: 461914-09 / 468601-07 / P01372-99)</span>
+                                    <span class="text-[11px] font-bold text-emerald-900 bg-white px-2 py-0.5 rounded border border-emerald-300">FM-80KE ~ FM-1800ALKE</span>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-emerald-200">
+                                    <div class="lg:col-span-7 p-3 space-y-1.5">
+                                        <div class="font-extrabold text-emerald-900 mb-1"><i class="fa-solid fa-plug mr-1"></i> ผังขั้วต่อสายไฟหลัก (Main Board &amp; Current Sub-Board)</div>
+                                        <table class="w-full border-collapse text-left text-[11.5px]">
+                                            <thead>
+                                                <tr class="bg-slate-100 text-slate-800 border-b border-slate-300">
+                                                    <th class="p-1.5 border-r border-slate-300 w-24">ขั้วต่อ</th>
+                                                    <th class="p-1.5 border-r border-slate-300 w-36">Pin / สัญญาณ</th>
+                                                    <th class="p-1.5">หน้าที่และค่าแรงดันมาตรฐาน</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-200">
+                                                <tr><td class="p-1.5 border-r font-bold text-rose-800">CN1 / CN2</td><td class="p-1.5 border-r">220VAC / 24VAC / 12VAC</td><td class="p-1.5">ไฟเลี้ยงเข้าบอร์ดหลักและไฟต่ำจากหม้อแปลง (459865-01)</td></tr>
+                                                <tr><td class="p-1.5 border-r font-bold text-hoshizaki-navy">CN5 / Relays</td><td class="p-1.5 border-r">Comp / Gear Motor / WV / DV</td><td class="p-1.5">Output 220VAC: <b>Compressor</b>, <b>Auger Gear Motor</b>, <b>Water Valve</b>, <b>Drain/Flush Valve</b></td></tr>
+                                                <tr><td class="p-1.5 border-r font-bold text-emerald-800">CN3 (Sensors)</td><td class="p-1.5 border-r">Evap / Cond / Bin IR</td><td class="p-1.5">5VDC Signal: <b>Evap/Head Thermistor</b>, <b>Condenser Thermistor</b>, <b>Bin Control (Infrared/Reed)</b></td></tr>
+                                                <tr><td class="p-1.5 border-r font-bold text-amber-800">CN4 (Auger/CT)</td><td class="p-1.5 border-r">Hall IC 3-Pin / Float / CT</td><td class="p-1.5"><b>Rotation Sensor</b> (ตรวจรอบหมุนแกนสว่าน), <b>Float Switch (Hi/Lo)</b>, และ <b>Current Sub-Board (461144-01)</b></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="lg:col-span-5 p-3 bg-emerald-50/40 space-y-1.5">
+                                        <div class="font-extrabold text-emerald-900 mb-1"><i class="fa-solid fa-lightbulb mr-1"></i> FM Board LED Status &amp; Error Codes</div>
+                                        <ul class="space-y-1 text-[11.5px] text-slate-800">
+                                            <li><span class="font-bold text-emerald-700">● POWER / RUN LED ติดนิ่ง:</span> ระบบทำงานปกติ (Gear Motor หมุนก่อน Comp 30 วิ)</li>
+                                            <li><span class="font-bold text-amber-800">● E1 / E2 (LED 1-2x):</span> น้ำไม่เข้าถังพักหรือ Float Switch ค้าง / Drain Valve รั่ว</li>
+                                            <li><span class="font-bold text-rose-700">● E3 (LED 3x):</span> Gear Motor Overload — กระแสไฟมอเตอร์สว่านเกินพิกัด (เช็ก CT Sub-Board / น้ำแข็งจับแกน)</li>
+                                            <li><span class="font-bold text-rose-700">● E4 (LED 4x):</span> Rotation Sensor Error — ไม่พบพัลส์รอบหมุนของแกนสว่าน (เช็กเซ็นเซอร์ 459861-01)</li>
+                                            <li><span class="font-bold text-rose-700">● E5 / HP (LED 5x):</span> High Pressure Switch ตัด หรืออุณหภูมิคอยล์ร้อนเกินกำหนด</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

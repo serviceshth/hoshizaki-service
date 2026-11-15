@@ -756,7 +756,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v19.0 Universal Red CLOSE + ExcelJS Logo + LINE FullScreen</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v191.0</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -3543,9 +3543,12 @@
                 </div>
                 <div class="space-y-0.5 max-w-md min-w-0 break-words">
                     <h2 id="docCompanyNameDisplay" class="text-sm sm:text-lg font-extrabold text-hoshizaki-navy leading-tight">HOSHIZAKI (THAILAND) LIMITED</h2>
-                    <p id="docCompanyAddressDisplay" class="text-[11px] sm:text-xs text-gray-600 leading-snug">Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District, Bangkok 10210 Thailand.</p>
-                    <p id="docCompanyTelTaxDisplay" class="text-[11px] sm:text-xs text-gray-600">TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)</p>
-                    <p id="docCompanyEmailWebDisplay" class="text-[11px] sm:text-xs text-gray-600">Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com</p>
+                    <p id="docCompanyAddressDisplay" class="text-[11px] sm:text-xs text-gray-600 leading-snug whitespace-pre-line">Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64(Mahanakorn)
+Talat Bang Khen Subdistrict,Lak Si District,Bangkok 10210 Thailand.</p>
+                    <p id="docCompanyTelTaxDisplay" class="text-[11px] sm:text-xs text-gray-600 leading-snug whitespace-pre-line">TEL : 02-005-9980-83 FAX : 02-516-2646
+TAX ID : 0135558002599 (HEAD OFFICE)</p>
+                    <p id="docCompanyEmailWebDisplay" class="text-[11px] sm:text-xs text-gray-600 leading-snug whitespace-pre-line">Email : services@hoshizaki.co.th
+Website : www.hoshizaki-sea.com</p>
                 </div>
             </div>
 
@@ -3649,8 +3652,11 @@
                 <div class="space-y-2 text-xs">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-1">
                         <span class="sm:w-28 text-gray-500 font-medium flex-shrink-0">Serial No.:</span>
-                        <div class="flex-1 flex items-center gap-1">
-                            <input type="text" id="eqSerial" list="hoshizakiSerialsList" oninput="handleSerialAutoLookup(this.value)" onchange="handleSerialAutoLookup(this.value)" placeholder="พิมพ์ สแกน หรือเลือก Serial No." class="flex-1 font-semibold border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
+                        <div class="flex-1 flex flex-wrap items-center gap-1">
+                            <input type="text" id="eqSerial" list="hoshizakiSerialsList" oninput="handleSerialAutoLookup(this.value)" onchange="handleSerialAutoLookup(this.value)" placeholder="พิมพ์ สแกน หรือเลือก Serial No. (หากจางกดปุ่มไม่ระบุ S/N)" class="flex-1 min-w-[150px] font-semibold border-b border-gray-300 focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
+                            <button type="button" id="btnSerialUnreadable" onclick="toggleSerialUnreadableMode()" title="กรณีเนมเพลทจาง/อ่าน S/N ไม่ออก ให้ระบุเฉพาะรุ่นเครื่อง (Model Only)" class="no-print bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-2 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 transition">
+                                <i class="fa-solid fa-eye-slash"></i> <span>S/N จาง/ระบุแค่รุ่น</span>
+                            </button>
                             <button type="button" onclick="openBarcodeScannerModal()" title="สแกนบาร์โค้ด/QR หรือถ่ายรูปเนมเพลตเครื่อง" class="no-print bg-hoshizaki-navy hover:bg-hoshizaki-darkblue active:bg-hoshizaki-blue text-white px-2.5 py-1.5 rounded-lg text-[11px] font-semibold flex items-center gap-1 flex-shrink-0 shadow-sm transition">
                                 <i class="fa-solid fa-barcode"></i> <span>สแกน S/N</span>
                             </button>
@@ -3766,21 +3772,29 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                 <div>
                     <div class="flex items-center justify-between mb-1">
-                        <label class="text-gray-500 font-medium">เวลาเข้า - ออกงาน (SLA Timer):</label>
-                        <span id="onSiteDurationBadge" class="text-[10px] bg-blue-100 text-hoshizaki-navy px-1.5 py-0.5 rounded font-bold">0 ชม. 0 นาที</span>
+                        <label class="text-gray-500 font-medium">เวลาเข้า - ออกงาน (Auto Geofence + แก้ไขได้):</label>
+                        <div class="flex items-center gap-1">
+                            <span id="autoGeofenceStatusBadge" class="no-print text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-1.5 py-0.5 rounded font-bold cursor-pointer" onclick="toggleAutoGeofenceTracking()" title="คลิกเพื่อเปิด/ปิดระบบ Auto Check-In/Out เมื่อเข้า-ออกพื้นที่หน้างาน (รัศมี 250 ม.)">
+                                <i class="fa-solid fa-satellite-dish text-emerald-600 mr-0.5"></i>Auto GPS: ON
+                            </span>
+                            <span id="onSiteDurationBadge" class="text-[10px] bg-blue-100 text-hoshizaki-navy px-1.5 py-0.5 rounded font-bold">0 ชม. 0 นาที</span>
+                        </div>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <div class="flex-1 flex items-center gap-1">
-                            <input type="time" id="timeIn" onchange="updateOnSiteDuration()" class="border border-gray-300 rounded p-2 sm:p-1.5 w-full bg-white text-center">
-                            <button type="button" onclick="checkInOnSiteJob()" title="เช็กอินเริ่มงาน + บันทึก GPS อัตโนมัติ" class="no-print bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-2 sm:py-1.5 rounded text-[11px] font-bold flex-shrink-0">เริ่มงาน</button>
+                            <input type="time" id="timeIn" onchange="onManualTimeEdited('IN')" class="border border-gray-300 rounded p-2 sm:p-1.5 w-full bg-white text-center font-semibold" title="เวลาเข้าหน้างาน (Auto Check-In หรือพิมพ์แก้ไขได้)">
+                            <button type="button" onclick="checkInOnSiteJob()" title="เช็กอินเข้าหน้างานทันที + บันทึกพิกัด GPS" class="no-print bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-2 sm:py-1.5 rounded font-bold text-[11px] flex-shrink-0">เข้า</button>
                         </div>
-                        <span class="text-gray-500">-</span>
+                        <span class="text-gray-400 font-bold">-</span>
                         <div class="flex-1 flex items-center gap-1">
-                            <input type="time" id="timeOut" onchange="updateOnSiteDuration()" class="border border-gray-300 rounded p-2 sm:p-1.5 w-full bg-white text-center">
-                            <button type="button" onclick="checkOutOnSiteJob()" title="เช็กเอาต์ปิดงาน" class="no-print bg-rose-600 hover:bg-rose-700 text-white px-2 py-2 sm:py-1.5 rounded text-[11px] font-bold flex-shrink-0">ปิดงาน</button>
+                            <input type="time" id="timeOut" onchange="onManualTimeEdited('OUT')" class="border border-gray-300 rounded p-2 sm:p-1.5 w-full bg-white text-center font-semibold" title="เวลาออกจากหน้างาน (Auto Check-Out หรือพิมพ์แก้ไขได้)">
+                            <button type="button" onclick="checkOutOnSiteJob()" title="เช็กเอาต์ออกจากหน้างานทันที" class="no-print bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-2 sm:py-1.5 rounded font-bold text-[11px] flex-shrink-0">ออก</button>
                         </div>
                     </div>
-                </div>
+                    <div id="timeAuditTrailNote" class="no-print text-[10px] text-gray-500 mt-1 flex items-center justify-between">
+                        <span id="timeAuditTrailText">โหมด Auto Check-In/Out พร้อมทำงานเมื่อมีพิกัดหน้างาน</span>
+                        <button type="button" onclick="pullTodayScheduledJobIntoForm()" class="text-hoshizaki-blue hover:underline font-bold ml-1"><i class="fa-solid fa-calendar-check mr-0.5"></i>ดึงงานจากตาราง</button>
+                    </div></div>
                 <div>
                     <label class="block text-gray-500 font-medium mb-1">พิกัด GPS / แผนที่หน้างาน:</label>
                     <div class="flex items-center gap-1.5">
@@ -7385,6 +7399,7 @@ Website : www.hoshizaki-sea.com</p>
 
                 await persistJobHistoryEverywhere(history);
                 saveCustomerProfileToDirectory(jobData);
+                if (typeof autoPersistNewMasterDataFromJob === 'function') autoPersistNewMasterDataFromJob(jobData);
                 markMatchingScheduleItemDone(jobData);
                 deductVanStockForSavedJob(jobData);
                 refreshPmDueAlertBadge();
@@ -8618,9 +8633,9 @@ Website : www.hoshizaki-sea.com</p>
             const docMainTitle = currentFinancialDocMode === 'RECEIPT' ? 'RECEIPT / TAX INVOICE' : (currentFinancialDocMode === 'INVOICE' ? 'INVOICE / TAX INVOICE' : 'QUOTATION');
             const cfg = typeof getGlobalCompanyConfig === 'function' ? getGlobalCompanyConfig() : {
                 companyName: 'HOSHIZAKI (THAILAND) LIMITED',
-                address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District, Bangkok 10210 Thailand.',
-                telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)',
-                emailWeb: 'Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com',
+                address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64(Mahanakorn)\nTalat Bang Khen Subdistrict,Lak Si District,Bangkok 10210 Thailand.',
+                telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646\nTAX ID : 0135558002599 (HEAD OFFICE)',
+                emailWeb: 'Email : services@hoshizaki.co.th\nWebsite : www.hoshizaki-sea.com',
                 bankInfo: 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2'
             };
 
@@ -9079,6 +9094,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     await idbSet('hoshizaki_draft_job', draft);
                     try {
                         localStorage.setItem('hoshizaki_draft_job', JSON.stringify({ ...draft, photos: [] }));
+                    if (typeof autoPersistNewMasterDataFromJob === 'function') autoPersistNewMasterDataFromJob(draft);
                     } catch (e) {}
                 } catch (e) {
                     console.warn('Draft autosave note:', e);
@@ -9925,7 +9941,12 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             if (obj.store) document.getElementById('custStore').value = obj.store;
             if (obj.onsiteContact) document.getElementById('custContact').value = obj.onsiteContact;
             if (obj.address) document.getElementById('custAddress').value = obj.address;
-            if (obj.mapUrl) document.getElementById('diagGps').value = obj.mapUrl;
+            if (obj.mapUrl) {
+                document.getElementById('diagGps').value = obj.mapUrl;
+                if (typeof setTargetJobSiteGeofenceFromString === 'function') {
+                    setTargetJobSiteGeofenceFromString(obj.mapUrl, obj.store);
+                }
+            }
             if (obj.serial) {
                 document.getElementById('eqSerial').value = obj.serial;
                 handleSerialAutoLookup(obj.serial);
@@ -19098,6 +19119,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                             <option value="SERVICE">3. Service Manual (คู่มือซ่อม)</option>
                             <option value="INSTRUCTION">4. Instruction Manual (คู่มือผู้ใช้)</option>
                             <option value="DRAWING">5. Drawing / Wiring Diagram (แบบวงจร/โครงสร้าง)</option>
+                            <option value="PART_PHOTO">6. Part Photo / รูปภาพอะไหล่ (ภาพถ่ายอะไหล่จริง/เปรียบเทียบ)</option>
                         </select>
                     </div>
                     <div class="sm:col-span-3">
@@ -19109,8 +19131,15 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                         <input type="text" id="techDocTitleInput" placeholder="เช่น Spec Sheet IM-240DNE (2026) หรือ Wiring Diagram HSU-400" class="w-full border border-amber-300 rounded-lg px-2.5 py-2 bg-white font-semibold text-gray-800">
                     </div>
                     <div class="sm:col-span-6">
-                        <label class="block text-[11px] font-bold text-gray-700 mb-0.5">ลิงก์ไฟล์ Google Drive / PDF / รูปภาพ Drawing *</label>
-                        <input type="text" id="techDocUrlInput" placeholder="วาง URL ของไฟล์ PDF หรือรูปภาพใน Google Drive (https://drive.google.com/...)" class="w-full border border-amber-300 rounded-lg px-2.5 py-2 bg-white text-sky-900">
+                        <label class="block text-[11px] font-bold text-gray-700 mb-0.5">แนบไฟล์ PDF / รูปภาพอะไหล่ หรือวางลิงก์ Google Drive *</label>
+                        <div class="flex items-center gap-1.5">
+                            <input type="text" id="techDocUrlInput" placeholder="วาง URL (https://...) หรือกดปุ่มแนบไฟล์ PDF/รูปภาพด้านขวา" class="flex-1 border border-amber-300 rounded-lg px-2.5 py-2 bg-white text-sky-900">
+                            <label class="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-bold text-[11px] flex items-center gap-1 flex-shrink-0 shadow-xs" title="อัปโหลดไฟล์ PDF (Parts List / Service Manual / Instruction / Spec Sheet) หรือรูปภาพอะไหล่เข้า Google Drive และบันทึกอัตโนมัติ">
+                                <i class="fa-solid fa-file-arrow-up"></i> <span>แนบ PDF/รูป</span>
+                                <input type="file" id="techDocDirectFileInput" accept="application/pdf,image/*" onchange="handleTechnicalDocDirectFileUpload(event)" class="hidden">
+                            </label>
+                        </div>
+                        <div id="techDocUploadStatusLine" class="text-[10px] text-emerald-800 font-semibold mt-0.5 hidden"></div>
                     </div>
                     <div class="sm:col-span-4">
                         <label class="block text-[11px] font-bold text-gray-700 mb-0.5">หมายเหตุ / ข้อมูลสเปกเพิ่มเติม</label>
@@ -19821,7 +19850,8 @@ function openFullScreenSpecViewerModal(presetModel) {
                 PARTS: { text: 'Parts List', cls: 'bg-emerald-100 text-emerald-900 border-emerald-300' },
                 SERVICE: { text: 'Service Manual', cls: 'bg-indigo-100 text-indigo-900 border-indigo-300' },
                 INSTRUCTION: { text: 'Instruction Manual', cls: 'bg-amber-100 text-amber-900 border-amber-300' },
-                DRAWING: { text: 'Drawing / Diagram', cls: 'bg-purple-100 text-purple-900 border-purple-300' }
+                DRAWING: { text: 'Drawing / Diagram', cls: 'bg-purple-100 text-purple-900 border-purple-300' },
+                PART_PHOTO: { text: 'Part Photo / รูปภาพอะไหล่', cls: 'bg-rose-100 text-rose-900 border-rose-300' }
             };
 
             if (list.length === 0) {
@@ -20697,9 +20727,9 @@ function openFullScreenSpecViewerModal(presetModel) {
         const DEFAULT_COMPANY_CONFIG = {
             companyName: 'HOSHIZAKI (THAILAND) LIMITED',
             companyShort: 'HOSHIZAKI (THAILAND)',
-            address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District, Bangkok 10210 Thailand.',
-            telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)',
-            emailWeb: 'Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com',
+            address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64(Mahanakorn)\nTalat Bang Khen Subdistrict,Lak Si District,Bangkok 10210 Thailand.',
+            telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646\nTAX ID : 0135558002599 (HEAD OFFICE)',
+            emailWeb: 'Email : services@hoshizaki.co.th\nWebsite : www.hoshizaki-sea.com',
             currency: 'THB',
             vatRate: 7,
             bankInfo: 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2',
@@ -20710,9 +20740,9 @@ function openFullScreenSpecViewerModal(presetModel) {
             TH: {
                 companyName: 'HOSHIZAKI (THAILAND) LIMITED',
                 companyShort: 'HOSHIZAKI (THAILAND)',
-                address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District, Bangkok 10210 Thailand.',
-                telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)',
-                emailWeb: 'Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com',
+                address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64(Mahanakorn)\nTalat Bang Khen Subdistrict,Lak Si District,Bangkok 10210 Thailand.',
+                telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646\nTAX ID : 0135558002599 (HEAD OFFICE)',
+                emailWeb: 'Email : services@hoshizaki.co.th\nWebsite : www.hoshizaki-sea.com',
                 currency: 'THB',
                 vatRate: 7,
                 bankInfo: 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2'
@@ -21472,6 +21502,400 @@ function openFullScreenSpecViewerModal(presetModel) {
                 }
             }, 3500);
         });
+    
+        // =========================================================================
+        // Enterprise v191.0 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // =========================================================================
+
+        function autoPersistNewMasterDataFromJob(jobData) {
+            if (!jobData) return;
+            let learnedItems = [];
+
+            // 1. Auto-save new Serial No. + Model into Serial Master Database
+            const rawSn = String(jobData.serial || '').trim().toUpperCase();
+            const rawModel = String(jobData.model || '').trim().toUpperCase();
+            const isUnreadableSn = !rawSn || rawSn === 'N/A' || rawSn === '-' || rawSn.includes('ไม่สามารถระบุ') || rawSn.includes('จาง');
+
+            if (!isUnreadableSn && rawSn.length >= 3 && rawModel) {
+                const mergedSn = typeof getMergedSerialMap === 'function' ? getMergedSerialMap() : new Map();
+                const existingSn = mergedSn.get(rawSn);
+                if (!existingSn || (rawModel && existingSn.model !== rawModel) || (jobData.store && !existingSn.customer)) {
+                    const overrides = typeof getCustomSerialOverridesMap === 'function' ? getCustomSerialOverridesMap() : new Map();
+                    const newSnRec = {
+                        serial: rawSn,
+                        productType: String(jobData.productType || existingSn?.productType || 'ICE MAKER').trim(),
+                        model: rawModel,
+                        dateOut: String(jobData.dateOut || existingSn?.dateOut || '').trim(),
+                        invoiceNo: String(jobData.invoiceNo || existingSn?.invoiceNo || '').trim(),
+                        customer: String(jobData.store || existingSn?.customer || '').trim(),
+                        poNo: String(jobData.poNo || existingSn?.poNo || '').trim(),
+                        isCustom: true,
+                        updatedAt: new Date().toISOString()
+                    };
+                    overrides.set(rawSn, newSnRec);
+                    if (typeof saveCustomSerialOverridesMap === 'function') {
+                        saveCustomSerialOverridesMap(overrides);
+                    }
+                    const snListEl = document.getElementById('hoshizakiSerialsList');
+                    if (snListEl && !Array.from(snListEl.options).some(o => o.value === rawSn)) {
+                        const opt = document.createElement('option');
+                        opt.value = rawSn;
+                        snListEl.appendChild(opt);
+                    }
+                    if (typeof pushSerialUpdateToCloud === 'function' && navigator.onLine) {
+                        pushSerialUpdateToCloud(newSnRec);
+                    }
+                    learnedItems.push(`S/N: ${rawSn}`);
+                }
+            }
+
+            if (rawModel && rawModel.length >= 3) {
+                const modListEl = document.getElementById('hoshizakiModelsList');
+                if (modListEl && !Array.from(modListEl.options).some(o => o.value.toUpperCase() === rawModel)) {
+                    const optM = document.createElement('option');
+                    optM.value = rawModel;
+                    modListEl.appendChild(optM);
+                }
+            }
+
+            // 2. Auto-save new Spare Parts & Prices into Parts Catalog Master
+            if (Array.isArray(jobData.parts) && jobData.parts.length > 0 && typeof getAllNormalizedPartPrices === 'function') {
+                const allParts = getAllNormalizedPartPrices();
+                const customMap = typeof getCustomPartPriceMap === 'function' ? getCustomPartPriceMap() : {};
+                let partsAdded = false;
+                const partsListEl = document.getElementById('hoshizakiPartsList');
+
+                jobData.parts.forEach(p => {
+                    const desc = String(p.desc || '').trim();
+                    const price = parseFloat(String(p.price || '0').replace(/,/g, '')) || 0;
+                    if (desc && desc.length >= 3 && !allParts[desc]) {
+                        customMap[desc] = {
+                            DIRECT: price,
+                            A_PLUS: Math.round(price * 0.70 * 100) / 100,
+                            A: Math.round(price * 0.75 * 100) / 100,
+                            B_PLUS: Math.round(price * 0.80 * 100) / 100,
+                            B: Math.round(price * 0.85 * 100) / 100,
+                            C_PLUS: Math.round(price * 0.90 * 100) / 100,
+                            C: Math.round(price * 0.95 * 100) / 100,
+                            SPECIAL: price
+                        };
+                        partsAdded = true;
+                        if (partsListEl && !Array.from(partsListEl.options).some(o => o.value === desc)) {
+                            const optP = document.createElement('option');
+                            optP.value = desc;
+                            partsListEl.appendChild(optP);
+                        }
+                    }
+                });
+
+                if (partsAdded) {
+                    localStorage.setItem('hoshizaki_custom_part_prices_v13', JSON.stringify(customMap));
+                    learnedItems.push('รายการอะไหล่ใหม่');
+                }
+            }
+
+            if (learnedItems.length > 0) {
+                console.log('Auto-saved new master data:', learnedItems.join(', '));
+            }
+        }
+
+        function toggleSerialUnreadableMode() {
+            const snInput = document.getElementById('eqSerial');
+            const modelInput = document.getElementById('eqModel');
+            const btn = document.getElementById('btnSerialUnreadable');
+            if (!snInput) return;
+
+            const isCurrentlyUnreadable = snInput.dataset.unreadableMode === '1';
+            if (!isCurrentlyUnreadable) {
+                snInput.dataset.unreadableMode = '1';
+                snInput.value = 'N/A (เนมเพลทจาง - ระบุเฉพาะรุ่น)';
+                snInput.classList.add('text-amber-800', 'bg-amber-50/70');
+                if (btn) {
+                    btn.classList.remove('bg-amber-100', 'text-amber-900');
+                    btn.classList.add('bg-amber-600', 'text-white');
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>โหมดเฉพาะรุ่น</span>';
+                }
+                if (modelInput) {
+                    modelInput.focus();
+                }
+                showToast('เปิดโหมดระบุเฉพาะรุ่นเครื่อง (Model Only) สำหรับเครื่องที่เนมเพลทจาง ✓');
+            } else {
+                snInput.dataset.unreadableMode = '0';
+                snInput.value = '';
+                snInput.classList.remove('text-amber-800', 'bg-amber-50/70');
+                if (btn) {
+                    btn.classList.add('bg-amber-100', 'text-amber-900');
+                    btn.classList.remove('bg-amber-600', 'text-white');
+                    btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> <span>S/N จาง/ระบุแค่รุ่น</span>';
+                }
+                snInput.focus();
+            }
+            if (typeof debounceAutoSave === 'function') debounceAutoSave();
+        }
+
+        function pullTodayScheduledJobIntoForm() {
+            const items = typeof getScheduleItems === 'function' ? getScheduleItems() : [];
+            const todayIso = document.getElementById('jobDate')?.value || new Date().toISOString().split('T')[0];
+            const activeTech = document.getElementById('responsibleTechSelect')?.value || '';
+
+            let candidates = items.filter(it => it.slotType !== 'WAITING' && it.date === todayIso && it.jobStatus !== 'DONE');
+            if (activeTech) {
+                const techMatched = candidates.filter(it => Array.isArray(it.techs) && it.techs.includes(activeTech));
+                if (techMatched.length > 0) candidates = techMatched;
+            }
+            if (candidates.length === 0) {
+                candidates = items.filter(it => it.slotType !== 'WAITING' && it.date === todayIso);
+            }
+            if (candidates.length === 0) {
+                showToast('ไม่พบรายการงานในตารางนัดหมายของวันที่เลือก (เปิดดูทั้งหมดได้ที่ปุ่ม ตารางงาน)');
+                if (typeof openScheduleModal === 'function') openScheduleModal();
+                return;
+            }
+
+            const job = candidates[0];
+            if (job.store) document.getElementById('custStore').value = job.store;
+            if (job.onsiteContact) document.getElementById('custContact').value = job.onsiteContact;
+            if (job.address) document.getElementById('custAddress').value = job.address;
+            if (job.mapUrl) {
+                document.getElementById('diagGps').value = job.mapUrl;
+                setTargetJobSiteGeofenceFromString(job.mapUrl, job.store);
+            }
+            if (job.serial) {
+                document.getElementById('eqSerial').value = job.serial;
+                if (typeof handleSerialAutoLookup === 'function') handleSerialAutoLookup(job.serial);
+            }
+            if (job.model) {
+                document.getElementById('eqModel').value = job.model;
+            }
+            if (job.workDetail) {
+                document.getElementById('diagSymptom').value = job.workDetail;
+            }
+            if (job.checkedInTime) {
+                document.getElementById('timeIn').value = job.checkedInTime;
+            }
+            if (job.checkedOutTime) {
+                document.getElementById('timeOut').value = job.checkedOutTime;
+            }
+            if (typeof updateOnSiteDuration === 'function') updateOnSiteDuration();
+            if (typeof debounceAutoSave === 'function') debounceAutoSave();
+            showToast(`ดึงข้อมูลงาน "${job.store}" (${job.model || '-'} / S/N: ${job.serial || 'ไม่ระบุ'}) เข้าใบงานเรียบร้อย ✓`);
+        }
+
+        // GEOFENCE AUTO CHECK-IN / AUTO CHECK-OUT ENGINE (250m Radius, Editable)
+        let geofenceWatchId = null;
+        let activeTargetSiteCoords = null;
+        let autoGeofenceEnabled = localStorage.getItem('hoshizaki_auto_geofence_v19') !== 'false';
+        let geofenceState = { autoCheckedIn: false, autoCheckedOut: false, manualOverrideIn: false, manualOverrideOut: false };
+
+        function parseLatLngFromText(raw) {
+            const m = String(raw || '').match(/(-?\d{1,2}\.\d{3,})\s*,\s*(-?\d{1,3}\.\d{3,})/);
+            if (!m) return null;
+            const lat = parseFloat(m[1]);
+            const lng = parseFloat(m[2]);
+            if (isNaN(lat) || isNaN(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
+            return { lat, lng };
+        }
+
+        function calcDistanceMeters(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const toRad = deg => deg * Math.PI / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        function setTargetJobSiteGeofenceFromString(coordOrUrlStr, siteLabel) {
+            const parsed = parseLatLngFromText(coordOrUrlStr);
+            if (parsed) {
+                activeTargetSiteCoords = { lat: parsed.lat, lng: parsed.lng, label: siteLabel || 'หน้างานลูกค้า' };
+                geofenceState = { autoCheckedIn: false, autoCheckedOut: false, manualOverrideIn: false, manualOverrideOut: false };
+                updateTimeAuditNote(`พร้อมตรวจจับเข้า-ออกพื้นที่: ${activeTargetSiteCoords.label} (รัศมี 250 ม.)`);
+            }
+        }
+
+        function updateTimeAuditNote(msg) {
+            const el = document.getElementById('timeAuditTrailText');
+            if (el && msg) el.innerText = msg;
+        }
+
+        function onManualTimeEdited(which) {
+            if (which === 'IN') {
+                geofenceState.manualOverrideIn = true;
+                updateTimeAuditNote(`แก้ไขเวลาเข้างานด้วยตนเอง (${document.getElementById('timeIn')?.value || '-'})`);
+            } else if (which === 'OUT') {
+                geofenceState.manualOverrideOut = true;
+                updateTimeAuditNote(`แก้ไขเวลาออกงานด้วยตนเอง (${document.getElementById('timeOut')?.value || '-'})`);
+            }
+            if (typeof updateOnSiteDuration === 'function') updateOnSiteDuration();
+            if (typeof debounceAutoSave === 'function') debounceAutoSave();
+        }
+
+        function toggleAutoGeofenceTracking() {
+            autoGeofenceEnabled = !autoGeofenceEnabled;
+            localStorage.setItem('hoshizaki_auto_geofence_v19', autoGeofenceEnabled ? 'true' : 'false');
+            const badge = document.getElementById('autoGeofenceStatusBadge');
+            if (badge) {
+                if (autoGeofenceEnabled) {
+                    badge.className = 'no-print text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-1.5 py-0.5 rounded font-bold cursor-pointer';
+                    badge.innerHTML = '<i class="fa-solid fa-satellite-dish text-emerald-600 mr-0.5"></i>Auto GPS: ON';
+                    startGeofenceWatch();
+                    showToast('เปิดระบบ Auto Check-In / Check-Out อัตโนมัติเมื่อเข้า-ออกพื้นที่หน้างาน ✓');
+                } else {
+                    badge.className = 'no-print text-[10px] bg-gray-100 text-gray-600 border border-gray-300 px-1.5 py-0.5 rounded font-bold cursor-pointer';
+                    badge.innerHTML = '<i class="fa-solid fa-satellite-dish text-gray-400 mr-0.5"></i>Auto GPS: OFF';
+                    stopGeofenceWatch();
+                    showToast('ปิดระบบ Auto Check-In / Check-Out ชั่วคราว');
+                }
+            }
+        }
+
+        function startGeofenceWatch() {
+            if (!autoGeofenceEnabled || !navigator.geolocation || geofenceWatchId !== null) return;
+            try {
+                geofenceWatchId = navigator.geolocation.watchPosition(
+                    (pos) => {
+                        const curLat = pos.coords.latitude;
+                        const curLng = pos.coords.longitude;
+                        const gpsInput = document.getElementById('diagGps');
+
+                        if (!activeTargetSiteCoords && gpsInput && gpsInput.value.trim()) {
+                            const parsed = parseLatLngFromText(gpsInput.value);
+                            if (parsed) {
+                                activeTargetSiteCoords = { lat: parsed.lat, lng: parsed.lng, label: document.getElementById('custStore')?.value || 'หน้างาน' };
+                            }
+                        }
+                        if (!activeTargetSiteCoords) return;
+
+                        const dist = calcDistanceMeters(curLat, curLng, activeTargetSiteCoords.lat, activeTargetSiteCoords.lng);
+                        const timeInEl = document.getElementById('timeIn');
+                        const timeOutEl = document.getElementById('timeOut');
+
+                        if (dist <= 250 && !geofenceState.autoCheckedIn && !geofenceState.manualOverrideIn && timeInEl && !timeInEl.value) {
+                            setNowTime('timeIn');
+                            geofenceState.autoCheckedIn = true;
+                            if (gpsInput && !gpsInput.value.trim()) {
+                                gpsInput.value = `${curLat.toFixed(6)}, ${curLng.toFixed(6)}`;
+                            }
+                            if (typeof updateOnSiteDuration === 'function') updateOnSiteDuration();
+                            updateTimeAuditNote(`Auto Check-In เมื่อถึงหน้างานเวลา ${timeInEl.value} น. (ระยะ ${Math.round(dist)} ม.)`);
+                            showToast(`📍 Auto Check-In: ถึงบริเวณหน้างานแล้ว (${timeInEl.value} น.)`);
+                            if (typeof debounceAutoSave === 'function') debounceAutoSave();
+                        }
+
+                        if (dist >= 350 && (geofenceState.autoCheckedIn || (timeInEl && timeInEl.value)) && !geofenceState.autoCheckedOut && !geofenceState.manualOverrideOut && timeOutEl && !timeOutEl.value) {
+                            setNowTime('timeOut');
+                            geofenceState.autoCheckedOut = true;
+                            if (typeof updateOnSiteDuration === 'function') updateOnSiteDuration();
+                            updateTimeAuditNote(`Auto Check-Out เมื่อออกจากหน้างานเวลา ${timeOutEl.value} น. (ระยะ ${Math.round(dist)} ม.)`);
+                            showToast(`🚗 Auto Check-Out: ออกจากบริเวณหน้างานแล้ว (${timeOutEl.value} น.)`);
+                            if (typeof debounceAutoSave === 'function') debounceAutoSave();
+                        }
+                    },
+                    () => {},
+                    { enableHighAccuracy: true, maximumAge: 15000, timeout: 15000 }
+                );
+            } catch (e) {}
+        }
+
+        function stopGeofenceWatch() {
+            if (geofenceWatchId !== null && navigator.geolocation) {
+                navigator.geolocation.clearWatch(geofenceWatchId);
+                geofenceWatchId = null;
+            }
+        }
+
+        // DIRECT PDF / PART PHOTO ATTACHMENT IN TECHNICAL DOCUMENT MANAGER
+        async function handleTechnicalDocDirectFileUpload(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            const statusEl = document.getElementById('techDocUploadStatusLine');
+            const titleEl = document.getElementById('techDocTitleInput');
+            const urlEl = document.getElementById('techDocUrlInput');
+            const catEl = document.getElementById('techDocCategoryInput');
+            const modelEl = document.getElementById('techDocModelInput');
+
+            const category = catEl?.value || 'SPEC';
+            const model = (modelEl?.value || document.getElementById('eqModel')?.value || 'GENERAL').trim().toUpperCase();
+            if (modelEl && !modelEl.value.trim()) modelEl.value = model;
+            if (titleEl && !titleEl.value.trim()) {
+                titleEl.value = file.name.replace(/\.[^/.]+$/, '');
+            }
+
+            if (statusEl) {
+                statusEl.classList.remove('hidden');
+                statusEl.innerText = `⏳ กำลังอ่านไฟล์ "${file.name}" (${Math.round(file.size / 1024)} KB)...`;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const dataUrl = e.target.result;
+                const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+
+                if (webhookUrl && navigator.onLine) {
+                    try {
+                        if (statusEl) statusEl.innerText = '☁️ กำลังอัปโหลดไฟล์ขึ้น Google Drive และสร้างลิงก์แชร์อัตโนมัติ...';
+                        const res = await fetch(webhookUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify({
+                                actionType: 'UPLOAD_TECH_DOC_FILE',
+                                apiSecretKey: typeof getAppApiSecretKey === 'function' ? getAppApiSecretKey() : '',
+                                category,
+                                model,
+                                fileName: file.name,
+                                mimeType: file.type || 'application/octet-stream',
+                                dataUrl
+                            })
+                        });
+                        if (res.ok) {
+                            const out = await res.json();
+                            if (out && out.status === 'ok' && out.fileUrl) {
+                                if (urlEl) urlEl.value = out.fileUrl;
+                                if (statusEl) statusEl.innerText = `✅ อัปโหลดขึ้น Google Drive สำเร็จ! พร้อมกด "บันทึกข้อมูล" (${out.folderName || category})`;
+                                showToast('อัปโหลดไฟล์ PDF/รูปภาพขึ้น Google Drive สำเร็จ ✓');
+                                event.target.value = '';
+                                return;
+                            }
+                        }
+                    } catch (err) {
+                        console.warn('Cloud file upload fallback to local dataUrl:', err);
+                    }
+                }
+
+                if (file.type.startsWith('image/')) {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const maxDim = 1280;
+                        let w = img.width, h = img.height;
+                        if (w > maxDim || h > maxDim) {
+                            if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+                            else { w = Math.round(w * maxDim / h); h = maxDim; }
+                        }
+                        canvas.width = w;
+                        canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        const compressed = canvas.toDataURL('image/jpeg', 0.82);
+                        if (urlEl) urlEl.value = compressed;
+                        if (statusEl) statusEl.innerText = '✅ แนบรูปภาพอะไหล่ลงฐานข้อมูลเครื่องเรียบร้อย (กด "บันทึกข้อมูล" เพื่อจัดเก็บ)';
+                        showToast('แนบรูปภาพอะไหล่เรียบร้อย ✓');
+                    };
+                    img.src = dataUrl;
+                } else {
+                    if (urlEl) urlEl.value = dataUrl;
+                    if (statusEl) statusEl.innerText = '✅ แนบไฟล์ PDF ลงฐานข้อมูลเครื่องเรียบร้อย (กด "บันทึกข้อมูล" เพื่อจัดเก็บ)';
+                    showToast('แนบไฟล์ PDF เรียบร้อย ✓');
+                }
+                event.target.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => { if (typeof startGeofenceWatch === 'function') startGeofenceWatch(); });
     </script>
 </body>
 </html>

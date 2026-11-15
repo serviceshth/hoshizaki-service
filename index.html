@@ -22,6 +22,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- SheetJS Library for Excel Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- ExcelJS Library for Exporting Formatted Excel with Embedded Company Logo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
     <!-- Google Fonts: Prompt & Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -635,9 +637,45 @@
                 padding-left: 0.55rem !important;
             }
         }
+        /* v19.0 Universal Red Top-Right CLOSE Floating Button for ALL Pop-Up Modals */
+        #universalModalRedCloseBar {
+            position: fixed;
+            top: max(10px, env(safe-area-inset-top, 10px));
+            right: max(12px, env(safe-area-inset-right, 12px));
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            border-radius: 9999px;
+            padding: 7px 16px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            box-shadow: 0 8px 24px rgba(185, 28, 28, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+            cursor: pointer;
+            transition: transform 0.14s ease, background 0.15s ease;
+        }
+        #universalModalRedCloseBar:hover {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            transform: scale(1.04);
+        }
+        #universalModalRedCloseBar:active {
+            transform: scale(0.96);
+        }
+        @media print {
+            #universalModalRedCloseBar { display: none !important; }
+        }
     </style>
 </head>
 <body class="p-2 sm:p-4 md:p-6 pb-24 sm:pb-6 min-h-screen">
+    <!-- v19.0 Universal Top-Right Red CLOSE Button for All Popups -->
+    <button type="button" id="universalModalRedCloseBar" onclick="closeTopmostActivePopupModal()" title="ปิดหน้าต่างนี้ (ESC)">
+        <i class="fa-solid fa-xmark text-base font-black"></i>
+        <span>CLOSE</span>
+    </button>
 
     <!-- Batch Photo Upload Progress Banner (v12.7) -->
     <div id="cloudBatchUploadBanner" class="hidden no-print fixed top-3 inset-x-3 sm:inset-x-auto sm:right-4 sm:w-96 bg-hoshizaki-navy text-white border border-hoshizaki-blue p-3 rounded-xl shadow-2xl z-[90] space-y-1.5 text-xs">
@@ -718,7 +756,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v18.9 Board Pinout & LED + Error Matrix</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v19.0 Universal Red CLOSE + ExcelJS Logo + LINE FullScreen</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -8566,12 +8604,7 @@ Website : www.hoshizaki-sea.com</p>
             if (document.getElementById('recCheckedDate')) document.getElementById('recCheckedDate').innerText = shortDate;
         }
 
-        function exportReceiptExcel() {
-            if (typeof XLSX === 'undefined') {
-                showToast('ไม่พบไลบรารีสำหรับส่งออก Excel');
-                return;
-            }
-
+        async function exportReceiptExcel() {
             const offerNo = document.getElementById('recOfferNo')?.innerText || 'Quotation';
             const dateStr = document.getElementById('recDate')?.innerText || '-';
             const custCode = document.getElementById('recCustCode')?.innerText || 'AR00000149';
@@ -8582,7 +8615,14 @@ Website : www.hoshizaki-sea.com</p>
             const telNo = document.getElementById('recContactName')?.innerText || '-';
             const eqModelHeader = document.getElementById('recEqModel')?.innerText || 'MODEL : -  S/N : -';
             const customRemark = document.getElementById('recCustomRemarkInput')?.value.trim() || '';
-            const docMainTitle = currentFinancialDocMode === 'RECEIPT' ? 'RECEIPT / TAX INVOICE' : (currentFinancialDocMode === 'INVOICE' ? 'INVOICE' : 'QUOTATION');
+            const docMainTitle = currentFinancialDocMode === 'RECEIPT' ? 'RECEIPT / TAX INVOICE' : (currentFinancialDocMode === 'INVOICE' ? 'INVOICE / TAX INVOICE' : 'QUOTATION');
+            const cfg = typeof getGlobalCompanyConfig === 'function' ? getGlobalCompanyConfig() : {
+                companyName: 'HOSHIZAKI (THAILAND) LIMITED',
+                address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District, Bangkok 10210 Thailand.',
+                telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)',
+                emailWeb: 'Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com',
+                bankInfo: 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2'
+            };
 
             const subTotal = parseFloat((document.getElementById('recSubtotal')?.innerText || '0').replace(/,/g, '')) || 0;
             const vatAmt = parseFloat((document.getElementById('recVat')?.innerText || '0').replace(/,/g, '')) || 0;
@@ -8590,337 +8630,322 @@ Website : www.hoshizaki-sea.com</p>
             const isWht = document.getElementById('whtCheckbox')?.checked || false;
             const whtAmt = isWht ? (Math.round(subTotal * 0.03 * 100) / 100) : 0;
             const grandTotal = parseFloat((document.getElementById('recTotal')?.innerText || '0').replace(/,/g, '')) || 0;
+            const shortDate = document.getElementById('recIssueDate')?.innerText || dateStr;
+            const sheetModelTab = (document.getElementById('eqModel')?.value || docMainTitle).replace(/[\/:?*\[\]]/g, '').substring(0, 28) || 'Document';
+            const filePrefix = currentFinancialDocMode === 'RECEIPT' ? 'Hoshizaki_Receipt' : (currentFinancialDocMode === 'INVOICE' ? 'Hoshizaki_Invoice' : 'Hoshizaki_Quotation');
 
-            const wb = XLSX.utils.book_new();
-
-            // โครงสร้าง 8 คอลัมน์ (A-H) และ 54 แถว แก้ไขปัญหา #VALUE! และป้องกันข้อความหัวกระดาษ/ตารางถูกตัดขอบ 100%
-            const wsData = [
-                ['', '', 'HOSHIZAKI (THAILAND) LIMITED', '', '', '', '', ''],                                                          // Row 1
-                ['', '', 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64', '', '', '', '', ''],                            // Row 2
-                ['', '', '(Mahanakorn),Talat Bang Khen Subdistrict,Lak Si District,', '', '', '', '', ''],                             // Row 3
-                ['', '', 'Bangkok 10210 Thailand.', '', '', '', '', ''],                                                              // Row 4
-                ['', '', 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)', '', '', '', '', ''],        // Row 5
-                ['', '', 'Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com', '', '', '', '', ''],                    // Row 6
-                [docMainTitle, '', '', '', '', '', '', ''],                                                                           // Row 7
-                ['รหัสลูกค้า :', custCode, '', '', '', '', '', ''],                                                                   // Row 8
-                ['ชื่อลูกค้า :', custName, '', '', '', '', '', ''],                                                                     // Row 9
-                ['Buyer Name :', buyerTaxId, '', '', '', '', 'วันที่ / Date', dateStr],                                               // Row 10
-                ['Contact Person :', contactPerson, '', '', '', '', 'Offer No.', offerNo],                                           // Row 11
-                ['ที่อยู่ :', address, '', '', '', '', '', ''],                                                                         // Row 12
-                ['', '', '', '', '', '', 'เงื่อนไขในการชำระเงิน', ''],                                                               // Row 13
-                ['', '', '', '', '', '', 'Payment term', '30 DAYS'],                                                                  // Row 14
-                ['Telephone No. :', telNo, '', '', '', '', '', ''],                                                                   // Row 15
-                ['', '', '', '', '', '', '', ''],                                                                                     // Row 16
-                [eqModelHeader, '', '', '', '', '', '', ''],                                                                          // Row 17
-                ['ITEM', 'Part No.', 'DESCRIPTION', 'UNIT PRICE (BAHT)', 'DISCOUNT', 'NET UNIT PRICE', 'QUANTITY (PCS)', 'AMOUNT'],   // Row 18
-                ['', '', '', '', '', '', '', '']                                                                                      // Row 19
-            ];
-
-            // Rows 20-35 (16 แถวรายการสินค้า ใช้สูตร IF(ISNUMBER(...)) ป้องกัน #VALUE! เมื่อแถวว่าง)
-            const firstItemRow = 20;
+            // Extract line items accurately from #receiptTableBody
             const tableRows = Array.from(document.querySelectorAll('#receiptTableBody tr'));
+            const parsedItems = [];
             for (let i = 0; i < 16; i++) {
-                const rNum = firstItemRow + i;
                 const tr = tableRows[i];
-                const netFormula = `IF(ISNUMBER(D${rNum}),ROUND(MAX(0,D${rNum}-N(E${rNum})),2),0)`;
-                const amtFormula = `IF(ISNUMBER(G${rNum}),ROUND(F${rNum}*G${rNum},2),0)`;
                 if (tr) {
                     const tds = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
-                    const itemNo = tds[0] && tds[0] !== '' ? (parseInt(tds[0], 10) || '') : '';
+                    const itemNo = tds[0] && tds[0] !== '' ? (parseInt(tds[0], 10) || (i + 1)) : '';
                     const partNo = tds[1] || '';
                     const desc = tds[2] || '';
-                    const uPrice = tds[3] ? (parseFloat(tds[3].replace(/,/g, '')) || 0) : '';
-                    const disc = tds[4] ? (parseFloat(tds[4].replace(/,/g, '')) || 0) : '';
-                    const qty = tds[6] ? (parseFloat(tds[6].replace(/,/g, '')) || 0) : '';
-
+                    const uPrice = tds[3] ? (parseFloat(tds[3].replace(/,/g, '')) || 0) : 0;
+                    const disc = tds[4] ? (parseFloat(tds[4].replace(/,/g, '')) || 0) : 0;
+                    const qty = tds[6] ? (parseFloat(tds[6].replace(/,/g, '')) || 0) : 0;
                     if (desc) {
-                        const netV = Math.round(Math.max(0, (uPrice || 0) - (disc || 0)) * 100) / 100;
-                        const amtV = Math.round(netV * (qty || 0) * 100) / 100;
-                        wsData.push([
-                            itemNo,
-                            partNo,
-                            desc,
-                            uPrice,
-                            disc || 0,
-                            { f: netFormula, v: netV, t: 'n' },
-                            qty,
-                            { f: amtFormula, v: amtV, t: 'n' }
-                        ]);
+                        const netV = Math.round(Math.max(0, uPrice - disc) * 100) / 100;
+                        const amtV = Math.round(netV * qty * 100) / 100;
+                        parsedItems.push({ hasData: true, itemNo, partNo, desc, uPrice, disc, netV, qty, amtV });
                     } else {
-                        wsData.push(['', '', '', '', '', { f: netFormula, v: 0, t: 'n' }, '', { f: amtFormula, v: 0, t: 'n' }]);
+                        parsedItems.push({ hasData: false });
                     }
                 } else {
-                    wsData.push(['', '', '', '', '', { f: netFormula, v: 0, t: 'n' }, '', { f: amtFormula, v: 0, t: 'n' }]);
+                    parsedItems.push({ hasData: false });
                 }
             }
 
-            // Row 36: REMARK (A36:C39) | SUB TOTAL (D36:F36) | =ROUND(SUM(H20:H35),2) (G36:H36)
-            wsData.push([
-                customRemark ? `REMARK : ${customRemark}
-VALIDITY : QUOTATION IS VALID FOR 30 DAYS` : 'VALIDITY : QUOTATION IS VALID FOR 30 DAYS',
-                '', '',
-                'SUB TOTAL', '', '',
-                { f: 'ROUND(SUM(H20:H35),2)', v: subTotal, t: 'n' }, ''
-            ]);
-            // Row 37: VAT 7%
-            wsData.push(['', '', '', 'VAT 7%', '', '', { f: 'ROUND(G36*0.07,2)', v: vatAmt, t: 'n' }, '']);
-            // Row 38: TOTAL
-            wsData.push(['', '', '', 'TOTAL', '', '', { f: 'ROUND(G36+G37,2)', v: beforeWhtTotal, t: 'n' }, '']);
-            // Row 39: WHT 3%
-            wsData.push(['', '', '', 'WHT 3%', '', '', { v: isWht ? -whtAmt : 0, t: 'n' }, '']);
-            // Row 40: THB (A40) | Baht Text (B40:C40) | GRAND TOTAL (D40:F40) | =ROUND(G38+G39,2) (G40:H40)
-            wsData.push(['THB', `(${numberToThaiBahtText(grandTotal)})`, '', 'GRAND TOTAL', '', '', { f: 'ROUND(G38+G39,2)', v: grandTotal, t: 'n' }, '']);
+            // Use ExcelJS to embed Company Logo PNG + Full Borders, Styling, WrapText & A4 Fit-to-Page
+            if (typeof ExcelJS !== 'undefined') {
+                try {
+                    const wb = new ExcelJS.Workbook();
+                    wb.creator = 'HOSHIZAKI (THAILAND) LIMITED';
+                    wb.created = new Date();
+                    const ws = wb.addWorksheet(sheetModelTab, {
+                        pageSetup: {
+                            paperSize: 9, // A4
+                            orientation: 'portrait',
+                            fitToPage: true,
+                            fitToWidth: 1,
+                            fitToHeight: 1,
+                            margins: { left: 0.35, right: 0.35, top: 0.4, bottom: 0.4, header: 0.2, footer: 0.2 }
+                        }
+                    });
 
-            // Rows 41-44: Remark Bank Details (Merged B41:H41 and B42:H42 so text never truncates)
-            wsData.push(['Remark :', 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2', '', '', '', '', '', '']);
-            wsData.push(['', 'The above offer is Ex-warehouse of Hoshizaki Thailand office (in Hankyu Hanshin Express W/H )', '', '', '', '', '', '']);
-            wsData.push(['', '', '', '', '', '', '', '']);
-            wsData.push(['', '', '', '', '', '', '', '']);
+                    ws.columns = [
+                        { key: 'A', width: 15 },
+                        { key: 'B', width: 18 },
+                        { key: 'C', width: 42 },
+                        { key: 'D', width: 17 },
+                        { key: 'E', width: 13 },
+                        { key: 'F', width: 16 },
+                        { key: 'G', width: 16 },
+                        { key: 'H', width: 18 }
+                    ];
 
-            // Rows 45-54: Signature Block
-            const shortDate = document.getElementById('recIssueDate')?.innerText || '';
-            wsData.push(['Issued By', '', 'Checked By', 'Approved By', '', '', '', '']);                        // Row 45
-            wsData.push(['', '', '', '', '', '', '', '']);                                                      // Row 46
-            wsData.push(['MS.WANWIPHA', '', 'MR.THANAKRIT', 'MR.THANAKRIT CHANMOKONPANIT', '', '', '', '']);   // Row 47
-            wsData.push([shortDate, '', shortDate, 'ผู้มีอำนาจอนุมัติ / Authorized Signature', '', '', '', '']); // Row 48
-            wsData.push(['', '', '', '', '', '', '', '']);                                                      // Row 49
-            wsData.push(['', '', '', 'Confirmed Purchase', '', '', '', '']);                                    // Row 50
-            wsData.push(['', '', '', '', '', '', '', '']);                                                      // Row 51
-            wsData.push(['', '', '', '…………………………………………………', '', '', '', '']);                                      // Row 52
-            wsData.push(['', '', '', 'ชื่อผู้สั่งซื้อ / Purchased Signature', '', '', '', '']);                 // Row 53
-            wsData.push(['', '', '', 'Date : …………………………….', '', '', '', '']);                                   // Row 54
+                    const thinBorder = {
+                        top: { style: 'thin', color: { argb: 'FF94A3B8' } },
+                        left: { style: 'thin', color: { argb: 'FF94A3B8' } },
+                        bottom: { style: 'thin', color: { argb: 'FF94A3B8' } },
+                        right: { style: 'thin', color: { argb: 'FF94A3B8' } }
+                    };
 
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-            // ขยายความกว้างคอลัมน์ A-H ให้แสดงหัวตารางและข้อความครบทุกตัวอักษรไม่ถูกตัด
-            ws['!cols'] = [
-                { wch: 16.0 }, // A: ITEM / Labels
-                { wch: 18.0 }, // B: Part No.
-                { wch: 40.0 }, // C: DESCRIPTION
-                { wch: 18.5 }, // D: UNIT PRICE (BAHT)
-                { wch: 14.0 }, // E: DISCOUNT
-                { wch: 17.5 }, // F: NET UNIT PRICE
-                { wch: 17.5 }, // G: QUANTITY (PCS)
-                { wch: 18.0 }  // H: AMOUNT
-            ];
-
-            // Merged cells ครอบคลุมหัวบริษัท ที่อยู่ ข้อมูลลูกค้า รายการ remark และช่องเซ็นชื่อไม่ให้ข้อความล้น/ถูกตัด
-            ws['!merges'] = [
-                { s: { r: 0, c: 2 }, e: { r: 0, c: 7 } },   // C1:H1 Company Title
-                { s: { r: 1, c: 2 }, e: { r: 1, c: 7 } },   // C2:H2 Address line 1
-                { s: { r: 2, c: 2 }, e: { r: 2, c: 7 } },   // C3:H3 Address line 2
-                { s: { r: 3, c: 2 }, e: { r: 3, c: 7 } },   // C4:H4 Address line 3
-                { s: { r: 4, c: 2 }, e: { r: 4, c: 7 } },   // C5:H5 Tel / Fax / Tax ID
-                { s: { r: 5, c: 2 }, e: { r: 5, c: 7 } },   // C6:H6 Email / Website
-                { s: { r: 6, c: 0 }, e: { r: 6, c: 7 } },   // A7:H7 QUOTATION
-                { s: { r: 7, c: 1 }, e: { r: 7, c: 5 } },   // B8:F8 Cust Code
-                { s: { r: 8, c: 1 }, e: { r: 8, c: 5 } },   // B9:F9 Cust Name
-                { s: { r: 9, c: 1 }, e: { r: 9, c: 5 } },   // B10:F10 Buyer Name
-                { s: { r: 10, c: 1 }, e: { r: 10, c: 5 } }, // B11:F11 Contact Person
-                { s: { r: 11, c: 1 }, e: { r: 11, c: 5 } }, // B12:F12 Address
-                { s: { r: 14, c: 1 }, e: { r: 14, c: 5 } }, // B15:F15 Tel
-                { s: { r: 16, c: 0 }, e: { r: 16, c: 7 } }, // A17:H17 MODEL & S/N
-                { s: { r: 17, c: 0 }, e: { r: 18, c: 0 } }, // A18:A19 ITEM
-                { s: { r: 17, c: 1 }, e: { r: 18, c: 1 } }, // B18:B19 Part No.
-                { s: { r: 17, c: 2 }, e: { r: 18, c: 2 } }, // C18:C19 DESCRIPTION
-                { s: { r: 17, c: 3 }, e: { r: 18, c: 3 } }, // D18:D19 UNIT PRICE
-                { s: { r: 17, c: 4 }, e: { r: 18, c: 4 } }, // E18:E19 DISCOUNT
-                { s: { r: 17, c: 5 }, e: { r: 18, c: 5 } }, // F18:F19 NET UNIT PRICE
-                { s: { r: 17, c: 6 }, e: { r: 18, c: 6 } }, // G18:G19 QUANTITY
-                { s: { r: 17, c: 7 }, e: { r: 18, c: 7 } }, // H18:H19 AMOUNT
-                { s: { r: 35, c: 0 }, e: { r: 38, c: 2 } }, // A36:C39 REMARK & VALIDITY
-                { s: { r: 35, c: 3 }, e: { r: 35, c: 5 } }, // D36:F36 SUB TOTAL
-                { s: { r: 35, c: 6 }, e: { r: 35, c: 7 } }, // G36:H36 SUB TOTAL val
-                { s: { r: 36, c: 3 }, e: { r: 36, c: 5 } }, // D37:F37 VAT 7%
-                { s: { r: 36, c: 6 }, e: { r: 36, c: 7 } }, // G37:H37 VAT val
-                { s: { r: 37, c: 3 }, e: { r: 37, c: 5 } }, // D38:F38 TOTAL
-                { s: { r: 37, c: 6 }, e: { r: 37, c: 7 } }, // G38:H38 TOTAL val
-                { s: { r: 38, c: 3 }, e: { r: 38, c: 5 } }, // D39:F39 WHT 3%
-                { s: { r: 38, c: 6 }, e: { r: 38, c: 7 } }, // G39:H39 WHT val
-                { s: { r: 39, c: 1 }, e: { r: 39, c: 2 } }, // B40:C40 Baht text
-                { s: { r: 39, c: 3 }, e: { r: 39, c: 5 } }, // D40:F40 GRAND TOTAL
-                { s: { r: 39, c: 6 }, e: { r: 39, c: 7 } }, // G40:H40 GRAND TOTAL val
-                { s: { r: 40, c: 1 }, e: { r: 40, c: 7 } }, // B41:H41 Bank info line 1
-                { s: { r: 41, c: 1 }, e: { r: 41, c: 7 } }, // B42:H42 Bank info line 2
-                { s: { r: 44, c: 0 }, e: { r: 44, c: 1 } }, // A45:B45 Issued By
-                { s: { r: 44, c: 3 }, e: { r: 44, c: 7 } }, // D45:H45 Approved By
-                { s: { r: 45, c: 0 }, e: { r: 45, c: 1 } }, // A46:B46
-                { s: { r: 45, c: 3 }, e: { r: 45, c: 7 } }, // D46:H46
-                { s: { r: 46, c: 0 }, e: { r: 46, c: 1 } }, // A47:B47 MS.WANWIPHA
-                { s: { r: 46, c: 3 }, e: { r: 46, c: 7 } }, // D47:H47 MR.THANAKRIT
-                { s: { r: 47, c: 0 }, e: { r: 47, c: 1 } }, // A48:B48 Date
-                { s: { r: 47, c: 3 }, e: { r: 47, c: 7 } }, // D48:H48 Authorized Sig
-                { s: { r: 49, c: 3 }, e: { r: 49, c: 7 } }, // D50:H50 Confirmed Purchase
-                { s: { r: 51, c: 3 }, e: { r: 51, c: 7 } }, // D52:H52 Dots
-                { s: { r: 52, c: 3 }, e: { r: 52, c: 7 } }, // D53:H53 Purchased Sig
-                { s: { r: 53, c: 3 }, e: { r: 53, c: 7 } }  // D54:H54 Date
-            ];
-
-            // Format numbers #,##0.00
-            for (let R = 19; R <= 39; R++) {
-                [3, 4, 5, 6, 7].forEach(C => {
-                    const ref = XLSX.utils.encode_cell({ r: R, c: C });
-                    if (ws[ref] && (typeof ws[ref].v === 'number' || ws[ref].t === 'n')) {
-                        ws[ref].z = '#,##0.00';
+                    // Embed Official Company Logo in A1:B5
+                    const logoDataUrl = typeof getActiveCompanyLogoDataUrl === 'function' ? getActiveCompanyLogoDataUrl() : '';
+                    if (logoDataUrl && logoDataUrl.startsWith('data:image/')) {
+                        const ext = logoDataUrl.includes('image/jpeg') || logoDataUrl.includes('image/jpg') ? 'jpeg' : 'png';
+                        const imgId = wb.addImage({ base64: logoDataUrl, extension: ext });
+                        ws.addImage(imgId, {
+                            tl: { col: 0.25, row: 0.15 },
+                            ext: { width: 96, height: 96 }
+                        });
                     }
-                });
+
+                    // Rows 1-5: Company Header (C1:H5)
+                    const addrLines = String(cfg.address || '').split(/,|\n/).map(s => s.trim()).filter(Boolean);
+                    const addrLine1 = addrLines.slice(0, 2).join(', ') || cfg.address;
+                    const addrLine2 = addrLines.slice(2).join(', ') || '';
+
+                    ws.getCell('C1').value = cfg.companyName || 'HOSHIZAKI (THAILAND) LIMITED';
+                    ws.getCell('C2').value = addrLine1;
+                    ws.getCell('C3').value = addrLine2;
+                    ws.getCell('C4').value = cfg.telTax || 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)';
+                    ws.getCell('C5').value = cfg.emailWeb || 'Email : services@hoshizaki.co.th | Website : www.hoshizaki-sea.com';
+
+                    ['C1:H1', 'C2:H2', 'C3:H3', 'C4:H4', 'C5:H5'].forEach(rng => ws.mergeCells(rng));
+                    ws.getCell('C1').font = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FF002B49' } };
+                    ['C2', 'C3', 'C4', 'C5'].forEach(ref => {
+                        ws.getCell(ref).font = { name: 'Calibri', size: 9.5, color: { argb: 'FF334155' } };
+                    });
+                    [1, 2, 3, 4, 5].forEach(r => { ws.getRow(r).height = r === 1 ? 22 : 16; });
+
+                    // Row 7: Document Title Banner
+                    ws.mergeCells('A7:H7');
+                    ws.getCell('A7').value = docMainTitle;
+                    ws.getCell('A7').font = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
+                    ws.getCell('A7').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
+                    ws.getCell('A7').alignment = { horizontal: 'center', vertical: 'middle' };
+                    ws.getRow(7).height = 24;
+
+                    // Rows 8-13: Customer Info (Left A-F) & Document Info (Right G-H)
+                    const custMetaRows = [
+                        ['รหัสลูกค้า / Cust Code :', custCode, 'วันที่ / Date', dateStr],
+                        ['ชื่อลูกค้า / Customer :', custName, 'เลขที่เอกสาร / Doc No.', offerNo],
+                        ['ผู้ซื้อ / Buyer Tax ID :', buyerTaxId, 'เงื่อนไขชำระเงิน / Term', '30 DAYS'],
+                        ['ผู้ติดต่อ / Contact :', contactPerson, 'เบอร์โทร / Tel.', telNo],
+                        ['ที่อยู่ / Address :', address, '', '']
+                    ];
+                    custMetaRows.forEach((rowArr, idx) => {
+                        const r = 8 + idx;
+                        ws.getRow(r).height = idx === 4 ? 28 : 18;
+                        ws.getCell(`A${r}`).value = rowArr[0];
+                        ws.getCell(`A${r}`).font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF0F172A' } };
+                        ws.getCell(`B${r}`).value = rowArr[1];
+                        ws.getCell(`B${r}`).font = { name: 'Calibri', size: 10, color: { argb: 'FF0F172A' } };
+                        ws.getCell(`B${r}`).alignment = { vertical: 'middle', wrapText: true };
+
+                        if (idx < 4) {
+                            ws.mergeCells(`B${r}:F${r}`);
+                            ws.getCell(`G${r}`).value = rowArr[2];
+                            ws.getCell(`G${r}`).font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF002B49' } };
+                            ws.getCell(`G${r}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
+                            ws.getCell(`H${r}`).value = rowArr[3];
+                            ws.getCell(`H${r}`).font = { name: 'Calibri', size: 10, bold: idx === 1, color: { argb: 'FF0F172A' } };
+                        } else {
+                            ws.mergeCells(`B${r}:H${r}`);
+                        }
+                        for (let c = 1; c <= 8; c++) {
+                            ws.getRow(r).getCell(c).border = thinBorder;
+                        }
+                    });
+
+                    // Row 15: Equipment Model & Serial Banner
+                    ws.mergeCells('A15:H15');
+                    ws.getCell('A15').value = eqModelHeader;
+                    ws.getCell('A15').font = { name: 'Calibri', size: 10.5, bold: true, color: { argb: 'FF002B49' } };
+                    ws.getCell('A15').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0F2FE' } };
+                    ws.getCell('A15').alignment = { vertical: 'middle', indent: 1 };
+                    ws.getRow(15).height = 20;
+                    for (let c = 1; c <= 8; c++) ws.getRow(15).getCell(c).border = thinBorder;
+
+                    // Row 16: Table Headers
+                    const headers = ['ITEM', 'PART NO.', 'DESCRIPTION', 'UNIT PRICE (THB)', 'DISCOUNT', 'NET UNIT PRICE', 'QTY (PCS)', 'AMOUNT (THB)'];
+                    const hdrRow = ws.getRow(16);
+                    hdrRow.height = 24;
+                    headers.forEach((hText, idx) => {
+                        const cell = hdrRow.getCell(idx + 1);
+                        cell.value = hText;
+                        cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FFFFFFFF' } };
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
+                        cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+                        cell.border = thinBorder;
+                    });
+
+                    // Rows 17-32: 16 Item Rows with Safe Formulas
+                    const firstItemRow = 17;
+                    for (let i = 0; i < 16; i++) {
+                        const rNum = firstItemRow + i;
+                        const row = ws.getRow(rNum);
+                        row.height = 19;
+                        const item = parsedItems[i];
+                        const netFormula = `IF(ISNUMBER(D${rNum}),ROUND(MAX(0,D${rNum}-N(E${rNum})),2),0)`;
+                        const amtFormula = `IF(ISNUMBER(G${rNum}),ROUND(F${rNum}*G${rNum},2),0)`;
+
+                        row.getCell(1).value = item.hasData ? item.itemNo : '';
+                        row.getCell(2).value = item.hasData ? item.partNo : '';
+                        row.getCell(3).value = item.hasData ? item.desc : '';
+                        row.getCell(4).value = item.hasData ? item.uPrice : null;
+                        row.getCell(5).value = item.hasData ? item.disc : null;
+                        row.getCell(6).value = { formula: netFormula, result: item.hasData ? item.netV : 0 };
+                        row.getCell(7).value = item.hasData ? item.qty : null;
+                        row.getCell(8).value = { formula: amtFormula, result: item.hasData ? item.amtV : 0 };
+
+                        row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+                        row.getCell(2).alignment = { horizontal: 'left', vertical: 'middle' };
+                        row.getCell(3).alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+                        [4, 5, 6, 8].forEach(c => {
+                            row.getCell(c).numFmt = '#,##0.00';
+                            row.getCell(c).alignment = { horizontal: 'right', vertical: 'middle' };
+                        });
+                        row.getCell(7).numFmt = '#,##0';
+                        row.getCell(7).alignment = { horizontal: 'center', vertical: 'middle' };
+
+                        for (let c = 1; c <= 8; c++) {
+                            const cell = row.getCell(c);
+                            cell.font = { name: 'Calibri', size: 9.5, color: { argb: 'FF0F172A' } };
+                            cell.border = thinBorder;
+                            if (i % 2 === 1) {
+                                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+                            }
+                        }
+                    }
+
+                    // Rows 33-37: Totals & Remark Block
+                    ws.mergeCells('A33:C36');
+                    ws.getCell('A33').value = customRemark
+                        ? `REMARK : ${customRemark}\nVALIDITY : QUOTATION IS VALID FOR 30 DAYS`
+                        : 'VALIDITY : QUOTATION IS VALID FOR 30 DAYS';
+                    ws.getCell('A33').alignment = { vertical: 'top', wrapText: true };
+                    ws.getCell('A33').font = { name: 'Calibri', size: 9.5, color: { argb: 'FF1E293B' } };
+
+                    const totalsMeta = [
+                        { r: 33, label: 'SUB TOTAL', formula: 'ROUND(SUM(H17:H32),2)', result: subTotal, bold: false },
+                        { r: 34, label: 'VAT 7%', formula: 'ROUND(G33*0.07,2)', result: vatAmt, bold: false },
+                        { r: 35, label: 'TOTAL', formula: 'ROUND(G33+G34,2)', result: beforeWhtTotal, bold: true },
+                        { r: 36, label: 'WHT 3%', formula: null, result: isWht ? -whtAmt : 0, bold: false },
+                        { r: 37, label: 'GRAND TOTAL', formula: 'ROUND(G35+G36,2)', result: grandTotal, bold: true, highlight: true }
+                    ];
+
+                    totalsMeta.forEach(t => {
+                        ws.getRow(t.r).height = t.highlight ? 22 : 18;
+                        ws.mergeCells(`D${t.r}:F${t.r}`);
+                        ws.mergeCells(`G${t.r}:H${t.r}`);
+                        const lblCell = ws.getCell(`D${t.r}`);
+                        const valCell = ws.getCell(`G${t.r}`);
+                        lblCell.value = t.label;
+                        lblCell.alignment = { horizontal: 'right', vertical: 'middle' };
+                        lblCell.font = { name: 'Calibri', size: t.highlight ? 10.5 : 9.5, bold: true, color: { argb: t.highlight ? 'FFFFFFFF' : 'FF0F172A' } };
+
+                        valCell.value = t.formula ? { formula: t.formula, result: t.result } : t.result;
+                        valCell.numFmt = '#,##0.00';
+                        valCell.alignment = { horizontal: 'right', vertical: 'middle' };
+                        valCell.font = { name: 'Calibri', size: t.highlight ? 11 : 9.5, bold: t.bold, color: { argb: t.highlight ? 'FFFFFFFF' : 'FF0F172A' } };
+
+                        if (t.highlight) {
+                            lblCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
+                            valCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
+                        }
+                    });
+
+                    // Row 37 Left: THB Baht Text
+                    ws.getCell('A37').value = 'THB';
+                    ws.getCell('A37').font = { name: 'Calibri', size: 10, bold: true };
+                    ws.getCell('A37').alignment = { horizontal: 'center', vertical: 'middle' };
+                    ws.mergeCells('B37:C37');
+                    ws.getCell('B37').value = `(${numberToThaiBahtText(grandTotal)})`;
+                    ws.getCell('B37').font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF002B49' } };
+                    ws.getCell('B37').alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+
+                    for (let r = 33; r <= 37; r++) {
+                        for (let c = 1; c <= 8; c++) ws.getRow(r).getCell(c).border = thinBorder;
+                    }
+
+                    // Rows 39-40: Bank Transfer Remark
+                    ws.getRow(39).height = 18;
+                    ws.getRow(40).height = 18;
+                    ws.getCell('A39').value = 'Remark :';
+                    ws.getCell('A39').font = { name: 'Calibri', size: 9.5, bold: true };
+                    ws.mergeCells('B39:H39');
+                    ws.getCell('B39').value = cfg.bankInfo || 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2';
+                    ws.getCell('B39').font = { name: 'Calibri', size: 9.5 };
+                    ws.mergeCells('B40:H40');
+                    ws.getCell('B40').value = 'The above offer is Ex-warehouse of Hoshizaki Thailand office (in Hankyu Hanshin Express W/H)';
+                    ws.getCell('B40').font = { name: 'Calibri', size: 9.5 };
+
+                    // Rows 42-49: Signature Blocks
+                    ws.mergeCells('A42:B42'); ws.getCell('A42').value = 'Issued By';
+                    ws.getCell('C42').value = 'Checked By';
+                    ws.mergeCells('D42:H42'); ws.getCell('D42').value = 'Approved By';
+                    ['A42', 'C42', 'D42'].forEach(ref => { ws.getCell(ref).font = { name: 'Calibri', size: 9.5, bold: true }; });
+
+                    ws.getRow(43).height = 24;
+                    ws.mergeCells('A44:B44'); ws.getCell('A44').value = 'MS.WANWIPHA';
+                    ws.getCell('C44').value = 'MR.THANAKRIT';
+                    ws.mergeCells('D44:H44'); ws.getCell('D44').value = 'MR.THANAKRIT CHANMOKONPANIT';
+
+                    ws.mergeCells('A45:B45'); ws.getCell('A45').value = shortDate;
+                    ws.getCell('C45').value = shortDate;
+                    ws.mergeCells('D45:H45'); ws.getCell('D45').value = 'ผู้มีอำนาจอนุมัติ / Authorized Signature';
+
+                    ws.mergeCells('D47:H47'); ws.getCell('D47').value = 'Confirmed Purchase';
+                    ws.getCell('D47').font = { name: 'Calibri', size: 9.5, bold: true };
+                    ws.getRow(48).height = 24;
+                    ws.mergeCells('D49:H49'); ws.getCell('D49').value = 'ชื่อผู้สั่งซื้อ / Purchased Signature   |   Date : …………………………….';
+
+                    const buffer = await wb.xlsx.writeBuffer();
+                    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filePrefix}_${offerNo}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    showToast('ส่งออกไฟล์ Excel พร้อมโลโก้บริษัทและตารางมาตรฐาน Hoshizaki เรียบร้อย ✓');
+                    return;
+                } catch (excelJsErr) {
+                    console.warn('ExcelJS fallback to SheetJS:', excelJsErr);
+                }
             }
 
-            const sheetModelTab = (document.getElementById('eqModel')?.value || 'Quotation').replace(/[\/:?*\[\]]/g, '').substring(0, 28) || 'Quotation';
+            if (typeof XLSX === 'undefined') {
+                showToast('ไม่พบไลบรารีสำหรับส่งออก Excel');
+                return;
+            }
+            const fallbackRows = [
+                [cfg.companyName],
+                [cfg.address],
+                [docMainTitle, 'Offer No.', offerNo, 'Date', dateStr],
+                ['Customer', custName, 'Model/S/N', eqModelHeader],
+                ['ITEM', 'Part No.', 'DESCRIPTION', 'UNIT PRICE', 'DISCOUNT', 'NET PRICE', 'QTY', 'AMOUNT']
+            ];
+            parsedItems.filter(x => x.hasData).forEach(x => {
+                fallbackRows.push([x.itemNo, x.partNo, x.desc, x.uPrice, x.disc, x.netV, x.qty, x.amtV]);
+            });
+            fallbackRows.push(['', '', '', '', '', '', 'GRAND TOTAL', grandTotal]);
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(fallbackRows);
             XLSX.utils.book_append_sheet(wb, ws, sheetModelTab);
-            const filePrefix = currentFinancialDocMode === 'RECEIPT' ? 'Hoshizaki_Receipt' : 'Hoshizaki_Quotation';
             XLSX.writeFile(wb, `${filePrefix}_${offerNo}.xlsx`);
-            showToast('ส่งออกไฟล์ Excel ตามแบบฟอร์มมาตรฐาน Hoshizaki เรียบร้อยแล้ว ✓');
+            showToast('ส่งออกไฟล์ Excel เรียบร้อยแล้ว ✓');
         }
 
-        function downloadReceiptPDF() {
-            showToast('กำลังสร้างเอกสาร PDF ใบเสร็จรับเงิน/ใบเสนอราคา...');
-            const element = document.getElementById('receiptContainer');
-            const offerNo = document.getElementById('recOfferNo')?.innerText || 'Quotation';
-
-            const history = JSON.parse(localStorage.getItem('hoshizaki_receipt_history') || '[]');
-            if (!history.some(h => h.offerNo === offerNo)) {
-                history.push({ offerNo, date: new Date().toISOString() });
-                localStorage.setItem('hoshizaki_receipt_history', JSON.stringify(history));
-            }
-
-            const opt = {
-                margin: [5, 5, 5, 5],
-                filename: `Hoshizaki_Quotation_${offerNo}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                showToast('ดาวน์โหลดไฟล์ PDF เรียบร้อยแล้ว');
-            });
-        }
-
-        function openReceiptInNewWindow() {
-            if (typeof applyGlobalCompanyConfigToUI === 'function') applyGlobalCompanyConfigToUI();
-            showToast('กำลังเปิดเอกสาร PDF ใบเสนอราคาในหน้าต่างใหม่...');
-            const element = document.getElementById('receiptContainer');
-            const offerNo = document.getElementById('recOfferNo')?.innerText || 'Quotation';
-
-            const opt = {
-                margin: [5, 5, 5, 5],
-                filename: `Hoshizaki_Quotation_${offerNo}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).outputPdf('blob').then((blob) => {
-                const blobUrl = URL.createObjectURL(blob);
-                window.open(blobUrl, '_blank');
-                showToast('เปิดเอกสาร PDF ในหน้าต่างใหม่เรียบร้อย');
-            }).catch(err => {
-                console.error(err);
-                showToast('เกิดข้อผิดพลาดในการเปิด PDF หน้าต่างใหม่');
-            });
-        }
-
-        async function buildReceiptPdfFile() {
-            const element = document.getElementById('receiptContainer');
-            const offerNo = document.getElementById('recOfferNo')?.innerText || 'Quotation';
-            const docPrefix = currentFinancialDocMode === 'RECEIPT' ? 'Hoshizaki_Receipt' : 'Hoshizaki_Quotation';
-            const filename = `${docPrefix}_${offerNo}.pdf`;
-
-            const history = JSON.parse(localStorage.getItem('hoshizaki_receipt_history') || '[]');
-            if (!history.some(h => h.offerNo === offerNo)) {
-                history.push({ offerNo, date: new Date().toISOString() });
-                localStorage.setItem('hoshizaki_receipt_history', JSON.stringify(history));
-            }
-
-            const opt = {
-                margin: [5, 5, 5, 5],
-                filename: filename,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 900 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
-            const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
-            return { pdfBlob, pdfFile, filename, offerNo };
-        }
-
-        async function shareReceiptPDFToLine() {
-            const docLabel = currentFinancialDocMode === 'RECEIPT' ? 'ใบเสร็จรับเงิน' : 'ใบเสนอราคา';
-            showToast(`กำลังสร้างไฟล์ PDF ${docLabel} เพื่อแชร์เข้า LINE...`);
-            try {
-                const { pdfBlob, pdfFile, filename, offerNo } = await buildReceiptPdfFile();
-                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-                    try {
-                        await navigator.share({
-                            title: `HOSHIZAKI ${docLabel} - ${offerNo}`,
-                            text: `${docLabel} Hoshizaki เลขที่ ${offerNo}`,
-                            files: [pdfFile]
-                        });
-                        showToast(`แชร์ไฟล์ ${docLabel} PDF เรียบร้อยแล้ว`);
-                        return;
-                    } catch (err) {
-                        if (err.name === 'AbortError') return;
-                    }
-                }
-                triggerPdfDownload(pdfBlob, filename);
-                showToast(`ดาวน์โหลด ${filename} แล้ว สามารถส่งไฟล์เข้า LINE ได้ทันที`);
-            } catch (err) {
-                console.error(err);
-                showToast('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF');
-            }
-        }
-
-        async function sendReceiptByEmail() {
-            const docLabel = currentFinancialDocMode === 'RECEIPT' ? 'ใบเสร็จรับเงิน / ใบกำกับภาษี' : 'ใบเสนอราคา';
-            showToast(`กำลังพิมพ์${docLabel}เป็น PDF และจัดเตรียมอีเมล...`);
-            const custStore = document.getElementById('custStore')?.value || '';
-            const jobNo = document.getElementById('jobNo')?.value || '-';
-            const recTotal = document.getElementById('recTotal')?.innerText || '0.00';
-
-            try {
-                const { pdfBlob, pdfFile, filename, offerNo } = await buildReceiptPdfFile();
-                const subjectText = `[HOSHIZAKI] ${docLabel} เลขที่ ${offerNo} (อ้างอิงใบงาน ${jobNo}) - ${custStore}`;
-                const bodyText = `เรียน ลูกค้า/ผู้เกี่ยวข้อง,
-
-HOSHIZAKI (THAILAND) LIMITED ขอส่งเอกสาร${docLabel}
-
-รายละเอียดเอกสาร:
-- เลขที่เอกสาร: ${offerNo}
-- อ้างอิงใบงาน: ${jobNo}
-- ชื่อร้าน/ลูกค้า: ${custStore}
-- ยอดรวมสุทธิ: ${recTotal} THB
-
-ขอแสดงความนับถือ,
-ฝ่ายบริการลูกค้า HOSHIZAKI (THAILAND) LIMITED
-โทร: 02-005-9980-83`;
-
-                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-                    try {
-                        await navigator.share({
-                            title: subjectText,
-                            text: bodyText,
-                            files: [pdfFile]
-                        });
-                        showToast('แนบไฟล์ PDF และเปิดแอปส่งอีเมลเรียบร้อยแล้ว');
-                        return;
-                    } catch (err) {
-                        if (err.name === 'AbortError') return;
-                    }
-                }
-
-                triggerPdfDownload(pdfBlob, filename);
-                const mailtoUrl = `mailto:?subject=${encodeURIComponent(subjectText)}&body=${encodeURIComponent(bodyText + `\n\n* หมายเหตุ: ไฟล์ PDF (${filename}) ถูกดาวน์โหลดลงในเครื่องแล้ว กรุณาแนบไฟล์ส่งออก`)}`;
-                showToast(`บันทึกไฟล์ ${filename} แล้ว กำลังเปิดโปรแกรมอีเมล...`);
-                setTimeout(() => { window.location.href = mailtoUrl; }, 800);
-            } catch (err) {
-                console.error(err);
-                showToast('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF สำหรับส่งอีเมล');
-            }
-        }
-
-        // --- SEND JOB SERVICE PDF BY EMAIL ---
+                // --- SEND JOB SERVICE PDF BY EMAIL ---
                 async function sendJobByEmail() {
             showToast('กำลังพิมพ์เป็นไฟล์ PDF และเตรียมแนบส่งอีเมล...');
             const custStore = document.getElementById('custStore')?.value || '';
@@ -19871,13 +19896,121 @@ function openFullScreenSpecViewerModal(presetModel) {
             showToast('ส่งออกไฟล์สำรองเอกสารทางเทคนิค (.json) เรียบร้อย ✓');
         }
 
-        // รองรับการเปิดหน้าต่าง Spec Sheet เต็มจออัตโนมัติเมื่อกดลิงก์ ?specModel=... จาก LINE OA
+        // v19.0 Universal Top-Right Red CLOSE Button Controller for All 37+ Modals
+        function getActivePopupModalsList() {
+            return Array.from(document.querySelectorAll('[id$="Modal"]')).filter(el => !el.classList.contains('hidden'));
+        }
+
+        function updateUniversalRedCloseBarVisibility() {
+            const btn = document.getElementById('universalModalRedCloseBar');
+            if (!btn) return;
+            const openModals = getActivePopupModalsList();
+            btn.style.display = openModals.length > 0 ? 'inline-flex' : 'none';
+        }
+
+        function closeTopmostActivePopupModal() {
+            const openModals = getActivePopupModalsList();
+            if (openModals.length === 0) return;
+            // Pick modal with highest computed z-index (last in DOM if tied)
+            let topModal = openModals[openModals.length - 1];
+            let maxZ = -1;
+            openModals.forEach(m => {
+                const z = parseInt(window.getComputedStyle(m).zIndex, 10) || 50;
+                if (z >= maxZ) {
+                    maxZ = z;
+                    topModal = m;
+                }
+            });
+            const id = topModal.id;
+            const specificClosers = {
+                fullscreenSigModal: 'closeFullscreenSigModal',
+                barcodeScannerModal: 'closeBarcodeScannerModal',
+                partsBatchScannerModal: 'closePartsBatchScanner',
+                quickTemplateModal: 'closeQuickTemplateModal',
+                installGuideModal: 'closeInstallGuideModal',
+                modelDbModal: 'closeModelDbModal',
+                fullPreviewModal: 'closeFullPreviewModal',
+                historyModal: 'closeHistoryModal',
+                receiptModal: 'closeReceiptModal',
+                quotationArchiveModal: 'closeQuotationArchiveModal',
+                customerDirectoryModal: 'closeCustomerDirectoryModal',
+                partPriceTrendModal: 'closePartPriceTrendModal',
+                teamCloudSyncModal: 'closeTeamCloudSyncModal',
+                scheduleModal: 'closeScheduleModal',
+                dispatchEditorModal: 'closeDispatchEditorModal',
+                staffManagerModal: 'closeStaffManagerModal',
+                mobileSchedulePreviewModal: 'closeMobileSchedulePreviewModal',
+                errorCodeModal: 'closeErrorCodeModal',
+                partPriceDbModal: 'closePartPriceDbModal',
+                dealerGradeModal: 'closeDealerGradeModal',
+                managerPinModal: 'closeManagerPinModal',
+                pmAnalyticsModal: 'closePmAnalyticsModal',
+                vanStockModal: 'closeVanStockModal',
+                warrantyClaimModal: 'closeWarrantyClaimModal',
+                dailyRouteMapModal: 'closeDailyRouteMapModal',
+                waitingPartsModal: 'closeWaitingPartsBackorderModal',
+                executiveDashboardModal: 'closeExecutiveDashboardModal',
+                archivedQtFullscreenModal: 'closeArchivedQtFullscreenModal',
+                technicalDocManagerModal: 'closeTechnicalDocManagerModal',
+                fullScreenSpecViewerModal: 'closeFullScreenSpecViewerModal',
+                enterpriseOperationsModal: 'closeEnterpriseOperationsModal',
+                globalEnterpriseConfigModal: 'closeGlobalEnterpriseConfigModal'
+            };
+            const fnName = specificClosers[id];
+            if (fnName && typeof window[fnName] === 'function') {
+                window[fnName]();
+            } else {
+                topModal.classList.add('hidden');
+            }
+            setTimeout(updateUniversalRedCloseBarVisibility, 30);
+        }
+
+        // รองรับการเปิดหน้าต่างพรีวิวเต็มจออัตโนมัติเมื่อคลิกปุ่มพรีวิวเต็มจอจาก LINE OA (?specModel, ?errQuery, ?pinoutSeries, ?jobNo, ?pmDue, ?vanTech)
         window.addEventListener('DOMContentLoaded', () => {
             try {
+                const observer = new MutationObserver(() => updateUniversalRedCloseBarVisibility());
+                document.querySelectorAll('[id$="Modal"]').forEach(modalEl => {
+                    observer.observe(modalEl, { attributes: true, attributeFilter: ['class'] });
+                });
+                updateUniversalRedCloseBarVisibility();
+                document.addEventListener('keydown', (ev) => {
+                    if (ev.key === 'Escape' && getActivePopupModalsList().length > 0) {
+                        closeTopmostActivePopupModal();
+                    }
+                });
+
                 const params = new URLSearchParams(window.location.search);
                 const specModel = (params.get('specModel') || '').trim();
-                if (specModel) {
+                const errQuery = (params.get('errQuery') || '').trim();
+                const pinoutSeries = (params.get('pinoutSeries') || '').trim();
+                const jobNoParam = (params.get('jobNo') || '').trim();
+                const pmDueParam = (params.get('pmDue') || '').trim();
+                const vanTechParam = (params.get('vanTech') || '').trim();
+
+                if (specModel && typeof openFullScreenSpecViewerModal === 'function') {
                     setTimeout(() => openFullScreenSpecViewerModal(specModel), 600);
+                } else if (errQuery && typeof openErrorCodeModal === 'function') {
+                    setTimeout(() => {
+                        openErrorCodeModal();
+                        const inp = document.getElementById('errorCodeSearchInput');
+                        if (inp) { inp.value = errQuery; if (typeof renderErrorCodeList === 'function') renderErrorCodeList(); }
+                    }, 600);
+                } else if (pinoutSeries && typeof openErrorCodeModal === 'function') {
+                    setTimeout(() => {
+                        openErrorCodeModal();
+                        if (typeof switchBoardPinoutTab === 'function') switchBoardPinoutTab(pinoutSeries.toUpperCase());
+                        document.getElementById('controlBoardPinoutSection')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 600);
+                } else if (jobNoParam && typeof openHistoryModal === 'function') {
+                    setTimeout(() => {
+                        openHistoryModal();
+                        const hInp = document.getElementById('historySearchInput');
+                        if (hInp) { hInp.value = jobNoParam; if (typeof renderHistoryList === 'function') renderHistoryList(); }
+                    }, 700);
+                } else if (pmDueParam && typeof openPmAndAnalyticsModal === 'function') {
+                    setTimeout(() => openPmAndAnalyticsModal(), 600);
+                } else if (vanTechParam && typeof openVanStockModal === 'function') {
+                    setTimeout(() => openVanStockModal(), 600);
                 }
             } catch (e) {}
         });

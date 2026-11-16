@@ -10460,6 +10460,12 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 if (document.getElementById('lineTeamGroupIdInput') && lineCfg.groupId) {
                     document.getElementById('lineTeamGroupIdInput').value = lineCfg.groupId;
                 }
+                if (document.getElementById('lineServiceBotBasicIdInput') && lineCfg.botId) {
+                    document.getElementById('lineServiceBotBasicIdInput').value = lineCfg.botId;
+                }
+                if (document.getElementById('lineMainOfficeBasicIdInput') && lineCfg.officeId) {
+                    document.getElementById('lineMainOfficeBasicIdInput').value = lineCfg.officeId;
+                }
             } catch (e) {}
             renderStaffManagerLists();
             modal.classList.remove('hidden');
@@ -10554,8 +10560,11 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         async function saveLineNotificationConfig() {
             const token = (document.getElementById('lineChannelAccessTokenInput')?.value || '').trim();
             const groupId = (document.getElementById('lineTeamGroupIdInput')?.value || '').trim();
-            localStorage.setItem('hoshizaki_line_config', JSON.stringify({ token, groupId }));
+            const botId = (document.getElementById('lineServiceBotBasicIdInput')?.value || '').trim();
+            const officeId = (document.getElementById('lineMainOfficeBasicIdInput')?.value || '').trim();
+            localStorage.setItem('hoshizaki_line_config', JSON.stringify({ token, groupId, botId, officeId }));
             const url = getGoogleSheetsWebAppUrl();
+            const cfg = typeof getGlobalEnterpriseConfig === 'function' ? getGlobalEnterpriseConfig() : {};
             if (url) {
                 try {
                     await fetch(url, {
@@ -10564,13 +10573,34 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify({
                             actionType: 'SAVE_LINE_CONFIG',
+                            apiSecretKey: cfg.apiSecretKey || '',
                             lineToken: token,
-                            lineGroupId: groupId
+                            lineGroupId: groupId,
+                            lineBotId: botId,
+                            lineMainOfficeId: officeId
                         })
                     });
                 } catch (e) {}
             }
-            showToast('บันทึกการตั้งค่า LINE แจ้งเตือนเรียบร้อยแล้ว ✓');
+            showToast('บันทึกการตั้งค่าเชื่อมโยง 2 บัญชี LINE OA เรียบร้อยแล้ว ✓');
+        }
+
+        function copyCrossLineLink(target) {
+            const rawId = target === 'BOT'
+                ? (document.getElementById('lineServiceBotBasicIdInput')?.value || '').trim()
+                : (document.getElementById('lineMainOfficeBasicIdInput')?.value || '').trim();
+            if (!rawId) {
+                showToast(target === 'BOT' ? 'กรุณากรอก LINE ID ของ ServiceBot ก่อนครับ (เช่น @...)' : 'กรุณากรอก LINE ID ของ Hoshizaki_Th ก่อนครับ (เช่น @...)');
+                return;
+            }
+            const formatted = rawId.startsWith('http') ? rawId : `https://line.me/R/ti/p/${encodeURIComponent(rawId.startsWith('@') ? rawId : '@' + rawId)}`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(formatted).then(() => {
+                    showToast(`คัดลอกลิงก์ ${formatted} เรียบร้อย นำไปวางใน Rich Menu ได้ทันที ✓`);
+                });
+            } else {
+                prompt('คัดลอกลิงก์สำหรับวางใน Rich Menu:', formatted);
+            }
         }
 
         async function testLineGroupNotification() {
@@ -16685,14 +16715,30 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
                     <div class="sm:col-span-6">
-                        <input type="password" id="lineChannelAccessTokenInput" placeholder="วาง LINE Channel Access Token (LINE Official Account)..." class="w-full border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
+                        <input type="password" id="lineChannelAccessTokenInput" placeholder="Token บัญชีแชทบอท (ServiceBot Hoshizaki)..." class="w-full border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
                     </div>
                     <div class="sm:col-span-4">
-                        <input type="text" id="lineTeamGroupIdInput" placeholder="LINE Group ID กลุ่มทีมช่าง (ขึ้นต้นด้วย C...)" class="w-full border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
+                        <input type="text" id="lineTeamGroupIdInput" placeholder="LINE Group ID กลุ่มทีมช่าง/ออฟฟิศ (ขึ้นต้นด้วย C...)" class="w-full border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
                     </div>
                     <div class="sm:col-span-2 flex gap-1">
                         <button type="button" onclick="saveLineNotificationConfig()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 px-2 rounded-lg font-bold shadow-xs">บันทึก</button>
                         <button type="button" onclick="testLineGroupNotification()" title="ทดสอบส่งข้อความเข้า LINE กลุ่มช่าง" class="bg-sky-600 hover:bg-sky-700 text-white py-1.5 px-2 rounded-lg font-bold shadow-xs"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center pt-1 border-t border-emerald-200/70">
+                    <div class="sm:col-span-4">
+                        <input type="text" id="lineServiceBotBasicIdInput" placeholder="LINE ID บอท (เช่น @servicebot_hth)" class="w-full border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
+                    </div>
+                    <div class="sm:col-span-4">
+                        <input type="text" id="lineMainOfficeBasicIdInput" placeholder="LINE ID ออฟฟิศหลัก (เช่น @hoshizaki_th)" class="w-full border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
+                    </div>
+                    <div class="sm:col-span-4 flex gap-1">
+                        <button type="button" onclick="copyCrossLineLink('BOT')" class="flex-1 bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 py-1.5 px-2 rounded-lg font-bold text-[10.5px]" title="คัดลอกลิงก์เปิดแชทบอทไปใส่ใน Rich Menu ของ Hoshizaki_Th">
+                            <i class="fa-solid fa-link mr-1"></i> ลิงก์บอท (ใส่RichMenuหลัก)
+                        </button>
+                        <button type="button" onclick="copyCrossLineLink('OFFICE')" class="flex-1 bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 py-1.5 px-2 rounded-lg font-bold text-[10.5px]" title="คัดลอกลิงก์เปิดแชทออฟฟิศหลักไปใส่ใน Rich Menu ของ ServiceBot">
+                            <i class="fa-solid fa-building mr-1"></i> ลิงก์ออฟฟิศ
+                        </button>
                     </div>
                 </div>
             </div>

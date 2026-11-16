@@ -24574,7 +24574,11 @@ Defect: ${defectText}`;
                     </div>
                     <p class="text-[11px] text-slate-600 mt-0.5">เฉพาะผู้จัดการ/ผู้มีสิทธิ์ที่ยืนยันรหัส PIN เท่านั้น • ช่างหน้างานจะเห็นเฉพาะรหัสและชื่ออะไหล่เพื่อเลือกใช้ในใบงาน (ซ่อนต้นทุนและ %GP ทั้งหมด)</p>
                 </div>
-                <div class="flex items-center gap-1.5">
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <input type="file" id="confJsonFileImportInput" accept=".json,application/json" class="hidden" onchange="importConfidentialCostJsonFile(event)">
+                    <button type="button" onclick="document.getElementById('confJsonFileImportInput')?.click()" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs" title="เลือกไฟล์ parts_cost_2025.json จากเครื่องเพื่อนำเข้าฐานข้อมูลราคาทุน">
+                        <i class="fa-solid fa-file-import"></i><span>นำเข้าไฟล์ JSON (.json)</span>
+                    </button>
                     <button type="button" onclick="pullConfidentialCostAndApprovalsFromCloud(true)" class="bg-sky-700 hover:bg-sky-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs" title="ดึงข้อมูลราคาทุนล่าสุดและรายการรออนุมัติ GP% จาก Cloud (Two-Way Sync)">
                         <i class="fa-solid fa-cloud-arrow-down"></i><span>ดึง Cost &amp; คำขออนุมัติ</span>
                     </button>
@@ -30126,6 +30130,41 @@ Defect: ${defectText}`;
                 };
             }
         })();
+    </script>
+
+    <script>
+        window.importConfidentialCostJsonFile = function(event) {
+            const file = event?.target?.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(String(e.target?.result || '{}'));
+                    const partsArr = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.parts) ? parsed.parts : []);
+                    if (partsArr.length === 0) {
+                        alert('ไม่พบรายการอะไหล่ในไฟล์ JSON นี้ (ต้องมีคีย์ "parts")');
+                        return;
+                    }
+                    DEFAULT_CONFIDENTIAL_PARTS_2025 = partsArr;
+                    if (Array.isArray(parsed.dealers) && parsed.dealers.length > 0) {
+                        DEFAULT_OFFICIAL_DEALERS_2025 = parsed.dealers;
+                    }
+                    if (typeof saveConfidentialPartsList === 'function') {
+                        saveConfidentialPartsList(partsArr, `นำเข้าจากไฟล์ ${file.name} (${partsArr.length} รายการ)`);
+                    }
+                    if (typeof renderConfidentialPartsTable === 'function') renderConfidentialPartsTable();
+                    if (typeof renderConfidentialDealersTable === 'function') renderConfidentialDealersTable();
+                    if (typeof showToast === 'function') {
+                        showToast(`นำเข้าไฟล์ ${file.name} สำเร็จ (${partsArr.length.toLocaleString()} รายการ) — กด "ซิงค์ขึ้น Cloud" เพื่อบันทึกลง Google Sheets ✓`);
+                    }
+                } catch (err) {
+                    alert('ไฟล์ JSON ไม่ถูกต้อง: ' + err.message);
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+        };
     </script>
 </body>
 </html>

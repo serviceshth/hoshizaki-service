@@ -782,6 +782,9 @@
                         <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="hzk-compact-pill text-[10.5px] bg-amber-400 hover:bg-amber-300 text-slate-950 border border-white px-2.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อสลับโหมดระหว่าง ผู้จัดการ/จ่ายงาน และ ช่างดำเนินงาน">
                             <i class="fa-solid fa-user-shield"></i> <span>โหมด: ผู้จัดการ/จ่ายงาน</span>
                         </button>
+                        <button type="button" onclick="forceAppCacheUpdateNow()" class="hzk-compact-pill text-[10px] bg-rose-500/25 hover:bg-rose-500/45 text-rose-100 border border-rose-300/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ล้างแคชเก่าและโหลดแอปเวอร์ชันล่าสุดทันที">
+                            <i class="fa-solid fa-rotate text-amber-300"></i> <span>อัปเดตแอป</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -30280,6 +30283,68 @@ Defect: ${defectText}`;
                     reg.update().catch(function() {});
                 }).catch(function() {});
             }
+        })();
+    </script>
+
+    <script>
+        // =========================================================================
+        // ENTERPRISE v1011 PRODUCTION ADD-ONS:
+        // 1) 10-Minute Manager Idle Auto-Lock (สลับกลับโหมดช่างอัตโนมัติเมื่อไม่ได้ใช้งาน)
+        // 2) 1-Click Force Cache Update (`forceAppCacheUpdateNow`)
+        // =========================================================================
+        (function initEnterpriseProductionSuite() {
+            const IDLE_LIMIT_MS = 10 * 60 * 1000; // 10 นาที
+            let lastManagerActivityTs = Date.now();
+
+            function resetManagerIdleTimer() {
+                lastManagerActivityTs = Date.now();
+            }
+
+            ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt => {
+                window.addEventListener(evt, resetManagerIdleTimer, { passive: true });
+            });
+
+            setInterval(function() {
+                if (typeof currentUserRoleMode === 'undefined' || currentUserRoleMode !== 'MANAGER') {
+                    lastManagerActivityTs = Date.now();
+                    return;
+                }
+                const elapsed = Date.now() - lastManagerActivityTs;
+                const remainingSec = Math.max(0, Math.ceil((IDLE_LIMIT_MS - elapsed) / 1000));
+                const bannerTxt = document.getElementById('activeRoleModeStatusText');
+                if (bannerTxt && remainingSec <= 120 && remainingSec > 0) {
+                    const mm = Math.floor(remainingSec / 60);
+                    const ss = String(remainingSec % 60).padStart(2, '0');
+                    bannerTxt.innerHTML = `<i class="fa-solid fa-user-shield text-amber-300 mr-1"></i> โหมดปัจจุบัน: <b>ผู้จัดการ / จ่ายงาน (MANAGER)</b> — ล็อกกลับโหมดช่างอัตโนมัติใน <b>${mm}:${ss}</b>`;
+                }
+                if (elapsed >= IDLE_LIMIT_MS) {
+                    currentUserRoleMode = 'TECH';
+                    localStorage.setItem('hoshizaki_user_role', 'TECH');
+                    if (typeof applyUserRoleModeUI === 'function') applyUserRoleModeUI();
+                    if (typeof closeConfidentialCostGpModal === 'function') closeConfidentialCostGpModal();
+                    if (typeof closeGlobalEnterpriseConfigModal === 'function') closeGlobalEnterpriseConfigModal();
+                    if (typeof updateSecurityWatermarkOverlay_ === 'function') updateSecurityWatermarkOverlay_();
+                    if (typeof showToast === 'function') {
+                        showToast('🔒 ล็อกกลับโหมดช่างดำเนินงานอัตโนมัติ (ไม่มีการใช้งานเกิน 10 นาที)');
+                    }
+                }
+            }, 1000);
+
+            window.forceAppCacheUpdateNow = async function() {
+                if (typeof showToast === 'function') showToast('กำลังล้างแคชเก่าและตรวจสอบเวอร์ชันล่าสุด...');
+                try {
+                    if ('caches' in window) {
+                        const keys = await caches.keys();
+                        await Promise.all(keys.map(k => caches.delete(k)));
+                    }
+                    if ('serviceWorker' in navigator) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map(r => r.update().catch(() => {})));
+                    }
+                } catch (e) {}
+                const baseUrl = window.location.href.split('?')[0].split('#')[0];
+                window.location.replace(baseUrl + '?v=' + Date.now());
+            };
         })();
     </script>
 </body>

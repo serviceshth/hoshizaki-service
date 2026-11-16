@@ -756,7 +756,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v191.0</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v191.5</span></p>
                         <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
                             <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
@@ -18111,6 +18111,12 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         }
 
         function handleUniversalOmniSearch(rawQuery) {
+            const trimmedRaw = (q || raw || '').trim();
+            if (/^S\/?N\s+/i.test(trimmedRaw)) {
+                const stripped = trimmedRaw.replace(/^S\/?N\s+/i, '').trim();
+                if (typeof q !== 'undefined') q = stripped;
+                if (typeof raw !== 'undefined') raw = stripped;
+            }
             const q = String(rawQuery || '').trim().toLowerCase();
             const box = document.getElementById('universalOmniResultsBox');
             const btn = document.getElementById('btnClearUniversalSearch');
@@ -20147,8 +20153,391 @@ function openFullScreenSpecViewerModal(presetModel) {
                 } else if (vanTechParam && typeof openVanStockModal === 'function') {
                     setTimeout(() => openVanStockModal(), 600);
                 }
+                const snFullScreenParam = (params.get('snFullScreen') || '').trim();
+                if (snFullScreenParam && typeof openSerial360FullScreenModal === 'function') {
+                    setTimeout(() => openSerial360FullScreenModal(snFullScreenParam), 650);
+                }
             } catch (e) {}
         });
+    </script>
+
+
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v191.5) -->
+    <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
+        <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
+            <!-- Top Navy Header -->
+            <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-sky-800 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-hoshizaki-blue/20 border border-hoshizaki-blue flex items-center justify-center text-sky-300">
+                        <i class="fa-solid fa-barcode text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base leading-tight">ประวัติเครื่องแบบเต็มหน้าจอ (Serial 360° Dossier)</h3>
+                        <p class="text-[11px] text-sky-200">แสดงรุ่นเครื่อง ข้อมูลการซื้อขาย/วันที่ขายออก รายชื่อลูกค้า ประวัติ Service Job และใบเสนอราคา (เรียงใหม่ไปเก่า)</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 w-full sm:w-auto">
+                    <input type="text" id="serial360SearchInput" list="hoshizakiSerialsList" onkeydown="if(event.key==='Enter'){event.preventDefault();openSerial360FullScreenModal(this.value);}" placeholder="พิมพ์ Serial No. เช่น H10638J..." class="flex-1 sm:w-56 px-3 py-1.5 rounded-lg text-xs font-bold text-hoshizaki-navy bg-white uppercase focus:outline-none">
+                    <button type="button" onclick="openSerial360FullScreenModal(document.getElementById('serial360SearchInput')?.value || '')" class="bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-xs">
+                        <i class="fa-solid fa-magnifying-glass mr-1"></i>ค้นหา
+                    </button>
+                    <button type="button" onclick="document.getElementById('serial360FullScreenModal').classList.add('hidden')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
+                        <i class="fa-solid fa-xmark mr-1"></i>ปิดเต็มจอ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Body -->
+            <div id="serial360FullScreenBody" class="flex-1 overflow-y-auto p-3 sm:p-5 bg-slate-50 space-y-4 text-xs">
+                <div class="text-center text-gray-400 py-12">กรุณาระบุ Serial Number เพื่อแสดงข้อมูลเครื่อง ประวัติซ่อม และใบเสนอราคา</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function normalizeSortDateStr_(dStr) {
+            const s = String(dStr || '').trim();
+            if (!s) return '0000-00-00';
+            if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0, 10);
+            const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+            if (m) {
+                const dd = ('0' + m[1]).slice(-2);
+                const mm = ('0' + m[2]).slice(-2);
+                const yy = Number(m[3]) > 2400 ? String(Number(m[3]) - 543) : m[3];
+                return `${yy}-${mm}-${dd}`;
+            }
+            return s;
+        }
+
+        async function openSerial360FullScreenModal(rawSn) {
+            const modal = document.getElementById('serial360FullScreenModal');
+            const bodyEl = document.getElementById('serial360FullScreenBody');
+            const inpEl = document.getElementById('serial360SearchInput');
+            if (!modal || !bodyEl) return;
+
+            const cleanSn = String(rawSn || document.getElementById('eqSerial')?.value || '')
+                .replace(/^S\/?N\s+/i, '').trim().toUpperCase();
+            if (inpEl) inpEl.value = cleanSn;
+            modal.classList.remove('hidden');
+
+            if (!cleanSn) {
+                bodyEl.innerHTML = '<div class="text-center text-gray-500 py-12 font-semibold">พิมพ์หมายเลข Serial Number ในช่องค้นหาด้านบนแล้วกดค้นหาครับ</div>';
+                return;
+            }
+
+            bodyEl.innerHTML = `<div class="text-center text-hoshizaki-navy py-12 font-bold"><i class="fa-solid fa-spinner fa-spin mr-2 text-hoshizaki-blue"></i>กำลังดึงข้อมูลประวัติเครื่อง S/N: ${cleanSn} จากฐานข้อมูลเครื่องและ Cloud...</div>`;
+
+            // 1. Gather local Serial Master + Custom overrides
+            const serialMap = typeof getMergedSerialMap === 'function' ? getMergedSerialMap() : new Map();
+            const salesMatches = [];
+            serialMap.forEach((rec, key) => {
+                if (key === cleanSn || (cleanSn.length >= 5 && key.includes(cleanSn))) {
+                    salesMatches.push({
+                        ...rec,
+                        sortDate: normalizeSortDateStr_(rec.dateOut)
+                    });
+                }
+            });
+            salesMatches.sort((a, b) => b.sortDate.localeCompare(a.sortDate));
+
+            // 2. Gather Local Service Jobs
+            const localJobs = typeof getJobHistorySync === 'function' ? getJobHistorySync() : [];
+            const jobMap = new Map();
+            localJobs.forEach(j => {
+                const jSn = String(j.serial || '').trim().toUpperCase();
+                if (jSn && (jSn === cleanSn || (cleanSn.length >= 5 && jSn.includes(cleanSn)))) {
+                    jobMap.set(j.jobNo || JSON.stringify(j), {
+                        ...j,
+                        sortDate: normalizeSortDateStr_(j.date)
+                    });
+                }
+            });
+
+            // 3. Gather Quotations from Archive (2,486+) & Live Saved Quotations
+            const qtMap = new Map();
+            const liveQts = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
+            liveQts.forEach(q => {
+                const qSn = String(q.serial || '').trim().toUpperCase();
+                if (qSn && (qSn === cleanSn || (cleanSn.length >= 5 && qSn.includes(cleanSn)))) {
+                    const key = `${q.offerNo}|${q.date}|${q.customerStore}`;
+                    qtMap.set(key, {
+                        offerNo: q.offerNo || '-',
+                        date: q.date || '-',
+                        sortDate: normalizeSortDateStr_(q.date),
+                        customer: q.customerStore || '-',
+                        model: q.model || '-',
+                        itemsSummary: q.partsSummary || '-',
+                        grandTotal: Number(q.grandTotal || 0),
+                        source: 'Live Quotation'
+                    });
+                }
+            });
+
+            if (typeof ensureQuotationArchiveLoaded === 'function') {
+                const archData = await ensureQuotationArchiveLoaded();
+                if (archData && Array.isArray(archData.quotations)) {
+                    archData.quotations.forEach(q => {
+                        const qSn = String(q.sn || '').trim().toUpperCase();
+                        const mlUpper = String(q.ml || '').toUpperCase();
+                        if ((qSn && (qSn === cleanSn || (cleanSn.length >= 5 && qSn.includes(cleanSn)))) || (cleanSn.length >= 5 && mlUpper.includes(cleanSn))) {
+                            const key = `${q.o}|${q.dt}|${q.s}`;
+                            if (!qtMap.has(key)) {
+                                const itemsTxt = Array.isArray(q.it) && q.it.length > 0
+                                    ? q.it.map(x => `${x.d || x.p} (x${x.q || 1})`).join(', ')
+                                    : (q.ml || '-');
+                                qtMap.set(key, {
+                                    offerNo: q.o || '-',
+                                    date: q.dt || '-',
+                                    sortDate: normalizeSortDateStr_(q.dt),
+                                    customer: q.s || '-',
+                                    model: q.m || '-',
+                                    itemsSummary: itemsTxt,
+                                    grandTotal: Number(q.gt || 0),
+                                    source: 'Archive'
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+
+            // 4. Also fetch live Cloud Dossier from Apps Script if configured
+            const gasUrl = typeof getGoogleSheetsWebAppUrl === 'function' ? getGoogleSheetsWebAppUrl() : '';
+            if (gasUrl) {
+                try {
+                    const resp = await fetch(`${gasUrl}?action=getSerialFullDossier&serial=${encodeURIComponent(cleanSn)}`);
+                    if (resp.ok) {
+                        const cloudJson = await resp.json();
+                        const d = cloudJson && cloudJson.dossier;
+                        if (d) {
+                            if (d.salesMeta && Array.isArray(d.salesMeta.allSalesRecords)) {
+                                d.salesMeta.allSalesRecords.forEach(sr => {
+                                    if (!salesMatches.some(x => x.serial === sr.serial && x.dateOut === sr.dateOut && x.customer === sr.customer)) {
+                                        salesMatches.push({ ...sr, sortDate: normalizeSortDateStr_(sr.dateOut) });
+                                    }
+                                });
+                            }
+                            if (Array.isArray(d.jobs)) {
+                                d.jobs.forEach(cj => {
+                                    if (!jobMap.has(cj.jobNo)) {
+                                        jobMap.set(cj.jobNo, { ...cj, sortDate: normalizeSortDateStr_(cj.date) });
+                                    }
+                                });
+                            }
+                            if (Array.isArray(d.quotations)) {
+                                d.quotations.forEach(cq => {
+                                    const cKey = `${cq.offerNo}|${cq.date}|${cq.customer}`;
+                                    if (!qtMap.has(cKey)) {
+                                        qtMap.set(cKey, { ...cq, sortDate: normalizeSortDateStr_(cq.date) });
+                                    }
+                                });
+                            }
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            const jobsSorted = Array.from(jobMap.values()).sort((a, b) => b.sortDate.localeCompare(a.sortDate));
+            const qtsSorted = Array.from(qtMap.values()).sort((a, b) => b.sortDate.localeCompare(a.sortDate));
+
+            const detectedModel = (salesMatches[0]?.model && salesMatches[0].model !== '-') ? salesMatches[0].model
+                : (jobsSorted[0]?.model || qtsSorted[0]?.model || 'ไม่ระบุรุ่น');
+            const detectedType = salesMatches[0]?.productType || jobsSorted[0]?.productType || '-';
+
+            // Collect all distinct customers across sales, service jobs, and quotations
+            const custList = [];
+            const seenCust = new Set();
+            const addCustEntry = (name, role, dt) => {
+                const c = String(name || '').trim();
+                if (!c || c === '-') return;
+                const k = c.toUpperCase();
+                if (!seenCust.has(k)) {
+                    seenCust.add(k);
+                    custList.push({ name: c, role, date: dt || '-' });
+                }
+            };
+            salesMatches.forEach(s => addCustEntry(s.customer, 'ข้อมูลการขายเครื่อง', s.dateOut));
+            jobsSorted.forEach(j => addCustEntry(j.store, 'ใบแจ้งบริการ (Service Job)', j.date));
+            qtsSorted.forEach(q => addCustEntry(q.customer, 'ใบเสนอราคา (Quotation)', q.date));
+
+            // Render Full-Screen HTML
+            const salesHtml = salesMatches.length > 0
+                ? salesMatches.map(s => `
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div><div class="text-[10px] text-sky-700 font-bold">วันที่ขาย / ส่งออก (Date Out)</div><div class="font-extrabold text-hoshizaki-navy text-sm">${s.dateOut || '-'}</div></div>
+                        <div><div class="text-[10px] text-sky-700 font-bold">เลขที่บิลขาย (Invoice No.)</div><div class="font-bold text-slate-800">${s.invoiceNo || '-'}</div></div>
+                        <div><div class="text-[10px] text-sky-700 font-bold">เลขที่สั่งซื้อ (PO No.)</div><div class="font-bold text-slate-800">${s.poNo || '-'}</div></div>
+                        <div><div class="text-[10px] text-sky-700 font-bold">ผู้ซื้อในระบบขาย</div><div class="font-bold text-slate-900">${s.customer || '-'}</div></div>
+                    </div>`).join('')
+                : '<div class="bg-gray-100 border border-gray-200 rounded-xl p-3 text-gray-500">ไม่พบข้อมูลประวัติการซื้อขายในฐานข้อมูล Master</div>';
+
+            const custHtml = custList.length > 0
+                ? `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">${custList.map((c, idx) => `
+                    <div class="bg-white border border-slate-200 rounded-lg p-2.5 flex items-start gap-2 shadow-2xs">
+                        <span class="w-6 h-6 rounded-full bg-hoshizaki-navy text-white font-bold flex items-center justify-center flex-shrink-0 text-[11px]">${idx + 1}</span>
+                        <div class="min-w-0">
+                            <div class="font-bold text-slate-900 truncate">${c.name}</div>
+                            <div class="text-[10.5px] text-sky-700">${c.role} • วันที่: ${c.date}</div>
+                        </div>
+                    </div>`).join('')}</div>`
+                : '<div class="text-gray-400">ไม่พบรายชื่อลูกค้าที่ผูกกับ S/N นี้</div>';
+
+            const jobsHtml = jobsSorted.length > 0
+                ? jobsSorted.map(j => {
+                    const partsTxt = Array.isArray(j.parts) && j.parts.length > 0
+                        ? j.parts.map(p => `${p.desc} (x${p.qty})`).join(', ')
+                        : (j.partsSummary || '-');
+                    return `
+                    <div class="bg-white border-l-4 border-emerald-600 border border-slate-200 rounded-xl p-3.5 shadow-xs space-y-1.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-1.5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded-md font-extrabold"><i class="fa-regular fa-calendar mr-1"></i>${j.date || '-'}</span>
+                                <span class="font-extrabold text-hoshizaki-navy text-sm">📄 ${j.jobNo || '-'}</span>
+                                <span class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-semibold">${j.jobStatus || 'Completed'}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-extrabold text-emerald-700">${Number(j.grandTotal || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} THB</span>
+                                ${j.pdfBackupUrl ? `<a href="${j.pdfBackupUrl}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-[11px] font-bold"><i class="fa-solid fa-file-pdf mr-1"></i>เปิด PDF</a>` : ''}
+                            </div>
+                        </div>
+                        <div class="font-bold text-slate-900"><i class="fa-solid fa-store text-emerald-600 mr-1"></i>ลูกค้า/ร้านค้า: ${j.store || '-'} <span class="font-normal text-slate-500 ml-2">(ช่าง: ${j.responsibleTech || '-'})</span></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11.5px]">
+                            <div class="bg-slate-50 p-2 rounded-lg"><span class="font-bold text-slate-700">🔍 อาการ/รายการตรวจเช็ก:</span> ${j.diagSymptom || '-'}</div>
+                            <div class="bg-slate-50 p-2 rounded-lg"><span class="font-bold text-slate-700">🛠️ การแก้ไข/อะไหล่:</span> ${j.diagAction || '-'} | <span class="text-sky-800 font-semibold">${partsTxt}</span></div>
+                        </div>
+                    </div>`;
+                }).join('')
+                : '<div class="bg-white border border-slate-200 rounded-xl p-4 text-center text-gray-400">ยังไม่มีประวัติใบ Service Job สำหรับ S/N นี้</div>';
+
+            const qtsHtml = qtsSorted.length > 0
+                ? qtsSorted.map(q => `
+                    <div class="bg-white border-l-4 border-amber-500 border border-slate-200 rounded-xl p-3.5 shadow-xs space-y-1.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-1.5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-md font-extrabold"><i class="fa-regular fa-calendar mr-1"></i>${q.date || '-'}</span>
+                                <span class="font-extrabold text-hoshizaki-navy text-sm">📑 ${q.offerNo || '-'}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-extrabold text-amber-700">${Number(q.grandTotal || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} THB</span>
+                                <button type="button" onclick="document.getElementById('serial360FullScreenModal').classList.add('hidden'); openQuotationArchiveModal('${String(q.offerNo || '').replace(/'/g, "\'")}');" class="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded text-[11px] font-bold">เปิดดูใบเสนอราคา</button>
+                            </div>
+                        </div>
+                        <div class="font-bold text-slate-900"><i class="fa-solid fa-building text-amber-600 mr-1"></i>ลูกค้า: ${q.customer || '-'}</div>
+                        <div class="bg-amber-50/60 p-2 rounded-lg text-[11.5px] text-slate-700"><span class="font-bold">🔩 รายการเสนอราคา:</span> ${q.itemsSummary || '-'}</div>
+                    </div>`).join('')
+                : '<div class="bg-white border border-slate-200 rounded-xl p-4 text-center text-gray-400">ยังไม่มีประวัติใบเสนอราคาสำหรับ S/N นี้</div>';
+
+            bodyEl.innerHTML = `
+                <!-- Summary Banner -->
+                <div class="bg-gradient-to-r from-hoshizaki-navy to-sky-900 text-white rounded-2xl p-4 shadow-md flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <div class="text-[11px] text-sky-300 font-bold uppercase tracking-wider">HOSHIZAKI EQUIPMENT PROFILE</div>
+                        <div class="text-xl sm:text-2xl font-extrabold tracking-wide">S/N: ${cleanSn}</div>
+                        <div class="text-sm font-bold text-amber-300 mt-0.5">รุ่นเครื่อง (Model): ${detectedModel} <span class="text-sky-200 font-normal text-xs">(${detectedType})</span></div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-white/10 rounded-xl px-3 py-2">
+                            <div class="text-lg font-extrabold text-sky-200">${custList.length}</div>
+                            <div class="text-[10px] text-white/80">ลูกค้าที่เกี่ยวข้อง</div>
+                        </div>
+                        <div class="bg-white/10 rounded-xl px-3 py-2">
+                            <div class="text-lg font-extrabold text-emerald-300">${jobsSorted.length}</div>
+                            <div class="text-[10px] text-white/80">ใบ Service Job</div>
+                        </div>
+                        <div class="bg-white/10 rounded-xl px-3 py-2">
+                            <div class="text-lg font-extrabold text-amber-300">${qtsSorted.length}</div>
+                            <div class="text-[10px] text-white/80">ใบเสนอราคา</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 1: Sales Info -->
+                <div class="space-y-2">
+                    <h4 class="font-extrabold text-hoshizaki-navy text-sm flex items-center gap-1.5"><i class="fa-solid fa-receipt text-hoshizaki-blue"></i> 1. ข้อมูลการซื้อขาย / วันที่ขายเครื่องออก</h4>
+                    ${salesHtml}
+                </div>
+
+                <!-- Section 2: Customers -->
+                <div class="space-y-2">
+                    <h4 class="font-extrabold text-hoshizaki-navy text-sm flex items-center gap-1.5"><i class="fa-solid fa-users text-sky-600"></i> 2. รายละเอียดลูกค้าที่เกี่ยวข้องทั้งหมด (${custList.length} ราย)</h4>
+                    ${custHtml}
+                </div>
+
+                <!-- Section 3: Service Jobs -->
+                <div class="space-y-2">
+                    <h4 class="font-extrabold text-emerald-900 text-sm flex items-center gap-1.5"><i class="fa-solid fa-screwdriver-wrench text-emerald-600"></i> 3. ประวัติใบ Service Job &amp; รายการตรวจเช็ก (${jobsSorted.length} ใบ — เรียงใหม่ไปเก่า)</h4>
+                    <div class="space-y-2.5">${jobsHtml}</div>
+                </div>
+
+                <!-- Section 4: Quotations -->
+                <div class="space-y-2">
+                    <h4 class="font-extrabold text-amber-900 text-sm flex items-center gap-1.5"><i class="fa-solid fa-file-invoice-dollar text-amber-600"></i> 4. ประวัติใบเสนอราคา (${qtsSorted.length} ใบ — เรียงใหม่ไปเก่า)</h4>
+                    <div class="space-y-2.5">${qtsHtml}</div>
+                </div>
+            `;
+        }
+
+        async function syncSerialAndQuotationsToLineCloud() {
+            const url = typeof getGoogleSheetsWebAppUrl === 'function' ? getGoogleSheetsWebAppUrl() : '';
+            if (!url) {
+                showToast('กรุณาตั้งค่า Google Apps Script Web App URL ก่อนครับ');
+                return;
+            }
+            const cfg = typeof getGlobalEnterpriseConfig === 'function' ? getGlobalEnterpriseConfig() : {};
+            const serialMap = typeof getMergedSerialMap === 'function' ? getMergedSerialMap() : new Map();
+            const allSerialRows = Array.from(serialMap.values()).map(r => [
+                r.serial, r.productType, r.model, r.dateOut, r.invoiceNo, r.customer, r.poNo
+            ]);
+
+            showToast(`กำลังซิงค์ฐานข้อมูล S/N (${allSerialRows.length.toLocaleString()} เครื่อง) และใบเสนอราคาขึ้น Cloud...`);
+
+            const CHUNK = 1500;
+            for (let i = 0; i < allSerialRows.length; i += CHUNK) {
+                const slice = allSerialRows.slice(i, i + CHUNK);
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SYNC_SERIAL_MASTER',
+                        apiSecretKey: cfg.apiSecretKey || '',
+                        resetSheet: i === 0,
+                        rows: slice
+                    })
+                });
+            }
+
+            if (typeof ensureQuotationArchiveLoaded === 'function') {
+                const arch = await ensureQuotationArchiveLoaded();
+                if (arch && Array.isArray(arch.quotations)) {
+                    const qtRows = arch.quotations.map(q => ({
+                        sn: q.sn || '',
+                        dt: q.dt || '',
+                        o: q.o || '',
+                        s: q.s || '',
+                        m: q.m || '',
+                        ml: q.ml || '',
+                        sum: Array.isArray(q.it) ? q.it.map(x => `${x.d || x.p} (x${x.q || 1})`).join(', ') : '',
+                        gt: Number(q.gt || 0)
+                    }));
+                    const Q_CHUNK = 800;
+                    for (let j = 0; j < qtRows.length; j += Q_CHUNK) {
+                        await fetch(url, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify({
+                                actionType: 'SYNC_QUOTATION_ARCHIVE_MASTER',
+                                apiSecretKey: cfg.apiSecretKey || '',
+                                resetSheet: j === 0,
+                                rows: qtRows.slice(j, j + Q_CHUNK)
+                            })
+                        });
+                    }
+                }
+            }
+            showToast('ซิงค์ฐานข้อมูล S/N และใบเสนอราคาทั้งหมดให้ LINE Bot เรียบร้อย ✓');
+        }
     </script>
 
 </body>
@@ -21793,7 +22182,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v191.0 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v191.5 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {

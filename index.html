@@ -11301,13 +11301,24 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
         }
 
+        let pendingManagerPinSuccessCallback = null;
+
         function closeManagerPinModal() {
-            document.getElementById('managerPinModal')?.classList.add('hidden');
+            const modal = document.getElementById('managerPinModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = '';
+            }
+            const inp = document.getElementById('managerPinVerifyInput');
+            if (inp) inp.value = '';
+            pendingManagerPinSuccessCallback = null;
         }
 
         function verifyManagerPinAndUnlock() {
-            const entered = (document.getElementById('managerPinVerifyInput')?.value || '').trim();
-            if (entered === getManagerPinCode()) {
+            const inp = document.getElementById('managerPinVerifyInput');
+            const entered = (inp?.value || '').trim();
+            if (entered === String(getManagerPinCode()).trim()) {
+                const cb = pendingManagerPinSuccessCallback;
                 currentUserRoleMode = 'MANAGER';
                 localStorage.setItem('hoshizaki_user_role', 'MANAGER');
                 applyUserRoleModeUI();
@@ -11315,8 +11326,22 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 if (typeof loadExternalConfidentialMasterJson === 'function') loadExternalConfidentialMasterJson(true);
                 if (typeof updateSecurityWatermarkOverlay_ === 'function') updateSecurityWatermarkOverlay_();
                 showToast('ยืนยันรหัส PIN สำเร็จ: ปลดล็อกโหมดผู้จัดการ & ฐานข้อมูลลับแล้ว ✓');
+                if (typeof cb === 'function') {
+                    setTimeout(() => cb(), 30);
+                }
             } else {
                 showToast('รหัส PIN ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+            }
+        }
+
+        function autoVerifyManagerPinOnComplete() {
+            const inp = document.getElementById('managerPinVerifyInput');
+            if (!inp) return;
+            const entered = inp.value.trim();
+            const targetPin = String(getManagerPinCode()).trim();
+            if (entered.length > 0 && entered === targetPin) {
+                inp.blur();
+                verifyManagerPinAndUnlock();
             }
         }
 
@@ -11351,6 +11376,11 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             document.getElementById('oldManagerPinInput').value = '';
             document.getElementById('newManagerPinInput').value = '';
             document.getElementById('changeManagerPinBox')?.classList.add('hidden');
+            currentUserRoleMode = 'MANAGER';
+            localStorage.setItem('hoshizaki_user_role', 'MANAGER');
+            applyUserRoleModeUI();
+            closeManagerPinModal();
+            if (typeof loadExternalConfidentialMasterJson === 'function') loadExternalConfidentialMasterJson(true);
             showToast('เปลี่ยนรหัส PIN ผู้จัดการเรียบร้อยแล้ว ✓');
         }
 
@@ -17560,12 +17590,12 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-5 space-y-4">
             <div class="flex items-center justify-between border-b pb-2.5">
                 <h3 class="text-sm font-extrabold text-hoshizaki-navy flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-amber-600"></i> ยืนยันรหัส PIN โหมดผู้จัดการ
+                    <i class="fa-solid fa-shield-halved text-amber-600"></i> ยืนยันรหัส PIN โหมดผู้จัดการ <span class="text-[9.5px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">Auto-Close</span>
                 </h3>
                 <button type="button" onclick="closeManagerPinModal()" class="bg-red-600 hover:bg-red-700 active:scale-95 text-white rounded-lg w-8 h-8 inline-flex items-center justify-center text-xl font-extrabold shadow-sm transition flex-shrink-0" title="ปิดหน้าต่าง">&times;</button>
             </div>
-            <p class="text-xs text-gray-600">กรุณากรอกรหัส PIN 4 หลักเพื่อเข้าสู่ <b>โหมดผู้จัดการ / ผู้จ่ายงาน</b> (รหัสเริ่มต้น: <b>1234</b>)</p>
-            <input type="password" id="managerPinVerifyInput" maxlength="6" inputmode="numeric" placeholder="••••" oninput="autoVerifyManagerPinOnComplete()" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyManagerPinAndUnlock();}" class="w-full text-center text-2xl tracking-[0.5em] font-extrabold border-2 border-hoshizaki-blue rounded-xl py-2.5 focus:outline-none">
+            <p class="text-xs text-gray-600">กรุณากรอกรหัส PIN 4 หลักเพื่อเข้าสู่ <b>โหมดผู้จัดการ / ผู้จ่ายงาน</b> (รหัสเริ่มต้น: <b>1234</b>) — <i>ระบบจะปิดหน้าต่างให้อัตโนมัติทันทีเมื่อกรอกครบ</i></p>
+            <input type="password" id="managerPinVerifyInput" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="••••" oninput="autoVerifyManagerPinOnComplete()" onkeyup="autoVerifyManagerPinOnComplete()" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyManagerPinAndUnlock();}" class="w-full text-center text-2xl tracking-[0.5em] font-extrabold border-2 border-hoshizaki-blue rounded-xl py-2.5 focus:outline-none">
             <div class="flex items-center justify-between pt-1">
                 <button type="button" onclick="toggleChangeManagerPinBox()" class="text-[11px] text-hoshizaki-darkblue underline">เปลี่ยนรหัส PIN</button>
                 <div class="flex gap-2">
@@ -19296,10 +19326,17 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         function toggleManagerJobSignOff() {
             const jobNo = (document.getElementById('jobNo')?.value || '').trim();
             if (!jobNo) return;
-            const pin = typeof getManagerPinCode === 'function' ? getManagerPinCode() : '1234';
-            const entered = prompt('กรุณากรอกรหัส PIN ผู้จัดการเพื่อยืนยันอนุมัติ / ปลดล็อกใบงาน:');
-            if (entered === null || entered.trim() !== pin) {
-                if (entered !== null) showToast('รหัส PIN ผู้จัดการไม่ถูกต้อง ❌');
+            if (currentUserRoleMode !== 'MANAGER') {
+                pendingManagerPinSuccessCallback = () => {
+                    if (typeof toggleManagerJobSignOff === 'function') toggleManagerJobSignOff();
+                };
+                const modal = document.getElementById('managerPinModal');
+                const inp = document.getElementById('managerPinVerifyInput');
+                const chgBox = document.getElementById('changeManagerPinBox');
+                if (chgBox) chgBox.classList.add('hidden');
+                if (inp) inp.value = '';
+                if (modal) modal.classList.remove('hidden');
+                setTimeout(() => inp?.focus(), 60);
                 return;
             }
             const map = JSON.parse(localStorage.getItem(V18_LOCKED_JOBS_KEY) || '{}');
@@ -30167,24 +30204,18 @@ Defect: ${defectText}`;
         };
     </script>
 
+
+
     <script>
-        window.autoVerifyManagerPinOnComplete = function() {
-            const inp = document.getElementById('managerPinVerifyInput');
-            if (!inp) return;
-            const entered = inp.value.trim();
-            const targetPin = (typeof getManagerPinCode === 'function') ? String(getManagerPinCode()).trim() : '1234';
-            if (entered.length > 0 && entered === targetPin) {
-                inp.value = '';
-                if (typeof verifyManagerPinAndUnlock === 'function') {
-                    // Temporarily set value back for verifyManagerPinAndUnlock to read, then clear & close modal
-                    inp.value = entered;
-                    verifyManagerPinAndUnlock();
-                    inp.value = '';
+        if ('serviceWorker' in navigator) {
+            let swRefreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', function() {
+                if (!swRefreshing) {
+                    swRefreshing = true;
+                    window.location.reload();
                 }
-                const modal = document.getElementById('managerPinModal');
-                if (modal) modal.classList.add('hidden');
-            }
-        };
+            });
+        }
     </script>
 </body>
 </html>

@@ -771,10 +771,17 @@
                         <button type="button" id="offlineQueueStatusBadge" onclick="processOfflineSyncQueue(true)" class="hidden text-[10px] bg-amber-500/25 hover:bg-amber-500/40 text-amber-200 border border-amber-400/50 px-2 py-0.5 rounded-full font-bold transition" title="คลิกเพื่อซิงค์รายการที่ค้างอยู่ในคิวขึ้น Google Sheets/Drive ทันที">
                             <i class="fa-solid fa-cloud-arrow-up mr-0.5"></i> รอซิงค์: <span id="offlineQueueCountText">0</span>
                         </button>
-                        <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="text-[10px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full font-bold transition" title="สลับโหมดหน้าจอระหว่าง ผู้จ่ายงาน/ผู้จัดการ และ ช่างหน้างาน">
-                            <i class="fa-solid fa-user-shield mr-0.5"></i> โหมด: ผู้จัดการ/จ่ายงาน
+                        <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="text-[11px] bg-amber-400 hover:bg-amber-300 text-slate-950 border-2 border-white px-3 py-1 rounded-full font-extrabold shadow-md transition flex items-center gap-1" title="คลิกเพื่อสลับโหมดระหว่าง ผู้จัดการ/จ่ายงาน และ ช่างดำเนินงาน">
+                            <i class="fa-solid fa-user-shield"></i> <span>โหมด: ผู้จัดการ/จ่ายงาน</span>
                         </button>
                     </div>
+                </div>
+                <!-- แถบแสดงสถานะโหมดผู้ใช้งานปัจจุบันอย่างชัดเจน (Desktop & Mobile) -->
+                <div id="activeRoleModeStatusBanner" class="w-full rounded-lg px-3 py-1 text-[11px] font-bold flex flex-wrap items-center justify-between gap-2 bg-amber-400/20 border border-amber-300/60 text-amber-100">
+                    <span id="activeRoleModeStatusText"><i class="fa-solid fa-user-shield text-amber-300 mr-1"></i> สถานะหน้าจอปัจจุบัน: <b>โหมดผู้จัดการ / ผู้จ่ายงาน (MANAGER)</b> — แสดงราคาทุน วิเคราะห์ GP% และเมนูบริหารครบทุกส่วน</span>
+                    <button type="button" onclick="toggleUserRoleMode()" id="activeRoleModeQuickSwitchBtn" class="bg-white/20 hover:bg-white/30 text-white px-2.5 py-0.5 rounded text-[10.5px] font-extrabold transition">
+                        สลับเป็นโหมดช่างดำเนินงาน
+                    </button>
                 </div>
             </div>
 
@@ -11224,11 +11231,25 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             const btn = document.getElementById('roleModeToggleBtn');
             if (btn) {
                 btn.innerHTML = isTech
-                    ? '<i class="fa-solid fa-lock mr-0.5"></i> โหมด: ช่างหน้างาน (แตะปลดล็อกผู้จัดการ)'
-                    : '<i class="fa-solid fa-user-shield mr-0.5"></i> โหมด: ผู้จัดการ/จ่ายงาน';
+                    ? '<i class="fa-solid fa-wrench"></i> <span>โหมด: ช่างดำเนินงาน (ปลดล็อก PIN)</span>'
+                    : '<i class="fa-solid fa-user-shield"></i> <span>โหมด: ผู้จัดการ/จ่ายงาน</span>';
                 btn.className = isTech
-                    ? 'text-[10px] bg-emerald-500/25 hover:bg-emerald-500/35 text-emerald-200 border border-emerald-400/50 px-2 py-0.5 rounded-full font-bold transition'
-                    : 'text-[10px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full font-bold transition';
+                    ? 'text-[11px] bg-emerald-500 hover:bg-emerald-400 text-white border-2 border-emerald-100 px-3 py-1 rounded-full font-extrabold shadow-md transition flex items-center gap-1'
+                    : 'text-[11px] bg-amber-400 hover:bg-amber-300 text-slate-950 border-2 border-white px-3 py-1 rounded-full font-extrabold shadow-md transition flex items-center gap-1';
+            }
+            const banner = document.getElementById('activeRoleModeStatusBanner');
+            const bannerTxt = document.getElementById('activeRoleModeStatusText');
+            const switchBtn = document.getElementById('activeRoleModeQuickSwitchBtn');
+            if (banner && bannerTxt && switchBtn) {
+                if (isTech) {
+                    banner.className = 'w-full rounded-lg px-3 py-1 text-[11px] font-bold flex flex-wrap items-center justify-between gap-2 bg-emerald-500/25 border border-emerald-300/70 text-emerald-50';
+                    bannerTxt.innerHTML = '<i class="fa-solid fa-wrench text-emerald-300 mr-1"></i> สถานะหน้าจอปัจจุบัน: <b>โหมดช่างดำเนินงาน (TECH)</b> — ซ่อนราคาทุนและล็อกข้อมูลลับอัตโนมัติ';
+                    switchBtn.textContent = 'ปลดล็อกโหมดผู้จัดการ (PIN)';
+                } else {
+                    banner.className = 'w-full rounded-lg px-3 py-1 text-[11px] font-bold flex flex-wrap items-center justify-between gap-2 bg-amber-400/25 border border-amber-300/80 text-amber-50';
+                    bannerTxt.innerHTML = '<i class="fa-solid fa-user-shield text-amber-300 mr-1"></i> สถานะหน้าจอปัจจุบัน: <b>โหมดผู้จัดการ / ผู้จ่ายงาน (MANAGER)</b> — แสดงราคาทุน วิเคราะห์ GP% และเมนูบริหารครบทุกส่วน';
+                    switchBtn.textContent = 'สลับกลับโหมดช่างดำเนินงาน';
+                }
             }
 
             // ซ่อน/แสดงปุ่มเฉพาะฝั่งผู้จัดการในแถบเครื่องมือบน
@@ -30216,6 +30237,32 @@ Defect: ${defectText}`;
                 }
             });
         }
+    </script>
+
+    <script>
+        (function initDesktopPinAutoCloseWatcher() {
+            setInterval(function() {
+                const modal = document.getElementById('managerPinModal');
+                if (!modal || modal.classList.contains('hidden')) return;
+                const inp = document.getElementById('managerPinVerifyInput');
+                if (!inp) return;
+                const entered = (inp.value || '').trim();
+                const targetPin = (typeof getManagerPinCode === 'function') ? String(getManagerPinCode()).trim() : '1234';
+                if (entered.length > 0 && entered === targetPin) {
+                    inp.blur();
+                    if (typeof verifyManagerPinAndUnlock === 'function') {
+                        verifyManagerPinAndUnlock();
+                    }
+                    modal.classList.add('hidden');
+                }
+            }, 100);
+
+            if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(function(reg) {
+                    reg.update().catch(function() {});
+                }).catch(function() {});
+            }
+        })();
     </script>
 </body>
 </html>

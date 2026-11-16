@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v195-0';
+const CACHE_NAME = 'hoshizaki-service-pwa-v196-0';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,8 @@ const APP_SHELL_ASSETS = [
 const DATA_ASSETS = [
   './serial_db.json',
   './parts_catalog.json',
-  './quotation_archive.json'
+  './quotation_archive.json',
+  './parts_cost_2025.json'
 ];
 
 self.addEventListener('install', (event) => {

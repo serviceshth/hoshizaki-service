@@ -227,8 +227,15 @@
             min-width: 18px;
         }
         #toolbarActions button,
-        .no-print button {
+        .no-print button:not(.hzk-compact-pill) {
             min-height: 40px;
+        }
+        .hzk-compact-pill {
+            min-height: 24px !important;
+            height: auto !important;
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+            line-height: 1.25 !important;
         }
         .photo-card { min-width: 0; }
         .photo-card img { object-fit: cover; }
@@ -741,7 +748,7 @@
 
     <!-- Top Action Toolbar (Responsive สำหรับมือถือ แท็บเล็ต และพีซี) -->
     <header class="relative max-w-4xl mx-auto mb-3 sm:mb-4 bg-hoshizaki-navy text-white p-3 sm:p-4 rounded-xl shadow-lg no-print">
-        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2.5">
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2">
             <!-- โลโก้และชื่อระบบ -->
             <div class="flex items-center gap-2.5 min-w-0 flex-1">
                 <div id="topHeaderLogoWrap" class="w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center p-0.5 shadow flex-shrink-0 overflow-hidden">
@@ -749,29 +756,30 @@
                     <svg id="topHeaderDefaultLogoSvg" viewBox="0 0 300 300" class="hidden w-full h-full"></svg>
                 </div>
                 <div class="min-w-0 flex-1">
-                    <div class="flex flex-wrap items-center justify-between gap-1.5">
+                    <div class="flex items-center justify-between gap-1.5">
                         <h1 id="topHeaderCompanyTitle" class="font-bold text-sm sm:text-lg leading-tight tracking-wide truncate">HOSHIZAKI (THAILAND)</h1>
-                        <div class="flex items-center gap-1 flex-shrink-0">
-                            <button type="button" onclick="openGlobalEnterpriseConfigModal()" class="text-[10px] bg-amber-400/20 hover:bg-amber-400/35 text-amber-200 border border-amber-300/40 px-2 py-0.5 rounded-full font-bold transition whitespace-nowrap" title="ตั้งค่าสาขา/ประเทศ โลโก้บริษัท รหัส PIN และ API Secret Key">
-                                <i class="fa-solid fa-building-shield mr-0.5"></i> <span>ตั้งค่าสาขา/โลโก้</span>
-                            </button>
-                        </div>
+                        <button type="button" onclick="openGlobalEnterpriseConfigModal()" class="hzk-compact-pill text-[10px] bg-amber-400/20 hover:bg-amber-400/35 text-amber-200 border border-amber-300/40 px-2.5 rounded-full font-bold transition whitespace-nowrap flex-shrink-0" title="ตั้งค่าสาขา/ประเทศ โลโก้บริษัท รหัส PIN และ API Secret Key">
+                            <i class="fa-solid fa-building-shield mr-0.5"></i> <span>ตั้งค่าสาขา/โลโก้</span>
+                        </button>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
                         <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1011</span></p>
-                        <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2 py-0.5 rounded-full font-bold transition whitespace-nowrap" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
-                            <i class="fa-solid fa-id-badge mr-0.5 text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
+                    </div>
+                    <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
+                    <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                        <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="hzk-compact-pill text-[10.5px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
+                            <i class="fa-solid fa-id-badge text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
                         </button>
-                        <button type="button" onclick="pullTwoWayCloudSync(true)" class="text-[10px] bg-indigo-500/25 hover:bg-indigo-500/40 text-indigo-100 border border-indigo-400/50 px-2 py-0.5 rounded-full font-bold transition whitespace-nowrap" title="ดึงข้อมูลใบงานและ S/N ล่าสุดจาก Google Sheets ส่วนกลางลงเครื่อง (Two-Way Sync)">
-                            <i class="fa-solid fa-arrows-rotate mr-0.5 text-sky-300"></i> ดึงข้อมูล Cloud
+                        <button type="button" onclick="pullTwoWayCloudSync(true)" class="hzk-compact-pill text-[10.5px] bg-indigo-500/25 hover:bg-indigo-500/40 text-indigo-100 border border-indigo-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ดึงข้อมูลใบงานและ S/N ล่าสุดจาก Google Sheets ส่วนกลางลงเครื่อง (Two-Way Sync)">
+                            <i class="fa-solid fa-arrows-rotate text-sky-300"></i> <span>ดึงข้อมูล Cloud</span>
                         </button>
-                        <button type="button" onclick="openExecutiveDashboardModal()" class="text-[10px] bg-sky-500/25 hover:bg-sky-500/40 text-sky-100 border border-sky-400/40 px-2 py-0.5 rounded-full font-bold transition whitespace-nowrap" title="เปิดศูนย์บัญชาการและวิเคราะห์ KPI แผนกบริการ (Executive Command Center)">
-                            <i class="fa-solid fa-gauge-high mr-0.5 text-amber-300"></i> แดชบอร์ด KPI
+                        <button type="button" onclick="openExecutiveDashboardModal()" class="hzk-compact-pill text-[10.5px] bg-sky-500/25 hover:bg-sky-500/40 text-sky-100 border border-sky-400/40 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เปิดศูนย์บัญชาการและวิเคราะห์ KPI แผนกบริการ (Executive Command Center)">
+                            <i class="fa-solid fa-gauge-high text-amber-300"></i> <span>แดชบอร์ด KPI</span>
                         </button>
-                        <button type="button" id="offlineQueueStatusBadge" onclick="processOfflineSyncQueue(true)" class="hidden text-[10px] bg-amber-500/25 hover:bg-amber-500/40 text-amber-200 border border-amber-400/50 px-2 py-0.5 rounded-full font-bold transition whitespace-nowrap" title="คลิกเพื่อซิงค์รายการที่ค้างอยู่ในคิวขึ้น Google Sheets/Drive ทันที">
-                            <i class="fa-solid fa-cloud-arrow-up mr-0.5"></i> รอซิงค์: <span id="offlineQueueCountText">0</span>
+                        <button type="button" id="offlineQueueStatusBadge" onclick="processOfflineSyncQueue(true)" class="hidden hzk-compact-pill text-[10.5px] bg-amber-500/25 hover:bg-amber-500/40 text-amber-200 border border-amber-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อซิงค์รายการที่ค้างอยู่ในคิวขึ้น Google Sheets/Drive ทันที">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> <span>รอซิงค์: <span id="offlineQueueCountText">0</span></span>
                         </button>
-                        <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="text-[10px] bg-amber-400 hover:bg-amber-300 text-slate-950 border border-white px-2.5 py-0.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อสลับโหมดระหว่าง ผู้จัดการ/จ่ายงาน และ ช่างดำเนินงาน">
+                        <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="hzk-compact-pill text-[10.5px] bg-amber-400 hover:bg-amber-300 text-slate-950 border border-white px-2.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อสลับโหมดระหว่าง ผู้จัดการ/จ่ายงาน และ ช่างดำเนินงาน">
                             <i class="fa-solid fa-user-shield"></i> <span>โหมด: ผู้จัดการ/จ่ายงาน</span>
                         </button>
                     </div>
@@ -801,10 +809,10 @@
             </div>
         </div>
 
-        <!-- แถบแสดงสถานะโหมดผู้ใช้งานปัจจุบันอย่างชัดเจน (จัดวางเต็มความกว้าง ไม่เบียดปุ่มอื่น) -->
-        <div id="activeRoleModeStatusBanner" class="mt-2.5 rounded-lg px-3 py-1.5 text-[11px] font-bold flex flex-wrap items-center justify-between gap-2 bg-amber-400/20 border border-amber-300/60 text-amber-100">
-            <span id="activeRoleModeStatusText" class="leading-snug"><i class="fa-solid fa-user-shield text-amber-300 mr-1"></i> สถานะหน้าจอปัจจุบัน: <b>โหมดผู้จัดการ / ผู้จ่ายงาน (MANAGER)</b> — แสดงราคาทุน วิเคราะห์ GP% และเมนูบริหารครบทุกส่วน</span>
-            <button type="button" onclick="toggleUserRoleMode()" id="activeRoleModeQuickSwitchBtn" class="bg-white/20 hover:bg-white/30 text-white px-2.5 py-0.5 rounded text-[10.5px] font-extrabold transition whitespace-nowrap flex-shrink-0">
+        <!-- แถบแสดงสถานะโหมดผู้ใช้งานปัจจุบันอย่างชัดเจน (จัดวางเต็มความกว้าง กะทัดรัดไม่ขยายล้นจอ) -->
+        <div id="activeRoleModeStatusBanner" class="mt-2 rounded-lg px-2.5 py-1.5 text-[11px] font-bold flex flex-wrap items-center justify-between gap-1.5 bg-amber-400/20 border border-amber-300/60 text-amber-100">
+            <span id="activeRoleModeStatusText" class="leading-snug"><i class="fa-solid fa-user-shield text-amber-300 mr-1"></i> โหมดปัจจุบัน: <b>ผู้จัดการ / จ่ายงาน (MANAGER)</b> — แสดงราคาทุน &amp; GP%</span>
+            <button type="button" onclick="toggleUserRoleMode()" id="activeRoleModeQuickSwitchBtn" class="hzk-compact-pill bg-white/20 hover:bg-white/30 text-white px-2.5 rounded-md text-[10.5px] font-extrabold transition whitespace-nowrap flex-shrink-0">
                 สลับเป็นโหมดช่างดำเนินงาน
             </button>
         </div>
@@ -11235,20 +11243,20 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     ? '<i class="fa-solid fa-wrench"></i> <span>โหมด: ช่างดำเนินงาน</span>'
                     : '<i class="fa-solid fa-user-shield"></i> <span>โหมด: ผู้จัดการ/จ่ายงาน</span>';
                 btn.className = isTech
-                    ? 'text-[10px] bg-emerald-500 hover:bg-emerald-400 text-white border border-emerald-100 px-2.5 py-0.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap'
-                    : 'text-[10px] bg-amber-400 hover:bg-amber-300 text-slate-950 border border-white px-2.5 py-0.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap';
+                    ? 'hzk-compact-pill text-[10.5px] bg-emerald-500 hover:bg-emerald-400 text-white border border-emerald-100 px-2.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap'
+                    : 'hzk-compact-pill text-[10.5px] bg-amber-400 hover:bg-amber-300 text-slate-950 border border-white px-2.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap';
             }
             const banner = document.getElementById('activeRoleModeStatusBanner');
             const bannerTxt = document.getElementById('activeRoleModeStatusText');
             const switchBtn = document.getElementById('activeRoleModeQuickSwitchBtn');
             if (banner && bannerTxt && switchBtn) {
                 if (isTech) {
-                    banner.className = 'mt-2.5 rounded-lg px-3 py-1.5 text-[11px] font-bold flex flex-wrap items-center justify-between gap-2 bg-emerald-500/25 border border-emerald-300/70 text-emerald-50';
-                    bannerTxt.innerHTML = '<i class="fa-solid fa-wrench text-emerald-300 mr-1"></i> สถานะหน้าจอปัจจุบัน: <b>โหมดช่างดำเนินงาน (TECH)</b> — ซ่อนราคาทุนและล็อกข้อมูลลับอัตโนมัติ';
-                    switchBtn.textContent = 'ปลดล็อกโหมดผู้จัดการ (PIN)';
+                    banner.className = 'mt-2 rounded-lg px-2.5 py-1.5 text-[11px] font-bold flex flex-wrap items-center justify-between gap-1.5 bg-emerald-500/25 border border-emerald-300/70 text-emerald-50';
+                    bannerTxt.innerHTML = '<i class="fa-solid fa-wrench text-emerald-300 mr-1"></i> โหมดปัจจุบัน: <b>ช่างดำเนินงาน (TECH)</b> — ซ่อนราคาทุนและล็อกข้อมูลลับ';
+                    switchBtn.textContent = 'ปลดล็อกผู้จัดการ (PIN)';
                 } else {
-                    banner.className = 'mt-2.5 rounded-lg px-3 py-1.5 text-[11px] font-bold flex flex-wrap items-center justify-between gap-2 bg-amber-400/25 border border-amber-300/80 text-amber-50';
-                    bannerTxt.innerHTML = '<i class="fa-solid fa-user-shield text-amber-300 mr-1"></i> สถานะหน้าจอปัจจุบัน: <b>โหมดผู้จัดการ / ผู้จ่ายงาน (MANAGER)</b> — แสดงราคาทุน วิเคราะห์ GP% และเมนูบริหารครบทุกส่วน';
+                    banner.className = 'mt-2 rounded-lg px-2.5 py-1.5 text-[11px] font-bold flex flex-wrap items-center justify-between gap-1.5 bg-amber-400/25 border border-amber-300/80 text-amber-50';
+                    bannerTxt.innerHTML = '<i class="fa-solid fa-user-shield text-amber-300 mr-1"></i> โหมดปัจจุบัน: <b>ผู้จัดการ / จ่ายงาน (MANAGER)</b> — แสดงราคาทุน &amp; GP%';
                     switchBtn.textContent = 'สลับกลับโหมดช่างดำเนินงาน';
                 }
             }
@@ -11336,20 +11344,37 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             pendingManagerPinSuccessCallback = null;
         }
 
+        function normalizePinDigits_(raw) {
+            const thaiMap = { '๐':'0','๑':'1','๒':'2','๓':'3','๔':'4','๕':'5','๖':'6','๗':'7','๘':'8','๙':'9' };
+            return String(raw || '').replace(/[๐-๙]/g, ch => thaiMap[ch] || ch).replace(/\s+/g, '').trim();
+        }
+
+        let isUnlockingManagerPinLock_ = false;
         function verifyManagerPinAndUnlock() {
+            if (isUnlockingManagerPinLock_) return;
             const inp = document.getElementById('managerPinVerifyInput');
-            const entered = (inp?.value || '').trim();
-            if (entered === String(getManagerPinCode()).trim()) {
-                const cb = pendingManagerPinSuccessCallback;
-                currentUserRoleMode = 'MANAGER';
-                localStorage.setItem('hoshizaki_user_role', 'MANAGER');
-                applyUserRoleModeUI();
-                closeManagerPinModal();
-                if (typeof loadExternalConfidentialMasterJson === 'function') loadExternalConfidentialMasterJson(true);
-                if (typeof updateSecurityWatermarkOverlay_ === 'function') updateSecurityWatermarkOverlay_();
-                showToast('ยืนยันรหัส PIN สำเร็จ: ปลดล็อกโหมดผู้จัดการ & ฐานข้อมูลลับแล้ว ✓');
-                if (typeof cb === 'function') {
-                    setTimeout(() => cb(), 30);
+            const entered = normalizePinDigits_(inp?.value || '');
+            const targetPin = normalizePinDigits_(getManagerPinCode());
+            if (entered.length > 0 && entered === targetPin) {
+                isUnlockingManagerPinLock_ = true;
+                try {
+                    const cb = pendingManagerPinSuccessCallback;
+                    if (inp) {
+                        inp.value = '';
+                        inp.blur();
+                    }
+                    currentUserRoleMode = 'MANAGER';
+                    localStorage.setItem('hoshizaki_user_role', 'MANAGER');
+                    closeManagerPinModal();
+                    applyUserRoleModeUI();
+                    if (typeof loadExternalConfidentialMasterJson === 'function') loadExternalConfidentialMasterJson(true);
+                    if (typeof updateSecurityWatermarkOverlay_ === 'function') updateSecurityWatermarkOverlay_();
+                    showToast('ยืนยันรหัส PIN สำเร็จ: ปลดล็อกโหมดผู้จัดการ & ฐานข้อมูลลับแล้ว ✓');
+                    if (typeof cb === 'function') {
+                        setTimeout(() => cb(), 30);
+                    }
+                } finally {
+                    setTimeout(() => { isUnlockingManagerPinLock_ = false; }, 250);
                 }
             } else {
                 showToast('รหัส PIN ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
@@ -11359,10 +11384,10 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         function autoVerifyManagerPinOnComplete() {
             const inp = document.getElementById('managerPinVerifyInput');
             if (!inp) return;
-            const entered = inp.value.trim();
-            const targetPin = String(getManagerPinCode()).trim();
-            if (entered.length > 0 && entered === targetPin) {
-                inp.blur();
+            const clean = normalizePinDigits_(inp.value);
+            if (inp.value !== clean) inp.value = clean;
+            const targetPin = normalizePinDigits_(getManagerPinCode());
+            if (clean.length > 0 && clean === targetPin) {
                 verifyManagerPinAndUnlock();
             }
         }
@@ -17617,7 +17642,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 <button type="button" onclick="closeManagerPinModal()" class="bg-red-600 hover:bg-red-700 active:scale-95 text-white rounded-lg w-8 h-8 inline-flex items-center justify-center text-xl font-extrabold shadow-sm transition flex-shrink-0" title="ปิดหน้าต่าง">&times;</button>
             </div>
             <p class="text-xs text-gray-600">กรุณากรอกรหัส PIN 4 หลักเพื่อเข้าสู่ <b>โหมดผู้จัดการ / ผู้จ่ายงาน</b> (รหัสเริ่มต้น: <b>1234</b>) — <i>ระบบจะปิดหน้าต่างให้อัตโนมัติทันทีเมื่อกรอกครบ</i></p>
-            <input type="password" id="managerPinVerifyInput" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="••••" oninput="autoVerifyManagerPinOnComplete()" onkeyup="autoVerifyManagerPinOnComplete()" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyManagerPinAndUnlock();}" class="w-full text-center text-2xl tracking-[0.5em] font-extrabold border-2 border-hoshizaki-blue rounded-xl py-2.5 focus:outline-none">
+            <input type="tel" id="managerPinVerifyInput" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="••••" style="-webkit-text-security:disc;" oninput="autoVerifyManagerPinOnComplete()" onkeyup="autoVerifyManagerPinOnComplete()" oncompositionend="autoVerifyManagerPinOnComplete()" onchange="autoVerifyManagerPinOnComplete()" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyManagerPinAndUnlock();}" class="w-full text-center text-2xl tracking-[0.5em] font-extrabold border-2 border-hoshizaki-blue rounded-xl py-2.5 focus:outline-none">
             <div class="flex items-center justify-between pt-1">
                 <button type="button" onclick="toggleChangeManagerPinBox()" class="text-[11px] text-hoshizaki-darkblue underline">เปลี่ยนรหัส PIN</button>
                 <div class="flex gap-2">
@@ -30245,18 +30270,10 @@ Defect: ${defectText}`;
             setInterval(function() {
                 const modal = document.getElementById('managerPinModal');
                 if (!modal || modal.classList.contains('hidden')) return;
-                const inp = document.getElementById('managerPinVerifyInput');
-                if (!inp) return;
-                const entered = (inp.value || '').trim();
-                const targetPin = (typeof getManagerPinCode === 'function') ? String(getManagerPinCode()).trim() : '1234';
-                if (entered.length > 0 && entered === targetPin) {
-                    inp.blur();
-                    if (typeof verifyManagerPinAndUnlock === 'function') {
-                        verifyManagerPinAndUnlock();
-                    }
-                    modal.classList.add('hidden');
+                if (typeof autoVerifyManagerPinOnComplete === 'function') {
+                    autoVerifyManagerPinOnComplete();
                 }
-            }, 100);
+            }, 60);
 
             if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
                 navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(function(reg) {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1011-perf';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1011-highsec';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',
@@ -7,8 +7,7 @@ const APP_SHELL_ASSETS = [
 const DATA_ASSETS = [
   './serial_db.json',
   './parts_catalog.json',
-  './quotation_archive.json',
-  './parts_cost_2025.json'
+  './quotation_archive.json'
 ];
 const OCR_CDN_ASSETS = [
   'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'

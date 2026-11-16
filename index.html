@@ -11312,7 +11312,9 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 localStorage.setItem('hoshizaki_user_role', 'MANAGER');
                 applyUserRoleModeUI();
                 closeManagerPinModal();
-                showToast('ยืนยันรหัส PIN สำเร็จ: เข้าสู่โหมดผู้จัดการ / ผู้จ่ายงานแล้ว ✓');
+                if (typeof loadExternalConfidentialMasterJson === 'function') loadExternalConfidentialMasterJson(true);
+                if (typeof updateSecurityWatermarkOverlay_ === 'function') updateSecurityWatermarkOverlay_();
+                showToast('ยืนยันรหัส PIN สำเร็จ: ปลดล็อกโหมดผู้จัดการ & ฐานข้อมูลลับแล้ว ✓');
             } else {
                 showToast('รหัส PIN ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
             }
@@ -11334,6 +11336,18 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 return;
             }
             localStorage.setItem('hoshizaki_manager_pin', newPin);
+            const wbUrl = typeof getGoogleSheetsWebAppUrl === 'function' ? getGoogleSheetsWebAppUrl() : '';
+            if (wbUrl) {
+                fetch(wbUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        actionType: 'UPDATE_MANAGER_PIN_CLOUD',
+                        apiSecretKey: localStorage.getItem('hoshizaki_api_secret_key_v17') || '',
+                        oldPin: oldPin,
+                        newPin: newPin
+                    })
+                }).catch(() => {});
+            }
             document.getElementById('oldManagerPinInput').value = '';
             document.getElementById('newManagerPinInput').value = '';
             document.getElementById('changeManagerPinBox')?.classList.add('hidden');
@@ -24787,28 +24801,39 @@ Defect: ${defectText}`;
         const CONF_EDITORS_STORAGE_KEY = 'hoshizaki_conf_authorized_editors_v196';
         const CONF_AUDIT_STORAGE_KEY = 'hoshizaki_conf_audit_log_v196';
 
-        async function loadExternalConfidentialMasterJson() {
+        async function loadExternalConfidentialMasterJson(forceWithPin) {
+            if (typeof currentUserRoleMode !== 'undefined' && currentUserRoleMode !== 'MANAGER' && !forceWithPin) {
+                DEFAULT_CONFIDENTIAL_PARTS_2025 = [];
+                return;
+            }
+            const url = typeof getGoogleSheetsWebAppUrl === 'function' ? getGoogleSheetsWebAppUrl() : '';
+            const pin = typeof getManagerPinCode === 'function' ? getManagerPinCode() : '';
+            if (!url || !pin) return;
             try {
-                if (typeof idbGet === 'function') {
-                    const cached = await idbGet('hoshizaki_parts_cost_2025_asset_v196');
-                    if (cached && Array.isArray(cached.parts) && cached.parts.length > 0) {
-                        DEFAULT_CONFIDENTIAL_PARTS_2025 = cached.parts;
-                        DEFAULT_OFFICIAL_DEALERS_2025 = cached.dealers || [];
-                        injectConfidentialPartsIntoDatalist();
-                    }
-                }
-                const res = await fetch('./parts_cost_2025.json');
+                const apiKey = localStorage.getItem('hoshizaki_api_secret_key_v17') || '';
+                const res = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        actionType: 'GET_CONFIDENTIAL_COST_SECURE',
+                        apiSecretKey: apiKey,
+                        managerPin: pin
+                    })
+                });
                 if (res.ok) {
                     const data = await res.json();
-                    if (Array.isArray(data.parts)) DEFAULT_CONFIDENTIAL_PARTS_2025 = data.parts;
-                    if (Array.isArray(data.dealers)) DEFAULT_OFFICIAL_DEALERS_2025 = data.dealers;
-                    if (typeof idbSet === 'function') await idbSet('hoshizaki_parts_cost_2025_asset_v196', data);
-                    injectConfidentialPartsIntoDatalist();
+                    if (data && data.status === 'ok' && Array.isArray(data.parts)) {
+                        DEFAULT_CONFIDENTIAL_PARTS_2025 = data.parts;
+                        saveConfidentialPartsList(data.parts, `โหลดฐานราคาทุนลับจาก Cloud Vault (${data.parts.length} รายการ)`);
+                        if (Array.isArray(data.approvals)) cachedCloudApprovalsList = data.approvals;
+                    }
                 }
             } catch (e) {}
         }
 
         function getConfidentialPartsList() {
+            if (typeof currentUserRoleMode !== 'undefined' && currentUserRoleMode === 'TECH') {
+                return [];
+            }
             try {
                 const saved = JSON.parse(localStorage.getItem(CONF_PARTS_STORAGE_KEY) || 'null');
                 if (Array.isArray(saved) && saved.length > 0) return saved;
@@ -25818,7 +25843,8 @@ Defect: ${defectText}`;
                 return;
             }
             try {
-                const res = await fetch(`${url}?action=getConfidentialCostAndApprovals`);
+                const pin = typeof getManagerPinCode === 'function' ? getManagerPinCode() : '';
+                const res = await fetch(`${url}?action=getConfidentialCostAndApprovals&pin=${encodeURIComponent(pin)}`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data && Array.isArray(data.parts) && data.parts.length > 0) {
@@ -29949,6 +29975,157 @@ Defect: ${defectText}`;
                 alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Google Apps Script: ' + err.message);
             }
         };
+    </script>
+
+    <style>
+        body.hzk-sec-shield table td,
+        body.hzk-sec-shield #serial360FullScreenBody,
+        body.hzk-sec-shield #confPartsTableBody,
+        body.hzk-sec-shield #quotationArchiveTableBody {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        body.hzk-sec-shield input,
+        body.hzk-sec-shield textarea,
+        body.hzk-sec-shield select,
+        body.hzk-sec-shield #embeddedAppsScriptPre {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+    </style>
+    <div id="hzkDynamicSecurityWatermark" class="pointer-events-none fixed inset-0 z-[98] overflow-hidden opacity-[0.045] select-none hidden no-print" aria-hidden="true"></div>
+    <script>
+        (function initHoshizakiHighSecuritySuite() {
+            document.body.classList.add('hzk-sec-shield');
+
+            window.updateSecurityWatermarkOverlay_ = function() {
+                const wm = document.getElementById('hzkDynamicSecurityWatermark');
+                if (!wm) return;
+                const user = document.getElementById('techQuickProfileName')?.textContent?.trim() || 'HOSHIZAKI-STAFF';
+                const role = (typeof currentUserRoleMode !== 'undefined') ? currentUserRoleMode : 'TECH';
+                const stamp = new Date().toLocaleDateString('th-TH');
+                const label = `HOSHIZAKI CONFIDENTIAL • ${user} (${role}) • ${stamp}`;
+                let tiles = '';
+                for (let i = 0; i < 24; i++) {
+                    tiles += `<div style="transform:rotate(-24deg);white-space:nowrap;font-weight:800;font-size:13px;color:#002B49;padding:28px 18px;">${label}</div>`;
+                }
+                wm.innerHTML = `<div style="display:grid;grid-template-columns:repeat(3,1fr);width:120%;margin-left:-10%;">${tiles}</div>`;
+                wm.classList.remove('hidden');
+            };
+            setTimeout(window.updateSecurityWatermarkOverlay_, 800);
+
+            document.addEventListener('contextmenu', function(e) {
+                const role = (typeof currentUserRoleMode !== 'undefined') ? currentUserRoleMode : 'TECH';
+                if (role === 'MANAGER') return;
+                const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+                if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+                e.preventDefault();
+                if (typeof showToast === 'function') showToast('🔒 ระบบป้องกันการคัดลอกข้อมูล (High Security Mode)');
+            });
+
+            document.addEventListener('keydown', function(e) {
+                const role = (typeof currentUserRoleMode !== 'undefined') ? currentUserRoleMode : 'TECH';
+                if (role === 'MANAGER') return;
+                const k = (e.key || '').toUpperCase();
+                if (
+                    e.key === 'F12' ||
+                    (e.ctrlKey && e.shiftKey && (k === 'I' || k === 'J' || k === 'C')) ||
+                    (e.ctrlKey && (k === 'U' || k === 'S')) ||
+                    (e.metaKey && e.altKey && (k === 'I' || k === 'J')) ||
+                    (e.metaKey && (k === 'U' || k === 'S'))
+                ) {
+                    e.preventDefault();
+                    if (typeof showToast === 'function') showToast('🔒 ปิดการเข้าถึงซอร์สโค้ดและบันทึกหน้าเว็บในโหมดช่าง');
+                }
+            });
+
+            document.addEventListener('copy', function(e) {
+                const role = (typeof currentUserRoleMode !== 'undefined') ? currentUserRoleMode : 'TECH';
+                if (role === 'MANAGER') return;
+                const active = document.activeElement;
+                const tag = active ? active.tagName.toUpperCase() : '';
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || active?.id === 'embeddedAppsScriptPre') return;
+                const sel = window.getSelection()?.toString() || '';
+                if (sel.length > 120) {
+                    e.preventDefault();
+                    if (typeof showToast === 'function') showToast('🔒 ไม่อนุญาตให้คัดลอกข้อมูลตารางจำนวนมาก');
+                }
+            });
+
+            window.computeClientDocIntegrityHash_ = async function(jobData) {
+                const raw = [
+                    String(jobData.jobNo || '').trim().toUpperCase(),
+                    String(jobData.date || '').trim(),
+                    String(jobData.serial || '').trim().toUpperCase(),
+                    String(jobData.grandTotal || '0.00').trim(),
+                    JSON.stringify(jobData.parts || [])
+                ].join('|');
+                try {
+                    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+                    const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+                    return 'HZK-' + hex.slice(0, 16);
+                } catch (e) {
+                    return 'HZK-' + btoa(unescape(encodeURIComponent(raw))).replace(/[^A-Z0-9]/gi, '').slice(0, 16).toUpperCase();
+                }
+            };
+
+            const origSaveToHistory = window.saveToHistory;
+            if (typeof origSaveToHistory === 'function') {
+                window.saveToHistory = async function() {
+                    const draft = typeof collectFullJobData === 'function' ? collectFullJobData() : null;
+                    if (draft) {
+                        const history = typeof getJobHistorySync === 'function' ? getJobHistorySync() : [];
+                        const existing = history.find(h => h.jobNo === draft.jobNo);
+                        const role = (typeof currentUserRoleMode !== 'undefined') ? currentUserRoleMode : 'TECH';
+
+                        if (existing && existing.jobStatus === 'Completed' && role !== 'MANAGER') {
+                            const oldHash = existing.integrityHash || '';
+                            const newHash = await window.computeClientDocIntegrityHash_(draft);
+                            if (oldHash && oldHash !== newHash) {
+                                alert('🔒 ใบงานเลขที่ ' + draft.jobNo + ' ถูกปิดงาน (Completed) และลงรหัสยืนยันความถูกต้องแล้ว (' + oldHash + ')\n\nไม่อนุญาตให้แก้ไขรายการอะไหล่หรือยอดเงินย้อนหลัง กรุณาให้ผู้จัดการปลดล็อก Manager PIN ก่อนแก้ไขครับ');
+                                return;
+                            }
+                        }
+
+                        const cleanSn = String(draft.serial || '').trim().toUpperCase();
+                        const cleanDate = String(draft.date || '').trim();
+                        const cleanSym = String(draft.diagSymptom || '').trim().toLowerCase();
+                        if (!existing && cleanSn && cleanSn !== '-' && cleanDate) {
+                            const dup = history.find(h =>
+                                h.jobNo !== draft.jobNo &&
+                                String(h.serial || '').trim().toUpperCase() === cleanSn &&
+                                String(h.date || '').trim() === cleanDate &&
+                                String(h.diagSymptom || '').trim().toLowerCase() === cleanSym
+                            );
+                            if (dup) {
+                                const proceed = confirm(
+                                    '⚠️ ตรวจพบใบงานที่อาจซ้ำซ้อนในระบบ!\n\n' +
+                                    '• ใบงานเดิม: ' + dup.jobNo + ' (วันที่ ' + dup.date + ')\n' +
+                                    '• เครื่อง S/N: ' + cleanSn + '\n' +
+                                    '• อาการ: ' + (draft.diagSymptom || '-') + '\n\n' +
+                                    'กด "ตกลง (OK)" เฉพาะกรณีเป็นการเข้าบริการคนละครั้งในวันเดียวกัน หรือกด "ยกเลิก" เพื่อตรวจสอบใบงานเดิม'
+                                );
+                                if (!proceed) return;
+                            }
+                        }
+
+                        const hash = await window.computeClientDocIntegrityHash_(draft);
+                        localStorage.setItem('hzk_last_job_integrity_hash', hash);
+                    }
+                    return origSaveToHistory.apply(this, arguments);
+                };
+            }
+
+            const origCollect = window.collectFullJobData;
+            if (typeof origCollect === 'function') {
+                window.collectFullJobData = function() {
+                    const obj = origCollect.apply(this, arguments);
+                    const cachedHash = localStorage.getItem('hzk_last_job_integrity_hash') || '';
+                    if (cachedHash) obj.integrityHash = cachedHash;
+                    return obj;
+                };
+            }
+        })();
     </script>
 </body>
 </html>

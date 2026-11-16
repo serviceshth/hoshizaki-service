@@ -5887,12 +5887,23 @@ Website : www.hoshizaki-sea.com</p>
         async function loadSerialDbJson() {
             if (_serialDbLoaded && BUILTIN_SERIAL_ROWS.length > 0) return;
             try {
+                if (typeof idbGet === 'function') {
+                    const cached = await idbGet('hoshizaki_serial_db_v1');
+                    if (Array.isArray(cached) && cached.length > 0) {
+                        BUILTIN_SERIAL_ROWS = cached;
+                        _serialDbLoaded = true;
+                        if (typeof _cachedSerialRecordsMap !== 'undefined') _cachedSerialRecordsMap = null;
+                        if (typeof updateSerialDbCountBadge === 'function') updateSerialDbCountBadge();
+                        return;
+                    }
+                }
                 const res = await fetch('serial_db.json');
                 if (res.ok) {
                     const arr = await res.json();
                     if (Array.isArray(arr)) {
                         BUILTIN_SERIAL_ROWS = arr;
                         _serialDbLoaded = true;
+                        if (typeof idbSet === 'function') await idbSet('hoshizaki_serial_db_v1', arr);
                         if (typeof _cachedSerialRecordsMap !== 'undefined') _cachedSerialRecordsMap = null;
                         if (typeof updateSerialDbCountBadge === 'function') updateSerialDbCountBadge();
                     }
@@ -6394,6 +6405,17 @@ Website : www.hoshizaki-sea.com</p>
 
             if (typeof XLSX === 'undefined') {
                 showToast('ไม่พบไลบรารีสำหรับอ่านไฟล์ Excel');
+                return;
+            }
+
+            const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8 MB Limit for Apps Script POST Payload
+            if (file.size > MAX_UPLOAD_BYTES) {
+                showToast(`ไฟล์ "${file.name}" มีขนาด ${(file.size / (1024 * 1024)).toFixed(1)} MB เกินขีดจำกัด 8 MB กรุณาย่อไฟล์ก่อนอัปโหลด`);
+                if (statusEl) {
+                    statusEl.classList.remove('hidden');
+                    statusEl.innerText = `❌ ไฟล์ใหญ่เกิน 8 MB (${(file.size / (1024 * 1024)).toFixed(1)} MB) กรุณาบีบอัดไฟล์ PDF/รูปภาพก่อนอัปโหลด`;
+                }
+                event.target.value = '';
                 return;
             }
 
@@ -9116,12 +9138,21 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         async function loadPartsCatalogJson() {
             if (_partsCatalogLoaded && Object.keys(HOSHIZAKI_PARTS_CATALOG_2026).length > 0) return;
             try {
+                if (typeof idbGet === 'function') {
+                    const cached = await idbGet('hoshizaki_parts_catalog_v1');
+                    if (cached && typeof cached === 'object' && Object.keys(cached).length > 0) {
+                        HOSHIZAKI_PARTS_CATALOG_2026 = cached;
+                        _partsCatalogLoaded = true;
+                        return;
+                    }
+                }
                 const res = await fetch('parts_catalog.json');
                 if (res.ok) {
                     const obj = await res.json();
                     if (obj && typeof obj === 'object') {
                         HOSHIZAKI_PARTS_CATALOG_2026 = obj;
                         _partsCatalogLoaded = true;
+                        if (typeof idbSet === 'function') await idbSet('hoshizaki_parts_catalog_v1', obj);
                     }
                 }
             } catch (e) { console.warn('parts_catalog.json fetch:', e); }
@@ -10540,6 +10571,33 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 } catch (e) {}
             }
             showToast('บันทึกการตั้งค่า LINE แจ้งเตือนเรียบร้อยแล้ว ✓');
+        }
+
+        async function testLineGroupNotification() {
+            const url = getGoogleSheetsWebAppUrl();
+            if (!url) {
+                showToast('กรุณาตั้งค่า Google Apps Script Web App URL ก่อนทดสอบครับ');
+                return;
+            }
+            const cfg = typeof getGlobalEnterpriseConfig === 'function' ? getGlobalEnterpriseConfig() : {};
+            const groupId = (document.getElementById('lineTeamGroupIdInput')?.value || '').trim();
+            showToast('กำลังส่งข้อความทดสอบเข้า LINE กลุ่มช่าง...');
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SEND_LINE_PUSH',
+                        apiSecretKey: cfg.apiSecretKey || '',
+                        lineTargetId: groupId,
+                        message: '✅ [HOSHIZAKI SYSTEM TEST] เชื่อมต่อระบบ Web App กับ LINE Official Account สำเร็จพร้อมใช้งานแล้วครับ 🐧'
+                    })
+                });
+                showToast('ส่งคำสั่งทดสอบเข้า LINE เรียบร้อยแล้ว กรุณาตรวจสอบในกลุ่ม LINE ✓');
+            } catch (e) {
+                showToast('ไม่สามารถส่งข้อความทดสอบได้');
+            }
         }
 
         function removeTechnicianEntry(index) {
@@ -16632,8 +16690,9 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                     <div class="sm:col-span-4">
                         <input type="text" id="lineTeamGroupIdInput" placeholder="LINE Group ID กลุ่มทีมช่าง (ขึ้นต้นด้วย C...)" class="w-full border border-emerald-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
                     </div>
-                    <div class="sm:col-span-2">
-                        <button type="button" onclick="saveLineNotificationConfig()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 px-3 rounded-lg font-bold shadow-xs">บันทึก LINE</button>
+                    <div class="sm:col-span-2 flex gap-1">
+                        <button type="button" onclick="saveLineNotificationConfig()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 px-2 rounded-lg font-bold shadow-xs">บันทึก</button>
+                        <button type="button" onclick="testLineGroupNotification()" title="ทดสอบส่งข้อความเข้า LINE กลุ่มช่าง" class="bg-sky-600 hover:bg-sky-700 text-white py-1.5 px-2 rounded-lg font-bold shadow-xs"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
@@ -20088,6 +20147,9 @@ function openFullScreenSpecViewerModal(presetModel) {
                     <button type="button" id="entTabBtnPayments" onclick="switchEnterpriseOpsTab('PAYMENTS')" class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition">
                         <i class="fa-solid fa-money-check-dollar mr-1"></i> ติดตามวางบิล & รับชำระเงิน (Payment Aging)
                     </button>
+                    <button type="button" id="entTabBtnLineTickets" onclick="switchEnterpriseOpsTab('LINE_TICKETS')" class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition">
+                        <i class="fa-brands fa-line text-[#06C755] mr-1"></i> คิวคำถามลูกค้าจาก LINE Bot (<span id="lineOpenTicketsBadge">0</span>)
+                    </button>
                 </div>
                 <button type="button" onclick="document.getElementById('enterpriseOperationsModal')?.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold px-1">&times;</button>
             </div>
@@ -20143,6 +20205,26 @@ function openFullScreenSpecViewerModal(presetModel) {
                     </thead>
                     <tbody id="paymentAgingTableBody" class="divide-y divide-gray-200"></tbody>
                 </table>
+            </div>
+
+            <!-- Tab 3: LINE Customer Support Tickets (Two-Way Reply & Job Conversion) -->
+            <div id="entPanelLineTickets" class="hidden overflow-auto flex-1 space-y-2.5 text-xs">
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2">
+                    <div class="text-[11px] text-emerald-950">
+                        <b>ศูนย์ตอบกลับคำถามลูกค้าจาก LINE Chatbot:</b> เมื่อลูกค้าถามข้อมูลที่ไม่มีในคลัง PDF อัตโนมัติ ระบบจะสร้าง Ticket เข้าคิวนี้เพื่อให้ช่าง/หัวหน้างานตอบกลับไปยัง LINE ลูกค้าโดยตรง หรือกดสร้างใบงานซ่อมได้ทันที
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="syncPartsCatalogToLineCloud()" class="bg-sky-700 hover:bg-sky-800 text-white px-2.5 py-1.5 rounded-lg font-bold text-[11px] shadow-xs">
+                            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> ซิงค์ราคาอะไหล่ให้ LINE Bot
+                        </button>
+                        <button type="button" onclick="loadLineSupportTickets(true)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[11px] shadow-xs">
+                            <i class="fa-solid fa-rotate mr-1"></i> รีเฟรชคิวคำถาม
+                        </button>
+                    </div>
+                </div>
+                <div id="lineTicketsListContainer" class="space-y-2">
+                    <div class="p-6 text-center text-gray-400">กดปุ่ม "รีเฟรชคิวคำถาม" เพื่อดึงรายการคำถามจาก LINE Official Account</div>
+                </div>
             </div>
 
             <div class="flex justify-end pt-2 border-t flex-shrink-0 text-xs">
@@ -20460,15 +20542,169 @@ function openFullScreenSpecViewerModal(presetModel) {
 
         function switchEnterpriseOpsTab(tab) {
             const isDef = tab === 'DEFECTIVE';
+            const isPay = tab === 'PAYMENTS';
+            const isLine = tab === 'LINE_TICKETS';
             document.getElementById('entPanelDefective')?.classList.toggle('hidden', !isDef);
-            document.getElementById('entPanelPayments')?.classList.toggle('hidden', isDef);
+            document.getElementById('entPanelPayments')?.classList.toggle('hidden', !isPay);
+            document.getElementById('entPanelLineTickets')?.classList.toggle('hidden', !isLine);
+
             const btnDef = document.getElementById('entTabBtnDefective');
             const btnPay = document.getElementById('entTabBtnPayments');
+            const btnLine = document.getElementById('entTabBtnLineTickets');
             if (btnDef) btnDef.className = isDef ? 'px-3 py-1.5 rounded-lg bg-rose-600 text-white transition' : 'px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition';
-            if (btnPay) btnPay.className = !isDef ? 'px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition' : 'px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition';
+            if (btnPay) btnPay.className = isPay ? 'px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition' : 'px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition';
+            if (btnLine) btnLine.className = isLine ? 'px-3 py-1.5 rounded-lg bg-[#06C755] text-white transition' : 'px-3 py-1.5 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition';
 
             if (isDef) renderDefectiveReturnTable();
-            else renderPaymentAgingTable();
+            else if (isPay) renderPaymentAgingTable();
+            else if (isLine) loadLineSupportTickets(false);
+        }
+
+        let cachedLineTicketsList = [];
+
+        async function loadLineSupportTickets(showNotify = false) {
+            const container = document.getElementById('lineTicketsListContainer');
+            const url = typeof getGoogleSheetsWebAppUrl === 'function' ? getGoogleSheetsWebAppUrl() : '';
+            if (!url) {
+                if (container) container.innerHTML = '<div class="p-6 text-center text-amber-700 bg-amber-50 rounded-xl">กรุณาตั้งค่า Google Apps Script Web App URL ก่อนใช้งานฟีเจอร์นี้</div>';
+                return;
+            }
+            if (container) container.innerHTML = '<div class="p-6 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-1"></i> กำลังดึงข้อมูลคิวคำถามจาก LINE Bot...</div>';
+            try {
+                const sep = url.includes('?') ? '&' : '?';
+                const res = await fetch(`${url}${sep}action=getLineTickets&_t=${Date.now()}`);
+                const data = await res.json();
+                cachedLineTicketsList = Array.isArray(data.tickets) ? data.tickets : [];
+                const openCount = cachedLineTicketsList.filter(t => String(t.status).toUpperCase() === 'OPEN').length;
+                const badge = document.getElementById('lineOpenTicketsBadge');
+                if (badge) badge.innerText = openCount;
+                renderLineSupportTicketsList();
+                if (showNotify) showToast(`อัปเดตคิวคำถาม LINE (${cachedLineTicketsList.length} รายการ, รอตอบ ${openCount}) ✓`);
+            } catch (err) {
+                if (container) container.innerHTML = '<div class="p-6 text-center text-rose-600">ไม่สามารถดึงข้อมูล Ticket จาก Cloud ได้ในขณะนี้</div>';
+            }
+        }
+
+        function renderLineSupportTicketsList() {
+            const container = document.getElementById('lineTicketsListContainer');
+            if (!container) return;
+            if (!cachedLineTicketsList.length) {
+                container.innerHTML = '<div class="p-6 text-center text-gray-400">ยังไม่มีรายการคำถามลูกค้าจาก LINE Chatbot</div>';
+                return;
+            }
+            container.innerHTML = cachedLineTicketsList.map((t, idx) => {
+                const isOpen = String(t.status || '').toUpperCase() === 'OPEN';
+                const statusBadge = isOpen
+                    ? '<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-bold text-[10px]">⏳ รอช่างตอบ (OPEN)</span>'
+                    : '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">✅ ตอบกลับแล้ว</span>';
+                return `
+                    <div class="border ${isOpen ? 'border-rose-200 bg-rose-50/20' : 'border-gray-200 bg-white'} rounded-xl p-3 space-y-2">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono font-extrabold text-hoshizaki-navy">${escapeHtml(t.ticketId)}</span>
+                                <span class="font-bold text-gray-800">${escapeHtml(t.customerName || 'ลูกค้า LINE')}</span>
+                                <span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-bold text-[10px]">${escapeHtml(t.topic || 'GENERAL')}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-gray-500">${escapeHtml(t.createdAt || '')}</span>
+                                ${statusBadge}
+                            </div>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-lg p-2 text-gray-800 whitespace-pre-wrap">${escapeHtml(t.message || '')}</div>
+                        ${t.techReply ? `<div class="bg-emerald-50 border border-emerald-200 rounded-lg p-2 text-emerald-950"><b>คำตอบล่าสุด (${escapeHtml(t.repliedAt || '')}):</b> ${escapeHtml(t.techReply)}</div>` : ''}
+                        <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                            <input type="text" id="lineReplyInput_${idx}" placeholder="พิมพ์คำตอบหรือวางลิงก์ PDF เพื่อส่งกลับเข้าแชท LINE ลูกค้าทันที..." class="flex-1 border border-gray-300 rounded-lg px-2.5 py-1.5 text-xs bg-white">
+                            <div class="flex gap-1.5">
+                                <button type="button" onclick="sendLineTicketReplyFromWeb('${escapeHtml(t.ticketId)}', ${idx})" class="bg-[#06C755] hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-bold text-xs whitespace-nowrap">
+                                    <i class="fa-solid fa-paper-plane mr-1"></i> ส่งคำตอบเข้า LINE
+                                </button>
+                                <button type="button" onclick="createServiceJobFromLineTicket(${idx})" class="bg-hoshizaki-navy hover:bg-blue-900 text-white px-3 py-1.5 rounded-lg font-bold text-xs whitespace-nowrap">
+                                    <i class="fa-solid fa-file-circle-plus mr-1"></i> เปิดใบงานซ่อม
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function sendLineTicketReplyFromWeb(ticketId, idx) {
+            const inp = document.getElementById(`lineReplyInput_${idx}`);
+            const msg = (inp?.value || '').trim();
+            if (!msg) {
+                showToast('กรุณาพิมพ์ข้อความคำตอบก่อนกดส่งครับ');
+                return;
+            }
+            const url = typeof getGoogleSheetsWebAppUrl === 'function' ? getGoogleSheetsWebAppUrl() : '';
+            if (!url) return;
+            const cfg = typeof getGlobalEnterpriseConfig === 'function' ? getGlobalEnterpriseConfig() : {};
+            showToast(`กำลังส่งคำตอบไปยัง LINE ลูกค้า (${ticketId})...`);
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'REPLY_LINE_TICKET',
+                        apiSecretKey: cfg.apiSecretKey || '',
+                        ticketId: ticketId,
+                        replyMessage: msg
+                    })
+                });
+                if (inp) inp.value = '';
+                showToast(`ส่งคำตอบกลับ ${ticketId} เข้าแชท LINE ลูกค้าเรียบร้อยแล้ว ✓`);
+                setTimeout(() => loadLineSupportTickets(false), 1200);
+            } catch (err) {
+                showToast('เกิดข้อผิดพลาดในการส่งคำตอบ');
+            }
+        }
+
+        function createServiceJobFromLineTicket(idx) {
+            const t = cachedLineTicketsList[idx];
+            if (!t) return;
+            document.getElementById('enterpriseOperationsModal')?.classList.add('hidden');
+            const storeEl = document.getElementById('storeName');
+            const modelEl = document.getElementById('machineModel');
+            const symEl = document.getElementById('diagSymptom');
+            if (storeEl && !storeEl.value) storeEl.value = t.customerName || '';
+            if (modelEl && t.topic && /^(IM|KM|FM|HR|HF|RT|DCM|AM|HNC|DBF|HSU)-/i.test(t.topic)) {
+                modelEl.value = t.topic.split(',')[0].trim();
+            }
+            if (symEl) {
+                symEl.value = `[LINE ${t.ticketId}] ${t.message || ''}`;
+            }
+            showToast(`นำเข้าข้อมูลจาก ${t.ticketId} ลงฟอร์มใบงานซ่อมแล้ว ✓`);
+        }
+
+        async function syncPartsCatalogToLineCloud() {
+            const url = typeof getGoogleSheetsWebAppUrl === 'function' ? getGoogleSheetsWebAppUrl() : '';
+            if (!url) {
+                showToast('กรุณาตั้งค่า Google Apps Script Web App URL ก่อนครับ');
+                return;
+            }
+            const cfg = typeof getGlobalEnterpriseConfig === 'function' ? getGlobalEnterpriseConfig() : {};
+            const catalogObj = (typeof partsCatalogData !== 'undefined' && partsCatalogData) ? partsCatalogData : {};
+            const partsArr = Object.values(catalogObj);
+            if (!partsArr.length) {
+                showToast('ไม่พบรายการอะไหล่ในแค็ตตาล็อก');
+                return;
+            }
+            showToast(`กำลังซิงค์ฐานข้อมูลราคาอะไหล่ ${partsArr.length} รายการให้ LINE Bot...`);
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SYNC_PARTS_CATALOG',
+                        apiSecretKey: cfg.apiSecretKey || '',
+                        parts: partsArr
+                    })
+                });
+                showToast(`ซิงค์ราคาอะไหล่ ${partsArr.length} รายการขึ้น Cloud สำหรับ LINE Bot เรียบร้อย ✓`);
+            } catch (e) {
+                showToast('ไม่สามารถซิงค์ฐานข้อมูลอะไหล่ได้ในขณะนี้');
+            }
         }
 
         function renderDefectiveReturnTable() {
@@ -21161,12 +21397,19 @@ function openFullScreenSpecViewerModal(presetModel) {
             if (!c) return '';
             try {
                 const tmp = document.createElement('canvas');
-                tmp.width = 240;
-                tmp.height = 90;
+                tmp.width = 280;
+                tmp.height = 105;
                 const ctx = tmp.getContext('2d');
-                ctx.drawImage(c, 0, 0, tmp.width, tmp.height);
-                const url = tmp.toDataURL('image/png');
-                return url.length > 2000 ? url : '';
+                ctx.drawImage(c, 0, 0, 280, 90);
+                const rawCheck = tmp.toDataURL('image/png');
+                if (rawCheck.length <= 2000) return '';
+
+                const nowStr = new Date().toLocaleString('th-TH', { hour12: false });
+                const gpsEl = document.getElementById('gpsCoords')?.value || '';
+                ctx.fillStyle = '#475569';
+                ctx.font = '9px sans-serif';
+                ctx.fillText(`Signed: ${nowStr}${gpsEl ? ' | GPS: ' + gpsEl : ''}`, 6, 101);
+                return tmp.toDataURL('image/png');
             } catch (e) { return ''; }
         }
 

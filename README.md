@@ -1,13 +1,20 @@
-# HOSHIZAKI (THAILAND) — Job Service Management System (Enterprise v191.0)
+# HOSHIZAKI (THAILAND) LIMITED — Job Service Management System & Smart LINE Chatbot (Enterprise v191.3)
 
-ระบบบริหารจัดการงานบริการภาคสนาม (Service Report PWA) เชื่อมต่อ **Google Apps Script**, **Google Drive**, **Google Sheets** และ **LINE Official Account**
+## 1. รายการไฟล์ในชุดติดตั้ง (Deployment Package)
+1. `index.html` — เว็บแอปพลิเคชันหลัก (Offline-First PWA + LINE Support Ticket Center + Full-Screen Technical Viewer)
+2. `sw.js` — Service Worker สำหรับทำงานแบบ Offline 100%
+3. `manifest.json` — PWA Manifest สำหรับติดตั้งลงหน้าจอโฮม iOS / Android / Desktop
+4. `serial_db.json` — ฐานข้อมูลหมายเลขเครื่อง (Serial Number Master Database)
+5. `parts_catalog.json` — แค็ตตาล็อกอะไหล่และราคามาตรฐาน (2,120 รายการ)
+6. `quotation_archive.json` — คลังประวัติใบเสนอราคาเริ่มต้น
+7. `Hoshizaki_Google_AppsScript_Enterprise_v191_3.js` — โค้ด Backend สำหรับ Google Apps Script (Cloud Sync, PDF Backup, Smart LINE Chatbot & Two-Way Technician Escalation)
 
-## รายการไฟล์สำหรับอัปโหลดขึ้น GitHub (Root Repository)
-1. `index.html` — หน้าเว็บแอปพลิเคชันหลัก (**Enterprise v191.0**) รองรับ Auto-Save ข้อมูลใหม่เข้าฐานข้อมูลถาวร (Serial No., Model, อะไหล่, ลูกค้า), อัปโหลดไฟล์ PDF (Parts List, Service Manual, Instruction Manual, Spec Sheet, Drawing) และรูปภาพอะไหล่ตรงเข้า Google Drive, ระบบ Auto Check-In/Check-Out ด้วยพิกัด GPS หน้างาน (แก้ไขเวลาได้), โหมดระบุเฉพาะรุ่นเครื่องเมื่อเนมเพลทจาง และหัวกระดาษที่อยู่บริษัทตามรูปแบบมาตรฐานล่าสุด
-2. `sw.js` — Service Worker สำหรับแคชไฟล์และฐานข้อมูลออฟไลน์ (`hoshizaki-service-pwa-v191-0`)
-3. `manifest.json` — ไฟล์ตั้งค่าการติดตั้งแอปลงหน้าจอมือถือ (Add to Home Screen)
-4. `serial_db.json` — ฐานข้อมูล Serial Number และสถานะการรับประกัน (6,749 รายการ)
-5. `parts_catalog.json` — ฐานข้อมูลอะไหล่มาตรฐาน Hoshizaki (2,127 รายการ)
-6. `quotation_archive.json` — ฐานข้อมูลใบเสนอราคาเก่าสำหรับค้นหาและออกบิลซ้ำ (2,486 ฉบับ)
-7. `Hoshizaki_Google_AppsScript_Enterprise_v191_0.js` — โค้ด Backend ล่าสุด รองรับการอัปโหลดไฟล์ PDF/รูปภาพอะไหล่เข้าโฟลเดอร์ Google Drive พร้อมลงดัชนีค้นหาใน LINE Bot ทันที
-8. `README.md` — เอกสารสรุปโครงสร้างไฟล์และวิธีตั้งค่า
+## 2. ขั้นตอนการอัปเดตระบบ (Deployment Guide)
+### ฝั่ง Web App (GitHub Pages / Web Hosting)
+- คัดลอกไฟล์ทั้งหมดในโฟลเดอร์นี้ (`index.html`, `sw.js`, `manifest.json`, `serial_db.json`, `parts_catalog.json`, `quotation_archive.json`) ไปวางทับไฟล์เดิมใน Repository ของคุณ
+
+### ฝั่ง Google Apps Script Backend
+1. เปิดโปรเจกต์ Google Apps Script ที่ผูกกับ Google Sheets ของระบบ
+2. คัดลอกโค้ดทั้งหมดจากไฟล์ `Hoshizaki_Google_AppsScript_Enterprise_v191_3.js` ไปวางทับโค้ดเดิมแล้วกด **Save**
+3. กด **Deploy > Manage deployments > แก้ไข (รูปดินสอ) > เลือก Version: New version > กด Deploy**
+4. เปิดเว็บแอป > เข้าเมนู **ศูนย์ควบคุมงาน (Operations Control) > คิวคำถามลูกค้าจาก LINE Bot** แล้วกดปุ่ม **"ซิงค์ราคาอะไหล่ให้ LINE Bot"** 1 ครั้ง เพื่อให้ LINE Bot ตอบราคาอะไหล่ได้ทันที

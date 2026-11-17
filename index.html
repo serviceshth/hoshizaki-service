@@ -38165,5 +38165,84 @@ try {
 })();
 </script>
 
+
+
+<!-- ============================================================================
+     PROACTIVE PM 30-DAY RENEWAL & PARTS BACKORDER ARRIVAL SMS/LINE ENGINE (v1021-PROACTIVE+)
+     ============================================================================ -->
+<script id="v1021-proactive-sms-reminders">
+(function() {
+    window.sendProactivePmOrBackorderMobileAlert = function(opts) {
+        const o = opts || {};
+        const mode = o.mode || 'PM_30D'; // 'PM_30D' or 'PARTS_READY'
+        const refNo = String(o.refNo || document.getElementById('jobNo')?.value || 'JOB-LIVE').trim();
+        const customer = String(o.customer || document.getElementById('storeName')?.value || 'ลูกค้า HOSHIZAKI').trim();
+        const model = String(o.model || document.getElementById('machineModel')?.value || '').trim();
+        const serial = String(o.serial || document.getElementById('serialNumber')?.value || '').trim();
+        const dueDate = String(o.dueDate || '').trim();
+        const partSummary = String(o.partSummary || '').trim();
+        const contactRaw = String(o.phone || document.getElementById('contactPerson')?.value || '').trim();
+        const defaultPhone = (contactRaw.match(/0\d{8,9}/) || [''])[0];
+
+        const promptLabel = mode === 'PARTS_READY'
+            ? `ระบุเบอร์มือถือลูกค้า (9-10 หลัก) เพื่อแจ้งอะไหล่พร้อมเข้าติดตั้ง (${customer}):`
+            : `ระบุเบอร์มือถือลูกค้า (9-10 หลัก) เพื่อแจ้งเตือนรอบบำรุงรักษา PM (${customer}):`;
+
+        const phoneInput = prompt(promptLabel, defaultPhone);
+        if (!phoneInput) return;
+        const digits = phoneInput.replace(/\D/g, '');
+        if (digits.length < 9) {
+            if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุเบอร์โทรศัพท์มือถือให้ครบ 9-10 หลัก');
+            return;
+        }
+
+        const baseUrl = window.location.origin + window.location.pathname;
+        const portalUrl = baseUrl + '?portal=customer&jobNo=' + encodeURIComponent(refNo) +
+            '&customer=' + encodeURIComponent(customer) +
+            '&model=' + encodeURIComponent(model) +
+            '&serial=' + encodeURIComponent(serial) +
+            '&mode=' + encodeURIComponent(mode);
+
+        const smsText = mode === 'PARTS_READY'
+            ? `HOSHIZAKI แจ้งอะไหล่พร้อมติดตั้ง (${refNo}): เครื่อง ${model} S/N ${serial} (${partSummary || 'อะไหล่ครบตามรายการ'}) นัดหมายวันเข้าซ่อมได้ที่ ${portalUrl}`
+            : `HOSHIZAKI แจ้งเตือนรอบบำรุงรักษา PM (${refNo}): เครื่อง ${model} S/N ${serial}${dueDate ? ' ครบกำหนด ' + dueDate : ''} ดูรายละเอียด/ยืนยันนัดหมายได้ที่ ${portalUrl}`;
+
+        if (typeof window.dispatchSmsAndLog_ === 'function') {
+            window.dispatchSmsAndLog_(digits, refNo, customer, portalUrl, smsText);
+        } else {
+            const intlPhone = digits.startsWith('0') ? ('+66' + digits.slice(1)) : ('+' + digits);
+            window.location.href = `sms:${intlPhone}?body=${encodeURIComponent(smsText)}`;
+        }
+    };
+
+    // Inject quick SMS / LINE alert action triggers into PM 30-Day & Waiting Parts modals when opened
+    document.addEventListener('DOMContentLoaded', function() {
+        const pmModalHeader = document.querySelector('#pmAndAnalyticsModal .border-b');
+        if (pmModalHeader && !document.getElementById('btnPmProactiveSmsAlert')) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.id = 'btnPmProactiveSmsAlert';
+            btn.onclick = function() { window.sendProactivePmOrBackorderMobileAlert({ mode: 'PM_30D' }); };
+            btn.className = 'bg-amber-600 hover:bg-amber-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1 shadow-xs ml-2';
+            btn.innerHTML = '<i class="fa-solid fa-comment-sms"></i> <span>แจ้งเตือน PM ทาง SMS</span>';
+            const titleEl = pmModalHeader.querySelector('h2, h3, div');
+            if (titleEl) titleEl.appendChild(btn);
+        }
+
+        const bpModalHeader = document.querySelector('#waitingPartsBackorderModal .border-b');
+        if (bpModalHeader && !document.getElementById('btnBackorderReadySmsAlert')) {
+            const btn2 = document.createElement('button');
+            btn2.type = 'button';
+            btn2.id = 'btnBackorderReadySmsAlert';
+            btn2.onclick = function() { window.sendProactivePmOrBackorderMobileAlert({ mode: 'PARTS_READY' }); };
+            btn2.className = 'bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1 shadow-xs ml-2';
+            btn2.innerHTML = '<i class="fa-solid fa-comment-sms"></i> <span>แจ้งอะไหล่พร้อมทาง SMS</span>';
+            const titleEl2 = bpModalHeader.querySelector('h2, h3, div');
+            if (titleEl2) titleEl2.appendChild(btn2);
+        }
+    });
+})();
+</script>
+
 </body>
 </html>

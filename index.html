@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1027</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1028</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -4554,7 +4554,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1027</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1028</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20692,7 +20692,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1027) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1028) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -23594,7 +23594,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1027 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1028 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -31510,7 +31510,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1027)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1028)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31713,7 +31713,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1027)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1028)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31722,7 +31722,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1027)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1028)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -31731,7 +31731,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1027)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1028)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31813,21 +31813,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1027) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1028) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1027 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1028 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1027）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1028）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -34681,9 +34681,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1027',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1027)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1027)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1028',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1028)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1028)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34732,7 +34732,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1027 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1028 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -34958,7 +34958,7 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
         <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1027 — Multi-Branch &amp; White-Label Ready)</h3>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1028 — Multi-Branch &amp; White-Label Ready)</h3>
                 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
             </div>
             <div class="flex items-center gap-1.5">
@@ -39003,7 +39003,7 @@ try {
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1027 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1028 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -39530,7 +39530,7 @@ try {
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1027</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1028</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -40442,7 +40442,7 @@ ${portalUrl}`;
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1027</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1028</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -41110,6 +41110,367 @@ ${portalUrl}`;
       btn.className = 'tb-action-item col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-sm border border-indigo-300/30';
       btn.innerHTML = '<i class="fa-solid fa-sliders text-amber-300"></i> <span>ตั้งค่า Controller &amp; คู่มือติดตั้ง/ใช้งาน (เครื่องล้างจาน • IM/KM/FM • ตู้แช่)</span>';
       manualGrid.insertBefore(btn, manualGrid.firstChild);
+    }
+  });
+})();
+</script>
+
+
+<style id="hzk-v1028-autohide-pin-css">
+  .hzk-pinned-group-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 9.5px;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background: rgba(251, 191, 36, 0.25);
+    color: #fde68a;
+    border: 1px solid rgba(251, 191, 36, 0.5);
+  }
+  .hzk-pin-item-btn {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    background: rgba(15, 23, 42, 0.45);
+    color: #cbd5e1;
+    border: 1px solid rgba(255,255,255,0.2);
+    z-index: 5;
+    transition: all 0.15s ease;
+  }
+  .hzk-pin-item-btn:hover,
+  .hzk-pin-item-btn.is-pinned {
+    background: #f59e0b;
+    color: #0f172a;
+    border-color: #ffffff;
+    transform: scale(1.08);
+  }
+  .tb-action-item {
+    position: relative;
+  }
+  #hzkCompactPinnedDock {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(125, 211, 252, 0.35);
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.6rem;
+    margin-top: 0.5rem;
+  }
+</style>
+<script id="hzk-v1028-autohide-pin-engine">
+(function() {
+  const PREF_KEY = 'hzk_toolbar_autohide_pin_prefs_v1028';
+
+  function loadToolbarPrefs() {
+    try {
+      const raw = localStorage.getItem(PREF_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return {
+        autoHide: Boolean(parsed.autoHide),
+        collapsed: Boolean(parsed.collapsed),
+        pinnedGroup: parsed.pinnedGroup || 'ALL', // 'ALL' | 'SERVICE' | 'DOCS' | 'STOCK_PM' | 'MANUAL_TEAM' | 'FAVORITES'
+        pinnedButtons: Array.isArray(parsed.pinnedButtons) ? parsed.pinnedButtons : [],
+        activeCat: parsed.activeCat || 'ALL'
+      };
+    } catch (e) {
+      return { autoHide: false, collapsed: false, pinnedGroup: 'ALL', pinnedButtons: [], activeCat: 'ALL' };
+    }
+  }
+
+  function saveToolbarPrefs(prefs) {
+    try {
+      localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
+    } catch (e) {}
+  }
+
+  let tbPrefs = loadToolbarPrefs();
+
+  function getButtonKey(btn, idx) {
+    if (btn.id) return btn.id;
+    const label = (btn.innerText || '').trim().replace(/\s+/g, '_').slice(0, 40);
+    return 'tb_btn_' + idx + '_' + label;
+  }
+
+  function renderCompactPinnedDock() {
+    const dock = document.getElementById('hzkCompactPinnedDock');
+    const listWrap = document.getElementById('hzkCompactPinnedDockButtons');
+    const dockTitle = document.getElementById('hzkCompactPinnedDockTitle');
+    if (!dock || !listWrap) return;
+
+    const allBtns = Array.from(document.querySelectorAll('#toolbarSectionsGrid .tb-action-item'));
+    let matchedBtns = [];
+
+    if (tbPrefs.pinnedGroup === 'FAVORITES') {
+      matchedBtns = allBtns.filter((b, i) => tbPrefs.pinnedButtons.includes(getButtonKey(b, i)));
+      if (dockTitle) dockTitle.innerHTML = '<i class="fa-solid fa-thumbtack text-amber-300 mr-1"></i> เมนูปักหมุดส่วนตัว (Pinned Shortcuts)';
+    } else if (tbPrefs.pinnedGroup && tbPrefs.pinnedGroup !== 'ALL') {
+      matchedBtns = allBtns.filter(b => b.getAttribute('data-tb-cat') === tbPrefs.pinnedGroup);
+      const groupNames = {
+        SERVICE: 'หมวด 1: งานบริการ & ตารางช่าง',
+        DOCS: 'หมวด 2: เอกสารการเงิน & เคลม',
+        STOCK_PM: 'หมวด 3: สต็อกรถช่าง & PM',
+        MANUAL_TEAM: 'หมวด 4: คู่มือช่าง & ระบบ'
+      };
+      if (dockTitle) dockTitle.innerHTML = `<i class="fa-solid fa-thumbtack text-amber-300 mr-1"></i> ปักหมุดแสดงเฉพาะ: ${groupNames[tbPrefs.pinnedGroup] || tbPrefs.pinnedGroup}`;
+    } else {
+      // ALL: show favorite pinned buttons if any exist, otherwise top 6 core actions when collapsed
+      const favs = allBtns.filter((b, i) => tbPrefs.pinnedButtons.includes(getButtonKey(b, i)));
+      matchedBtns = favs.length > 0 ? favs : allBtns.slice(0, 6);
+      if (dockTitle) {
+        dockTitle.innerHTML = favs.length > 0
+          ? '<i class="fa-solid fa-thumbtack text-amber-300 mr-1"></i> แถบเมนูด่วนที่ปักหมุดไว้ (Pinned Bar)'
+          : '<i class="fa-solid fa-bolt text-amber-300 mr-1"></i> เมนูด่วนหลัก (กดปักหมุด 📌 บนปุ่มใดก็ได้เพื่อเลือกเอง)';
+      }
+    }
+
+    // Show dock whenever toolbar is collapsed OR user pinned specific group/favorites
+    const shouldShowDock = tbPrefs.collapsed || tbPrefs.pinnedGroup !== 'ALL' || tbPrefs.pinnedButtons.length > 0;
+    dock.classList.toggle('hidden', !shouldShowDock);
+
+    listWrap.innerHTML = '';
+    matchedBtns.forEach(srcBtn => {
+      const clone = document.createElement('button');
+      clone.type = 'button';
+      clone.className = 'px-2.5 py-1.5 rounded-lg bg-white/15 hover:bg-hoshizaki-blue text-white text-[11px] font-bold flex items-center gap-1.5 transition border border-white/20 shadow-xs';
+      const iconEl = srcBtn.querySelector('i');
+      const iconHtml = iconEl ? `<i class="${iconEl.className}"></i>` : '';
+      const textSpan = srcBtn.querySelector('span');
+      const labelTxt = textSpan ? textSpan.innerText.trim() : srcBtn.innerText.trim();
+      clone.innerHTML = `${iconHtml}<span class="truncate max-w-[180px]">${labelTxt}</span>`;
+      clone.onclick = function(e) {
+        e.stopPropagation();
+        srcBtn.click();
+        if (tbPrefs.autoHide) {
+          setToolbarCollapsedState(true, true);
+        }
+      };
+      listWrap.appendChild(clone);
+    });
+  }
+
+  window.setToolbarCollapsedState = function(collapsed, skipSave) {
+    tbPrefs.collapsed = Boolean(collapsed);
+    const tb = document.getElementById('toolbarActions');
+    const toggleBtn = document.getElementById('btnToggleToolbarCollapseV1028');
+    if (tb) {
+      if (tbPrefs.collapsed) {
+        tb.classList.add('hidden');
+        tb.classList.remove('sm:block', 'flex');
+      } else {
+        tb.classList.remove('hidden');
+        if (window.innerWidth >= 640) tb.classList.add('sm:block');
+        else tb.classList.add('flex');
+      }
+    }
+    if (toggleBtn) {
+      toggleBtn.innerHTML = tbPrefs.collapsed
+        ? '<i class="fa-solid fa-chevron-down text-amber-300"></i> <span>ขยายเมนูหลัก</span>'
+        : '<i class="fa-solid fa-chevron-up text-sky-300"></i> <span>ซ่อนเมนูหลัก</span>';
+    }
+    if (!skipSave) saveToolbarPrefs(tbPrefs);
+    renderCompactPinnedDock();
+  };
+
+  window.toggleAutoHideToolbarMode = function() {
+    tbPrefs.autoHide = !tbPrefs.autoHide;
+    saveToolbarPrefs(tbPrefs);
+    updateAutoHideToolbarBadge();
+    if (typeof showToast === 'function') {
+      showToast(
+        tbPrefs.autoHide
+          ? '✅ เปิดโหมด AUTO-HIDE เมนูหลักแล้ว (เมนูจะพับเก็บอัตโนมัติหลังกดเลือกคำสั่ง)'
+          : 'ℹ️ ปิดโหมด AUTO-HIDE เมนูหลักแล้ว',
+        'info'
+      );
+    }
+  };
+
+  window.setPinnedMenuGroupPreference = function(groupVal) {
+    tbPrefs.pinnedGroup = groupVal || 'ALL';
+    saveToolbarPrefs(tbPrefs);
+
+    // Also filter the main grid if a specific group is pinned
+    if (['ALL', 'SERVICE', 'DOCS', 'STOCK_PM', 'MANUAL_TEAM'].includes(tbPrefs.pinnedGroup)) {
+      if (typeof switchToolbarCategory === 'function') {
+        switchToolbarCategory(tbPrefs.pinnedGroup);
+      }
+    }
+    renderCompactPinnedDock();
+    updateGroupPinIcons();
+    if (typeof showToast === 'function') {
+      const labelMap = {
+        ALL: 'แสดงเมนูหลักทั้งหมด (4 หมวด)',
+        SERVICE: 'ปักหมุดแสดงเฉพาะ: 1. งานบริการ & ตารางช่าง',
+        DOCS: 'ปักหมุดแสดงเฉพาะ: 2. เอกสาร & เคลม',
+        STOCK_PM: 'ปักหมุดแสดงเฉพาะ: 3. สต็อก & PM',
+        MANUAL_TEAM: 'ปักหมุดแสดงเฉพาะ: 4. คู่มือ & ระบบ',
+        FAVORITES: 'ปักหมุดแสดงเฉพาะ: ปุ่มโปรดที่เลือกเอง (Pinned Shortcuts)'
+      };
+      showToast('📌 ' + (labelMap[tbPrefs.pinnedGroup] || tbPrefs.pinnedGroup), 'success');
+    }
+  };
+
+  window.toggleSingleButtonPin = function(btnKey, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const idx = tbPrefs.pinnedButtons.indexOf(btnKey);
+    if (idx > -1) {
+      tbPrefs.pinnedButtons.splice(idx, 1);
+    } else {
+      tbPrefs.pinnedButtons.push(btnKey);
+    }
+    saveToolbarPrefs(tbPrefs);
+    updateSingleButtonPinVisuals();
+    renderCompactPinnedDock();
+  };
+
+  function updateAutoHideToolbarBadge() {
+    const btn = document.getElementById('btnAutoHideToolbarToggleV1028');
+    if (!btn) return;
+    btn.className = tbPrefs.autoHide
+      ? 'hzk-compact-pill text-[10px] bg-amber-400 text-slate-950 border border-white px-2.5 rounded-full font-extrabold transition inline-flex items-center gap-1 whitespace-nowrap shadow-xs'
+      : 'hzk-compact-pill text-[10px] bg-white/15 hover:bg-white/25 text-sky-100 border border-white/30 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap';
+    btn.innerHTML = tbPrefs.autoHide
+      ? '<i class="fa-solid fa-eye-slash text-slate-900"></i> <span>AUTO-HIDE: เปิด</span>'
+      : '<i class="fa-solid fa-eye text-sky-300"></i> <span>AUTO-HIDE: ปิด</span>';
+  }
+
+  function updateGroupPinIcons() {
+    const sel = document.getElementById('selectPinnedToolbarGroupV1028');
+    if (sel) sel.value = tbPrefs.pinnedGroup;
+
+    document.querySelectorAll('.tb-group-card').forEach(card => {
+      const g = card.getAttribute('data-tb-group');
+      const pinBtn = card.querySelector('.hzk-group-pin-trigger');
+      if (pinBtn) {
+        const isPinned = tbPrefs.pinnedGroup === g;
+        pinBtn.className = isPinned
+          ? 'hzk-group-pin-trigger px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-400 text-slate-950 shadow-xs transition'
+          : 'hzk-group-pin-trigger px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/10 hover:bg-white/20 text-sky-200 transition';
+        pinBtn.innerHTML = isPinned ? '📌 ปักหมุดหมวดนี้อยู่' : '📌 ปักหมุดหมวดนี้';
+      }
+    });
+  }
+
+  function updateSingleButtonPinVisuals() {
+    const allBtns = Array.from(document.querySelectorAll('#toolbarSectionsGrid .tb-action-item'));
+    allBtns.forEach((btn, idx) => {
+      const key = getButtonKey(btn, idx);
+      const pinEl = btn.querySelector('.hzk-pin-item-btn');
+      if (pinEl) {
+        const active = tbPrefs.pinnedButtons.includes(key);
+        pinEl.classList.toggle('is-pinned', active);
+        pinEl.title = active ? 'ยกเลิกปักหมุดปุ่มนี้' : 'ปักหมุดปุ่มนี้ไว้บนแถบด่วน';
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const statusBanner = document.getElementById('activeRoleModeStatusBanner');
+    if (statusBanner && !document.getElementById('hzkToolbarControlBarV1028')) {
+      const ctrlBar = document.createElement('div');
+      ctrlBar.id = 'hzkToolbarControlBarV1028';
+      ctrlBar.className = 'mt-2 rounded-lg px-2.5 py-1.5 bg-slate-900/50 border border-white/15 flex flex-wrap items-center justify-between gap-1.5 text-[11px]';
+      ctrlBar.innerHTML = `
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button type="button" id="btnToggleToolbarCollapseV1028" onclick="setToolbarCollapsedState(!(${tbPrefs.collapsed}))" class="hzk-compact-pill text-[10px] bg-sky-600/40 hover:bg-sky-600/60 text-white border border-sky-300/40 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap">
+            <i class="fa-solid fa-chevron-up text-sky-300"></i> <span>ซ่อนเมนูหลัก</span>
+          </button>
+          <button type="button" id="btnAutoHideToolbarToggleV1028" onclick="toggleAutoHideToolbarMode()" class="hzk-compact-pill text-[10px] bg-white/15 hover:bg-white/25 text-sky-100 border border-white/30 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap">
+            <i class="fa-solid fa-eye text-sky-300"></i> <span>AUTO-HIDE: ปิด</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <label for="selectPinnedToolbarGroupV1028" class="text-[10px] text-sky-200 font-semibold whitespace-nowrap"><i class="fa-solid fa-thumbtack text-amber-300 mr-0.5"></i> ปักหมุดเมนู:</label>
+          <select id="selectPinnedToolbarGroupV1028" onchange="setPinnedMenuGroupPreference(this.value)" class="bg-slate-800 text-white border border-sky-400/40 rounded-lg px-2 py-1 text-[10.5px] font-bold focus:outline-none">
+            <option value="ALL">แสดงทั้งหมด (4 หมวด)</option>
+            <option value="FAVORITES">เฉพาะปุ่มที่ปักหมุดเอง (📌 Favorites)</option>
+            <option value="SERVICE">หมวด 1: งานบริการ &amp; ตารางช่าง</option>
+            <option value="DOCS">หมวด 2: เอกสารการเงิน &amp; เคลม</option>
+            <option value="STOCK_PM">หมวด 3: สต็อกรถช่าง &amp; PM</option>
+            <option value="MANUAL_TEAM">หมวด 4: คู่มือช่าง &amp; ระบบ</option>
+          </select>
+        </div>
+      `;
+      statusBanner.parentNode.insertBefore(ctrlBar, statusBanner.nextSibling);
+
+      // Compact Pinned Dock (remains visible even when main 4-category grid is hidden)
+      const dock = document.createElement('div');
+      dock.id = 'hzkCompactPinnedDock';
+      dock.className = 'hidden';
+      dock.innerHTML = `
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+          <span id="hzkCompactPinnedDockTitle" class="text-[10.5px] font-bold text-amber-200"></span>
+          <button type="button" onclick="setToolbarCollapsedState(false)" class="text-[10px] text-sky-300 hover:text-white underline font-semibold">แสดงเมนูเต็ม</button>
+        </div>
+        <div id="hzkCompactPinnedDockButtons" class="flex flex-wrap gap-1.5"></div>
+      `;
+      ctrlBar.parentNode.insertBefore(dock, ctrlBar.nextSibling);
+    }
+
+    // Add Pin Group button to each of the 4 group card headers
+    document.querySelectorAll('.tb-group-card').forEach(card => {
+      const g = card.getAttribute('data-tb-group');
+      const header = card.querySelector('.tb-group-header');
+      if (header && !header.querySelector('.hzk-group-pin-trigger')) {
+        const pBtn = document.createElement('button');
+        pBtn.type = 'button';
+        pBtn.className = 'hzk-group-pin-trigger px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/10 hover:bg-white/20 text-sky-200 transition';
+        pBtn.innerHTML = '📌 ปักหมุดหมวดนี้';
+        pBtn.onclick = function(e) {
+          e.stopPropagation();
+          setPinnedMenuGroupPreference(tbPrefs.pinnedGroup === g ? 'ALL' : g);
+        };
+        header.appendChild(pBtn);
+      }
+    });
+
+    // Add individual Pin icon to every action button + Auto-Hide hook on click
+    const allBtns = Array.from(document.querySelectorAll('#toolbarSectionsGrid .tb-action-item'));
+    allBtns.forEach((btn, idx) => {
+      const key = getButtonKey(btn, idx);
+      if (!btn.querySelector('.hzk-pin-item-btn')) {
+        const pinSpan = document.createElement('span');
+        pinSpan.className = 'hzk-pin-item-btn';
+        pinSpan.innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
+        pinSpan.onclick = function(ev) { toggleSingleButtonPin(key, ev); };
+        btn.appendChild(pinSpan);
+      }
+      btn.addEventListener('click', function(ev) {
+        if (ev.target && ev.target.closest('.hzk-pin-item-btn')) return;
+        if (tbPrefs.autoHide) {
+          setTimeout(() => setToolbarCollapsedState(true, false), 120);
+        }
+      });
+    });
+
+    // Fix buttonToggleToolbarCollapseV1028 toggle reference dynamically
+    const toggleBtn = document.getElementById('btnToggleToolbarCollapseV1028');
+    if (toggleBtn) {
+      toggleBtn.onclick = function() {
+        setToolbarCollapsedState(!tbPrefs.collapsed, false);
+      };
+    }
+
+    // Apply initial saved state
+    updateAutoHideToolbarBadge();
+    updateGroupPinIcons();
+    updateSingleButtonPinVisuals();
+    if (tbPrefs.pinnedGroup && ['ALL', 'SERVICE', 'DOCS', 'STOCK_PM', 'MANUAL_TEAM'].includes(tbPrefs.pinnedGroup)) {
+      if (typeof switchToolbarCategory === 'function') switchToolbarCategory(tbPrefs.pinnedGroup);
+    }
+    if (tbPrefs.collapsed) {
+      setToolbarCollapsedState(true, true);
+    } else {
+      renderCompactPinnedDock();
     }
   });
 })();

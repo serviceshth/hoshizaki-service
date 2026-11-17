@@ -1,5 +1,5 @@
 {
-  "name": "HOSHIZAKI Service Management (Enterprise v1027)",
+  "name": "HOSHIZAKI Service Management (Enterprise v1028)",
   "short_name": "Hoshizaki Service",
   "description": "ระบบบริหารจัดการงานบริการ ใบแจ้งบริการ ใบเสนอราคา และสต็อกอะไหล่สำหรับทีมช่าง HOSHIZAKI (THAILAND) Enterprise v1024",
   "start_url": "./index.html",
@@ -22,5 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "1027-SEC"
+  "version": "1028-SEC"
 }

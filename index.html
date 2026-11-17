@@ -764,11 +764,52 @@
                     <svg id="topHeaderDefaultLogoSvg" viewBox="0 0 300 300" class="hidden w-full h-full"></svg>
                 </div>
                 <div class="min-w-0 flex-1">
-                    <div class="flex items-center justify-between gap-1.5">
+                    <div class="flex flex-wrap items-center justify-between gap-1.5">
                         <h1 id="topHeaderCompanyTitle" class="font-bold text-sm sm:text-lg leading-tight tracking-wide truncate">HOSHIZAKI (THAILAND)</h1>
-                        <button type="button" onclick="openGlobalEnterpriseConfigModal()" class="hzk-compact-pill text-[10px] bg-amber-400/20 hover:bg-amber-400/35 text-amber-200 border border-amber-300/40 px-2.5 rounded-full font-bold transition whitespace-nowrap flex-shrink-0" title="ตั้งค่าสาขา/ประเทศ โลโก้บริษัท รหัส PIN และ API Secret Key">
-                            <i class="fa-solid fa-building-shield mr-0.5"></i> <span>ตั้งค่าสาขา/โลโก้</span>
-                        </button>
+                        <div class="flex flex-wrap items-center gap-1.5 flex-shrink-0">
+                            <!-- 1. Executive Report Dropdown Menu -->
+                            <div class="relative" id="topExecReportDropdownWrap">
+                                <button type="button" id="btnTopExecutiveReport" onclick="toggleTopExecutiveReportDropdown(event)" class="hzk-compact-pill text-[10px] bg-gradient-to-r from-amber-500/35 to-rose-600/35 hover:from-amber-500/50 hover:to-rose-600/50 text-amber-100 border border-amber-300/50 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="เมนูรายงานผู้บริหาร (Executive Report 3 ภาษา TH/EN/JP)">
+                                    <i class="fa-solid fa-crown text-amber-300"></i>
+                                    <span>Executive Report</span>
+                                    <i class="fa-solid fa-chevron-down text-[9px] opacity-85"></i>
+                                </button>
+                                <div id="topExecutiveReportDropdownMenu" onclick="event.stopPropagation()" class="hidden absolute right-0 mt-1.5 w-72 bg-white text-slate-800 rounded-xl shadow-2xl border border-amber-200/80 p-1.5 z-50 text-xs">
+                                    <div class="px-2.5 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#002B49] bg-sky-50/80 rounded-lg mb-1 flex items-center justify-between">
+                                        <span><i class="fa-solid fa-chart-pie text-[#00A3E0] mr-1"></i> Executive Report Suite</span>
+                                        <span class="text-[9px] text-slate-500">TH / EN / JP</span>
+                                    </div>
+                                    <button type="button" onclick="closeTopExecutiveReportDropdown(); openMdBoardroomModal('OVERVIEW');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-amber-50 transition flex items-start gap-2 group">
+                                        <span class="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-rose-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
+                                            <i class="fa-solid fa-crown text-[11px]"></i>
+                                        </span>
+                                        <div>
+                                            <div class="font-bold text-slate-900 group-hover:text-rose-700">MD Boardroom BI &amp; สไลด์ประชุม 3 ภาษา (TH/EN/JP)</div>
+                                            <div class="text-[10px] text-slate-500">แดชบอร์ดผู้บริหาร 360° &amp; สไลด์นำเสนอ 3 ภาษา</div>
+                                        </div>
+                                    </button>
+                                    <button type="button" onclick="closeTopExecutiveReportDropdown(); openTrilingualExecutiveBriefModal();" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-sky-50 transition flex items-start gap-2 group mt-0.5">
+                                        <span class="w-6 h-6 rounded-md bg-amber-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
+                                            <i class="fa-solid fa-language text-[11px]"></i>
+                                        </span>
+                                        <div>
+                                            <div class="font-bold text-slate-900 group-hover:text-[#002B49]">สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)</div>
+                                            <div class="text-[10px] text-slate-500">รายงานสรุป KPI ประจำวัน/สัปดาห์ (ไทย • EN • 日本語)</div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 2. ตั้งค่าสาขา โลโก้ -->
+                            <button type="button" onclick="openGlobalEnterpriseConfigModal()" class="hzk-compact-pill text-[10px] bg-amber-400/20 hover:bg-amber-400/35 text-amber-200 border border-amber-300/40 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1" title="ตั้งค่าสาขา/ประเทศ โลโก้บริษัท รหัส PIN และ API Secret Key">
+                                <i class="fa-solid fa-building-shield text-amber-300"></i> <span>ตั้งค่าสาขา โลโก้</span>
+                            </button>
+
+                            <!-- 3. Admin Studio (ย้ายมาจาก Developer & Admin Studio) -->
+                            <button type="button" onclick="openAdminDevStudioModal('MODULES')" class="hzk-compact-pill text-[10px] bg-sky-500/25 hover:bg-indigo-500/40 text-sky-100 border border-sky-300/45 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1" title="Admin Studio (เปิด/ปิดฟังก์ชัน • Staging • โคลนสาขา • Backup)">
+                                <i class="fa-solid fa-sliders text-amber-300"></i> <span>Admin Studio</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
                         <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1021</span></p>
@@ -913,9 +954,6 @@
                         <button type="button" data-tb-cat="SERVICE" onclick="openPhase2DepartmentalBridgeModal()" class="tb-action-item bg-slate-700 hover:bg-slate-800 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-diagram-project text-amber-300"></i> <span>เบิกอะไหล่ล่วงหน้า &amp; บัญชี (Phase 2)</span>
                         </button>
-                        <button type="button" data-tb-cat="SERVICE" onclick="openTrilingualExecutiveBriefModal()" class="tb-action-item bg-amber-700 hover:bg-amber-800 text-white font-bold shadow-sm">
-                            <i class="fa-solid fa-language text-white"></i> <span>สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)</span>
-                        </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openFieldStampAndExpenseModal('AUTO_STAMP')" class="tb-action-item bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-stopwatch text-white"></i> <span>Auto-Stamp &amp; กรอกย้อนหลัง</span>
                         </button>
@@ -924,9 +962,6 @@
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openFieldStampAndExpenseModal('OUTSOURCE_LINK')" class="tb-action-item col-span-2 bg-rose-700 hover:bg-rose-800 text-white font-extrabold shadow-sm border border-rose-300/40">
                             <i class="fa-solid fa-shield-halved text-amber-200"></i> <span>ส่งลิงก์งานให้ Outsource (แยกสิทธิ์ปลอดภัย ไม่เห็นข้อมูลอื่น)</span>
-                        </button>
-                        <button type="button" data-tb-cat="SERVICE" onclick="openMdBoardroomModal('OVERVIEW')" class="tb-action-item col-span-2 bg-gradient-to-r from-amber-600 to-rose-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-amber-300/50">
-                            <i class="fa-solid fa-crown text-amber-200"></i> <span>MD Boardroom BI &amp; สไลด์ประชุม 3 ภาษา (TH/EN/JP)</span>
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openInstallAndLoanerModal('INSTALL')" class="tb-action-item col-span-2 bg-emerald-800 hover:bg-emerald-900 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-boxes-packing text-amber-300"></i> <span>ส่งมอบติดตั้งเครื่องใหม่ &amp; ทะเบียนเครื่องสำรอง (Loaner)</span>
@@ -1034,9 +1069,6 @@
                         </button>
                         <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openInstallGuideModal()" class="tb-action-item col-span-2 bg-sky-700 hover:bg-sky-800 text-white font-medium shadow-sm">
                             <i class="fa-solid fa-mobile-screen-button"></i> <span>เพิ่มแอปลงหน้าจอ (Add to Home Screen)</span>
-                        </button>
-                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openAdminDevStudioModal('MODULES')" class="tb-action-item col-span-2 bg-gradient-to-r from-slate-800 via-sky-900 to-indigo-900 hover:opacity-95 text-white font-extrabold shadow-sm border border-amber-300/60">
-                            <i class="fa-solid fa-sliders text-amber-300"></i> <span>Developer &amp; Admin Studio (เปิด/ปิดฟังก์ชัน • Staging • โคลนสาขา • Backup)</span>
                         </button>
 
                     </div>
@@ -19259,7 +19291,36 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 </head>
                 <body onload="setTimeout(() => { window.print(); }, 400);">
                     ${sheetHtml}
-                </body>
+                
+    <script id="hzk-top-exec-report-menu-logic">
+    (function() {
+        window.toggleTopExecutiveReportDropdown = function(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('topExecutiveReportDropdownMenu');
+            if (!menu) return;
+            const willOpen = menu.classList.contains('hidden');
+            const manualMenu = document.getElementById('manualSearchMenu');
+            if (manualMenu) manualMenu.classList.add('hidden');
+            menu.classList.toggle('hidden', !willOpen);
+        };
+        window.closeTopExecutiveReportDropdown = function() {
+            const menu = document.getElementById('topExecutiveReportDropdownMenu');
+            if (menu) menu.classList.add('hidden');
+        };
+        document.addEventListener('click', function(e) {
+            const wrap = document.getElementById('topExecReportDropdownWrap');
+            if (wrap && !wrap.contains(e.target)) {
+                window.closeTopExecutiveReportDropdown();
+            }
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                window.closeTopExecutiveReportDropdown();
+            }
+        });
+    })();
+    </script>
+</body>
                 </html>
             `);
             win.document.close();

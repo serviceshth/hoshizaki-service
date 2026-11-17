@@ -763,7 +763,7 @@
                         </button>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1015</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1016</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -905,6 +905,16 @@
                         <button type="button" data-tb-cat="SERVICE" onclick="openTrilingualExecutiveBriefModal()" class="tb-action-item bg-amber-700 hover:bg-amber-800 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-language text-white"></i> <span>สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)</span>
                         </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openFieldStampAndExpenseModal('AUTO_STAMP')" class="tb-action-item bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-stopwatch text-white"></i> <span>Auto-Stamp &amp; กรอกย้อนหลัง</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openFieldStampAndExpenseModal('TRAVEL_EXP')" class="tb-action-item bg-teal-700 hover:bg-teal-800 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-receipt text-amber-200"></i> <span>ค่าทางด่วน / จอดรถ / เดินทาง</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openFieldStampAndExpenseModal('OUTSOURCE_LINK')" class="tb-action-item col-span-2 bg-rose-700 hover:bg-rose-800 text-white font-extrabold shadow-sm border border-rose-300/40">
+                            <i class="fa-solid fa-shield-halved text-amber-200"></i> <span>ส่งลิงก์งานให้ Outsource (แยกสิทธิ์ปลอดภัย ไม่เห็นข้อมูลอื่น)</span>
+                        </button>
+
 
 
                     </div>
@@ -4394,7 +4404,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1015</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1016</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20514,7 +20524,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1015) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1016) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -20937,7 +20947,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1015) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1016) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-sky-800 flex-shrink-0">
@@ -23443,7 +23453,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1015 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1016 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -30731,7 +30741,7 @@ Defect: ${defectText}`;
 <!-- Corporate Enterprise Footer (v1013) -->
 <footer class="no-print max-w-4xl mx-auto mt-6 mb-4 text-center text-[11px] text-slate-500 border-t border-slate-200 pt-3">
     <div>
-        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1015 ·
+        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1016 ·
         <span onclick="triggerCreatorCreditEasterEgg()" class="cursor-pointer underline decoration-dotted hover:text-hoshizaki-blue font-semibold">Service Management System</span>
         · For Internal Use Only
     </div>
@@ -31338,7 +31348,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1015)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1016)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31541,7 +31551,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1015)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1016)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31557,7 +31567,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1015)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1016)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31576,7 +31586,7 @@ Defect: ${defectText}`;
         });
         const dict = TRILINGUAL_LABELS[lang];
         const subEl = document.querySelector('header p.text-hoshizaki-blue');
-        if (subEl) subEl.innerHTML = dict.subtitle + ' <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v1015</span>';
+        if (subEl) subEl.innerHTML = dict.subtitle + ' <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v1016</span>';
         if (typeof showToast === 'function') {
             const msg = lang === 'JP' ? '表示言語を日本語（エグゼクティブモード）に切り替えました' : (lang === 'EN' ? 'Switched UI language to Corporate English' : 'เปลี่ยนภาษาหน้าจอเป็นภาษาไทยแล้ว');
             showToast(msg);
@@ -31635,21 +31645,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1015) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1016) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1015 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1016 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1015）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1016）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -32824,6 +32834,795 @@ Defect: ${defectText}`;
     }
 
     document.addEventListener('DOMContentLoaded', mountLiveSlaCountdownBar);
+})();
+</script>
+
+
+<!-- ============================================================================
+     ENTERPRISE v1016-FIELD EXPRESS AUTO-STAMP, TRAVEL EXPENSES & SECURE OUTSOURCE SANDBOX
+     ============================================================================ -->
+
+<!-- 1. Modal: Quick Time Auto-Stamp & Deferred Report Queue + Travel Expense & Receipt Attachments -->
+<div id="hzkFieldStampAndExpenseModal" class="hidden fixed inset-0 bg-black/75 z-[97] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[93dvh] border border-slate-200">
+        <div class="bg-hoshizaki-navy text-white px-4 py-3 rounded-t-2xl flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-sm sm:text-base"><i class="fa-solid fa-stopwatch text-amber-300 mr-1.5"></i>บันทึกเวลาเช็กอิน-เช็กเอาต์อัตโนมัติ (กรอกย้อนหลังได้) &amp; ค่าเดินทาง/ทางด่วน/จอดรถ</h3>
+                <p class="text-[11px] text-sky-200">เก็บ Time Auto-Stamp &amp; GPS หน้างานไว้ก่อน แล้วกลับมากรอกรายละเอียดซ่อมและแนบรูปย้อนหลังภายในวันได้ครบถ้วน</p>
+            </div>
+            <button type="button" onclick="closeFieldStampAndExpenseModal()" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4 text-xs">
+            <div class="flex flex-wrap gap-2 border-b pb-2">
+                <button type="button" onclick="switchFieldStampTab('AUTO_STAMP')" id="tabBtnFieldStamp" class="px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold">
+                    <i class="fa-solid fa-clock mr-1 text-amber-300"></i> 1. เช็กอิน/เช็กเอาต์ Auto-Stamp &amp; คิวรอกรอกย้อนหลัง
+                </button>
+                <button type="button" onclick="switchFieldStampTab('TRAVEL_EXP')" id="tabBtnTravelExp" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-receipt mr-1 text-emerald-600"></i> 2. ค่าเดินทาง / ค่าทางด่วนพิเศษ / ค่าจอดรถ &amp; แนบรูปสลิป
+                </button>
+                <button type="button" onclick="switchFieldStampTab('OUTSOURCE_LINK')" id="tabBtnOutsourceLink" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-shield-halved mr-1 text-rose-600"></i> 3. สร้างลิงก์ปลอดภัยให้ช่าง Outsource (จำกัดสิทธิ์เฉพาะใบงาน)
+                </button>
+            </div>
+
+            <!-- Panel 1: Auto-Stamp & Deferred Report -->
+            <div id="fieldAutoStampPanel" class="space-y-3"></div>
+
+            <!-- Panel 2: Travel Expenses & Receipt Attachments -->
+            <div id="fieldTravelExpensePanel" class="hidden space-y-3"></div>
+
+            <!-- Panel 3: Secure Outsource Link Generator -->
+            <div id="fieldOutsourceLinkPanel" class="hidden space-y-3"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Isolated Zero-Leakage Outsource Portal Overlay (เปิดอัตโนมัติเมื่อเข้าผ่าน ?portal=outsource) -->
+<div id="hzkIsolatedOutsourceOverlay" class="hidden fixed inset-0 bg-slate-100 z-[9998] overflow-y-auto p-2 sm:p-5">
+    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="bg-hoshizaki-navy text-white p-4 flex items-center justify-between">
+            <div>
+                <div class="text-[10px] font-extrabold tracking-wider uppercase text-amber-300">HOSHIZAKI (THAILAND) • SECURE OUTSOURCE PARTNER PORTAL</div>
+                <h2 class="text-base sm:text-lg font-extrabold mt-0.5">แบบฟอร์มส่งรายงานปฏิบัติงานบริการ (Outsource Service Report)</h2>
+                <p class="text-[11px] text-sky-200">โหมดจำกัดสิทธิ์เฉพาะใบงานที่ได้รับมอบหมาย • ข้อมูลจะส่งตรงเข้าศูนย์บริการ HOSHIZAKI</p>
+            </div>
+            <span class="bg-emerald-500/20 border border-emerald-300/40 text-emerald-200 text-[10px] font-bold px-2.5 py-1 rounded-full">ISOLATED MODE</span>
+        </div>
+        <div id="isolatedOutsourceBody" class="p-4 sm:p-5 space-y-3 text-xs"></div>
+    </div>
+</div>
+
+<script id="v1016-field-stamp-outsource-logic">
+(function() {
+    const DEFERRED_JOBS_KEY = 'hoshizaki_deferred_autostamp_jobs_v1016';
+    const TRAVEL_EXPENSES_KEY = 'hoshizaki_travel_expenses_v1016';
+    const OUTSOURCE_SUBMISSIONS_KEY = 'hoshizaki_outsource_submissions_v1016';
+
+    function nowBangkokTime_() {
+        const d = new Date();
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mm = String(d.getMinutes()).padStart(2, '0');
+        return hh + ':' + mm;
+    }
+
+    function nowBangkokFullStamp_() {
+        return new Date().toLocaleString('th-TH', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+    }
+
+    function captureQuickGps_(cb) {
+        if (!navigator.geolocation) {
+            cb('GPS ไม่รองรับบนอุปกรณ์นี้');
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {
+                const coords = pos.coords.latitude.toFixed(6) + ', ' + pos.coords.longitude.toFixed(6);
+                cb(coords);
+            },
+            function() {
+                cb('ไม่สามารถดึงพิกัด GPS ได้ (Offline/Permission)');
+            },
+            { enableHighAccuracy: true, timeout: 6000, maximumAge: 15000 }
+        );
+    }
+
+    // =========================================================================
+    // A. QUICK TIME AUTO-STAMP (CHECK-IN / CHECK-OUT) & DEFERRED REPORT QUEUE
+    // =========================================================================
+    window.performQuickAutoTimeStamp = function(type) {
+        const tStr = nowBangkokTime_();
+        const fullIso = nowBangkokFullStamp_();
+        const jobNo = document.getElementById('jobNo')?.value || ('JOB-' + Date.now().toString().slice(-6));
+        const store = document.getElementById('storeName')?.value || 'ไม่ระบุชื่อร้าน';
+        const model = document.getElementById('machineModel')?.value || '-';
+        const serial = document.getElementById('serialNumber')?.value || '-';
+        const tech = document.getElementById('responsibleTech')?.value || 'ช่างบริการ';
+
+        captureQuickGps_(function(gpsStr) {
+            if (type === 'IN') {
+                const elIn = document.getElementById('timeIn');
+                if (elIn) elIn.value = tStr;
+                const elGps = document.getElementById('diagGps');
+                if (elGps && (!elGps.value || elGps.value.indexOf(',') === -1)) elGps.value = gpsStr;
+            } else {
+                const elOut = document.getElementById('timeOut');
+                if (elOut) elOut.value = tStr;
+            }
+
+            // Save immutable Auto-Stamp Audit record so technician can complete the report & photos later!
+            let list = [];
+            try { list = JSON.parse(localStorage.getItem(DEFERRED_JOBS_KEY) || '[]'); } catch (e) {}
+            let rec = list.find(x => x.jobNo === jobNo);
+            if (!rec) {
+                rec = {
+                    jobNo: jobNo,
+                    date: document.getElementById('jobDate')?.value || new Date().toISOString().slice(0, 10),
+                    store: store,
+                    model: model,
+                    serial: serial,
+                    tech: tech,
+                    autoTimeIn: '',
+                    autoStampInFull: '',
+                    autoGpsIn: '',
+                    autoTimeOut: '',
+                    autoStampOutFull: '',
+                    autoGpsOut: '',
+                    status: 'PENDING_DEFERRED_REPORT'
+                };
+                list.unshift(rec);
+            } else {
+                rec.store = store || rec.store;
+                rec.model = model || rec.model;
+                rec.serial = serial || rec.serial;
+                rec.tech = tech || rec.tech;
+            }
+
+            if (type === 'IN') {
+                rec.autoTimeIn = tStr;
+                rec.autoStampInFull = fullIso;
+                rec.autoGpsIn = gpsStr;
+            } else {
+                rec.autoTimeOut = tStr;
+                rec.autoStampOutFull = fullIso;
+                rec.autoGpsOut = gpsStr;
+            }
+            localStorage.setItem(DEFERRED_JOBS_KEY, JSON.stringify(list));
+
+            // Append immutable audit stamp note into remark if not present
+            const remEl = document.getElementById('additionalRemarks') || document.getElementById('remark');
+            if (remEl) {
+                const tag = type === 'IN'
+                    ? `[AUTO-STAMP IN: ${fullIso} | GPS: ${gpsStr}]`
+                    : `[AUTO-STAMP OUT: ${fullIso} | GPS: ${gpsStr}]`;
+                if (remEl.value.indexOf(tag) === -1) {
+                    remEl.value = (remEl.value ? remEl.value + '\n' : '') + tag;
+                }
+            }
+
+            window.renderFieldAutoStampPanel();
+            if (typeof showToast === 'function') {
+                showToast((type === 'IN' ? '✅ Auto-Stamp เช็กอินเวลา ' : '🏁 Auto-Stamp เช็กเอาต์เวลา ') + tStr + ' + GPS เรียบร้อย (สามารถกลับมากรอกรายละเอียดและแนบรูปย้อนหลังได้)');
+            }
+        });
+    };
+
+    window.saveCurrentAsDeferredDraft = function() {
+        const jobNo = document.getElementById('jobNo')?.value || ('JOB-' + Date.now().toString().slice(-6));
+        const stEl = document.getElementById('jobStatus');
+        if (stEl && stEl.value === 'Completed') {
+            stEl.value = 'In Progress';
+        }
+        window.performQuickAutoTimeStamp('OUT');
+        if (typeof saveToHistory === 'function') {
+            saveToHistory();
+        }
+        if (typeof showToast === 'function') {
+            showToast('💾 บันทึกคิวรอกรอกรายงานย้อนหลังเรียบร้อย! เวลาเช็กอิน-เช็กเอาต์ถูกประทับตราไว้แล้ว');
+        }
+    };
+
+    window.resumeDeferredJobReport = function(jobNo) {
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem(DEFERRED_JOBS_KEY) || '[]'); } catch (e) {}
+        const rec = list.find(x => x.jobNo === jobNo);
+        if (!rec) return;
+        if (document.getElementById('jobNo')) document.getElementById('jobNo').value = rec.jobNo;
+        if (document.getElementById('jobDate') && rec.date) document.getElementById('jobDate').value = rec.date;
+        if (document.getElementById('storeName') && rec.store) document.getElementById('storeName').value = rec.store;
+        if (document.getElementById('machineModel') && rec.model) document.getElementById('machineModel').value = rec.model;
+        if (document.getElementById('serialNumber') && rec.serial) document.getElementById('serialNumber').value = rec.serial;
+        if (document.getElementById('timeIn') && rec.autoTimeIn) document.getElementById('timeIn').value = rec.autoTimeIn;
+        if (document.getElementById('timeOut') && rec.autoTimeOut) document.getElementById('timeOut').value = rec.autoTimeOut;
+        if (document.getElementById('diagGps') && rec.autoGpsIn) document.getElementById('diagGps').value = rec.autoGpsIn;
+
+        window.closeFieldStampAndExpenseModal();
+        if (typeof showToast === 'function') {
+            showToast('📂 โหลดใบงาน ' + rec.jobNo + ' (Time-In: ' + (rec.autoTimeIn || '-') + ' / Out: ' + (rec.autoTimeOut || '-') + ') พร้อมกรอกรายละเอียดและแนบรูปย้อนหลัง');
+        }
+    };
+
+    // =========================================================================
+    // B. TRAVEL LOG & EXPENSE REIMBURSEMENTS (ค่าทางด่วน, ค่าจอดรถ, ค่าน้ำมัน + สลิป)
+    // =========================================================================
+    function getTravelExpenses_() {
+        try { return JSON.parse(localStorage.getItem(TRAVEL_EXPENSES_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function saveTravelExpenses_(list) {
+        localStorage.setItem(TRAVEL_EXPENSES_KEY, JSON.stringify(list));
+    }
+
+    window.addTravelExpenseItem = function() {
+        const jobNo = document.getElementById('jobNo')?.value || 'GENERAL';
+        const dateVal = document.getElementById('jobDate')?.value || new Date().toISOString().slice(0, 10);
+        const category = document.getElementById('travExpCategory')?.value || 'EXPRESSWAY';
+        const routeNote = (document.getElementById('travExpRoute')?.value || '').trim();
+        const amount = parseFloat(document.getElementById('travExpAmount')?.value || '0') || 0;
+        const mileageKm = parseFloat(document.getElementById('travExpKm')?.value || '0') || 0;
+        const fileInput = document.getElementById('travExpSlipFile');
+
+        if (amount <= 0 && mileageKm <= 0) {
+            if (typeof showToast === 'function') showToast('กรุณาระบุจำนวนเงินค่าใช้จ่าย หรือระยะทาง (กม.) ครับ');
+            return;
+        }
+
+        const catLabels = {
+            EXPRESSWAY: 'ค่าทางด่วนพิเศษ (Expressway / Tollway)',
+            PARKING: 'ค่าจอดรถ (Parking Fee)',
+            FUEL_MILEAGE: 'ค่าน้ำมัน / ระยะทางเดินทาง (Fuel / Mileage)',
+            OTHER_TRAVEL: 'ค่าเดินทาง / ค่าใช้จ่ายหน้างานอื่นๆ'
+        };
+
+        const finalizeSave = function(slipDataUrl) {
+            const list = getTravelExpenses_();
+            list.unshift({
+                id: 'EXP-' + Date.now().toString().slice(-6),
+                jobNo: jobNo,
+                date: dateVal,
+                store: document.getElementById('storeName')?.value || '-',
+                tech: document.getElementById('responsibleTech')?.value || '-',
+                category: category,
+                categoryLabel: catLabels[category] || category,
+                routeNote: routeNote || '-',
+                mileageKm: mileageKm,
+                amount: amount,
+                slipPhoto: slipDataUrl || '',
+                createdAt: nowBangkokFullStamp_()
+            });
+            saveTravelExpenses_(list);
+            if (document.getElementById('travExpRoute')) document.getElementById('travExpRoute').value = '';
+            if (document.getElementById('travExpAmount')) document.getElementById('travExpAmount').value = '';
+            if (document.getElementById('travExpKm')) document.getElementById('travExpKm').value = '';
+            if (fileInput) fileInput.value = '';
+            window.renderFieldTravelExpensePanel();
+            if (typeof showToast === 'function') showToast('✅ บันทึกรายการค่าเดินทาง/ทางด่วน พร้อมรูปหลักฐานเรียบร้อย');
+        };
+
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxW = 900;
+                    const scale = img.width > maxW ? (maxW / img.width) : 1;
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'rgba(0,43,73,0.82)';
+                    ctx.fillRect(0, canvas.height - 26, canvas.width, 26);
+                    ctx.fillStyle = '#fde047';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.fillText(`HOSHIZAKI EXPENSE SLIP | ${jobNo} | ${dateVal} | ${amount.toFixed(2)} THB`, 8, canvas.height - 9);
+                    finalizeSave(canvas.toDataURL('image/jpeg', 0.78));
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            finalizeSave('');
+        }
+    };
+
+    window.pushTravelExpenseToJobBilling = function(expId) {
+        const list = getTravelExpenses_();
+        const item = list.find(x => x.id === expId);
+        if (!item) return;
+        const desc = `${item.categoryLabel}${item.routeNote && item.routeNote !== '-' ? ' (' + item.routeNote + ')' : ''}`;
+        if (typeof addPartRow === 'function') {
+            addPartRow(desc, 1, item.amount);
+        }
+        window.closeFieldStampAndExpenseModal();
+        if (typeof showToast === 'function') showToast('เพิ่มรายการ ' + desc + ' ลงตารางค่าบริการในใบงานแล้ว');
+    };
+
+    window.deleteTravelExpenseItem = function(expId) {
+        const next = getTravelExpenses_().filter(x => x.id !== expId);
+        saveTravelExpenses_(next);
+        window.renderFieldTravelExpensePanel();
+    };
+
+    // =========================================================================
+    // C. SECURE ZERO-LEAKAGE OUTSOURCE JOB LINK (`?portal=outsource`)
+    // =========================================================================
+    function encodeOutsourcePayload_(obj) {
+        const jsonStr = JSON.stringify(obj);
+        const bytes = new TextEncoder().encode(jsonStr);
+        let bin = '';
+        bytes.forEach(b => bin += String.fromCharCode(b));
+        return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function decodeOutsourcePayload_(b64url) {
+        try {
+            let b64 = String(b64url || '').replace(/-/g, '+').replace(/_/g, '/');
+            while (b64.length % 4) b64 += '=';
+            const bin = atob(b64);
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            return JSON.parse(new TextDecoder().decode(bytes));
+        } catch (e) {
+            return null;
+        }
+    }
+
+    window.generateSecureOutsourceJobUrl = function() {
+        const partnerName = (document.getElementById('outsourcePartnerNameInput')?.value || 'Outsource Service Partner').trim();
+        const payload = {
+            v: '1016-OS',
+            jobNo: document.getElementById('jobNo')?.value || ('JOB-' + Date.now().toString().slice(-6)),
+            date: document.getElementById('jobDate')?.value || new Date().toISOString().slice(0, 10),
+            store: document.getElementById('storeName')?.value || '',
+            contact: document.getElementById('contactPerson')?.value || '',
+            address: document.getElementById('storeAddress')?.value || '',
+            model: document.getElementById('machineModel')?.value || '',
+            serial: document.getElementById('serialNumber')?.value || '',
+            symptom: document.getElementById('diagSymptom')?.value || '',
+            partner: partnerName,
+            gasUrl: localStorage.getItem('hoshizaki_gas_url') || ''
+        };
+        const token = encodeOutsourcePayload_(payload);
+        const baseUrl = window.location.href.split('?')[0].split('#')[0];
+        const shareUrl = `${baseUrl}?portal=outsource&token=${encodeURIComponent(token)}`;
+        const outBox = document.getElementById('outsourceGeneratedLinkOutput');
+        if (outBox) outBox.value = shareUrl;
+        return shareUrl;
+    };
+
+    window.copyOutsourceLinkAndLine = function(sendLine) {
+        const url = window.generateSecureOutsourceJobUrl();
+        if (navigator.clipboard) navigator.clipboard.writeText(url);
+        if (sendLine) {
+            const jobNo = document.getElementById('jobNo')?.value || '';
+            const store = document.getElementById('storeName')?.value || '';
+            const model = document.getElementById('machineModel')?.value || '';
+            const msg = `🔧 [HOSHIZAKI OUTSOURCE JOB]\nเลขที่ใบงาน: ${jobNo}\nลูกค้า: ${store}\nรุ่นเครื่อง: ${model}\n\nกรุณากดลิงก์ด้านล่างเพื่อเช็กอิน บันทึกผลการซ่อม แนบรูป และให้ลูกค้าเซ็นรับงาน (ลิงก์เฉพาะใบงานนี้เท่านั้น):\n${url}`;
+            window.open('https://line.me/R/msg/text/?' + encodeURIComponent(msg), '_blank');
+        } else if (typeof showToast === 'function') {
+            showToast('📋 คัดลอกลิงก์เฉพาะใบงานสำหรับช่าง Outsource เรียบร้อยแล้ว');
+        }
+    };
+
+    window.submitOutsourceIsolatedReport = function() {
+        const jobNo = document.getElementById('osJobNo')?.value || '';
+        const partner = document.getElementById('osPartnerName')?.value || 'Outsource Tech';
+        const techPerson = document.getElementById('osTechPerson')?.value || partner;
+        const timeIn = document.getElementById('osTimeIn')?.value || nowBangkokTime_();
+        const timeOut = document.getElementById('osTimeOut')?.value || nowBangkokTime_();
+        const cause = document.getElementById('osCause')?.value || '';
+        const action = document.getElementById('osAction')?.value || '';
+        const parts = document.getElementById('osParts')?.value || '';
+        const custSignName = document.getElementById('osCustSignName')?.value || '';
+        const gasUrl = document.getElementById('osGasUrl')?.value || localStorage.getItem('hoshizaki_gas_url') || '';
+
+        if (!action.trim()) {
+            alert('กรุณากรอกรายละเอียดการตรวจเช็กและแก้ไขครับ');
+            return;
+        }
+
+        const record = {
+            jobNo: jobNo,
+            date: document.getElementById('osJobDate')?.value || new Date().toISOString().slice(0, 10),
+            jobStatus: 'Completed',
+            techCode: 'OUTSOURCE',
+            responsibleTech: `[Outsource: ${partner}] ${techPerson}`,
+            store: document.getElementById('osStore')?.value || '',
+            contact: document.getElementById('osContact')?.value || '',
+            address: document.getElementById('osAddress')?.value || '',
+            model: document.getElementById('osModel')?.value || '',
+            serial: document.getElementById('osSerial')?.value || '',
+            timeIn: timeIn,
+            timeOut: timeOut,
+            diagGps: document.getElementById('osGps')?.value || '',
+            diagSymptom: document.getElementById('osSymptom')?.value || '',
+            diagDetected: cause,
+            diagAction: action,
+            partsSummary: parts || 'ไม่มีการเปลี่ยนอะไหล่',
+            nameCustomer: custSignName,
+            submittedAt: nowBangkokFullStamp_()
+        };
+
+        // Save locally & push directly to Hoshizaki Google Apps Script endpoint if configured
+        let subs = [];
+        try { subs = JSON.parse(localStorage.getItem(OUTSOURCE_SUBMISSIONS_KEY) || '[]'); } catch (e) {}
+        subs.unshift(record);
+        localStorage.setItem(OUTSOURCE_SUBMISSIONS_KEY, JSON.stringify(subs));
+
+        if (gasUrl && gasUrl.indexOf('http') === 0) {
+            fetch(gasUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.assign({ actionType: 'SAVE_JOB' }, record))
+            }).catch(() => {});
+        }
+
+        const body = document.getElementById('isolatedOutsourceBody');
+        if (body) {
+            body.innerHTML = `
+                <div class="text-center py-8 space-y-3">
+                    <div class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto text-3xl">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-hoshizaki-navy">ส่งรายงานปฏิบัติงานเข้าศูนย์บริการ HOSHIZAKI เรียบร้อยแล้ว!</h3>
+                    <p class="text-xs text-slate-600">เลขที่ใบงาน: <b>${jobNo}</b> • ผู้ส่งรายงาน: <b>${record.responsibleTech}</b></p>
+                    <p class="text-[11px] text-slate-500">ขอบคุณที่ร่วมให้บริการมาตรฐาน HOSHIZAKI (THAILAND) LIMITED สามารถปิดหน้าต่างนี้ได้ทันทีครับ</p>
+                </div>
+            `;
+        }
+    };
+
+    function checkAndMountIsolatedOutsourcePortal_() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('portal') !== 'outsource') return;
+
+        // Strictly hide main corporate UI so Outsource partner cannot inspect any internal menus/data
+        const headerEl = document.querySelector('header');
+        const mainEl = document.getElementById('jobSheetContainer');
+        const navEl = document.getElementById('mobileSectionNav');
+        if (headerEl) headerEl.style.display = 'none';
+        if (mainEl) mainEl.style.display = 'none';
+        if (navEl) navEl.style.display = 'none';
+
+        const overlay = document.getElementById('hzkIsolatedOutsourceOverlay');
+        const body = document.getElementById('isolatedOutsourceBody');
+        if (!overlay || !body) return;
+        overlay.classList.remove('hidden');
+
+        const data = decodeOutsourcePayload_(params.get('token')) || {
+            jobNo: params.get('jobNo') || 'JOB-OUTSOURCE',
+            date: new Date().toISOString().slice(0, 10),
+            store: params.get('store') || '',
+            model: params.get('model') || '',
+            serial: params.get('serial') || '',
+            symptom: params.get('symptom') || '',
+            partner: 'Outsource Partner'
+        };
+
+        body.innerHTML = `
+            <input type="hidden" id="osJobNo" value="${data.jobNo || ''}">
+            <input type="hidden" id="osJobDate" value="${data.date || ''}">
+            <input type="hidden" id="osPartnerName" value="${data.partner || 'Outsource Partner'}">
+            <input type="hidden" id="osGasUrl" value="${data.gasUrl || ''}">
+
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-1">
+                <div class="font-extrabold text-hoshizaki-navy text-sm">ใบงานเลขที่: ${data.jobNo || '-'} (${data.date || '-'})</div>
+                <div><b>บริษัท/ทีม Outsource:</b> ${data.partner || '-'}</div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">ชื่อร้านค้า / ลูกค้า:</label>
+                    <input type="text" id="osStore" value="${data.store || ''}" class="w-full border rounded-lg px-2.5 py-2 bg-slate-50 font-semibold">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">ผู้ติดต่อหน้างาน:</label>
+                    <input type="text" id="osContact" value="${data.contact || ''}" class="w-full border rounded-lg px-2.5 py-2">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="font-bold text-slate-700 block mb-1">สถานที่ปฏิบัติงาน:</label>
+                    <input type="text" id="osAddress" value="${data.address || ''}" class="w-full border rounded-lg px-2.5 py-2">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">รุ่นเครื่อง (Model):</label>
+                    <input type="text" id="osModel" value="${data.model || ''}" class="w-full border rounded-lg px-2.5 py-2 font-bold">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">หมายเลขเครื่อง (Serial No.):</label>
+                    <input type="text" id="osSerial" value="${data.serial || ''}" class="w-full border rounded-lg px-2.5 py-2 font-bold">
+                </div>
+            </div>
+
+            <div class="bg-slate-900 text-white rounded-xl p-3 space-y-2">
+                <div class="font-bold text-amber-300"><i class="fa-solid fa-stopwatch mr-1"></i> บันทึกเวลาเข้า-ออกหน้างาน (Time Auto-Stamp &amp; GPS)</div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div>
+                        <label class="text-[10px] text-slate-300 block">เวลาเข้า (Time In):</label>
+                        <div class="flex gap-1 mt-0.5">
+                            <input type="time" id="osTimeIn" class="flex-1 rounded px-2 py-1 text-slate-900 font-bold">
+                            <button type="button" onclick="document.getElementById('osTimeIn').value='${nowBangkokTime_()}'; navigator.geolocation && navigator.geolocation.getCurrentPosition(p=>{document.getElementById('osGps').value=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);});" class="bg-emerald-600 px-2 py-1 rounded font-bold text-[10px]">Stamp</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-300 block">เวลาออก (Time Out):</label>
+                        <div class="flex gap-1 mt-0.5">
+                            <input type="time" id="osTimeOut" class="flex-1 rounded px-2 py-1 text-slate-900 font-bold">
+                            <button type="button" onclick="document.getElementById('osTimeOut').value='${nowBangkokTime_()}'" class="bg-sky-600 px-2 py-1 rounded font-bold text-[10px]">Stamp</button>
+                        </div>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="text-[10px] text-slate-300 block">พิกัด GPS:</label>
+                        <input type="text" id="osGps" placeholder="กด Stamp เพื่อจับพิกัด" class="w-full rounded px-2 py-1 text-slate-900 mt-0.5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2.5">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">ชื่อช่างผู้ปฏิบัติงาน (Outsource Technician Name) *:</label>
+                    <input type="text" id="osTechPerson" placeholder="ระบุชื่อ-นามสกุลช่างที่เข้าหน้างาน" class="w-full border rounded-lg px-2.5 py-2">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">อาการที่ได้รับแจ้ง (Symptom):</label>
+                    <input type="text" id="osSymptom" value="${data.symptom || ''}" class="w-full border rounded-lg px-2.5 py-2">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">สาเหตุที่ตรวจพบ (Detected Cause):</label>
+                    <textarea id="osCause" rows="2" placeholder="ระบุสาเหตุความผิดปกติที่ตรวจพบ..." class="w-full border rounded-lg px-2.5 py-2"></textarea>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">รายละเอียดการซ่อมและแก้ไข (Action Taken) *:</label>
+                    <textarea id="osAction" rows="3" placeholder="ระบุขั้นตอนการซ่อม ผลการทดสอบเครื่องหลังซ่อม..." class="w-full border rounded-lg px-2.5 py-2"></textarea>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">รายการอะไหล่ที่ใช้ (ถ้ามี):</label>
+                    <input type="text" id="osParts" placeholder="เช่น Water Valve 1 ชิ้น, ล้างแผงคอยล์ร้อน" class="w-full border rounded-lg px-2.5 py-2">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">ชื่อผู้รับมอบงานฝั่งลูกค้า (Customer Sign-off Name):</label>
+                    <input type="text" id="osCustSignName" placeholder="ชื่อผู้จัดการร้าน / พนักงานผู้รับมอบงาน" class="w-full border rounded-lg px-2.5 py-2">
+                </div>
+            </div>
+
+            <button type="button" onclick="submitOutsourceIsolatedReport()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-xl shadow-lg text-sm">
+                <i class="fa-solid fa-paper-plane mr-1.5"></i> ส่งรายงานซ่อมเข้าศูนย์บริการ HOSHIZAKI
+            </button>
+        `;
+    }
+
+    // =========================================================================
+    // D. MODAL CONTROLLERS & UI RENDERERS
+    // =========================================================================
+    window.openFieldStampAndExpenseModal = function(tab) {
+        const modal = document.getElementById('hzkFieldStampAndExpenseModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        window.switchFieldStampTab(tab || 'AUTO_STAMP');
+    };
+
+    window.closeFieldStampAndExpenseModal = function() {
+        document.getElementById('hzkFieldStampAndExpenseModal')?.classList.add('hidden');
+    };
+
+    window.switchFieldStampTab = function(tab) {
+        const p1 = document.getElementById('fieldAutoStampPanel');
+        const p2 = document.getElementById('fieldTravelExpensePanel');
+        const p3 = document.getElementById('fieldOutsourceLinkPanel');
+        const b1 = document.getElementById('tabBtnFieldStamp');
+        const b2 = document.getElementById('tabBtnTravelExp');
+        const b3 = document.getElementById('tabBtnOutsourceLink');
+        [p1, p2, p3].forEach(el => el?.classList.add('hidden'));
+        [b1, b2, b3].forEach(btn => { if (btn) btn.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold'; });
+
+        if (tab === 'TRAVEL_EXP') {
+            p2?.classList.remove('hidden');
+            if (b2) b2.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            window.renderFieldTravelExpensePanel();
+        } else if (tab === 'OUTSOURCE_LINK') {
+            p3?.classList.remove('hidden');
+            if (b3) b3.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            window.renderFieldOutsourceLinkPanel();
+        } else {
+            p1?.classList.remove('hidden');
+            if (b1) b1.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            window.renderFieldAutoStampPanel();
+        }
+    };
+
+    window.renderFieldAutoStampPanel = function() {
+        const panel = document.getElementById('fieldAutoStampPanel');
+        if (!panel) return;
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem(DEFERRED_JOBS_KEY) || '[]'); } catch (e) {}
+
+        panel.innerHTML = `
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-2.5">
+                <div class="font-extrabold text-hoshizaki-navy">
+                    <i class="fa-solid fa-stopwatch text-hoshizaki-blue mr-1"></i>
+                    โหมดช่างหน้างานเร่งด่วน: ประทับเวลา &amp; GPS อัตโนมัติไว้ก่อน แล้วค่อยกลับมากรอกรายละเอียด + แนบรูปย้อนหลังภายในวัน
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <button type="button" onclick="performQuickAutoTimeStamp('IN')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 px-3 rounded-xl shadow-sm">
+                        <i class="fa-solid fa-location-dot mr-1"></i> 1. เช็กอิน Auto-Stamp (Time In + GPS)
+                    </button>
+                    <button type="button" onclick="performQuickAutoTimeStamp('OUT')" class="bg-sky-600 hover:bg-sky-700 text-white font-extrabold py-2.5 px-3 rounded-xl shadow-sm">
+                        <i class="fa-solid fa-flag-checkered mr-1"></i> 2. เช็กเอาต์ Auto-Stamp (Time Out + GPS)
+                    </button>
+                    <button type="button" onclick="saveCurrentAsDeferredDraft()" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 px-3 rounded-xl shadow-sm">
+                        <i class="fa-solid fa-clock-rotate-left mr-1"></i> 3. พักใบงานไว้กรอกรายละเอียดย้อนหลัง
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <div class="font-extrabold text-hoshizaki-navy">รายการใบงานที่ประทับเวลา Auto-Stamp ไว้แล้ว (พร้อมกลับมากรอกข้อมูลและแนบรูปย้อนหลัง):</div>
+                ${list.length === 0 ? '<div class="text-slate-500 py-4 text-center">ยังไม่มีใบงานที่ประทับเวลาค้างกรอก — กดปุ่มเช็กอิน/เช็กเอาต์ Auto-Stamp ด้านบนเมื่อถึงหน้างานได้เลยครับ</div>' : list.slice(0, 15).map(item => `
+                    <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <div class="font-extrabold text-hoshizaki-navy">${item.jobNo} • ${item.store} (${item.date})</div>
+                            <div class="text-[11px] text-slate-700">รุ่น/S/N: ${item.model} / ${item.serial} • ช่าง: ${item.tech}</div>
+                            <div class="text-[10.5px] font-bold text-emerald-800 mt-0.5">
+                                🟢 เข้า: ${item.autoStampInFull || item.autoTimeIn || '-'} (${item.autoGpsIn || '-'})<br>
+                                🔵 ออก: ${item.autoStampOutFull || item.autoTimeOut || '-'} (${item.autoGpsOut || '-'})
+                            </div>
+                        </div>
+                        <button type="button" onclick="resumeDeferredJobReport('${item.jobNo}')" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold px-3 py-2 rounded-lg">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> เปิดกรอกข้อมูล &amp; แนบรูปย้อนหลัง
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    };
+
+    window.renderFieldTravelExpensePanel = function() {
+        const panel = document.getElementById('fieldTravelExpensePanel');
+        if (!panel) return;
+        const list = getTravelExpenses_();
+        const totalExp = list.reduce((acc, x) => acc + (Number(x.amount) || 0), 0);
+
+        panel.innerHTML = `
+            <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 space-y-2.5">
+                <div class="font-extrabold text-hoshizaki-navy">บันทึกค่าเดินทาง ค่าทางด่วนพิเศษ ค่าจอดรถ และแนบรูปสลิป/ใบเสร็จ</div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">ประเภทค่าใช้จ่าย:</label>
+                        <select id="travExpCategory" class="w-full border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+                            <option value="EXPRESSWAY">ค่าทางด่วนพิเศษ (Expressway / Tollway)</option>
+                            <option value="PARKING">ค่าจอดรถ (Parking Fee)</option>
+                            <option value="FUEL_MILEAGE">ค่าน้ำมัน / ระยะทาง (Fuel / Mileage)</option>
+                            <option value="OTHER_TRAVEL">ค่าเดินทาง / ค่าใช้จ่ายอื่นๆ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">เส้นทาง / ด่านทางด่วน / สถานที่จอด:</label>
+                        <input type="text" id="travExpRoute" placeholder="เช่น ทางด่วนศรีรัช-แจ้งวัฒนะ / จอดห้าง..." class="w-full border rounded-lg px-2.5 py-1.5 bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <div>
+                            <label class="font-bold text-slate-700 block mb-1">จำนวนเงิน (THB):</label>
+                            <input type="number" id="travExpAmount" placeholder="0.00" step="0.01" class="w-full border rounded-lg px-2 py-1.5 bg-white font-bold">
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-700 block mb-1">ระยะทาง (กม.):</label>
+                            <input type="number" id="travExpKm" placeholder="0" class="w-full border rounded-lg px-2 py-1.5 bg-white">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+                    <div class="flex-1">
+                        <label class="font-bold text-slate-700 block mb-1"><i class="fa-solid fa-camera text-emerald-700 mr-1"></i> แนบรูปใบเสร็จทางด่วน / บัตรจอดรถ / สลิปน้ำมัน (ถ่ายสดหรือเลือกจากอัลบั้มย้อนหลังได้):</label>
+                        <input type="file" id="travExpSlipFile" accept="image/*" class="text-xs">
+                    </div>
+                    <button type="button" onclick="addTravelExpenseItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl shadow-sm">
+                        + บันทึกรายการ &amp; รูปหลักฐาน
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between font-extrabold text-hoshizaki-navy">
+                <span>รายการค่าเดินทางและค่าใช้จ่ายที่บันทึกไว้ (${list.length} รายการ)</span>
+                <span class="text-emerald-700">ยอดรวมสะสม: ${totalExp.toLocaleString('en-US', {minimumFractionDigits:2})} THB</span>
+            </div>
+
+            <div class="space-y-2">
+                ${list.length === 0 ? '<div class="text-slate-500 py-4 text-center">ยังไม่มีรายการค่าทางด่วนหรือค่าจอดรถ</div>' : list.map(item => `
+                    <div class="p-2.5 rounded-xl border border-slate-200 bg-white flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5">
+                            ${item.slipPhoto ? `<img src="${item.slipPhoto}" alt="Slip" class="w-14 h-14 object-cover rounded-lg border cursor-pointer" onclick="window.open('${item.slipPhoto}','_blank')">` : '<div class="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 text-[10px]">ไม่มีรูป</div>'}
+                            <div>
+                                <div class="font-extrabold text-hoshizaki-navy">${item.categoryLabel} — <span class="text-emerald-700">${Number(item.amount).toLocaleString('en-US', {minimumFractionDigits:2})} THB</span></div>
+                                <div class="text-[11px] text-slate-600">ใบงาน: ${item.jobNo} (${item.store}) • เส้นทาง: ${item.routeNote} ${item.mileageKm ? '• ' + item.mileageKm + ' กม.' : ''}</div>
+                                <div class="text-[10px] text-slate-400">บันทึกเมื่อ: ${item.createdAt}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" onclick="pushTravelExpenseToJobBilling('${item.id}')" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-[10.5px]">+ ใส่ในบิลลูกค้า</button>
+                            <button type="button" onclick="deleteTravelExpenseItem('${item.id}')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-2 py-1.5 rounded-lg text-[10.5px]">ลบ</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    };
+
+    window.renderFieldOutsourceLinkPanel = function() {
+        const panel = document.getElementById('fieldOutsourceLinkPanel');
+        if (!panel) return;
+        const jobNo = document.getElementById('jobNo')?.value || '-';
+        const store = document.getElementById('storeName')?.value || '-';
+        const model = document.getElementById('machineModel')?.value || '-';
+
+        panel.innerHTML = `
+            <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 space-y-2.5">
+                <div class="font-extrabold text-rose-950">
+                    <i class="fa-solid fa-shield-halved text-rose-600 mr-1"></i>
+                    ระบบสร้างลิงก์ปลอดภัยสำหรับช่าง Outsource (Zero-Leakage Isolated Job Link)
+                </div>
+                <p class="text-[11px] text-rose-900">
+                    เมื่อส่งลิงก์นี้ให้ช่าง Outsource เปิดบนมือถือ <b>ระบบจะซ่อนเมนูทั้งหมดของบริษัท</b> (ไม่เห็นฐานลูกค้า 6,749 เครื่อง, ไม่เห็นราคาทุน/GP%, ไม่เห็นสต็อกรถช่าง และไม่เห็นใบงานอื่น) โดยจะกรอกและส่งรายงานได้เฉพาะใบงาน <b>${jobNo} (${store} • ${model})</b> เท่านั้น
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">ชื่อบริษัท / ทีมช่าง Outsource ที่รับงาน:</label>
+                        <input type="text" id="outsourcePartnerNameInput" placeholder="เช่น หจก. เอสเค คูลลิ่ง เซอร์วิส (Outsource)" class="w-full border rounded-lg px-2.5 py-1.5 bg-white">
+                    </div>
+                    <div class="flex items-end gap-1.5">
+                        <button type="button" onclick="copyOutsourceLinkAndLine(false)" class="flex-1 bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold py-2 px-3 rounded-lg">
+                            <i class="fa-solid fa-copy mr-1"></i> สร้าง &amp; คัดลอกลิงก์
+                        </button>
+                        <button type="button" onclick="copyOutsourceLinkAndLine(true)" class="flex-1 bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-2 px-3 rounded-lg">
+                            <i class="fa-brands fa-line mr-1"></i> ส่งเข้า LINE Outsource
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-600 block mb-1">ลิงก์เฉพาะใบงานสำหรับ Outsource:</label>
+                    <input type="text" id="outsourceGeneratedLinkOutput" readonly placeholder="กดปุ่ม สร้าง & คัดลอกลิงก์ ด้านบน..." class="w-full border rounded-lg px-2.5 py-1.5 bg-slate-100 font-mono text-[10.5px]">
+                </div>
+            </div>
+        `;
+        window.generateSecureOutsourceJobUrl();
+    };
+
+    // Upgrade top SLA & Field Action Bar in Job Sheet to include 1-Tap Auto-Stamp, Deferred Report, Travel Expenses & Outsource Link
+    function upgradeFieldActionStrip_() {
+        const bar = document.getElementById('hzkSlaCountdownBar');
+        if (!bar || document.getElementById('hzkFieldExpressActionStrip')) return;
+        const strip = document.createElement('div');
+        strip.id = 'hzkFieldExpressActionStrip';
+        strip.className = 'no-print bg-sky-950 text-white rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-1.5 text-xs border border-sky-400/30';
+        strip.innerHTML = `
+            <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="performQuickAutoTimeStamp('IN')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-2.5 py-1 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-location-dot mr-1"></i> Auto-Stamp เข้างาน
+                </button>
+                <button type="button" onclick="performQuickAutoTimeStamp('OUT')" class="bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-2.5 py-1 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-flag-checkered mr-1"></i> Auto-Stamp ออกงาน
+                </button>
+                <button type="button" onclick="openFieldStampAndExpenseModal('AUTO_STAMP')" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-clock-rotate-left mr-1"></i> กรอกย้อนหลัง/แนบรูปทีหลัง
+                </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="openFieldStampAndExpenseModal('TRAVEL_EXP')" class="bg-teal-600 hover:bg-teal-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-receipt mr-1"></i> ค่าทางด่วน/จอดรถ/เดินทาง
+                </button>
+                <button type="button" onclick="openFieldStampAndExpenseModal('OUTSOURCE_LINK')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> ส่งลิงก์ Outsource (จำกัดสิทธิ์)
+                </button>
+            </div>
+        `;
+        bar.parentNode.insertBefore(strip, bar.nextSibling);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        checkAndMountIsolatedOutsourcePortal_();
+        upgradeFieldActionStrip_();
+    });
 })();
 </script>
 

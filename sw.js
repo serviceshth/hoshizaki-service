@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1011-prod-credit';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1013-complete';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,9 @@ const DATA_ASSETS = [
   './serial_db.json',
   './parts_catalog.json',
   './quotation_archive.json'
+];
+const LAZY_BACKEND_ASSETS = [
+  './Hoshizaki_Google_AppsScript_Enterprise_v1011.js'
 ];
 const OCR_CDN_ASSETS = [
   'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'
@@ -39,6 +42,28 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
+
+  // Never cache confidential cost JSON if ever requested
+  if (url.pathname.includes('parts_cost_2025.json')) {
+    return;
+  }
+
+  // Lazy-cache backend script on demand
+  if (LAZY_BACKEND_ASSETS.some((asset) => url.pathname.endsWith(asset.replace('./', '')))) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        }).catch(() => cached);
+      })
+    );
+    return;
+  }
 
   // Cache Tesseract.js worker, core wasm, and traineddata language packs for instant offline OCR
   if (url.hostname.includes('jsdelivr.net') || url.hostname.includes('projectnaptha.com') || url.pathname.endsWith('.traineddata.gz')) {

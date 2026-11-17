@@ -38244,5 +38244,180 @@ try {
 })();
 </script>
 
+
+
+<!-- ============================================================================
+     CUSTOMER MOBILE SMS DISPATCH LOG VIEWER & RE-SEND MODAL (v1021-SMS-LOG)
+     ============================================================================ -->
+<div id="customerSmsDispatchLogModal" class="hidden fixed inset-0 bg-black/70 z-[95] flex items-center justify-center p-2 sm:p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90dvh] flex flex-col overflow-hidden border border-slate-200">
+        <div class="bg-[#002B49] text-white px-4 py-3 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+                <i class="fa-solid fa-comment-sms text-[#00A3E0] text-lg"></i>
+                <div class="truncate">
+                    <div class="font-extrabold text-sm sm:text-base truncate">ประวัติการส่งลิงก์พอร์ทัลเข้ามือถือลูกค้า (Customer Mobile SMS Logs)</div>
+                    <div class="text-[11px] text-sky-200 truncate">ติดตามสถานะการส่ง SMS · คัดลอกลิงก์ลูกค้า · ส่งซ้ำได้ในคลิกเดียว</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button type="button" onclick="refreshCustomerMobileSmsLogs(true)" class="bg-[#00A3E0] hover:bg-sky-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg inline-flex items-center gap-1">
+                    <i class="fa-solid fa-arrows-rotate"></i> <span>ดึงจาก Cloud</span>
+                </button>
+                <button type="button" onclick="document.getElementById('customerSmsDispatchLogModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 inline-flex items-center justify-center text-lg font-black">&times;</button>
+            </div>
+        </div>
+        <div class="p-3 bg-sky-50/70 border-b border-slate-200 flex flex-col sm:flex-row gap-2 items-stretch sm:items-center justify-between text-xs">
+            <input type="text" id="smsLogSearchInput" oninput="renderCustomerMobileSmsLogsTable()" placeholder="ค้นหาเลขที่ใบงาน, ใบเสนอราคา, ชื่อร้านค้า หรือเบอร์มือถือ..." class="flex-1 border border-slate-300 rounded-lg px-3 py-1.5 bg-white text-slate-800 focus:outline-none focus:border-[#00A3E0]">
+            <span id="smsLogCountBadge" class="text-[11px] font-bold text-[#002B49] bg-white border border-sky-200 px-2.5 py-1.5 rounded-lg text-center">ทั้งหมด 0 รายการ</span>
+        </div>
+        <div class="overflow-y-auto flex-1 p-3">
+            <div id="customerSmsLogsTableBody" class="space-y-2 text-xs"></div>
+        </div>
+    </div>
+</div>
+
+<script id="v1021-sms-history-log">
+(function() {
+    const SMS_LOG_STORAGE_KEY = 'hoshizaki_mobile_sms_logs_v1021';
+
+    function loadLocalSmsLogs_() {
+        try {
+            const raw = localStorage.getItem(SMS_LOG_STORAGE_KEY);
+            const parsed = raw ? JSON.parse(raw) : [];
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveLocalSmsLogs_(list) {
+        try {
+            localStorage.setItem(SMS_LOG_STORAGE_KEY, JSON.stringify((list || []).slice(0, 250)));
+        } catch (e) {}
+    }
+
+    // Wrap dispatchSmsAndLog_ so every SMS dispatch is also stored locally for instant offline/online audit
+    const origDispatch = window.dispatchSmsAndLog_;
+    window.dispatchSmsAndLog_ = function(digits, refNo, customer, portalUrl, smsText) {
+        const logs = loadLocalSmsLogs_();
+        const techName = document.getElementById('techQuickProfileName')?.textContent?.trim() || 'Service Unit';
+        logs.unshift({
+            timestamp: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Bangkok' }),
+            refNo: String(refNo || ''),
+            customer: String(customer || ''),
+            phone: String(digits || ''),
+            channel: 'MOBILE_SMS',
+            portalUrl: String(portalUrl || ''),
+            message: String(smsText || ''),
+            sentBy: techName
+        });
+        saveLocalSmsLogs_(logs);
+        if (typeof origDispatch === 'function') {
+            return origDispatch(digits, refNo, customer, portalUrl, smsText);
+        }
+        const intlPhone = String(digits).startsWith('0') ? ('+66' + String(digits).slice(1)) : ('+' + digits);
+        window.location.href = `sms:${intlPhone}?body=${encodeURIComponent(smsText)}`;
+    };
+
+    window.openCustomerMobileSmsLogModal = function() {
+        const modal = document.getElementById('customerSmsDispatchLogModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        renderCustomerMobileSmsLogsTable();
+        refreshCustomerMobileSmsLogs(false);
+    };
+
+    window.refreshCustomerMobileSmsLogs = async function(notify) {
+        const gasUrl = (typeof getActiveGasWebAppUrl === 'function' ? getActiveGasWebAppUrl() : localStorage.getItem('hoshizaki_gas_url')) || '';
+        if (!gasUrl || !navigator.onLine) {
+            if (notify && typeof showToast === 'function') showToast('ℹ️ แสดงประวัติการส่ง SMS ล่าสุดในเครื่อง');
+            return;
+        }
+        try {
+            const secret = localStorage.getItem('hoshizaki_api_secret') || '';
+            const res = await fetch(gasUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'GET_MOBILE_SMS_LOGS', limit: 120, apiSecret: secret })
+            });
+            const json = await res.json();
+            if (json && json.status === 'ok' && Array.isArray(json.rows) && json.rows.length > 0) {
+                saveLocalSmsLogs_(json.rows);
+                renderCustomerMobileSmsLogsTable();
+                if (notify && typeof showToast === 'function') showToast(`✅ โหลดประวัติการส่ง SMS จาก Cloud สำเร็จ (${json.rows.length} รายการ)`);
+            }
+        } catch (err) {
+            if (notify && typeof showToast === 'function') showToast('⚠️ ไม่สามารถเชื่อมต่อ Cloud ได้ แสดงข้อมูลในเครื่อง');
+        }
+    };
+
+    window.renderCustomerMobileSmsLogsTable = function() {
+        const wrap = document.getElementById('customerSmsLogsTableBody');
+        const badge = document.getElementById('smsLogCountBadge');
+        if (!wrap) return;
+        const q = (document.getElementById('smsLogSearchInput')?.value || '').trim().toLowerCase();
+        const logs = loadLocalSmsLogs_().filter(item => {
+            if (!q) return true;
+            return [item.refNo, item.customer, item.phone, item.message, item.sentBy].some(v => String(v || '').toLowerCase().includes(q));
+        });
+        if (badge) badge.textContent = `ทั้งหมด ${logs.length} รายการ`;
+        if (logs.length === 0) {
+            wrap.innerHTML = `<div class="text-center py-8 text-slate-400 font-medium">ยังไม่มีประวัติการส่ง SMS ถึงลูกค้า</div>`;
+            return;
+        }
+        wrap.innerHTML = logs.map((item, idx) => {
+            const safePhone = String(item.phone || '').replace(/</g, '&lt;');
+            const safeCust = String(item.customer || '').replace(/</g, '&lt;');
+            const safeRef = String(item.refNo || '').replace(/</g, '&lt;');
+            const safeMsg = String(item.message || '').replace(/</g, '&lt;');
+            const safeTime = String(item.timestamp || '').replace(/</g, '&lt;');
+            const safeUrl = String(item.portalUrl || '').replace(/"/g, '&quot;');
+            return `
+            <div class="border border-slate-200 rounded-xl p-3 bg-white hover:bg-sky-50/40 transition flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="space-y-1 min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="bg-[#002B49] text-white font-bold px-2 py-0.5 rounded text-[11px]">${safeRef || 'N/A'}</span>
+                        <span class="font-bold text-slate-900">${safeCust}</span>
+                        <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full text-[11px]"><i class="fa-solid fa-phone mr-1"></i>${safePhone}</span>
+                        <span class="text-[10.5px] text-slate-400">${safeTime}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-600 break-words">${safeMsg}</div>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                    <button type="button" onclick="navigator.clipboard?.writeText('${safeUrl}'); if(typeof showToast==='function') showToast('📋 คัดลอกลิงก์ลูกค้าแล้ว');" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1.5 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-copy"></i> คัดลอกลิงก์
+                    </button>
+                    <button type="button" onclick="window.resendLoggedCustomerSms_(${idx})" class="bg-[#00A3E0] hover:bg-sky-600 text-white font-bold px-2.5 py-1.5 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-paper-plane"></i> ส่ง SMS ซ้ำ
+                    </button>
+                </div>
+            </div>`;
+        }).join('');
+    };
+
+    window.resendLoggedCustomerSms_ = function(idx) {
+        const logs = loadLocalSmsLogs_();
+        const item = logs[idx];
+        if (!item) return;
+        window.dispatchSmsAndLog_(item.phone, item.refNo, item.customer, item.portalUrl, item.message);
+    };
+
+    // Add quick access button inside Top-Right Executive/System or Dual LINE modal
+    document.addEventListener('DOMContentLoaded', function() {
+        const lineModalHeader = document.querySelector('#dualLineCommandCenterModal .border-b');
+        if (lineModalHeader && !document.getElementById('btnOpenSmsDispatchLogs')) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.id = 'btnOpenSmsDispatchLogs';
+            btn.onclick = function() { window.openCustomerMobileSmsLogModal(); };
+            btn.className = 'bg-[#00A3E0] hover:bg-sky-600 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold inline-flex items-center gap-1 shadow-xs ml-2';
+            btn.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> <span>ประวัติส่ง SMS ลูกค้า</span>';
+            const titleArea = lineModalHeader.querySelector('h2, h3, div');
+            if (titleArea) titleArea.appendChild(btn);
+        }
+    });
+})();
+</script>
+
 </body>
 </html>

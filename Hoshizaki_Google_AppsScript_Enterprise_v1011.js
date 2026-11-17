@@ -246,6 +246,10 @@ function doPost(e) {
         return jsonOut(logMobileSmsDispatchToSheet_(ss, data));
       }
 
+      if (action === 'GET_MOBILE_SMS_LOGS') {
+        return jsonOut(getMobileSmsDispatchLogs_(ss, data));
+      }
+
       if (action === 'RUN_PREDICTIVE_PM_WARRANTY_SCAN') {
         return jsonOut(runPredictivePmAndWarrantyAlerts_());
       }
@@ -7422,4 +7426,32 @@ function logMobileSmsDispatchToSheet_(ss, data) {
     String(data.sentBy || 'Service Unit')
   ]);
   return { status: 'ok', loggedAt: nowStr };
+}
+
+
+function getMobileSmsDispatchLogs_(ss, data) {
+  var sheet = ss.getSheetByName('Customer_Mobile_SMS_Logs');
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { status: 'ok', rows: [] };
+  }
+  var limit = Math.min(Number(data && data.limit) || 100, 300);
+  var lastRow = sheet.getLastRow();
+  var startRow = Math.max(2, lastRow - limit + 1);
+  var numRows = lastRow - startRow + 1;
+  var values = sheet.getRange(startRow, 1, numRows, 8).getValues();
+  var rows = [];
+  for (var i = values.length - 1; i >= 0; i--) {
+    var r = values[i];
+    rows.push({
+      timestamp: String(r[0] || ''),
+      refNo: String(r[1] || ''),
+      customer: String(r[2] || ''),
+      phone: String(r[3] || ''),
+      channel: String(r[4] || 'MOBILE_SMS'),
+      portalUrl: String(r[5] || ''),
+      message: String(r[6] || ''),
+      sentBy: String(r[7] || '')
+    });
+  }
+  return { status: 'ok', rows: rows };
 }

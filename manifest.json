@@ -1,7 +1,7 @@
 {
   "name": "HOSHIZAKI (THAILAND) - Job Service Management",
   "short_name": "Hoshizaki Service",
-  "description": "ระบบบริหารจัดการงานบริการ ใบแจ้งบริการ ใบเสนอราคา และสต็อกอะไหล่สำหรับทีมช่าง HOSHIZAKI (THAILAND) Enterprise v1018",
+  "description": "ระบบบริหารจัดการงานบริการ ใบแจ้งบริการ ใบเสนอราคา และสต็อกอะไหล่สำหรับทีมช่าง HOSHIZAKI (THAILAND) Enterprise v1019",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -22,5 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "1018-SEC"
+  "version": "1019-SEC"
 }

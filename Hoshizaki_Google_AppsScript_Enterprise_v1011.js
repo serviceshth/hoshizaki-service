@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1018-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1019-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -134,7 +134,7 @@ function installEnterpriseDailyTriggers() {
   ScriptApp.newTrigger('autoImportNavReportsFromGmail_').timeBased().everyHours(4).create();
   ScriptApp.newTrigger('rebuildDrivePdfIndexSheet').timeBased().everyDays(1).atHour(2).create();
   ScriptApp.newTrigger('archiveOldServiceJobsToYearlySheets').timeBased().onMonthDay(1).atHour(3).create();
-  Logger.log('✅ ติดตั้ง Enterprise v1018 Triggers ครบทั้งหมด 6 รายการเรียบร้อยแล้ว');
+  Logger.log('✅ ติดตั้ง Enterprise v1019 Triggers ครบทั้งหมด 6 รายการเรียบร้อยแล้ว');
 }
 
 function isLineTokenConfigured() {
@@ -233,6 +233,18 @@ function doPost(e) {
 
       if (action === 'RUN_PREDICTIVE_PM_WARRANTY_SCAN') {
         return jsonOut(runPredictivePmAndWarrantyAlerts_());
+      }
+
+      if (action === 'REBUILD_ALL_SHEETS_AND_TRIGGERS') {
+        return jsonOut(rebuildAllEnterpriseSheetsAndTriggers_(ss, secrets));
+      }
+
+      if (action === 'RUN_NIGHTLY_FULL_DRIVE_BACKUP_NOW') {
+        return jsonOut(runNightlyFullDriveBackup_());
+      }
+
+      if (action === 'RESTORE_LATEST_NIGHTLY_BACKUP_TO_SHEETS') {
+        return jsonOut(restoreLatestNightlyBackupToSheets_(ss));
       }
 
       // --- Core Existing Endpoints ---
@@ -981,7 +993,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1013-FINAL',
+    version: 'Enterprise-v1019-FINAL',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1014,7 +1026,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1013-FINAL',
+    version: 'Enterprise-v1019-FINAL',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -6700,4 +6712,276 @@ function computeDocumentIntegrityHash_(docNo, dateStr, serialNo, grandTotal, ite
     return ('0' + v.toString(16)).slice(-2);
   }).join('').toUpperCase();
   return 'HZK-' + hex.slice(0, 16);
+}
+
+
+// ============================================================================
+// 17. ENTERPRISE v1019 DISASTER RESILIENCE, 1-CLICK SHEET REBUILDER &
+//     AUTOMATED NIGHTLY FULL-SYSTEM BACKUP ENGINE (23:00 DAILY TRIGGER)
+// ============================================================================
+
+function rebuildAllEnterpriseSheetsAndTriggers_(ss, secrets) {
+  var created = [];
+  var repaired = [];
+
+  var schemaDefs = [
+    {
+      name: 'Service_Jobs',
+      headers: [
+        'Job No.', 'Date', 'Status', 'Tech Code', 'Responsible Tech', 'Team Techs',
+        'Customer / Store', 'Dealer', 'Contact', 'Address',
+        'Model', 'Serial No.', 'Product Type', 'Warranty',
+        'Time In', 'Time Out', 'GPS',
+        'Symptom', 'Detected Cause', 'Action / Troubleshooting', 'Parts Summary',
+        'Grand Total (THB)', 'Drive Folder URL', 'PDF Backup URL', 'Updated At',
+        'Defective Return Status', 'Payment Aging Status'
+      ]
+    },
+    {
+      name: 'Quotations',
+      headers: [
+        'Offer No.', 'Document Type', 'Ref. Job No.', 'Date',
+        'Customer / Store', 'Dealer', 'Contact', 'Address',
+        'Model', 'Serial No.', 'Price Tier', 'Parts & Services Summary',
+        'Subtotal (THB)', 'VAT 7%', 'WHT 3%', 'Grand Total (THB)',
+        'Remark', 'Technician', 'Updated At'
+      ]
+    },
+    {
+      name: 'Van_Stock',
+      headers: ['Tech Code', 'Part Description', 'Qty Remaining', 'Status', 'Updated At']
+    },
+    {
+      name: 'Service_Schedule',
+      headers: ['Schedule ID', 'JSON Data', 'Updated At']
+    },
+    {
+      name: 'Warranty_Claims',
+      headers: ['Claim No.', 'Ref Job No.', 'Claim Date', 'Failed Date', 'Customer', 'Dealer', 'Model', 'Serial No.', 'Install Date', 'Symptom', 'Claim Parts', 'Updated At']
+    },
+    {
+      name: 'Serial_Database_Updates',
+      headers: ['Serial No.', 'Product Type', 'Model', 'Date Out', 'Invoice No.', 'Customer', 'PO No.', 'Deleted', 'Updated At']
+    },
+    {
+      name: 'Legacy_Service_History',
+      headers: [
+        'Legacy_ID', 'Service_Date', 'Customer_Store', 'Model', 'Serial_No',
+        'Technician', 'Symptom', 'Action_Taken', 'Result_Status', 'Parts_Used',
+        'Photo_Count', 'Drive_Folder_URL', 'Photo_Thumbnails_JSON', 'Raw_Text', 'Imported_At'
+      ]
+    },
+    {
+      name: 'Parts_Advance_Tracking',
+      headers: [
+        'Req ID', 'Ref Job No.', 'Tech Name', 'Customer', 'Model / S/N',
+        'Parts JSON', 'Stage Status', 'Carrier / Waybill', 'Delivery Doc URL',
+        'Signatures JSON', 'Notes', 'Updated At'
+      ]
+    },
+    {
+      name: 'Factory_GIT_ETA_Tracker',
+      headers: ['Item Code', 'Description', 'Model', 'Serial No.', 'Origin', 'PO / Ref', 'Qty', 'ETD', 'ETA Port', 'ETA Warehouse', 'Status']
+    },
+    {
+      name: 'Company_Staff_Directory',
+      headers: ['Staff ID', 'Full Name', 'Nickname', 'Department / Unit', 'Position', 'Role Tag', 'Email', 'Mobile / Ext', 'Phase 1 Active', 'Updated At']
+    },
+    {
+      name: 'Live_Tech_GPS_Radar',
+      headers: ['Tech Key', 'Tech Name', 'Job No.', 'Customer / Store', 'Status', 'Tech Lat', 'Tech Lng', 'Dest Lat', 'Dest Lng', 'Distance (km)', 'ETA (mins)', 'Updated At']
+    },
+    {
+      name: 'Dispatch_Job_Assignments',
+      headers: ['Dispatch ID', 'Job No.', 'Tech Name', 'Tech Email', 'Tech Phone', 'Customer', 'Address / Maps', 'Model / S/N', 'Scheduled Date/Time', 'Status', 'Dispatcher Name', 'Updated At']
+    },
+    {
+      name: 'Customer_CSAT_Ratings',
+      headers: ['Job No.', 'Rating (1-5)', 'Customer Name', 'LINE User ID', 'Rated At', 'Comment']
+    },
+    {
+      name: 'Warehouse_Inspection_Reports',
+      headers: [
+        'Inspection ID', 'Date', 'Inspection Type', 'QC Status', 'Model', 'Serial No.',
+        'Container / BL / PO Ref', 'Inspector / Outsource Name', 'Company / Team',
+        'Box Condition', 'Exterior Body', 'Internal & Compressor', 'Accessories & Manual',
+        'Damage Summary / Remarks', 'Photo Count', 'Drive Folder URL', 'PDF Report URL',
+        'Full JSON Payload', 'Updated At'
+      ]
+    },
+    {
+      name: 'QCF_And_Memo_Reports',
+      headers: [
+        'QCF Issued No.', 'Issued Date', 'Ref Inspection ID', 'Model', 'Serial No.',
+        'Customer Name', 'Claim Type', 'Memo Subject', 'Memo Total Cost (THB)',
+        'Factory Reply Status', 'Drive Folder URL', 'QCF PDF URL', 'Memo PDF URL',
+        'Full JSON Payload', 'Updated At'
+      ]
+    },
+    {
+      name: 'Global_Enterprise_Config',
+      headers: ['Key', 'JSON Value', 'Updated At']
+    }
+  ];
+
+  schemaDefs.forEach(function(def) {
+    var sh = ss.getSheetByName(def.name);
+    if (!sh) {
+      sh = ss.insertSheet(def.name);
+      sh.getRange(1, 1, 1, def.headers.length).setValues([def.headers])
+        .setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+      sh.setFrozenRows(1);
+      created.push(def.name);
+    } else {
+      var curLastCol = Math.max(1, sh.getLastColumn());
+      var existingHeaders = sh.getRange(1, 1, 1, curLastCol).getValues()[0];
+      var isHeaderEmpty = !existingHeaders[0] || String(existingHeaders[0]).trim() === '';
+      if (isHeaderEmpty || curLastCol < def.headers.length) {
+        sh.getRange(1, 1, 1, def.headers.length).setValues([def.headers])
+          .setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+        sh.setFrozenRows(1);
+        repaired.push(def.name);
+      }
+    }
+  });
+
+  // Install Nightly 23:00 Automated Full-System Backup Trigger
+  var triggerInstalled = ensureNightlyBackupTrigger_();
+
+  return {
+    status: 'ok',
+    createdSheets: created,
+    repairedSheets: repaired,
+    totalVerifiedSheets: schemaDefs.length,
+    nightlyBackupTriggerActive: triggerInstalled,
+    repairedAt: Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss')
+  };
+}
+
+function ensureNightlyBackupTrigger_() {
+  try {
+    var triggers = ScriptApp.getProjectTriggers();
+    var hasNightly = false;
+    triggers.forEach(function(t) {
+      if (t.getHandlerFunction() === 'runNightlyFullDriveBackup_') {
+        hasNightly = true;
+      }
+    });
+    if (!hasNightly) {
+      ScriptApp.newTrigger('runNightlyFullDriveBackup_').timeBased().everyDays(1).atHour(23).create();
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function runNightlyFullDriveBackup_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var secrets = getAppSecrets_();
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var dateTag = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd');
+
+  var backupBundle = {
+    system: 'HOSHIZAKI_NIGHTLY_FULL_CLOUD_BACKUP_V1019',
+    createdAt: nowStr,
+    spreadsheetId: ss.getId(),
+    spreadsheetName: ss.getName(),
+    sheets: {}
+  };
+
+  var totalRows = 0;
+  ss.getSheets().forEach(function(sh) {
+    var sName = sh.getName();
+    var lr = sh.getLastRow();
+    var lc = sh.getLastColumn();
+    if (lr >= 1 && lc >= 1) {
+      var vals = sh.getRange(1, 1, Math.min(lr, 5000), lc).getValues();
+      backupBundle.sheets[sName] = vals;
+      totalRows += Math.max(0, vals.length - 1);
+    }
+  });
+
+  var rootIter = DriveApp.getFoldersByName(ROOT_DRIVE_FOLDER_NAME);
+  var root = rootIter.hasNext() ? rootIter.next() : DriveApp.createFolder(ROOT_DRIVE_FOLDER_NAME);
+  var snapIter = root.getFoldersByName('_NIGHTLY_FULL_SYSTEM_BACKUPS');
+  var snapFolder = snapIter.hasNext() ? snapIter.next() : root.createFolder('_NIGHTLY_FULL_SYSTEM_BACKUPS');
+
+  var fileName = 'HOSHIZAKI_Cloud_Full_Backup_' + dateTag + '.json';
+  var existing = snapFolder.getFilesByName(fileName);
+  while (existing.hasNext()) {
+    existing.next().setTrashed(true);
+  }
+  var file = snapFolder.createFile(fileName, JSON.stringify(backupBundle), MimeType.PLAIN_TEXT);
+
+  // Rolling 30-day retention cleanup
+  var cutoffMs = Date.now() - (30 * 24 * 60 * 60 * 1000);
+  var allFiles = snapFolder.getFiles();
+  while (allFiles.hasNext()) {
+    var f = allFiles.next();
+    if (f.getLastUpdated().getTime() < cutoffMs) {
+      try { f.setTrashed(true); } catch (eDel) {}
+    }
+  }
+
+  // Record audit log
+  var logSheet = ss.getSheetByName('System_Auto_Backup_Log');
+  if (!logSheet) {
+    logSheet = ss.insertSheet('System_Auto_Backup_Log');
+    logSheet.getRange(1, 1, 1, 5).setValues([['Backup Timestamp', 'File Name', 'Sheets Count', 'Total Rows', 'Drive URL']])
+      .setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    logSheet.setFrozenRows(1);
+  }
+  logSheet.appendRow([nowStr, fileName, Object.keys(backupBundle.sheets).length, totalRows, file.getUrl()]);
+
+  return {
+    status: 'ok',
+    fileName: fileName,
+    sheetsCount: Object.keys(backupBundle.sheets).length,
+    totalRows: totalRows,
+    fileUrl: file.getUrl(),
+    createdAt: nowStr
+  };
+}
+
+function restoreLatestNightlyBackupToSheets_(ss) {
+  var rootIter = DriveApp.getFoldersByName(ROOT_DRIVE_FOLDER_NAME);
+  if (!rootIter.hasNext()) return { status: 'empty', message: 'ไม่พบโฟลเดอร์สำรองข้อมูลบน Google Drive' };
+  var snapIter = rootIter.next().getFoldersByName('_NIGHTLY_FULL_SYSTEM_BACKUPS');
+  if (!snapIter.hasNext()) return { status: 'empty', message: 'ยังไม่มีไฟล์สำรองอัตโนมัติรายวันบน Google Drive' };
+
+  var files = snapIter.next().getFiles();
+  var latest = null;
+  while (files.hasNext()) {
+    var f = files.next();
+    if (!latest || f.getLastUpdated() > latest.getLastUpdated()) {
+      latest = f;
+    }
+  }
+  if (!latest) return { status: 'empty', message: 'ไม่พบไฟล์สำรองล่าสุด' };
+
+  var bundle = JSON.parse(latest.getBlob().getDataAsString());
+  var sheetsMap = bundle.sheets || {};
+  var restoredSheets = [];
+
+  Object.keys(sheetsMap).forEach(function(sName) {
+    var rows = sheetsMap[sName];
+    if (!Array.isArray(rows) || rows.length === 0) return;
+    var sh = ss.getSheetByName(sName);
+    if (!sh) sh = ss.insertSheet(sName);
+    sh.clear();
+    sh.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+    sh.getRange(1, 1, 1, rows[0].length).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    sh.setFrozenRows(1);
+    restoredSheets.push(sName);
+  });
+
+  CacheService.getScriptCache().remove('PULL_ALL_JOBS_V18');
+  return {
+    status: 'ok',
+    restoredFromFile: latest.getName(),
+    backupCreatedAt: bundle.createdAt || '',
+    restoredSheetsCount: restoredSheets.length,
+    restoredSheets: restoredSheets
+  };
 }

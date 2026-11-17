@@ -763,7 +763,7 @@
                         </button>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1013</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1014</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -893,6 +893,19 @@
                         <button type="button" data-tb-cat="SERVICE" onclick="openFreeTextOrSubstitutePartModal()" class="tb-action-item bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-pen-to-square text-white"></i> <span>เพิ่มอะไหล่ทดแทน/อิสระ</span>
                         </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openCustomerLivePortalModal()" class="tb-action-item bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-mobile-screen text-amber-200"></i> <span>พอร์ทัลลูกค้าสด (GPS/อนุมัติ)</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openRouteAndPmCertModal('ROUTE')" class="tb-action-item bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-route text-amber-200"></i> <span>จัดเส้นทางวิ่งงาน &amp; ใบรับรอง PM</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openPhase2DepartmentalBridgeModal()" class="tb-action-item bg-slate-700 hover:bg-slate-800 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-diagram-project text-amber-300"></i> <span>เบิกอะไหล่ล่วงหน้า &amp; บัญชี (Phase 2)</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openTrilingualExecutiveBriefModal()" class="tb-action-item bg-amber-700 hover:bg-amber-800 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-language text-white"></i> <span>สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)</span>
+                        </button>
+
 
                     </div>
                 </section>
@@ -4374,7 +4387,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1013</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1014</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20494,7 +20507,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1013) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1014) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -20917,7 +20930,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1013) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1014) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-sky-800 flex-shrink-0">
@@ -23423,7 +23436,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1013 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1014 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -30711,7 +30724,7 @@ Defect: ${defectText}`;
 <!-- Corporate Enterprise Footer (v1013) -->
 <footer class="no-print max-w-4xl mx-auto mt-6 mb-4 text-center text-[11px] text-slate-500 border-t border-slate-200 pt-3">
     <div>
-        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1013 ·
+        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1014 ·
         <span onclick="triggerCreatorCreditEasterEgg()" class="cursor-pointer underline decoration-dotted hover:text-hoshizaki-blue font-semibold">Service Management System</span>
         · For Internal Use Only
     </div>
@@ -31318,7 +31331,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1013)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1014)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31353,6 +31366,743 @@ Defect: ${defectText}`;
             window.runSystemAutoHealNow();
         }
     }, 2500);
+})();
+</script>
+
+
+<!-- ============================================================================
+     ENTERPRISE v1014-NEXTGEN FIELD, CUSTOMER PORTAL & TRILINGUAL SUITE
+     (TH / EN / JP Executive Mode • Customer Live GPS & Approval Portal •
+      Smart Route Optimizer & PM Certificate • Phase 2 Admin/Acct Bridge)
+     ============================================================================ -->
+<style id="v1014-nextgen-styles">
+    .v1014-lang-btn.active {
+        background-color: #00A3E0 !important;
+        color: #ffffff !important;
+        border-color: #ffffff !important;
+    }
+    @media print {
+        body.printing-pm-cert #jobSheetContainer,
+        body.printing-pm-cert header,
+        body.printing-pm-cert footer,
+        body.printing-pm-cert .no-print {
+            display: none !important;
+        }
+        body.printing-pm-cert #hzkPmCertificateModal {
+            display: block !important;
+            position: static !important;
+            background: transparent !important;
+            padding: 0 !important;
+        }
+        body.printing-pm-cert #hzkPmCertificateModal > div {
+            max-width: 100% !important;
+            max-height: none !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+        body.printing-pm-cert .pm-cert-no-print {
+            display: none !important;
+        }
+    }
+</style>
+
+<!-- 1. Customer Live Tracking & On-Site 3-Tier Approval Portal Modal (Fullscreen Mobile-First) -->
+<div id="hzkCustomerLivePortalModal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-xs z-[99] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full flex flex-col max-h-[94dvh] border-2 border-hoshizaki-blue overflow-hidden">
+        <div class="bg-hoshizaki-navy text-white px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-white text-hoshizaki-navy font-black flex items-center justify-center text-lg shadow">H</div>
+                <div>
+                    <h3 class="font-bold text-sm sm:text-base">HOSHIZAKI CUSTOMER LIVE PORTAL</h3>
+                    <p class="text-[11px] text-sky-200">ติดตามตำแหน่งรถช่างเรียลไทม์ &amp; อนุมัติรายการซ่อมออนไลน์</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeCustomerLivePortalModal()" class="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+        </div>
+        <div id="hzkCustomerLivePortalBody" class="p-4 overflow-y-auto space-y-3 text-xs"></div>
+    </div>
+</div>
+
+<!-- 2. Smart Route Optimizer & PM Contract Certificate Modal -->
+<div id="hzkRouteAndPmCertModal" class="hidden fixed inset-0 bg-black/75 z-[96] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[92dvh] border border-slate-200">
+        <div class="bg-hoshizaki-navy text-white px-4 py-3 rounded-t-2xl flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-sm sm:text-base"><i class="fa-solid fa-route text-amber-300 mr-1.5"></i>Smart Daily Route Optimizer &amp; Annual PM Certificate</h3>
+                <p class="text-[11px] text-sky-200">จัดเรียงลำดับเส้นทางวิ่งงานรายวันตามพิกัด GPS เพื่อลดค่าน้ำมัน &amp; ออกใบรับรองบำรุงรักษารายปี</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkRouteAndPmCertModal').classList.add('hidden')" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4 text-xs">
+            <div class="flex flex-wrap gap-2 border-b pb-2">
+                <button type="button" onclick="switchRoutePmTab('ROUTE')" id="tabBtnRouteOpt" class="px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold">
+                    <i class="fa-solid fa-map-location-dot mr-1"></i> 1. จัดลำดับเส้นทางวิ่งงาน (Route Optimizer)
+                </button>
+                <button type="button" onclick="switchRoutePmTab('PM_CERT')" id="tabBtnPmCert" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-award mr-1 text-amber-600"></i> 2. ออกใบรับรองการบำรุงรักษา (PM Certificate)
+                </button>
+            </div>
+            <div id="routeOptTabPanel" class="space-y-3"></div>
+            <div id="pmCertTabPanel" class="hidden space-y-3"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Printable A4 PM Certificate Modal -->
+<div id="hzkPmCertificateModal" class="hidden fixed inset-0 bg-black/80 z-[99] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col max-h-[94dvh] border border-slate-300">
+        <div class="pm-cert-no-print bg-slate-900 text-white px-4 py-2.5 rounded-t-2xl flex items-center justify-between">
+            <span class="font-bold text-xs sm:text-sm"><i class="fa-solid fa-certificate text-amber-300 mr-1.5"></i>ตัวอย่างใบรับรองการบำรุงรักษาเครื่อง (HOSHIZAKI PM CERTIFICATE)</span>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="printPmCertificateA4()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1 rounded-lg text-xs">
+                    <i class="fa-solid fa-print mr-1"></i> พิมพ์ / บันทึก PDF (A4)
+                </button>
+                <button type="button" onclick="document.getElementById('hzkPmCertificateModal').classList.add('hidden')" class="bg-red-600 text-white w-7 h-7 rounded-lg font-bold">&times;</button>
+            </div>
+        </div>
+        <div id="pmCertificatePrintableSheet" class="p-6 sm:p-8 overflow-y-auto bg-white text-slate-900"></div>
+    </div>
+</div>
+
+<!-- 4. Phase 2 Readiness Bridge Modal (Admin Unit Parts Advance 6-Stage + Accounting Handover) -->
+<div id="hzkPhase2BridgeModal" class="hidden fixed inset-0 bg-black/75 z-[96] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full flex flex-col max-h-[92dvh] border border-slate-200">
+        <div class="bg-hoshizaki-navy text-white px-4 py-3 rounded-t-2xl flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-sm sm:text-base"><i class="fa-solid fa-diagram-project text-amber-300 mr-1.5"></i>Phase 2 Departmental Bridge — Admin Unit (Parts Advance 6-Stage) &amp; Accounting Handover</h3>
+                <p class="text-[11px] text-sky-200">ระบบติดตามเบิกอะไหล่ล่วงหน้า 6 ขั้นตอน &amp; ส่งต่อเอกสารวางบิล/ใบกำกับภาษี (QT → IV → RE)</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkPhase2BridgeModal').classList.add('hidden')" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4 text-xs">
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <div class="font-extrabold text-hoshizaki-navy">สถานะการเปิดใช้งานข้ามแผนก (Departmental Isolation Guard):</div>
+                    <div id="phase2GuardStatusText" class="text-[11px] text-slate-700 mt-0.5">Phase 1 Active (Service Unit &amp; Service Center Only)</div>
+                </div>
+                <div class="flex gap-1.5">
+                    <button type="button" onclick="createPartsAdvanceFromCurrentJob()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg">
+                        <i class="fa-solid fa-plus mr-1"></i> สร้างใบเบิกอะไหล่ล่วงหน้าจากใบงานนี้
+                    </button>
+                    <button type="button" onclick="openCompanyDirectoryManagerModal()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold px-3 py-1.5 rounded-lg">
+                        <i class="fa-solid fa-sliders mr-1"></i> ตั้งค่าสิทธิ์ Phase 2
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div class="border border-slate-200 rounded-xl p-3 space-y-2">
+                    <div class="font-extrabold text-hoshizaki-navy flex items-center justify-between border-b pb-1.5">
+                        <span><i class="fa-solid fa-boxes-packing text-amber-600 mr-1"></i> Parts Advance 6-Stage Workflow (Admin Unit)</span>
+                        <span id="paWorkflowCountBadge" class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full text-[10px]">0 รายการ</span>
+                    </div>
+                    <div id="partsAdvanceListContainer" class="space-y-2 max-h-80 overflow-y-auto"></div>
+                </div>
+                <div class="border border-slate-200 rounded-xl p-3 space-y-2">
+                    <div class="font-extrabold text-hoshizaki-navy flex items-center justify-between border-b pb-1.5">
+                        <span><i class="fa-solid fa-file-invoice-dollar text-emerald-600 mr-1"></i> Accounting Billing Handover (QT → IV → RE)</span>
+                        <span id="acctHandoverCountBadge" class="bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded-full text-[10px]">0 รายการ</span>
+                    </div>
+                    <div id="accountingHandoverListContainer" class="space-y-2 max-h-80 overflow-y-auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Trilingual Executive Summary Modal (TH / EN / JP — 日本語) -->
+<div id="hzkTrilingualExecBriefModal" class="hidden fixed inset-0 bg-black/75 z-[97] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[92dvh] border border-slate-200">
+        <div class="bg-hoshizaki-navy text-white px-4 py-3 rounded-t-2xl flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-sm sm:text-base"><i class="fa-solid fa-language text-amber-300 mr-1.5"></i>Executive KPI &amp; Operations Brief — 3 ภาษา (ไทย • English • 日本語)</h3>
+                <p class="text-[11px] text-sky-200">รายงานสรุปผู้บริหารแบบเรียลไทม์สำหรับ Managing Director (Mr. Daisuke Suzuki) และ Japanese Corporate Unit</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkTrilingualExecBriefModal').classList.add('hidden')" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+        </div>
+        <div id="trilingualExecBriefBody" class="p-4 overflow-y-auto space-y-3 text-xs"></div>
+    </div>
+</div>
+
+<script id="v1014-nextgen-logic">
+(function() {
+    // =========================================================================
+    // 1. TRILINGUAL UI & EXECUTIVE MODE (TH / EN / JP — 日本語)
+    // =========================================================================
+    const HZK_LANG_KEY = 'hoshizaki_ui_language_v1014';
+    window.HZK_CURRENT_LANG = localStorage.getItem(HZK_LANG_KEY) || 'TH';
+
+    const TRILINGUAL_LABELS = {
+        TH: {
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1014)',
+            selectTech: 'เลือกโปรไฟล์ช่าง',
+            pullCloud: 'ดึงข้อมูล Cloud',
+            kpiDash: 'แดชบอร์ด KPI',
+            updateApp: 'อัปเดตแอป',
+            execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
+        },
+        EN: {
+            subtitle: 'Enterprise Digital Field Service Management (v1014)',
+            selectTech: 'Technician Profile',
+            pullCloud: 'Two-Way Cloud Sync',
+            kpiDash: 'Executive KPI',
+            updateApp: 'Update App',
+            execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
+        },
+        JP: {
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1014)',
+            selectTech: 'エンジニア選択',
+            pullCloud: 'クラウド双方向同期',
+            kpiDash: '経営KPIダッシュボード',
+            updateApp: 'アプリ更新',
+            execBriefBtn: '経営サマリー (日・英・タイ3言語)'
+        }
+    };
+
+    window.setHoshizakiUiLanguage = function(lang) {
+        if (!TRILINGUAL_LABELS[lang]) lang = 'TH';
+        window.HZK_CURRENT_LANG = lang;
+        localStorage.setItem(HZK_LANG_KEY, lang);
+        ['TH', 'EN', 'JP'].forEach(code => {
+            const btn = document.getElementById('hzkLangBtn_' + code);
+            if (btn) btn.classList.toggle('active', code === lang);
+        });
+        const dict = TRILINGUAL_LABELS[lang];
+        const subEl = document.querySelector('header p.text-hoshizaki-blue');
+        if (subEl) subEl.innerHTML = dict.subtitle + ' <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v1014</span>';
+        if (typeof showToast === 'function') {
+            const msg = lang === 'JP' ? '表示言語を日本語（エグゼクティブモード）に切り替えました' : (lang === 'EN' ? 'Switched UI language to Corporate English' : 'เปลี่ยนภาษาหน้าจอเป็นภาษาไทยแล้ว');
+            showToast(msg);
+        }
+    };
+
+    // Inject TH / EN / JP switcher pills into the top header compact pill row
+    function mountTrilingualHeaderBar() {
+        const badgeWrap = document.getElementById('techQuickProfileBadge')?.parentElement;
+        if (!badgeWrap || document.getElementById('hzkLangSwitcherGroup')) return;
+        const grp = document.createElement('div');
+        grp.id = 'hzkLangSwitcherGroup';
+        grp.className = 'inline-flex items-center gap-1 bg-white/10 border border-white/20 rounded-full px-1.5 py-0.5';
+        grp.innerHTML = `
+            <button type="button" id="hzkLangBtn_TH" onclick="setHoshizakiUiLanguage('TH')" class="v1014-lang-btn hzk-compact-pill text-[10px] px-2 rounded-full font-extrabold text-white border border-transparent">TH</button>
+            <button type="button" id="hzkLangBtn_EN" onclick="setHoshizakiUiLanguage('EN')" class="v1014-lang-btn hzk-compact-pill text-[10px] px-2 rounded-full font-extrabold text-white border border-transparent">EN</button>
+            <button type="button" id="hzkLangBtn_JP" onclick="setHoshizakiUiLanguage('JP')" class="v1014-lang-btn hzk-compact-pill text-[10px] px-2 rounded-full font-extrabold text-white border border-transparent">日本語</button>
+        `;
+        badgeWrap.appendChild(grp);
+        window.setHoshizakiUiLanguage(window.HZK_CURRENT_LANG);
+    }
+
+    window.openTrilingualExecutiveBriefModal = function() {
+        const modal = document.getElementById('hzkTrilingualExecBriefModal');
+        const body = document.getElementById('trilingualExecBriefBody');
+        if (!modal || !body) return;
+
+        let jobs = [];
+        try { jobs = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch (e) {}
+        const completed = jobs.filter(j => j.jobStatus === 'Completed').length;
+        const waiting = jobs.filter(j => j.jobStatus === 'Waiting Parts').length;
+        const totalRev = jobs.reduce((acc, j) => acc + (parseFloat(String(j.grandTotal || '0').replace(/,/g, '')) || 0), 0);
+        const ftfr = jobs.length > 0 ? ((completed / jobs.length) * 100).toFixed(1) : '100.0';
+
+        body.innerHTML = `
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div class="bg-sky-50 border border-sky-200 rounded-xl p-2.5 text-center">
+                    <div class="text-[10px] font-bold text-sky-900">Total Jobs / 総案件数</div>
+                    <div class="text-lg font-extrabold text-hoshizaki-navy">${jobs.length}</div>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 text-center">
+                    <div class="text-[10px] font-bold text-emerald-900">Completed / 完了件数</div>
+                    <div class="text-lg font-extrabold text-emerald-700">${completed} (${ftfr}%)</div>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-center">
+                    <div class="text-[10px] font-bold text-amber-900">Waiting Parts / 部品待ち</div>
+                    <div class="text-lg font-extrabold text-amber-700">${waiting}</div>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-2.5 text-center">
+                    <div class="text-[10px] font-bold text-indigo-900">Service Revenue / 売上累計</div>
+                    <div class="text-lg font-extrabold text-indigo-800">${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})}</div>
+                </div>
+            </div>
+
+            <div class="space-y-2.5">
+                <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
+                    <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
+                    <p class="text-slate-700 leading-relaxed">
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1014) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                    </p>
+                </div>
+
+                <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
+                    <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
+                    <p class="text-slate-700 leading-relaxed">
+                        The HOSHIZAKI Enterprise v1014 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                    </p>
+                </div>
+
+                <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
+                    <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
+                    <p class="text-slate-800 leading-relaxed">
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1014）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                    </p>
+                </div>
+            </div>
+        `;
+        modal.classList.remove('hidden');
+    };
+
+    // =========================================================================
+    // 2. CUSTOMER LIVE TRACKING & ON-SITE 3-TIER APPROVAL PORTAL
+    // =========================================================================
+    window.openCustomerLivePortalModal = function(overrideParams) {
+        const modal = document.getElementById('hzkCustomerLivePortalModal');
+        const body = document.getElementById('hzkCustomerLivePortalBody');
+        if (!modal || !body) return;
+
+        const jobNo = (overrideParams && overrideParams.jobNo) || document.getElementById('jobNo')?.value || 'JOB-LIVE';
+        const customer = (overrideParams && overrideParams.customer) || document.getElementById('storeName')?.value || 'ลูกค้า HOSHIZAKI';
+        const model = (overrideParams && overrideParams.model) || document.getElementById('machineModel')?.value || '-';
+        const serial = (overrideParams && overrideParams.serial) || document.getElementById('serialNumber')?.value || '-';
+        const tech = (overrideParams && overrideParams.tech) || document.getElementById('responsibleTech')?.value || 'ทีมช่างเทคนิค HOSHIZAKI';
+        const baseTotal = parseFloat(String((overrideParams && overrideParams.total) || document.getElementById('grandTotalDisplay')?.textContent || '3500').replace(/,/g, '')) || 3500;
+
+        const goodPrice = baseTotal;
+        const betterPrice = baseTotal + 2400;
+        const bestPrice = baseTotal + 6800;
+
+        const shareUrl = window.location.origin + window.location.pathname +
+            '?portal=customer&jobNo=' + encodeURIComponent(jobNo) +
+            '&customer=' + encodeURIComponent(customer) +
+            '&model=' + encodeURIComponent(model) +
+            '&serial=' + encodeURIComponent(serial) +
+            '&tech=' + encodeURIComponent(tech) +
+            '&total=' + encodeURIComponent(baseTotal.toFixed(2));
+
+        body.innerHTML = `
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-1">
+                <div class="flex items-center justify-between">
+                    <span class="font-extrabold text-hoshizaki-navy text-sm">ใบงานเลขที่: ${jobNo}</span>
+                    <span class="bg-emerald-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold animate-pulse">● LIVE TRACKING</span>
+                </div>
+                <div><b>ร้านค้า/ลูกค้า:</b> ${customer}</div>
+                <div><b>รุ่นเครื่อง / S/N:</b> ${model} / ${serial}</div>
+                <div><b>ช่างผู้ดูแล:</b> ${tech}</div>
+            </div>
+
+            <div class="border border-slate-200 rounded-xl p-3 space-y-2">
+                <div class="font-extrabold text-hoshizaki-navy flex items-center justify-between">
+                    <span><i class="fa-solid fa-truck-fast text-emerald-600 mr-1"></i> สถานะการเดินทางและพิกัด GPS รถช่างล่าสุด</span>
+                    <button type="button" onclick="loadCustomerPortalLiveGps_()" class="text-sky-700 underline font-bold text-[11px]">อัปเดตพิกัด</button>
+                </div>
+                <div id="custPortalLiveGpsBox" class="bg-slate-50 border rounded-lg p-2.5 text-slate-700">กำลังดึงพิกัดรถช่างจากเรดาร์ส่วนกลาง...</div>
+            </div>
+
+            <div class="border border-slate-200 rounded-xl p-3 space-y-2">
+                <div class="font-extrabold text-hoshizaki-navy"><i class="fa-solid fa-file-signature text-amber-600 mr-1"></i> เลือกแพ็กเกจซ่อม &amp; กดอนุมัติออนไลน์ (On-Site Customer Approval)</div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <label class="border rounded-xl p-2.5 cursor-pointer hover:border-hoshizaki-blue bg-slate-50">
+                        <input type="radio" name="custPortalTierRadio" value="GOOD:${goodPrice}" checked class="mr-1">
+                        <span class="font-extrabold text-slate-800">GOOD (ซ่อมเฉพาะจุด)</span>
+                        <div class="text-sm font-extrabold text-hoshizaki-navy mt-1">${goodPrice.toLocaleString('en-US', {minimumFractionDigits:2})} THB</div>
+                    </label>
+                    <label class="border-2 border-hoshizaki-blue rounded-xl p-2.5 cursor-pointer bg-sky-50">
+                        <input type="radio" name="custPortalTierRadio" value="BETTER:${betterPrice}" class="mr-1">
+                        <span class="font-extrabold text-hoshizaki-navy">BETTER (แนะนำ)</span>
+                        <div class="text-sm font-extrabold text-hoshizaki-darkblue mt-1">${betterPrice.toLocaleString('en-US', {minimumFractionDigits:2})} THB</div>
+                    </label>
+                    <label class="border-2 border-emerald-600 rounded-xl p-2.5 cursor-pointer bg-emerald-50">
+                        <input type="radio" name="custPortalTierRadio" value="BEST:${bestPrice}" class="mr-1">
+                        <span class="font-extrabold text-emerald-900">BEST (ซ่อม + PM 1 ปี)</span>
+                        <div class="text-sm font-extrabold text-emerald-700 mt-1">${bestPrice.toLocaleString('en-US', {minimumFractionDigits:2})} THB</div>
+                    </label>
+                </div>
+                <input type="text" id="custPortalApproverInput" placeholder="ระบุชื่อ-นามสกุล ผู้อนุมัติ / ผู้จัดการร้าน *" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <button type="button" onclick="submitCustomerPortalApprovalNow_('${jobNo}', '${customer.replace(/'/g, '')}', '${model.replace(/'/g, '')}', '${serial.replace(/'/g, '')}', '${tech.replace(/'/g, '')}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl shadow">
+                    <i class="fa-solid fa-circle-check mr-1"></i> ยืนยันอนุมัติซ่อมตามแพ็กเกจที่เลือก
+                </button>
+            </div>
+
+            <div class="bg-slate-100 rounded-xl p-2.5 space-y-1.5">
+                <div class="font-bold text-slate-700 text-[11px]">ลิงก์ส่งให้ลูกค้าเปิดบนมือถือ (ไม่ต้องล็อกอิน):</div>
+                <div class="flex gap-1.5">
+                    <input type="text" readonly value="${shareUrl}" id="custPortalShareUrlInput" class="flex-1 bg-white border border-slate-300 rounded-lg px-2 py-1 text-[10px]">
+                    <button type="button" onclick="navigator.clipboard?.writeText(document.getElementById('custPortalShareUrlInput').value); if(typeof showToast==='function') showToast('คัดลอกลิงก์พอร์ทัลลูกค้าเรียบร้อย');" class="bg-hoshizaki-navy text-white font-bold px-3 py-1 rounded-lg text-[11px]">คัดลอก</button>
+                </div>
+            </div>
+        `;
+        modal.classList.remove('hidden');
+        window.loadCustomerPortalLiveGps_();
+    };
+
+    window.closeCustomerLivePortalModal = function() {
+        document.getElementById('hzkCustomerLivePortalModal')?.classList.add('hidden');
+    };
+
+    window.loadCustomerPortalLiveGps_ = async function() {
+        const box = document.getElementById('custPortalLiveGpsBox');
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (!box) return;
+        if (!gasUrl) {
+            box.innerHTML = 'พร้อมให้บริการ (เชื่อมต่อพิกัด GPS สดเมื่อตั้งค่า Cloud URL)';
+            return;
+        }
+        try {
+            const res = await fetch(gasUrl + '?action=getLiveTechGpsRadar');
+            const data = await res.json();
+            const fleet = data.fleet || [];
+            if (fleet.length === 0) {
+                box.innerHTML = 'ทีมช่างกำลังเตรียมความพร้อมออกเดินทาง';
+                return;
+            }
+            const t = fleet[0];
+            box.innerHTML = `
+                <div class="font-bold text-emerald-800">ช่าง: ${t.techName} • สถานะ: ${t.status} ${t.etaMins ? ('(ถึงใน ~' + t.etaMins + ' นาที)') : ''}</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">อัปเดตล่าสุด: ${t.updatedAt}</div>
+                <iframe title="Tech Location" class="w-full h-44 rounded-lg border mt-2" src="https://maps.google.com/maps?q=${t.lat},${t.lng}&z=13&output=embed"></iframe>
+            `;
+        } catch (e) {
+            box.innerHTML = 'กำลังติดตามสัญญาณ GPS ของทีมช่าง...';
+        }
+    };
+
+    window.submitCustomerPortalApprovalNow_ = async function(jobNo, cust, model, serial, tech) {
+        const approver = (document.getElementById('custPortalApproverInput')?.value || '').trim() || 'ผู้จัดการสาขา';
+        const picked = document.querySelector('input[name="custPortalTierRadio"]:checked')?.value || 'GOOD:0';
+        const [tier, amt] = picked.split(':');
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (gasUrl) {
+            try {
+                const u = gasUrl + '?action=submitRepairApprovalGet&jobNo=' + encodeURIComponent(jobNo) +
+                    '&cust=' + encodeURIComponent(cust) + '&model=' + encodeURIComponent(model) +
+                    '&serial=' + encodeURIComponent(serial) + '&tech=' + encodeURIComponent(tech) +
+                    '&parts=' + encodeURIComponent('Package ' + tier) + '&total=' + encodeURIComponent(amt) +
+                    '&approver=' + encodeURIComponent(approver) + '&decision=APPROVED';
+                await fetch(u);
+            } catch (e) {}
+        }
+        if (typeof showToast === 'function') showToast('บันทึกการอนุมัติแพ็กเกจ ' + tier + ' เรียบร้อยแล้ว');
+        window.closeCustomerLivePortalModal();
+    };
+
+    // =========================================================================
+    // 3. SMART ROUTE OPTIMIZER & PM CERTIFICATE GENERATOR
+    // =========================================================================
+    window.openRouteAndPmCertModal = function(tab) {
+        const modal = document.getElementById('hzkRouteAndPmCertModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        window.switchRoutePmTab(tab || 'ROUTE');
+    };
+
+    window.switchRoutePmTab = function(tab) {
+        const pRoute = document.getElementById('routeOptTabPanel');
+        const pPm = document.getElementById('pmCertTabPanel');
+        const bRoute = document.getElementById('tabBtnRouteOpt');
+        const bPm = document.getElementById('tabBtnPmCert');
+        if (!pRoute || !pPm) return;
+
+        if (tab === 'PM_CERT') {
+            pRoute.classList.add('hidden');
+            pPm.classList.remove('hidden');
+            bPm.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            bRoute.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold';
+            window.renderPmCertificateBuilderPanel();
+        } else {
+            pPm.classList.add('hidden');
+            pRoute.classList.remove('hidden');
+            bRoute.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            bPm.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold';
+            window.renderSmartRouteOptimizerPanel();
+        }
+    };
+
+    window.renderSmartRouteOptimizerPanel = function() {
+        const panel = document.getElementById('routeOptTabPanel');
+        if (!panel) return;
+        let sch = [];
+        try { sch = JSON.parse(localStorage.getItem('hoshizaki_schedule_items_v1') || '[]'); } catch (e) {}
+        const todayIso = new Date().toISOString().slice(0, 10);
+        const items = sch.length > 0 ? sch : [
+            { id: 'DEMO-1', date: todayIso, time: '09:00', store: 'สาขาวิภาวดีรังสิต (HQ)', address: 'Vibhavadi Rangsit 64, Lak Si, Bangkok', model: 'IM-130NE', serial: 'H10293J' },
+            { id: 'DEMO-2', date: todayIso, time: '11:30', store: 'Central Ladprao Food Court', address: '1693 Phahonyothin Rd, Chatuchak, Bangkok', model: 'KM-901MAJ', serial: 'K99812A' },
+            { id: 'DEMO-3', date: todayIso, time: '14:30', store: 'Siam Paragon Kitchen Zone', address: '991 Rama I Rd, Pathum Wan, Bangkok', model: 'FM-480AKE', serial: 'F48120B' }
+        ];
+
+        const waypoints = items.map(it => encodeURIComponent(it.address || it.store || '')).filter(Boolean);
+        const multiStopMapsUrl = waypoints.length > 0
+            ? 'https://www.google.com/maps/dir/?api=1&origin=Current+Location&destination=' + waypoints[waypoints.length - 1] + (waypoints.length > 1 ? ('&waypoints=' + waypoints.slice(0, -1).join('|')) : '')
+            : 'https://www.google.com/maps';
+
+        panel.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
+                <div>
+                    <div class="font-extrabold text-emerald-950">พบจุดหมายงานบริการทั้งหมด ${items.length} จุด</div>
+                    <div class="text-[11px] text-emerald-800">จัดเรียงเส้นทางต่อเนื่องเพื่อประหยัดเวลาเดินทางและค่าน้ำมัน</div>
+                </div>
+                <a href="${multiStopMapsUrl}" target="_blank" rel="noopener" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-lg shadow-xs inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-diamond-turn-right"></i> เปิดเส้นทางรวมใน Google Maps
+                </a>
+            </div>
+            <div class="space-y-1.5">
+                ${items.map((it, idx) => `
+                    <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-full bg-hoshizaki-navy text-white font-extrabold flex items-center justify-center text-[11px]">${idx + 1}</span>
+                            <div>
+                                <div class="font-bold text-hoshizaki-navy">${it.store || '-'} <span class="text-sky-700">(${it.time || '-'})</span></div>
+                                <div class="text-[10px] text-slate-600">${it.model || '-'} / S/N: ${it.serial || '-'} • ${it.address || '-'}</div>
+                            </div>
+                        </div>
+                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.address || it.store || '')}" target="_blank" rel="noopener" class="bg-sky-600 text-white px-2.5 py-1 rounded-lg font-bold text-[10px]">นำทาง</a>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    };
+
+    window.renderPmCertificateBuilderPanel = function() {
+        const panel = document.getElementById('pmCertTabPanel');
+        if (!panel) return;
+        const store = document.getElementById('storeName')?.value || '';
+        const model = document.getElementById('machineModel')?.value || '';
+        const serial = document.getElementById('serialNumber')?.value || '';
+        const tech = document.getElementById('responsibleTech')?.value || 'Noparin Homhoul';
+        const dt = document.getElementById('jobDate')?.value || new Date().toISOString().slice(0, 10);
+
+        panel.innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">ชื่อลูกค้า / สถานที่ติดตั้ง (Customer):</label>
+                    <input type="text" id="pmCertCustInput" value="${store}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">รุ่นเครื่อง (Model):</label>
+                    <input type="text" id="pmCertModelInput" value="${model}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">หมายเลขเครื่อง (Serial No.):</label>
+                    <input type="text" id="pmCertSerialInput" value="${serial}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">วันที่บำรุงรักษา (PM Date):</label>
+                    <input type="date" id="pmCertDateInput" value="${dt}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">รอบการบำรุงรักษา (PM Cycle):</label>
+                    <select id="pmCertCycleSelect" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white">
+                        <option value="3 MONTHS (Quarterly PM)">ทุก 3 เดือน (Quarterly PM — ล้างแผง/ตรวจเช็กระบบ)</option>
+                        <option value="6 MONTHS (Semi-Annual Deep PM)" selected>ทุก 6 เดือน (Semi-Annual Deep PM — ล้างระบบน้ำ+ไส้กรอง)</option>
+                        <option value="12 MONTHS (Annual Overhaul PM)">รายปี (Annual PM Certification)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">วิศวกร / ช่างผู้รับรอง (Certified Engineer):</label>
+                    <input type="text" id="pmCertTechInput" value="${tech}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5">
+                </div>
+            </div>
+            <div class="flex justify-end pt-2 border-t">
+                <button type="button" onclick="generateAndPreviewPmCertificate()" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-4 py-2 rounded-lg shadow">
+                    <i class="fa-solid fa-award mr-1"></i> สร้างใบรับรอง PM Certificate (A4)
+                </button>
+            </div>
+        `;
+    };
+
+    window.generateAndPreviewPmCertificate = function() {
+        const cust = document.getElementById('pmCertCustInput')?.value || '-';
+        const model = document.getElementById('pmCertModelInput')?.value || '-';
+        const serial = document.getElementById('pmCertSerialInput')?.value || '-';
+        const dt = document.getElementById('pmCertDateInput')?.value || '-';
+        const cycle = document.getElementById('pmCertCycleSelect')?.value || '6 MONTHS';
+        const tech = document.getElementById('pmCertTechInput')?.value || '-';
+        const certNo = 'PM-CERT-' + dt.replace(/-/g, '') + '-' + (serial || 'HZK');
+
+        const sheet = document.getElementById('pmCertificatePrintableSheet');
+        if (!sheet) return;
+        sheet.innerHTML = `
+            <div class="border-4 border-double border-hoshizaki-navy p-6 rounded-xl space-y-4">
+                <div class="text-center border-b-2 border-hoshizaki-blue pb-4">
+                    <div class="text-xs font-extrabold tracking-widest text-hoshizaki-darkblue">HOSHIZAKI (THAILAND) LIMITED</div>
+                    <h2 class="text-xl font-black text-hoshizaki-navy mt-1">PREVENTIVE MAINTENANCE CERTIFICATE</h2>
+                    <div class="text-xs text-slate-600">ใบรับรองการตรวจเช็กและบำรุงรักษาเครื่องตามมาตรฐานโรงงาน</div>
+                    <div class="text-[11px] font-bold text-emerald-700 mt-1">Certificate No.: ${certNo}</div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-xs bg-sky-50/70 p-4 rounded-xl border border-sky-200">
+                    <div><b>Customer / สถานที่ติดตั้ง:</b><br>${cust}</div>
+                    <div><b>Inspection Date / วันที่บำรุงรักษา:</b><br>${dt}</div>
+                    <div><b>Equipment Model / รุ่นเครื่อง:</b><br>${model}</div>
+                    <div><b>Serial Number / หมายเลขเครื่อง:</b><br>${serial}</div>
+                    <div class="col-span-2"><b>Maintenance Program / รอบบำรุงรักษา:</b> ${cycle}</div>
+                </div>
+                <div class="text-xs space-y-1.5">
+                    <div class="font-bold text-hoshizaki-navy">รายการตรวจสอบและทำความสะอาดตามมาตรฐาน HOSHIZAKI:</div>
+                    <ul class="list-disc pl-5 space-y-1 text-slate-700">
+                        <li>ล้างทำความสะอาดแผงระบายความร้อน (Condenser Coil) และแผ่นกรองฝุ่น (Air Filter)</li>
+                        <li>ล้างฆ่าเชื้อระบบผลิตน้ำแข็ง ถาดพักน้ำ และหัวฉีดน้ำ (Sanitizing &amp; Descaling)</li>
+                        <li>ตรวจวัดแรงดันน้ำยาทำความเย็น (High/Low Pressure) และกระแสไฟฟ้าคอมเพรสเซอร์ (Volt/Amp)</li>
+                        <li>ตรวจสอบการทำงานของวาล์วน้ำ ลูกลอย เซ็นเซอร์อุณหภูมิ และระบบตัดน้ำแข็งเต็ม</li>
+                    </ul>
+                </div>
+                <div class="grid grid-cols-2 gap-6 pt-6 text-center text-xs">
+                    <div class="border-t border-slate-400 pt-2">
+                        <div class="font-bold text-hoshizaki-navy">${tech}</div>
+                        <div class="text-[11px] text-slate-500">Certified Service Engineer / ช่างผู้ตรวจสอบ</div>
+                    </div>
+                    <div class="border-t border-slate-400 pt-2">
+                        <div class="font-bold text-hoshizaki-navy">Service Unit Management</div>
+                        <div class="text-[11px] text-slate-500">HOSHIZAKI (THAILAND) LIMITED</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById('hzkPmCertificateModal')?.classList.remove('hidden');
+    };
+
+    window.printPmCertificateA4 = function() {
+        document.body.classList.add('printing-pm-cert');
+        window.print();
+        setTimeout(() => document.body.classList.remove('printing-pm-cert'), 600);
+    };
+
+    // =========================================================================
+    // 4. PHASE 2 DEPARTMENTAL BRIDGE (PARTS ADVANCE 6-STAGE & ACCOUNTING)
+    // =========================================================================
+    const PA_LOCAL_KEY = 'hoshizaki_parts_advance_v1014';
+
+    window.openPhase2DepartmentalBridgeModal = async function() {
+        const modal = document.getElementById('hzkPhase2BridgeModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+
+        const flags = window.HZK_PHASED_ROLLOUT_FLAGS || {};
+        const guardEl = document.getElementById('phase2GuardStatusText');
+        if (guardEl) {
+            guardEl.innerHTML = `Phase 1 Service Unit: <b class="text-emerald-700">ACTIVE</b> | Phase 2A Admin Unit: <b>${flags.phase2AdminUnit ? 'CONNECTED' : 'STANDBY'}</b> | Phase 2B Accounting: <b>${flags.phase2AccountingUnit ? 'CONNECTED' : 'STANDBY'}</b>`;
+        }
+        window.renderPhase2BridgeLists();
+    };
+
+    window.createPartsAdvanceFromCurrentJob = async function() {
+        const jobNo = document.getElementById('jobNo')?.value || ('JOB-' + Date.now());
+        const techName = document.getElementById('responsibleTech')?.value || 'Field Tech';
+        const customer = document.getElementById('storeName')?.value || 'Customer';
+        const model = document.getElementById('machineModel')?.value || '-';
+        const serial = document.getElementById('serialNumber')?.value || '-';
+        const reqId = 'PA-' + Date.now().toString().slice(-6);
+
+        const rec = {
+            reqId,
+            jobNo,
+            techName,
+            customer,
+            modelSerial: model + ' / ' + serial,
+            stage: 'JOB_REPORT_PARTS_CONFIRMED',
+            updatedAt: new Date().toLocaleString('th-TH')
+        };
+
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem(PA_LOCAL_KEY) || '[]'); } catch (e) {}
+        list.unshift(rec);
+        localStorage.setItem(PA_LOCAL_KEY, JSON.stringify(list));
+
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (gasUrl) {
+            try {
+                await fetch(gasUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        actionType: 'SYNC_PARTS_ADVANCE_WORKFLOW',
+                        apiSecretKey: localStorage.getItem('hoshizaki_api_secret_key') || '',
+                        reqId, jobNo, techName, customer,
+                        modelSerial: rec.modelSerial,
+                        stage: rec.stage,
+                        notifyLine: true
+                    })
+                });
+            } catch (e) {}
+        }
+        if (typeof showToast === 'function') showToast('สร้างใบเบิกอะไหล่ล่วงหน้า ' + reqId + ' เรียบร้อย');
+        window.renderPhase2BridgeLists();
+    };
+
+    window.advancePartsStageLocal_ = function(reqId) {
+        const STAGES = [
+            'JOB_REPORT_PARTS_CONFIRMED',
+            'ADMIN_TECH_EMAILED_ADMIN_OFFICE',
+            'WAREHOUSE_STOCK_CHECKED_DISPATCHED',
+            'IN_TRANSIT_CARRIER_TRACKING',
+            'DELIVERED_AT_TECH_SITE',
+            'INSTALLED_AND_CLOSED'
+        ];
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem(PA_LOCAL_KEY) || '[]'); } catch (e) {}
+        const item = list.find(x => x.reqId === reqId);
+        if (!item) return;
+        const idx = STAGES.indexOf(item.stage);
+        item.stage = STAGES[Math.min(STAGES.length - 1, idx + 1)];
+        item.updatedAt = new Date().toLocaleString('th-TH');
+        localStorage.setItem(PA_LOCAL_KEY, JSON.stringify(list));
+        window.renderPhase2BridgeLists();
+    };
+
+    window.renderPhase2BridgeLists = function() {
+        const paBox = document.getElementById('partsAdvanceListContainer');
+        const acctBox = document.getElementById('accountingHandoverListContainer');
+        if (!paBox || !acctBox) return;
+
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem(PA_LOCAL_KEY) || '[]'); } catch (e) {}
+        document.getElementById('paWorkflowCountBadge').textContent = list.length + ' รายการ';
+
+        paBox.innerHTML = list.length === 0
+            ? '<div class="text-slate-500 py-4 text-center">ยังไม่มีรายการเบิกอะไหล่ล่วงหน้า กดปุ่ม "+ สร้างใบเบิกอะไหล่ล่วงหน้า" ด้านบน</div>'
+            : list.map(it => `
+                <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 space-y-1">
+                    <div class="flex justify-between font-bold text-hoshizaki-navy">
+                        <span>${it.reqId} (${it.jobNo})</span>
+                        <span class="text-[10px] bg-amber-200 text-amber-950 px-2 py-0.5 rounded-full">${it.stage}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-700">${it.customer} • ${it.modelSerial}</div>
+                    <div class="flex justify-between items-center pt-1">
+                        <span class="text-[10px] text-slate-500">ช่าง: ${it.techName}</span>
+                        <button type="button" onclick="advancePartsStageLocal_('${it.reqId}')" class="bg-hoshizaki-blue text-white px-2 py-0.5 rounded text-[10px] font-bold">อัปเดตขั้นถัดไป →</button>
+                    </div>
+                </div>
+            `).join('');
+
+        let jobs = [];
+        try { jobs = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch (e) {}
+        const billable = jobs.filter(j => (parseFloat(String(j.grandTotal || '0').replace(/,/g, '')) || 0) > 0).slice(0, 15);
+        document.getElementById('acctHandoverCountBadge').textContent = billable.length + ' รายการ';
+
+        acctBox.innerHTML = billable.length === 0
+            ? '<div class="text-slate-500 py-4 text-center">ยังไม่มีรายการงานมีค่าใช้จ่ายรอส่งฝ่ายบัญชี</div>'
+            : billable.map(j => `
+                <div class="p-2.5 rounded-lg border border-slate-200 bg-emerald-50/40 space-y-1">
+                    <div class="flex justify-between font-bold text-hoshizaki-navy">
+                        <span>${j.jobNo || '-'}</span>
+                        <span class="text-emerald-700">${j.grandTotal} THB</span>
+                    </div>
+                    <div class="text-[11px] text-slate-700">${j.store || '-'} (${j.date || '-'})</div>
+                    <div class="text-[10px] text-slate-500">สถานะใบงาน: ${j.jobStatus || '-'} • พร้อมออกใบกำกับภาษี (IV / RE)</div>
+                </div>
+            `).join('');
+    };
+
+    // Boot Hooks: URL Parameter Auto-Router (?portal=customer) + Header Language Switcher
+    document.addEventListener('DOMContentLoaded', function() {
+        mountTrilingualHeaderBar();
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('portal') === 'customer') {
+            window.openCustomerLivePortalModal({
+                jobNo: params.get('jobNo') || 'JOB-LIVE',
+                customer: params.get('customer') || 'ลูกค้า HOSHIZAKI',
+                model: params.get('model') || '-',
+                serial: params.get('serial') || '-',
+                tech: params.get('tech') || 'ทีมช่างเทคนิค HOSHIZAKI',
+                total: params.get('total') || '3500'
+            });
+        }
+    });
 })();
 </script>
 

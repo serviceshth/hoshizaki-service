@@ -763,7 +763,7 @@
                         </button>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1014</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1015</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -951,6 +951,13 @@
                         <button type="button" data-tb-cat="STOCK_PM" onclick="openVanStockModal()" class="tb-action-item bg-orange-600 hover:bg-orange-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-truck-ramp-box"></i> <span>สต็อกรถช่าง / Van Stock</span>
                         </button>
+                        <button type="button" data-tb-cat="STOCK_PM" onclick="openPmPricebookModal('PM_MATRIX')" class="tb-action-item col-span-2 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold shadow-sm border border-emerald-300/40">
+                            <i class="fa-solid fa-sparkles text-amber-200"></i> <span>ราคา PM &amp; Big Cleaning (รายครั้ง/6ด./1ปี ตามสเปค)</span>
+                        </button>
+                        <button type="button" data-tb-cat="STOCK_PM" onclick="openVanTransferAndSkillModal('VAN_TRANSFER')" class="tb-action-item col-span-2 bg-orange-700 hover:bg-orange-800 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-right-left text-amber-200"></i> <span>โอนอะไหล่ระหว่างรถช่าง &amp; ค่าเดินทางตามโซน</span>
+                        </button>
+
                         <button type="button" data-tb-cat="STOCK_PM" onclick="openWaitingPartsBackorderModal()" class="tb-action-item bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-hourglass-half"></i> <span>งานรออะไหล่ (<span id="waitingPartsInlineCount">0</span>)</span>
                         </button>
@@ -4387,7 +4394,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1014</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1015</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20507,7 +20514,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1014) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1015) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -20930,7 +20937,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1014) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1015) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-sky-800 flex-shrink-0">
@@ -23436,7 +23443,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1014 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1015 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -30724,7 +30731,7 @@ Defect: ${defectText}`;
 <!-- Corporate Enterprise Footer (v1013) -->
 <footer class="no-print max-w-4xl mx-auto mt-6 mb-4 text-center text-[11px] text-slate-500 border-t border-slate-200 pt-3">
     <div>
-        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1014 ·
+        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1015 ·
         <span onclick="triggerCreatorCreditEasterEgg()" class="cursor-pointer underline decoration-dotted hover:text-hoshizaki-blue font-semibold">Service Management System</span>
         · For Internal Use Only
     </div>
@@ -31331,7 +31338,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1014)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1015)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31534,7 +31541,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1014)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1015)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31550,7 +31557,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1014)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1015)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31569,7 +31576,7 @@ Defect: ${defectText}`;
         });
         const dict = TRILINGUAL_LABELS[lang];
         const subEl = document.querySelector('header p.text-hoshizaki-blue');
-        if (subEl) subEl.innerHTML = dict.subtitle + ' <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v1014</span>';
+        if (subEl) subEl.innerHTML = dict.subtitle + ' <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v1015</span>';
         if (typeof showToast === 'function') {
             const msg = lang === 'JP' ? '表示言語を日本語（エグゼクティブモード）に切り替えました' : (lang === 'EN' ? 'Switched UI language to Corporate English' : 'เปลี่ยนภาษาหน้าจอเป็นภาษาไทยแล้ว');
             showToast(msg);
@@ -31628,21 +31635,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1014) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1015) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1014 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1015 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1014）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1015）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -32103,6 +32110,720 @@ Defect: ${defectText}`;
             });
         }
     });
+})();
+</script>
+
+
+<!-- ============================================================================
+     ENTERPRISE v1015-GLOBAL FSM & SPEC-BASED PM / BIG CLEANING SUITE
+     ============================================================================ -->
+
+<!-- 1. Spec-Based PM & Big Cleaning Pricing + Visual Flat-Rate Pricebook Modal -->
+<div id="hzkPmPricebookModal" class="hidden fixed inset-0 bg-black/75 z-[96] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full flex flex-col max-h-[93dvh] border border-slate-200">
+        <div class="bg-hoshizaki-navy text-white px-4 py-3 rounded-t-2xl flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-sm sm:text-base"><i class="fa-solid fa-sparkles text-amber-300 mr-1.5"></i>ระบบราคา PM &amp; Big Cleaning แยกตามประเภท/สเปคเครื่อง + Visual Flat-Rate Pricebook</h3>
+                <p class="text-[11px] text-sky-200">รองรับงานล้างใหญ่รายครั้ง (Big Cleaning), สัญญา PM ทุก 6 เดือน และรายปี (4 ครั้ง) แยกตามรุ่น/สเปคเครื่อง</p>
+            </div>
+            <button type="button" onclick="closePmPricebookModal()" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4 text-xs">
+            <div class="flex flex-wrap gap-2 border-b pb-2">
+                <button type="button" onclick="switchPmPricebookTab('PM_MATRIX')" id="tabBtnPmMatrix" class="px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold">
+                    <i class="fa-solid fa-snowflake mr-1 text-sky-300"></i> 1. ตารางราคา PM &amp; Big Cleaning ตามประเภท/สเปคเครื่อง
+                </button>
+                <button type="button" onclick="switchPmPricebookTab('FLAT_RATE')" id="tabBtnFlatRate" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-tags mr-1 text-emerald-600"></i> 2. Visual Flat-Rate Repair Pricebook (แพ็กเกจซ่อมเหมาจ่าย)
+                </button>
+                <button type="button" onclick="switchPmPricebookTab('PM_CONTRACTS')" id="tabBtnPmContracts" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-file-contract mr-1 text-amber-600"></i> 3. ทะเบียนสัญญา PM รายปี / 6 เดือน (Active Contracts)
+                </button>
+            </div>
+            <div id="pmMatrixPanel" class="space-y-3"></div>
+            <div id="flatRatePricebookPanel" class="hidden space-y-3"></div>
+            <div id="pmContractsListPanel" class="hidden space-y-3"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Van-to-Van Stock Transfer & Skill/Zone Dispatch Modal -->
+<div id="hzkVanTransferAndSkillModal" class="hidden fixed inset-0 bg-black/75 z-[96] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[92dvh] border border-slate-200">
+        <div class="bg-hoshizaki-navy text-white px-4 py-3 rounded-t-2xl flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-sm sm:text-base"><i class="fa-solid fa-truck-arrow-right text-amber-300 mr-1.5"></i>Van-to-Van Stock Transfer &amp; Skill-Based / Zone Dispatch</h3>
+                <p class="text-[11px] text-sky-200">โอนย้ายอะไหล่ระหว่างรถช่างหน้างาน + แนะนำช่างเชี่ยวชาญเฉพาะรุ่น &amp; คำนวณค่าเดินทางตามโซน</p>
+            </div>
+            <button type="button" onclick="closeVanTransferAndSkillModal()" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4 text-xs">
+            <div class="flex flex-wrap gap-2 border-b pb-2">
+                <button type="button" onclick="switchVanSkillTab('VAN_TRANSFER')" id="tabBtnVanTransfer" class="px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold">
+                    <i class="fa-solid fa-right-left mr-1 text-amber-300"></i> 1. โอนย้ายอะไหล่ระหว่างรถช่าง (Van-to-Van Transfer)
+                </button>
+                <button type="button" onclick="switchVanSkillTab('SKILL_ZONE')" id="tabBtnSkillZone" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-user-check mr-1 text-emerald-600"></i> 2. แนะนำช่างตามทักษะ &amp; ค่าเดินทางตามโซน (Zone Surcharge)
+                </button>
+            </div>
+            <div id="vanTransferPanel" class="space-y-3"></div>
+            <div id="skillZoneDispatchPanel" class="hidden space-y-3"></div>
+        </div>
+    </div>
+</div>
+
+<script id="v1015-global-fsm-logic">
+(function() {
+    const PM_MATRIX_STORAGE_KEY = 'hoshizaki_pm_spec_matrix_v1015';
+    const PM_CONTRACTS_KEY = 'hoshizaki_pm_contracts_v1015';
+    const VAN_TRANSFER_LOG_KEY = 'hoshizaki_van_transfer_log_v1015';
+
+    const DEFAULT_PM_SPEC_MATRIX = [
+        {
+            id: 'IM_COMPACT',
+            category: 'CUBE_ICE',
+            categoryLabel: 'เครื่องทำน้ำแข็งก้อนสี่เหลี่ยม (IM Cube Series)',
+            specTier: 'ขนาดเล็ก / Compact (21–45 kg/24h)',
+            modelsExample: 'IM-21CNE, IM-30CNE, IM-45NE, IM-45CNE',
+            bigCleaningOnce: 2500,
+            pm6MonthsTwice: 4500,
+            pm1YearFourTimes: 8200,
+            scopeNote: 'ล้างแผงคอยล์ร้อน, ถอดล้างถาดน้ำพลิก/หัวฉีด, ฆ่าเชื้อระบบน้ำ, ตรวจแรงดันน้ำยาและกระแสไฟ'
+        },
+        {
+            id: 'IM_MEDIUM',
+            category: 'CUBE_ICE',
+            categoryLabel: 'เครื่องทำน้ำแข็งก้อนสี่เหลี่ยม (IM Cube Series)',
+            specTier: 'ขนาดกลาง / Standard (65–130 kg/24h)',
+            modelsExample: 'IM-65NE, IM-100NE, IM-100CNE, IM-130NE',
+            bigCleaningOnce: 3200,
+            pm6MonthsTwice: 5800,
+            pm1YearFourTimes: 10500,
+            scopeNote: 'ล้างแผงคอยล์ร้อน, ถอดล้างชุดถาดน้ำ/สเปรย์บาร์, ล้างฆ่าเชื้อ Sanitizer, ตรวจ Actuator & Thermistor'
+        },
+        {
+            id: 'IM_MODULAR',
+            category: 'CUBE_ICE',
+            categoryLabel: 'เครื่องทำน้ำแข็งก้อนสี่เหลี่ยม (IM Cube Series)',
+            specTier: 'ขนาดใหญ่ / Modular (240+ kg/24h)',
+            modelsExample: 'IM-240DNE, IM-240ANE, IM-240XNE',
+            bigCleaningOnce: 4500,
+            pm6MonthsTwice: 8200,
+            pm1YearFourTimes: 14800,
+            scopeNote: 'ล้างใหญ่ชุดโมดูลบน + ถังเก็บน้ำแข็งล่าง, ล้างคอยล์ร้อน, ตรวจปั๊มน้ำคู่, เช็กแรงดัน High/Low'
+        },
+        {
+            id: 'KM_SELF',
+            category: 'CRESCENT_ICE',
+            categoryLabel: 'เครื่องทำน้ำแข็งเสี้ยวพระจันทร์ (KM / KMD Crescent)',
+            specTier: 'ขนาดเล็ก-กลาง / Self-Contained (35–150 kg/24h)',
+            modelsExample: 'KM-35A, KM-40B, KM-50B, KM-60B, KM-100B, KM-150B',
+            bigCleaningOnce: 3000,
+            pm6MonthsTwice: 5400,
+            pm1YearFourTimes: 9800,
+            scopeNote: 'ล้างตะกรัน Evaporator สเตนเลส 2 ด้าน (Descaling), ล้าง Float Switch, คอยล์ร้อน, ตรวจ CycleSaver'
+        },
+        {
+            id: 'KM_MOD_MID',
+            category: 'CRESCENT_ICE',
+            categoryLabel: 'เครื่องทำน้ำแข็งเสี้ยวพระจันทร์ (KM / KMD Crescent)',
+            specTier: 'ขนาดใหญ่ / Modular Mid (231–660 kg/24h)',
+            modelsExample: 'KM-231BAJ, KM-515MAH, KM-660MAJ, KMD-270AB',
+            bigCleaningOnce: 4800,
+            pm6MonthsTwice: 8800,
+            pm1YearFourTimes: 15800,
+            scopeNote: 'ล้างตะกรันและฆ่าเชื้อ Evaporator + ถังเก็บน้ำแข็ง, ล้างคอยล์ร้อน, ตรวจ Float Switch & Hot Gas Valve'
+        },
+        {
+            id: 'KM_MOD_HIGH',
+            category: 'CRESCENT_ICE',
+            categoryLabel: 'เครื่องทำน้ำแข็งเสี้ยวพระจันทร์ (KM / KMD Crescent)',
+            specTier: 'ขนาดอุตสาหกรรม / High-Capacity (901–2,600 kg/24h)',
+            modelsExample: 'KM-901MAJ, KM-1301SAJ, KM-1601SAJ, KM-2200SAJ3',
+            bigCleaningOnce: 6500,
+            pm6MonthsTwice: 11800,
+            pm1YearFourTimes: 21500,
+            scopeNote: 'ล้างใหญ่ชุด Evaporator คู่ + Bin ขนาดใหญ่, ตรวจวัดระบบไฟ 1/3 เฟส, เช็ก EverCheck™ & Water Regulator'
+        },
+        {
+            id: 'FM_COMPACT',
+            category: 'FLAKE_NUGGET',
+            categoryLabel: 'เครื่องทำเกล็ดน้ำแข็ง / นักเก็ต (FM Flake & Nugget)',
+            specTier: 'ขนาดเล็ก-กลาง (80–300 kg/24h)',
+            modelsExample: 'FM-80KE, FM-120FE, FM-150KE, FM-170AKE, FM-300AKE',
+            bigCleaningOnce: 3800,
+            pm6MonthsTwice: 6900,
+            pm1YearFourTimes: 12500,
+            scopeNote: 'ฟลัชล้างกระบอกทำน้ำแข็ง, ตรวจเช็กกระแส Gear Motor Amps, เช็กรั่ว Mechanical Seal & Float Switch'
+        },
+        {
+            id: 'FM_HEAVY',
+            category: 'FLAKE_NUGGET',
+            categoryLabel: 'เครื่องทำเกล็ดน้ำแข็ง / นักเก็ต (FM Flake & Nugget)',
+            specTier: 'ขนาดใหญ่ / Heavy-Duty (480–750 kg/24h)',
+            modelsExample: 'FM-480AKE, FM-600AKE, FM-750AKE',
+            bigCleaningOnce: 5200,
+            pm6MonthsTwice: 9500,
+            pm1YearFourTimes: 17200,
+            scopeNote: 'ล้างตะกรันระบบน้ำ + ถังเก็บ, ตรวจลูกปืน Auger, ซีลแกนสว่าน, คอยล์ร้อน และ Rotation Sensor'
+        },
+        {
+            id: 'FM_INDUSTRIAL',
+            category: 'FLAKE_NUGGET',
+            categoryLabel: 'เครื่องทำเกล็ดน้ำแข็ง / นักเก็ต (FM Flake & Nugget)',
+            specTier: 'ขนาดอุตสาหกรรม (1,000–1,800 kg/24h)',
+            modelsExample: 'FM-1000AKE, FM-1000ALKE, FM-1800ALKE-N',
+            bigCleaningOnce: 7200,
+            pm6MonthsTwice: 13200,
+            pm1YearFourTimes: 24000,
+            scopeNote: 'ล้างใหญ่ระบบอุตสาหกรรมครบชุด, วัดกระแสคอมเพรสเซอร์/Gear Motor, ตรวจชุดหัวรีดและแบริ่งบน-ล่าง'
+        },
+        {
+            id: 'REF_2DOOR',
+            category: 'CHILLER_FREEZER',
+            categoryLabel: 'ตู้แช่เย็นและตู้แช่แข็งเชิงพาณิชย์ (HR / HF / RT / RTC)',
+            specTier: 'ตู้ยืน 2 ประตู / ตู้เคาน์เตอร์ 90–150 ซม.',
+            modelsExample: 'HR-68MA-S, HF-68MA-S, RT-126MA-S, RTC-120SDB, RTC-150SDB',
+            bigCleaningOnce: 2200,
+            pm6MonthsTwice: 4000,
+            pm1YearFourTimes: 7400,
+            scopeNote: 'ล้างแผงคอยล์ร้อน/คอยล์เย็น, ล้างท่อระบายน้ำทิ้ง, ตรวจยางขอบประตู, เช็ก Defrost Heater & Thermistor'
+        },
+        {
+            id: 'REF_4DOOR',
+            category: 'CHILLER_FREEZER',
+            categoryLabel: 'ตู้แช่เย็นและตู้แช่แข็งเชิงพาณิชย์ (HR / HF / RT / RTC)',
+            specTier: 'ตู้ยืน 4 ประตู / ตู้เคาน์เตอร์ 180–210 ซม.',
+            modelsExample: 'HR-126MA-S, HF-126MA-S, HR-148MA-S, RT-186MA-S, RTC-180SDB',
+            bigCleaningOnce: 3000,
+            pm6MonthsTwice: 5500,
+            pm1YearFourTimes: 9900,
+            scopeNote: 'ล้างคอยล์ร้อน/คอยล์เย็น 2 ชุด, ตรวจพัดลมคอยล์เย็น, ยางขอบประตู 4 บาน, ระบบละลายน้ำแข็ง'
+        },
+        {
+            id: 'REF_6DOOR',
+            category: 'CHILLER_FREEZER',
+            categoryLabel: 'ตู้แช่เย็นและตู้แช่แข็งเชิงพาณิชย์ (HR / HF / RT / RTC)',
+            specTier: 'ตู้ยืน 6 ประตู / ตู้แช่ขนาดใหญ่ (186 Series)',
+            modelsExample: 'HR-186MA-S, HF-186MA-S, HRF-186MA-S',
+            bigCleaningOnce: 3900,
+            pm6MonthsTwice: 7200,
+            pm1YearFourTimes: 13000,
+            scopeNote: 'ล้างใหญ่ชุดทำความเย็นขนาดใหญ่ 6 ประตู, ตรวจความแนบขอบประตูทุกบาน, วัดอุณหภูมิและกระแสไฟ'
+        },
+        {
+            id: 'DW_UNDER',
+            category: 'DISHWASHER',
+            categoryLabel: 'เครื่องล้างจานเชิงพาณิชย์ (HSU / JWE Dishwasher)',
+            specTier: 'แบบตั้งใต้เคาน์เตอร์ (Undercounter)',
+            modelsExample: 'HSU-400, HSU-500, JWE-400, JWE-450',
+            bigCleaningOnce: 2600,
+            pm6MonthsTwice: 4800,
+            pm1YearFourTimes: 8800,
+            scopeNote: 'ล้างตะกรันหม้อต้มและถังล้าง (Descaling), ถอดล้างก้านฉีดน้ำบน-ล่าง, ตรวจปั๊มน้ำยาและอุณหภูมิ 85°C'
+        },
+        {
+            id: 'DW_HOOD',
+            category: 'DISHWASHER',
+            categoryLabel: 'เครื่องล้างจานเชิงพาณิชย์ (HSU / JWE Dishwasher)',
+            specTier: 'แบบกระโจมเปิด-ปิด (Hood-Type Heavy Duty)',
+            modelsExample: 'JWE-500, JWE-620, JWE-680',
+            bigCleaningOnce: 3600,
+            pm6MonthsTwice: 6600,
+            pm1YearFourTimes: 12000,
+            scopeNote: 'ล้างตะกรันหม้อต้ม 9kW + ถังล้าง, ตรวจฮีตเตอร์/แมกเนติก, เช็กก้านฉีดน้ำและระบบจ่ายน้ำยาอัตโนมัติ'
+        },
+        {
+            id: 'SPEC_EQUIP',
+            category: 'SPECIALTY',
+            categoryLabel: 'อุปกรณ์เฉพาะทาง (Dispenser / Sushi Case / Beer Dispenser)',
+            specTier: 'เครื่องจ่ายน้ำแข็ง-น้ำ / ตู้ซูชิ / ตู้จ่ายเบียร์',
+            modelsExample: 'DCM-60KE, DCM-120KE, AM-50BAE, HNC-120BE, DBF-25SB',
+            bigCleaningOnce: 2800,
+            pm6MonthsTwice: 5000,
+            pm1YearFourTimes: 9200,
+            scopeNote: 'ล้างฆ่าเชื้อระบบจ่ายน้ำแข็ง/เบียร์, ล้างคอยล์ร้อน, ตรวจ Agitator Motor และเซ็นเซอร์อุณหภูมิ'
+        }
+    ];
+
+    function getPmSpecMatrix_() {
+        try {
+            const raw = localStorage.getItem(PM_MATRIX_STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            }
+        } catch (e) {}
+        return DEFAULT_PM_SPEC_MATRIX;
+    }
+
+    function savePmSpecMatrix_(list) {
+        localStorage.setItem(PM_MATRIX_STORAGE_KEY, JSON.stringify(list));
+    }
+
+    window.detectPmTierForModel = function(modelStr) {
+        const m = String(modelStr || '').trim().toUpperCase();
+        const matrix = getPmSpecMatrix_();
+        if (!m) return matrix[1];
+        if (/^IM-(21|30|45)/.test(m)) return matrix.find(x => x.id === 'IM_COMPACT') || matrix[0];
+        if (/^IM-(65|100|130)/.test(m)) return matrix.find(x => x.id === 'IM_MEDIUM') || matrix[1];
+        if (/^IM-240/.test(m)) return matrix.find(x => x.id === 'IM_MODULAR') || matrix[2];
+        if (/^KM-(35|40|50|60|80|100|150)/.test(m)) return matrix.find(x => x.id === 'KM_SELF') || matrix[3];
+        if (/^(KM-(231|515|660)|KMD-)/.test(m)) return matrix.find(x => x.id === 'KM_MOD_MID') || matrix[4];
+        if (/^KM-(901|1301|1340|1601|1900|2200|2600)/.test(m)) return matrix.find(x => x.id === 'KM_MOD_HIGH') || matrix[5];
+        if (/^FM-(80|120|150|170|300)/.test(m)) return matrix.find(x => x.id === 'FM_COMPACT') || matrix[6];
+        if (/^FM-(480|600|750)/.test(m)) return matrix.find(x => x.id === 'FM_HEAVY') || matrix[7];
+        if (/^FM-(1000|1800)/.test(m)) return matrix.find(x => x.id === 'FM_INDUSTRIAL') || matrix[8];
+        if (/^(HR|HF|HRF|RT|RTC|RTF)-(66|68|76|78|96|98|90|120|150)/.test(m)) return matrix.find(x => x.id === 'REF_2DOOR') || matrix[9];
+        if (/^(HR|HF|HRF|RT|RTC|RTF)-(126|128|146|148|180|210)/.test(m)) return matrix.find(x => x.id === 'REF_4DOOR') || matrix[10];
+        if (/^(HR|HF|HRF)-186/.test(m)) return matrix.find(x => x.id === 'REF_6DOOR') || matrix[11];
+        if (/^(HSU-400|HSU-500|JWE-400|JWE-450)/.test(m)) return matrix.find(x => x.id === 'DW_UNDER') || matrix[12];
+        if (/^JWE-(500|620|680)/.test(m)) return matrix.find(x => x.id === 'DW_HOOD') || matrix[13];
+        if (/^(DCM|DIM|AM|HNC|DBF)-/.test(m)) return matrix.find(x => x.id === 'SPEC_EQUIP') || matrix[14];
+        return matrix[1];
+    };
+
+    window.openPmPricebookModal = function(tab) {
+        const modal = document.getElementById('hzkPmPricebookModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        window.switchPmPricebookTab(tab || 'PM_MATRIX');
+    };
+
+    window.closePmPricebookModal = function() {
+        document.getElementById('hzkPmPricebookModal')?.classList.add('hidden');
+    };
+
+    window.switchPmPricebookTab = function(tab) {
+        const p1 = document.getElementById('pmMatrixPanel');
+        const p2 = document.getElementById('flatRatePricebookPanel');
+        const p3 = document.getElementById('pmContractsListPanel');
+        const b1 = document.getElementById('tabBtnPmMatrix');
+        const b2 = document.getElementById('tabBtnFlatRate');
+        const b3 = document.getElementById('tabBtnPmContracts');
+        [p1, p2, p3].forEach(el => el?.classList.add('hidden'));
+        [b1, b2, b3].forEach(btn => { if (btn) btn.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold'; });
+
+        if (tab === 'FLAT_RATE') {
+            p2?.classList.remove('hidden');
+            if (b2) b2.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            window.renderFlatRatePricebookPanel();
+        } else if (tab === 'PM_CONTRACTS') {
+            p3?.classList.remove('hidden');
+            if (b3) b3.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            window.renderPmContractsListPanel();
+        } else {
+            p1?.classList.remove('hidden');
+            if (b1) b1.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            window.renderPmSpecMatrixPanel('ALL');
+        }
+    };
+
+    window.renderPmSpecMatrixPanel = function(filterCat) {
+        const panel = document.getElementById('pmMatrixPanel');
+        if (!panel) return;
+        const activeCat = filterCat || 'ALL';
+        const matrix = getPmSpecMatrix_();
+        const curModel = document.getElementById('machineModel')?.value || '';
+        const recommended = window.detectPmTierForModel(curModel);
+        const filtered = activeCat === 'ALL' ? matrix : matrix.filter(x => x.category === activeCat);
+
+        panel.innerHTML = `
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <div class="font-extrabold text-hoshizaki-navy">
+                        <i class="fa-solid fa-wand-magic-sparkles text-hoshizaki-blue mr-1"></i>
+                        รุ่นเครื่องในใบงานปัจจุบัน: <span class="text-sky-700">${curModel || '(ยังไม่ระบุรุ่น)'}</span>
+                        → แนะนำสเปค: <span class="underline">${recommended.specTier}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-600 mt-0.5">${recommended.scopeNote}</div>
+                </div>
+                <div class="flex flex-wrap gap-1.5 flex-shrink-0">
+                    <button type="button" onclick="applyPmPlanToJobSheet('${recommended.id}', 'ONCE')" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-2.5 py-1.5 rounded-lg">+ Big Cleaning (${recommended.bigCleaningOnce.toLocaleString()})</button>
+                    <button type="button" onclick="applyPmPlanToJobSheet('${recommended.id}', '6M')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1.5 rounded-lg">+ PM ทุก 6 เดือน (${recommended.pm6MonthsTwice.toLocaleString()})</button>
+                    <button type="button" onclick="applyPmPlanToJobSheet('${recommended.id}', '1Y')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded-lg">+ PM รายปี 4 ครั้ง (${recommended.pm1YearFourTimes.toLocaleString()})</button>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5">
+                <span class="font-bold text-slate-600">กรองประเภทเครื่อง:</span>
+                ${[
+                    ['ALL', 'ทุกประเภท (15 สเปค)'],
+                    ['CUBE_ICE', 'IM น้ำแข็งก้อน'],
+                    ['CRESCENT_ICE', 'KM เสี้ยวพระจันทร์'],
+                    ['FLAKE_NUGGET', 'FM เกล็ด/นักเก็ต'],
+                    ['CHILLER_FREEZER', 'HR/HF/RT ตู้แช่'],
+                    ['DISHWASHER', 'HSU/JWE ล้างจาน'],
+                    ['SPECIALTY', 'DCM/AM/HNC/DBF']
+                ].map(([code, label]) => `
+                    <button type="button" onclick="renderPmSpecMatrixPanel('${code}')" class="px-2.5 py-1 rounded-lg font-bold ${activeCat === code ? 'bg-hoshizaki-blue text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">${label}</button>
+                `).join('')}
+            </div>
+
+            <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                <table class="w-full text-left border-collapse text-[11px]">
+                    <thead>
+                        <tr class="bg-hoshizaki-navy text-white">
+                            <th class="p-2">ประเภท &amp; สเปคเครื่อง (Type &amp; Spec)</th>
+                            <th class="p-2">ตัวอย่างรุ่น (Models)</th>
+                            <th class="p-2 text-right bg-sky-900">1. ล้างใหญ่รายครั้ง<br>(Big Cleaning / ครั้ง)</th>
+                            <th class="p-2 text-right bg-indigo-900">2. สัญญา PM ทุก 6 เดือน<br>(2 ครั้ง/ปี)</th>
+                            <th class="p-2 text-right bg-emerald-900">3. สัญญา PM รายปี<br>(4 ครั้ง/ปี ทุก 3 เดือน)</th>
+                            <th class="p-2 text-center">เพิ่มลงใบงาน / ใบเสนอราคา</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(row => `
+                            <tr class="border-b hover:bg-sky-50/60 ${row.id === recommended.id ? 'bg-amber-50/70' : ''}">
+                                <td class="p-2">
+                                    <div class="font-bold text-hoshizaki-navy">${row.categoryLabel}</div>
+                                    <div class="text-sky-800 font-semibold">${row.specTier}</div>
+                                    <div class="text-[10px] text-slate-500 mt-0.5">${row.scopeNote}</div>
+                                </td>
+                                <td class="p-2 font-mono text-[10px] text-slate-700">${row.modelsExample}</td>
+                                <td class="p-2 text-right font-extrabold text-sky-900">
+                                    ${row.bigCleaningOnce.toLocaleString('en-US', {minimumFractionDigits:2})}
+                                    <button type="button" onclick="editPmMatrixPricePrompt_('${row.id}', 'bigCleaningOnce')" class="ml-1 text-slate-400 hover:text-hoshizaki-blue" title="แก้ไขราคา"><i class="fa-solid fa-pen"></i></button>
+                                </td>
+                                <td class="p-2 text-right font-extrabold text-indigo-900">
+                                    ${row.pm6MonthsTwice.toLocaleString('en-US', {minimumFractionDigits:2})}
+                                    <button type="button" onclick="editPmMatrixPricePrompt_('${row.id}', 'pm6MonthsTwice')" class="ml-1 text-slate-400 hover:text-hoshizaki-blue" title="แก้ไขราคา"><i class="fa-solid fa-pen"></i></button>
+                                </td>
+                                <td class="p-2 text-right font-extrabold text-emerald-800">
+                                    ${row.pm1YearFourTimes.toLocaleString('en-US', {minimumFractionDigits:2})}
+                                    <button type="button" onclick="editPmMatrixPricePrompt_('${row.id}', 'pm1YearFourTimes')" class="ml-1 text-slate-400 hover:text-hoshizaki-blue" title="แก้ไขราคา"><i class="fa-solid fa-pen"></i></button>
+                                </td>
+                                <td class="p-2 text-center space-y-1">
+                                    <button type="button" onclick="applyPmPlanToJobSheet('${row.id}', 'ONCE')" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold px-2 py-1 rounded text-[10px]">+ รายครั้ง (Big Clean)</button>
+                                    <button type="button" onclick="applyPmPlanToJobSheet('${row.id}', '6M')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2 py-1 rounded text-[10px]">+ สัญญา 6 เดือน (2x)</button>
+                                    <button type="button" onclick="applyPmPlanToJobSheet('${row.id}', '1Y')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded text-[10px]">+ สัญญา 1 ปี (4x)</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    };
+
+    window.editPmMatrixPricePrompt_ = function(rowId, field) {
+        const list = getPmSpecMatrix_();
+        const item = list.find(x => x.id === rowId);
+        if (!item) return;
+        const nextVal = prompt('ระบุราคาใหม่ (THB) สำหรับ ' + item.specTier + ':', item[field]);
+        if (nextVal === null) return;
+        const num = parseFloat(String(nextVal).replace(/,/g, ''));
+        if (isNaN(num) || num < 0) return;
+        item[field] = num;
+        savePmSpecMatrix_(list);
+        window.renderPmSpecMatrixPanel('ALL');
+        if (typeof showToast === 'function') showToast('อัปเดตราคา PM เรียบร้อยแล้ว');
+    };
+
+    window.applyPmPlanToJobSheet = function(rowId, planType) {
+        const list = getPmSpecMatrix_();
+        const item = list.find(x => x.id === rowId);
+        if (!item) return;
+
+        let label = '';
+        let price = 0;
+        let cycleMonths = 6;
+        if (planType === 'ONCE') {
+            label = 'One-Time Big Cleaning & Descaling (' + item.specTier + ')';
+            price = item.bigCleaningOnce;
+            cycleMonths = 6;
+        } else if (planType === '6M') {
+            label = 'Semi-Annual PM Contract ทุก 6 เดือน - 2 ครั้ง/ปี (' + item.specTier + ')';
+            price = item.pm6MonthsTwice;
+            cycleMonths = 6;
+        } else {
+            label = 'Annual Full-Care PM Contract รายปี - 4 ครั้ง/ปี ทุก 3 เดือน (' + item.specTier + ')';
+            price = item.pm1YearFourTimes;
+            cycleMonths = 3;
+        }
+
+        if (typeof addPartRow === 'function') {
+            addPartRow(label, 1, price);
+        }
+
+        const jobTypeEl = document.getElementById('jobType');
+        if (jobTypeEl && planType !== 'ONCE') jobTypeEl.value = 'PM / Maintenance';
+
+        const nextPmEl = document.getElementById('nextPmDate');
+        if (nextPmEl) {
+            const d = new Date();
+            d.setMonth(d.getMonth() + cycleMonths);
+            nextPmEl.value = d.toISOString().slice(0, 10);
+        }
+
+        if (planType === '6M' || planType === '1Y') {
+            let contracts = [];
+            try { contracts = JSON.parse(localStorage.getItem(PM_CONTRACTS_KEY) || '[]'); } catch (e) {}
+            contracts.unshift({
+                contractId: 'PMC-' + Date.now().toString().slice(-6),
+                customer: document.getElementById('storeName')?.value || 'ลูกค้า HOSHIZAKI',
+                model: document.getElementById('machineModel')?.value || item.modelsExample.split(',')[0],
+                serial: document.getElementById('serialNumber')?.value || '-',
+                specTier: item.specTier,
+                planType: planType === '6M' ? 'ทุก 6 เดือน (2 ครั้ง/ปี)' : 'รายปี (4 ครั้ง/ปี ทุก 3 เดือน)',
+                amount: price,
+                startDate: document.getElementById('jobDate')?.value || new Date().toISOString().slice(0, 10),
+                nextDueDate: nextPmEl ? nextPmEl.value : ''
+            });
+            localStorage.setItem(PM_CONTRACTS_KEY, JSON.stringify(contracts));
+        }
+
+        window.closePmPricebookModal();
+        if (typeof showToast === 'function') showToast('เพิ่มรายการ ' + label + ' ลงใบงานเรียบร้อยแล้ว');
+    };
+
+    const FLAT_RATE_PACKAGES = [
+        { code: 'FR-WATER-01', title: 'ชุดแก้ไขน้ำไม่เข้า + ล้างระบบจ่ายน้ำ (Water Inlet Overhaul)', desc: 'เปลี่ยน Water Valve + ล้างตะแกรงกรอง + ปรับระดับลูกลอย', price: 2950, tag: 'IM / KM / FM' },
+        { code: 'FR-FILT-4HC', title: 'ชุดเปลี่ยนไส้กรองน้ำแท้ HOSHIZAKI 4HC-H + ล้างฆ่าเชื้อ', desc: 'ไส้กรองน้ำ 4HC-H (EV965516) + ค่าบริการเปลี่ยนและฟลัชระบบ', price: 3450, tag: 'ทุกรุ่นทำน้ำแข็ง' },
+        { code: 'FR-IM-ACT', title: 'ชุดซ่อมระบบถาดน้ำพลิก IM Series (Actuator & Micro Switch)', desc: 'เปลี่ยน Actuator Motor + เช็ก Cam A/B และสปริงถาดน้ำ', price: 4600, tag: 'IM Series' },
+        { code: 'FR-FM-SEAL', title: 'ชุดโอเวอร์ฮอลซีลและลูกปืนกระบอกเกล็ดน้ำแข็ง (Auger Seal Kit)', desc: 'เปลี่ยน Mechanical Seal + O-Ring + ตรวจแบริ่งชุดบน-ล่าง', price: 5800, tag: 'FM Series' },
+        { code: 'FR-REF-TEMP', title: 'ชุดแก้ไขตู้แช่ไม่เย็น / เซ็นเซอร์อุณหภูมิ (Sensor & Defrost Kit)', desc: 'เปลี่ยน Thermistor คอยล์เย็น/ห้องแช่ + ล้างคอยล์ร้อน + เช็กขอบประตู', price: 2800, tag: 'HR / HF / RT' },
+        { code: 'FR-DW-DESCALE', title: 'ชุดล้างตะกรันหม้อต้ม & ปรับตั้งอุณหภูมิเครื่องล้างจาน 85°C', desc: 'น้ำยาล้างตะกรัน Food-Grade + ล้างก้านฉีดน้ำ + เช็กปั๊มน้ำยา', price: 3200, tag: 'HSU / JWE' }
+    ];
+
+    window.applyFlatRatePackageToJob = function(code) {
+        const pkg = FLAT_RATE_PACKAGES.find(x => x.code === code);
+        if (!pkg) return;
+        if (typeof addPartRow === 'function') {
+            addPartRow(pkg.code + ' - ' + pkg.title, 1, pkg.price);
+        }
+        window.closePmPricebookModal();
+        if (typeof showToast === 'function') showToast('เพิ่มแพ็กเกจ ' + pkg.code + ' ลงใบงานแล้ว');
+    };
+
+    window.renderFlatRatePricebookPanel = function() {
+        const panel = document.getElementById('flatRatePricebookPanel');
+        if (!panel) return;
+        panel.innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                ${FLAT_RATE_PACKAGES.map(pkg => `
+                    <div class="border-2 border-slate-200 hover:border-hoshizaki-blue rounded-xl p-3 bg-slate-50 flex flex-col justify-between space-y-2">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold bg-hoshizaki-navy text-white px-2 py-0.5 rounded">${pkg.code}</span>
+                                <span class="text-[10px] font-bold text-sky-700">${pkg.tag}</span>
+                            </div>
+                            <div class="font-extrabold text-hoshizaki-navy text-xs mt-1.5">${pkg.title}</div>
+                            <div class="text-[11px] text-slate-600 mt-1">${pkg.desc}</div>
+                        </div>
+                        <div class="pt-2 border-t flex items-center justify-between">
+                            <span class="text-sm font-black text-emerald-700">${pkg.price.toLocaleString('en-US', {minimumFractionDigits:2})} THB</span>
+                            <button type="button" onclick="applyFlatRatePackageToJob('${pkg.code}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">
+                                + เลือกแพ็กเกจนี้
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    };
+
+    window.openPmCertFromContract = function() {
+        if (typeof openRouteAndPmCertModal === 'function') openRouteAndPmCertModal('PM_CERT');
+    };
+
+    window.renderPmContractsListPanel = function() {
+        const panel = document.getElementById('pmContractsListPanel');
+        if (!panel) return;
+        let contracts = [];
+        try { contracts = JSON.parse(localStorage.getItem(PM_CONTRACTS_KEY) || '[]'); } catch (e) {}
+        panel.innerHTML = contracts.length === 0
+            ? '<div class="text-center py-6 text-slate-500">ยังไม่มีรายการสัญญา PM ที่บันทึกไว้ — เลือกสัญญา PM ทุก 6 เดือน หรือรายปี จากแท็บที่ 1 เพื่อสร้างสัญญาอัตโนมัติ</div>'
+            : `<div class="space-y-2">${contracts.map(c => `
+                <div class="p-3 rounded-xl border border-emerald-200 bg-emerald-50/40 flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <div class="font-extrabold text-hoshizaki-navy">${c.contractId} • ${c.customer}</div>
+                        <div class="text-[11px] text-slate-700">${c.model} (S/N: ${c.serial}) • ${c.specTier}</div>
+                        <div class="text-[10px] text-emerald-800 font-bold">แพ็กเกจ: ${c.planType} • นัดถัดไป: ${c.nextDueDate || '-'}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-black text-sm text-hoshizaki-navy">${Number(c.amount || 0).toLocaleString('en-US', {minimumFractionDigits:2})} THB</div>
+                        <button type="button" onclick="openPmCertFromContract()" class="mt-1 bg-amber-600 text-white px-2.5 py-1 rounded font-bold text-[10px]">ออกใบรับรอง PM (A4)</button>
+                    </div>
+                </div>
+            `).join('')}</div>`;
+    };
+
+    window.openVanTransferAndSkillModal = function(tab) {
+        const modal = document.getElementById('hzkVanTransferAndSkillModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        window.switchVanSkillTab(tab || 'VAN_TRANSFER');
+    };
+
+    window.closeVanTransferAndSkillModal = function() {
+        document.getElementById('hzkVanTransferAndSkillModal')?.classList.add('hidden');
+    };
+
+    window.switchVanSkillTab = function(tab) {
+        const p1 = document.getElementById('vanTransferPanel');
+        const p2 = document.getElementById('skillZoneDispatchPanel');
+        const b1 = document.getElementById('tabBtnVanTransfer');
+        const b2 = document.getElementById('tabBtnSkillZone');
+        if (tab === 'SKILL_ZONE') {
+            p1?.classList.add('hidden');
+            p2?.classList.remove('hidden');
+            if (b2) b2.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            if (b1) b1.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold';
+            window.renderSkillZoneDispatchPanel();
+        } else {
+            p2?.classList.add('hidden');
+            p1?.classList.remove('hidden');
+            if (b1) b1.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            if (b2) b2.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold';
+            window.renderVanTransferPanel();
+        }
+    };
+
+    window.renderVanTransferPanel = function() {
+        const panel = document.getElementById('vanTransferPanel');
+        if (!panel) return;
+        let logs = [];
+        try { logs = JSON.parse(localStorage.getItem(VAN_TRANSFER_LOG_KEY) || '[]'); } catch (e) {}
+        const vans = ['T01', 'T02', 'T03', 'T04', 'T05', 'T06', 'T07', 'T08'];
+
+        panel.innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">จากรถช่างต้นทาง (From Van):</label>
+                    <select id="vanTransferFromSel" class="w-full border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+                        ${vans.map(v => `<option value="${v}">${v}</option>`).join('')}
+                    </select>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">ไปยังรถช่างปลายทาง (To Van):</label>
+                    <select id="vanTransferToSel" class="w-full border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+                        ${vans.map((v, i) => `<option value="${v}" ${i===1?'selected':''}>${v}</option>`).join('')}
+                    </select>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">รหัส/ชื่ออะไหล่ (Part):</label>
+                    <input type="text" id="vanTransferPartInput" list="hoshizakiPartsList" placeholder="เช่น 4A5251-06 Water Valve" class="w-full border rounded-lg px-2.5 py-1.5 bg-white">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">จำนวน (Qty):</label>
+                    <div class="flex gap-1.5">
+                        <input type="number" id="vanTransferQtyInput" value="1" min="1" class="w-20 border rounded-lg px-2 py-1.5 bg-white font-bold">
+                        <button type="button" onclick="executeVanToVanTransferNow()" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-extrabold rounded-lg px-3 py-1.5">โอนย้าย</button>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-1.5">
+                <div class="font-bold text-hoshizaki-navy">ประวัติการโอนย้ายอะไหล่ระหว่างรถช่างล่าสุด:</div>
+                ${logs.length === 0 ? '<div class="text-slate-500 py-3">ยังไม่มีรายการโอนย้ายระหว่างรถช่าง</div>' : logs.slice(0, 12).map(l => `
+                    <div class="p-2 rounded-lg border bg-white flex justify-between items-center">
+                        <span><b>[${l.fromVan} → ${l.toVan}]</b> ${l.part} (จำนวน ${l.qty} ชิ้น)</span>
+                        <span class="text-[10px] text-slate-500">${l.timestamp}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    };
+
+    window.executeVanToVanTransferNow = function() {
+        const fromVan = document.getElementById('vanTransferFromSel')?.value || 'T01';
+        const toVan = document.getElementById('vanTransferToSel')?.value || 'T02';
+        const part = (document.getElementById('vanTransferPartInput')?.value || '').trim();
+        const qty = parseInt(document.getElementById('vanTransferQtyInput')?.value || '1', 10) || 1;
+        if (!part || fromVan === toVan) {
+            if (typeof showToast === 'function') showToast('กรุณาระบุชื่ออะไหล่และเลือกรถช่างต้นทาง-ปลายทางให้ต่างกัน');
+            return;
+        }
+        try {
+            const vsKey = 'hoshizaki_van_stock_v1';
+            const map = JSON.parse(localStorage.getItem(vsKey) || '{}');
+            if (!map[fromVan]) map[fromVan] = {};
+            if (!map[toVan]) map[toVan] = {};
+            map[fromVan][part] = Math.max(0, (Number(map[fromVan][part]) || 0) - qty);
+            map[toVan][part] = (Number(map[toVan][part]) || 0) + qty;
+            localStorage.setItem(vsKey, JSON.stringify(map));
+        } catch (e) {}
+
+        let logs = [];
+        try { logs = JSON.parse(localStorage.getItem(VAN_TRANSFER_LOG_KEY) || '[]'); } catch (e) {}
+        logs.unshift({ fromVan, toVan, part, qty, timestamp: new Date().toLocaleString('th-TH') });
+        localStorage.setItem(VAN_TRANSFER_LOG_KEY, JSON.stringify(logs));
+        window.renderVanTransferPanel();
+        if (typeof showToast === 'function') showToast('โอนย้าย ' + part + ' จาก ' + fromVan + ' ไปยัง ' + toVan + ' เรียบร้อย');
+    };
+
+    const ZONE_FEES = [
+        { code: 'ZONE-A', name: 'Zone A: กรุงเทพฯ และปริมณฑล (ไม่เกิน 50 กม.)', fee: 800 },
+        { code: 'ZONE-B', name: 'Zone B: ภาคกลาง / ภาคตะวันออก (51–150 กม.)', fee: 1800 },
+        { code: 'ZONE-C', name: 'Zone C: ต่างจังหวัดระยะไกล / ภูมิภาค (> 150 กม.)', fee: 3500 },
+        { code: 'ZONE-URGENT', name: 'Emergency SLA: งานด่วนพิเศษนอกเวลา / วันหยุด', fee: 1500 }
+    ];
+
+    window.applyZoneSurchargeToJob = function(code) {
+        const z = ZONE_FEES.find(x => x.code === code);
+        if (!z) return;
+        if (typeof addPartRow === 'function') {
+            addPartRow('Travel & Zone Surcharge (' + z.name + ')', 1, z.fee);
+        }
+        window.closeVanTransferAndSkillModal();
+        if (typeof showToast === 'function') showToast('เพิ่มค่าเดินทาง ' + z.code + ' ลงใบงานแล้ว');
+    };
+
+    window.renderSkillZoneDispatchPanel = function() {
+        const panel = document.getElementById('skillZoneDispatchPanel');
+        if (!panel) return;
+        const curModel = document.getElementById('machineModel')?.value || 'IM-130NE';
+        const skillMatch = /^FM-/.test(curModel.toUpperCase())
+            ? 'ผู้เชี่ยวชาญระบบ Auger & Gear Motor (FM Flake/Nugget): [T01] Noparin, [T03] Senior Tech'
+            : (/^(HSU|JWE)-/.test(curModel.toUpperCase())
+                ? 'ผู้เชี่ยวชาญเครื่องล้างจาน & Boiler 85°C: [T02] Service Specialist, [T05] Kitchen Tech'
+                : 'ผู้เชี่ยวชาญเครื่องทำน้ำแข็ง IM/KM & ตู้แช่ HR/HF: [T01]–[T08] ทุกทีมพร้อมปฏิบัติงาน');
+
+        panel.innerHTML = `
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                <div class="font-extrabold text-emerald-950">🎯 Skill-Based Tech Recommendation สำหรับรุ่น ${curModel}:</div>
+                <div class="text-xs text-emerald-800 mt-1">${skillMatch}</div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                ${ZONE_FEES.map(z => `
+                    <div class="border border-slate-200 rounded-xl p-3 bg-white flex items-center justify-between gap-2">
+                        <div>
+                            <div class="font-bold text-hoshizaki-navy">${z.name}</div>
+                            <div class="text-xs font-extrabold text-sky-700 mt-0.5">${z.fee.toLocaleString('en-US', {minimumFractionDigits:2})} THB</div>
+                        </div>
+                        <button type="button" onclick="applyZoneSurchargeToJob('${z.code}')" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">
+                            + เพิ่มค่าเดินทาง
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    };
+
+    function mountLiveSlaCountdownBar() {
+        const container = document.getElementById('jobSheetContainer');
+        if (!container || document.getElementById('hzkSlaCountdownBar')) return;
+        const bar = document.createElement('div');
+        bar.id = 'hzkSlaCountdownBar';
+        bar.className = 'no-print bg-slate-900 text-white rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-xs border border-sky-500/40';
+        bar.innerHTML = `
+            <div class="flex items-center gap-2">
+                <span class="bg-rose-600 text-white font-extrabold px-2 py-0.5 rounded text-[10px]">SLA TIMER</span>
+                <span id="hzkSlaStatusLabel" class="font-bold text-sky-200">เป้าหมายเข้าหน้างาน: ภายใน 4 ชม. (Urgent) / 24 ชม. (Standard)</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="openPmPricebookModal('PM_MATRIX')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-sparkles mr-1"></i> คิดราคา PM / Big Cleaning ตามสเปคเครื่อง
+                </button>
+                <button type="button" onclick="openVanTransferAndSkillModal('VAN_TRANSFER')" class="bg-orange-600 hover:bg-orange-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-right-left mr-1"></i> โอนสต็อกรถช่าง / โซนค่าเดินทาง
+                </button>
+            </div>
+        `;
+        container.insertBefore(bar, container.firstChild);
+    }
+
+    document.addEventListener('DOMContentLoaded', mountLiveSlaCountdownBar);
 })();
 </script>
 

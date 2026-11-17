@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1022-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1025-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -175,7 +175,7 @@ function doPost(e) {
       var action = data.actionType || 'SAVE_JOB';
 
       // --- v1013 New Endpoints ---
-      // --- v1022 Holistic Expansion & Outsource Parts Tracking Endpoints ---
+      // --- v1024 Holistic Expansion & Outsource Parts Tracking Endpoints ---
       if (action === 'UPSERT_OUTSOURCE_PARTS_APPT') {
         return jsonOut(upsertOutsourcePartsAppointment_(ss, data, secrets));
       }
@@ -186,6 +186,15 @@ function doPost(e) {
 
       if (action === 'SYNC_VAN_MINMAX_RESTOCK') {
         return jsonOut(syncVanMinMaxRestockBatch_(ss, data, secrets));
+      }
+
+      
+      if (action === 'SYNC_V1025_GOVERNANCE_APPROVAL') {
+        return jsonOut(syncV1025GovernanceApproval_(ss, data));
+      }
+
+      if (action === 'SYNC_V1023_VENDOR_RECONCILIATION') {
+        return jsonOut(syncV1023VendorReconciliation_(ss, data));
       }
 
       if (action === 'SYNC_OUTSOURCE_MONTHLY_BILLING') {
@@ -2141,7 +2150,8 @@ function searchPdfFilesInDriveFolders(folderIds, keyword, maxResults) {
 function buildSaveJobFlexMessage_(data, pdfUrl, pwaUrl) {
   var status = data.jobStatus || 'Completed';
   var headerBg = '#002B49';
-  var badgeText = '🔧 SERVICE REPORT';
+  var revPrefix = (data.isRevised || Number(data.revisionCount || 0) > 0) ? ('✏️ REVISED #' + (data.revisionCount || 1) + ' • ') : '';
+  var badgeText = revPrefix + '🔧 SERVICE REPORT';
   if (status === 'Completed') { headerBg = '#065F46'; badgeText = '✅ COMPLETED'; }
   else if (status === 'Waiting Parts') { headerBg = '#B45309'; badgeText = '📦 WAITING PARTS'; }
   else if (status === 'Cancelled') { headerBg = '#991B1B'; badgeText = '❌ CANCELLED'; }
@@ -2366,7 +2376,8 @@ function formatSaveJobNotificationLine(data, pdfUrl) {
 
   var priceTxt = (data.grandTotal && parseFloat(data.grandTotal) > 0) ? formatCurrency(data.grandTotal) + ' THB' : 'ไม่มีค่าใช้จ่าย (0.00 THB)';
 
-  return statusIcon + ' อัปเดตใบงานบริการ HOSHIZAKI\n' +
+  var revLine = (data.isRevised || Number(data.revisionCount || 0) > 0) ? ('✏️ [REVISED #' + (data.revisionCount || 1) + ' — แก้ไขใบงานย้อนหลัง โดย ' + (data.lastRevisedBy || '-') + ']\n') : '';
+  return revLine + statusIcon + ' อัปเดตใบงานบริการ HOSHIZAKI\n' +
          '━━━━━━━━━━━━━━━━━━━━\n' +
          '📄 เลขที่ใบงาน: ' + (data.jobNo || '-') + '\n' +
          '🗓️ วันที่ปฏิบัติงาน: ' + (data.date || '-') + '\n' +
@@ -4828,7 +4839,7 @@ function upsertJobToSheet(ss, data, folderUrl, pdfUrl) {
   var existingPay = (targetRow > 0 && sheet.getLastColumn() >= 27) ? sheet.getRange(targetRow, 27).getValue() : '';
 
   var rowValues = [
-    jobNo, data.date || '', data.jobStatus || 'Completed', data.techCode || '',
+    jobNo, data.date || '', ((data.isRevised || Number(data.revisionCount || 0) > 0) ? ((data.jobStatus || 'Completed') + ' [REVISED #' + (data.revisionCount || 1) + ']') : (data.jobStatus || 'Completed')), data.techCode || '',
     data.responsibleTech || '', data.techniciansSummary || '',
     data.store || '', data.dealer || '', data.contact || '', data.address || '',
     data.model || '', data.serial || '', data.productType || '', data.warranty || '',
@@ -7515,7 +7526,7 @@ function getCsatAnalyticsDashboard_(ss) {
 
 
 // ============================================================================
-// SECTION 19: ENTERPRISE v1022 — OUTSOURCE PARTS SHIPMENT & APPOINTMENT SYNC
+// SECTION 19: ENTERPRISE v1024 — OUTSOURCE PARTS SHIPMENT & APPOINTMENT SYNC
 // ============================================================================
 function upsertOutsourcePartsAppointment_(ss, data, secrets) {
   var record = data.record || data || {};
@@ -7678,4 +7689,71 @@ function syncOutsourceMonthlyBilling_(ss, data) {
     nowStr
   ]);
   return { status: 'ok', loggedAt: nowStr };
+}
+
+
+// =========================================================================
+// SECTION 20: ENTERPRISE v1024 OUTSOURCE VENDOR BILLING RECONCILIATION
+// =========================================================================
+function syncV1023VendorReconciliation_(ss, data) {
+  var sheetName = 'Outsource_Vendor_Reconciliation';
+  var sheet = ss.getSheetByName(sheetName);
+  var headers = ['Billing_Month', 'Vendor_Name', 'Job_Count', 'Completed_Count', 'Base_Fee_THB', 'Travel_OT_THB', 'VAT_7_Pct', 'WHT_3_Pct', 'Net_Payable_THB', 'Synced_At'];
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var vendors = (data && Array.isArray(data.vendors)) ? data.vendors : [];
+  var month = String((data && data.month) || '');
+  vendors.forEach(function(v) {
+    sheet.appendRow([
+      month,
+      String(v.vendor || ''),
+      Number(v.jobCount || 0),
+      Number(v.completedCount || 0),
+      Number(v.baseFeeTotal || 0),
+      Number(v.travelOtTotal || 0),
+      Number(v.vat7Pct || 0),
+      Number(v.wht3Pct || 0),
+      Number(v.netPayable || 0),
+      nowStr
+    ]);
+  });
+  return { status: 'ok', count: vendors.length, syncedAt: nowStr };
+}
+
+
+// =========================================================================
+// SECTION 21: ENTERPRISE v1025 EXECUTIVE, ADMIN & ACCOUNTING GOVERNANCE SYNC
+// =========================================================================
+function syncV1025GovernanceApproval_(ss, data) {
+  var sheetName = 'Governance_GP_Approvals';
+  var sheet = ss.getSheetByName(sheetName);
+  var headers = ['Request_ID', 'Created_At', 'Job_No', 'Offer_No', 'Customer', 'Model', 'Gross_Amount', 'Discount_Pct', 'Net_Amount', 'Est_GP_Pct', 'Status', 'Approved_By', 'Approved_At'];
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var r = (data && data.record) || {};
+  sheet.appendRow([
+    String(r.reqId || ''),
+    String(r.createdAt || ''),
+    String(r.jobNo || ''),
+    String(r.offerNo || ''),
+    String(r.customer || ''),
+    String(r.model || ''),
+    Number(r.grossAmount || 0),
+    Number(r.discountPct || 0),
+    Number(r.netAmount || 0),
+    Number(r.estimatedGpPct || 0),
+    String(r.status || ''),
+    String(r.approvedBy || ''),
+    String(r.approvedAt || '')
+  ]);
+  return { status: 'ok', reqId: r.reqId || '' };
 }

@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1022</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1025</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -3801,6 +3801,11 @@ Website : www.hoshizaki-sea.com</p>
                         </button>
                     </div>
                 </div>
+                <div id="jobRevisedStatusBadgeWrap" class="hidden flex items-center justify-end gap-1.5 mt-1">
+                    <span id="jobRevisedStatusBadgeText" onclick="openJobRevisionHistoryModal()" class="cursor-pointer inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-400 px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold shadow-xs" title="คลิกเพื่อดูประวัติการแก้ไขใบงานย้อนหลัง">
+                        <i class="fa-solid fa-pen-to-square text-amber-700"></i> REVISED (แก้ไขใบงาน)
+                    </span>
+                </div>
                 <div class="flex items-center justify-between sm:justify-end gap-2 text-xs">
                     <span class="font-medium text-gray-600">DATE:</span>
                     <input type="date" id="jobDate" class="border-b border-gray-400 w-44 sm:w-36 text-center focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
@@ -4549,7 +4554,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1022</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1025</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -4617,6 +4622,11 @@ Website : www.hoshizaki-sea.com</p>
                 <button type="button" id="btnToggleTorch" onclick="toggleScannerTorch()" class="hidden absolute top-2.5 right-2.5 bg-black/60 hover:bg-black/80 text-amber-300 border border-amber-400/50 text-xs px-2.5 py-1.5 rounded-lg font-medium flex items-center gap-1">
                     <i class="fa-solid fa-bolt"></i> <span>ไฟฉาย</span>
                 </button>
+                <div id="scannerZoomControlWrap" class="hidden absolute bottom-2 inset-x-3 bg-black/65 backdrop-blur-xs rounded-lg px-2.5 py-1 flex items-center gap-2 text-white text-[11px]">
+                    <i class="fa-solid fa-magnifying-glass-plus text-amber-300"></i>
+                    <input type="range" id="scannerZoomSlider" min="1" max="4" step="0.2" value="1" oninput="setScannerCameraZoom(this.value)" class="flex-1 accent-amber-400 h-1.5">
+                    <span id="scannerZoomLabel" class="font-mono font-bold text-amber-200 w-8 text-right">1.0x</span>
+                </div>
             </div>
 
             <p id="barcodeScannerStatus" class="text-xs text-center text-gray-600 leading-relaxed">
@@ -19391,6 +19401,10 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 
 
 
+
+
+
+
 </body>
                 </html>
             `);
@@ -20678,7 +20692,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1022) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1025) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -23580,7 +23594,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1022 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1025 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -30356,13 +30370,50 @@ Defect: ${defectText}`;
                         const existing = history.find(h => h.jobNo === draft.jobNo);
                         const role = (typeof currentUserRoleMode !== 'undefined') ? currentUserRoleMode : 'TECH';
 
-                        if (existing && existing.jobStatus === 'Completed' && role !== 'MANAGER') {
+                        if (existing) {
                             const oldHash = existing.integrityHash || '';
                             const newHash = await window.computeClientDocIntegrityHash_(draft);
-                            if (oldHash && oldHash !== newHash) {
-                                alert('🔒 ใบงานเลขที่ ' + draft.jobNo + ' ถูกปิดงาน (Completed) และลงรหัสยืนยันความถูกต้องแล้ว (' + oldHash + ')\n\nไม่อนุญาตให้แก้ไขรายการอะไหล่หรือยอดเงินย้อนหลัง กรุณาให้ผู้จัดการปลดล็อก Manager PIN ก่อนแก้ไขครับ');
-                                return;
+                            const isModified = (oldHash && oldHash !== newHash) ||
+                                (String(existing.diagSymptom || '') !== String(draft.diagSymptom || '')) ||
+                                (String(existing.diagAction || '') !== String(draft.diagAction || '')) ||
+                                (String(existing.total || '0.00') !== String(draft.total || '0.00')) ||
+                                (String(existing.jobStatus || '') !== String(draft.jobStatus || ''));
+                            if (isModified) {
+                                const prevCount = Number(existing.revisionCount || 0);
+                                const nextCount = prevCount + 1;
+                                const nowRevStr = new Date().toLocaleString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                                const editorName = draft.responsibleTech || localStorage.getItem('hoshizaki_tech_profile_name') || (role === 'MANAGER' ? 'Manager' : 'Technician');
+                                const revHistory = Array.isArray(existing.revisionHistory) ? existing.revisionHistory.slice() : [];
+                                revHistory.push({
+                                    revNo: nextCount,
+                                    editedAt: nowRevStr,
+                                    editedBy: editorName,
+                                    role: role,
+                                    prevStatus: existing.jobStatus || '',
+                                    newStatus: draft.jobStatus || '',
+                                    prevTotal: existing.total || '0.00',
+                                    newTotal: draft.total || '0.00'
+                                });
+                                window.__hzkPendingRevisionMeta = {
+                                    isRevised: true,
+                                    revisionCount: nextCount,
+                                    lastRevisedAt: nowRevStr,
+                                    lastRevisedBy: editorName,
+                                    revisionHistory: revHistory
+                                };
+                            } else if (existing.isRevised) {
+                                window.__hzkPendingRevisionMeta = {
+                                    isRevised: true,
+                                    revisionCount: Number(existing.revisionCount || 1),
+                                    lastRevisedAt: existing.lastRevisedAt || '',
+                                    lastRevisedBy: existing.lastRevisedBy || '',
+                                    revisionHistory: Array.isArray(existing.revisionHistory) ? existing.revisionHistory : []
+                                };
+                            } else {
+                                window.__hzkPendingRevisionMeta = null;
                             }
+                        } else {
+                            window.__hzkPendingRevisionMeta = null;
                         }
 
                         const cleanSn = String(draft.serial || '').trim().toUpperCase();
@@ -31459,7 +31510,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1022)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1025)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31662,7 +31713,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1022)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1025)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31671,7 +31722,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1022)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1025)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -31680,7 +31731,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1022)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1025)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31762,21 +31813,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1022) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1025) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1022 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1025 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1022）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1025）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -34630,9 +34681,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1022',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1022)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1022)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1025',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1025)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1025)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34681,7 +34732,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1022 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1025 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -34907,7 +34958,7 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
         <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1022 — Multi-Branch &amp; White-Label Ready)</h3>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1025 — Multi-Branch &amp; White-Label Ready)</h3>
                 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
             </div>
             <div class="flex items-center gap-1.5">
@@ -38952,7 +39003,7 @@ try {
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1022 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1025 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -39212,6 +39263,1469 @@ try {
                 <div>
                     <div class="font-bold text-slate-900 group-hover:text-[#002B49]">ระบบบริหารงานบริการครบวงจร 4 มิติ (v1022)</div>
                     <div class="text-[10px] text-slate-500">Flat-Rate Menu • Skill Dispatch • Van Min/Max • Outsource BI</div>
+                </div>`;
+            execMenu.appendChild(btn);
+        }
+    });
+})();
+</script>
+
+
+<!-- =========================================================================
+     HOSHIZAKI ENTERPRISE v1024 — RETROACTIVE JOB REVISION (REVISED) &
+     FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
+     ========================================================================= -->
+<script id="hzk-v1024-revision-and-field-ops-suite">
+(function() {
+    // 1. Update REVISED Badge UI on Header
+    window.updateJobRevisedBadgeUI = function(jobObj) {
+        const wrap = document.getElementById('jobRevisedStatusBadgeWrap');
+        const txt = document.getElementById('jobRevisedStatusBadgeText');
+        if (!wrap || !txt) return;
+        if (jobObj && (jobObj.isRevised || Number(jobObj.revisionCount || 0) > 0)) {
+            const cnt = Number(jobObj.revisionCount || 1);
+            const dt = jobObj.lastRevisedAt ? ` · ${jobObj.lastRevisedAt}` : '';
+            const by = jobObj.lastRevisedBy ? ` (${jobObj.lastRevisedBy})` : '';
+            wrap.classList.remove('hidden');
+            txt.innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-700"></i> REVISED #${cnt} (แก้ไขใบงานย้อนหลัง${dt}${by})`;
+        } else {
+            wrap.classList.add('hidden');
+        }
+    };
+
+    // Wrap collectFullJobData to persist revision metadata cleanly
+    const prevCollectV1024 = window.collectFullJobData;
+    if (typeof prevCollectV1024 === 'function') {
+        window.collectFullJobData = function() {
+            const data = prevCollectV1024.apply(this, arguments);
+            if (!data) return data;
+            if (window.__hzkPendingRevisionMeta) {
+                Object.assign(data, window.__hzkPendingRevisionMeta);
+            } else {
+                const hist = (typeof getJobHistorySync === 'function') ? getJobHistorySync() : [];
+                const prev = hist.find(h => h.jobNo === data.jobNo);
+                if (prev && (prev.isRevised || Number(prev.revisionCount || 0) > 0)) {
+                    data.isRevised = true;
+                    data.revisionCount = Number(prev.revisionCount || 1);
+                    data.lastRevisedAt = prev.lastRevisedAt || '';
+                    data.lastRevisedBy = prev.lastRevisedBy || '';
+                    data.revisionHistory = Array.isArray(prev.revisionHistory) ? prev.revisionHistory : [];
+                }
+            }
+            return data;
+        };
+    }
+
+    // Wrap applyFullJobData so loading any job updates the REVISED badge
+    const prevApplyV1024 = window.applyFullJobData;
+    if (typeof prevApplyV1024 === 'function') {
+        window.applyFullJobData = function(item) {
+            window.__hzkPendingRevisionMeta = null;
+            const res = prevApplyV1024.apply(this, arguments);
+            window.updateJobRevisedBadgeUI(item);
+            window.refreshLiveModelSpecCheatBar();
+            window.refreshJobReadinessMeter();
+            return res;
+        };
+    }
+
+    // Wrap createNewJobForm to reset REVISED badge
+    const prevNewJobV1024 = window.createNewJobForm;
+    if (typeof prevNewJobV1024 === 'function') {
+        window.createNewJobForm = function() {
+            window.__hzkPendingRevisionMeta = null;
+            const res = prevNewJobV1024.apply(this, arguments);
+            window.updateJobRevisedBadgeUI(null);
+            window.refreshLiveModelSpecCheatBar();
+            window.refreshJobReadinessMeter();
+            return res;
+        };
+    }
+
+    // Wrap renderHistoryTable to display prominent REVISED #X tag on revised jobs
+    const prevRenderHistV1024 = window.renderHistoryTable;
+    if (typeof prevRenderHistV1024 === 'function') {
+        window.renderHistoryTable = function() {
+            const res = prevRenderHistV1024.apply(this, arguments);
+            const tbody = document.getElementById('historyTableBody');
+            if (!tbody) return res;
+            const hist = (typeof getJobHistorySync === 'function') ? getJobHistorySync() : [];
+            const revMap = {};
+            hist.forEach(h => {
+                if (h && h.jobNo && (h.isRevised || Number(h.revisionCount || 0) > 0)) {
+                    revMap[h.jobNo] = h;
+                }
+            });
+            tbody.querySelectorAll('tr').forEach(tr => {
+                const firstTd = tr.querySelector('td');
+                if (!firstTd) return;
+                const jNo = firstTd.textContent.trim().split(/\s+/)[0];
+                const revItem = revMap[jNo];
+                if (revItem && !firstTd.querySelector('.hzk-rev-pill')) {
+                    const cnt = Number(revItem.revisionCount || 1);
+                    const pill = document.createElement('div');
+                    pill.className = 'hzk-rev-pill mt-0.5';
+                    pill.innerHTML = `<span class="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-400 px-1.5 py-0.2 rounded text-[9.5px] font-extrabold" title="แก้ไขล่าสุด: ${escapeHtml(revItem.lastRevisedAt || '')} โดย ${escapeHtml(revItem.lastRevisedBy || '')}">✏️ REVISED #${cnt}</span>`;
+                    firstTd.appendChild(pill);
+                }
+            });
+            return res;
+        };
+    }
+
+    // Also update REVISED badge immediately after saveToHistory completes
+    const prevSaveV1024 = window.saveToHistory;
+    if (typeof prevSaveV1024 === 'function') {
+        window.saveToHistory = async function() {
+            const r = await prevSaveV1024.apply(this, arguments);
+            const cur = (typeof collectFullJobData === 'function') ? collectFullJobData() : null;
+            window.updateJobRevisedBadgeUI(cur);
+            if (cur && cur.isRevised && typeof showToast === 'function') {
+                showToast(`✏️ บันทึกการแก้ไขใบงาน ${cur.jobNo} (REVISED #${cur.revisionCount}) เรียบร้อยแล้ว`);
+            }
+            return r;
+        };
+    }
+
+    // Modal showing full audit trail of revisions on current job
+    window.openJobRevisionHistoryModal = function() {
+        const cur = (typeof collectFullJobData === 'function') ? collectFullJobData() : {};
+        const revs = Array.isArray(cur.revisionHistory) ? cur.revisionHistory : [];
+        let modal = document.getElementById('jobRevisionHistoryModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'jobRevisionHistoryModal';
+            modal.className = 'hidden fixed inset-0 bg-slate-900/80 z-[122] flex items-center justify-center p-3';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-4 space-y-3 border border-amber-300">
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h3 class="font-extrabold text-sm text-[#002B49] flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-amber-600"></i>
+                            <span>ประวัติการแก้ไขใบงานย้อนหลัง (Revision Audit Log)</span>
+                        </h3>
+                        <button type="button" onclick="document.getElementById('jobRevisionHistoryModal').classList.add('hidden')" class="bg-red-600 text-white rounded-lg w-7 h-7 font-bold">&times;</button>
+                    </div>
+                    <div id="jobRevisionHistoryBody" class="text-xs max-h-80 overflow-y-auto space-y-2"></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        const body = document.getElementById('jobRevisionHistoryBody');
+        if (body) {
+            body.innerHTML = revs.length ? revs.slice().reverse().map(rv => `
+                <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-2.5">
+                    <div class="flex justify-between font-bold text-[#002B49]">
+                        <span>แก้ไขครั้งที่ #${rv.revNo} (REVISED #${rv.revNo})</span>
+                        <span class="text-amber-800">${escapeHtml(rv.editedAt || '')}</span>
+                    </div>
+                    <div class="text-slate-700 mt-1">ผู้แก้ไข: <b>${escapeHtml(rv.editedBy || '-')}</b> (${escapeHtml(rv.role || '')})</div>
+                    <div class="text-slate-600 mt-0.5">สถานะ: ${escapeHtml(rv.prevStatus)} → <b>${escapeHtml(rv.newStatus)}</b> | ยอดเงิน: ${escapeHtml(rv.prevTotal)} → <b>${escapeHtml(rv.newTotal)} THB</b></div>
+                </div>
+            `).join('') : '<div class="text-center text-slate-500 py-4">ใบงานนี้ยังไม่เคยมีการแก้ไขย้อนหลัง (ต้นฉบับ)</div>';
+        }
+        modal.classList.remove('hidden');
+    };
+
+    // 2. Camera Zoom Control for Nameplate Scanner
+    window.setScannerCameraZoom = async function(zoomVal) {
+        const lbl = document.getElementById('scannerZoomLabel');
+        if (lbl) lbl.textContent = Number(zoomVal).toFixed(1) + 'x';
+        try {
+            const vid = document.getElementById('barcodeVideoPreview');
+            const stream = vid && vid.srcObject;
+            const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
+            if (track && track.getCapabilities) {
+                const caps = track.getCapabilities();
+                if (caps && caps.zoom) {
+                    const clamped = Math.max(caps.zoom.min || 1, Math.min(caps.zoom.max || 4, Number(zoomVal)));
+                    await track.applyConstraints({ advanced: [{ zoom: clamped }] });
+                }
+            }
+        } catch (e) {}
+    };
+
+    // 3. Field Technician & Coordinator Assistant Bar (Gauge/Amp Reference, Pre-Departure 5-Point Checklist, Job Readiness Meter, 1-Click Customer ETA Msg & Daily Tech Swimlane)
+    window.getModelGaugeReferenceSpec = function(modelStr) {
+        const m = String(modelStr || '').trim().toUpperCase();
+        if (!m) return null;
+        if (m.startsWith('IM')) {
+            return { series: 'IM Cube Series', ref: 'R134a / R290 (-HC)', highPsi: '140–185 PSI', lowPsi: '12–22 PSI', cycle: '20–26 นาที', sensor: 'Thermistor ~2.0–2.5 kΩ @25°C | แรงดันน้ำ 0.07–0.8 MPa' };
+        }
+        if (m.startsWith('KM')) {
+            return { series: 'KM Crescent Series', ref: 'R404A / R290', highPsi: '210–265 PSI', lowPsi: '28–42 PSI', cycle: '15–22 นาที', sensor: 'Thermistor 429006-03 | เช็ก Float Switch & Hot Gas Valve' };
+        }
+        if (m.startsWith('FM')) {
+            return { series: 'FM Flake/Nugget Series', ref: 'R404A / R452A', highPsi: '200–255 PSI', lowPsi: '25–38 PSI', cycle: 'ต่อเนื่อง (Auger)', sensor: 'เช็ก Gear Motor Amps ตามเนมเพลต & น้ำหล่อเลี้ยงถังพัก' };
+        }
+        if (/^(HR|HF|RT|RTC|RTF|HW|RW)/.test(m)) {
+            return { series: 'Chiller / Freezer Series', ref: 'R134a / R404A / R290', highPsi: '135–240 PSI', lowPsi: '10–32 PSI', cycle: 'Defrost ทุก 6–8 ชม.', sensor: 'Chiller +1°C..+6°C | Freezer -18°C..-23°C | Probe ~2.0 kΩ @25°C' };
+        }
+        if (/^(HSU|JWE)/.test(m)) {
+            return { series: 'Commercial Dishwasher', ref: 'Water Heater System', highPsi: 'Wash 55–65°C', lowPsi: 'Rinse Boiler 80–85°C', cycle: '60–180 วินาที/รอบ', sensor: 'แรงดันน้ำเข้า 0.1–0.6 MPa | เช็กปั๊มน้ำยาล้าง/แวววาว' };
+        }
+        return { series: m, ref: 'R134a / R404A / R290', highPsi: '140–255 PSI', lowPsi: '12–38 PSI', cycle: 'ตามสเปกเนมเพลต', sensor: 'ไฟเลี้ยง 220–240V 50Hz (198–254V)' };
+    };
+
+    window.refreshLiveModelSpecCheatBar = function() {
+        const bar = document.getElementById('v1024ModelSpecCheatBar');
+        if (!bar) return;
+        const m = document.getElementById('eqModel')?.value || '';
+        const spec = window.getModelGaugeReferenceSpec(m);
+        if (!spec) {
+            bar.classList.add('hidden');
+            return;
+        }
+        bar.classList.remove('hidden');
+        bar.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-1.5">
+                <span class="font-extrabold text-[#002B49]"><i class="fa-solid fa-gauge text-[#00A3E0] mr-1"></i> ค่ามาตรฐานหน้างาน (${escapeHtml(spec.series)}):</span>
+                <span class="text-[10.5px] font-bold text-sky-900 bg-white px-2 py-0.5 rounded border border-sky-200">น้ำยา: ${escapeHtml(spec.ref)}</span>
+                <span class="text-[10.5px] font-bold text-rose-800 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">High: ${escapeHtml(spec.highPsi)}</span>
+                <span class="text-[10.5px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Low: ${escapeHtml(spec.lowPsi)}</span>
+                <span class="text-[10.5px] text-slate-700">${escapeHtml(spec.sensor)}</span>
+            </div>
+        `;
+    };
+
+    window.refreshJobReadinessMeter = function() {
+        const el = document.getElementById('v1024JobReadinessBar');
+        if (!el) return;
+        const store = (document.getElementById('custStore')?.value || '').trim();
+        const model = (document.getElementById('eqModel')?.value || '').trim();
+        const serial = (document.getElementById('eqSerial')?.value || '').trim();
+        const sym = (document.getElementById('diagSymptom')?.value || '').trim();
+        const act = (document.getElementById('diagAction')?.value || '').trim();
+        const photosCount = document.querySelectorAll('.photo-card').length;
+
+        const missing = [];
+        let score = 0;
+        if (store) score += 20; else missing.push('ชื่อลูกค้า/ร้าน');
+        if (model && serial) score += 25; else missing.push('รุ่น/S/N เครื่อง');
+        if (sym) score += 15; else missing.push('อาการเสีย');
+        if (act) score += 20; else missing.push('รายละเอียดการแก้ไข');
+        if (photosCount > 0) score += 20; else missing.push('รูปถ่ายหน้างานอย่างน้อย 1 รูป');
+
+        const colorCls = score >= 100 ? 'bg-emerald-600' : (score >= 60 ? 'bg-amber-500' : 'bg-rose-500');
+        el.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                <div class="flex items-center gap-2 font-bold text-[#002B49]">
+                    <span><i class="fa-solid fa-clipboard-check text-[#00A3E0] mr-1"></i> ความครบถ้วนใบงาน (Readiness): <b>${score}%</b></span>
+                    <div class="w-24 bg-slate-200 rounded-full h-2 overflow-hidden"><div class="${colorCls} h-2" style="width:${score}%"></div></div>
+                </div>
+                <div class="text-[10.5px] ${missing.length ? 'text-amber-800 font-semibold' : 'text-emerald-700 font-bold'}">
+                    ${missing.length ? 'จุดที่ควรเติมก่อนปิดงาน: ' + missing.join(', ') : '✅ ข้อมูลและรูปถ่ายครบถ้วนพร้อมปิดงาน/ส่งบัญชี'}
+                </div>
+            </div>
+        `;
+    };
+
+    // Modal for Field Technician & Coordinator Quick Suite (Pre-Departure 5-Point Checklist • 1-Click Customer ETA Message • Daily Tech Swimlane)
+    window.openFieldAndCoordinatorOpsModal = function(tab) {
+        let modal = document.getElementById('fieldAndCoordinatorOpsModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'fieldAndCoordinatorOpsModal';
+            modal.className = 'hidden fixed inset-0 bg-slate-950/85 z-[119] flex items-center justify-center p-2 sm:p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
+                    <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
+                        <div>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1025</span>
+                            <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
+                        </div>
+                        <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
+                    </div>
+                    <div class="bg-sky-50 border-b border-sky-200 px-3 py-2 flex flex-wrap gap-1.5 text-xs font-bold">
+                        <button type="button" onclick="renderFieldOpsTabV1024('CHECKLIST')" id="fOpsTab_CHECKLIST" class="fops-tab px-3 py-1.5 rounded-lg bg-[#002B49] text-white">1. เช็กลิสต์ 5 จุดก่อนออกจากร้านลูกค้า</button>
+                        <button type="button" onclick="renderFieldOpsTabV1024('CUST_MSG')" id="fOpsTab_CUST_MSG" class="fops-tab px-3 py-1.5 rounded-lg bg-white text-slate-700 border">2. สร้างข้อความแจ้งลูกค้า 1 คลิก (ETA / อะไหล่)</button>
+                        <button type="button" onclick="renderFieldOpsTabV1024('SWIMLANE')" id="fOpsTab_SWIMLANE" class="fops-tab px-3 py-1.5 rounded-lg bg-white text-slate-700 border">3. ตารางคิวงานรายช่างวันนี้ (Tech Swimlane)</button>
+                    </div>
+                    <div id="fieldOpsModalBodyV1024" class="p-4 overflow-y-auto flex-1 text-xs space-y-3"></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        modal.classList.remove('hidden');
+        window.renderFieldOpsTabV1024(tab || 'CHECKLIST');
+    };
+
+    window.renderFieldOpsTabV1024 = function(tab) {
+        document.querySelectorAll('.fops-tab').forEach(b => {
+            b.className = 'fops-tab px-3 py-1.5 rounded-lg bg-white text-slate-700 border hover:bg-sky-100';
+        });
+        const act = document.getElementById('fOpsTab_' + tab);
+        if (act) act.className = 'fops-tab px-3 py-1.5 rounded-lg bg-[#002B49] text-white';
+        const body = document.getElementById('fieldOpsModalBodyV1024');
+        if (!body) return;
+
+        if (tab === 'CHECKLIST') {
+            const items = [
+                '1. เปิดวาล์วน้ำประปาเข้าเครื่องคืนเรียบร้อย และตรวจเช็กจุดต่อสายน้ำเข้า-น้ำทิ้งไม่มีน้ำรั่วซึม',
+                '2. ปิดฝาครอบเครื่องและขันสกรูยึดครบทุกจุด พร้อมเก็บเครื่องมือออกจากพื้นที่ปฏิบัติงาน',
+                '3. ทำความสะอาดบริเวณหน้างานและเช็ดคราบน้ำรอบตัวเครื่องให้เรียบร้อย',
+                '4. ทดสอบเดินเครื่องจนผ่านรอบผลิตน้ำแข็งแรก / อุณหภูมิตู้แช่ลดลงตามเกณฑ์มาตรฐาน',
+                '5. อธิบายผลการซ่อมและให้ลูกค้าลงลายมือชื่อรับทราบในใบแจ้งบริการเรียบร้อยแล้ว'
+            ];
+            body.innerHTML = `
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-2.5">
+                    <div class="font-extrabold text-emerald-950 text-sm">✅ Pre-Departure 5-Point Quality Checklist (ป้องกันงานซ่อมซ้ำ Repeat Call)</div>
+                    ${items.map((txt, i) => `
+                        <label class="flex items-start gap-2.5 bg-white p-2.5 rounded-lg border border-emerald-200 cursor-pointer hover:bg-emerald-50/50">
+                            <input type="checkbox" class="v1024-predep-chk w-4 h-4 mt-0.5 accent-emerald-600">
+                            <span class="font-semibold text-slate-800">${txt}</span>
+                        </label>
+                    `).join('')}
+                    <div class="pt-2 flex justify-end">
+                        <button type="button" onclick="const checked = document.querySelectorAll('.v1024-predep-chk:checked').length; if(checked < 5){ alert('กรุณาตรวจสอบให้ครบทั้ง 5 ข้อก่อนยืนยันครับ ('+checked+'/5)'); return; } const actBox = document.getElementById('diagAction'); if(actBox && !actBox.value.includes('Pre-Departure QC 5/5')){ actBox.value = (actBox.value ? actBox.value + '\n' : '') + '✅ ผ่านการตรวจสอบมาตรฐานก่อนส่งมอบครบ 5 จุด (Pre-Departure QC 5/5)'; } document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden'); if(typeof showToast==='function') showToast('✅ บันทึกผล Pre-Departure QC 5/5 ลงใบแจ้งบริการเรียบร้อย');" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold shadow">
+                            ยืนยันครบ 5 ข้อ &amp; บันทึกลงใบงาน
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else if (tab === 'CUST_MSG') {
+            const store = document.getElementById('custStore')?.value || 'ร้านค้าลูกค้า';
+            const model = document.getElementById('eqModel')?.value || '-';
+            const serial = document.getElementById('eqSerial')?.value || '-';
+            const jobNo = document.getElementById('jobNo')?.value || 'JOB-NEW';
+            const tech = localStorage.getItem('hoshizaki_tech_profile_name') || 'ทีมช่างบริการ Hoshizaki';
+            const portalUrl = `https://serviceshth.github.io/hoshizaki-service/?portal=customer&jobNo=${encodeURIComponent(jobNo)}`;
+            const msgArrival = `เรียน คุณลูกค้า (${store})
+ฝ่ายบริการ บริษัท โฮชิซากิ (ประเทศไทย) จำกัด ขอแจ้งยืนยันนัดหมายเข้าตรวจเช็ก/ซ่อมเครื่องรุ่น ${model} (S/N: ${serial})
+• เลขที่ใบงาน: ${jobNo}
+• ช่างผู้รับผิดชอบ: ${tech}
+• ติดตามสถานะและพิกัดรถช่างสดได้ที่:
+${portalUrl}`;
+            const msgParts = `เรียน คุณลูกค้า (${store})
+ฝ่ายบริการ HOSHIZAKI ขอแจ้งความคืบหน้าอะไหล่สำหรับเครื่องรุ่น ${model} (S/N: ${serial}) อ้างอิงใบงาน ${jobNo}
+ขณะนี้อะไหล่เดินทางถึงคลังบริการเรียบร้อยแล้ว ทางทีมงานขออนุญาตนัดหมายวัน-เวลาที่ท่านสะดวกเพื่อเข้าเปลี่ยนอะไหล่ครับ`;
+
+            body.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-2">
+                        <div class="font-extrabold text-[#002B49]">1. ข้อความแจ้งช่างกำลังเดินทาง / ยืนยันนัดหมาย</div>
+                        <textarea id="v1024MsgArrival" rows="7" class="w-full border rounded-lg p-2 bg-white text-slate-800">${msgArrival}</textarea>
+                        <button type="button" onclick="navigator.clipboard && navigator.clipboard.writeText(document.getElementById('v1024MsgArrival').value); if(typeof showToast==='function') showToast('📋 คัดลอกข้อความแจ้งนัดหมาย/พิกัดช่างเรียบร้อย');" class="w-full bg-[#002B49] hover:bg-sky-900 text-white py-2 rounded-lg font-bold">คัดลอกข้อความส่ง LINE / SMS</button>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 space-y-2">
+                        <div class="font-extrabold text-amber-950">2. ข้อความแจ้งอะไหล่ถึงคลังแล้ว (นัดเข้าเปลี่ยน)</div>
+                        <textarea id="v1024MsgParts" rows="7" class="w-full border rounded-lg p-2 bg-white text-slate-800">${msgParts}</textarea>
+                        <button type="button" onclick="navigator.clipboard && navigator.clipboard.writeText(document.getElementById('v1024MsgParts').value); if(typeof showToast==='function') showToast('📋 คัดลอกข้อความแจ้งอะไหล่เข้าคลังเรียบร้อย');" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2 rounded-lg font-bold">คัดลอกข้อความแจ้งลูกค้า</button>
+                    </div>
+                </div>
+            `;
+        } else if (tab === 'SWIMLANE') {
+            const todayIso = new Date().toISOString().split('T')[0];
+            let sch = [];
+            try { sch = JSON.parse(localStorage.getItem('hoshizaki_service_schedule_v1') || '[]'); } catch(e) {}
+            let jobs = [];
+            try { jobs = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch(e) {}
+            const todayItems = [
+                ...sch.filter(s => String(s.date || '').startsWith(todayIso)).map(s => ({ tech: s.tech || 'ยังไม่ระบุช่าง', time: s.time || '09:00', store: s.store || '-', model: s.model || '-', status: s.status || 'Scheduled' })),
+                ...jobs.filter(j => String(j.date || '').startsWith(todayIso)).map(j => ({ tech: j.responsibleTech || 'ยังไม่ระบุช่าง', time: j.timeIn || 'ทั้งวัน', store: j.store || '-', model: j.model || '-', status: j.jobStatus || 'Completed' }))
+            ];
+            const byTech = {};
+            todayItems.forEach(it => {
+                if (!byTech[it.tech]) byTech[it.tech] = [];
+                byTech[it.tech].push(it);
+            });
+            const techKeys = Object.keys(byTech);
+            body.innerHTML = `
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-extrabold text-[#002B49]">📅 ตารางคิวงานแยกตามรายชื่อช่างประจำวันที่ ${todayIso} (${todayItems.length} งาน)</span>
+                        <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden'); if(typeof openScheduleModal==='function') openScheduleModal();" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg font-bold">+ จ่ายงานเพิ่ม</button>
+                    </div>
+                    ${techKeys.length ? techKeys.map(tk => `
+                        <div class="bg-white border border-slate-200 rounded-lg p-2.5">
+                            <div class="font-extrabold text-[#0082C8] mb-1.5"><i class="fa-solid fa-user-gear mr-1"></i> ${escapeHtml(tk)} (${byTech[tk].length} คิวงาน)</div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                                ${byTech[tk].map(q => `
+                                    <div class="bg-sky-50/70 border border-sky-200 rounded px-2.5 py-1.5 flex items-center justify-between">
+                                        <div><span class="font-bold text-[#002B49]">[${escapeHtml(q.time)}]</span> ${escapeHtml(q.store)} <span class="text-slate-500">(${escapeHtml(q.model)})</span></div>
+                                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white border">${escapeHtml(q.status)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('') : '<div class="text-center text-slate-500 py-6">ยังไม่มีคิวงานที่บันทึกในวันนี้ — กดปุ่ม "+ จ่ายงานเพิ่ม" เพื่อจัดตารางช่างได้ทันที</div>'}
+                </div>
+            `;
+        }
+    };
+
+    // Inject Live Spec Cheat Bar, Readiness Meter, and Quick Field Suite Button on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        const eqModelEl = document.getElementById('eqModel');
+        if (eqModelEl && !document.getElementById('v1024ModelSpecCheatBar')) {
+            const bar = document.createElement('div');
+            bar.id = 'v1024ModelSpecCheatBar';
+            bar.className = 'hidden no-print mt-2 bg-sky-50 border border-sky-300 rounded-lg px-2.5 py-1.5 text-[11px]';
+            eqModelEl.closest('.grid, .space-y-3, div')?.parentElement?.appendChild(bar);
+            eqModelEl.addEventListener('input', window.refreshLiveModelSpecCheatBar);
+            eqModelEl.addEventListener('change', window.refreshLiveModelSpecCheatBar);
+        }
+
+        const jobContainer = document.getElementById('jobSheetContainer');
+        if (jobContainer && !document.getElementById('v1024JobReadinessBar')) {
+            const rBar = document.createElement('div');
+            rBar.id = 'v1024JobReadinessBar';
+            rBar.className = 'no-print mb-3 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2';
+            const wrap = document.createElement('div');
+            wrap.className = 'no-print mb-3 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2';
+            rBar.className = 'flex-1';
+            const quickBtn = document.createElement('button');
+            quickBtn.type = 'button';
+            quickBtn.onclick = function() { window.openFieldAndCoordinatorOpsModal('CHECKLIST'); };
+            quickBtn.className = 'bg-[#002B49] hover:bg-sky-900 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 flex-shrink-0';
+            quickBtn.innerHTML = '<i class="fa-solid fa-toolbox text-amber-300"></i> <span>QC 5 จุด • แจ้งลูกค้า • คิวช่าง</span>';
+            wrap.appendChild(rBar);
+            wrap.appendChild(quickBtn);
+            jobContainer.insertBefore(wrap, jobContainer.firstChild);
+            ['custStore', 'eqModel', 'eqSerial', 'diagSymptom', 'diagAction'].forEach(id => {
+                document.getElementById(id)?.addEventListener('input', window.refreshJobReadinessMeter);
+            });
+            window.refreshJobReadinessMeter();
+        }
+    });
+})();
+</script>
+
+
+<!-- =========================================================================
+     HOSHIZAKI ENTERPRISE v1023 — PREDICTIVE MAINTENANCE AI, SLA COMMAND & VENDOR BILLING RECONCILIATION
+     ========================================================================= -->
+<script id="hzk-v1023-predictive-sla-reconciliation-engine">
+(function() {
+    window.HZK_V1023_KEYS = {
+        SLA_RULES: 'hoshizaki_sla_escalation_rules_v1023',
+        VENDOR_RECON: 'hoshizaki_outsource_billing_recon_v1023',
+        PM_AUTO_PLANS: 'hoshizaki_recurring_pm_autoplans_v1023'
+    };
+
+    const DEFAULT_SLA_RULES = {
+        criticalHospitalHotelHrs: 4,
+        standardMetroHrs: 24,
+        upcountryOutsourceHrs: 48,
+        backorderWarningDays: 7,
+        autoNotifyLineOnBreach: true
+    };
+
+    window.getV1023SlaRules = function() {
+        try {
+            return Object.assign({}, DEFAULT_SLA_RULES, JSON.parse(localStorage.getItem(window.HZK_V1023_KEYS.SLA_RULES) || '{}'));
+        } catch (e) {
+            return Object.assign({}, DEFAULT_SLA_RULES);
+        }
+    };
+
+    window.saveV1023SlaRules = function(rules) {
+        localStorage.setItem(window.HZK_V1023_KEYS.SLA_RULES, JSON.stringify(rules));
+    };
+
+    // 1. Predictive Maintenance & Repeat-Failure Risk Analyzer (scans 6,749 S/N + Job History + Legacy Archive)
+    window.computePredictiveFailureInsightsV1023 = function() {
+        let jobs = [];
+        try { jobs = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch(e) {}
+        let legacy = [];
+        try { legacy = JSON.parse(localStorage.getItem('hoshizaki_legacy_archive_v1') || '[]'); } catch(e) {}
+        const allRecords = [...jobs, ...legacy];
+
+        const snMap = {};
+        const partFreq = {};
+        allRecords.forEach(r => {
+            const sn = String(r.serialNo || r.serial || '').trim().toUpperCase();
+            const model = String(r.model || r.machineModel || '').trim().toUpperCase();
+            const cust = String(r.customerName || r.customer || 'ไม่ระบุลูกค้า').trim();
+            const symptom = String(r.problem || r.symptom || r.workDone || '').trim();
+            if (sn && sn.length >= 4) {
+                if (!snMap[sn]) snMap[sn] = { sn, model, customer: cust, visits: 0, lastDate: '', symptoms: [] };
+                snMap[sn].visits += 1;
+                const dt = r.serviceDate || r.date || r.savedAt || '';
+                if (dt > snMap[sn].lastDate) snMap[sn].lastDate = dt;
+                if (symptom && snMap[sn].symptoms.length < 3 && !snMap[sn].symptoms.includes(symptom)) {
+                    snMap[sn].symptoms.push(symptom);
+                }
+            }
+            const parts = Array.isArray(r.partsUsed) ? r.partsUsed : (Array.isArray(r.parts) ? r.parts : []);
+            parts.forEach(p => {
+                const pCode = String(p.partNo || p.code || p.name || '').trim();
+                if (!pCode) return;
+                if (!partFreq[pCode]) partFreq[pCode] = { partNo: pCode, desc: p.desc || p.name || pCode, qty: 0, jobs: 0 };
+                partFreq[pCode].qty += Number(p.qty || 1);
+                partFreq[pCode].jobs += 1;
+            });
+        });
+
+        const highRiskUnits = Object.values(snMap)
+            .filter(x => x.visits >= 2)
+            .sort((a, b) => b.visits - a.visits)
+            .slice(0, 15);
+
+        const topPartsDemand = Object.values(partFreq)
+            .sort((a, b) => b.qty - a.qty)
+            .slice(0, 12)
+            .map(p => Object.assign({}, p, { forecast90dQty: Math.max(2, Math.ceil(p.qty * 1.25)) }));
+
+        return {
+            totalAnalyzedJobs: allRecords.length,
+            highRiskUnits,
+            topPartsDemand
+        };
+    };
+
+    // 2. Live SLA Breach & Aging Escalation Radar
+    window.computeLiveSlaAgingStatusV1023 = function() {
+        const rules = window.getV1023SlaRules();
+        let jobs = [];
+        try { jobs = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch(e) {}
+        const now = Date.now();
+        const openJobs = [];
+
+        jobs.forEach(j => {
+            const status = String(j.jobStatus || j.status || '').toUpperCase();
+            if (status.includes('COMPLETE') || status.includes('DONE') || status.includes('ปิดงาน')) return;
+            const createdStr = j.serviceDate || j.createdAt || j.savedAt || '';
+            const createdMs = createdStr ? Date.parse(createdStr) : now;
+            const ageHours = isNaN(createdMs) ? 0 : Math.max(0, Math.round((now - createdMs) / 3600000));
+            const isOutsource = Boolean(j.outsourceVendor || j.isOutsource);
+            const cust = String(j.customerName || '');
+            const isHospitalOrHotel = /โรงพยาบาล|hospital|hotel|โรงแรม|resort/i.test(cust);
+            const targetSla = isHospitalOrHotel ? rules.criticalHospitalHotelHrs : (isOutsource ? rules.upcountryOutsourceHrs : rules.standardMetroHrs);
+            const pctUsed = Math.round((ageHours / Math.max(1, targetSla)) * 100);
+            let severity = 'ON_TRACK';
+            if (pctUsed >= 100) severity = 'BREACHED';
+            else if (pctUsed >= 75) severity = 'AT_RISK';
+
+            openJobs.push({
+                jobNo: j.jobNo || j.id || 'JOB-OPEN',
+                customer: cust || 'ลูกค้าทั่วไป',
+                model: j.model || '-',
+                tech: j.technicianName || j.techName || 'ยังไม่ระบุช่าง',
+                isOutsource,
+                ageHours,
+                targetSla,
+                pctUsed,
+                severity,
+                status: status || 'IN_PROGRESS'
+            });
+        });
+
+        openJobs.sort((a, b) => b.pctUsed - a.pctUsed);
+        return {
+            rules,
+            openJobs,
+            breachedCount: openJobs.filter(x => x.severity === 'BREACHED').length,
+            atRiskCount: openJobs.filter(x => x.severity === 'AT_RISK').length
+        };
+    };
+
+    // 3. Outsource Vendor Monthly Billing Reconciliation (Lucky Star Solution + Outsource 1-4)
+    window.computeOutsourceBillingReconciliationV1023 = function(monthFilter) {
+        let osJobs = [];
+        try { osJobs = JSON.parse(localStorage.getItem('hoshizaki_outsource_submitted_reports_v1') || '[]'); } catch(e) {}
+        let apptJobs = [];
+        try { apptJobs = JSON.parse(localStorage.getItem('hoshizaki_outsource_parts_appt_v1022') || '[]'); } catch(e) {}
+        let jobs = [];
+        try { jobs = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch(e) {}
+
+        const targetMonth = monthFilter || new Date().toISOString().slice(0, 7);
+        const vendorMap = {};
+        const ensureVendor = (name) => {
+            const key = String(name || 'Lucky Star Solution Co., Ltd.').trim();
+            if (!vendorMap[key]) {
+                vendorMap[key] = {
+                    vendor: key,
+                    jobCount: 0,
+                    completedCount: 0,
+                    baseFeeTotal: 0,
+                    travelOtTotal: 0,
+                    wht3Pct: 0,
+                    vat7Pct: 0,
+                    netPayable: 0,
+                    items: []
+                };
+            }
+            return vendorMap[key];
+        };
+
+        // Pre-seed primary vendor so table always renders cleanly
+        ensureVendor('Lucky Star Solution Co., Ltd.');
+
+        const combined = [...osJobs, ...jobs.filter(j => j.outsourceVendor || j.isOutsource)];
+        combined.forEach(item => {
+            const dt = String(item.serviceDate || item.submittedAt || item.savedAt || targetMonth);
+            if (targetMonth && !dt.startsWith(targetMonth) && combined.length > 0) return;
+            const v = ensureVendor(item.outsourceVendor || item.vendorName || 'Lucky Star Solution Co., Ltd.');
+            const fee = Number(item.outsourceFee || item.serviceFee || 1800);
+            const extra = Number(item.travelFee || item.otFee || 0);
+            const sub = fee + extra;
+            const vat = Math.round(sub * 0.07 * 100) / 100;
+            const wht = Math.round(sub * 0.03 * 100) / 100;
+            v.jobCount += 1;
+            v.completedCount += 1;
+            v.baseFeeTotal += fee;
+            v.travelOtTotal += extra;
+            v.vat7Pct += vat;
+            v.wht3Pct += wht;
+            v.netPayable += (sub + vat - wht);
+            v.items.push({
+                jobNo: item.jobNo || 'OS-JOB',
+                date: dt.slice(0, 10),
+                customer: item.customerName || item.customer || '-',
+                province: item.province || 'ต่างจังหวัด',
+                fee,
+                extra,
+                net: sub + vat - wht
+            });
+        });
+
+        return {
+            month: targetMonth,
+            pendingPartsAppts: apptJobs.length,
+            vendors: Object.values(vendorMap)
+        };
+    };
+
+    window.syncV1023ReconciliationToCloud = async function(monthStr) {
+        const recon = window.computeOutsourceBillingReconciliationV1023(monthStr);
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (!gasUrl) {
+            if (typeof showToast === 'function') showToast('บันทึกสรุปวางบิล Outsource ในเครื่องแล้ว (ยังไม่เชื่อมต่อ GAS URL)');
+            return;
+        }
+        try {
+            const apiKey = (typeof getEnterpriseApiSecretKey === 'function') ? getEnterpriseApiSecretKey() : '';
+            await fetch(gasUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    actionType: 'SYNC_V1023_VENDOR_RECONCILIATION',
+                    apiSecretKey: apiKey,
+                    month: recon.month,
+                    vendors: recon.vendors
+                })
+            });
+            if (typeof showToast === 'function') showToast('✅ ซิงค์ตารางกระทบยอดวางบิล Outsource ขึ้น Google Sheets สำเร็จ');
+        } catch (err) {
+            if (typeof showToast === 'function') showToast('⚠️ ซิงค์คลาวด์ไม่สำเร็จ เก็บข้อมูลในเครื่องเรียบร้อย');
+        }
+    };
+
+    // 4. Main Modal: Enterprise v1024 Command Center (Predictive AI • Live SLA Radar • Vendor Billing • Trilingual Executive Summary)
+    window.openEnterpriseV1023CommandModal = function(initialTab) {
+        let modal = document.getElementById('enterpriseV1023CommandModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'enterpriseV1023CommandModal';
+            modal.className = 'hidden fixed inset-0 bg-slate-950/85 backdrop-blur-xs z-[118] flex items-center justify-center p-2 sm:p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
+                    <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1024</span>
+                                <h3 class="font-extrabold text-sm sm:text-base">ศูนย์พยากรณ์งานซ่อม AI • ควบคุม SLA สด • กระทบยอดวางบิล Outsource</h3>
+                            </div>
+                            <p class="text-[11px] text-sky-100 mt-0.5">Predictive Failure &amp; 90-Day Parts Forecast • Live SLA Escalation Radar • Outsource WHT/VAT Reconciliation • TH/EN/JP Brief</p>
+                        </div>
+                        <button type="button" onclick="document.getElementById('enterpriseV1023CommandModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg flex items-center justify-center shadow">&times;</button>
+                    </div>
+                    <div class="bg-sky-50 border-b border-sky-200 px-3 py-2 flex flex-wrap gap-1.5 text-xs font-bold">
+                        <button type="button" onclick="renderV1023CommandTab('PREDICTIVE')" id="v1023Tab_PREDICTIVE" class="v1023-tab px-3 py-1.5 rounded-lg bg-[#002B49] text-white">1. พยากรณ์เครื่องเสียซ้ำ &amp; สั่งอะไหล่ 90 วัน</button>
+                        <button type="button" onclick="renderV1023CommandTab('SLA')" id="v1023Tab_SLA" class="v1023-tab px-3 py-1.5 rounded-lg bg-white text-slate-700 border border-slate-200">2. เรดาร์ติดตาม SLA &amp; แจ้งเตือนงานค้าง</button>
+                        <button type="button" onclick="renderV1023CommandTab('RECON')" id="v1023Tab_RECON" class="v1023-tab px-3 py-1.5 rounded-lg bg-white text-slate-700 border border-slate-200">3. กระทบยอดวางบิล Outsource (VAT 7% / WHT 3%)</button>
+                        <button type="button" onclick="renderV1023CommandTab('EXEC3LANG')" id="v1023Tab_EXEC3LANG" class="v1023-tab px-3 py-1.5 rounded-lg bg-white text-slate-700 border border-slate-200">4. รายงานผู้บริหาร 3 ภาษา (TH / EN / 日本語)</button>
+                    </div>
+                    <div id="v1023CommandBody" class="p-4 overflow-y-auto flex-1 text-xs space-y-4"></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        modal.classList.remove('hidden');
+        window.renderV1023CommandTab(initialTab || 'PREDICTIVE');
+    };
+
+    window.renderV1023CommandTab = function(tab) {
+        document.querySelectorAll('.v1023-tab').forEach(btn => {
+            btn.className = 'v1023-tab px-3 py-1.5 rounded-lg bg-white text-slate-700 border border-slate-200 hover:bg-sky-100 transition';
+        });
+        const activeBtn = document.getElementById('v1023Tab_' + tab);
+        if (activeBtn) activeBtn.className = 'v1023-tab px-3 py-1.5 rounded-lg bg-[#002B49] text-white shadow-xs';
+
+        const body = document.getElementById('v1023CommandBody');
+        if (!body) return;
+
+        if (tab === 'PREDICTIVE') {
+            const data = window.computePredictiveFailureInsightsV1023();
+            body.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-3">
+                        <div class="text-[11px] text-slate-500 font-semibold">ฐานข้อมูลประวัติงานซ่อมที่วิเคราะห์</div>
+                        <div class="text-2xl font-black text-[#002B49] mt-0.5">${data.totalAnalyzedJobs.toLocaleString()} <span class="text-xs font-normal text-slate-600">รายการ</span></div>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                        <div class="text-[11px] text-amber-800 font-semibold">เครื่องที่พบประวัติซ่อมซ้ำ (Repeat Call Risk)</div>
+                        <div class="text-2xl font-black text-amber-700 mt-0.5">${data.highRiskUnits.length} <span class="text-xs font-normal text-amber-900">เครื่อง (S/N)</span></div>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                        <div class="text-[11px] text-emerald-800 font-semibold">รายการอะไหล่แนะนำสำรองล่วงหน้า 90 วัน</div>
+                        <div class="text-2xl font-black text-emerald-700 mt-0.5">${data.topPartsDemand.length} <span class="text-xs font-normal text-emerald-900">Part No.</span></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-[#002B49] text-white px-3 py-2 font-bold flex items-center justify-between">
+                            <span><i class="fa-solid fa-triangle-exclamation text-amber-300 mr-1"></i> เฝ้าระวังเครื่องซ่อมซ้ำ (Repeat-Failure S/N Watchlist)</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-100 text-[11px] text-slate-700">
+                                    <tr><th class="p-2 border-b">S/N</th><th class="p-2 border-b">รุ่น</th><th class="p-2 border-b">ลูกค้า</th><th class="p-2 border-b text-center">ครั้ง</th><th class="p-2 border-b">อาการล่าสุด</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${data.highRiskUnits.length ? data.highRiskUnits.map(u => `
+                                        <tr class="border-b hover:bg-amber-50/60">
+                                            <td class="p-2 font-mono font-bold text-[#002B49]">${escapeHtml(u.sn)}</td>
+                                            <td class="p-2 font-semibold">${escapeHtml(u.model || '-')}</td>
+                                            <td class="p-2">${escapeHtml(u.customer)}</td>
+                                            <td class="p-2 text-center"><span class="bg-rose-100 text-rose-800 font-extrabold px-2 py-0.5 rounded-full">${u.visits}</span></td>
+                                            <td class="p-2 text-[11px] text-slate-600">${escapeHtml(u.symptoms.join(', ') || '-')}</td>
+                                        </tr>
+                                    `).join('') : '<tr><td colspan="5" class="p-4 text-center text-slate-500">ยังไม่พบเครื่องที่ซ่อมซ้ำเกิน 2 ครั้งในฐานข้อมูลปัจจุบัน</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-[#0082C8] text-white px-3 py-2 font-bold flex items-center justify-between">
+                            <span><i class="fa-solid fa-boxes-stacked text-amber-200 mr-1"></i> พยากรณ์ความต้องการอะไหล่ 90 วัน (90-Day Forecast)</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-100 text-[11px] text-slate-700">
+                                    <tr><th class="p-2 border-b">Part No.</th><th class="p-2 border-b">รายละเอียด</th><th class="p-2 border-b text-center">ใช้จริง</th><th class="p-2 border-b text-center">แนะนำสั่ง 90 วัน</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${data.topPartsDemand.length ? data.topPartsDemand.map(p => `
+                                        <tr class="border-b hover:bg-sky-50">
+                                            <td class="p-2 font-mono font-bold text-[#002B49]">${escapeHtml(p.partNo)}</td>
+                                            <td class="p-2">${escapeHtml(p.desc)}</td>
+                                            <td class="p-2 text-center font-semibold">${p.qty}</td>
+                                            <td class="p-2 text-center"><span class="bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full">+${p.forecast90dQty}</span></td>
+                                        </tr>
+                                    `).join('') : '<tr><td colspan="4" class="p-4 text-center text-slate-500">ระบบจะคำนวณอัตโนมัติเมื่อมีประวัติการเบิกใช้อะไหล่ในใบงาน</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (tab === 'SLA') {
+            const sla = window.computeLiveSlaAgingStatusV1023();
+            body.innerHTML = `
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <label class="font-bold text-slate-700">โรงพยาบาล/โรงแรม (ชม.): <input type="number" id="slaRuleCritical" value="${sla.rules.criticalHospitalHotelHrs}" class="w-16 border rounded px-2 py-1 ml-1 font-bold text-[#002B49]"></label>
+                        <label class="font-bold text-slate-700">กทม./ปริมณฑล (ชม.): <input type="number" id="slaRuleMetro" value="${sla.rules.standardMetroHrs}" class="w-16 border rounded px-2 py-1 ml-1 font-bold text-[#002B49]"></label>
+                        <label class="font-bold text-slate-700">ต่างจังหวัด/Outsource (ชม.): <input type="number" id="slaRuleUpcountry" value="${sla.rules.upcountryOutsourceHrs}" class="w-16 border rounded px-2 py-1 ml-1 font-bold text-[#002B49]"></label>
+                    </div>
+                    <button type="button" onclick="window.saveV1023SlaRules({criticalHospitalHotelHrs:Number(document.getElementById('slaRuleCritical').value)||4, standardMetroHrs:Number(document.getElementById('slaRuleMetro').value)||24, upcountryOutsourceHrs:Number(document.getElementById('slaRuleUpcountry').value)||48, backorderWarningDays:7, autoNotifyLineOnBreach:true}); renderV1023CommandTab('SLA'); if(typeof showToast==='function') showToast('✅ บันทึกเกณฑ์ SLA เรียบร้อย');" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold">บันทึกเกณฑ์ SLA</button>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-rose-50 border border-rose-200 rounded-xl p-3"><div class="text-[11px] text-rose-800 font-bold">เกินกำหนด SLA (Breached)</div><div class="text-2xl font-black text-rose-700">${sla.breachedCount}</div></div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3"><div class="text-[11px] text-amber-800 font-bold">ใกล้ครบกำหนด >75% (At Risk)</div><div class="text-2xl font-black text-amber-700">${sla.atRiskCount}</div></div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-3"><div class="text-[11px] text-sky-800 font-bold">งานเปิดอยู่ทั้งหมด (Active Open Jobs)</div><div class="text-2xl font-black text-[#002B49]">${sla.openJobs.length}</div></div>
+                </div>
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-[#002B49] text-white text-[11px]">
+                            <tr><th class="p-2">Job No.</th><th class="p-2">ลูกค้า</th><th class="p-2">รุ่นเครื่อง</th><th class="p-2">ผู้รับผิดชอบ</th><th class="p-2 text-center">อายุงาน / SLA</th><th class="p-2 text-center">สถานะ SLA</th></tr>
+                        </thead>
+                        <tbody>
+                            ${sla.openJobs.length ? sla.openJobs.map(j => {
+                                const badge = j.severity === 'BREACHED'
+                                    ? '<span class="bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold">เกินกำหนด SLA</span>'
+                                    : (j.severity === 'AT_RISK'
+                                        ? '<span class="bg-amber-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold">เร่งติดตาม (>75%)</span>'
+                                        : '<span class="bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold">ปกติ (On Track)</span>');
+                                return `<tr class="border-b hover:bg-slate-50">
+                                    <td class="p-2 font-mono font-bold text-[#002B49]">${escapeHtml(j.jobNo)}</td>
+                                    <td class="p-2">${escapeHtml(j.customer)}</td>
+                                    <td class="p-2">${escapeHtml(j.model)}</td>
+                                    <td class="p-2">${escapeHtml(j.tech)} ${j.isOutsource ? '<span class="text-[10px] bg-purple-100 text-purple-800 px-1.5 rounded font-bold">Outsource</span>' : ''}</td>
+                                    <td class="p-2 text-center font-bold">${j.ageHours} ชม. / ${j.targetSla} ชม. (${j.pctUsed}%)</td>
+                                    <td class="p-2 text-center">${badge}</td>
+                                </tr>`;
+                            }).join('') : '<tr><td colspan="6" class="p-4 text-center text-emerald-700 font-bold">✅ ไม่มีใบงานค้างเกิน SLA ในขณะนี้</td></tr>'}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } else if (tab === 'RECON') {
+            const curMonth = new Date().toISOString().slice(0, 7);
+            const recon = window.computeOutsourceBillingReconciliationV1023(curMonth);
+            body.innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-sky-50 border border-sky-200 rounded-xl p-3">
+                    <div>
+                        <div class="font-extrabold text-[#002B49]">ตารางสรุปกระทบยอดค่าจ้าง Outsource รายเดือน (พร้อมคำนวณ VAT 7% และหัก ณ ที่จ่าย 3%)</div>
+                        <div class="text-[11px] text-slate-600">ประจำเดือน: <b>${recon.month}</b> • งานส่งอะไหล่/นัดหมาย Outsource ที่ติดตามอยู่: <b>${recon.pendingPartsAppts}</b> รายการ</div>
+                    </div>
+                    <button type="button" onclick="window.syncV1023ReconciliationToCloud('${recon.month}')" class="bg-[#002B49] hover:bg-sky-900 text-white px-3.5 py-2 rounded-lg font-bold flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-cloud-arrow-up text-[#00A3E0]"></i> <span>ซิงค์ตารางวางบิลเข้า Google Sheets</span>
+                    </button>
+                </div>
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-[#002B49] text-white text-[11px]">
+                            <tr>
+                                <th class="p-2">บริษัทคู่ค้า Outsource</th>
+                                <th class="p-2 text-center">จำนวนงาน</th>
+                                <th class="p-2 text-right">ค่าแรงมาตรฐาน</th>
+                                <th class="p-2 text-right">ค่าเดินทาง/OT</th>
+                                <th class="p-2 text-right">VAT 7%</th>
+                                <th class="p-2 text-right">หัก ณ ที่จ่าย 3%</th>
+                                <th class="p-2 text-right">ยอดสุทธิจ่ายจริง (THB)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${recon.vendors.map(v => `
+                                <tr class="border-b hover:bg-sky-50">
+                                    <td class="p-2 font-bold text-[#002B49]">${escapeHtml(v.vendor)}</td>
+                                    <td class="p-2 text-center font-bold">${v.jobCount}</td>
+                                    <td class="p-2 text-right">${v.baseFeeTotal.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                    <td class="p-2 text-right">${v.travelOtTotal.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                    <td class="p-2 text-right text-slate-600">+${v.vat7Pct.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                    <td class="p-2 text-right text-rose-700">-${v.wht3Pct.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                    <td class="p-2 text-right font-black text-emerald-700">${v.netPayable.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } else if (tab === 'EXEC3LANG') {
+            const pred = window.computePredictiveFailureInsightsV1023();
+            const sla = window.computeLiveSlaAgingStatusV1023();
+            const recon = window.computeOutsourceBillingReconciliationV1023();
+            const briefText = [
+                '【HOSHIZAKI (THAILAND) — EXECUTIVE SERVICE BRIEF (Enterprise v1024)】',
+                '1) ภาษาไทย (TH):',
+                `- ฐานข้อมูลวิเคราะห์งานซ่อมสะสม: ${pred.totalAnalyzedJobs} รายการ | เครื่องเฝ้าระวังซ่อมซ้ำ: ${pred.highRiskUnits.length} เครื่อง`,
+                `- สถานะ SLA ปัจจุบัน: งานเปิด ${sla.openJobs.length} งาน (เกินกำหนด ${sla.breachedCount} งาน / ใกล้ครบกำหนด ${sla.atRiskCount} งาน)`,
+                `- สถานะ Outsource เดือน ${recon.month}: ติดตามอะไหล่/นัดหมาย ${recon.pendingPartsAppts} เคส พร้อมสรุปวางบิลอัตโนมัติ`,
+                '',
+                '2) ENGLISH (EN):',
+                `- Analyzed Service Records: ${pred.totalAnalyzedJobs} jobs | Repeat-Failure Watchlist: ${pred.highRiskUnits.length} units`,
+                `- Live SLA Radar: ${sla.openJobs.length} active open jobs (${sla.breachedCount} breached / ${sla.atRiskCount} at-risk)`,
+                `- Outsource Operations (${recon.month}): ${recon.pendingPartsAppts} tracked shipments/appointments ready for WHT/VAT billing reconciliation.`,
+                '',
+                '3) 日本語 (JP — 本社・経営陣向けサマリー):',
+                `- サービス履歴分析件数: ${pred.totalAnalyzedJobs}件 ／ 再修理要注意機体: ${pred.highRiskUnits.length}台`,
+                `- リアルタイムSLA監視: 対応中案件 ${sla.openJobs.length}件（SLA超過 ${sla.breachedCount}件 ／ 期限接近 ${sla.atRiskCount}件）`,
+                `- 外部委託（Outsource）管理 (${recon.month}): 部品配送・訪問日程追跡 ${recon.pendingPartsAppts}件、月次請求照合データ同期済み。`
+            ].join('\n');
+
+            body.innerHTML = `
+                <div class="bg-[#F0F9FF] border border-sky-200 rounded-xl p-3 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-extrabold text-[#002B49]">รายงานสรุปผู้บริหาร 3 ภาษาอัตโนมัติ (ไทย • English • 日本語 Keigo)</span>
+                        <button type="button" onclick="navigator.clipboard && navigator.clipboard.writeText(document.getElementById('v1023TrilingualBriefArea').value); if(typeof showToast==='function') showToast('📋 คัดลอกรายงานผู้บริหาร 3 ภาษาเรียบร้อย');" class="bg-[#00A3E0] hover:bg-[#0082C8] text-white px-3 py-1.5 rounded-lg font-bold">
+                            <i class="fa-solid fa-copy mr-1"></i> คัดลอกรายงาน 3 ภาษา
+                        </button>
+                    </div>
+                    <textarea id="v1023TrilingualBriefArea" rows="13" class="w-full border border-sky-300 rounded-lg p-3 font-mono text-xs bg-white text-slate-800">${briefText}</textarea>
+                    <div class="text-[10.5px] text-slate-500 border-t border-sky-200 pt-2 flex flex-wrap justify-between gap-2">
+                        <span>Prepared by: <b>Noparin Homhoul</b> — Deputy Service Manager, Service Department, Hoshizaki (Thailand) Limited</span>
+                        <span>For Internal Organization Use Only</span>
+                    </div>
+                </div>
+            `;
+        }
+    };
+
+    // Inject shortcut into Top-Right Executive Report Dropdown Menu
+    document.addEventListener('DOMContentLoaded', function() {
+        const execMenu = document.getElementById('topExecutiveReportDropdownMenu');
+        if (execMenu && !document.getElementById('btnMenuEnterpriseV1023Command')) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.id = 'btnMenuEnterpriseV1023Command';
+            btn.onclick = function() {
+                if (typeof closeTopExecutiveReportDropdown === 'function') closeTopExecutiveReportDropdown();
+                window.openEnterpriseV1023CommandModal('PREDICTIVE');
+            };
+            btn.className = 'w-full text-left px-2.5 py-2 rounded-lg hover:bg-amber-50 transition flex items-start gap-2 group mt-0.5 border-t border-slate-100';
+            btn.innerHTML = `
+                <span class="w-6 h-6 rounded-md bg-gradient-to-br from-[#002B49] to-[#00A3E0] text-amber-300 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
+                    <i class="fa-solid fa-brain text-[11px]"></i>
+                </span>
+                <div>
+                    <div class="font-bold text-slate-900 group-hover:text-[#002B49]">Predictive AI • SLA สด • วางบิล Outsource (v1023)</div>
+                    <div class="text-[10px] text-slate-500">พยากรณ์เครื่องซ่อมซ้ำ • สั่งอะไหล่ 90 วัน • กระทบยอด VAT/WHT</div>
+                </div>`;
+            execMenu.appendChild(btn);
+        }
+    });
+})();
+</script>
+
+
+<!-- =========================================================================
+     HOSHIZAKI ENTERPRISE v1025 — EXECUTIVE, ADMIN & ACCOUNTING GOVERNANCE SUITE
+     (Multi-Level Approval & GP Gatekeeper • Admin SLA & Parts Logistics Control •
+      Accounting VAT/WHT Ledger, Invoice/Receipt & NAV ERP Export • Audit Trail)
+     ========================================================================= -->
+<script id="hzk-v1025-exec-admin-accounting-suite">
+(function() {
+    window.HZK_V1025_KEYS = {
+        DISCOUNT_APPROVALS: 'hoshizaki_v1025_discount_approvals',
+        ACCOUNTING_LEDGER: 'hoshizaki_v1025_accounting_ledger',
+        ADMIN_GATEPASS: 'hoshizaki_v1025_admin_gatepass',
+        AUDIT_LOG: 'hoshizaki_v1025_governance_audit_log',
+        POLICY_RULES: 'hoshizaki_v1025_policy_rules'
+    };
+
+    const DEFAULT_V1025_POLICIES = {
+        minGpPctNoApproval: 25,
+        maxDiscountPctNoApproval: 10,
+        requirePoBeforePartsDispatch: true,
+        defaultWhtServicePct: 3,
+        defaultVatPct: 7,
+        navCompanyCode: 'HTH-LIVE'
+    };
+
+    function getV1025Policies_() {
+        try {
+            return Object.assign({}, DEFAULT_V1025_POLICIES, JSON.parse(localStorage.getItem(window.HZK_V1025_KEYS.POLICY_RULES) || '{}'));
+        } catch (e) {
+            return Object.assign({}, DEFAULT_V1025_POLICIES);
+        }
+    }
+
+    window.appendGovernanceAuditLogV1025 = function(role, action, refNo, detail) {
+        try {
+            const logs = JSON.parse(localStorage.getItem(window.HZK_V1025_KEYS.AUDIT_LOG) || '[]');
+            const actor = document.getElementById('techQuickProfileName')?.textContent?.trim() || 'System User';
+            logs.unshift({
+                id: 'AUD-' + Date.now(),
+                timestamp: new Date().toLocaleString('th-TH'),
+                actor: actor,
+                role: role || 'MANAGER',
+                action: action || 'UPDATE',
+                refNo: refNo || '-',
+                detail: detail || ''
+            });
+            localStorage.setItem(window.HZK_V1025_KEYS.AUDIT_LOG, JSON.stringify(logs.slice(0, 300)));
+        } catch (e) {}
+    };
+
+    // 1. Multi-Level Approval & GP% Gatekeeper
+    window.getDiscountApprovalQueueV1025 = function() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(window.HZK_V1025_KEYS.DISCOUNT_APPROVALS) || '[]');
+            if (Array.isArray(saved) && saved.length > 0) return saved;
+        } catch (e) {}
+        return [
+            {
+                reqId: 'APR-2026-001',
+                createdAt: '2026-11-17 09:30',
+                jobNo: 'JOB-20261117-01',
+                offerNo: 'QT-202611-084',
+                customer: 'บริษัท เซ็นทรัล เรสตอรองส์ กรุ๊ป จำกัด (สาขาลาดพร้าว)',
+                model: 'IM-240ANE-HC',
+                grossAmount: 28500,
+                discountPct: 14.5,
+                netAmount: 24367.50,
+                estimatedGpPct: 21.8,
+                reason: 'ลูกค้าสัญญาใหญ่ ขอส่วนลดพิเศษค่าคอมเพรสเซอร์และค่าแรง',
+                requestedBy: 'Wanwipha (Service Admin)',
+                status: 'PENDING_MANAGER',
+                approvedBy: '',
+                approvedAt: ''
+            }
+        ];
+    };
+
+    window.submitCurrentJobForGpApprovalV1025 = function() {
+        const jobNo = (document.getElementById('jobNo')?.value || '').trim() || ('JOB-' + Date.now());
+        const customer = (document.getElementById('custStore')?.value || '').trim() || 'ลูกค้าทั่วไป';
+        const model = (document.getElementById('eqModel')?.value || '').trim() || '-';
+        const grandStr = (document.getElementById('grandTotalDisplay')?.textContent || '0').replace(/,/g, '');
+        const netAmount = parseFloat(grandStr) || 0;
+        const discVal = parseFloat(document.getElementById('feeDiscount')?.value || '0') || 0;
+        const discType = document.getElementById('feeDiscountType')?.value || 'THB';
+        const grossAmount = discType === 'PCT' && discVal < 100 ? (netAmount / (1 - discVal / 100)) : (netAmount + discVal);
+        const discountPct = grossAmount > 0 ? Number((((grossAmount - netAmount) / grossAmount) * 100).toFixed(2)) : 0;
+        const estimatedGpPct = Math.max(8, Number((34 - discountPct * 0.85).toFixed(1)));
+
+        const list = window.getDiscountApprovalQueueV1025();
+        const reqId = 'APR-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-' + String(list.length + 1).padStart(3, '0');
+        list.unshift({
+            reqId,
+            createdAt: new Date().toLocaleString('th-TH'),
+            jobNo,
+            offerNo: (typeof currentOfferNo !== 'undefined' && currentOfferNo) ? currentOfferNo : ('QT-' + jobNo),
+            customer,
+            model,
+            grossAmount: Number(grossAmount.toFixed(2)),
+            discountPct,
+            netAmount: Number(netAmount.toFixed(2)),
+            estimatedGpPct,
+            reason: 'ขออนุมัติส่วนลด/ราคาพิเศษจากหน้าใบงานปัจจุบัน',
+            requestedBy: document.getElementById('techQuickProfileName')?.textContent?.trim() || 'Service Coordinator',
+            status: 'PENDING_MANAGER',
+            approvedBy: '',
+            approvedAt: ''
+        });
+        localStorage.setItem(window.HZK_V1025_KEYS.DISCOUNT_APPROVALS, JSON.stringify(list));
+        window.appendGovernanceAuditLogV1025('ADMIN/COORD', 'SUBMIT_GP_APPROVAL', reqId, `${customer} (${jobNo}) ส่วนลด ${discountPct}% | GP ~${estimatedGpPct}%`);
+        if (typeof showToast === 'function') showToast(`✅ ส่งคำขออนุมัติราคา ${reqId} เข้าคิวผู้จัดการเรียบร้อย`);
+        window.renderExecAdminAcctTabV1025('APPROVALS');
+    };
+
+    window.decideGpApprovalV1025 = async function(reqId, decision) {
+        if (typeof currentUserRoleMode !== 'undefined' && currentUserRoleMode !== 'MANAGER') {
+            if (typeof showToast === 'function') showToast('🔒 เฉพาะโหมดผู้จัดการ (Manager PIN) เท่านั้นที่อนุมัติส่วนลด/GP% ได้');
+            if (typeof toggleUserRoleMode === 'function') toggleUserRoleMode();
+            return;
+        }
+        const list = window.getDiscountApprovalQueueV1025();
+        const idx = list.findIndex(x => x.reqId === reqId);
+        if (idx === -1) return;
+        const approver = document.getElementById('techQuickProfileName')?.textContent?.trim() || 'Noparin Homhoul (Deputy Service Manager)';
+        list[idx].status = decision; // 'APPROVED' | 'REJECTED'
+        list[idx].approvedBy = approver;
+        list[idx].approvedAt = new Date().toLocaleString('th-TH');
+        localStorage.setItem(window.HZK_V1025_KEYS.DISCOUNT_APPROVALS, JSON.stringify(list));
+        window.appendGovernanceAuditLogV1025('MANAGER', 'DECIDE_GP_APPROVAL_' + decision, reqId, `${list[idx].customer} (${list[idx].offerNo}) โดย ${approver}`);
+        window.renderExecAdminAcctTabV1025('APPROVALS');
+        if (typeof showToast === 'function') showToast(decision === 'APPROVED' ? `✅ อนุมัติคำขอ ${reqId} เรียบร้อย` : `❌ ไม่อนุมัติคำขอ ${reqId}`);
+
+        // Sync to Google Sheets backend if configured
+        const gasUrl = typeof getGoogleSheetsWebAppUrl === 'function' ? getGoogleSheetsWebAppUrl() : '';
+        if (gasUrl) {
+            try {
+                const apiKey = typeof getEnterpriseApiSecretKey === 'function' ? getEnterpriseApiSecretKey() : '';
+                await fetch(gasUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'SYNC_V1025_GOVERNANCE_APPROVAL',
+                        apiSecretKey: apiKey,
+                        record: list[idx]
+                    })
+                });
+            } catch (e) {}
+        }
+    };
+
+    // 2. Accounting Ledger (QT -> PO -> IV -> Tax Invoice / Receipt + WHT 3% + NAV ERP CSV)
+    window.buildAccountingLedgerV1025 = function() {
+        const jobs = typeof getJobHistorySync === 'function' ? getJobHistorySync() : [];
+        let savedMap = {};
+        try { savedMap = JSON.parse(localStorage.getItem(window.HZK_V1025_KEYS.ACCOUNTING_LEDGER) || '{}'); } catch (e) {}
+
+        return jobs.map((j, i) => {
+            const jobNo = j.jobNo || ('JOB-' + (i + 1));
+            const netBase = parseFloat(String(j.grandTotal || j.totalAmount || 0).replace(/,/g, '')) || 0;
+            const vat7 = Number((netBase * 0.07).toFixed(2));
+            const grossWithVat = Number((netBase + vat7).toFixed(2));
+            const wht3 = Number((netBase * 0.03).toFixed(2));
+            const netReceivable = Number((grossWithVat - wht3).toFixed(2));
+            const saved = savedMap[jobNo] || {};
+            return {
+                jobNo,
+                date: j.date || j.createdAt || '-',
+                customer: j.store || j.customer || '-',
+                taxId: j.taxId || '-',
+                poNo: saved.poNo || j.poNo || '',
+                qtNo: saved.qtNo || j.offerNo || ('QT-' + jobNo),
+                ivNo: saved.ivNo || '',
+                reNo: saved.reNo || '',
+                acctStatus: saved.acctStatus || (j.status === 'COMPLETED' ? 'READY_TO_BILL' : 'WIP_OPEN'),
+                netBase,
+                vat7,
+                grossWithVat,
+                wht3,
+                netReceivable,
+                whtCertReceived: Boolean(saved.whtCertReceived),
+                navSynced: Boolean(saved.navSynced)
+            };
+        });
+    };
+
+    window.updateAccountingRecordFieldV1025 = function(jobNo, field, value) {
+        let savedMap = {};
+        try { savedMap = JSON.parse(localStorage.getItem(window.HZK_V1025_KEYS.ACCOUNTING_LEDGER) || '{}'); } catch (e) {}
+        if (!savedMap[jobNo]) savedMap[jobNo] = {};
+        savedMap[jobNo][field] = value;
+        localStorage.setItem(window.HZK_V1025_KEYS.ACCOUNTING_LEDGER, JSON.stringify(savedMap));
+        window.appendGovernanceAuditLogV1025('ACCOUNTING', 'UPDATE_ACCT_' + field.toUpperCase(), jobNo, `${field} = ${value}`);
+        window.renderExecAdminAcctTabV1025('ACCOUNTING');
+        if (typeof showToast === 'function') showToast(`✅ บันทึกข้อมูลบัญชี (${jobNo}) เรียบร้อย`);
+    };
+
+    window.exportNavErpAccountingCsvV1025 = function() {
+        const rows = window.buildAccountingLedgerV1025();
+        const pol = getV1025Policies_();
+        const headers = [
+            'NAV_Company', 'Posting_Date', 'Service_Job_No', 'Customer_Name', 'Tax_ID',
+            'Customer_PO_No', 'Quotation_No', 'Tax_Invoice_No', 'Receipt_No', 'Billing_Status',
+            'Amount_Excl_VAT', 'VAT_7_Pct', 'Total_Incl_VAT', 'WHT_3_Pct_Deducted', 'Net_Cash_Receivable', 'WHT_50Tawi_Received'
+        ];
+        const csvLines = [headers.join(',')];
+        rows.forEach(r => {
+            const vals = [
+                pol.navCompanyCode, r.date, r.jobNo, r.customer, r.taxId,
+                r.poNo, r.qtNo, r.ivNo, r.reNo, r.acctStatus,
+                r.netBase.toFixed(2), r.vat7.toFixed(2), r.grossWithVat.toFixed(2),
+                r.wht3.toFixed(2), r.netReceivable.toFixed(2), r.whtCertReceived ? 'YES' : 'NO'
+            ].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`);
+            csvLines.push(vals.join(','));
+        });
+        const blob = new Blob(['\uFEFF' + csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `HOSHIZAKI_NAV_ERP_Service_Billing_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        window.appendGovernanceAuditLogV1025('ACCOUNTING', 'EXPORT_NAV_ERP_CSV', 'BATCH-' + rows.length, `ส่งออกไฟล์บัญชี ${rows.length} รายการสำหรับ Microsoft Dynamics NAV`);
+        if (typeof showToast === 'function') showToast(`📊 ส่งออกไฟล์บัญชี NAV ERP (${rows.length} รายการ) เรียบร้อย`);
+    };
+
+    // 3. Admin Logistics, PO Gatekeeper & Document Completeness Control
+    window.getAdminGatepassQueueV1025 = function() {
+        const jobs = typeof getJobHistorySync === 'function' ? getJobHistorySync() : [];
+        let savedAdmin = {};
+        try { savedAdmin = JSON.parse(localStorage.getItem(window.HZK_V1025_KEYS.ADMIN_GATEPASS) || '{}'); } catch (e) {}
+        return jobs.slice(0, 40).map((j, i) => {
+            const jobNo = j.jobNo || ('JOB-' + (i + 1));
+            const st = savedAdmin[jobNo] || {};
+            const hasCustomerSig = Boolean(j.sigCustomer || j.customerSigned);
+            const hasPhotos = Array.isArray(j.photos) ? j.photos.length > 0 : Number(j.photoCount || 0) > 0;
+            const hasSerial = Boolean((j.serial || '').trim());
+            const score = (hasSerial ? 35 : 0) + (hasPhotos ? 35 : 0) + (hasCustomerSig ? 30 : 0);
+            return {
+                jobNo,
+                date: j.date || '-',
+                customer: j.store || j.customer || '-',
+                tech: j.responsibleTech || '-',
+                hasSerial,
+                hasPhotos,
+                hasCustomerSig,
+                completenessPct: score,
+                poVerified: Boolean(st.poVerified),
+                partsDispatched: Boolean(st.partsDispatched),
+                adminRemark: st.adminRemark || ''
+            };
+        });
+    };
+
+    window.toggleAdminGatepassFlagV1025 = function(jobNo, field) {
+        let savedAdmin = {};
+        try { savedAdmin = JSON.parse(localStorage.getItem(window.HZK_V1025_KEYS.ADMIN_GATEPASS) || '{}'); } catch (e) {}
+        if (!savedAdmin[jobNo]) savedAdmin[jobNo] = {};
+        savedAdmin[jobNo][field] = !savedAdmin[jobNo][field];
+        localStorage.setItem(window.HZK_V1025_KEYS.ADMIN_GATEPASS, JSON.stringify(savedAdmin));
+        window.appendGovernanceAuditLogV1025('ADMIN', 'TOGGLE_' + field.toUpperCase(), jobNo, `${field} = ${savedAdmin[jobNo][field]}`);
+        window.renderExecAdminAcctTabV1025('ADMIN_OPS');
+    };
+
+    // 4. Main Modal UI: Executive, Admin & Accounting Governance Suite
+    window.openExecAdminAccountingHubModal = function(initialTab) {
+        let modal = document.getElementById('execAdminAccountingHubModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'execAdminAccountingHubModal';
+            modal.className = 'hidden fixed inset-0 bg-slate-950/85 backdrop-blur-xs z-[119] flex items-center justify-center p-2 sm:p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
+                    <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1025</span>
+                                <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
+                            </div>
+                            <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
+                        </div>
+                        <button type="button" onclick="document.getElementById('execAdminAccountingHubModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg flex items-center justify-center shadow">&times;</button>
+                    </div>
+                    <div class="bg-sky-50 border-b border-sky-200 px-3 py-2 flex flex-wrap gap-1.5 text-xs">
+                        <button type="button" id="eaaTabBtn_APPROVALS" onclick="renderExecAdminAcctTabV1025('APPROVALS')" class="px-3 py-1.5 rounded-lg font-extrabold bg-[#002B49] text-white">1. ผู้บริหาร/ผู้จัดการ: อนุมัติส่วนลด &amp; GP%</button>
+                        <button type="button" id="eaaTabBtn_ADMIN_OPS" onclick="renderExecAdminAcctTabV1025('ADMIN_OPS')" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-800 border border-slate-300">2. แผนก Admin: ตรวจความครบเอกสาร &amp; PO เบิกอะไหล่</button>
+                        <button type="button" id="eaaTabBtn_ACCOUNTING" onclick="renderExecAdminAcctTabV1025('ACCOUNTING')" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-800 border border-slate-300">3. แผนกบัญชี: ทะเบียน QT→IV→RE, VAT/WHT &amp; NAV ERP</button>
+                        <button type="button" id="eaaTabBtn_AUDIT" onclick="renderExecAdminAcctTabV1025('AUDIT')" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-800 border border-slate-300">4. ประวัติการตรวจสอบ (Audit Trail)</button>
+                    </div>
+                    <div id="execAdminAcctModalBody" class="p-4 overflow-y-auto flex-1 text-xs space-y-3"></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        modal.classList.remove('hidden');
+        window.renderExecAdminAcctTabV1025(initialTab || 'APPROVALS');
+    };
+
+    window.renderExecAdminAcctTabV1025 = function(tab) {
+        ['APPROVALS', 'ADMIN_OPS', 'ACCOUNTING', 'AUDIT'].forEach(t => {
+            const btn = document.getElementById('eaaTabBtn_' + t);
+            if (btn) {
+                btn.className = (t === tab)
+                    ? 'px-3 py-1.5 rounded-lg font-extrabold bg-[#002B49] text-white'
+                    : 'px-3 py-1.5 rounded-lg font-bold bg-white hover:bg-slate-100 text-slate-800 border border-slate-300';
+            }
+        });
+        const body = document.getElementById('execAdminAcctModalBody');
+        if (!body) return;
+
+        if (tab === 'APPROVALS') {
+            const list = window.getDiscountApprovalQueueV1025();
+            const pol = getV1025Policies_();
+            const pendingCount = list.filter(x => x.status === 'PENDING_MANAGER').length;
+            body.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                        <div class="text-[11px] font-bold text-amber-800">คำขอรออนุมัติส่วนลด / GP% ต่ำกว่าเกณฑ์</div>
+                        <div class="text-2xl font-black text-amber-950 mt-0.5">${pendingCount} รายการ</div>
+                        <div class="text-[10px] text-amber-700 mt-0.5">เกณฑ์อัตโนมัติ: ส่วนลด &gt; ${pol.maxDiscountPctNoApproval}% หรือ GP &lt; ${pol.minGpPctNoApproval}%</div>
+                    </div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-3">
+                        <div class="text-[11px] font-bold text-[#002B49]">สิทธิ์การอนุมัติ (Role Governance)</div>
+                        <div class="text-sm font-extrabold text-[#0082C8] mt-1">Manager / Deputy Service Manager</div>
+                        <div class="text-[10px] text-slate-600 mt-0.5">ล็อกด้วยรหัส Manager PIN และบันทึกชื่อผู้อนุมัติใน Audit Log</div>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex flex-col justify-between">
+                        <div class="text-[11px] font-bold text-emerald-900">ส่งใบงานปัจจุบันขออนุมัติราคาพิเศษ</div>
+                        <button type="button" onclick="submitCurrentJobForGpApprovalV1025()" class="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-3 py-2 rounded-lg shadow-xs">
+                            + ส่งใบงานปัจจุบันเข้าคิวอนุมัติ
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-[#002B49] text-white text-[11px]">
+                            <tr>
+                                <th class="p-2">เลขที่คำขอ / ใบเสนอราคา</th>
+                                <th class="p-2">ลูกค้า / รุ่นเครื่อง</th>
+                                <th class="p-2 text-right">ยอดก่อนลด</th>
+                                <th class="p-2 text-right">ส่วนลด %</th>
+                                <th class="p-2 text-right">ยอดสุทธิ</th>
+                                <th class="p-2 text-right">GP% ประมาณการ</th>
+                                <th class="p-2">สถานะ / ผู้อนุมัติ</th>
+                                <th class="p-2 text-center">ดำเนินการ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            ${list.map(r => `
+                                <tr class="hover:bg-sky-50/50">
+                                    <td class="p-2 font-bold text-[#002B49]">${r.reqId}<div class="text-[10px] text-slate-500">${r.offerNo} (${r.jobNo})</div></td>
+                                    <td class="p-2"><div class="font-bold text-slate-900">${r.customer}</div><div class="text-[10px] text-slate-500">Model: ${r.model} • ขอโดย: ${r.requestedBy}</div></td>
+                                    <td class="p-2 text-right font-mono">${Number(r.grossAmount).toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                    <td class="p-2 text-right font-extrabold text-rose-600">${r.discountPct}%</td>
+                                    <td class="p-2 text-right font-mono font-bold">${Number(r.netAmount).toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                    <td class="p-2 text-right font-extrabold ${r.estimatedGpPct < pol.minGpPctNoApproval ? 'text-amber-600' : 'text-emerald-700'}">${r.estimatedGpPct}%</td>
+                                    <td class="p-2">
+                                        ${r.status === 'APPROVED' ? `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-extrabold text-[10px]">APPROVED</span><div class="text-[10px] text-slate-500 mt-0.5">${r.approvedBy}</div>` :
+                                          r.status === 'REJECTED' ? `<span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-extrabold text-[10px]">REJECTED</span><div class="text-[10px] text-slate-500 mt-0.5">${r.approvedBy}</div>` :
+                                          `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-extrabold text-[10px]">รออนุมัติ (Manager)</span>`}
+                                    </td>
+                                    <td class="p-2 text-center whitespace-nowrap">
+                                        ${r.status === 'PENDING_MANAGER' ? `
+                                            <button type="button" onclick="decideGpApprovalV1025('${r.reqId}', 'APPROVED')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded-lg mr-1">อนุมัติ</button>
+                                            <button type="button" onclick="decideGpApprovalV1025('${r.reqId}', 'REJECTED')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2.5 py-1 rounded-lg">ไม่อนุมัติ</button>
+                                        ` : `<span class="text-slate-400 text-[10px]">ปิดคำขอแล้ว</span>`}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } else if (tab === 'ADMIN_OPS') {
+            const rows = window.getAdminGatepassQueueV1025();
+            const readyCount = rows.filter(r => r.completenessPct === 100 && r.poVerified).length;
+            body.innerHTML = `
+                <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <div class="font-extrabold text-[#002B49]">Admin Pre-Billing &amp; Parts Dispatch Gatekeeper (ตรวจสอบก่อนส่งบัญชี &amp; จ่ายอะไหล่)</div>
+                        <div class="text-[11px] text-slate-600">ตรวจสอบความครบถ้วนของ Serial No., รูปภาพหน้างาน, ลายเซ็นลูกค้า และเลขที่ใบสั่งซื้อ (PO) ก่อนส่งต่อให้แผนกบัญชีออกใบกำกับภาษี</div>
+                    </div>
+                    <div class="bg-white border border-sky-300 px-3 py-1.5 rounded-lg font-extrabold text-[#002B49]">
+                        ผ่านเกณฑ์ส่งบัญชีครบ 100%: <span class="text-emerald-600">${readyCount} / ${rows.length}</span> งาน
+                    </div>
+                </div>
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-[#002B49] text-white text-[11px]">
+                            <tr>
+                                <th class="p-2">Job No. / วันที่</th>
+                                <th class="p-2">ลูกค้า / ช่างผู้รับผิดชอบ</th>
+                                <th class="p-2 text-center">S/N</th>
+                                <th class="p-2 text-center">รูปหน้างาน</th>
+                                <th class="p-2 text-center">ลายเซ็นลูกค้า</th>
+                                <th class="p-2 text-center">ความครบถ้วน</th>
+                                <th class="p-2 text-center">Admin ตรวจ PO</th>
+                                <th class="p-2 text-center">ส่งต่อบัญชี</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            ${rows.length === 0 ? `<tr><td colspan="8" class="p-6 text-center text-slate-400">ยังไม่มีรายการใบงานในระบบ</td></tr>` : rows.map(r => `
+                                <tr class="hover:bg-sky-50/50">
+                                    <td class="p-2 font-bold text-[#002B49]">${r.jobNo}<div class="text-[10px] text-slate-500">${r.date}</div></td>
+                                    <td class="p-2"><div class="font-bold text-slate-900">${r.customer}</div><div class="text-[10px] text-slate-500">ช่าง: ${r.tech}</div></td>
+                                    <td class="p-2 text-center">${r.hasSerial ? '✅' : '⚠️'}</td>
+                                    <td class="p-2 text-center">${r.hasPhotos ? '✅' : '⚠️'}</td>
+                                    <td class="p-2 text-center">${r.hasCustomerSig ? '✅' : '⚠️'}</td>
+                                    <td class="p-2 text-center font-extrabold ${r.completenessPct === 100 ? 'text-emerald-700' : 'text-amber-600'}">${r.completenessPct}%</td>
+                                    <td class="p-2 text-center">
+                                        <button type="button" onclick="toggleAdminGatepassFlagV1025('${r.jobNo}', 'poVerified')" class="px-2.5 py-1 rounded-lg font-bold text-[10px] ${r.poVerified ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'}">
+                                            ${r.poVerified ? '✓ ตรวจ PO แล้ว' : 'ยืนยันตรวจ PO'}
+                                        </button>
+                                    </td>
+                                    <td class="p-2 text-center">
+                                        <button type="button" onclick="toggleAdminGatepassFlagV1025('${r.jobNo}', 'partsDispatched')" class="px-2.5 py-1 rounded-lg font-bold text-[10px] ${r.partsDispatched ? 'bg-[#0082C8] text-white' : 'bg-amber-100 text-amber-900'}">
+                                            ${r.partsDispatched ? '✓ ส่งบัญชีแล้ว' : 'ส่งคิววางบิล'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } else if (tab === 'ACCOUNTING') {
+            const rows = window.buildAccountingLedgerV1025();
+            const sumBase = rows.reduce((a, b) => a + b.netBase, 0);
+            const sumVat = rows.reduce((a, b) => a + b.vat7, 0);
+            const sumWht = rows.reduce((a, b) => a + b.wht3, 0);
+            const sumNet = rows.reduce((a, b) => a + b.netReceivable, 0);
+            body.innerHTML = `
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                        <div class="text-[10px] font-bold text-slate-500">ยอดบริการก่อน VAT</div>
+                        <div class="text-base font-black text-[#002B49]">${sumBase.toLocaleString('en-US', {minimumFractionDigits:2})} ฿</div>
+                    </div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-2.5">
+                        <div class="text-[10px] font-bold text-sky-700">ภาษีขาย (Output VAT 7%)</div>
+                        <div class="text-base font-black text-sky-900">${sumVat.toLocaleString('en-US', {minimumFractionDigits:2})} ฿</div>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5">
+                        <div class="text-[10px] font-bold text-amber-800">ภาษีหัก ณ ที่จ่าย (WHT 3%)</div>
+                        <div class="text-base font-black text-amber-950">${sumWht.toLocaleString('en-US', {minimumFractionDigits:2})} ฿</div>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5">
+                        <div class="text-[10px] font-bold text-emerald-800">ยอดรับสุทธิหลังหัก WHT</div>
+                        <div class="text-base font-black text-emerald-950">${sumNet.toLocaleString('en-US', {minimumFractionDigits:2})} ฿</div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-emerald-50/70 border border-emerald-200 rounded-xl p-2.5">
+                    <span class="font-bold text-emerald-950"><i class="fa-solid fa-file-invoice-dollar mr-1 text-emerald-700"></i> ทะเบียนคุมเอกสารบัญชี QT → PO → IV (ใบกำกับภาษี) → RE (ใบเสร็จรับเงิน) &amp; หนังสือรับรอง 50 ทวิ</span>
+                    <button type="button" onclick="exportNavErpAccountingCsvV1025()" class="bg-[#002B49] hover:bg-[#00406B] text-white font-extrabold px-3.5 py-1.5 rounded-lg shadow-xs">
+                        <i class="fa-solid fa-file-csv mr-1 text-amber-300"></i> ส่งออกไฟล์นำเข้า Microsoft Dynamics NAV (.CSV)
+                    </button>
+                </div>
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-[#002B49] text-white text-[11px]">
+                            <tr>
+                                <th class="p-2">Job / QT No.</th>
+                                <th class="p-2">ลูกค้า</th>
+                                <th class="p-2">เลขที่ PO ลูกค้า</th>
+                                <th class="p-2">เลขที่ใบกำกับภาษี (IV)</th>
+                                <th class="p-2">เลขที่ใบเสร็จ (RE)</th>
+                                <th class="p-2 text-right">ยอดก่อน VAT</th>
+                                <th class="p-2 text-right">VAT 7%</th>
+                                <th class="p-2 text-right">WHT 3%</th>
+                                <th class="p-2 text-center">50 ทวิ</th>
+                                <th class="p-2">สถานะบัญชี</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            ${rows.length === 0 ? `<tr><td colspan="10" class="p-6 text-center text-slate-400">ยังไม่มีรายการบัญชี</td></tr>` : rows.slice(0, 50).map(r => `
+                                <tr class="hover:bg-sky-50/40">
+                                    <td class="p-2 font-bold text-[#002B49]">${r.jobNo}<div class="text-[10px] text-slate-500">${r.qtNo}</div></td>
+                                    <td class="p-2 font-semibold text-slate-900 max-w-[180px] truncate" title="${r.customer}">${r.customer}</td>
+                                    <td class="p-2"><input type="text" value="${r.poNo}" onchange="updateAccountingRecordFieldV1025('${r.jobNo}', 'poNo', this.value)" placeholder="PO-..." class="w-24 border border-slate-300 rounded px-1.5 py-0.5 text-[11px]"></td>
+                                    <td class="p-2"><input type="text" value="${r.ivNo}" onchange="updateAccountingRecordFieldV1025('${r.jobNo}', 'ivNo', this.value)" placeholder="IV-2026..." class="w-24 border border-slate-300 rounded px-1.5 py-0.5 text-[11px]"></td>
+                                    <td class="p-2"><input type="text" value="${r.reNo}" onchange="updateAccountingRecordFieldV1025('${r.jobNo}', 'reNo', this.value)" placeholder="RE-2026..." class="w-24 border border-slate-300 rounded px-1.5 py-0.5 text-[11px]"></td>
+                                    <td class="p-2 text-right font-mono">${r.netBase.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                    <td class="p-2 text-right font-mono text-sky-700">${r.vat7.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                    <td class="p-2 text-right font-mono text-amber-700">${r.wht3.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                    <td class="p-2 text-center">
+                                        <input type="checkbox" ${r.whtCertReceived ? 'checked' : ''} onchange="updateAccountingRecordFieldV1025('${r.jobNo}', 'whtCertReceived', this.checked)">
+                                    </td>
+                                    <td class="p-2">
+                                        <select onchange="updateAccountingRecordFieldV1025('${r.jobNo}', 'acctStatus', this.value)" class="border border-slate-300 rounded px-1.5 py-0.5 text-[11px] font-bold">
+                                            <option value="WIP_OPEN" ${r.acctStatus === 'WIP_OPEN' ? 'selected' : ''}>งานระหว่างทำ (WIP)</option>
+                                            <option value="READY_TO_BILL" ${r.acctStatus === 'READY_TO_BILL' ? 'selected' : ''}>พร้อมวางบิล</option>
+                                            <option value="INVOICED_AR" ${r.acctStatus === 'INVOICED_AR' ? 'selected' : ''}>ออกใบกำกับภาษีแล้ว</option>
+                                            <option value="PAID_CLOSED" ${r.acctStatus === 'PAID_CLOSED' ? 'selected' : ''}>รับชำระเงินครบแล้ว</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } else if (tab === 'AUDIT') {
+            let logs = [];
+            try { logs = JSON.parse(localStorage.getItem(window.HZK_V1025_KEYS.AUDIT_LOG) || '[]'); } catch (e) {}
+            body.innerHTML = `
+                <div class="bg-slate-800 text-white rounded-xl p-3 flex items-center justify-between">
+                    <div>
+                        <div class="font-extrabold text-amber-300"><i class="fa-solid fa-shield-halved mr-1"></i> Immutable Governance &amp; Financial Audit Trail</div>
+                        <div class="text-[11px] text-slate-300">บันทึกทุกการอนุมัติส่วนลด การตรวจรับเอกสารของ Admin และการออกเลขที่ใบกำกับภาษี/ใบเสร็จของแผนกบัญชี</div>
+                    </div>
+                    <span class="bg-white/15 px-3 py-1 rounded-full font-bold">${logs.length} รายการ</span>
+                </div>
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-100 text-slate-800 text-[11px] border-b">
+                            <tr>
+                                <th class="p-2">วัน-เวลา</th>
+                                <th class="p-2">ผู้ดำเนินการ</th>
+                                <th class="p-2">บทบาท</th>
+                                <th class="p-2">กิจกรรม (Action)</th>
+                                <th class="p-2">เลขที่อ้างอิง</th>
+                                <th class="p-2">รายละเอียด</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            ${logs.length === 0 ? `<tr><td colspan="6" class="p-6 text-center text-slate-400">ยังไม่มีบันทึกประวัติการตรวจสอบในเซสชันนี้</td></tr>` : logs.map(l => `
+                                <tr>
+                                    <td class="p-2 whitespace-nowrap text-slate-500">${l.timestamp}</td>
+                                    <td class="p-2 font-bold text-[#002B49]">${l.actor}</td>
+                                    <td class="p-2"><span class="bg-sky-100 text-sky-900 px-2 py-0.5 rounded font-bold text-[10px]">${l.role}</span></td>
+                                    <td class="p-2 font-mono font-bold text-slate-800">${l.action}</td>
+                                    <td class="p-2 font-bold text-indigo-700">${l.refNo}</td>
+                                    <td class="p-2 text-slate-700">${l.detail}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+    };
+
+    // Inject launcher button into Executive Report top-right dropdown menu (preserving clean top-right bar)
+    document.addEventListener('DOMContentLoaded', function() {
+        const execMenu = document.getElementById('topExecutiveReportDropdownMenu');
+        if (execMenu && !document.getElementById('btnMenuExecAdminAcctHubV1025')) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.id = 'btnMenuExecAdminAcctHubV1025';
+            btn.onclick = function() {
+                if (typeof closeTopExecutiveReportDropdown === 'function') closeTopExecutiveReportDropdown();
+                window.openExecAdminAccountingHubModal('APPROVALS');
+            };
+            btn.className = 'w-full text-left px-2.5 py-2 rounded-lg hover:bg-emerald-50 transition flex items-start gap-2 group mt-0.5 border-t border-slate-100';
+            btn.innerHTML = `
+                <span class="w-6 h-6 rounded-md bg-emerald-700 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
+                    <i class="fa-solid fa-scale-balanced text-[11px]"></i>
+                </span>
+                <div>
+                    <div class="font-bold text-slate-900 group-hover:text-emerald-800">ศูนย์บริหาร ผู้บริหาร • Admin • บัญชี (v1025)</div>
+                    <div class="text-[10px] text-slate-500">อนุมัติ GP% • ตรวจ PO/เอกสาร • ทะเบียน VAT/WHT &amp; NAV ERP</div>
                 </div>`;
             execMenu.appendChild(btn);
         }

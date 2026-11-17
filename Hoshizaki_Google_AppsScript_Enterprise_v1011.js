@@ -217,18 +217,33 @@ function doPost(e) {
 
       if (action === 'SAVE_DUAL_LINE_BRIDGE_CONFIG') {
         var propsBridge = PropertiesService.getScriptProperties();
-        if (data.customerLineToken) propsBridge.setProperty('CUSTOMER_LINE_CHANNEL_ACCESS_TOKEN', String(data.customerLineToken).trim());
-        if (data.internalLineToken) propsBridge.setProperty('INTERNAL_LINE_CHANNEL_ACCESS_TOKEN', String(data.internalLineToken).trim());
-        if (data.lineGroupId) propsBridge.setProperty('LINE_TECH_GROUP_ID', String(data.lineGroupId).trim());
-        if (data.mgmtGroupId) propsBridge.setProperty('LINE_MGMT_GROUP_ID', String(data.mgmtGroupId).trim());
-        if (data.pwaWebAppUrl) propsBridge.setProperty('PWA_WEB_APP_URL', String(data.pwaWebAppUrl).trim());
-        return jsonOut({ status: 'ok', action: action });
+        if (data.customerLineToken !== undefined && String(data.customerLineToken).trim()) propsBridge.setProperty('CUSTOMER_LINE_CHANNEL_ACCESS_TOKEN', String(data.customerLineToken).trim());
+        if (data.internalLineToken !== undefined && String(data.internalLineToken).trim()) propsBridge.setProperty('INTERNAL_LINE_CHANNEL_ACCESS_TOKEN', String(data.internalLineToken).trim());
+        if (data.lineGroupId !== undefined) propsBridge.setProperty('LINE_TECH_GROUP_ID', String(data.lineGroupId).trim());
+        if (data.mgmtGroupId !== undefined) propsBridge.setProperty('LINE_MGMT_GROUP_ID', String(data.mgmtGroupId).trim());
+        if (data.lineBotId !== undefined) propsBridge.setProperty('LINE_SERVICE_BOT_ID', String(data.lineBotId).trim());
+        if (data.lineMainOfficeId !== undefined) propsBridge.setProperty('LINE_MAIN_OFFICE_ID', String(data.lineMainOfficeId).trim());
+        if (data.pwaWebAppUrl !== undefined && String(data.pwaWebAppUrl).trim()) propsBridge.setProperty('PWA_WEB_APP_URL', String(data.pwaWebAppUrl).trim());
+        return jsonOut({ status: 'ok', action: action, phaseScope: 'Phase-1-ServiceUnit-ServiceCenter' });
       }
 
       if (action === 'TEST_DUAL_LINE_BRIDGE') {
-        var testMsg = '🔔 [TEST BRIDGE v1013] ทดสอบการเชื่อมต่อ Dual LINE OA Bridge สำเร็จ!\nเวลา: ' + Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+        var testMsg = '🔔 [TEST DUAL LINE OA BRIDGE v1021]\nระบบเชื่อมต่อ LINE OA (Service Unit & Service Center) สำเร็จ!\nเวลา: ' + Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
         var sentInt = pushLineMessageWithToken_(secrets.internalLineToken || secrets.lineToken, secrets.lineGroupId, testMsg);
-        return jsonOut({ status: sentInt ? 'ok' : 'warning', internalSent: sentInt });
+        var sentCust = false;
+        if (data.testCustomerUserId && secrets.customerLineToken) {
+          sentCust = pushLineMessageWithToken_(secrets.customerLineToken, String(data.testCustomerUserId).trim(), '🐧 [HOSHIZAKI Customer OA] ทดสอบระบบแจ้งเตือนลูกค้าเรียบร้อยครับ');
+        }
+        return jsonOut({ status: (sentInt || sentCust) ? 'ok' : 'warning', internalSent: sentInt, customerSent: sentCust });
+      }
+
+      if (action === 'CREATE_CROSS_LINK_RICH_MENUS') {
+        createCrossLinkRichMenus();
+        return jsonOut({ status: 'ok', action: action });
+      }
+
+      if (action === 'LOG_MOBILE_SMS_DISPATCH') {
+        return jsonOut(logMobileSmsDispatchToSheet_(ss, data));
       }
 
       if (action === 'RUN_PREDICTIVE_PM_WARRANTY_SCAN') {
@@ -1791,7 +1806,13 @@ function routeDualLineWebhook_(events, botMode) {
 
       if (ev.type === 'message' && ev.message && ev.message.type === 'text') {
         var txt = String(ev.message.text || '').trim();
-        var phoneMatch = txt.match(/ลงทะเบียน\s*(0\d{8,9})/i);
+        var lang = detectTextLanguage_(txt);
+        var pwaBase = (secrets.pwaWebAppUrl && secrets.pwaWebAppUrl.indexOf('http') === 0)
+          ? secrets.pwaWebAppUrl
+          : 'https://serviceshth.github.io/hoshizaki-service/';
+
+        // 1) Register mobile phone <-> LINE User ID
+        var phoneMatch = txt.match(/(?:ลงทะเบียน|REGISTER|登録)\s*(0\d{8,9})/i);
         if (phoneMatch && userId) {
           var mapSheet = ss.getSheetByName('Customer_Phone_LINE_Map');
           if (!mapSheet) {
@@ -1799,14 +1820,80 @@ function routeDualLineWebhook_(events, botMode) {
             mapSheet.getRange(1, 1, 1, 4).setValues([['Phone', 'LINE User ID', 'Display Name', 'Updated At']]).setFontWeight('bold');
           }
           mapSheet.appendRow([phoneMatch[1], userId, getLineUserDisplayName_(userId), Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss')]);
-          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{ type: 'text', text: '✅ ลงทะเบียนผูกเบอร์โทรศัพท์ ' + phoneMatch[1] + ' เรียบร้อยแล้ว คุณจะได้รับการแจ้งเตือนนัดหมายและรายงานบริการอัตโนมัติครับ' }]);
+          var regMsg = lang === 'JP'
+            ? '✅ お電話番号 ' + phoneMatch[1] + ' の登録が完了しました。点検予定やサービス完了報告を自動でお知らせいたします。'
+            : (lang === 'EN'
+              ? '✅ Mobile number ' + phoneMatch[1] + ' linked successfully! You will receive live technician arrival & service updates here.'
+              : '✅ ลงทะเบียนผูกเบอร์โทรศัพท์ ' + phoneMatch[1] + ' เรียบร้อยแล้ว คุณจะได้รับการแจ้งเตือนนัดหมายและรายงานบริการอัตโนมัติครับ');
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{ type: 'text', text: regMsg }]);
           return;
         }
+
+        // 2) Customer Self-Service Status Lookup (STATUS / เช็กสถานะ / ステータス + Phone/SN/JobNo)
+        if (/^(STATUS|TRACK|เช็กสถานะ|เช็คสถานะ|สถานะ|ติดตามช่าง|ステータス|進捗)/i.test(txt)) {
+          var qKey = txt.replace(/^(STATUS|TRACK|เช็กสถานะ|เช็คสถานะ|สถานะ|ติดตามช่าง|ステータス|進捗)\s*/i, '').trim();
+          var custFlex = buildCustomerSelfStatusFlex_(ss, qKey, userId, pwaBase, lang);
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [custFlex]);
+          return;
+        }
+
+        // 3) Customer Service / Repair Request (แจ้งซ่อม / REPAIR / SERVICE / 修理)
+        if (/^(แจ้งซ่อม|ขอซ่อม|นัดช่าง|REPAIR|SERVICE\s*CALL|BOOK|修理|点検依頼)/i.test(txt)) {
+          var modelsReq = extractHoshizakiModelsFromText_(txt);
+          var tkReq = createTechnicianSupportTicket_(ss, userId, txt, modelsReq.join(', ') || 'CUSTOMER_REPAIR_REQ', 'CUSTOMER_REPAIR_REQ');
+          var portalUrl = pwaBase + (pwaBase.indexOf('?') > -1 ? '&' : '?') + 'portal=customer&jobNo=' + encodeURIComponent(tkReq.ticketId);
+          var ackTitle = lang === 'JP' ? '🛠️ 修理・点検のご依頼を受け付けました' : (lang === 'EN' ? '🛠️ Service Request Received' : '🛠️ รับเรื่องแจ้งซ่อมเรียบร้อยแล้ว');
+          var ackBody = lang === 'JP'
+            ? '受付番号: ' + tkReq.ticketId + '\nサービス担当およびエンジニアより速やかにご連絡いたします。'
+            : (lang === 'EN'
+              ? 'Reference ID: ' + tkReq.ticketId + '\nOur Service Unit dispatcher & engineer will contact you shortly.'
+              : 'รหัสอ้างอิง: ' + tkReq.ticketId + '\nศูนย์บริการ HOSHIZAKI ได้รับข้อมูลแล้ว ทีมช่างจะติดต่อกลับโดยเร็วที่สุดครับ');
+          var btnLabel = lang === 'JP' ? '📱 ライブ進捗ポータルを開く' : (lang === 'EN' ? '📱 Open Customer Live Portal' : '📱 เปิดพอร์ทัลติดตามงานสด');
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{
+            type: 'flex',
+            altText: ackTitle + ' (' + tkReq.ticketId + ')',
+            contents: {
+              type: 'bubble',
+              size: 'mega',
+              header: {
+                type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+                contents: [{ type: 'text', text: ackTitle, color: '#FFFFFF', weight: 'bold', size: 'sm', wrap: true }]
+              },
+              body: {
+                type: 'box', layout: 'vertical', paddingAll: '12px',
+                contents: [{ type: 'text', text: ackBody, size: 'xs', color: '#1E293B', wrap: true }]
+              },
+              footer: {
+                type: 'box', layout: 'vertical', paddingAll: '10px',
+                contents: [{
+                  type: 'button', style: 'primary', color: '#00A3E0', height: 'sm',
+                  action: { type: 'uri', label: btnLabel, uri: portalUrl }
+                }]
+              }
+            }
+          }]);
+          return;
+        }
+
+        // 4) Trilingual Help Menu on Customer OA
+        if (/^(HELP|MENU|เมนู|ช่วยเหลือ|ヘルプ)/i.test(txt)) {
+          var helpCust = lang === 'JP'
+            ? '🐧 HOSHIZAKI カスタマーサポート\n• 修理依頼 <機種名・症状> : 修理・点検を依頼\n• ステータス <電話番号 または S/N> : 作業状況・エンジニア位置確認\n• 登録 <08x...> : 携帯番号連携'
+            : (lang === 'EN'
+              ? '🐧 HOSHIZAKI Customer Self-Service\n• REPAIR <Model / Issue> : Request service\n• STATUS <Phone or S/N> : Check live job & technician ETA\n• REGISTER <08x...> : Link phone for auto-alerts'
+              : '🐧 ศูนย์บริการลูกค้า HOSHIZAKI (THAILAND)\n• พิมพ์: แจ้งซ่อม <รุ่นเครื่อง/อาการ> เพื่อเปิดใบแจ้งซ่อม\n• พิมพ์: เช็กสถานะ <เบอร์โทร หรือ S/N> เพื่อดูสถานะช่าง\n• พิมพ์: ลงทะเบียน <เบอร์มือถือ 08x...> เพื่อรับแจ้งเตือนอัตโนมัติ');
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{ type: 'text', text: helpCust }]);
+          return;
+        }
+
+        // 5) General Inquiry -> Escalate to Service Unit Ticket Queue + Trilingual Ack
         var tkCust = createTechnicianSupportTicket_(ss, userId, txt, 'CUSTOMER_OA', 'CUSTOMER_INQUIRY');
-        replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{
-          type: 'text',
-          text: '🐧 ศูนย์บริการ HOSHIZAKI (THAILAND) ได้รับข้อความของคุณแล้ว (รหัสอ้างอิง: ' + tkCust.ticketId + ')\nเจ้าหน้าที่ประสานงานและทีมช่างจะตอบกลับโดยเร็วที่สุดครับ'
-        }]);
+        var genAck = lang === 'JP'
+          ? '🐧 ホシザキ・タイランド サービス部にてお問い合わせを受け付けました（受付番号: ' + tkCust.ticketId + '）。担当者より順次ご返信いたします。'
+          : (lang === 'EN'
+            ? '🐧 HOSHIZAKI (THAILAND) Service Unit has received your message (Ref: ' + tkCust.ticketId + '). Our coordinator/engineer will reply shortly.'
+            : '🐧 ศูนย์บริการ HOSHIZAKI (THAILAND) ได้รับข้อความของคุณแล้ว (รหัสอ้างอิง: ' + tkCust.ticketId + ')\nเจ้าหน้าที่ประสานงานและทีมช่างจะตอบกลับโดยเร็วที่สุดครับ');
+        replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{ type: 'text', text: genAck }]);
       }
     });
     return;
@@ -7184,4 +7271,155 @@ function upsertDeduplicatedMasterBatch_(ss, data) {
   }
 
   return { status: 'ok', addedQuotations: addedQt, addedSerials: addedSn, addedParts: addedParts };
+}
+
+
+// ============================================================================
+// 19. TRILINGUAL CUSTOMER CHATBOT & MOBILE SMS DISPATCH LOGGER (v1021-LINE+)
+// ============================================================================
+
+function detectTextLanguage_(text) {
+  var s = String(text || '');
+  if (/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(s)) return 'JP';
+  if (/[\u0E00-\u0E7F]/.test(s)) return 'TH';
+  return 'EN';
+}
+
+function buildCustomerSelfStatusFlex_(ss, queryKey, userId, pwaBase, lang) {
+  var q = String(queryKey || '').trim().toUpperCase();
+  var digits = q.replace(/\D/g, '');
+  var jobs = readRecentJobsFromSheet(ss, 800);
+  var matched = [];
+
+  if (q) {
+    matched = jobs.filter(function(j) {
+      var jNo = String(j.jobNo || '').toUpperCase();
+      var jSn = String(j.serial || '').toUpperCase();
+      var jStore = String(j.store || '').toUpperCase();
+      var jPhone = String(j.contact || '').replace(/\D/g, '');
+      return (jNo && jNo.indexOf(q) > -1) ||
+             (jSn && jSn.indexOf(q) > -1) ||
+             (jStore && q.length >= 3 && jStore.indexOf(q) > -1) ||
+             (digits.length >= 8 && jPhone && jPhone.indexOf(digits) > -1);
+    });
+  } else if (userId) {
+    // Look up mapped phone from Customer_Phone_LINE_Map
+    var mapSheet = ss.getSheetByName('Customer_Phone_LINE_Map');
+    if (mapSheet && mapSheet.getLastRow() >= 2) {
+      var mVals = mapSheet.getRange(2, 1, mapSheet.getLastRow() - 1, 2).getValues();
+      for (var i = mVals.length - 1; i >= 0; i--) {
+        if (String(mVals[i][1]).trim() === userId) {
+          var mappedDigits = String(mVals[i][0] || '').replace(/\D/g, '');
+          if (mappedDigits.length >= 8) {
+            matched = jobs.filter(function(j) {
+              return String(j.contact || '').replace(/\D/g, '').indexOf(mappedDigits) > -1;
+            });
+          }
+          break;
+        }
+      }
+    }
+  }
+
+  var title = lang === 'JP' ? '❄️ サービス進捗ステータス' : (lang === 'EN' ? '❄️ HOSHIZAKI Live Service Status' : '❄️ สถานะงานบริการ HOSHIZAKI');
+  var portalUrl = pwaBase + (pwaBase.indexOf('?') > -1 ? '&' : '?') + 'portal=customer';
+
+  if (matched.length === 0) {
+    var notFoundTxt = lang === 'JP'
+      ? '該当する作業記録が見つかりませんでした。「ステータス 08x...」または「ステータス S/N」と入力してください。'
+      : (lang === 'EN'
+        ? 'No active service job found. Try typing: STATUS <Phone> or STATUS <Serial No.>'
+        : 'ยังไม่พบข้อมูลใบงานที่ตรงกัน ลองพิมพ์: เช็กสถานะ <เบอร์โทร> หรือ เช็กสถานะ <S/N เครื่อง> ครับ');
+    return {
+      type: 'flex',
+      altText: title,
+      contents: {
+        type: 'bubble',
+        size: 'mega',
+        body: {
+          type: 'box', layout: 'vertical', paddingAll: '14px',
+          contents: [
+            { type: 'text', text: title, weight: 'bold', size: 'sm', color: '#002B49' },
+            { type: 'text', text: notFoundTxt, size: 'xs', color: '#334155', wrap: true, margin: 'sm' }
+          ]
+        },
+        footer: {
+          type: 'box', layout: 'vertical', paddingAll: '10px',
+          contents: [{
+            type: 'button', style: 'primary', color: '#00A3E0', height: 'sm',
+            action: { type: 'uri', label: lang === 'EN' ? 'Open Customer Portal' : 'เปิดพอร์ทัลบริการลูกค้า', uri: portalUrl }
+          }]
+        }
+      }
+    };
+  }
+
+  var topJob = matched[0];
+  var jobPortalUrl = portalUrl +
+    '&jobNo=' + encodeURIComponent(topJob.jobNo || '') +
+    '&customer=' + encodeURIComponent(topJob.store || '') +
+    '&model=' + encodeURIComponent(topJob.model || '') +
+    '&serial=' + encodeURIComponent(topJob.serial || '') +
+    '&tech=' + encodeURIComponent(topJob.responsibleTech || '') +
+    '&total=' + encodeURIComponent(topJob.grandTotal || '0');
+
+  return {
+    type: 'flex',
+    altText: title + ' - ' + (topJob.jobNo || ''),
+    contents: {
+      type: 'bubble',
+      size: 'mega',
+      header: {
+        type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+        contents: [
+          { type: 'text', text: title, color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+          { type: 'text', text: (topJob.jobNo || '-') + ' (' + (topJob.jobStatus || '-') + ')', color: '#FFFFFF', size: 'md', weight: 'bold', margin: 'xs' }
+        ]
+      },
+      body: {
+        type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '12px',
+        contents: [
+          { type: 'text', text: '🏪 ' + (topJob.store || '-'), size: 'xs', weight: 'bold', wrap: true },
+          { type: 'text', text: '❄️ ' + (topJob.model || '-') + ' | S/N: ' + (topJob.serial || '-'), size: 'xs', color: '#0369A1', wrap: true },
+          { type: 'text', text: '👨‍🔧 Tech: ' + (topJob.responsibleTech || '-'), size: 'xs', color: '#334155', wrap: true },
+          { type: 'text', text: '🗓️ Date: ' + (topJob.date || '-'), size: 'xxs', color: '#64748B' }
+        ]
+      },
+      footer: {
+        type: 'box', layout: 'vertical', paddingAll: '10px',
+        contents: [{
+          type: 'button', style: 'primary', color: '#059669', height: 'sm',
+          action: {
+            type: 'uri',
+            label: lang === 'JP' ? '📍 エンジニア位置・承認ページを開く' : (lang === 'EN' ? '📍 Live Tech GPS & Approval' : '📍 ดูพิกัดช่างสด & อนุมัติซ่อม'),
+            uri: jobPortalUrl
+          }
+        }]
+      }
+    }
+  };
+}
+
+function logMobileSmsDispatchToSheet_(ss, data) {
+  var sheet = ss.getSheetByName('Customer_Mobile_SMS_Logs');
+  if (!sheet) {
+    sheet = ss.insertSheet('Customer_Mobile_SMS_Logs');
+    sheet.getRange(1, 1, 1, 8).setValues([[
+      'Timestamp', 'Job / Offer No.', 'Customer / Store', 'Mobile Phone',
+      'Channel', 'Portal URL', 'Message Preview', 'Sent By'
+    ]]).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  sheet.appendRow([
+    nowStr,
+    String(data.refNo || ''),
+    String(data.customer || ''),
+    String(data.phone || ''),
+    String(data.channel || 'MOBILE_SMS'),
+    String(data.portalUrl || ''),
+    String(data.message || '').substring(0, 500),
+    String(data.sentBy || 'Service Unit')
+  ]);
+  return { status: 'ok', loggedAt: nowStr };
 }

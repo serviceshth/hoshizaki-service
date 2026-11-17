@@ -3981,6 +3981,14 @@ function handleLineWebhookEvents(events) {
       return;
     }
 
+    if (/^(PARAM|SETTING|MANUAL|ตั้งค่า|พารามิเตอร์|คู่มือ)\s+/i.test(rawText) || /(HW-?320B|HW-?600A|HW-?600B|HW-?600B3|P01873|DIXELL|XR06CH|WR-?87285|ECS-?180|ETC-?3000|HR-MC|HF-MC|HRF-MC)/i.test(rawText)) {
+      var paramReply = lookupControllerAndMachineParametersText_(rawText);
+      if (paramReply) {
+        replyLineMessage(replyToken, paramReply);
+        return;
+      }
+    }
+
     if (upperText.indexOf('ERR ') === 0 || upperText.indexOf('ERROR ') === 0) {
       var errQ = rawText.replace(/^ERR(OR)?\s+/i, '').trim().toUpperCase();
       var errRecs = getModelSpecificErrorRecords_(errQ);
@@ -7756,4 +7764,109 @@ function syncV1025GovernanceApproval_(ss, data) {
     String(r.approvedAt || '')
   ]);
   return { status: 'ok', reqId: r.reqId || '' };
+}
+
+
+// =========================================================================
+// ENTERPRISE v1027: CONTROLLER & MACHINE PARAMETER / MANUAL LOOKUP (LINE OA)
+// =========================================================================
+function lookupControllerAndMachineParametersText_(rawQuery) {
+  var q = String(rawQuery || '').trim().toUpperCase();
+  if (!q) return '';
+
+  // Dishwasher HW-320B
+  if (/(HW-?320B|320B\b)/i.test(q)) {
+    return '🍽️ [HOSHIZAKI HW-320B PDRT — คู่มือตั้งค่า & ใช้งาน]\n' +
+      '• เข้า Service Menu: กดไอคอนรูปเฟือง ⚙️ ค้าง 3 วิ → ใส่รหัสผ่าน "3" → กด ✓ ค้าง 3 วิ\n' +
+      '• ค่ามาตรฐานโรงงาน:\n' +
+      '  - P01 (อุณหภูมิน้ำล้าง Tank) = 55°C (55–60°C)\n' +
+      '  - P02 (อุณหภูมิน้ำลวก Boiler) = 80°C (80–85°C)\n' +
+      '  - P03 (เวลาล้าง 5 โปรแกรม) = 40 / 90 / 120 / 140 / 180 วิ (+ลวก P04=10 วิ, พัก P05=2 วิ)\n' +
+      '  - P08 (ปั๊มน้ำยาล้างจาน) = 10 วิ | P09 (ปั๊มน้ำยาเคลือบเงา) = 10 วิ\n' +
+      '  - P10 (เวลาปั๊มเดรน) = 150 วิ | P17 (ปิดฝาเริ่มล้างอัตโนมัติ) = 1\n' +
+      '• ติดตั้ง: น้ำเข้า 3/4" แรงดัน 2–4 Bar, ท่อน้ำทิ้ง Ø28mm สูง ≤60 ซม. (มีปั๊มเดรน) / ≤5 ซม. (ไม่มีปั๊มเดรน)';
+  }
+
+  // Dishwasher HW-600A
+  if (/(HW-?600A|600A\b|J030)/i.test(q)) {
+    return '🍽️ [HOSHIZAKI HW-600A (J030) — คู่มือตั้งค่า Service Menu]\n' +
+      '• วิธีเข้า Service Menu: ปิดเครื่อง (OFF) → กด MODE ค้างไว้แล้วกด ON/OFF (หน้าจอขึ้น 01)\n' +
+      '• ค่ามาตรฐานโรงงาน:\n' +
+      '  - No.01 (เวลาล้าง Standard) = 48 วิ | No.02/09 (Long) = 110 วิ\n' +
+      '  - No.03 (เวลาลวก Rinse) = 6 วิ | No.30 (Water Supply Delay) = 1 วิ\n' +
+      '  - No.04 (อุณหภูมิน้ำล้าง) = 58°C (ตัดที่ +3°C)\n' +
+      '  - No.05 (อุณหภูมิน้ำลวก Booster) = 73°C (ห้ามตั้งเกิน 79°C เพื่อป้องกัน Vapor Lock)\n' +
+      '  - No.11 (เริ่มล้างเมื่อปิดฝา) = on | No.31–35 = ดู Error Log (กด ▲+▼ ค้าง 3 วิเพื่อลบ)\n' +
+      '• โหมดล้างตัวเอง (SC): ปิดเครื่อง (ปิดฝา) → กด STANDBY/CLEANING ค้าง 3 วิ\n' +
+      '• Error: A1/A2=เติมน้ำไม่ทัน, o1/o2=ระดับน้ำ Booster, H1–H4=Thermistor (ค่าโอห์ม 60°C = 11.5–12.8 kΩ)';
+  }
+
+  // Dishwasher HW-600B / HW-600B3 / HW-600B3 RT
+  if (/(HW-?600B|600B3|600B|EMKO|OZT_BYM|เครื่องล้างจาน)/i.test(q)) {
+    return '🍽️ [HOSHIZAKI HW-600B / HW-600B3 RT — คู่มือตั้งค่า & ติดตั้ง]\n' +
+      '• เข้า Service Menu: กดไอคอนรูปเฟือง ⚙️ ค้าง 3 วิ → ใส่รหัสผ่าน "3" → กด ✓ ค้าง 3 วิ\n' +
+      '• ค่ามาตรฐานโรงงาน:\n' +
+      '  - P01 (น้ำล้าง Tank) = 55°C (55–66°C) | P02 (น้ำลวก Boiler) = 80°C (80–85°C)\n' +
+      '  - P03 (เวลาล้าง 5 โปรแกรม) = 40 / 90 / 120 / 140 / 180 วิ (+ลวก 10 วิ +พัก 2 วิ)\n' +
+      '  - P08 (Detergent) = 10 วิ | P09 (Rinse Aid) = 10 วิ | P10 (Drain) = 150 วิ\n' +
+      '  - P15 (รอน้ำร้อนถึงเป้าก่อนล้าง) = 1 | P17 (ปิดฮูดเริ่มล้างอัตโนมัติ) = 1 | OP0=1 คืนค่าโรงงาน\n' +
+      '• ข้อกำหนดติดตั้งหน้างาน:\n' +
+      '  - ไฟฟ้า 380–415V 3NPE (9.66–11.46 kW) สาย 5x2.5 mm² เบรกเกอร์ 3P 30A–32A + RCD 30mA สูงจากพื้น ≥120 ซม.\n' +
+      '  - น้ำประปา 3/4" แรงดัน 2–4 Bar (น้ำอ่อน 0–10°fH, อุณหภูมิ ≤50°C)\n' +
+      '  - ท่อน้ำทิ้ง PVC Ø50 mm สูง ≤5–10 ซม. (ไม่มีปั๊มเดรน) หรือ Ø28 mm สูง ≤60 ซม. (มีปั๊มเดรน)';
+  }
+
+  // Ice Machine IM-Series
+  if (/(IM-?SERIES|\bIM-?\d{2,3}\b|P01873|DIMPLE|หลุมน้ำแข็ง|เครื่องทำน้ำแข็ง)/i.test(q)) {
+    return '❄️ [HOSHIZAKI IM-Series Controller (P01873-01 / -02)]\n' +
+      '• ปรับขนาดหลุมน้ำแข็ง (Dimple Size / Service Mode):\n' +
+      '  1. กดปุ่ม RESET ค้าง >3 วินาที (ขึ้นเลข "1")\n' +
+      '  2. กด ▲ (SERVICE 1) เลือกเมนู "2" (Target Freeze Completion Temp) หรือ "3" (Freeze Time)\n' +
+      '  3. กด RESET 1 ครั้ง (ตัวเลขกะพริบ) → กด ▲/▼ ปรับค่า (ทีละ 0.5°C ช่วง -5 ถึง -40°C) → กด RESET บันทึก\n' +
+      '• เช็กอุณหภูมิเซ็นเซอร์ & Error Log (Display Mode):\n' +
+      '  - กด ▲ (UP / SERVICE 1) ค้าง >3 วินาที (ขึ้น "n1") แล้วกด ▲/▼ เพื่อดู:\n' +
+      '    n3 = อุณหภูมิเซ็นเซอร์น้ำแข็ง | n4 = อุณหภูมิห้อง | n5 = อุณหภูมิน้ำ (H ≥13°C, L <13°C) | n6 = คอนเดนเซอร์ | h4 = ประวัติ Error (E1=Freeze, E2=Defrost, EE/EF=Other)';
+  }
+
+  // Dixell XR06CH
+  if (/(DIXELL|XR06CH|HFW|FTW|SRF)/i.test(q)) {
+    return '❄️ [Dixell XR06CH-5N5S5-B (V1.4) — HFW / FTW / SRF]\n' +
+      '• ตั้งอุณหภูมิ (Set): กด SET ค้าง 3 วิ → ปรับ ▲/▼ → กด SET บันทึก\n' +
+      '• เข้าเมนูช่าง (Pr2): กด SET+▼ ค้าง 3 วิ (เข้า Pr1) → กด SET+▼ ค้างต่ออีก 7 วิ\n' +
+      '• เช็กอุณหภูมิคอยล์เย็น (Evap): ดูค่าพารามิเตอร์ "d2" (Live Defrost Probe Temp)\n' +
+      '• ค่าโรงงาน: Set = -20.0°C (SRF500HC: -26.0°C), dE (ตัดละลาย) = 10°C (FTW:20°C, SRF500HC:15°C), id = 5–6 ชม.';
+  }
+
+  // PVR WR-87285
+  if (/(PVR|WR-?87285|HRW|RTW|RTDW|SRC900)/i.test(q)) {
+    return '❄️ [PVR WR-87285 — HRW / RTW / RTDW / SRC900-HL]\n' +
+      '• รหัสผ่าน (PS): "11" | ตั้งอุณหภูมิ (SP): กด SET → ปรับ ▲/▼ → กด SET\n' +
+      '• ค่าโรงงาน: SP = 2.0°C (-2~12°C), P4 (Diff) = 1.5°C (HRW) / 2.5°C (RTW), P7 (เวลาละลาย) = 60 นาที, P8 = ทุก 4 ชม., L7 (หยุดละลาย) = 4°C, LP = 0 (ปลดล็อกปุ่ม)';
+  }
+
+  // ECS-180neo
+  if (/(ECS-?180|FT-|RT-|HR-MA|HF-MA|HF188)/i.test(q)) {
+    return '❄️ [Elitech / Refulgence ECS-180neo — FT / RT / HR-MA / HF-MA]\n' +
+      '• เข้า Admin Menu: กด Set ค้าง 3 วิ (ขึ้น St) → กด ▼ ไปที่ Po → กด Set → ใส่รหัส "55"\n' +
+      '• เช็กอุณหภูมิคอยล์เย็น: กดปุ่ม ▼ 1 ครั้ง | สั่ง Defrost: กด Rst ค้าง 3 วิ\n' +
+      '• ค่าโรงงาน: FT/RT = 4°C | HR-MA = 1°C (d7=20°C) | HF-MA = -20°C (d7=30°C, HF188=20°C)';
+  }
+
+  // MC-Controller
+  if (/(MC-?CONTROLLER|HR-MC|HF-MC|HRF-MC|HRF-78|\bH7\b|\bH9\b|\bH11\b|\bH12\b|FG1)/i.test(q)) {
+    return '❄️ [MC-Controller 7 ปุ่มสัมผัส — HR / HF / HRF MC Series]\n' +
+      '• รหัสผ่าน: กดปุ่มประแจ 🔧 ค้าง 3 วิ → ใส่ "55" (ฮีตเตอร์ขอบประตู Fg1) หรือ "125" (Manager Menu)\n' +
+      '• กลุ่มรุ่น (กดประแจค้าง 10 วิ): H7/H1 = HF (-20°C), H9/H3 = HR (1°C), H11 = HRF-78 Freezer (-20°C), H6/H12 = HRF-78 Chiller (1°C)\n' +
+      '• เช็กอุณหภูมิ: กด ▼ ดู Evap | กด "ประแจ + ▼" ค้าง 3 วิ (Maintenance Mode) ดูค่าจริง ตู้ / คอยล์เย็น / คอยล์ร้อน\n' +
+      '• ฮีตเตอร์ขอบประตู Fg1 = 3 (หยุด 5 นาที / ทำงาน 10 นาที) | NTC 0°C = 25–30 kΩ';
+  }
+
+  // ETC-3000
+  if (/(ETC-?3000)/i.test(q)) {
+    return '❄️ [KI&BNT ETC-3000]\n' +
+      '• User Menu: กด SET ค้าง 3 วิ | Admin Menu: กด SET ค้างแล้วกด ▼ ค้าง 10 วิ | ล็อกปุ่ม: กด ▲+▼ ค้าง 10 วิ\n' +
+      '• เช็กอุณหภูมิคอยล์เย็น: กด ▼ 1 ครั้ง | Defrost: กด ▼ ค้าง 3 วิ | ค่าโรงงาน: SEt=-5.0°C, HY=2.0°C, dtE=10.0°C';
+  }
+
+  return '';
 }

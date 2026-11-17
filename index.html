@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1025</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1027</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -4554,7 +4554,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1025</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1027</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20692,7 +20692,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1025) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1027) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -23594,7 +23594,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1025 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1027 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -31510,7 +31510,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1025)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1027)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31713,7 +31713,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1025)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1027)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31722,7 +31722,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1025)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1027)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -31731,7 +31731,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1025)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1027)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31813,21 +31813,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1025) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1027) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1025 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1027 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1025）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1027）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -34681,9 +34681,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1025',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1025)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1025)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1027',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1027)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1027)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34732,7 +34732,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1025 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1027 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -34958,7 +34958,7 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
         <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1025 — Multi-Branch &amp; White-Label Ready)</h3>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1027 — Multi-Branch &amp; White-Label Ready)</h3>
                 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
             </div>
             <div class="flex items-center gap-1.5">
@@ -39003,7 +39003,7 @@ try {
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1025 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1027 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -39530,7 +39530,7 @@ try {
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1025</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1027</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -40442,7 +40442,7 @@ ${portalUrl}`;
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1025</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1027</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -40730,6 +40730,388 @@ ${portalUrl}`;
             execMenu.appendChild(btn);
         }
     });
+})();
+</script>
+
+
+<script id="hzk-v1027-parameter-manual-kb">
+(function() {
+  window.HZK_PARAMETER_MANUAL_KB_V1027 = [
+    // ==================== DISHWASHERS ====================
+    {
+      id: "DW-HW320B",
+      category: "DISHWASHER",
+      categoryLabel: "เครื่องล้างจาน (Dishwasher)",
+      modelTitle: "HOSHIZAKI HW-320B PDRT (Undercounter Touch Panel)",
+      aliases: ["HW-320B", "HW320B", "HW 320B", "HW-320B PDRT", "เครื่องล้างจาน 320B"],
+      docSources: "HW-320B Service Manual",
+      passwordInfo: "• รหัสผ่าน Service Menu (OP4): กดไอคอนรูปเฟือง (Settings) ค้าง 3 วินาที → ใส่รหัส '3' (00003) → กดปุ่มเครื่องหมายถูก (✓) ค้าง 3 วินาทีเพื่อยืนยัน",
+      quickOperation: "• เปิดเครื่อง: กดปุ่ม On/Off ค้าง 3 วิ (ไฟขาวติด) → เครื่องเติมน้ำและต้มน้ำอัตโนมัติ (รอ 25–30 นาทีจนถึงอุณหภูมิโรงงาน)\n• เลือกโปรแกรมล้าง 5 ระดับ: 102 / 132 / 152 / 172 / 192 วินาที (กำลังล้าง 560 จาน/ชม. หรือ 35/27/23/20/18 ตะกร้า/ชม. ขนาดตะกร้า 50x50 ซม., สูงสุุด 39 ซม.)\n• เดรนน้ำทิ้ง: ถอดท่อน้ำล้น (Overflow/Drain plug) แล้วกดไอคอนรูปอ่างระบายน้ำ (Drain) ปั๊มเดรนทำงาน 150–176 วินาที",
+      keyParameters: [
+        { code: "P01", name: "Tank Temperature Set (อุณหภูมิน้ำล้าง)", range: "4 ~ 100°C", defaultVal: "55°C (มาตรฐาน 55–60°C)" },
+        { code: "P02", name: "Boiler Temperature Set (อุณหภูมิน้ำล้างสุดท้าย/ลวก)", range: "4 ~ 100°C", defaultVal: "80°C (มาตรฐาน 80–85°C)" },
+        { code: "P03", name: "Washing Time (เวลาล้างแต่ละโปรแกรม)", range: "1 ~ 250 วินาที", defaultVal: "P1:40s / P2:90s / P3:120s / P4:140s / P5:180s" },
+        { code: "P04 / P05", name: "Rinse Time / Waiting Time After Wash", range: "1 ~ 250 วินาที", defaultVal: "Rinse 10 วินาที / Dwell 2 วินาที" },
+        { code: "P08 / P09", name: "Detergent Time / Rinse Aid (Polish) Time", range: "1 ~ 250 วินาที", defaultVal: "Detergent 10 วินาที / Rinse Aid 10 วินาที" },
+        { code: "P10 / P11", name: "Evacuation (Drain) Time / Dirtiness Counter", range: "1~250s / 0~250 ครั้ง", defaultVal: "Drain 150 วินาที / เตือนเปลี่ยนน้ำ 15 ครั้ง" },
+        { code: "P15 / P17", name: "Tank Preheating / Start By Door", range: "0 หรือ 1", defaultVal: "P15=1 (รอน้ำร้อนก่อนล้าง), P17=1 (ปิดฝาเริ่มล้างอัตโนมัติ)" },
+        { code: "OP0 / OP4", name: "Factory Default / Password", range: "0~1 / 0~1000000", defaultVal: "OP0=1 (คืนค่าโรงงาน) / OP4=3 (รหัสผ่าน)" }
+      ],
+      installAndSpecs: "• ไฟฟ้า: 220–240V NPE 50/60Hz (5.01–5.83 kW), ฮีตเตอร์ล้าง/ลวก 1.8/4.35 kW (220V) หรือ 2.2/5.17 kW (240V), ปั๊มล้าง 0.66 kW (Cap 12.5µF), ปั๊มลวก 0.25 kW (Cap 8µF)\n• น้ำเข้า/น้ำทิ้ง: ท่อน้ำเข้า 3/4\" แรงดัน 2–4 Bar อุณหภูมิน้ำเข้าสูงสุด 50°C | ท่อน้ำทิ้ง 3/4\" (Ø28 mm) สูงจากพื้นไม่เกิน 600 mm (รุ่นมีปั๊มเดรน) หรือไม่เกิน 50 mm (รุ่นไม่มีปั๊มเดรน)\n• การบำรุงรักษา: ล้างแขนฉีดน้ำและฟิลเตอร์ทุกวัน และต้มล้างตะกรัน (Descaling) เดือนละ 1 ครั้งด้วยน้ำยาล้างตะกรัน 1.5 กก. เดินเครื่อง 30 นาทีแล้วถ่ายน้ำล้างสะอาด",
+      dealerReplyTemplate: "📋 สรุปการตั้งค่าและใช้งานเครื่องล้างจาน HOSHIZAKI HW-320B PDRT\n1️⃣ การเข้าเมนูตั้งค่าช่าง (Service Menu): กดไอคอนรูปเฟือง ⚙️ ค้าง 3 วินาที → ใส่รหัสผ่าน '3' → กด ✓ ค้าง 3 วินาที\n2️⃣ ค่ามาตรฐานโรงงาน: น้ำล้าง (P01) = 55°C | น้ำลวก Boiler (P02) = 80°C | เวลาล้าง (P03) = 40/90/120/140/180 วิ + ลวก (P04) 10 วิ | ปั๊มน้ำยาล้างจาน (P08) = 10 วิ | ปั๊มน้ำยาเคลือบเงา (P09) = 10 วิ\n3️⃣ การติดตั้ง: แรงดันน้ำเข้า 2–4 Bar (ท่อ 3/4\") ท่อน้ำทิ้ง Ø28mm สูงไม่เกิน 60 ซม. และเบรกเกอร์กันดูด RCD 30mA ครับ"
+    },
+    {
+      id: "DW-HW600A",
+      category: "DISHWASHER",
+      categoryLabel: "เครื่องล้างจาน (Dishwasher)",
+      modelTitle: "HOSHIZAKI HW-600A (Hood Type — J030 Control Board)",
+      aliases: ["HW-600A", "HW600A", "HW 600A", "J030", "เครื่องล้างจาน 600A"],
+      docSources: "HW-600A Service Manual (J030-1065)",
+      passwordInfo: "• เข้า Service Menu (01–35): ปิดเครื่องด้วยปุ่ม ON/OFF → กดปุ่ม MODE ค้างไว้แล้วกดปุ่ม ON/OFF หน้าจอจะขึ้น '01' → ใช้ ▲/▼ เลือกเมนู, กด MODE ดู/แก้ไข, กด STANDBY/CLEANING เพื่อบันทึกและออก\n• โหมดเช็กสถานะสวิตช์ (Switch Open/Closed): เปิดเครื่อง → กด ▲ + ▼ ค้าง 3 วินาที (แสดงขีด A=Backup PS, B=Door Switch, C=Booster PS, D=Wash Tank PS)",
+      quickOperation: "• รอบมาตรฐาน 60 วินาที (ล้าง 48 วิ + พัก 5 วิ + ลวก 6 วิ + พัก 1 วิ) ใช้น้ำลวก ~2.0 ลิตร/รอบ\n• เช็กอุณหภูมิน้ำลวกขณะ Standby: กดปุ่ม ▼ (ลูกศรลง) 1 ครั้ง\n• โหมดล้างตัวเอง (Self-Cleaning 'SC'): ปิดเครื่อง (ปิดประตู) → กดปุ่ม STANDBY/CLEANING ค้าง 3 วิ (วิ่ง 5 รอบอัตโนมัติ)\n• โหมดล้างตะกรัน (Continuous Wash 'SE'): ปิดเครื่อง → กด ▲ + ▼ + MODE พร้อมกันแล้วกด ON/OFF",
+      keyParameters: [
+        { code: "01 / 08", name: "Wash Cycle Time (Standard) / Multiplier", range: "1~99 (x1s/10s/60s)", defaultVal: "48 วินาที (No.01=48, No.08=1)" },
+        { code: "02 / 09", name: "Wash Cycle Time (Long) / Multiplier", range: "1~99 (x1s/10s/60s)", defaultVal: "110 วินาที (No.02=11, No.09=10)" },
+        { code: "03 / 30", name: "Rinse Cycle Time / Water Supply Delay", range: "5~12s / 0~6s", defaultVal: "6 วินาที / Delay 1 วินาที (HK: 10s / 5s)" },
+        { code: "04", name: "Wash Tank Temperature (อุณหภูมิน้ำล้าง)", range: "0 ~ 70°C", defaultVal: "58°C (HK: 63°C) — ฮีตเตอร์ตัดที่ +3°C" },
+        { code: "05", name: "Rinse Boiler Temperature (อุณหภูมิน้ำลวก)", range: "0 ~ 85°C (ห้ามเกิน 79°C)", defaultVal: "73°C (HK: 75°C) — ระวัง Vapor Lock หากตั้งเกิน 79°C" },
+        { code: "11", name: "Wash Cycle Start Initiation", range: "on / oF", defaultVal: "on (ปิดฝาเริ่มล้างอัตโนมัติ) / oF (กดปุ่มเริ่ม)" },
+        { code: "15~18", name: "Booster Energy Saving Mode", range: "on/oF, 0~22°C, 0~99m", defaultVal: "No.15=oF (ปิดประหยัดพลังงาน), No.18=73°C" },
+        { code: "31~35", name: "Error Log ย้อนหลัง 5 ลำดับ (ลบ Log: กด ▲+▼ ค้าง 3 วิ)", range: "Read/Clear", defaultVal: "A1/A2=เติมน้ำไม่ทัน, o1/o2=ระดับน้ำ Booster, H1~H4=Thermistor" }
+      ],
+      installAndSpecs: "• ไฟฟ้า: 3 Phase 4-wire 380V 50Hz (23.1 kVA / 35.0A), ฮีตเตอร์ถังล้าง 3.0 kW + ฮีตเตอร์ Booster 12.0 kW = 15.0 kW, ปั๊มล้าง 710W, ปั๊มลวก 100W\n• ขนาด: 615(W) x 718(D) x 1485(H) mm (ยกฝาสูง 1955 mm, ช่องใส่สูง 445 mm, ตะกร้า 500x500 mm) | ความจุถังล้าง 22L / Booster 7.6L\n• ค่าโอห์ม Thermistor (CN7): 0°C = 145.6–180.6 kΩ | 20°C = 56.3–67.1 kΩ | 40°C = 24.3–28.0 kΩ | 60°C = 11.5–12.8 kΩ | 80°C = 5.87–6.38 kΩ",
+      dealerReplyTemplate: "📋 ข้อมูลการตั้งค่าเครื่องล้างจาน HOSHIZAKI HW-600A (J030)\n1️⃣ วิธีเข้า Service Menu: ปิดเครื่อง (OFF) → กดปุ่ม MODE ค้างไว้แล้วกด ON/OFF (หน้าจอขึ้น 01)\n2️⃣ ค่ามาตรฐานสำคัญ:\n• เมนู 01 (เวลาล้าง Standard) = 48 วิ | เมนู 03 (เวลาลวก) = 6 วิ\n• เมนู 04 (อุณหภูมิน้ำล้าง) = 58°C | เมนู 05 (อุณหภูมิน้ำลวก) = 73°C (คู่มือแนะนำไม่ตั้งเกิน 79°C เพื่อป้องกัน Vapor Lock)\n• เมนู 11 (เริ่มล้างอัตโนมัติเมื่อปิดฝา) = on\n• เมนู 31–35 = ดู Error Log ย้อนหลัง (A1/A2 ระดับน้ำ, H1–H4 เซ็นเซอร์อุณหภูมิ) ครับ"
+    },
+    {
+      id: "DW-HW600B-SERIES",
+      category: "DISHWASHER",
+      categoryLabel: "เครื่องล้างจาน (Dishwasher)",
+      modelTitle: "HOSHIZAKI HW-600B / HW-600B3 / HW-600B3 RT (Hood Type Touch EMKO)",
+      aliases: ["HW-600B", "HW600B", "HW-600B3", "HW600B3", "HW-600B3 RT", "EMKO", "OZT_BYM_MK1", "เครื่องล้างจาน 600B"],
+      docSources: "HW-600B User Manual, HW-600B3-RT User Manual, HW-600B Service Training",
+      passwordInfo: "• เข้า Service Menu: กดไอคอนรูปเฟือง (Settings) ค้าง 3 วินาที → ใส่รหัสผ่าน '3' (00003) → กดปุ่มเครื่องหมายถูก (✓) ค้าง 3 วินาทีเพื่อยืนยัน\n• คืนค่าโรงงาน: ตั้งค่า OP0 = 1",
+      quickOperation: "• 5 โปรแกรมล้างมาตรฐาน: 52 วิ (69 ตะกร้า/ชม.), 102 วิ (35 ตะกร้า/ชม.), 132 วิ (27 ตะกร้า/ชม.), 152 วิ (23 ตะกร้า/ชม.), 192 วิ (18 ตะกร้า/ชม.)\n• อุณหภูมิทำงาน: น้ำล้าง (Tank) 55–60°C (HW-600B3 RT: 55–66°C) / น้ำลวก (Boiler) 80–85°C (ตัดป้องกัน Overheat ที่ Tank >80°C, Boiler >100°C)\n• โครงสร้างควบคุม: บอร์ด EMKO OZT_BYM_MK1 (220V 50/60Hz), Limit Thermostat Boiler S5=95°C, Tank S6=75°C",
+      keyParameters: [
+        { code: "P01 / P02", name: "Tank Temp Set / Boiler Temp Set", range: "4 ~ 100°C", defaultVal: "P01 = 55°C (55–66°C) / P02 = 80°C (80–85°C)" },
+        { code: "P03", name: "Washing Time (5 โปรแกรม)", range: "1 ~ 250 วินาที", defaultVal: "40s / 90s / 120s / 140s / 180s (+ ลวก 10s + พัก 2s)" },
+        { code: "P04 / P05 / P06", name: "Rinse Time / Waiting Time / Evac During Rinse", range: "1 ~ 250 วินาที", defaultVal: "P04=10s / P05=2s / P06=40s" },
+        { code: "P08 / P09", name: "Getting Detergent Time / Getting Polish Time", range: "1 ~ 250 วินาที", defaultVal: "P08 = 10 วินาที / P09 = 10 วินาที" },
+        { code: "P10 / P11", name: "Evacuation (Drain) Time / Dirtiness Counter", range: "1~250s / 0~250", defaultVal: "P10 = 150 วินาที / P11 = 15 ครั้ง" },
+        { code: "P15 / P17", name: "Tank Preheating / Start By Door", range: "0 หรือ 1", defaultVal: "P15=1 (รอน้ำร้อนถึงเป้า), P17=1 (ปิดฮูดเริ่มล้างทันที)" },
+        { code: "OP0 / OP3 / OP4", name: "Factory Reset / Buzzer / Password", range: "0~1 / 0~1 / Num", defaultVal: "OP0=0 (ตั้ง 1 คืนค่าโรงงาน), OP3=1, OP4=3" }
+      ],
+      installAndSpecs: "• ไฟฟ้า & เบรกเกอร์: 380–415V 3NPE 50/60Hz (9.66 kW @380V / 11.46 kW @415V), สายไฟ 5x2.5 mm² NYY, เบรกเกอร์ 3 Phase 30A–32A + กันดูด RCD 30mA สูงจากพื้น ≥120 ซม.\n• น้ำเข้า & น้ำทิ้ง: ท่อน้ำเข้า 3/4\" แรงดัน 2–4 Bar อุณหภูมิน้ำเข้า 4–50°C ความกระด้างน้ำ 0–10°fH | ท่อน้ำทิ้ง PVC Ø50 mm สูงจากพื้นไม่เกิน 5–10 ซม. (รุ่นไม่มีปั๊มเดรน) หรือท่อ Ø28 mm สูงไม่เกิน 60 ซม. (รุ่นมีปั๊มเดรน)\n• ขนาดเครื่อง: 707(W) x 778~779(D) x 1485(H) mm (ยกฮูดสูง 1955–1960 mm, ช่องใส่สูง 445 mm, ถังล้าง 22L / Boiler 7L) | ใช้งานต่อเนื่อง 4 ชม. ควรพัก 1 ชม.",
+      dealerReplyTemplate: "📋 สรุปคู่มือติดตั้งและตั้งค่าเครื่องล้างจาน HOSHIZAKI HW-600B / HW-600B3 RT\n1️⃣ การเข้า Service Menu: กดปุ่มรูปเฟือง ⚙️ ค้าง 3 วินาที → ใส่รหัสผ่าน '3' → กด ✓ ค้าง 3 วินาที\n2️⃣ ค่าตั้งโรงงาน: น้ำล้าง (P01) = 55°C | น้ำลวก Boiler (P02) = 80°C | เวลาล้าง 5 โปรแกรม (P03) = 40/90/120/140/180 วิ (+ลวก 10 วิ +พัก 2 วิ) | ปั๊มน้ำยา (P08/P09) = 10 วิ\n3️⃣ ข้อกำหนดติดตั้งหน้างาน (Installation Checklist):\n• เบรกเกอร์ 3 เฟส 30A–32A + กันดูด RCD 30mA ติดตั้งสูงจากพื้นอย่างน้อย 120 ซม. สายไฟ 5x2.5 mm² พร้อมสายดิน\n• น้ำประปา 3/4\" แรงดัน 2–4 Bar ความกระด้าง 0–10°fH อุณหภูมิน้ำเข้าไม่เกิน 50°C\n• ท่อน้ำทิ้ง PVC Ø50 mm สูงจากพื้นไม่เกิน 5–10 ซม. (หรือ 60 ซม. หากใช้ปั๊มเดรน) และต้องมีฮูดดูดไอน้ำครับ"
+    },
+
+    // ==================== ICE MACHINES ====================
+    {
+      id: "ICE-IM-SERIES",
+      category: "ICE_MACHINE",
+      categoryLabel: "เครื่องทำน้ำแข็ง (Ice Machine)",
+      modelTitle: "HOSHIZAKI IM-Series Controller (P01873-01 / P01873-02)",
+      aliases: ["IM", "IM-Series", "IM-30", "IM-45", "IM-65", "IM-100", "IM-130", "IM-240", "P01873-01", "P01873-02", "Dimple Size", "ตั้งค่าขนาดหลุมน้ำแข็ง"],
+      docSources: "HW-600B Service Training (IM-Series Controller Section p.21–24)",
+      passwordInfo: "• Service Mode (ปรับค่า No.1–No.3+): กดปุ่ม 'RESET' ค้างไว้นานกว่า 3 วินาที → หน้าจอแสดงหมายเลข '1'\n• Display Mode (ดูค่าเซ็นเซอร์/ประวัติ Error Log): ขณะเครื่องทำงาน กดปุ่ม 'UP (▲ / SERVICE 1)' ค้างไว้นานกว่า 3 วินาที → หน้าจอแสดง 'n1'",
+      quickOperation: "• รุ่นบอร์ดเก่า (P01873-01 Ver.1.8D หรือเก่ากว่า / P01873-02 Ver.1.2F หรือเก่ากว่า): มีปุ่ม RESET, UP (▲), DOWN (▼) ผู้ใช้สามารถกด ▲/▼ เพื่อปรับขนาดหลุมน้ำแข็ง (Dimple Size / No.2 Target Freeze Completion Temp) ได้ทีละ 0.5°C ในช่วง -5°C ถึง -40°C\n• รุ่นบอร์ดใหม่ (P01873-01 Ver.1.9A+ / P01873-02 Ver.1.4A+): เปลี่ยนปุ่มเป็น RESET, SERVICE 1, SERVICE 2 ล็อกไม่ให้ End User กดเปลี่ยนค่าหน้าเครื่องเอง ต้องเข้า Service Mode (กด RESET ค้าง >3 วิ)",
+      keyParameters: [
+        { code: "No. 2", name: "Target Integrated Freeze Completion Temp (ปรับความหนาน้ำแข็ง/หลุม)", range: "-5°C ~ -40°C (ปรับทีละ 0.5°C)", defaultVal: "ปรับได้ ±3°C จากค่าโรงงาน (Service Mode)" },
+        { code: "No. 3", name: "Target Integrated Freeze Completion Time (เวลาทำน้ำแข็ง)", range: "5 ~ 90 นาที (ปรับทีละ 1 นาที)", defaultVal: "ปรับได้ ±2 นาที จากค่าโรงงาน (Service Mode)" },
+        { code: "n1 / n2", name: "Freeze Cycle Time Count Up (นาที) / Completion Rate (%)", range: "Display Mode (กด UP ค้าง 3 วิ)", defaultVal: "แสดงเวลาทำน้ำแข็งปัจจุบัน (นาที) และ % ความสมบูรณ์" },
+        { code: "n3 / n4 / n6", name: "Cube Control Temp / Ambient Temp / Condenser Temp", range: "Display Mode", defaultVal: "แสดงอุณหภูมิจริงของเซ็นเซอร์ถาดน้ำแข็ง (n3), อากาศ (n4), คอนเดนเซอร์ (n6)" },
+        { code: "n5", name: "Water Temp (Presumed — อุณหภูมิน้ำเข้าโดยประมาณ)", range: "H หรือ L", defaultVal: "H = น้ำอุณหภูมิ ≥ 13°C | L = น้ำอุณหภูมิ < 13°C" },
+        { code: "h1 / h2 / h3", name: "Last Freeze Time / Number of Freeze Cycles / Total Cycles", range: "Display Mode", defaultVal: "h1=เวลารอบล่าสุด, h2/h3=จำนวนรอบสะสม (แสดงทีละ 2 หลัก)" },
+        { code: "h4 / h5 / h6", name: "Error Log / Software Version / Default Model Code", range: "00 ~ FF (Hex 256 รุ่น)", defaultVal: "h4=ประวัติ Error (E1=Freeze, E2=Defrost, EE/EF=Other), h6=รหัสรุ่น" }
+      ],
+      installAndSpecs: "• Error Code หน้าจอ IM-Series:\n  - E1 = Abnormal freeze cycle (รอบทำน้ำแข็งผิดปกติ/นานเกินกำหนด)\n  - E2 = Abnormal defrost cycle (รอบละลายน้ำแข็ง/ปลดน้ำแข็งผิดปกติ)\n  - EE / EF = Other (ความผิดปกติอื่นๆ ของบอร์ด/เซ็นเซอร์/ระบบ)\n• วิธีออกจากการตั้งค่า: ปล่อยปุ่มทิ้งไว้ 30 วินาที ระบบจะบันทึกและกลับสู่หน้าจอปกติอัตโนมัติ",
+      dealerReplyTemplate: "❄️ วิธีปรับตั้งค่าและเช็กอุณหภูมิเครื่องทำน้ำแข็ง HOSHIZAKI IM-Series (บอร์ด P01873-01 / -02)\n1️⃣ วิธีปรับขนาดหลุมน้ำแข็ง (Dimple Size / ความหนา):\n• กดปุ่ม RESET ค้างไว้ 3 วินาที (หน้าจอขึ้นเลข '1') → กดปุ่ม ▲ (SERVICE 1) เลือกเมนู '2' → กด RESET 1 ครั้ง (ตัวเลขกะพริบ) → กด ▲/▼ ปรับอุณหภูมิตัด (ทีละ 0.5°C, ลดอุณหภูมิให้ติดลบมากขึ้น = น้ำแข็งเต็มก้อน/หลุมเล็กลง) → กด RESET เพื่อบันทึก\n2️⃣ วิธีเช็กอุณหภูมิเซ็นเซอร์และประวัติ Error (Display Mode):\n• ขณะเครื่องทำงาน กดปุ่ม ▲ (UP / SERVICE 1) ค้าง 3 วินาที (ขึ้น 'n1') แล้วกด ▲/▼ เพื่อดู:\n  - n3 = อุณหภูมิเซ็นเซอร์น้ำแข็ง (Cube Control)\n  - n4 = อุณหภูมิห้อง (Ambient)\n  - n5 = อุณหภูมิน้ำ (H ≥ 13°C, L < 13°C)\n  - n6 = อุณหภูมิคอยล์ร้อน (Condenser)\n  - h4 = ประวัติ Error ย้อนหลัง (E1=Freeze, E2=Defrost, EE/EF=Other) ครับ"
+    },
+    {
+      id: "ICE-KM-FM-SERIES",
+      category: "ICE_MACHINE",
+      categoryLabel: "เครื่องทำน้ำแข็ง (Ice Machine)",
+      modelTitle: "HOSHIZAKI KM / KMD (Crescent) & FM (Flake/Nugget) Series",
+      aliases: ["KM", "KMD", "KM-Series", "FM", "FM-Series", "DCM", "เครื่องทำน้ำแข็ง KM", "เครื่องทำน้ำแข็ง FM"],
+      docSources: "Hoshizaki Standard Technical Baseline (v1026)",
+      passwordInfo: "• KM / KMD Series (Control Board DIP Switch S4): ปรับสวิตช์ S4 บนบอร์ดควบคุม (No.1–2 ปรับเวลา Freeze/Harvest, No.4–5 ปรับ Pump-out/Flush)\n• FM Series (Flake/Nugget): ตรวจสอบ LED สถานะบนบอร์ดและสวิตช์ลูกลอย (Float Switch) / เซ็นเซอร์เต็มถัง (Bin Control)",
+      quickOperation: "• KM / KMD: ควบคุมการทำน้ำแข็งด้วย Thermistor + Float Switch (S4 DIP Switch ตั้งค่ามาตรฐานจากโรงงาน)\n• FM: ระบบสว่าน (Auger) + เกียร์มอเตอร์ ตัดการทำงานอัตโนมัติเมื่อน้ำแข็งเต็มถัง (Infrared / Mechanical Bin Switch)",
+      keyParameters: [
+        { code: "KM S4 DIP 1-2", name: "Freeze / Harvest Timer & Float Switch Control", range: "ON / OFF ตามตารางรุ่น", defaultVal: "Factory Default (ห้ามปรับเปลี่ยนโดยไม่เช็กแรงดันน้ำยา)" },
+        { code: "KM S4 DIP 4-5", name: "Drain / Pump-Out Frequency (ระบบถ่ายน้ำทิ้งล้างตะกรัน)", range: "ทุก 1 / 2 / 5 / 10 รอบ", defaultVal: "ตั้งค่ามาตรฐานตามความกระด้างน้ำหน้างาน" },
+        { code: "FM Protection", name: "Gear Motor & Low Water / High Pressure Cut-out", range: "Auto / Manual Reset", defaultVal: "ตัดการทำงานเมื่อน้ำขาด, ความดันสูง หรือกระแสเกียร์เกิน" }
+      ],
+      installAndSpecs: "• แรงดันน้ำประปาเข้าเครื่อง: 0.7 – 5.5 Bar (10 – 80 PSIG), อุณหภูมิน้ำเข้า 7 – 32°C, อุณหภูมิห้อง 7 – 38°C\n• ต้องติดตั้งชุดกรองน้ำ (Water Filter) และสายดินทุกเครื่อง",
+      dealerReplyTemplate: "❄️ ข้อมูลการตั้งค่ามาตรฐานเครื่องทำน้ำแข็ง HOSHIZAKI KM/KMD และ FM Series\n• รุ่น KM/KMD: ควบคุมรอบการทำน้ำแข็งด้วย Float Switch และบอร์ดควบคุม (DIP Switch S4 ตั้งค่าเวลา Harvest และรอบ Pump-out ถ่ายน้ำทิ้ง)\n• รุ่น FM (เกล็ด/นัตเก็ต): ควบคุมการตัดเต็มถังด้วย Bin Control Sensor และระบบป้องกันมอเตอร์เกียร์/น้ำขาด\n• หากต้องการค่า DIP Switch เฉพาะรุ่นย่อย (เช่น KM-161, KM-320, FM-120, FM-300) แจ้งชื่อรุ่นเต็มหรืออัปโหลดคู่มือรุ่นนั้นเพิ่มเติมได้เลยครับ"
+    },
+
+    // ==================== REFRIGERATORS & FREEZERS ====================
+    {
+      id: "REF-DIXELL-XR06CH",
+      category: "REFRIGERATOR",
+      categoryLabel: "ตู้แช่เย็น / ตู้แช่แข็ง (Refrigerator & Freezer)",
+      modelTitle: "Dixell XR06CH-5N5S5-B (V1.4) — HFW / FTW / SRF Series",
+      aliases: ["Dixell", "XR06CH", "HFW", "HFW-77", "HFW-127", "HFW-147", "FTW", "SRF350EC", "SRF500EC", "SRF500HC"],
+      docSources: "Dixell controller in HFW.pdf (Rev. B)",
+      passwordInfo: "• ตั้งอุณหภูมิตู้ (Set Point): กด 'SET' ค้าง 3 วินาที → ปรับด้วย ▲/▼ → กด 'SET' ยืนยัน\n• เข้าเมนูช่าง (Pr2): กด 'SET + ▼' ค้าง 3 วิ เข้า Pr1 → กด 'SET + ▼' ค้างต่ออีก 7 วินาที (ไม่ต้องใช้รหัสตัวเลข)\n• ละลายน้ำแข็ง Manual: กดปุ่มรูปเกล็ดหิมะค้าง > 2 วินาที",
+      quickOperation: "• หน้ากากควบคุม: ช่วงอุณหภูมิ Refrigerator = -2°C ถึง 12°C | Freezer = -25°C ถึง -7°C\n• ตรวจอุณหภูมิคอยล์เย็น (Evap Probe): เข้าเมนู 'd2' ใน Pr1 จะแสดงค่า Live Defrost Probe Temp",
+      keyParameters: [
+        { code: "Set / Hy", name: "Set Point / Differential (ค่าต่างอุณหภูมิตัดต่อ)", range: "LS~US / 0.1~25°C", defaultVal: "HFW/FTW/SRF-EC: -20.0°C (Hy 2.5~5.0°C) | SRF500HC: -26.0°C (Hy 5.0°C)" },
+        { code: "LS / US", name: "Minimum Set Point / Maximum Set Point", range: "-55 ~ 99°C", defaultVal: "HFW: -25°C ~ -7°C | FTW: -23°C ~ -7°C | SRF500HC: -27°C ~ -15°C" },
+        { code: "ot / P2 / oE", name: "Room Probe Calib / Evap Probe Enable / Evap Calib", range: "-9.9~9.9°C / y-n", defaultVal: "ot=0.0°C (SRF500HC: -2°C), P2=y, oE=0.0°C" },
+        { code: "td / dE / id / Md", name: "Defrost Type / Stop Temp / Interval / Max Time", range: "EL-in / -50~50°C", defaultVal: "td=EL, dE=10°C (FTW:20°C, SRF500HC:15°C), id=5~6 ชม., Md=20~40 นาที" },
+        { code: "d1 / d2", name: "Read-only Live Room Probe / Live Evap Probe Temp", range: "Read Only", defaultVal: "ดูค่าอุณหภูมิเซ็นเซอร์ตู้ (d1) และเซ็นเซอร์คอยล์เย็น (d2) แบบเรียลไทม์" }
+      ],
+      installAndSpecs: "• แหล่งจ่ายไฟ: 230V~ 50-60Hz, เซ็นเซอร์ NTC 2 ตัว (Room ขา 11-12, Evap ขา 10-11), รีเลย์ Comp 16FLA (ขา 3), Fan 5A (ขา 2), Defrost 10A (ขา 7)",
+      dealerReplyTemplate: "❄️ การตั้งค่า Controller Dixell XR06CH (รุ่น HFW-77/127/147-IC, FTW, SRF)\n1️⃣ ปรับอุณหภูมิตู้: กด SET ค้าง 3 วิ → กด ▲/▼ ตั้งอุณหภูมิ (มาตรฐาน -20°C) → กด SET บันทึก\n2️⃣ เข้าเมนูช่าง (Pr2): กด SET+▼ ค้าง 3 วิ (เข้า Pr1) แล้วกด SET+▼ ค้างต่ออีก 7 วิ\n3️⃣ เช็กอุณหภูมิคอยล์เย็น (Evap): เลื่อนไปที่พารามิเตอร์ 'd2' จะโชว์อุณหภูมิคอยล์เย็นสดๆ ทันที\n4️⃣ ค่า Defrost โรงงาน: dE (ตัดละลาย) = 10°C (FTW 20°C / SRF500HC 15°C), id (รอบละลาย) = ทุก 5–6 ชม., Md = 20–40 นาทีครับ"
+    },
+    {
+      id: "REF-PVR-WR87285",
+      category: "REFRIGERATOR",
+      categoryLabel: "ตู้แช่เย็น / ตู้แช่แข็ง (Refrigerator & Freezer)",
+      modelTitle: "PVR WR-87285 — HRW / RTW / RTDW / SRC900-HL Series",
+      aliases: ["PVR", "WR-87285", "HRW", "HRW-77", "HRW-127", "HRW-147", "HRFW-127", "RTW", "RTW-120", "RTW-150", "RTW-180", "RTDW", "SRC900-HL"],
+      docSources: "PVR Electronic Temperature controller setting for HRW,RTW model_D.pdf",
+      passwordInfo: "• รหัสผ่านเข้าเมนูตั้งค่า (PS): '11' (ปรับเปลี่ยนรหัสได้ที่ PA)\n• ตั้งอุณหภูมิตู้ (SP): กด SET 1 ครั้ง → ปรับ ▲/▼ → กด SET บันทึก\n• ล็อกปุ่มกด (LP): 0 = ปลดล็อก (Unlock), 1 = ล็อกปุ่ม (Lock)",
+      quickOperation: "• ค่าตั้งอุณหภูมิมาตรฐาน (SP) = 2.0°C (ช่วง LS = -2°C ถึง HS = 12°C)\n• โหมดทำงาน (CA): 0 = Cooling with Defrost (มาตรฐาน), 1 = Cooling without Defrost, 2 = Heating",
+      keyParameters: [
+        { code: "PS / SP", name: "Password / Set Point (อุณหภูมิตู้)", range: "-99~99 / -2~12°C", defaultVal: "PS = 11 / SP = 2.0°C" },
+        { code: "P4 / P5 / P6", name: "Differential / Probe Calibration / Restart Delay", range: "0.1~20°C / -10~10°C", defaultVal: "P4 = 1.5°C (HRW) / 2.5°C (RTW), P5 = 0.0°C, P6 = 3 นาที" },
+        { code: "P7 / P8 / LO", name: "Defrost Duration / Frequency / Defrost Probe Enable", range: "0~99m / 1~31h / 0-1", defaultVal: "P7 = 60 นาที, P8 = ทุก 4 ชม., LO = 1 (เปิดใช้เซ็นเซอร์คอยล์เย็น)" },
+        { code: "L7 / L8 / L9", name: "Defrost Stop Temp / Start Temp / Start Delay", range: "-40 ~ 50°C", defaultVal: "L7 (หยุดละลาย) = 4°C, L8 (เริ่มละลาย) = -12°C (RTW: -15°C), L9 = 15~30 นาที" },
+        { code: "LP / FS", name: "Keypad Lock / Factory Reset", range: "0 หรือ 1", defaultVal: "LP = 0 (ปลดล็อก), FS = 1 (คืนค่าโรงงาน)" }
+      ],
+      installAndSpecs: "• หมายเหตุ: หากตั้ง LO = 0 เมนู d5, L7, L8, L9 จะถูกซ่อน; หากตั้ง CA = 1 ระบบละลายน้ำแข็งอัตโนมัติและปุ่ม Defrost จะไม่ทำงาน",
+      dealerReplyTemplate: "❄️ การตั้งค่า Controller PVR WR-87285 (รุ่น HRW, RTW, RTDW, SRC900-HL)\n1️⃣ ตั้งอุณหภูมิตู้: กด SET → ปรับ ▲/▼ (ค่าโรงงาน SP = 2.0°C, ช่วง -2 ถึง 12°C) → กด SET บันทึก\n2️⃣ เข้าเมนูช่าง: ใส่รหัสผ่าน PS = '11'\n3️⃣ ค่ามาตรฐานสำคัญ: P4 (Diff) = 1.5°C (HRW) / 2.5°C (RTW) | P7 (เวลาละลาย) = 60 นาที | P8 (รอบละลาย) = ทุก 4 ชม. | L7 (อุณหภูมิหยุดละลาย) = 4°C | LP = 0 (ปลดล็อกปุ่ม) ครับ"
+    },
+    {
+      id: "REF-ECS180NEO",
+      category: "REFRIGERATOR",
+      categoryLabel: "ตู้แช่เย็น / ตู้แช่แข็ง (Refrigerator & Freezer)",
+      modelTitle: "Elitech / Refulgence ECS-180neo — FT / RT / HR-MA / HF-MA Series",
+      aliases: ["ECS-180", "ECS-180neo", "ECS180", "FT", "RT", "HR-MA", "HF-MA", "HF188", "HRF-R", "Refulgence"],
+      docSources: "ECS-180neo_FT-RT Series.pdf, HR-HF-HRF-MA Parameter setting.pdf",
+      passwordInfo: "• เข้า User Menu: กด 'Set' ค้าง 3 วินาที → แสดง 'St'\n• เข้า Admin Menu (Po): กด ▼ เลือก 'Po' → กด 'Set' → ใส่รหัสผ่าน '55' → กด 'Set'\n• เช็กอุณหภูมิคอยล์เย็น (Evap Temp): กดปุ่ม '▼' (ลูกศรลง) 1 ครั้งในหน้าจอปกติ\n• สั่งละลายน้ำแข็ง Manual: กดปุ่ม 'Rst' (รูปละลายน้ำแข็ง) ค้าง 3 วินาที",
+      quickOperation: "• FT/RT Series: St = 4°C (-2~22°C), d4 = 2 ชม., d7 = 12°C\n• HF-MA (Freezer): St = -20°C (-23~-7°C), C4 = +1.0°C, d4 = 6 ชม., d7 = 30°C (HF188: 20°C)\n• HR-MA (Chiller): St = 1°C (-2~12°C), C4 = -1.5°C, d4 = 6 ชม., d7 = 20°C (HRF-R: 5°C)",
+      keyParameters: [
+        { code: "St / Po", name: "Temperature Set Value / Admin Password", range: "C5~C6 / 00~99", defaultVal: "FT/RT: 4°C | HF-MA: -20°C | HR-MA: 1°C | Password Po = 55" },
+        { code: "C1 / C4", name: "Hysteresis (Diff) / Cabinet Sensor Calibration", range: "0.5~9°C / -10~10°C", defaultVal: "C1 = 4.0°C | C4: FT/RT=0.0°C, HF-MA=+1.0°C, HR-MA=-1.5°C" },
+        { code: "d4 / d6 / d7", name: "Defrost Cycle / Max Time / Termination Temp", range: "0~90h / 1~90m / 0~50°C", defaultVal: "FT/RT: 2h/25m/12°C | HF-MA: 6h/60m/30°C (HF188:20°C) | HR-MA: 6h/60m/20°C" },
+        { code: "F1 / F3", name: "Fan Running Mode / Fan Delay After Defrost", range: "0~4 / 0~60 นาที", defaultVal: "F1 = 3 (พัดลมหยุดตอน Defrost และหน่วงเวลา F3 = 2~15 นาทีหลังละลาย)" }
+      ],
+      installAndSpecs: "• Error Codes: E1 = เซ็นเซอร์ตู้เสีย, E2 = เซ็นเซอร์คอยล์เย็นเสีย (กดปุ่ม ▼ เพื่อดู), E3 = เซ็นเซอร์คอยล์ร้อนเสีย, CH = คอยล์ร้อนอุณหภูมิสูงเกิน (cd2 = 44~55°C)",
+      dealerReplyTemplate: "❄️ การตั้งค่า Controller ECS-180neo (รุ่น FT, RT, HR-MA, HF-MA)\n1️⃣ เข้าเมนูตั้งค่าช่าง: กด 'Set' ค้าง 3 วิ (ขึ้น St) → กด ▼ ไปที่ 'Po' → กด 'Set' → ใส่รหัสผ่าน '55' → กด 'Set'\n2️⃣ เช็กอุณหภูมิคอยล์เย็น (Evap): กดปุ่ม ▼ (ลูกศรลง) 1 ครั้งในหน้าจอปกติ\n3️⃣ สั่งละลายน้ำแข็ง Manual: กดปุ่ม Rst ค้าง 3 วินาที\n4️⃣ ค่ามาตรฐานโรงงาน: FT/RT = 4°C | HR-MA = 1°C (d7=20°C) | HF-MA = -20°C (d7=30°C, HF188=20°C) ครับ"
+    },
+    {
+      id: "REF-MC-CONTROLLER",
+      category: "REFRIGERATOR",
+      categoryLabel: "ตู้แช่เย็น / ตู้แช่แข็ง (Refrigerator & Freezer)",
+      modelTitle: "MC-Controller (7 ปุ่มสัมผัส) — HR / HF / HRF MC Series (H1–H12)",
+      aliases: ["MC", "MC-Controller", "HR-MC", "HF-MC", "HRF-MC", "HRF-78", "H7", "H9", "H11", "H12", "125", "Fg1", "ฮีตเตอร์ขอบประตู"],
+      docSources: "HF-MC_Controller_Parameter.pdf, HR-HF-HRF_MC_Series_Door Switch Parameter setting.pdf, HR-HF-HRF_MC_Series_Parameter setting.pdf, MC- Controller.pdf",
+      passwordInfo: "• ปรับอุณหภูมิตู้ (St): กดปุ่มรูปประแจ (Setting) 1 ครั้ง → กด ▲/▼ → กด ↵ (Enter)\n• เข้าเมนูช่าง (Po): กดปุ่มประแจค้าง 3 วินาที (แสดง 00) → ใส่รหัส '55' (เมนูผู้ใช้/ฮีตเตอร์ขอบประตู Fg1) หรือ '125' (Manager Menu เต็มรูปแบบ) → กด ↵\n• โหลดค่าสำเร็จรูปตามรุ่น (H0–H12): กดปุ่มประแจค้าง 10 วินาที → เลือก H1~H12 → กด ↵",
+      quickOperation: "• เช็กอุณหภูมิคอยล์เย็น (Evap Temp): กดปุ่ม ▼ (ลูกศรลง) 1 ครั้ง\n• โหมดซ่อมบำรุง (Maintenance Mode): กด 'ประแจ + ▼' ค้าง 3 วินาที → กด ▲/▼ ดูค่าจริงของ ตู้ (สัญลักษณ์คอมฯ), คอยล์เย็น (สัญลักษณ์ละลายน้ำแข็ง), และคอยล์ร้อน (ไม่มีสัญลักษณ์)\n• ตรวจเช็กฮีตเตอร์ขอบประตู (Anti-condensation Fg1): 0=Manual, 1=ตามคอมฯ, 2=ทำงานตลอด, 3=ทำงานเป็นรอบ (หยุด Fg2=5 นาที, ทำงาน Fg3=10 นาที)",
+      keyParameters: [
+        { code: "H1 ~ H12", name: "Parameter Group Code (รหัสกลุ่มรุ่นมาตรฐาน)", range: "H1 ~ H12", defaultVal: "H7=HF(มีสวิตช์ประตู), H1=HF(ไม่มีสวิตช์ประตู), H9=HR(มีสวิตช์ประตู), H3=HR(ไม่มีสวิตช์ประตู), H11=HRF-78 Freezer, H6/H12=HRF-78 Chiller" },
+        { code: "St / C1", name: "Temperature Set Value / Hysteresis", range: "C5~C6 / 0.5~9°C", defaultVal: "HF/HRF-Freezer: -20°C (C1=4°C) | HR/HRF-Chiller: 1°C (C1=4°C / 2.5°C)" },
+        { code: "Fg1 / Fg2 / Fg3", name: "Door Frame Heater Mode / Off Time / On Time", range: "0~3 / 1~240 นาที", defaultVal: "Fg1 = 3 (ทำงานสลับพัก: หยุด 5 นาที / ทำงาน 10 นาที) กดปุ่มฮีตเตอร์หน้าเครื่องเปิด/ปิดได้" },
+        { code: "d4 / d6 / d7", name: "Defrost Cycle / Max Time / Termination Temp", range: "0~90h / 1~90m / 0~50°C", defaultVal: "d4 = 6 ชม. (H6/H12 Chiller = 0), d6 = 60 นาที, d7 = 10°C (H6/H12 = 5°C)" },
+        { code: "do1 / do3", name: "Door Switch Output / Polarity", range: "0~4 / 0~1", defaultVal: "รุ่นมีสวิตช์ประตู (H7/H9/H11): do1=1 (เปิดประตูพัดลมหยุด), do3=1" }
+      ],
+      installAndSpecs: "• ค่ามาตรฐานตรวจเช็กอะไหล่ (Component Check):\n  - เซ็นเซอร์ NTC (Interior / Defrost / Condenser): แช่น้ำแข็ง 0°C ต้องวัดความต้านทานได้ 25 – 30 kΩ\n  - ฮีตเตอร์ละลายน้ำแข็ง (Defrost Heater) & Sheath Heater: ค่าฉนวน (Insulation Resistance) ต้อง ≥ 1 MΩ ที่ 500V\n  - คอยล์ร้อน (Condenser Alarm): เตือน 'CH' ที่ 55°C และตัดป้องกันระบบทั้งหมดที่ 60°C",
+      dealerReplyTemplate: "❄️ การตั้งค่าและการตรวจเช็ก Controller MC-Series (หน้าจอ 7 ปุ่มสัมผัส HR/HF/HRF)\n1️⃣ รหัสผ่านเข้าตั้งค่า: กดปุ่มรูปประแจ 🔧 ค้าง 3 วินาที → ใส่ '55' (ตั้งค่าฮีตเตอร์ขอบประตู Fg1) หรือ '125' (เมนูช่างทั้งหมด) → กด ↵\n2️⃣ รหัสกลุ่มรุ่นมาตรฐาน (กดประแจค้าง 10 วิ):\n• HF (Freezer): H7 (มีสวิตช์ประตู) / H1 (ไม่มีสวิตช์ประตู) → St = -20°C\n• HR (Chiller): H9 (มีสวิตช์ประตู) / H3 (ไม่มีสวิตช์ประตู) → St = 1°C\n• HRF-78 (2 ระบบ): ช่องฟรีซ H11 (-20°C) / ช่องแช่เย็น H6 หรือ H12 (1°C)\n3️⃣ วิธีเช็กอุณหภูมิเซ็นเซอร์และฮีตเตอร์:\n• กดปุ่ม ▼ 1 ครั้ง = ดูอุณหภูมิคอยล์เย็น (Evap)\n• กด 'ประแจ + ▼' ค้าง 3 วิ (Maintenance Mode) = กด ▲/▼ ดูอุณหภูมิตู้, คอยล์เย็น และคอยล์ร้อนทีละตัว\n• ฮีตเตอร์ขอบประตู (Fg1) ค่าโรงงาน = 3 (หยุด 5 นาที / ทำงาน 10 นาที) และค่าเซ็นเซอร์ NTC ที่ 0°C = 25–30 kΩ ครับ"
+    },
+    {
+      id: "REF-ETC3000",
+      category: "REFRIGERATOR",
+      categoryLabel: "ตู้แช่เย็น / ตู้แช่แข็ง (Refrigerator & Freezer)",
+      modelTitle: "KI&BNT ETC-3000 Temperature Controller",
+      aliases: ["ETC-3000", "ETC3000", "KI&BNT"],
+      docSources: "ETC-3000.pdf",
+      passwordInfo: "• เข้า User Menu: กด 'SET' ค้าง 3 วินาที\n• เข้า Administrator Menu: กด 'SET' ค้างไว้แล้วกดปุ่ม '▼' ค้าง 10 วินาที\n• ล็อก/ปลดล็อกปุ่มกด: กด '▲ + ▼' ค้าง 10 วินาที",
+      quickOperation: "• ดูอุณหภูมิคอยล์เย็น (Defrost Temp): กดปุ่ม '▼' ในหน้าจอปกติ\n• สั่งละลายน้ำแข็ง (Forced Defrost): กดปุ่ม '▼' ค้าง 3 วินาที\n• สั่งทำความเย็นบังคับ (Forced Refrigeration): กดปุ่ม '▲' ค้าง 3 วินาที",
+      keyParameters: [
+        { code: "SEt / HY", name: "Temp Set Point / Return Difference (Diff)", range: "-45.5~110°C / 1~25°C", defaultVal: "SEt = -5.0°C (ช่วง LS -20°C ~ US +20°C), HY = 2.0°C" },
+        { code: "MdF / IdF / dtE", name: "Defrost Time / Cycle / Termination Temp", range: "0~255m / 0~120h / -45.5~49.9°C", defaultVal: "MdF = 30 นาที, IdF = 6 ชม., dtE = 10.0°C" },
+        { code: "tdF / FnC / FSt", name: "Defrost Type / Fan Mode / Fan Stop Temp", range: "EL-HtG / C-n~O-Y", defaultVal: "tdF = EL (Electric), FnC = C-n, FSt = 10.0°C" }
+      ],
+      installAndSpecs: "• ไฟฟ้า: 220VAC, รีเลย์ Comp/Def/Fan ขนาด 8A/220VAC, รองรับ COPYKEY (เสียบตอนปิดเครื่องแล้วเปิดเพื่อ Download อัตโนมัติ)",
+      dealerReplyTemplate: "❄️ การตั้งค่า Controller KI&BNT ETC-3000\n• User Menu: กด SET ค้าง 3 วิ | Admin Menu: กด SET ค้างแล้วกด ▼ ค้าง 10 วิ\n• เช็กอุณหภูมิคอยล์เย็น: กดปุ่ม ▼ 1 ครั้ง | สั่งละลายน้ำแข็ง: กด ▼ ค้าง 3 วิ | ล็อกปุ่ม: กด ▲+▼ ค้าง 10 วิ\n• ค่าโรงงาน: SEt = -5.0°C, HY = 2.0°C, รอบละลาย IdF = 6 ชม., ตัดละลาย dtE = 10.0°C ครับ"
+    }
+  ];
+
+  // ==================== UI MODAL & SEARCH ENGINE ====================
+  window.openParameterManualGuideModal = function(initialQuery) {
+    let modal = document.getElementById('hzkParamManualModalV1027');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkParamManualModalV1027';
+      modal.className = 'fixed inset-0 z-[9999] bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-y-auto';
+      modal.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[92vh] flex flex-col border border-slate-200 overflow-hidden">
+          <!-- Header -->
+          <div class="bg-gradient-to-r from-[#002B49] via-[#003E6B] to-[#005B96] text-white px-5 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-sky-400/20 border border-sky-300/30 flex items-center justify-center text-sky-200 text-lg">
+                <i class="fa-solid fa-sliders"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-base sm:text-lg leading-tight">คู่มือตั้งค่าพารามิเตอร์ &amp; User/Installation Manual (ครบทุกกลุ่มสินค้า)</h3>
+                <p class="text-[11px] text-sky-200">เครื่องล้างจาน (HW-320B, HW-600A, HW-600B/B3) • เครื่องทำน้ำแข็ง (IM, KM, FM) • ตู้แช่ (Dixell, PVR, ECS-180, MC, ETC-3000)</p>
+              </div>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkParamManualModalV1027').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-rose-500 text-white flex items-center justify-center font-bold transition">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <!-- Filter & Search Bar -->
+          <div class="bg-slate-50 border-b border-slate-200 px-5 py-3 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
+            <div class="flex flex-wrap gap-1.5" id="hzkParamCatTabs">
+              <button type="button" data-pcat="ALL" onclick="renderParameterManualList('ALL')" class="pcat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-[#002B49] text-white shadow-xs">ทั้งหมด (10 รุ่น/กลุ่ม)</button>
+              <button type="button" data-pcat="DISHWASHER" onclick="renderParameterManualList('DISHWASHER')" class="pcat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-300 hover:bg-sky-50">🍽️ เครื่องล้างจาน (HW)</button>
+              <button type="button" data-pcat="ICE_MACHINE" onclick="renderParameterManualList('ICE_MACHINE')" class="pcat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-300 hover:bg-sky-50">🧊 เครื่องทำน้ำแข็ง (IM/KM/FM)</button>
+              <button type="button" data-pcat="REFRIGERATOR" onclick="renderParameterManualList('REFRIGERATOR')" class="pcat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-300 hover:bg-sky-50">❄️ ตู้แช่เย็น/แข็ง (Controller)</button>
+            </div>
+            <div class="relative flex-1 max-w-md">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="text" id="hzkParamSearchInput" oninput="renderParameterManualList()" placeholder="ค้นหารุ่น, รหัสพารามิเตอร์, รหัสผ่าน, P01, HW-600B, IM, Dixell..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#00A3E0]">
+            </div>
+          </div>
+
+          <!-- Content Body -->
+          <div id="hzkParamManualBody" class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 bg-slate-100/70"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    if (typeof initialQuery === 'string') {
+      const inp = document.getElementById('hzkParamSearchInput');
+      if (inp) inp.value = initialQuery;
+    }
+    renderParameterManualList('ALL');
+  };
+
+  let currentParamCat = 'ALL';
+  window.renderParameterManualList = function(catOverride) {
+    if (catOverride) currentParamCat = catOverride;
+    document.querySelectorAll('#hzkParamCatTabs .pcat-btn').forEach(btn => {
+      const active = btn.getAttribute('data-pcat') === currentParamCat;
+      btn.className = active
+        ? 'pcat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-[#002B49] text-white shadow-xs'
+        : 'pcat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-300 hover:bg-sky-50';
+    });
+    const q = (document.getElementById('hzkParamSearchInput')?.value || '').trim().toLowerCase();
+    const container = document.getElementById('hzkParamManualBody');
+    if (!container) return;
+
+    const items = (window.HZK_PARAMETER_MANUAL_KB_V1027 || []).filter(item => {
+      if (currentParamCat !== 'ALL' && item.category !== currentParamCat) return false;
+      if (!q) return true;
+      const hay = [
+        item.modelTitle, item.categoryLabel, item.docSources, item.passwordInfo,
+        item.quickOperation, item.installAndSpecs, ...(item.aliases || []),
+        ...(item.keyParameters || []).map(p => `${p.code} ${p.name} ${p.defaultVal}`)
+      ].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+
+    if (items.length === 0) {
+      container.innerHTML = `<div class="bg-white rounded-xl p-8 text-center text-slate-500 text-sm border border-slate-200">ไม่พบข้อมูลที่ตรงกับคำค้นหา "<span class="font-bold text-slate-700">${q}</span>"</div>`;
+      return;
+    }
+
+    container.innerHTML = items.map((item, idx) => {
+      const badgeColor = item.category === 'DISHWASHER'
+        ? 'bg-indigo-100 text-indigo-800 border-indigo-200'
+        : (item.category === 'ICE_MACHINE'
+          ? 'bg-cyan-100 text-cyan-800 border-cyan-200'
+          : 'bg-emerald-100 text-emerald-800 border-emerald-200');
+      const rowsHtml = (item.keyParameters || []).map(p => `
+        <tr class="border-b border-slate-100 hover:bg-sky-50/50">
+          <td class="py-1.5 px-2.5 font-mono font-bold text-[#002B49] whitespace-nowrap">${p.code}</td>
+          <td class="py-1.5 px-2.5 text-slate-700 font-medium">${p.name}</td>
+          <td class="py-1.5 px-2.5 text-slate-500 whitespace-nowrap">${p.range}</td>
+          <td class="py-1.5 px-2.5 font-semibold text-sky-900">${p.defaultVal}</td>
+        </tr>
+      `).join('');
+
+      return `
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${badgeColor}">${item.categoryLabel}</span>
+                <span class="text-[11px] text-slate-500"><i class="fa-regular fa-file-pdf text-rose-500 mr-1"></i>อ้างอิง: ${item.docSources}</span>
+              </div>
+              <h4 class="font-extrabold text-sm sm:text-base text-[#002B49] mt-1">${item.modelTitle}</h4>
+            </div>
+            <button type="button" onclick="copyDealerParameterAnswer('${item.id}')" class="px-3 py-1.5 rounded-lg bg-[#00A3E0] hover:bg-[#0082B3] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition">
+              <i class="fa-regular fa-copy"></i> คัดลอกคำตอบส่ง Dealer / ลูกค้า
+            </button>
+          </div>
+          <div class="p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 text-xs">
+            <div class="lg:col-span-5 space-y-2.5">
+              <div class="p-2.5 rounded-lg bg-amber-50/80 border border-amber-200">
+                <div class="font-bold text-amber-900 mb-1"><i class="fa-solid fa-key mr-1"></i>รหัสผ่าน &amp; วิธีเข้าเมนูตั้งค่า</div>
+                <div class="text-slate-700 whitespace-pre-line leading-relaxed">${item.passwordInfo}</div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-sky-50/70 border border-sky-200">
+                <div class="font-bold text-sky-900 mb-1"><i class="fa-solid fa-hand-pointer mr-1"></i>การใช้งานหน้าเครื่อง (User Operation)</div>
+                <div class="text-slate-700 whitespace-pre-line leading-relaxed">${item.quickOperation}</div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>ข้อกำหนดติดตั้ง (Installation &amp; Spec)</div>
+                <div class="text-slate-600 whitespace-pre-line leading-relaxed">${item.installAndSpecs}</div>
+              </div>
+            </div>
+            <div class="lg:col-span-7 overflow-x-auto border border-slate-200 rounded-lg">
+              <table class="w-full text-left border-collapse text-[11px]">
+                <thead>
+                  <tr class="bg-[#002B49] text-white">
+                    <th class="py-2 px-2.5 font-bold">รหัส</th>
+                    <th class="py-2 px-2.5 font-bold">พารามิเตอร์ / ฟังก์ชัน</th>
+                    <th class="py-2 px-2.5 font-bold">ช่วงปรับตั้ง</th>
+                    <th class="py-2 px-2.5 font-bold">ค่ามาตรฐานโรงงาน (Default)</th>
+                  </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  };
+
+  window.copyDealerParameterAnswer = function(itemId) {
+    const item = (window.HZK_PARAMETER_MANUAL_KB_V1027 || []).find(x => x.id === itemId);
+    if (!item) return;
+    const text = item.dealerReplyTemplate || `${item.modelTitle}\n${item.passwordInfo}\n${item.quickOperation}`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        if (typeof showToast === 'function') showToast('✅ คัดลอกคู่มือตั้งค่าสำหรับส่ง Dealer / ลูกค้าเรียบร้อยแล้ว', 'success');
+        else alert('✅ คัดลอกข้อความเรียบร้อยแล้ว:\n\n' + text);
+      });
+    } else {
+      alert(text);
+    }
+  };
+
+  // Inject shortcut button into MANUAL_TEAM toolbar grid
+  document.addEventListener('DOMContentLoaded', function() {
+    const manualGrid = document.querySelector('[data-tb-group="MANUAL_TEAM"] .tb-btn-grid');
+    if (manualGrid && !document.getElementById('btnOpenParamManualGuideV1027')) {
+      const btn = document.createElement('button');
+      btn.id = 'btnOpenParamManualGuideV1027';
+      btn.type = 'button';
+      btn.setAttribute('data-tb-cat', 'MANUAL_TEAM');
+      btn.onclick = function() { openParameterManualGuideModal(''); };
+      btn.className = 'tb-action-item col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-sm border border-indigo-300/30';
+      btn.innerHTML = '<i class="fa-solid fa-sliders text-amber-300"></i> <span>ตั้งค่า Controller &amp; คู่มือติดตั้ง/ใช้งาน (เครื่องล้างจาน • IM/KM/FM • ตู้แช่)</span>';
+      manualGrid.insertBefore(btn, manualGrid.firstChild);
+    }
+  });
 })();
 </script>
 

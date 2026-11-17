@@ -250,6 +250,10 @@ function doPost(e) {
         return jsonOut(getMobileSmsDispatchLogs_(ss, data));
       }
 
+      if (action === 'GET_CSAT_ANALYTICS_DASHBOARD') {
+        return jsonOut(getCsatAnalyticsDashboard_(ss));
+      }
+
       if (action === 'RUN_PREDICTIVE_PM_WARRANTY_SCAN') {
         return jsonOut(runPredictivePmAndWarrantyAlerts_());
       }
@@ -7454,4 +7458,40 @@ function getMobileSmsDispatchLogs_(ss, data) {
     });
   }
   return { status: 'ok', rows: rows };
+}
+
+
+function getCsatAnalyticsDashboard_(ss) {
+  var sheet = ss.getSheetByName('Customer_CSAT_Ratings');
+  var rows = [];
+  var sum = 0;
+  var dist = { '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 };
+  if (sheet && sheet.getLastRow() >= 2) {
+    var lastRow = sheet.getLastRow();
+    var startRow = Math.max(2, lastRow - 199);
+    var vals = sheet.getRange(startRow, 1, lastRow - startRow + 1, 6).getValues();
+    for (var i = vals.length - 1; i >= 0; i--) {
+      var r = vals[i];
+      var score = Math.max(1, Math.min(5, Number(r[1]) || 5));
+      sum += score;
+      dist[String(score)] = (dist[String(score)] || 0) + 1;
+      rows.push({
+        jobNo: String(r[0] || ''),
+        rating: score,
+        customer: String(r[2] || ''),
+        lineUserId: String(r[3] || ''),
+        ratedAt: String(r[4] || ''),
+        comment: String(r[5] || '')
+      });
+    }
+  }
+  var count = rows.length;
+  var avg = count > 0 ? Number((sum / count).toFixed(2)) : 5.0;
+  return {
+    status: 'ok',
+    totalResponses: count,
+    averageScore: avg,
+    distribution: dist,
+    recentRatings: rows
+  };
 }

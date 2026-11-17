@@ -38419,5 +38419,199 @@ try {
 })();
 </script>
 
+
+
+<!-- ============================================================================
+     CUSTOMER CSAT & 7-DAY POST-SERVICE QUALITY RADAR MODAL (v1021-CSAT-RADAR)
+     ============================================================================ -->
+<div id="customerCsatRadarModal" class="hidden fixed inset-0 bg-black/70 z-[95] flex items-center justify-center p-2 sm:p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90dvh] flex flex-col overflow-hidden border border-slate-200">
+        <div class="bg-[#002B49] text-white px-4 py-3 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+                <i class="fa-solid fa-star text-amber-400 text-lg"></i>
+                <div class="truncate">
+                    <div class="font-extrabold text-sm sm:text-base truncate">เรดาร์ความพึงพอใจลูกค้า &amp; ติดตามผลหลังซ่อม 7 วัน (CSAT Quality Radar)</div>
+                    <div class="text-[11px] text-sky-200 truncate">คะแนนประเมิน 1–5 ดาวจาก LINE OA / Customer Portal · แจ้งเตือนเคสต่ำกว่า 3 ดาว</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button type="button" onclick="refreshCustomerCsatRadar(true)" class="bg-[#00A3E0] hover:bg-sky-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg inline-flex items-center gap-1">
+                    <i class="fa-solid fa-arrows-rotate"></i> <span>ซิงค์จาก Cloud</span>
+                </button>
+                <button type="button" onclick="document.getElementById('customerCsatRadarModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 inline-flex items-center justify-center text-lg font-black">&times;</button>
+            </div>
+        </div>
+
+        <div class="p-3 bg-sky-50/80 border-b border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <div class="bg-white border border-sky-200 rounded-xl p-2.5 text-center">
+                <div class="text-[10px] font-bold text-slate-500">คะแนนเฉลี่ยรวม (CSAT)</div>
+                <div id="csatAvgScoreVal" class="text-lg font-black text-[#002B49] mt-0.5">5.00 / 5.0</div>
+            </div>
+            <div class="bg-white border border-emerald-200 rounded-xl p-2.5 text-center">
+                <div class="text-[10px] font-bold text-slate-500">จำนวนผู้ประเมินทั้งหมด</div>
+                <div id="csatTotalCountVal" class="text-lg font-black text-emerald-700 mt-0.5">0 ราย</div>
+            </div>
+            <div class="bg-white border border-amber-200 rounded-xl p-2.5 text-center">
+                <div class="text-[10px] font-bold text-slate-500">ระดับ 5 ดาว (พึงพอใจสูงสุด)</div>
+                <div id="csatFiveStarPctVal" class="text-lg font-black text-amber-600 mt-0.5">100%</div>
+            </div>
+            <div class="bg-white border border-rose-200 rounded-xl p-2.5 text-center">
+                <div class="text-[10px] font-bold text-slate-500">เคสเฝ้าระวัง (&lt; 3 ดาว)</div>
+                <div id="csatLowAlertCountVal" class="text-lg font-black text-rose-600 mt-0.5">0 เคส</div>
+            </div>
+        </div>
+
+        <div class="p-3 border-b border-slate-200 flex flex-col sm:flex-row gap-2 items-stretch sm:items-center justify-between text-xs bg-white">
+            <input type="text" id="csatSearchInput" oninput="renderCustomerCsatRadarList()" placeholder="ค้นหาเลขที่ใบงาน, ชื่อลูกค้า, หรือความคิดเห็น..." class="flex-1 border border-slate-300 rounded-lg px-3 py-1.5 bg-white text-slate-800 focus:outline-none focus:border-[#00A3E0]">
+            <select id="csatStarFilterSelect" onchange="renderCustomerCsatRadarList()" class="border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 font-semibold">
+                <option value="ALL">ทุกคะแนนดาว (1–5 ดาว)</option>
+                <option value="LOW">⚠️ เฉพาะเคสต่ำกว่า 3 ดาว</option>
+                <option value="5">⭐⭐⭐⭐⭐ 5 ดาว</option>
+                <option value="4">⭐⭐⭐⭐ 4 ดาว</option>
+            </select>
+        </div>
+
+        <div class="overflow-y-auto flex-1 p-3 bg-slate-50">
+            <div id="customerCsatRadarListBody" class="space-y-2 text-xs"></div>
+        </div>
+    </div>
+</div>
+
+<script id="v1021-csat-radar-logic">
+(function() {
+    const CSAT_LOCAL_KEY = 'hoshizaki_csat_ratings_v1021';
+
+    function loadLocalCsat_() {
+        try {
+            const raw = localStorage.getItem(CSAT_LOCAL_KEY);
+            const parsed = raw ? JSON.parse(raw) : [];
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveLocalCsat_(rows) {
+        try {
+            localStorage.setItem(CSAT_LOCAL_KEY, JSON.stringify((rows || []).slice(0, 250)));
+        } catch (e) {}
+    }
+
+    window.openCustomerCsatRadarModal = function() {
+        const modal = document.getElementById('customerCsatRadarModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        renderCustomerCsatRadarList();
+        refreshCustomerCsatRadar(false);
+    };
+
+    window.refreshCustomerCsatRadar = async function(notify) {
+        const gasUrl = (typeof getActiveGasWebAppUrl === 'function' ? getActiveGasWebAppUrl() : localStorage.getItem('hoshizaki_gas_url')) || '';
+        if (!gasUrl || !navigator.onLine) {
+            if (notify && typeof showToast === 'function') showToast('ℹ️ แสดงผลคะแนน CSAT ล่าสุดในเครื่อง');
+            return;
+        }
+        try {
+            const secret = localStorage.getItem('hoshizaki_api_secret') || '';
+            const res = await fetch(gasUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'GET_CSAT_ANALYTICS_DASHBOARD', apiSecret: secret })
+            });
+            const json = await res.json();
+            if (json && json.status === 'ok' && Array.isArray(json.recentRatings)) {
+                saveLocalCsat_(json.recentRatings);
+                renderCustomerCsatRadarList();
+                if (notify && typeof showToast === 'function') showToast(`✅ ซิงค์ผลประเมิน CSAT สำเร็จ (${json.totalResponses} รายการ)`);
+            }
+        } catch (e) {
+            if (notify && typeof showToast === 'function') showToast('⚠️ ไม่สามารถเชื่อมต่อ Cloud ได้ แสดงข้อมูลในเครื่อง');
+        }
+    };
+
+    window.renderCustomerCsatRadarList = function() {
+        const wrap = document.getElementById('customerCsatRadarListBody');
+        if (!wrap) return;
+        const all = loadLocalCsat_();
+        const total = all.length;
+        const sum = all.reduce((acc, r) => acc + (Number(r.rating) || 5), 0);
+        const avg = total > 0 ? (sum / total).toFixed(2) : '5.00';
+        const fiveCount = all.filter(r => Number(r.rating) === 5).length;
+        const fivePct = total > 0 ? Math.round((fiveCount / total) * 100) : 100;
+        const lowCount = all.filter(r => Number(r.rating) < 3).length;
+
+        const elAvg = document.getElementById('csatAvgScoreVal');
+        const elTot = document.getElementById('csatTotalCountVal');
+        const elFive = document.getElementById('csatFiveStarPctVal');
+        const elLow = document.getElementById('csatLowAlertCountVal');
+        if (elAvg) elAvg.textContent = `${avg} / 5.0`;
+        if (elTot) elTot.textContent = `${total} ราย`;
+        if (elFive) elFive.textContent = `${fivePct}%`;
+        if (elLow) elLow.textContent = `${lowCount} เคส`;
+
+        const q = (document.getElementById('csatSearchInput')?.value || '').trim().toLowerCase();
+        const filter = document.getElementById('csatStarFilterSelect')?.value || 'ALL';
+        const filtered = all.filter(r => {
+            const sc = Number(r.rating) || 5;
+            if (filter === 'LOW' && sc >= 3) return false;
+            if ((filter === '5' || filter === '4') && sc !== Number(filter)) return false;
+            if (!q) return true;
+            return [r.jobNo, r.customer, r.comment].some(v => String(v || '').toLowerCase().includes(q));
+        });
+
+        if (filtered.length === 0) {
+            wrap.innerHTML = `<div class="text-center py-8 text-slate-400 font-medium">ยังไม่มีรายการประเมิน CSAT ในเงื่อนไขที่เลือก</div>`;
+            return;
+        }
+
+        wrap.innerHTML = filtered.map(r => {
+            const sc = Math.max(1, Math.min(5, Number(r.rating) || 5));
+            const stars = '⭐'.repeat(sc);
+            const badgeCls = sc < 3 ? 'bg-rose-100 text-rose-800 border-rose-300' : 'bg-emerald-100 text-emerald-800 border-emerald-300';
+            const safeJob = String(r.jobNo || 'N/A').replace(/</g, '&lt;');
+            const safeCust = String(r.customer || 'ลูกค้า').replace(/</g, '&lt;');
+            const safeComment = String(r.comment || '-').replace(/</g, '&lt;');
+            const safeTime = String(r.ratedAt || '').replace(/</g, '&lt;');
+            return `
+            <div class="bg-white border border-slate-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="space-y-1 min-w-0">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="bg-[#002B49] text-white font-bold px-2 py-0.5 rounded text-[11px]">${safeJob}</span>
+                        <span class="font-bold text-slate-900">${safeCust}</span>
+                        <span class="border ${badgeCls} font-bold px-2 py-0.5 rounded-full text-[11px]">${stars} (${sc}/5)</span>
+                        <span class="text-[10.5px] text-slate-400">${safeTime}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-600">${safeComment}</div>
+                </div>
+            </div>`;
+        }).join('');
+    };
+
+    // Inject menu item into Top-Right Executive Report Dropdown Menu (maintaining Top-Right Clean Header architecture)
+    document.addEventListener('DOMContentLoaded', function() {
+        const execMenu = document.getElementById('topExecutiveReportDropdownMenu');
+        if (execMenu && !document.getElementById('btnMenuCustomerCsatRadar')) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.id = 'btnMenuCustomerCsatRadar';
+            btn.onclick = function() {
+                if (typeof closeTopExecutiveReportDropdown === 'function') closeTopExecutiveReportDropdown();
+                window.openCustomerCsatRadarModal();
+            };
+            btn.className = 'w-full text-left px-2.5 py-2 rounded-lg hover:bg-emerald-50 transition flex items-start gap-2 group mt-0.5';
+            btn.innerHTML = `
+                <span class="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
+                    <i class="fa-solid fa-star text-[11px]"></i>
+                </span>
+                <div>
+                    <div class="font-bold text-slate-900 group-hover:text-emerald-700">เรดาร์ความพึงพอใจลูกค้า (CSAT 1–5 ดาว)</div>
+                    <div class="text-[10px] text-slate-500">คะแนนประเมินจาก LINE OA &amp; ติดตามผลหลังซ่อม 7 วัน</div>
+                </div>`;
+            execMenu.appendChild(btn);
+        }
+    });
+})();
+</script>
+
 </body>
 </html>

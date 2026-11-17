@@ -678,6 +678,18 @@
             #universalModalRedCloseBar { display: none !important; }
         }
     </style>
+
+    <script id="hzk-global-safety-helpers">
+    window.escapeHtml = window.escapeHtml || function(str) {
+        return String(str == null ? '' : str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    };
+    </script>
+    
 </head>
 <body class="p-2 sm:p-4 md:p-6 pb-24 sm:pb-6 min-h-screen">
     <!-- v19.0 Universal Top-Right Red CLOSE Button for All Popups -->
@@ -30853,23 +30865,7 @@ Defect: ${defectText}`;
     </div>
 </div>
 
-<!-- Corporate Enterprise Footer (v1013) -->
-<footer class="no-print max-w-4xl mx-auto mt-6 mb-4 text-center text-[11px] text-slate-500 border-t border-slate-200 pt-3">
-    <div>
-        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1022 ·
-        <span onclick="triggerCreatorCreditEasterEgg()" class="cursor-pointer underline decoration-dotted hover:text-hoshizaki-blue font-semibold">Service Management System</span>
-        · For Internal Use Only
-    </div>
-    <div class="mt-1 flex flex-wrap justify-center gap-2">
-        <button type="button" onclick="openCompanyDirectoryManagerModal()" class="text-hoshizaki-darkblue hover:underline font-semibold">ทำเนียบบุคลากร (Phase 1 Active)</button>
-        <span>•</span>
-        <button type="button" onclick="openServiceKpiDashboardModal()" class="text-emerald-700 hover:underline font-semibold">Service KPI &amp; FTFR</button>
-        <span>•</span>
-        <button type="button" onclick="openLiveTechGpsRadarModal()" class="text-sky-700 hover:underline font-semibold">Live Fleet GPS Radar</button>
-        <span>•</span>
-        <button type="button" onclick="openSystemDiagnosticModal()" class="text-amber-700 hover:underline font-semibold">System Self-Diagnostic &amp; Auto-Heal</button>
-    </div>
-</footer>
+
 
 <script id="v1013-enterprise-logic">
 (function() {

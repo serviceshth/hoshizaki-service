@@ -1,0 +1,87 @@
+<!-- =========================================================================
+     ส่วนที่ 1: วางใน <head> ของ index.html (แทนที่ <title> และ <link rel="manifest"> เดิม)
+     ========================================================================= -->
+<title>HOSHIZAKI Service Management System</title>
+<link rel="manifest" href="/hoshizaki-service-management-system/manifest.json">
+<meta name="application-name" content="HOSHIZAKI Service Management System">
+<meta name="apple-mobile-web-app-title" content="HOSHIZAKI SMS">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#002B49">
+
+<meta property="og:site_name" content="HOSHIZAKI (THAILAND) LIMITED">
+<meta property="og:title" content="HOSHIZAKI Service Management System">
+<meta property="og:description" content="ระบบบริหารจัดการงานบริการและอะไหล่ภาคสนาม บริษัท โฮชิซากิ (ประเทศไทย) จำกัด">
+<meta property="og:url" content="https://serviceshth.github.io/hoshizaki-service-management-system/">
+<meta property="og:type" content="website">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+<script>
+// ล้างพารามิเตอร์ ?v=... ออกจากแถบ Address Bar อัตโนมัติเพื่อให้ลิงก์สะอาดตลอดเวลา
+(function cleanTrackingQueryFromUrl() {
+    try {
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('v')) {
+            url.searchParams.delete('v');
+            const cleanUrl = url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '') + url.hash;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+    } catch (e) {}
+})();
+</script>
+
+<!-- =========================================================================
+     ส่วนที่ 2: ปุ่มเครื่องมือหลักในแถบ #toolbarActions ของ index.html
+     ========================================================================= -->
+<button type="button" onclick="openLiveTechGpsRadarModal()" class="bg-rose-700 hover:bg-rose-800 active:scale-95 text-white text-xs px-3 py-1.5 rounded-lg font-extrabold shadow-xs inline-flex items-center gap-1.5">
+    <i class="fa-solid fa-location-crosshairs text-amber-300 animate-pulse"></i> <span>Live GPS ช่าง</span>
+</button>
+<button type="button" onclick="openTroubleshootingWizardModal()" class="bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs px-3 py-1.5 rounded-lg font-extrabold shadow-xs inline-flex items-center gap-1.5">
+    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>คู่มือเช็ก Error Code</span>
+</button>
+<button type="button" onclick="openQuickEstimateCalculatorModal()" class="bg-teal-700 hover:bg-teal-800 active:scale-95 text-white text-xs px-3 py-1.5 rounded-lg font-extrabold shadow-xs inline-flex items-center gap-1.5">
+    <i class="fa-solid fa-calculator"></i> <span>ประเมินค่าซ่อมเบื้องต้น</span>
+</button>
+<button type="button" onclick="openServiceKpiDashboardModal()" class="bg-indigo-700 hover:bg-indigo-800 active:scale-95 text-white text-xs px-3 py-1.5 rounded-lg font-extrabold shadow-xs inline-flex items-center gap-1.5">
+    <i class="fa-solid fa-chart-line text-amber-300"></i> <span>Service KPI &amp; อะไหล่เสียบ่อย</span>
+</button>
+<button type="button" onclick="openCompanyDirectoryManagerModal()" class="bg-slate-700 hover:bg-slate-800 active:scale-95 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow-xs inline-flex items-center gap-1.5">
+    <i class="fa-solid fa-address-book text-amber-300"></i> <span>รายชื่อพนักงาน &amp; เฟสแผนก</span>
+</button>
+
+<!-- =========================================================================
+     ส่วนที่ 3: โมดูลทั้งหมดสำหรับวางต่อท้ายใน index.html (ก่อนแท็ก </body>)
+     ========================================================================= -->
+<script>
+const HZK_COMPANY_DIRECTORY = [
+    { id: 'suzuki', name: 'Mr. Daisuke Suzuki', nickName: 'Suzuki', position: 'Managing Director / GM Accounting and Admin', unit: 'Management', email: 'suzuki@hoshizaki.co.th', phone: '0889855979', telExt: '', isDispatcher: false, isFieldTech: false },
+    { id: 'pawat', name: 'Mr. Pawat Warongtheradet', nickName: 'Prince', position: 'Service Center Staff', unit: 'Service Center', email: 'pawat@hoshizaki.co.th', phone: '0995081908', telExt: '', isDispatcher: false, isFieldTech: false },
+    { id: 'kanokwan', name: 'Ms. Kanokwan Treesukol', nickName: 'Kanokwan', position: 'Administration Manager', unit: 'Admin Unit', email: 'kanokwan@hoshizaki.co.th', phone: '0971356304', telExt: '02-005-9980-83 ext. 03', isDispatcher: false, isFieldTech: false },
+    { id: 'nattapong', name: 'Mr. Nattapong Chataram', nickName: 'Nattapong', position: 'Senior Administration Staff', unit: 'Admin Unit', email: 'nattapong@hoshizaki.co.th', phone: '0917727423', telExt: '02-005-9980-83 ext. 01', isDispatcher: false, isFieldTech: false },
+    { id: 'chayanin', name: 'Mr. Chayanin Kuptrakul', nickName: 'Chayanin', position: 'Administration Staff', unit: 'Admin Unit', email: 'chayanin@hoshizaki.co.th', phone: '', telExt: '', isDispatcher: false, isFieldTech: false },
+    { id: 'waraporn', name: 'Ms. Waraporn Kianthong', nickName: 'Waraporn', position: 'Accounting Manager', unit: 'Accounting Unit', email: 'waraporn@hoshizaki.co.th', phone: '0936455623', telExt: '02-005-9980-83 ext. 10', isDispatcher: false, isFieldTech: false },
+    { id: 'duangkamon', name: 'Ms. Duangkamon Tantayanon', nickName: 'Duangkamon', position: 'Senior Accounting Staff', unit: 'Accounting Unit', email: 'duangkamon@hoshizaki.co.th', phone: '0813728190', telExt: '02-005-9980-83 ext. 12', isDispatcher: false, isFieldTech: false },
+    { id: 'witharat', name: 'Ms. Witharat Riangpha', nickName: 'Witharat', position: 'Accounting Staff', unit: 'Accounting Unit', email: 'witharat@hoshizaki.co.th', phone: '0959594734', telExt: '02-005-9980-83 ext. 11', isDispatcher: false, isFieldTech: false },
+    { id: 'kulathida', name: 'Ms. Kulathida Charoenying', nickName: 'Kulathida', position: 'Deputy Sales Manager', unit: 'Sales Unit', email: 'kulathida@hoshizaki.co.th', phone: '0968983388', telExt: '', isDispatcher: false, isFieldTech: false },
+    { id: 'janyaluck', name: 'Ms. Janyaluck Paithaisong', nickName: 'Janyaluck', position: 'Senior Sales Staff', unit: 'Sales Unit', email: 'janyaluck@hoshizaki.co.th', phone: '0909720947', telExt: '', isDispatcher: false, isFieldTech: false },
+    { id: 'ketsaraporn', name: 'Ms. Ketsaraporn Porjai', nickName: 'Ketsaraporn', position: 'Sales Staff', unit: 'Sales Unit', email: 'ketsaraporn@hoshizaki.co.th', phone: '0968043988', telExt: '', isDispatcher: false, isFieldTech: false },
+    { id: 'taksaon', name: 'Ms. Taksaon Tipsrisombat', nickName: 'Taksaon', position: 'Marketing Unit Manager', unit: 'Marketing Unit', email: 'taksaon@hoshizaki.co.th', phone: '0917672092', telExt: '02-005-9980-83 ext. 21', isDispatcher: false, isFieldTech: false },
+    { id: 'khajornyot', name: 'Mr. Khajornyot Jewkrang', nickName: 'Khajornyot', position: 'Marketing Staff', unit: 'Marketing Unit', email: 'khajornyot@hoshizaki.co.th', phone: '0638211294', telExt: '', isDispatcher: false, isFieldTech: false },
+    { id: 'thanakrit', name: 'Mr. Thanakrit Chanmokonpanit', nickName: 'Tae', position: 'Services Unit Manager', unit: 'Service Unit', email: 'thanakrit@hoshizaki.co.th', phone: '0968043989', telExt: '02-005-9980-83 ext. 31', isDispatcher: true, isFieldTech: false },
+    { id: 'noparin', name: 'Mr. Noparin Homhoul', nickName: 'Rinny', position: 'Deputy Services Unit Manager', unit: 'Service Unit', email: 'noparin@hoshizaki.co.th', phone: '0972305941', telExt: '02-005-9980-83 ext. 60', isDispatcher: true, isFieldTech: true },
+    { id: 'surin_s', name: 'Mr. Surin Sarawong', nickName: 'Rin', position: 'Senior Services Staff', unit: 'Service Unit', email: 'surin@hoshizaki.co.th', phone: '0917672018', telExt: '', isDispatcher: true, isFieldTech: true },
+    { id: 'nirun', name: 'Mr. Nirun Sornrat', nickName: 'Pui', position: 'Services Staff', unit: 'Service Unit', email: 'nirun@hoshizaki.co.th', phone: '0917672038', telExt: '', isDispatcher: false, isFieldTech: true },
+    { id: 'wanwipha', name: 'Ms. Wanwipha Nakamrod', nickName: 'Oh', position: 'Services Admin Staff', unit: 'Service Unit', email: 'wanwipha@hoshizaki.co.th', phone: '0938278132', telExt: '02-005-9980-83 ext. 30', isDispatcher: true, isFieldTech: false },
+    { id: 'surin_t', name: 'Mr. Surin Tharapai', nickName: 'Beer', position: 'Services Staff', unit: 'Service Unit', email: 'surin.t@hoshizaki.co.th', phone: '0638655442', telExt: '', isDispatcher: false, isFieldTech: true },
+    { id: 'jeerapan', name: 'Mr. Jeerapan Phrasawang', nickName: 'Ceasar', position: 'Services Staff', unit: 'Service Unit', email: 'jeerapan@hoshizaki.co.th', phone: '0917672079', telExt: '', isDispatcher: true, isFieldTech: true },
+    { id: 'suleewan', name: 'Ms. Suleewan Siripirom', nickName: 'Suleewan', position: 'Japanese Corporate Staff', unit: 'Japanese Corporate Unit', email: 'suleewan@hoshizaki.co.th', phone: '0638108586', telExt: '', isDispatcher: false, isFieldTech: false },
+    { id: 'furujo', name: 'Mr. Naoki Furujo', nickName: 'Furujo', position: 'Senior Sales Staff (Effective 1/7/2025)', unit: 'Japanese Corporate Unit', email: 'furujo@hoshizaki.co.th', phone: '0641484245', telExt: '', isDispatcher: false, isFieldTech: false }
+];
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/hoshizaki-service-management-system/sw.js').catch(() => {});
+    });
+}
+</script>

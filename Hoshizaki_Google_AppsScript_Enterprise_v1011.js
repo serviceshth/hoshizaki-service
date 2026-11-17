@@ -4616,15 +4616,47 @@ function saveBackofficeSnapshotToDrive(snapshotObj) {
   var snapIter = root.getFoldersByName('_BACKOFFICE_SNAPSHOTS');
   var snapFolder = snapIter.hasNext() ? snapIter.next() : root.createFolder('_BACKOFFICE_SNAPSHOTS');
 
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
   var dateTag = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd');
   var fileName = 'Hoshizaki_Backoffice_Snapshot_' + dateTag + '.json';
+  var jsonText = JSON.stringify(snapshotObj || {});
 
   var existing = snapFolder.getFilesByName(fileName);
   while (existing.hasNext()) {
     existing.next().setTrashed(true);
   }
-  var file = snapFolder.createFile(fileName, JSON.stringify(snapshotObj), MimeType.PLAIN_TEXT);
-  return file.getUrl();
+  var file = snapFolder.createFile(fileName, jsonText, MimeType.PLAIN_TEXT);
+  var fileUrl = file.getUrl();
+
+  // Also record into Google Sheet tab "System_Auto_Backup_Log" + "JSON_Backup_Vault" so JSON backup is directly visible & restorable from Google Sheets!
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var counts = (snapshotObj && snapshotObj.recordCounts) ? snapshotObj.recordCounts : {};
+    var summaryStr = 'Jobs: ' + (counts.jobs || 0) + ', QT: ' + (counts.quotations || 0) + ', Legacy: ' + (counts.legacy || 0) + ', Outsource: ' + (counts.outsourceReports || 0);
+
+    var logSheet = ss.getSheetByName('System_Auto_Backup_Log');
+    if (!logSheet) {
+      logSheet = ss.insertSheet('System_Auto_Backup_Log');
+      logSheet.getRange(1, 1, 1, 6).setValues([['Backup Timestamp', 'Backup Type', 'File Name', 'Summary / Counts', 'JSON Size (KB)', 'Google Drive JSON URL']])
+        .setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+      logSheet.setFrozenRows(1);
+    }
+    logSheet.appendRow([nowStr, 'AUTO_PWA_JSON_SNAPSHOT', fileName, summaryStr, (jsonText.length / 1024).toFixed(1) + ' KB', fileUrl]);
+
+    var vaultSheet = ss.getSheetByName('JSON_Backup_Vault');
+    if (!vaultSheet) {
+      vaultSheet = ss.insertSheet('JSON_Backup_Vault');
+      vaultSheet.getRange(1, 1, 1, 5).setValues([['Date Tag', 'Updated At', 'Summary', 'Drive JSON URL', 'JSON Payload (First 45,000 chars)']])
+        .setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+      vaultSheet.setFrozenRows(1);
+    }
+    var rowIdx = findRowByExactKey(vaultSheet, 1, dateTag);
+    var vRow = [dateTag, nowStr, summaryStr, fileUrl, jsonText.substring(0, 45000)];
+    if (rowIdx >= 2) vaultSheet.getRange(rowIdx, 1, 1, 5).setValues([vRow]);
+    else vaultSheet.appendRow(vRow);
+  } catch (eSheet) {}
+
+  return fileUrl;
 }
 
 function readLatestBackofficeSnapshotFromDrive() {

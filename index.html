@@ -21079,34 +21079,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1021) -->
-    <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
-        <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
-            <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-sky-800 flex-shrink-0">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-hoshizaki-blue/20 border border-hoshizaki-blue flex items-center justify-center text-sky-300">
-                        <i class="fa-solid fa-barcode text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-sm sm:text-base leading-tight">ประวัติเครื่องแบบเต็มหน้าจอ (Serial 360° Smart Dossier)</h3>
-                        <p class="text-[11px] text-sky-200">แสดงสุขภาพเครื่อง สถานะประกัน เตือนซ่อมซ้ำ ข้อมูลซื้อขาย ลูกค้า ใบ Service Job และใบเสนอราคา (ใหม่ไปเก่า)</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5 w-full sm:w-auto">
-                    <input type="text" id="serial360SearchInput" list="hoshizakiSerialsList" onkeydown="if(event.key==='Enter'){event.preventDefault();openSerial360FullScreenModal(this.value);}" placeholder="พิมพ์ Serial No. เช่น H10638J..." class="flex-1 sm:w-56 px-3 py-1.5 rounded-lg text-xs font-bold text-hoshizaki-navy bg-white uppercase focus:outline-none">
-                    <button type="button" onclick="openSerial360FullScreenModal(document.getElementById('serial360SearchInput')?.value || '')" class="bg-hoshizaki-blue hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-xs">
-                        <i class="fa-solid fa-magnifying-glass mr-1"></i>ค้นหา
-                    </button>
-                    <button type="button" onclick="document.getElementById('serial360FullScreenModal').classList.add('hidden')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
-                        <i class="fa-solid fa-xmark mr-1"></i>ปิดเต็มจอ
-                    </button>
-                </div>
-            </div>
-            <div id="serial360FullScreenBody" class="flex-1 overflow-y-auto p-3 sm:p-5 bg-slate-50 space-y-4 text-xs">
-                <div class="text-center text-gray-400 py-12">กรุณาระบุ Serial Number เพื่อแสดงข้อมูลเครื่อง ประวัติซ่อม และใบเสนอราคา</div>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- 1-Click Copy Google Apps Script Code Viewer Modal (Top-Left Copy Button - v1011) -->
     <div id="appsScriptCodeViewerModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[95] flex items-center justify-center p-2 sm:p-4 no-print">
@@ -37476,6 +37449,193 @@ try {
                 window.closePmSuiteDropdown();
                 window.closeOutsourceHubDropdown();
             }
+        });
+    })();
+    </script>
+
+    <script id="hzk-deep-scan-fixes-and-auto-json-sheet-backup">
+    (function() {
+        // =====================================================================
+        // 1. RECEIPT / QUOTATION EXPORT HELPERS (Fixed from Deep-Scan)
+        // =====================================================================
+        window.openReceiptInNewWindow = function() {
+            const el = document.getElementById('receiptContainer');
+            if (!el) return;
+            const win = window.open('', '_blank');
+            if (!win) {
+                if (typeof showToast === 'function') showToast('⚠️ กรุณาอนุญาต Pop-up เพื่อเปิดหน้าต่างพิมพ์ PDF ครับ');
+                return;
+            }
+            const docTitle = (document.getElementById('recOfferNo')?.textContent || 'HOSHIZAKI_DOCUMENT').trim();
+            win.document.open();
+            win.document.write(`<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>${docTitle}</title>
+                <script src="https://cdn.tailwindcss.com"><\/script>
+                <style>body{font-family:sans-serif;padding:16px;background:#fff}@media print{body{padding:0}}</style>
+                </head><body onload="setTimeout(()=>window.print(),450)">${el.outerHTML}</body></html>`);
+            win.document.close();
+        };
+
+        window.downloadReceiptPDF = function() {
+            const el = document.getElementById('receiptContainer');
+            if (!el) return;
+            const docNo = (document.getElementById('recOfferNo')?.textContent || 'HOSHIZAKI_QT').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+            if (typeof html2pdf !== 'undefined') {
+                html2pdf().set({
+                    margin: [6, 6, 6, 6],
+                    filename: `${docNo}.pdf`,
+                    image: { type: 'jpeg', quality: 0.96 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).from(el).save();
+                if (typeof showToast === 'function') showToast(`📄 กำลังดาวน์โหลดไฟล์ ${docNo}.pdf`);
+            } else {
+                window.openReceiptInNewWindow();
+            }
+        };
+
+        window.shareReceiptPDFToLine = function() {
+            const docNo = (document.getElementById('recOfferNo')?.textContent || '-').trim();
+            const cust = (document.getElementById('recCustomerName')?.textContent || document.getElementById('storeName')?.value || '-').trim();
+            const total = (document.getElementById('recGrandTotal')?.textContent || '0.00').trim();
+            const model = (document.getElementById('machineModel')?.value || '-').trim();
+            const sn = (document.getElementById('serialNumber')?.value || '-').trim();
+            const msg = `📄 [HOSHIZAKI QUOTATION / BILL]\nเลขที่เอกสาร: ${docNo}\nลูกค้า: ${cust}\nรุ่น/S/N: ${model} / ${sn}\nยอดรวมสุทธิ: ${total} THB`;
+            window.open('https://line.me/R/msg/text/?' + encodeURIComponent(msg), '_blank');
+        };
+
+        window.sendReceiptByEmail = function() {
+            const docNo = (document.getElementById('recOfferNo')?.textContent || '-').trim();
+            const cust = (document.getElementById('recCustomerName')?.textContent || document.getElementById('storeName')?.value || '-').trim();
+            const total = (document.getElementById('recGrandTotal')?.textContent || '0.00').trim();
+            const subj = `[HOSHIZAKI] เอกสารเลขที่ ${docNo} - ${cust}`;
+            const body = `เรียนท่านลูกค้า ${cust}\n\nจัดส่งรายละเอียดเอกสารเลขที่ ${docNo} ยอดรวมสุทธิ ${total} THB\nกรุณาดูไฟล์ PDF แนบประกอบครับ\n\nขอแสดงความนับถือ\nแผนกบริการ HOSHIZAKI (THAILAND) LIMITED`;
+            window.location.href = `mailto:?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+        };
+
+        // =====================================================================
+        // 2. SMART PART & BI PANEL HELPERS (Fixed from Deep-Scan)
+        // =====================================================================
+        window.quickAddSmartPartToTable = function(partLabel) {
+            if (typeof window.addPartsRow === 'function') {
+                const parts = String(partLabel || '').split(' - ');
+                window.addPartsRow({ partNo: parts[0] || '', desc: partLabel, qty: 1, price: 0 });
+                if (typeof showToast === 'function') showToast('✅ เพิ่มอะไหล่ ' + partLabel + ' ลงในใบงานแล้ว');
+            }
+        };
+
+        window.refreshExecutiveSmartBiPanel = function() {
+            if (typeof renderExecutiveDashboard === 'function') {
+                renderExecutiveDashboard();
+            }
+            if (typeof showToast === 'function') {
+                showToast('📊 อัปเดตผลวิเคราะห์ KPI และ Smart BI เรียบร้อยแล้ว');
+            }
+        };
+
+        // =====================================================================
+        // 3. AUTOMATIC FULL JSON BACKUP TO GOOGLE SHEET + DRIVE VAULT
+        // =====================================================================
+        const AUTO_SHEET_JSON_BACKUP_KEY = 'hoshizaki_last_auto_sheet_json_backup_ts';
+        let autoJsonBackupDebounceTimer = null;
+
+        window.buildFullSystemJsonSnapshot_ = function() {
+            const safeParse = (k, fallback) => {
+                try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(fallback)); } catch (e) { return fallback; }
+            };
+            const jobs = safeParse('hoshizaki_service_history_v1', []);
+            const quotations = safeParse('hoshizaki_quotations_v1', []);
+            const schedule = safeParse('hoshizaki_schedule_v1', []);
+            const legacy = safeParse('hoshizaki_legacy_service_history_v1', []);
+            const outsourceReports = safeParse('hoshizaki_outsource_submissions_v1016', []);
+            const outsourceRates = safeParse('hoshizaki_outsource_rates_v1021', []);
+            const outsourceVendors = safeParse('hoshizaki_outsource_vendors_v1022', []);
+            const pmContracts = safeParse('hoshizaki_pm_contracts_v1015', []);
+            const vanStock = safeParse('hoshizaki_van_stock_v1', {});
+
+            return {
+                app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
+                version: 'Enterprise-v1021-FINAL',
+                exportedAt: new Date().toISOString(),
+                recordCounts: {
+                    jobs: jobs.length,
+                    quotations: quotations.length,
+                    schedule: schedule.length,
+                    legacy: legacy.length,
+                    outsourceReports: outsourceReports.length,
+                    outsourceRates: outsourceRates.length,
+                    pmContracts: pmContracts.length
+                },
+                payload: {
+                    jobs,
+                    quotations,
+                    schedule,
+                    legacy,
+                    outsourceReports,
+                    outsourceRates,
+                    outsourceVendors,
+                    pmContracts,
+                    vanStock
+                }
+            };
+        };
+
+        window.autoSyncFullJsonBackupToGoogleSheet = async function(isManual) {
+            if (!navigator.onLine) return false;
+            const cfg = JSON.parse(localStorage.getItem('hoshizaki_cloud_config_v1') || '{}');
+            const gasUrl = (cfg.scriptUrl || cfg.webAppUrl || localStorage.getItem('hoshizaki_gas_url') || (typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '') || '').trim();
+            if (!gasUrl || gasUrl.indexOf('http') !== 0) return false;
+
+            const snapshot = window.buildFullSystemJsonSnapshot_();
+            try {
+                await fetch(gasUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        actionType: 'AUTO_BACKOFFICE_SNAPSHOT',
+                        apiSecretKey: cfg.apiSecretKey || localStorage.getItem('hoshizaki_api_secret_key_v17') || '',
+                        snapshot: snapshot
+                    })
+                });
+                localStorage.setItem(AUTO_SHEET_JSON_BACKUP_KEY, String(Date.now()));
+                localStorage.setItem('hoshizaki_last_cloud_auto_backup_date', new Date().toISOString().split('T')[0]);
+                if (isManual && typeof showToast === 'function') {
+                    showToast(`☁️ สำรองข้อมูล JSON ทั้งระบบ (${snapshot.recordCounts.jobs} ใบงาน, ${snapshot.recordCounts.outsourceReports} งาน Outsource) ขึ้น Google Sheet & Drive เรียบร้อย!`);
+                }
+                return true;
+            } catch (e) {
+                return false;
+            }
+        };
+
+        window.scheduleDebouncedAutoJsonBackup_ = function() {
+            clearTimeout(autoJsonBackupDebounceTimer);
+            autoJsonBackupDebounceTimer = setTimeout(() => {
+                window.autoSyncFullJsonBackupToGoogleSheet(false);
+            }, 18000);
+        };
+
+        // Hook into saveToHistory & submitOutsourceIsolatedReport so every important save triggers auto JSON cloud backup
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.saveToHistory === 'function') {
+                const origSave = window.saveToHistory;
+                window.saveToHistory = function() {
+                    const res = origSave.apply(this, arguments);
+                    window.scheduleDebouncedAutoJsonBackup_();
+                    return res;
+                };
+            }
+
+            // Periodic 6-hour automatic JSON backup to Google Sheet when online
+            const lastTs = Number(localStorage.getItem(AUTO_SHEET_JSON_BACKUP_KEY) || '0');
+            if (Date.now() - lastTs > 6 * 60 * 60 * 1000) {
+                setTimeout(() => {
+                    window.autoSyncFullJsonBackupToGoogleSheet(false);
+                }, 12000);
+            }
+            setInterval(() => {
+                window.autoSyncFullJsonBackupToGoogleSheet(false);
+            }, 6 * 60 * 60 * 1000);
         });
     })();
     </script>

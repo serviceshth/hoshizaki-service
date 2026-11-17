@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1033</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1034</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -960,6 +960,9 @@
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openAiNextGenServiceHubModal('DIGITAL_TWIN')" class="tb-action-item col-span-2 bg-gradient-to-r from-indigo-700 via-violet-700 to-cyan-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-indigo-300/50">
                             <i class="fa-solid fa-robot text-amber-300"></i> <span>AI Field Co-Pilot &amp; IoT Digital Twin Suite (v1032)</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openAiChatbotOrchestratorModal()" class="tb-action-item col-span-2 bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-emerald-300/50">
+                            <i class="fa-brands fa-line text-amber-300"></i> <span>AI Chatbot 6 มิติ · #import ใบงาน &amp; ลิงก์สั้น Outsource (v1034)</span>
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openTroubleshootingWizardModal('E1')" class="tb-action-item bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-wand-magic-sparkles text-amber-200"></i> <span>วิเคราะห์ Error ทีละขั้น</span>
@@ -4563,7 +4566,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1033</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1034</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20701,7 +20704,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1033) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1034) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -23603,7 +23606,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1033 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1034 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -31519,7 +31522,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1033)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1034)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31722,7 +31725,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1033)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1034)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31731,7 +31734,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1033)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1034)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -31740,7 +31743,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1033)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1034)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31822,21 +31825,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1033) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1034) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1033 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1034 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1033）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1034）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -33342,6 +33345,8 @@ Defect: ${defectText}`;
     // =========================================================================
     // C. SECURE ZERO-LEAKAGE OUTSOURCE JOB LINK (`?portal=outsource`)
     // =========================================================================
+    const OS_VAULT_LOCAL_KEY = 'hoshizaki_outsource_short_vault_v1034';
+
     function encodeOutsourcePayload_(obj) {
         const jsonStr = JSON.stringify(obj);
         const bytes = new TextEncoder().encode(jsonStr);
@@ -33363,10 +33368,46 @@ Defect: ${defectText}`;
         }
     }
 
+    function generateShortOsRefCode_() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let code = 'OS-';
+        for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+        return code;
+    }
+
+    function generateRandom4DigitPin_() {
+        return String(Math.floor(1000 + Math.random() * 9000));
+    }
+
+    function saveOsVaultEntryLocal_(entry) {
+        try {
+            const map = JSON.parse(localStorage.getItem(OS_VAULT_LOCAL_KEY) || '{}');
+            map[entry.shortCode] = entry;
+            localStorage.setItem(OS_VAULT_LOCAL_KEY, JSON.stringify(map));
+        } catch (e) {}
+    }
+
     window.generateSecureOutsourceJobUrl = function() {
         const partnerName = (document.getElementById('outsourcePartnerNameInput')?.value || 'Outsource Service Partner').trim();
+        const expiryHours = Number(document.getElementById('outsourceExpiryHoursSelect')?.value || 48);
+        const customPin = (document.getElementById('outsourcePinInput')?.value || '').trim();
+        const pinCode = /^\d{4}$/.test(customPin) ? customPin : generateRandom4DigitPin_();
+        if (document.getElementById('outsourcePinInput') && !customPin) {
+            document.getElementById('outsourcePinInput').value = pinCode;
+        }
+
+        const shortCode = generateShortOsRefCode_();
+        const expiresAtMs = Date.now() + (expiryHours * 3600 * 1000);
+        const expiresAtStr = new Date(expiresAtMs).toLocaleString('th-TH', {
+            year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+        });
+
         const payload = {
-            v: '1016-OS',
+            v: '1034-OS-VAULT',
+            shortCode: shortCode,
+            pin: pinCode,
+            expiresAtMs: expiresAtMs,
+            expiresAtStr: expiresAtStr,
             jobNo: document.getElementById('jobNo')?.value || ('JOB-' + Date.now().toString().slice(-6)),
             date: document.getElementById('jobDate')?.value || new Date().toISOString().slice(0, 10),
             store: document.getElementById('storeName')?.value || '',
@@ -33378,26 +33419,82 @@ Defect: ${defectText}`;
             partner: partnerName,
             gasUrl: localStorage.getItem('hoshizaki_gas_url') || ''
         };
-        const token = encodeOutsourcePayload_(payload);
+
+        saveOsVaultEntryLocal_(payload);
+
+        const gasUrl = localStorage.getItem('hoshizaki_gas_url') || '';
+        if (gasUrl && gasUrl.indexOf('http') === 0) {
+            fetch(gasUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    actionType: 'CREATE_OUTSOURCE_SECURE_VAULT_LINK',
+                    vaultEntry: payload
+                })
+            }).catch(() => {});
+        }
+
         const baseUrl = window.location.href.split('?')[0].split('#')[0];
-        const shareUrl = `${baseUrl}?portal=outsource&token=${encodeURIComponent(token)}`;
+        const shareUrl = `${baseUrl}?os=${encodeURIComponent(shortCode)}`;
         const outBox = document.getElementById('outsourceGeneratedLinkOutput');
         if (outBox) outBox.value = shareUrl;
-        return shareUrl;
+        const metaBox = document.getElementById('outsourceSecuritySummaryBadge');
+        if (metaBox) {
+            metaBox.innerHTML = `🔐 รหัสอ้างอิง: <b>${shortCode}</b> · PIN ปลดล็อก: <b class="text-rose-700 text-sm">${pinCode}</b> · หมดอายุ: <b>${expiresAtStr}</b>`;
+        }
+        return { url: shareUrl, shortCode, pinCode, expiresAtStr, payload };
     };
 
     window.copyOutsourceLinkAndLine = function(sendLine) {
-        const url = window.generateSecureOutsourceJobUrl();
-        if (navigator.clipboard) navigator.clipboard.writeText(url);
-        if (sendLine) {
-            const jobNo = document.getElementById('jobNo')?.value || '';
-            const store = document.getElementById('storeName')?.value || '';
-            const model = document.getElementById('machineModel')?.value || '';
-            const msg = `🔧 [HOSHIZAKI OUTSOURCE JOB]\nเลขที่ใบงาน: ${jobNo}\nลูกค้า: ${store}\nรุ่นเครื่อง: ${model}\n\nกรุณากดลิงก์ด้านล่างเพื่อเช็กอิน บันทึกผลการซ่อม แนบรูป และให้ลูกค้าเซ็นรับงาน (ลิงก์เฉพาะใบงานนี้เท่านั้น):\n${url}`;
-            window.open('https://line.me/R/msg/text/?' + encodeURIComponent(msg), '_blank');
-        } else if (typeof showToast === 'function') {
-            showToast('📋 คัดลอกลิงก์เฉพาะใบงานสำหรับช่าง Outsource เรียบร้อยแล้ว');
+        const res = window.generateSecureOutsourceJobUrl();
+        const url = res.url;
+        const jobNo = res.payload.jobNo;
+        const store = res.payload.store;
+        const model = res.payload.model;
+        const partner = res.payload.partner;
+
+        const cleanMsg = `🔧 [HOSHIZAKI OUTSOURCE DISPATCH]\n` +
+            `• ใบงาน: ${jobNo}\n` +
+            `• ร้านค้า: ${store || '-'}\n` +
+            `• รุ่นเครื่อง: ${model || '-'}\n` +
+            `• รหัสผ่านเข้าฟอร์ม (PIN): ${res.pinCode}\n` +
+            `• หมดอายุ: ${res.expiresAtStr}\n\n` +
+            `กดลิงก์สั้นเฉพาะใบงาน (ซ่อนข้อมูลส่วนตัวตามมาตรฐาน PDPA):\n${url}`;
+
+        if (navigator.clipboard) navigator.clipboard.writeText(cleanMsg);
+        if (typeof appendSystemAuditLog === 'function') {
+            appendSystemAuditLog('OUTSOURCE_SHORT_LINK', res.shortCode, `สร้างลิงก์สั้น ${res.shortCode} (PIN: ****) ให้ ${partner} สำหรับใบงาน ${jobNo}`);
         }
+
+        if (sendLine) {
+            window.open('https://line.me/R/msg/text/?' + encodeURIComponent(cleanMsg), '_blank');
+        } else if (typeof showToast === 'function') {
+            showToast(`🔐 คัดลอกลิงก์สั้น (${res.shortCode}) + PIN ${res.pinCode} เรียบร้อยแล้ว`);
+        }
+    };
+
+    window.sendOutsourceFlexCardViaOa = function() {
+        const res = window.generateSecureOutsourceJobUrl();
+        const gasUrl = localStorage.getItem('hoshizaki_gas_url') || '';
+        const targetLineId = (document.getElementById('outsourceLineTargetIdInput')?.value || '').trim();
+        if (!gasUrl || gasUrl.indexOf('http') !== 0) {
+            if (typeof showToast === 'function') showToast('⚠️ กรุณาตั้งค่า Google Apps Script URL ก่อนส่ง Flex Message Card ผ่าน LINE OA');
+            return;
+        }
+        fetch(gasUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                actionType: 'SEND_OUTSOURCE_FLEX_CARD',
+                targetLineId: targetLineId,
+                shortUrl: res.url,
+                vaultEntry: res.payload
+            })
+        }).then(() => {
+            if (typeof showToast === 'function') showToast(`📨 ส่งการ์ด LINE Flex Message (ซ่อน URL ไว้หลังปุ่มกด) สำหรับ ${res.shortCode} เรียบร้อยแล้ว`);
+        }).catch(() => {});
     };
 
     const OS_DRAFTS_KEY = 'hoshizaki_outsource_drafts_v1022';
@@ -33813,9 +33910,50 @@ Defect: ${defectText}`;
         }
     };
 
-    function checkAndMountIsolatedOutsourcePortal_() {
+    function maskCustomerContactForOutsource_(rawContact, isCheckedIn) {
+        if (isCheckedIn) return rawContact || '-';
+        const s = String(rawContact || '');
+        return s.replace(/(0\d{2})\d{3,4}(\d{3,4})/g, '$1-XXX-$2') || 'ซ่อนเบอร์โทรจนกว่าจะกด Stamp เข้าหน้างาน';
+    }
+
+    async function resolveOutsourceVaultRecord_(params) {
+        const osCode = params.get('os');
+        if (osCode) {
+            try {
+                const localMap = JSON.parse(localStorage.getItem(OS_VAULT_LOCAL_KEY) || '{}');
+                if (localMap[osCode]) return localMap[osCode];
+            } catch (e) {}
+            const gasUrl = localStorage.getItem('hoshizaki_gas_url') || '';
+            if (gasUrl && gasUrl.indexOf('http') === 0) {
+                try {
+                    const res = await fetch(`${gasUrl}?action=getOutsourceVaultRecord&os=${encodeURIComponent(osCode)}`);
+                    const json = await res.json();
+                    if (json && json.status === 'ok' && json.record) return json.record;
+                } catch (e2) {}
+            }
+            return {
+                shortCode: osCode,
+                pin: '',
+                jobNo: osCode,
+                date: new Date().toISOString().slice(0, 10),
+                store: 'ใบงานมอบหมาย Outsource (' + osCode + ')',
+                partner: 'Outsource Partner'
+            };
+        }
+        return decodeOutsourcePayload_(params.get('token')) || {
+            jobNo: params.get('jobNo') || 'JOB-OUTSOURCE',
+            date: new Date().toISOString().slice(0, 10),
+            store: params.get('store') || '',
+            model: params.get('model') || '',
+            serial: params.get('serial') || '',
+            symptom: params.get('symptom') || '',
+            partner: 'Outsource Partner'
+        };
+    }
+
+    async function checkAndMountIsolatedOutsourcePortal_() {
         const params = new URLSearchParams(window.location.search);
-        if (params.get('portal') !== 'outsource') return;
+        if (params.get('portal') !== 'outsource' && !params.get('os')) return;
 
         const headerEl = document.querySelector('header');
         const mainEl = document.getElementById('jobSheetContainer');
@@ -33829,16 +33967,46 @@ Defect: ${defectText}`;
         if (!overlay || !body) return;
         overlay.classList.remove('hidden');
 
-        const data = decodeOutsourcePayload_(params.get('token')) || {
-            jobNo: params.get('jobNo') || 'JOB-OUTSOURCE',
-            date: new Date().toISOString().slice(0, 10),
-            store: params.get('store') || '',
-            model: params.get('model') || '',
-            serial: params.get('serial') || '',
-            symptom: params.get('symptom') || '',
-            partner: 'Outsource Partner'
-        };
+        const data = await resolveOutsourceVaultRecord_(params);
 
+        if (data.expiresAtMs && Date.now() > Number(data.expiresAtMs)) {
+            body.innerHTML = `
+                <div class="p-6 text-center space-y-3">
+                    <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-2xl"><i class="fa-solid fa-clock"></i></div>
+                    <h3 class="text-base font-extrabold text-rose-800">ลิงก์ใบงานนี้หมดอายุการใช้งานแล้ว (Link Expired)</h3>
+                    <p class="text-xs text-slate-600">รหัสอ้างอิง: <b>${escapeHtml(data.shortCode || data.jobNo || '-')}</b> · กรุณาติดต่อศูนย์บริการ HOSHIZAKI เพื่อขอรับลิงก์ใหม่ครับ</p>
+                </div>
+            `;
+            return;
+        }
+
+        if (data.pin && sessionStorage.getItem('os_pin_verified_' + (data.shortCode || data.jobNo)) !== '1') {
+            body.innerHTML = `
+                <div class="max-w-sm mx-auto py-6 space-y-3 text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-[#002B49] text-amber-300 flex items-center justify-center mx-auto text-2xl shadow-md"><i class="fa-solid fa-key"></i></div>
+                    <h3 class="text-base font-extrabold text-[#002B49]">ยืนยันรหัส PIN 4 หลักเพื่อเปิดใบงาน</h3>
+                    <p class="text-xs text-slate-600">ใบงาน: <b>${escapeHtml(data.jobNo || '-')}</b> · ทีมงาน: <b>${escapeHtml(data.partner || '-')}</b></p>
+                    <input type="password" id="osPinGateInput" maxlength="4" inputmode="numeric" placeholder="กรอก PIN 4 หลัก" class="w-40 mx-auto text-center text-xl tracking-widest font-mono font-extrabold border-2 border-[#002B49] rounded-xl py-2">
+                    <div>
+                        <button type="button" onclick="verifyOutsourcePinGate('${escapeHtml(data.shortCode || data.jobNo)}', '${escapeHtml(data.pin)}')" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold px-5 py-2.5 rounded-xl text-xs shadow-sm">
+                            <i class="fa-solid fa-unlock mr-1"></i> ปลดล็อกเข้าบันทึกงาน
+                        </button>
+                    </div>
+                </div>
+            `;
+            window.verifyOutsourcePinGate = function(codeKey, expectedPin) {
+                const entered = (document.getElementById('osPinGateInput')?.value || '').trim();
+                if (entered === expectedPin) {
+                    sessionStorage.setItem('os_pin_verified_' + codeKey, '1');
+                    checkAndMountIsolatedOutsourcePortal_();
+                } else {
+                    alert('❌ รหัส PIN 4 หลักไม่ถูกต้อง กรุณาตรวจสอบกับแอดมิน HOSHIZAKI อีกครั้งครับ');
+                }
+            };
+            return;
+        }
+
+        data.contact = maskCustomerContactForOutsource_(data.contact, false);
         osPhotoGallery = [];
 
         body.innerHTML = `
@@ -34178,36 +34346,48 @@ Defect: ${defectText}`;
     window.renderFieldOutsourceLinkPanel = function() {
         const panel = document.getElementById('fieldOutsourceLinkPanel');
         if (!panel) return;
-        const jobNo = document.getElementById('jobNo')?.value || '-';
-        const store = document.getElementById('storeName')?.value || '-';
-        const model = document.getElementById('machineModel')?.value || '-';
-
         panel.innerHTML = `
             <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 space-y-2.5">
-                <div class="font-extrabold text-rose-950">
-                    <i class="fa-solid fa-shield-halved text-rose-600 mr-1"></i>
-                    ระบบสร้างลิงก์ปลอดภัยสำหรับช่าง Outsource (Zero-Leakage Isolated Job Link)
+                <div class="font-extrabold text-rose-950 flex flex-wrap items-center justify-between gap-1">
+                    <span><i class="fa-solid fa-shield-halved text-rose-600 mr-1"></i> ระบบสร้างลิงก์สั้นปลอดภัยสำหรับ Outsource (Short Vault + PIN 4 หลัก + LINE Flex Card)</span>
+                    <span class="text-[10px] bg-emerald-700 text-white px-2 py-0.5 rounded-full">PDPA Masked</span>
                 </div>
                 <p class="text-[11px] text-rose-900">
-                    เมื่อส่งลิงก์นี้ให้ช่าง Outsource เปิดบนมือถือ <b>ระบบจะซ่อนเมนูทั้งหมดของบริษัท</b> (ไม่เห็นฐานลูกค้า 6,749 เครื่อง, ไม่เห็นราคาทุน/GP%, ไม่เห็นสต็อกรถช่าง และไม่เห็นใบงานอื่น) โดยจะกรอกและส่งรายงานได้เฉพาะใบงาน <b>${jobNo} (${store} • ${model})</b> เท่านั้น
+                    ซ่อน URL ยาวและตัดข้อมูลส่วนตัวออกจากลิงก์ 100% โดยใช้รหัสสั้น <b>?os=OS-XXXXXX</b> คู่กับ <b>PIN 4 หลัก</b> และปิดบังเบอร์โทรศัพท์เต็มของลูกค้าจนกว่าช่าง Outsource จะกดเช็กอิน GPS ถึงหน้างานจริง
                 </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div>
-                        <label class="font-bold text-slate-700 block mb-1">ชื่อบริษัท / ทีมช่าง Outsource ที่รับงาน:</label>
-                        <input type="text" id="outsourcePartnerNameInput" placeholder="เช่น หจก. เอสเค คูลลิ่ง เซอร์วิส (Outsource)" class="w-full border rounded-lg px-2.5 py-1.5 bg-white">
+                        <label class="font-bold text-slate-700 block mb-1">บริษัท / ทีมช่าง Outsource:</label>
+                        <input type="text" id="outsourcePartnerNameInput" placeholder="เช่น Lucky Star Solution / Outsource" class="w-full border rounded-lg px-2.5 py-1.5 bg-white">
                     </div>
-                    <div class="flex items-end gap-1.5">
-                        <button type="button" onclick="copyOutsourceLinkAndLine(false)" class="flex-1 bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold py-2 px-3 rounded-lg">
-                            <i class="fa-solid fa-copy mr-1"></i> สร้าง &amp; คัดลอกลิงก์
-                        </button>
-                        <button type="button" onclick="copyOutsourceLinkAndLine(true)" class="flex-1 bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-2 px-3 rounded-lg">
-                            <i class="fa-brands fa-line mr-1"></i> ส่งเข้า LINE Outsource
-                        </button>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">รหัส PIN 4 หลักเฉพาะใบงาน:</label>
+                        <input type="text" id="outsourcePinInput" maxlength="4" placeholder="สุ่มอัตโนมัติ 4 หลัก" class="w-full border rounded-lg px-2.5 py-1.5 bg-white font-mono font-extrabold text-rose-700">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">อายุการใช้งานลิงก์ (Auto-Expire):</label>
+                        <select id="outsourceExpiryHoursSelect" class="w-full border rounded-lg px-2.5 py-1.5 bg-white font-semibold">
+                            <option value="24">24 ชั่วโมง (งานด่วน)</option>
+                            <option value="48" selected>48 ชั่วโมง (มาตรฐาน)</option>
+                            <option value="72">72 ชั่วโมง (ต่างจังหวัด)</option>
+                        </select>
                     </div>
                 </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+                    <button type="button" onclick="copyOutsourceLinkAndLine(false)" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold py-2 px-3 rounded-lg">
+                        <i class="fa-solid fa-copy mr-1"></i> สร้าง &amp; คัดลอกลิงก์สั้น + PIN
+                    </button>
+                    <button type="button" onclick="copyOutsourceLinkAndLine(true)" class="bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-2 px-3 rounded-lg">
+                        <i class="fa-brands fa-line mr-1"></i> แชร์ข้อความสั้นเข้า LINE
+                    </button>
+                    <button type="button" onclick="sendOutsourceFlexCardViaOa()" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-2 px-3 rounded-lg">
+                        <i class="fa-solid fa-id-card mr-1"></i> ส่งการ์ด Flex Card (ซ่อนลิงก์)
+                    </button>
+                </div>
+                <div id="outsourceSecuritySummaryBadge" class="text-[11px] bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-slate-800"></div>
                 <div>
-                    <label class="font-bold text-slate-600 block mb-1">ลิงก์เฉพาะใบงานสำหรับ Outsource:</label>
-                    <input type="text" id="outsourceGeneratedLinkOutput" readonly placeholder="กดปุ่ม สร้าง & คัดลอกลิงก์ ด้านบน..." class="w-full border rounded-lg px-2.5 py-1.5 bg-slate-100 font-mono text-[10.5px]">
+                    <label class="font-bold text-slate-600 block mb-1">ลิงก์สั้นเฉพาะใบงาน (Clean Short URL):</label>
+                    <input type="text" id="outsourceGeneratedLinkOutput" readonly class="w-full border rounded-lg px-2.5 py-1.5 bg-slate-100 font-mono text-xs font-bold text-hoshizaki-navy">
                 </div>
             </div>
         `;
@@ -34690,9 +34870,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1033',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1033)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1033)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1034',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1034)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1034)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34741,7 +34921,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1033 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1034 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -34967,7 +35147,7 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
         <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1033 — Multi-Branch &amp; White-Label Ready)</h3>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1034 — Multi-Branch &amp; White-Label Ready)</h3>
                 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
             </div>
             <div class="flex items-center gap-1.5">
@@ -39012,7 +39192,7 @@ try {
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1033 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1034 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -39539,7 +39719,7 @@ try {
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1033</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1034</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -40451,7 +40631,7 @@ ${portalUrl}`;
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1033</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1034</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -42572,7 +42752,7 @@ ${portalUrl}`;
         <div>
           <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
             <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-            <span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1033</span>
+            <span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1034</span>
           </h2>
           <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
         </div>
@@ -43101,7 +43281,7 @@ ${portalUrl}`;
         <div>
           <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
             <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-            <span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1033</span>
+            <span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1034</span>
           </h2>
           <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
         </div>
@@ -43599,6 +43779,95 @@ ${portalUrl}`;
     mountPdpaSignatureConsent_();
   });
 })();
+</script>
+
+
+<!-- ========================================================================= -->
+<!-- ENTERPRISE v1034: AI CHATBOT 6-DIMENSION ORCHESTRATOR & #IMPORT BRIDGE    -->
+<!-- ========================================================================= -->
+<div id="aiChatbotOrchestratorModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-[180] flex items-center justify-center p-2 sm:p-4">
+  <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl border border-emerald-200 flex flex-col max-h-[92dvh] overflow-hidden">
+    <div class="bg-gradient-to-r from-[#002B49] via-[#065F46] to-[#0E7490] text-white px-4 py-3 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <span class="w-9 h-9 rounded-xl bg-emerald-400/20 border border-emerald-300/40 flex items-center justify-center text-emerald-300">
+          <i class="fa-brands fa-line text-lg"></i>
+        </span>
+        <div>
+          <h2 class="text-sm sm:text-base font-extrabold flex items-center gap-2">
+            <span>HOSHIZAKI AI Chatbot 6-Dimension Orchestrator &amp; #import Job Bridge</span>
+            <span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">v1034</span>
+          </h2>
+          <p class="text-[11px] text-emerald-100">1. Multimodal Vision/Audio Triage · 2. Smart Booking · 3. Tech RAG &amp; #import · 4. Outsource Flex Cloaking · 5. Proactive Care · 6. Exec Copilot</p>
+        </div>
+      </div>
+      <button type="button" onclick="document.getElementById('aiChatbotOrchestratorModal').classList.add('hidden')" class="bg-rose-600 hover:bg-rose-700 text-white w-8 h-8 rounded-lg font-extrabold text-lg flex items-center justify-center">&times;</button>
+    </div>
+    <div class="p-4 overflow-y-auto space-y-3 text-xs bg-slate-50 flex-1">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-1">
+          <div class="font-extrabold text-[#002B49]">1. AI Visual &amp; Audio Triage</div>
+          <p class="text-[11px] text-slate-600">ลูกค้าส่งรูปไฟ LED กะพริบหรือคลิปเสียงเครื่องเข้า LINE OA → AI อ่าน Error ส่งวิธีแก้เบื้องต้นและจัดลำดับความเร่งด่วน SLA อัตโนมัติ</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-1">
+          <div class="font-extrabold text-[#002B49]">2. AI Conversational Booking (TH/EN/JP)</div>
+          <p class="text-[11px] text-slate-600">ลูกค้าพิมพ์นัดซ่อมด้วยภาษาธรรมชาติ → AI ดึงประวัติ S/N ประกัน และเสนอคิวช่างที่ใกล้ที่สุดพร้อมอะไหล่บนรถ</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-1">
+          <div class="font-extrabold text-[#002B49]">3. Tech RAG &amp; #import Job Creation</div>
+          <p class="text-[11px] text-slate-600">ช่างถามสเปก/ค่าโอห์มในแชท หรือพิมพ์ <b>#import</b> พร้อมสรุปงาน → สร้างใบแจ้งบริการ <b>JOB-</b> และดูดรูปภาพภายใน 5 นาทีเข้าโฟลเดอร์ทันที</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-1">
+          <div class="font-extrabold text-[#002B49]">4. Outsource Flex Card &amp; Short Vault</div>
+          <p class="text-[11px] text-slate-600">ส่งลิงก์สั้น <b>?os=OS-XXXXXX</b> ซ่อนไว้หลังปุ่มกด LINE Flex Card พร้อม PIN 4 หลัก วันหมดอายุ และปิดบังเบอร์ลูกค้าก่อนเช็กอิน</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-1">
+          <div class="font-extrabold text-[#002B49]">5. Proactive Care &amp; CSAT Recovery</div>
+          <p class="text-[11px] text-slate-600">แจ้งเตือนเปลี่ยนไส้กรอง 4HC-H &amp; ต่อสัญญา PM ล่วงหน้า พร้อมระบบกู้คืนความพึงพอใจอัตโนมัติเมื่อลูกค้าให้ต่ำกว่า 3 ดาว</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs space-y-1">
+          <div class="font-extrabold text-[#002B49]">6. Executive AI Chatbot Copilot</div>
+          <p class="text-[11px] text-slate-600">ผู้บริหารพิมพ์ถาม KPI ยอดซ่อม อะไหล่ค้าง และสุขภาพเครื่อง IoT ใน LINE OA ได้ทันทีทั้งภาษาไทย อังกฤษ และญี่ปุ่น</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-3.5 rounded-xl border border-emerald-200 space-y-2">
+        <div class="font-extrabold text-sm text-[#002B49]">ทดสอบจำลองการทำงาน AI Chatbot &amp; #import Parser</div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="document.getElementById('aiBotSimInput').value='#import IM-240DNE S/N H14289J ร้าน Starbucks CentralWorld อาการน้ำแข็งไม่เต็มถาด การแก้ไขล้างคอยล์ร้อนและเปลี่ยนวาล์วน้ำ 4A5251-06'" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-1 rounded-lg font-bold text-[11px]">ทดสอบ #import สร้างใบงาน</button>
+          <button type="button" onclick="document.getElementById('aiBotSimInput').value='เครื่องทำน้ำแข็งสาขาสีลมขึ้น E1 น้ำไม่เข้า ขอช่างเข้าพรุ่งนี้เช้า'" class="bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-300 px-2.5 py-1 rounded-lg font-bold text-[11px]">ทดสอบ AI Customer Booking</button>
+          <button type="button" onclick="document.getElementById('aiBotSimInput').value='สรุป KPI งานซ่อมสัปดาห์นี้ และเครื่อง IoT ที่ต้องเฝ้าระวัง'" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-lg font-bold text-[11px]">ทดสอบ Exec Copilot ใน LINE</button>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" id="aiBotSimInput" placeholder="พิมพ์ข้อความจำลองที่ส่งเข้า LINE OA..." class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-xs">
+          <button type="button" onclick="simulateAiChatbotResponse_()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white px-4 py-2 rounded-lg font-bold text-xs">จำลองคำตอบ AI Bot</button>
+        </div>
+        <div id="aiBotSimOutput"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script id="v1034-ai-chatbot-sim-logic">
+window.openAiChatbotOrchestratorModal = function() {
+  const m = document.getElementById('aiChatbotOrchestratorModal');
+  if (m) m.classList.remove('hidden');
+};
+window.simulateAiChatbotResponse_ = function() {
+  const txt = (document.getElementById('aiBotSimInput')?.value || '').trim();
+  const out = document.getElementById('aiBotSimOutput');
+  if (!txt || !out) return;
+  if (txt.toLowerCase().indexOf('#import') > -1) {
+    out.innerHTML = `<div class="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 space-y-1">
+      <div class="font-extrabold">✅ [AI #import Job Created] สร้างใบแจ้งบริการเข้า Service_Jobs และคลัง Serial 360° เรียบร้อย!</div>
+      <div>• <b>Model / S/N:</b> IM-240DNE / H14289J · <b>ลูกค้า:</b> Starbucks CentralWorld</div>
+      <div>• <b>การแก้ไข &amp; อะไหล่:</b> ล้างคอยล์ร้อน + เปลี่ยน Water Valve (4A5251-06) · พร้อมรับรูปภาพในแชทภายใน 5 นาที</div>
+    </div>`;
+  } else {
+    out.innerHTML = `<div class="p-3 rounded-xl bg-sky-50 border border-sky-300 text-sky-950 space-y-1">
+      <div class="font-extrabold">🤖 [AI Chatbot Triaged &amp; Routed]</div>
+      <div>• วิเคราะห์เจตนาอัตโนมัติ (Intent Classification) + ค้นหาฐานข้อมูล S/N, คู่มือซ่อม และคิวรถช่าง T01–T08 พร้อมส่งการ์ด Flex Message ตอบกลับทันที</div>
+    </div>`;
+  }
+};
 </script>
 
 </body>

@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1033-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1034-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -215,6 +215,14 @@ function doPost(e) {
 
       if (action === 'SYNC_ESG_REFRIGERANT_LOG') {
         return jsonOut(syncEsgRefrigerantLogToSheet_(ss, data));
+      }
+
+      if (action === 'CREATE_OUTSOURCE_SECURE_VAULT_LINK') {
+        return jsonOut(createOutsourceSecureVaultLink_(ss, data));
+      }
+
+      if (action === 'SEND_OUTSOURCE_FLEX_CARD') {
+        return jsonOut(sendOutsourceFlexCardViaOa_(ss, data, secrets));
       }
 
       if (action === 'SYNC_V1025_GOVERNANCE_APPROVAL') {
@@ -852,6 +860,11 @@ function doGet(e) {
     return jsonOut(getOutsourceRateCardFromSheet_(ss));
   }
 
+  if (action === 'getOutsourceVaultRecord') {
+    var osCode = String((e.parameter && e.parameter.os) || '').trim().toUpperCase();
+    return jsonOut(getOutsourceVaultRecordFromSheet_(ss, osCode));
+  }
+
   if (action === 'getLiveTechGpsRadar') {
     return jsonOut(getLiveTechGpsRadar_(ss));
   }
@@ -1082,7 +1095,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1033-FINAL',
+    version: 'Enterprise-v1034-FINAL',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1115,7 +1128,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1033-FINAL',
+    version: 'Enterprise-v1034-FINAL',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -6578,10 +6591,29 @@ function tryAutoCaptureLegacyFromLineGroup_(ss, ev, rawText) {
     model: parsed.model
   }), 300);
 
+  var isExplicitImport = /#import|#เปิดใบงาน/i.test(rawText);
+  if (isExplicitImport) {
+    var autoJobNo = 'JOB-IMP-' + Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyMMdd-HHmmss');
+    upsertJobToSheet(ss, {
+      jobNo: autoJobNo,
+      date: parsed.date,
+      jobStatus: 'Pending Review',
+      techCode: 'LINE-IMPORT',
+      responsibleTech: parsed.technician,
+      store: parsed.customer,
+      model: parsed.model,
+      serial: parsed.serial,
+      diagSymptom: parsed.symptom,
+      diagAction: parsed.actionTaken,
+      partsSummary: parsed.partsUsed,
+      grandTotal: '0.00'
+    }, folder.getUrl(), '');
+  }
+
   if (ev.replyToken) {
     replyLineMessage(
       ev.replyToken,
-      '✅ บันทึกประวัติซ่อมเข้าคลัง Serial 360° อัตโนมัติแล้ว\n' +
+      (isExplicitImport ? '🚀 [#import สำเร็จ] สร้างใบแจ้งบริการเข้า Service_Jobs และคลัง Serial 360° แล้ว\n' : '✅ บันทึกประวัติซ่อมเข้าคลัง Serial 360° อัตโนมัติแล้ว\n') + \n' +
       '• ลูกค้า: ' + parsed.customer + '\n' +
       '• รุ่น/S/N: ' + parsed.model + ' / ' + parsed.serial + '\n' +
       '• ช่าง: ' + parsed.technician + '\n' +
@@ -8117,4 +8149,90 @@ function syncEsgRefrigerantLogToSheet_(ss, data) {
     Number(data.co2eKg || 0)
   ]);
   return { status: 'ok', loggedAt: nowStr };
+}
+
+
+// =========================================================================
+// SECTION 25: ENTERPRISE v1034 OUTSOURCE SHORT VAULT, FLEX CARD & AI CHATBOT
+// =========================================================================
+function createOutsourceSecureVaultLink_(ss, data) {
+  var v = data.vaultEntry || data || {};
+  var sheetName = 'Outsource_Secure_Vault';
+  var headers = ['Short_Code', 'PIN_4Digit', 'Job_No', 'Partner_Name', 'Expires_At_Ms', 'Expires_At_Text', 'Payload_JSON', 'Created_At'];
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var shortCode = String(v.shortCode || ('OS-' + Date.now().toString().slice(-6))).toUpperCase();
+  sheet.appendRow([
+    shortCode,
+    String(v.pin || ''),
+    String(v.jobNo || ''),
+    String(v.partner || ''),
+    Number(v.expiresAtMs || 0),
+    String(v.expiresAtStr || ''),
+    JSON.stringify(v),
+    nowStr
+  ]);
+  return { status: 'ok', shortCode: shortCode, createdAt: nowStr };
+}
+
+function getOutsourceVaultRecordFromSheet_(ss, shortCode) {
+  var sheet = ss.getSheetByName('Outsource_Secure_Vault');
+  if (!sheet || sheet.getLastRow() < 2 || !shortCode) return { status: 'not_found' };
+  var vals = sheet.getRange(2, 1, sheet.getLastRow() - 1, 8).getValues();
+  for (var i = vals.length - 1; i >= 0; i--) {
+    if (String(vals[i][0] || '').trim().toUpperCase() === shortCode) {
+      try {
+        return { status: 'ok', record: JSON.parse(String(vals[i][6] || '{}')) };
+      } catch (e) {}
+    }
+  }
+  return { status: 'not_found' };
+}
+
+function sendOutsourceFlexCardViaOa_(ss, data, secrets) {
+  var v = data.vaultEntry || {};
+  var targetId = String(data.targetLineId || secrets.lineGroupId || '').trim();
+  var shortUrl = String(data.shortUrl || '').trim();
+  if (!targetId || !shortUrl || !isLineTokenConfigured()) {
+    return { status: 'skipped', message: 'Missing targetLineId or LINE token' };
+  }
+  var flexCard = {
+    type: 'flex',
+    altText: '🔧 มอบหมายงาน Outsource: ' + (v.jobNo || '-') + ' (' + (v.shortCode || '-') + ')',
+    contents: {
+      type: 'bubble',
+      size: 'mega',
+      header: {
+        type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+        contents: [
+          { type: 'text', text: '🔧 HOSHIZAKI OUTSOURCE DISPATCH', color: '#FDE047', size: 'xxs', weight: 'bold' },
+          { type: 'text', text: (v.jobNo || '-') + ' (' + (v.shortCode || '-') + ')', color: '#FFFFFF', size: 'md', weight: 'bold', margin: 'xs' }
+        ]
+      },
+      body: {
+        type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '12px',
+        contents: [
+          { type: 'text', text: '🏪 ร้านค้า: ' + (v.store || '-'), size: 'xs', weight: 'bold', wrap: true },
+          { type: 'text', text: '❄️ รุ่นเครื่อง: ' + (v.model || '-'), size: 'xs', color: '#0369A1', wrap: true },
+          { type: 'text', text: '🔑 รหัส PIN เข้าฟอร์ม: ' + (v.pin || '****'), size: 'xs', color: '#BE123C', weight: 'bold' },
+          { type: 'text', text: '⏳ ลิงก์หมดอายุ: ' + (v.expiresAtStr || '-'), size: 'xxs', color: '#64748B' }
+        ]
+      },
+      footer: {
+        type: 'box', layout: 'vertical', paddingAll: '10px',
+        contents: [{
+          type: 'button', style: 'primary', color: '#059669', height: 'sm',
+          action: { type: 'uri', label: '🔧 เปิดฟอร์มบันทึกงานซ่อม', uri: shortUrl }
+        }]
+      }
+    }
+  };
+  var sent = pushLineMessages_(targetId, [flexCard]);
+  return { status: sent ? 'ok' : 'failed', shortCode: v.shortCode || '' };
 }

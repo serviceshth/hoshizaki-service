@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1030-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1031-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -191,6 +191,14 @@ function doPost(e) {
       
       if (action === 'UPSERT_PARAMETER_KB_ENTRY') {
         return jsonOut(upsertParameterKbEntryToSheet_(ss, data));
+      }
+
+      if (action === 'INGEST_IOT_TELEMETRY') {
+        return jsonOut(ingestIotTelemetryToSheet_(ss, data, secrets));
+      }
+
+      if (action === 'GET_IOT_TELEMETRY_FLEET') {
+        return jsonOut(getIotTelemetryFleetFromSheet_(ss));
       }
 
       if (action === 'SYNC_V1025_GOVERNANCE_APPROVAL') {
@@ -1058,7 +1066,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1030-FINAL',
+    version: 'Enterprise-v1031-FINAL',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1091,7 +1099,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1030-FINAL',
+    version: 'Enterprise-v1031-FINAL',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -7907,4 +7915,85 @@ function upsertParameterKbEntryToSheet_(ss, data) {
   if (rowIdx >= 2) sheet.getRange(rowIdx, 1, 1, rowVals.length).setValues([rowVals]);
   else sheet.appendRow(rowVals);
   return { status: 'ok', entryId: e.id || '', updatedAt: nowStr };
+}
+
+
+// =========================================================================
+// SECTION 22: ENTERPRISE v1031 IOT WIFI TELEMETRY & PREDICTIVE BRIDGE
+// =========================================================================
+function ingestIotTelemetryToSheet_(ss, data, secrets) {
+  var rec = (data && data.record) || data || {};
+  var metrics = rec.metrics || {};
+  var sheetName = 'IoT_Device_Telemetry';
+  var headers = [
+    'Device_ID', 'Serial_No', 'Model', 'Customer_Store', 'WiFi_SSID',
+    'RSSI_dBm', 'Status', 'Cabinet_Temp_C', 'Evap_Temp_C', 'Condenser_Temp_C',
+    'Comp_Amps', 'Bin_Level_Pct', 'Cycle_Mins', 'Filter_Life_Pct', 'Error_Code', 'Last_Seen'
+  ];
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var devId = String(rec.deviceId || '');
+  var rowVals = [
+    devId,
+    String(rec.serial || '').toUpperCase(),
+    String(rec.model || ''),
+    String(rec.customer || ''),
+    String(rec.wifiSsid || ''),
+    Number(rec.rssiDbm || 0),
+    String(rec.status || 'ONLINE_NORMAL'),
+    Number(metrics.cabinetTempC || 0),
+    Number(metrics.evapTempC || 0),
+    Number(metrics.condenserTempC || 0),
+    Number(metrics.compAmps || 0),
+    Number(metrics.binLevelPct || 0),
+    Number(metrics.cycleMins || 0),
+    Number(metrics.filterLifePct || 100),
+    String(metrics.errorCode || 'NONE'),
+    nowStr
+  ];
+  var rowIdx = findRowByExactKey(sheet, 1, devId);
+  if (rowIdx >= 2) sheet.getRange(rowIdx, 1, 1, rowVals.length).setValues([rowVals]);
+  else sheet.appendRow(rowVals);
+
+  // Trigger LINE alert if critical error reported via WiFi
+  if (String(rec.status || '') === 'CRITICAL_ERROR' && secrets && secrets.lineGroupId && isLineTokenConfigured()) {
+    pushLineMessage(
+      secrets.lineGroupId,
+      '🚨 [IoT WiFi CRITICAL ALERT]\n' +
+      '• รุ่น / S/N: ' + (rec.model || '-') + ' / ' + (rec.serial || '-') + '\n' +
+      '• ลูกค้า: ' + (rec.customer || '-') + '\n' +
+      '• รหัส Error: ' + (metrics.errorCode || '-') + ' | Condenser: ' + (metrics.condenserTempC || '-') + '°C'
+    );
+  }
+  return { status: 'ok', deviceId: devId, updatedAt: nowStr };
+}
+
+function getIotTelemetryFleetFromSheet_(ss) {
+  var sheet = ss.getSheetByName('IoT_Device_Telemetry');
+  if (!sheet || sheet.getLastRow() < 2) return { status: 'ok', devices: [] };
+  var vals = sheet.getRange(2, 1, sheet.getLastRow() - 1, 16).getValues();
+  var devices = vals.map(function(r) {
+    return {
+      deviceId: r[0], serial: r[1], model: r[2], customer: r[3], wifiSsid: r[4],
+      rssiDbm: Number(r[5] || 0), status: r[6],
+      metrics: {
+        cabinetTempC: Number(r[7] || 0),
+        evapTempC: Number(r[8] || 0),
+        condenserTempC: Number(r[9] || 0),
+        compAmps: Number(r[10] || 0),
+        binLevelPct: Number(r[11] || 0),
+        cycleMins: Number(r[12] || 0),
+        filterLifePct: Number(r[13] || 100),
+        errorCode: String(r[14] || 'NONE')
+      },
+      lastSeen: String(r[15] || '')
+    };
+  });
+  return { status: 'ok', devices: devices };
 }

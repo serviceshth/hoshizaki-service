@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1030</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1031</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -954,6 +954,9 @@
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openLiveTechGpsRadarModal()" class="tb-action-item bg-teal-600 hover:bg-teal-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-satellite-dish text-amber-300"></i> <span>เรดาร์ GPS ช่างสด</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openIotTelemetryHubModal('FLEET')" class="tb-action-item bg-cyan-700 hover:bg-cyan-800 text-white font-extrabold shadow-sm border border-cyan-300/50">
+                            <i class="fa-solid fa-wifi text-amber-300"></i> <span>IoT WiFi Telemetry สด <span id="iotAlertToolbarBadge" class="hidden ml-1 bg-rose-600 text-white text-[9px] px-1.5 py-0.2 rounded-full">0</span></span>
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openTroubleshootingWizardModal('E1')" class="tb-action-item bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-wand-magic-sparkles text-amber-200"></i> <span>วิเคราะห์ Error ทีละขั้น</span>
@@ -4554,7 +4557,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1030</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1031</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20692,7 +20695,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1030) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1031) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -23594,7 +23597,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1030 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1031 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -31510,7 +31513,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1030)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1031)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31713,7 +31716,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1030)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1031)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31722,7 +31725,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1030)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1031)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -31731,7 +31734,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1030)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1031)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31813,21 +31816,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1030) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1031) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1030 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1031 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1030）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1031）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -34681,9 +34684,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1030',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1030)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1030)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1031',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1031)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1031)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34732,7 +34735,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1030 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1031 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -34958,7 +34961,7 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
         <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1030 — Multi-Branch &amp; White-Label Ready)</h3>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1031 — Multi-Branch &amp; White-Label Ready)</h3>
                 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
             </div>
             <div class="flex items-center gap-1.5">
@@ -39003,7 +39006,7 @@ try {
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1030 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1031 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -39530,7 +39533,7 @@ try {
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1030</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1031</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -40442,7 +40445,7 @@ ${portalUrl}`;
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1030</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1031</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -41935,6 +41938,615 @@ ${portalUrl}`;
         });
       };
     }
+  });
+})();
+</script>
+
+
+<!-- ========================================================================= -->
+<!-- ENTERPRISE v1031: IOT WIFI TELEMETRY & FUTURE-READY INTEGRATION ENGINE    -->
+<!-- ========================================================================= -->
+<div id="iotTelemetryHubModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-[165] flex items-center justify-center p-2 sm:p-4">
+  <div class="bg-white w-full max-w-6xl rounded-2xl shadow-2xl border border-cyan-200 flex flex-col max-h-[92dvh] overflow-hidden">
+    <!-- Modal Header -->
+    <div class="bg-gradient-to-r from-[#002B49] via-[#004675] to-[#0077B6] text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <span class="w-9 h-9 rounded-xl bg-cyan-400/20 border border-cyan-300/40 flex items-center justify-center text-amber-300">
+          <i class="fa-solid fa-wifi text-base"></i>
+        </span>
+        <div>
+          <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
+            <span>HOSHIZAKI IoT WiFi Telemetry &amp; Smart Predictive Hub</span>
+            <span class="text-[10px] bg-emerald-500/30 border border-emerald-300/50 text-emerald-100 px-2 py-0.5 rounded-full">v1031 Ready</span>
+          </h2>
+          <p class="text-[11px] text-sky-200">ระบบรับค่าสถานะเครื่องทำน้ำแข็ง/ตู้แช่ WiFi แบบ Real-Time · วิเคราะห์แนวโน้มเสียล่วงหน้า · เชื่อมต่อ REST/MQTT/Webhook อนาคต</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button type="button" onclick="simulateLiveIotTelemetryPing()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-extrabold shadow-xs flex items-center gap-1">
+          <i class="fa-solid fa-bolt"></i> <span>จำลองรับข้อมูล WiFi สด (Demo Ping)</span>
+        </button>
+        <button type="button" onclick="closeIotTelemetryHubModal()" class="bg-rose-600 hover:bg-rose-700 text-white w-8 h-8 rounded-lg font-extrabold text-lg flex items-center justify-center">&times;</button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-slate-100 border-b border-slate-200 px-3 py-2 flex flex-wrap items-center gap-1.5 text-xs font-bold">
+      <button type="button" onclick="switchIotHubTab('FLEET')" id="iotTabBtn_FLEET" class="iot-tab-btn px-3 py-1.5 rounded-lg bg-[#002B49] text-white shadow-xs">
+        <i class="fa-solid fa-microchip mr-1 text-cyan-300"></i> 1. สถานะเครื่อง IoT Real-Time (<span id="iotFleetCountTab">0</span>)
+      </button>
+      <button type="button" onclick="switchIotHubTab('PAIRING')" id="iotTabBtn_PAIRING" class="iot-tab-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-sky-50 border border-slate-200">
+        <i class="fa-solid fa-link mr-1 text-emerald-600"></i> 2. ลงทะเบียน S/N ↔ IoT Device ID
+      </button>
+      <button type="button" onclick="switchIotHubTab('API_BRIDGE')" id="iotTabBtn_API_BRIDGE" class="iot-tab-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-sky-50 border border-slate-200">
+        <i class="fa-solid fa-plug-circle-bolt mr-1 text-indigo-600"></i> 3. มาตรฐานการเชื่อมต่ออนาคต (REST / MQTT / Webhook)
+      </button>
+      <button type="button" onclick="switchIotHubTab('ROADMAP')" id="iotTabBtn_ROADMAP" class="iot-tab-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-sky-50 border border-slate-200">
+        <i class="fa-solid fa-lightbulb mr-1 text-amber-500"></i> 4. ฟีเจอร์แนะนำต่อยอดในอนาคต (Roadmap)
+      </button>
+    </div>
+
+    <!-- Tab Body -->
+    <div id="iotHubModalBody" class="p-3 sm:p-4 overflow-y-auto space-y-3 text-xs flex-1 bg-slate-50"></div>
+  </div>
+</div>
+
+<script id="v1031-iot-telemetry-bridge-logic">
+(function() {
+  const IOT_DEVICES_KEY = 'hoshizaki_iot_devices_v1031';
+  const IOT_TELEMETRY_LOG_KEY = 'hoshizaki_iot_telemetry_logs_v1031';
+  const IOT_BRIDGE_CFG_KEY = 'hoshizaki_iot_bridge_config_v1031';
+
+  const DEFAULT_IOT_DEVICES = [
+    {
+      deviceId: 'HZK-WIFI-IM240-001',
+      serial: 'H14289J',
+      model: 'IM-240DNE-HC',
+      customer: 'Starbucks Reserve — CentralWorld',
+      wifiSsid: 'SBX-IOT-BKK01',
+      rssiDbm: -54,
+      firmware: 'v2.4.1-IoT',
+      status: 'ONLINE_NORMAL',
+      metrics: {
+        cabinetTempC: -1.8,
+        evapTempC: -14.2,
+        condenserTempC: 36.4,
+        compAmps: 6.4,
+        waterValveState: 'CLOSED',
+        binLevelPct: 85,
+        cycleMins: 26,
+        filterLifePct: 78,
+        errorCode: 'NONE'
+      },
+      lastSeen: new Date().toISOString()
+    },
+    {
+      deviceId: 'HZK-WIFI-KM901-002',
+      serial: 'K88310M',
+      model: 'KM-901MAJ',
+      customer: 'โรงแรมแชงกรี-ลา กรุงเทพฯ (Main Kitchen)',
+      wifiSsid: 'SHANGRILA-ENG-WIFI',
+      rssiDbm: -63,
+      firmware: 'v2.4.1-IoT',
+      status: 'WARNING_HIGH_COND',
+      metrics: {
+        cabinetTempC: 0.4,
+        evapTempC: -11.5,
+        condenserTempC: 51.8,
+        compAmps: 9.7,
+        waterValveState: 'OPEN',
+        binLevelPct: 42,
+        cycleMins: 44,
+        filterLifePct: 18,
+        errorCode: 'W-COND-TEMP'
+      },
+      lastSeen: new Date().toISOString()
+    },
+    {
+      deviceId: 'HZK-WIFI-HF126-003',
+      serial: 'F55201S',
+      model: 'HF-126MA-S',
+      customer: '7-Eleven Flagship สาขาสีลม',
+      wifiSsid: 'CPALL-STORE-IOT',
+      rssiDbm: -58,
+      firmware: 'v1.9.8-IoT',
+      status: 'ONLINE_NORMAL',
+      metrics: {
+        cabinetTempC: -20.5,
+        evapTempC: -26.1,
+        condenserTempC: 34.0,
+        compAmps: 3.1,
+        waterValveState: 'N/A',
+        binLevelPct: 100,
+        cycleMins: 0,
+        filterLifePct: 92,
+        errorCode: 'NONE'
+      },
+      lastSeen: new Date().toISOString()
+    }
+  ];
+
+  function loadIotDevices_() {
+    try {
+      const raw = localStorage.getItem(IOT_DEVICES_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    localStorage.setItem(IOT_DEVICES_KEY, JSON.stringify(DEFAULT_IOT_DEVICES));
+    return DEFAULT_IOT_DEVICES;
+  }
+
+  function saveIotDevices_(list) {
+    try {
+      localStorage.setItem(IOT_DEVICES_KEY, JSON.stringify(list || []));
+      updateIotAlertBadge_();
+    } catch (e) {}
+  }
+
+  function loadIotBridgeConfig_() {
+    try {
+      const raw = localStorage.getItem(IOT_BRIDGE_CFG_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return {
+      ingestionMode: 'GAS_WEBHOOK_BRIDGE',
+      mqttBrokerWssUrl: 'wss://iot-broker.hoshizaki.co.th:8084/mqtt',
+      mqttTopicPattern: 'hoshizaki/th/+/telemetry',
+      pollingIntervalSec: 30,
+      autoCreateJobOnCriticalError: true,
+      condenserTempWarnC: 48,
+      filterAlertThresholdPct: 20
+    };
+  }
+
+  function saveIotBridgeConfig_(cfg) {
+    try {
+      localStorage.setItem(IOT_BRIDGE_CFG_KEY, JSON.stringify(cfg));
+    } catch (e) {}
+  }
+
+  function updateIotAlertBadge_() {
+    const list = loadIotDevices_();
+    const warns = list.filter(d => d.status !== 'ONLINE_NORMAL').length;
+    const badge = document.getElementById('iotAlertToolbarBadge');
+    const tabCnt = document.getElementById('iotFleetCountTab');
+    if (tabCnt) tabCnt.textContent = String(list.length);
+    if (badge) {
+      if (warns > 0) {
+        badge.textContent = String(warns);
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+  }
+
+  // Standardized IoT Ingestion Handler (Accepts payloads from Hoshizaki WiFi Cloud / MQTT / Webhook)
+  window.ingestHoshizakiIotTelemetryPayload = function(payload) {
+    if (!payload) return null;
+    const list = loadIotDevices_();
+    const devId = String(payload.deviceId || payload.device_id || ('HZK-WIFI-' + (payload.serial || Date.now()))).trim();
+    const sn = String(payload.serial || payload.serial_no || '').trim().toUpperCase();
+    const m = payload.metrics || payload;
+    const condTemp = Number(m.condenserTempC ?? m.cond_temp ?? 35);
+    const errCode = String(m.errorCode || m.error_code || 'NONE').toUpperCase();
+    const filterPct = Number(m.filterLifePct ?? m.filter_pct ?? 100);
+
+    let computedStatus = 'ONLINE_NORMAL';
+    if (errCode && errCode !== 'NONE' && errCode !== '0') {
+      computedStatus = errCode.startsWith('E') ? 'CRITICAL_ERROR' : 'WARNING_HIGH_COND';
+    } else if (condTemp >= 48 || filterPct <= 20) {
+      computedStatus = 'WARNING_HIGH_COND';
+    }
+
+    const idx = list.findIndex(d => d.deviceId === devId || (sn && d.serial === sn));
+    const updatedObj = {
+      deviceId: devId,
+      serial: sn || (idx >= 0 ? list[idx].serial : 'UNKNOWN-SN'),
+      model: String(payload.model || (idx >= 0 ? list[idx].model : 'IM-240DNE')),
+      customer: String(payload.customer || (idx >= 0 ? list[idx].customer : 'ลูกค้าเชื่อมต่อ IoT WiFi')),
+      wifiSsid: String(payload.wifiSsid || (idx >= 0 ? list[idx].wifiSsid : 'HOSHIZAKI-WIFI')),
+      rssiDbm: Number(payload.rssiDbm ?? -55),
+      firmware: String(payload.firmware || 'v2.4.1-IoT'),
+      status: computedStatus,
+      metrics: {
+        cabinetTempC: Number(m.cabinetTempC ?? m.cabinet_temp ?? -1.5),
+        evapTempC: Number(m.evapTempC ?? m.evap_temp ?? -14.0),
+        condenserTempC: condTemp,
+        compAmps: Number(m.compAmps ?? m.amps ?? 5.5),
+        waterValveState: String(m.waterValveState || 'CLOSED'),
+        binLevelPct: Number(m.binLevelPct ?? 80),
+        cycleMins: Number(m.cycleMins ?? 25),
+        filterLifePct: filterPct,
+        errorCode: errCode
+      },
+      lastSeen: new Date().toISOString()
+    };
+
+    if (idx >= 0) list[idx] = updatedObj;
+    else list.unshift(updatedObj);
+    saveIotDevices_(list);
+
+    // Sync to Google Apps Script backend if configured
+    try {
+      const gasUrl = localStorage.getItem('hoshizaki_gas_url') || '';
+      if (gasUrl && gasUrl.startsWith('http')) {
+        fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            actionType: 'INGEST_IOT_TELEMETRY',
+            record: updatedObj
+          })
+        }).catch(() => {});
+      }
+    } catch (eSync) {}
+
+    return updatedObj;
+  };
+
+  window.simulateLiveIotTelemetryPing = function() {
+    const list = loadIotDevices_();
+    const pick = list[Math.floor(Math.random() * list.length)] || DEFAULT_IOT_DEVICES[0];
+    const jitter = (Math.random() * 2.4 - 1.2);
+    const nextCond = Number((pick.metrics.condenserTempC + jitter).toFixed(1));
+    const nextAmps = Number(Math.max(1.5, pick.metrics.compAmps + (Math.random() * 0.6 - 0.3)).toFixed(2));
+    const updated = window.ingestHoshizakiIotTelemetryPayload({
+      deviceId: pick.deviceId,
+      serial: pick.serial,
+      model: pick.model,
+      customer: pick.customer,
+      wifiSsid: pick.wifiSsid,
+      rssiDbm: -50 - Math.floor(Math.random() * 18),
+      metrics: {
+        ...pick.metrics,
+        condenserTempC: nextCond,
+        compAmps: nextAmps,
+        binLevelPct: Math.min(100, Math.max(10, pick.metrics.binLevelPct + (Math.random() > 0.5 ? 3 : -2)))
+      }
+    });
+    if (typeof showToast === 'function') {
+      showToast('📡 รับค่า IoT WiFi สดจาก ' + updated.model + ' (' + updated.serial + ') เรียบร้อย');
+    }
+    renderIotHubBody_('FLEET');
+  };
+
+  window.importIotMetricsIntoActiveJob = function(deviceId) {
+    const list = loadIotDevices_();
+    const dev = list.find(d => d.deviceId === deviceId);
+    if (!dev) return;
+
+    const setVal = (ids, val) => {
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el) { el.value = val; el.dispatchEvent(new Event('change', { bubbles: true })); break; }
+      }
+    };
+
+    setVal(['serialInput', 'serialNoInput'], dev.serial);
+    setVal(['modelInput', 'machineModelInput'], dev.model);
+    setVal(['storeInput', 'customerStoreInput'], dev.customer);
+
+    const m = dev.metrics || {};
+    setVal(['compAmpsInput', 'diagCompAmps'], String(m.compAmps || ''));
+    setVal(['cabinetTempInput', 'diagTemp'], String(m.cabinetTempC || ''));
+
+    const summaryNote = `[IoT WiFi Telemetry @ ${new Date(dev.lastSeen).toLocaleTimeString('th-TH')}] ` +
+      `Device: ${dev.deviceId} | Condenser: ${m.condenserTempC}°C | Evap: ${m.evapTempC}°C | ` +
+      `Comp Amps: ${m.compAmps}A | Bin: ${m.binLevelPct}% | Filter Life: ${m.filterLifePct}% | Error: ${m.errorCode}`;
+
+    const symEl = document.getElementById('diagSymptomInput') || document.getElementById('symptomInput');
+    if (symEl) {
+      symEl.value = symEl.value ? (symEl.value + '\n' + summaryNote) : summaryNote;
+    }
+
+    closeIotTelemetryHubModal();
+    if (typeof showToast === 'function') {
+      showToast('✅ ดึงค่า IoT Telemetry (' + dev.serial + ') ลงใบแจ้งบริการเรียบร้อยแล้ว!');
+    }
+  };
+
+  window.registerNewIotDeviceMapping = function(ev) {
+    if (ev) ev.preventDefault();
+    const deviceId = String(document.getElementById('iotRegDeviceId')?.value || '').trim();
+    const serial = String(document.getElementById('iotRegSerial')?.value || '').trim().toUpperCase();
+    const model = String(document.getElementById('iotRegModel')?.value || '').trim().toUpperCase();
+    const customer = String(document.getElementById('iotRegCustomer')?.value || '').trim();
+    const wifiSsid = String(document.getElementById('iotRegSsid')?.value || 'HOSHIZAKI-WIFI').trim();
+
+    if (!deviceId || !serial) {
+      alert('กรุณาระบุ IoT Device ID และ Serial No. ของเครื่องครับ');
+      return;
+    }
+
+    window.ingestHoshizakiIotTelemetryPayload({
+      deviceId,
+      serial,
+      model: model || 'IM-240DNE-HC',
+      customer: customer || 'ลูกค้าติดตั้งโมดูล WiFi',
+      wifiSsid,
+      metrics: {
+        cabinetTempC: -1.5,
+        evapTempC: -14.0,
+        condenserTempC: 35.5,
+        compAmps: 6.1,
+        waterValveState: 'CLOSED',
+        binLevelPct: 90,
+        cycleMins: 25,
+        filterLifePct: 100,
+        errorCode: 'NONE'
+      }
+    });
+
+    if (typeof showToast === 'function') {
+      showToast('✅ ผูกอุปกรณ์ IoT ' + deviceId + ' เข้ากับ S/N: ' + serial + ' สำเร็จ');
+    }
+    switchIotHubTab('FLEET');
+  };
+
+  window.saveIotBridgeSettingsForm = function() {
+    const cfg = {
+      ingestionMode: document.getElementById('iotCfgMode')?.value || 'GAS_WEBHOOK_BRIDGE',
+      mqttBrokerWssUrl: document.getElementById('iotCfgMqttUrl')?.value || '',
+      mqttTopicPattern: document.getElementById('iotCfgMqttTopic')?.value || 'hoshizaki/th/+/telemetry',
+      pollingIntervalSec: Number(document.getElementById('iotCfgPollSec')?.value || 30),
+      autoCreateJobOnCriticalError: Boolean(document.getElementById('iotCfgAutoJob')?.checked),
+      condenserTempWarnC: Number(document.getElementById('iotCfgCondWarn')?.value || 48),
+      filterAlertThresholdPct: Number(document.getElementById('iotCfgFilterWarn')?.value || 20)
+    };
+    saveIotBridgeConfig_(cfg);
+    if (typeof showToast === 'function') {
+      showToast('💾 บันทึกการตั้งค่า IoT Integration Gateway เรียบร้อยแล้ว');
+    }
+  };
+
+  function renderIotHubBody_(tab) {
+    const body = document.getElementById('iotHubModalBody');
+    if (!body) return;
+    const devices = loadIotDevices_();
+    const cfg = loadIotBridgeConfig_();
+
+    if (tab === 'FLEET') {
+      const onlineCnt = devices.filter(d => d.status === 'ONLINE_NORMAL').length;
+      const warnCnt = devices.filter(d => d.status !== 'ONLINE_NORMAL').length;
+      body.innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
+            <div class="text-[11px] text-slate-500 font-semibold">เครื่องเชื่อมต่อ WiFi ทั้งหมด</div>
+            <div class="text-xl font-extrabold text-[#002B49] mt-0.5">${devices.length} <span class="text-xs font-normal text-slate-400">เครื่อง</span></div>
+          </div>
+          <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 shadow-xs">
+            <div class="text-[11px] text-emerald-700 font-semibold">ทำงานปกติ (Online Normal)</div>
+            <div class="text-xl font-extrabold text-emerald-700 mt-0.5">${onlineCnt} <span class="text-xs font-normal">เครื่อง</span></div>
+          </div>
+          <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 shadow-xs">
+            <div class="text-[11px] text-amber-800 font-semibold">แจ้งเตือนล่วงหน้า (Predictive Alert)</div>
+            <div class="text-xl font-extrabold text-amber-700 mt-0.5">${warnCnt} <span class="text-xs font-normal">เครื่อง</span></div>
+          </div>
+          <div class="bg-sky-50 p-3 rounded-xl border border-sky-200 shadow-xs">
+            <div class="text-[11px] text-sky-800 font-semibold">โหมดการซิงค์ปัจจุบัน</div>
+            <div class="text-xs font-extrabold text-sky-900 mt-1.5">${cfg.ingestionMode} (${cfg.pollingIntervalSec}s)</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          ${devices.map(d => {
+            const isWarn = d.status !== 'ONLINE_NORMAL';
+            const m = d.metrics || {};
+            return `
+              <div class="bg-white rounded-xl border-2 ${isWarn ? 'border-amber-400 shadow-md' : 'border-slate-200 shadow-xs'} p-3.5 flex flex-col justify-between space-y-2.5">
+                <div>
+                  <div class="flex items-start justify-between gap-2">
+                    <div>
+                      <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${isWarn ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+                        <span class="w-1.5 h-1.5 rounded-full ${isWarn ? 'bg-amber-600 animate-ping' : 'bg-emerald-600'}"></span>
+                        ${isWarn ? 'WARNING: ' + m.errorCode : 'ONLINE · NORMAL'}
+                      </span>
+                      <div class="font-extrabold text-sm text-[#002B49] mt-1">${escapeHtml(d.model)} · S/N: ${escapeHtml(d.serial)}</div>
+                      <div class="text-[11px] text-slate-600 font-medium">${escapeHtml(d.customer)}</div>
+                    </div>
+                    <div class="text-right text-[10px] text-slate-500">
+                      <div><i class="fa-solid fa-wifi text-cyan-600"></i> ${d.rssiDbm} dBm</div>
+                      <div class="font-mono text-[9.5px]">${escapeHtml(d.deviceId)}</div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-1.5 mt-2.5 bg-slate-50 p-2 rounded-lg border border-slate-100 text-[11px]">
+                    <div>
+                      <div class="text-[9.5px] text-slate-400">Condenser</div>
+                      <div class="font-extrabold ${m.condenserTempC >= cfg.condenserTempWarnC ? 'text-rose-600' : 'text-slate-800'}">${m.condenserTempC}°C</div>
+                    </div>
+                    <div>
+                      <div class="text-[9.5px] text-slate-400">Evaporator</div>
+                      <div class="font-extrabold text-sky-700">${m.evapTempC}°C</div>
+                    </div>
+                    <div>
+                      <div class="text-[9.5px] text-slate-400">Comp Amps</div>
+                      <div class="font-extrabold text-slate-800">${m.compAmps} A</div>
+                    </div>
+                    <div>
+                      <div class="text-[9.5px] text-slate-400">Bin Level</div>
+                      <div class="font-extrabold text-emerald-700">${m.binLevelPct}%</div>
+                    </div>
+                    <div>
+                      <div class="text-[9.5px] text-slate-400">Filter 4HC-H</div>
+                      <div class="font-extrabold ${m.filterLifePct <= cfg.filterAlertThresholdPct ? 'text-amber-600' : 'text-slate-800'}">${m.filterLifePct}%</div>
+                    </div>
+                    <div>
+                      <div class="text-[9.5px] text-slate-400">Cycle Time</div>
+                      <div class="font-extrabold text-slate-800">${m.cycleMins} min</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                  <span class="text-[10px] text-slate-400">อัปเดต: ${new Date(d.lastSeen).toLocaleTimeString('th-TH')}</span>
+                  <button type="button" onclick="importIotMetricsIntoActiveJob('${escapeHtml(d.deviceId)}')" class="bg-[#002B49] hover:bg-[#00A3E0] text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition flex items-center gap-1">
+                    <i class="fa-solid fa-file-import"></i> <span>ดึงค่าลงใบงาน</span>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    } else if (tab === 'PAIRING') {
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs max-w-2xl mx-auto space-y-3">
+          <div class="font-extrabold text-sm text-[#002B49] border-b pb-2">
+            <i class="fa-solid fa-link text-emerald-600 mr-1"></i> ลงทะเบียนผูกโมดูล WiFi (IoT Device ID) เข้ากับ Serial No. เครื่อง
+          </div>
+          <form onsubmit="registerNewIotDeviceMapping(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">IoT Device ID / MAC Address *</label>
+              <input type="text" id="iotRegDeviceId" required placeholder="เช่น HZK-WIFI-IM240-004" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs font-mono">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Serial Number (S/N) *</label>
+              <input type="text" id="iotRegSerial" required placeholder="เช่น H19920J" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold uppercase">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">รุ่นเครื่อง (Model)</label>
+              <input type="text" id="iotRegModel" list="hoshizakiModelsList" placeholder="เช่น IM-240DNE-HC" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">WiFi SSID หน้างาน</label>
+              <input type="text" id="iotRegSsid" placeholder="เช่น STORE-IOT-WIFI" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">ชื่อร้านค้า / สถานที่ติดตั้ง</label>
+              <input type="text" id="iotRegCustomer" placeholder="ระบุชื่อลูกค้าหรือสาขา..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs">
+            </div>
+            <div class="sm:col-span-2 flex justify-end">
+              <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-xs shadow-sm">
+                <i class="fa-solid fa-plus mr-1"></i> บันทึกและเริ่มรับข้อมูล Real-Time
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
+    } else if (tab === 'API_BRIDGE') {
+      const sampleJson = JSON.stringify({
+        actionType: "INGEST_IOT_TELEMETRY",
+        deviceId: "HZK-WIFI-IM240-001",
+        serial: "H14289J",
+        model: "IM-240DNE-HC",
+        customer: "Starbucks Reserve — CentralWorld",
+        rssiDbm: -54,
+        metrics: {
+          cabinetTempC: -1.8,
+          evapTempC: -14.2,
+          condenserTempC: 36.4,
+          compAmps: 6.4,
+          binLevelPct: 85,
+          cycleMins: 26,
+          filterLifePct: 78,
+          errorCode: "NONE"
+        }
+      }, null, 2);
+
+      body.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49] border-b pb-2">
+              <i class="fa-solid fa-sliders text-indigo-600 mr-1"></i> ตั้งค่า IoT Gateway &amp; Threshold แจ้งเตือน
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">โปรโตคอลรับข้อมูลหลัก (Ingestion Architecture)</label>
+              <select id="iotCfgMode" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 text-xs bg-white font-semibold">
+                <option value="GAS_WEBHOOK_BRIDGE" ${cfg.ingestionMode === 'GAS_WEBHOOK_BRIDGE' ? 'selected' : ''}>1. HTTPS REST Webhook → Google Apps Script &amp; Sheets (พร้อมใช้ทันที)</option>
+                <option value="MQTT_OVER_WSS" ${cfg.ingestionMode === 'MQTT_OVER_WSS' ? 'selected' : ''}>2. MQTT over WebSocket (WSS Real-Time Stream สำหรับ Hoshizaki Cloud)</option>
+                <option value="HYBRID_POLL_PUSH" ${cfg.ingestionMode === 'HYBRID_POLL_PUSH' ? 'selected' : ''}>3. Hybrid Cloud API Polling + Edge Webhook</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">MQTT Broker WSS Endpoint (อนาคต)</label>
+              <input type="text" id="iotCfgMqttUrl" value="${escapeHtml(cfg.mqttBrokerWssUrl)}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">เตือนอุณหภูมิ Condenser เกิน (°C)</label>
+                <input type="number" id="iotCfgCondWarn" value="${cfg.condenserTempWarnC}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">เตือนอายุไส้กรองน้ำต่ำกว่า (%)</label>
+                <input type="number" id="iotCfgFilterWarn" value="${cfg.filterAlertThresholdPct}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold">
+              </div>
+            </div>
+            <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 pt-1">
+              <input type="checkbox" id="iotCfgAutoJob" ${cfg.autoCreateJobOnCriticalError ? 'checked' : ''} class="rounded text-cyan-600">
+              <span>สร้างใบแจ้งเตือนเข้ากลุ่ม LINE OA อัตโนมัติเมื่อเครื่องส่ง Error Code วิกฤต</span>
+            </label>
+            <div class="pt-2">
+              <button type="button" onclick="saveIotBridgeSettingsForm()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white px-4 py-2 rounded-lg font-bold text-xs">
+                <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกการตั้งค่า Gateway
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 text-sky-100 p-4 rounded-xl border border-slate-700 shadow-xs space-y-2">
+            <div class="font-extrabold text-xs text-amber-300 flex items-center justify-between">
+              <span><i class="fa-solid fa-code mr-1"></i> Standard IoT Telemetry JSON Schema (v1031)</span>
+              <span class="text-[10px] text-slate-400">POST → GAS / Webhook</span>
+            </div>
+            <p class="text-[11px] text-slate-300">ใช้ Payload มาตรฐานนี้สำหรับให้เซิร์ฟเวอร์ Hoshizaki IoT Cloud, เกตเวย์ WiFi หรือบอร์ด ESP32/MQTT Bridge ยิงข้อมูลเข้า Google Sheets แท็บ <b>IoT_Device_Telemetry</b> และหน้าแอปได้ทันที:</p>
+            <pre class="bg-slate-950 p-3 rounded-lg text-[10.5px] font-mono text-emerald-300 overflow-x-auto leading-relaxed">${escapeHtml(sampleJson)}</pre>
+          </div>
+        </div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="bg-white p-4 rounded-xl border-l-4 border-cyan-600 shadow-xs space-y-1.5">
+            <div class="font-extrabold text-sm text-[#002B49]">1. Predictive Maintenance &amp; Auto-Ticket (ซ่อมเชิงรุกก่อนเครื่องดับ)</div>
+            <p class="text-slate-600 leading-relaxed">ตรวจจับค่า <b>Condenser Temp สูงเกิน 48°C</b> หรือ <b>Cycle Time ยาวผิดปกติ</b> เพื่อแจ้งเตือนล้างแผงคอยล์ร้อนล่วงหน้าก่อนคอมเพรสเซอร์ตัดหรือเสียหาย ช่วยเพิ่ม First-Time Fix Rate (FTFR) และลดการสูญเสียน้ำแข็งของลูกค้า</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border-l-4 border-emerald-600 shadow-xs space-y-1.5">
+            <div class="font-extrabold text-sm text-[#002B49]">2. Smart Water Filter 4HC-H Auto-Replenishment (เตือนเปลี่ยนไส้กรองอัตโนมัติ)</div>
+            <p class="text-slate-600 leading-relaxed">คำนวณปริมาณน้ำไหลผ่านสะสมจาก IoT Telemetry เมื่ออายุไส้กรองเหลือต่ำกว่า <b>20%</b> ระบบจะแจ้งเตือนทีมขาย/บริการพร้อมสร้างใบเสนอราคาไส้กรองน้ำ 4HC-H อัตโนมัติ</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border-l-4 border-amber-500 shadow-xs space-y-1.5">
+            <div class="font-extrabold text-sm text-[#002B49]">3. Smart Van Stock Pre-Allocation (จองอะไหล่ขึ้นรถช่างตาม Error Code จริง)</div>
+            <p class="text-slate-600 leading-relaxed">เมื่อเครื่องส่งรหัส Error ผ่าน WiFi ระบบจับคู่รหัสอะไหล่ที่ต้องใช้จากฐานข้อมูล <b>Parts Catalog</b> และตรวจสอบสต็อกรถช่าง (T01–T08) ล่วงหน้าก่อนช่างออกเดินทาง</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border-l-4 border-indigo-600 shadow-xs space-y-1.5">
+            <div class="font-extrabold text-sm text-[#002B49]">4. ERP / SAP / NAV &amp; Customer Enterprise API Gateway</div>
+            <p class="text-slate-600 leading-relaxed">รองรับการเปิด REST API / Webhook ให้ลูกค้าองค์กรขนาดใหญ่ (เช่น ร้านสะดวกซื้อ, Chain โรงแรม) ดึงสถานะสุขภาพเครื่องและประวัติซ่อมไปแสดงบน Dashboard ส่วนกลางของลูกค้าได้</p>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  window.switchIotHubTab = function(tab) {
+    document.querySelectorAll('.iot-tab-btn').forEach(btn => {
+      btn.className = 'iot-tab-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-sky-50 border border-slate-200';
+    });
+    const active = document.getElementById('iotTabBtn_' + tab);
+    if (active) {
+      active.className = 'iot-tab-btn px-3 py-1.5 rounded-lg bg-[#002B49] text-white shadow-xs';
+    }
+    renderIotHubBody_(tab);
+  };
+
+  window.openIotTelemetryHubModal = function(tab) {
+    const modal = document.getElementById('iotTelemetryHubModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      switchIotHubTab(tab || 'FLEET');
+    }
+  };
+
+  window.closeIotTelemetryHubModal = function() {
+    const modal = document.getElementById('iotTelemetryHubModal');
+    if (modal) modal.classList.add('hidden');
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateIotAlertBadge_();
   });
 })();
 </script>

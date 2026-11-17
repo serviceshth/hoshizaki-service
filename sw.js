@@ -1,28 +1,29 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1013-final';
-const BASE_PATH = '/hoshizaki-service-management-system';
-
-const CORE_ASSETS = [
-  `${BASE_PATH}/`,
-  `${BASE_PATH}/index.html`,
-  `${BASE_PATH}/manifest.json`,
-  `${BASE_PATH}/serial_db.json`,
-  `${BASE_PATH}/parts_catalog.json`,
-  `${BASE_PATH}/quotation_archive.json`
+const CACHE_NAME = 'hoshizaki-service-pwa-v1011-prod-credit';
+const APP_SHELL_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json'
+];
+const DATA_ASSETS = [
+  './serial_db.json',
+  './parts_catalog.json',
+  './quotation_archive.json'
+];
+const OCR_CDN_ASSETS = [
+  'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'
 ];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return Promise.allSettled(
-        CORE_ASSETS.map((url) =>
-          fetch(url, { cache: 'no-store' })
-            .then((res) => {
-              if (res && res.ok) return cache.put(url, res);
-            })
-            .catch(() => null)
-        )
-      );
+    caches.open(CACHE_NAME).then(async (cache) => {
+      await cache.addAll(APP_SHELL_ASSETS);
+      for (const url of DATA_ASSETS.concat(OCR_CDN_ASSETS)) {
+        try {
+          const res = await fetch(url, { cache: 'no-cache' });
+          if (res.ok) await cache.put(url, res);
+        } catch (e) {}
+      }
     })
   );
 });
@@ -30,52 +31,55 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((oldKey) => caches.delete(oldKey))
-      )
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
 
-  const url = new URL(req.url);
-
-  // Security Guard: ห้ามแคชไฟล์ข้อมูลต้นทุนลับลงเบราว์เซอร์โดยเด็ดขาด
-  if (url.pathname.includes('parts_cost_2025.json')) return;
-  if (url.origin !== self.location.origin) return;
-
-  // Network-First สำหรับหน้า HTML หลัก เพื่อรับอัปเดตล่าสุดทันที
-  if (req.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === `${BASE_PATH}/`) {
+  // Cache Tesseract.js worker, core wasm, and traineddata language packs for instant offline OCR
+  if (url.hostname.includes('jsdelivr.net') || url.hostname.includes('projectnaptha.com') || url.pathname.endsWith('.traineddata.gz')) {
     event.respondWith(
-      fetch(req)
-        .then((networkRes) => {
-          const clone = networkRes.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-          return networkRes;
-        })
-        .catch(() => caches.match(`${BASE_PATH}/index.html`))
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((response) => {
+          if (response && (response.status === 200 || response.type === 'opaque')) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        }).catch(() => cached);
+      })
     );
     return;
   }
 
-  // Cache-First + Background Refresh สำหรับไฟล์ฐานข้อมูล JSON
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      const fetchPromise = fetch(req)
-        .then((networkRes) => {
-          if (networkRes && networkRes.ok) {
-            const clone = networkRes.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-          }
-          return networkRes;
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === '/') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return response;
         })
-        .catch(() => cached);
-      return cached || fetchPromise;
+        .catch(() => caches.match(event.request).then((res) => res || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).then((response) => {
+        if (response && response.status === 200 && url.origin === location.origin) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      }).catch(() => cached);
     })
   );
 });

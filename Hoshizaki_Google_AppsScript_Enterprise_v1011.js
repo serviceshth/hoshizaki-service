@@ -6613,7 +6613,7 @@ function tryAutoCaptureLegacyFromLineGroup_(ss, ev, rawText) {
   if (ev.replyToken) {
     replyLineMessage(
       ev.replyToken,
-      (isExplicitImport ? '🚀 [#import สำเร็จ] สร้างใบแจ้งบริการเข้า Service_Jobs และคลัง Serial 360° แล้ว\n' : '✅ บันทึกประวัติซ่อมเข้าคลัง Serial 360° อัตโนมัติแล้ว\n') + \n' +
+      (isExplicitImport ? '🚀 [#import สำเร็จ] สร้างใบแจ้งบริการเข้า Service_Jobs และคลัง Serial 360° แล้ว\n' : '✅ บันทึกประวัติซ่อมเข้าคลัง Serial 360° อัตโนมัติแล้ว\n') +
       '• ลูกค้า: ' + parsed.customer + '\n' +
       '• รุ่น/S/N: ' + parsed.model + ' / ' + parsed.serial + '\n' +
       '• ช่าง: ' + parsed.technician + '\n' +

@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1032-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1033-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -207,6 +207,14 @@ function doPost(e) {
 
       if (action === 'AI_GATEWAY_PROXY_QUERY') {
         return jsonOut(handleAiGatewayProxyQuery_(ss, data));
+      }
+
+      if (action === 'SYNC_SYSTEM_AUDIT_LOG') {
+        return jsonOut(syncSystemAuditLogToSheet_(ss, data));
+      }
+
+      if (action === 'SYNC_ESG_REFRIGERANT_LOG') {
+        return jsonOut(syncEsgRefrigerantLogToSheet_(ss, data));
       }
 
       if (action === 'SYNC_V1025_GOVERNANCE_APPROVAL') {
@@ -1074,7 +1082,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1032-FINAL',
+    version: 'Enterprise-v1033-FINAL',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1107,7 +1115,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1032-FINAL',
+    version: 'Enterprise-v1033-FINAL',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -8059,4 +8067,54 @@ function handleAiGatewayProxyQuery_(ss, data) {
   } catch (e) {
     return { status: 'error', message: String(e) };
   }
+}
+
+
+// =========================================================================
+// SECTION 24: ENTERPRISE v1033 IMMUTABLE AUDIT LOG & ESG REFRIGERANT LOG
+// =========================================================================
+function syncSystemAuditLogToSheet_(ss, data) {
+  var sheetName = 'System_Audit_Log';
+  var headers = ['Timestamp', 'Audit_ID', 'Actor', 'Role', 'Category', 'Entity_ID', 'Detail'];
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  sheet.appendRow([
+    nowStr,
+    String(data.auditId || ('AUD-' + Date.now())),
+    String(data.actor || ''),
+    String(data.role || ''),
+    String(data.category || ''),
+    String(data.entityId || ''),
+    String(data.detail || '')
+  ]);
+  return { status: 'ok', loggedAt: nowStr };
+}
+
+function syncEsgRefrigerantLogToSheet_(ss, data) {
+  var sheetName = 'ESG_Refrigerant_Log';
+  var headers = ['Timestamp', 'Record_ID', 'Serial_No', 'Refrigerant_Type', 'Action', 'Weight_KG', 'CO2e_KG'];
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  sheet.appendRow([
+    nowStr,
+    String(data.id || ('ESG-' + Date.now())),
+    String(data.serial || ''),
+    String(data.gasType || ''),
+    String(data.action || ''),
+    Number(data.kg || 0),
+    Number(data.co2eKg || 0)
+  ]);
+  return { status: 'ok', loggedAt: nowStr };
 }

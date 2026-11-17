@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1031-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1032-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -199,6 +199,14 @@ function doPost(e) {
 
       if (action === 'GET_IOT_TELEMETRY_FLEET') {
         return jsonOut(getIotTelemetryFleetFromSheet_(ss));
+      }
+
+      if (action === 'LOG_AI_DIAGNOSTIC_FEEDBACK') {
+        return jsonOut(logAiDiagnosticFeedbackToSheet_(ss, data));
+      }
+
+      if (action === 'AI_GATEWAY_PROXY_QUERY') {
+        return jsonOut(handleAiGatewayProxyQuery_(ss, data));
       }
 
       if (action === 'SYNC_V1025_GOVERNANCE_APPROVAL') {
@@ -1066,7 +1074,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1031-FINAL',
+    version: 'Enterprise-v1032-FINAL',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1099,7 +1107,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1031-FINAL',
+    version: 'Enterprise-v1032-FINAL',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -7996,4 +8004,59 @@ function getIotTelemetryFleetFromSheet_(ss) {
     };
   });
   return { status: 'ok', devices: devices };
+}
+
+
+// =========================================================================
+// SECTION 23: ENTERPRISE v1032 AI GATEWAY PROXY & DIAGNOSTIC FEEDBACK LOOP
+// =========================================================================
+function logAiDiagnosticFeedbackToSheet_(ss, data) {
+  var sheetName = 'AI_Diagnostic_Feedback';
+  var headers = ['Timestamp', 'Device_ID', 'Serial_No', 'AI_Diagnosis', 'Is_Accurate', 'Technician', 'Notes'];
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  sheet.appendRow([
+    nowStr,
+    String(data.deviceId || ''),
+    String(data.serial || ''),
+    String(data.diagnosis || ''),
+    data.accurate ? 'TRUE' : 'FALSE',
+    String(data.technician || ''),
+    String(data.notes || '')
+  ]);
+  return { status: 'ok', loggedAt: nowStr };
+}
+
+function handleAiGatewayProxyQuery_(ss, data) {
+  var props = PropertiesService.getScriptProperties();
+  var apiKey = props.getProperty('GEMINI_API_KEY') || '';
+  var prompt = String(data.prompt || '').trim();
+  if (!apiKey) {
+    return {
+      status: 'fallback_local',
+      message: 'GEMINI_API_KEY ยังไม่ได้ตั้งค่าใน ScriptProperties — ระบบใช้ Edge Rules ภายในแทนอัตโนมัติ'
+    };
+  }
+  try {
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(apiKey);
+    var res = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      }),
+      muteHttpExceptions: true
+    });
+    var json = JSON.parse(res.getContentText() || '{}');
+    var replyText = (json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts && json.candidates[0].content.parts[0].text) || '';
+    return { status: 'ok', reply: replyText };
+  } catch (e) {
+    return { status: 'error', message: String(e) };
+  }
 }

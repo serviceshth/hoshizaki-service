@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1031</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1032</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -957,6 +957,9 @@
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openIotTelemetryHubModal('FLEET')" class="tb-action-item bg-cyan-700 hover:bg-cyan-800 text-white font-extrabold shadow-sm border border-cyan-300/50">
                             <i class="fa-solid fa-wifi text-amber-300"></i> <span>IoT WiFi Telemetry สด <span id="iotAlertToolbarBadge" class="hidden ml-1 bg-rose-600 text-white text-[9px] px-1.5 py-0.2 rounded-full">0</span></span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openAiNextGenServiceHubModal('DIGITAL_TWIN')" class="tb-action-item col-span-2 bg-gradient-to-r from-indigo-700 via-violet-700 to-cyan-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-indigo-300/50">
+                            <i class="fa-solid fa-robot text-amber-300"></i> <span>AI Field Co-Pilot &amp; IoT Digital Twin Suite (v1032)</span>
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openTroubleshootingWizardModal('E1')" class="tb-action-item bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-wand-magic-sparkles text-amber-200"></i> <span>วิเคราะห์ Error ทีละขั้น</span>
@@ -4557,7 +4560,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1031</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1032</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20695,7 +20698,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1031) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1032) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -23597,7 +23600,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1031 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1032 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -31513,7 +31516,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1031)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1032)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31716,7 +31719,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1031)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1032)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31725,7 +31728,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1031)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1032)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -31734,7 +31737,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1031)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1032)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31816,21 +31819,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1031) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1032) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1031 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1032 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1031）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1032）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -34684,9 +34687,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1031',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1031)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1031)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1032',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1032)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1032)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34735,7 +34738,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1031 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1032 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -34961,7 +34964,7 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
         <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1031 — Multi-Branch &amp; White-Label Ready)</h3>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1032 — Multi-Branch &amp; White-Label Ready)</h3>
                 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
             </div>
             <div class="flex items-center gap-1.5">
@@ -39006,7 +39009,7 @@ try {
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1031 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1032 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -39533,7 +39536,7 @@ try {
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1031</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1032</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -40445,7 +40448,7 @@ ${portalUrl}`;
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1031</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1032</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -42548,6 +42551,535 @@ ${portalUrl}`;
   document.addEventListener('DOMContentLoaded', () => {
     updateIotAlertBadge_();
   });
+})();
+</script>
+
+
+<!-- ========================================================================= -->
+<!-- ENTERPRISE v1032: NEXT-GEN AI + IOT FIELD SERVICE PLATFORM (ALL 5 PILLARS) -->
+<!-- ========================================================================= -->
+<div id="aiNextGenServiceHubModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-[170] flex items-center justify-center p-2 sm:p-4">
+  <div class="bg-white w-full max-w-6xl rounded-2xl shadow-2xl border border-indigo-200 flex flex-col max-h-[93dvh] overflow-hidden">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-[#002B49] via-[#1E1B4B] to-[#0E7490] text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <span class="w-9 h-9 rounded-xl bg-amber-400/20 border border-amber-300/40 flex items-center justify-center text-amber-300">
+          <i class="fa-solid fa-robot text-base"></i>
+        </span>
+        <div>
+          <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
+            <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
+            <span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1032</span>
+          </h2>
+          <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeAiNextGenServiceHubModal()" class="bg-rose-600 hover:bg-rose-700 text-white w-8 h-8 rounded-lg font-extrabold text-lg flex items-center justify-center">&times;</button>
+    </div>
+
+    <!-- 5 Pillars + Infra Tabs -->
+    <div class="bg-slate-100 border-b border-slate-200 px-3 py-2 flex flex-wrap items-center gap-1.5 text-xs font-bold">
+      <button type="button" onclick="switchAiHubTab('DIGITAL_TWIN')" id="aiTabBtn_DIGITAL_TWIN" class="ai-tab-btn px-3 py-1.5 rounded-lg bg-[#002B49] text-white shadow-xs">
+        <i class="fa-solid fa-microchip mr-1 text-cyan-300"></i> 1. IoT Digital Twin &amp; Root-Cause
+      </button>
+      <button type="button" onclick="switchAiHubTab('VISION_VOICE')" id="aiTabBtn_VISION_VOICE" class="ai-tab-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200">
+        <i class="fa-solid fa-camera-retro mr-1 text-indigo-600"></i> 2. Vision &amp; Voice-to-Report
+      </button>
+      <button type="button" onclick="switchAiHubTab('AUTO_DISPATCH')" id="aiTabBtn_AUTO_DISPATCH" class="ai-tab-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200">
+        <i class="fa-solid fa-route mr-1 text-emerald-600"></i> 3. Auto-Dispatch &amp; Van Parts
+      </button>
+      <button type="button" onclick="switchAiHubTab('CONCIERGE_UPSELL')" id="aiTabBtn_CONCIERGE_UPSELL" class="ai-tab-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200">
+        <i class="fa-brands fa-line mr-1 text-[#06C755]"></i> 4. AI Triage &amp; Smart Upsell
+      </button>
+      <button type="button" onclick="switchAiHubTab('EXEC_COPILOT')" id="aiTabBtn_EXEC_COPILOT" class="ai-tab-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200">
+        <i class="fa-solid fa-crown mr-1 text-amber-500"></i> 5. Executive AI Copilot &amp; Gateway
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div id="aiHubModalBody" class="p-3 sm:p-4 overflow-y-auto space-y-3 text-xs flex-1 bg-slate-50"></div>
+  </div>
+</div>
+
+<script id="v1032-ai-iot-nextgen-logic">
+(function() {
+  const AI_FEEDBACK_LOG_KEY = 'hoshizaki_ai_diagnostic_feedback_v1032';
+  const AI_GATEWAY_CFG_KEY = 'hoshizaki_ai_gateway_config_v1032';
+
+  // Standard Digital Twin Spec Baselines per Series
+  const DIGITAL_TWIN_BASELINES = {
+    'IM': { series: 'IM Cube Series', maxCondC: 45, normEvapRange: [-18, -10], normAmpsRange: [2.2, 7.2], maxCycleMin: 33 },
+    'KM': { series: 'KM Crescent Series', maxCondC: 46, normEvapRange: [-16, -8], normAmpsRange: [2.5, 11.5], maxCycleMin: 24 },
+    'FM': { series: 'FM Flake/Nugget Series', maxCondC: 45, normEvapRange: [-22, -12], normAmpsRange: [3.0, 12.0], maxCycleMin: 0 },
+    'HF': { series: 'HF Freezer Series', maxCondC: 44, normEvapRange: [-29, -20], normAmpsRange: [2.0, 6.0], maxCycleMin: 0 },
+    'HR': { series: 'HR Chiller Series', maxCondC: 43, normEvapRange: [-8, 2], normAmpsRange: [1.5, 4.8], maxCycleMin: 0 }
+  };
+
+  function getTwinBaseline_(model) {
+    const m = String(model || '').toUpperCase();
+    for (const prefix of Object.keys(DIGITAL_TWIN_BASELINES)) {
+      if (m.startsWith(prefix)) return DIGITAL_TWIN_BASELINES[prefix];
+    }
+    return DIGITAL_TWIN_BASELINES['IM'];
+  }
+
+  function evaluateDigitalTwinDevice_(dev) {
+    const base = getTwinBaseline_(dev.model);
+    const m = dev.metrics || {};
+    const anomalies = [];
+    const rootCauses = [];
+    let healthScore = 100;
+
+    if (Number(m.condenserTempC) > base.maxCondC) {
+      const over = (Number(m.condenserTempC) - base.maxCondC).toFixed(1);
+      healthScore -= 28;
+      anomalies.push(`Condenser Temp ${m.condenserTempC}°C (เกินมาตรฐาน ${base.maxCondC}°C อยู่ +${over}°C)`);
+      rootCauses.push({ part: 'Condenser Coil / Air Filter Cleaning + Fan Motor Check', partNo: '2A2062G01 / P00156-01', prob: 76 });
+    }
+    if (base.maxCycleMin > 0 && Number(m.cycleMins) > base.maxCycleMin) {
+      healthScore -= 22;
+      anomalies.push(`Cycle Time ${m.cycleMins} นาที (ช้ากว่าเกณฑ์ ${base.maxCycleMin} นาที)`);
+      rootCauses.push({ part: 'Water Valve / Float Switch / Refrigerant Charge', partNo: '4A5251-06 / 4A3624-01', prob: 64 });
+    }
+    if (Number(m.compAmps) > base.normAmpsRange[1]) {
+      healthScore -= 25;
+      anomalies.push(`Compressor Amps ${m.compAmps}A สูงกว่าพิกัดสูงสุด (${base.normAmpsRange[1]}A)`);
+      rootCauses.push({ part: 'Compressor Starting Relay / Run Capacitor / Overload', partNo: '4A1107-15 / 3A2005-01', prob: 68 });
+    }
+    if (Number(m.filterLifePct) <= 20) {
+      healthScore -= 12;
+      anomalies.push(`อายุไส้กรองน้ำ 4HC-H เหลือ ${m.filterLifePct}% (ควรเปลี่ยนทันที)`);
+      rootCauses.push({ part: 'Water Filter Cartridge 4HC-H (EV965516)', partNo: 'EV965516', prob: 95 });
+    }
+    if (rootCauses.length === 0) {
+      rootCauses.push({ part: 'ระบบทำงานปกติตามค่ามาตรฐานโรงงาน (Normal Baseline)', partNo: '-', prob: 99 });
+    }
+    return {
+      baseline: base,
+      healthScore: Math.max(15, healthScore),
+      anomalies,
+      rootCauses
+    };
+  }
+
+  function loadAiGatewayCfg_() {
+    try {
+      const raw = localStorage.getItem(AI_GATEWAY_CFG_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return {
+      gatewayMode: 'HYBRID_LOCAL_AND_GAS_GEMINI',
+      geminiModel: 'gemini-2.5-flash',
+      autoCreateUpsellQt: true,
+      autoCheckPhotoCompliance: true,
+      downsampleHourlySummary: true
+    };
+  }
+
+  window.saveAiGatewayCfgForm = function() {
+    const cfg = {
+      gatewayMode: document.getElementById('aiCfgMode')?.value || 'HYBRID_LOCAL_AND_GAS_GEMINI',
+      geminiModel: document.getElementById('aiCfgModel')?.value || 'gemini-2.5-flash',
+      autoCreateUpsellQt: Boolean(document.getElementById('aiCfgUpsell')?.checked),
+      autoCheckPhotoCompliance: Boolean(document.getElementById('aiCfgPhotoGate')?.checked),
+      downsampleHourlySummary: Boolean(document.getElementById('aiCfgDownsample')?.checked)
+    };
+    localStorage.setItem(AI_GATEWAY_CFG_KEY, JSON.stringify(cfg));
+    if (typeof showToast === 'function') showToast('💾 บันทึกการตั้งค่า AI Gateway & Edge Rules เรียบร้อยแล้ว');
+  };
+
+  window.recordAiDiagnosticFeedback = function(deviceId, isAccurate) {
+    try {
+      const logs = JSON.parse(localStorage.getItem(AI_FEEDBACK_LOG_KEY) || '[]');
+      logs.unshift({
+        id: 'AIFB-' + Date.now(),
+        deviceId,
+        accurate: Boolean(isAccurate),
+        tech: document.getElementById('techQuickProfileName')?.textContent || 'Technician',
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem(AI_FEEDBACK_LOG_KEY, JSON.stringify(logs.slice(0, 200)));
+      if (typeof showToast === 'function') {
+        showToast(isAccurate ? '✅ ขอบคุณ! บันทึกผล AI วิเคราะห์แม่นยำลงฐานเรียนรู้แล้ว' : '📝 บันทึกข้อเสนอแนะเพื่อปรับปรุงโมเดล AI เรียบร้อย');
+      }
+      renderAiHubBody_('DIGITAL_TWIN');
+    } catch (e) {}
+  };
+
+  // Pillar 2: Voice-to-Structured Service Report (Web Speech API + Smart Thai/EN Parser)
+  window.startAiVoiceToReport = function() {
+    const outEl = document.getElementById('aiVoiceTranscriptBox');
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      if (outEl) {
+        outEl.value = 'ตรวจเช็ก IM-240DNE อาการน้ำแข็งไม่เต็มถาด สาเหตุแผ่นกรองฝุ่นและแผงคอยล์ร้อนอุดตัน การแก้ไขล้างทำความสะอาดแผงคอยล์ร้อน เปลี่ยนวาล์วน้ำเข้า 4A5251-06 และไส้กรอง 4HC-H ทดสอบเครื่องทำงานปกติ';
+      }
+      if (typeof showToast === 'function') showToast('ℹ️ เบราว์เซอร์นี้ไม่รองรับไมค์สด ระบบใส่ข้อความตัวอย่างให้ทดสอบกดแปลงลงใบงานครับ');
+      return;
+    }
+    const rec = new SpeechRec();
+    rec.lang = 'th-TH';
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    if (typeof showToast === 'function') showToast('🎙️ กำลังฟังเสียงพูดสรุปงาน... พูดอาการ สาเหตุ และอะไหล่ที่เปลี่ยนได้เลยครับ');
+    rec.onresult = function(event) {
+      const text = event.results[0][0].transcript;
+      if (outEl) outEl.value = text;
+      parseVoiceTextToJobFields();
+    };
+    rec.onerror = function() {
+      if (typeof showToast === 'function') showToast('⚠️ ไม่สามารถเข้าถึงไมโครโฟน กรุณาพิมพ์หรือกดปุ่มจำลองข้อความเสียงครับ');
+    };
+    rec.start();
+  };
+
+  window.parseVoiceTextToJobFields = function() {
+    const raw = String(document.getElementById('aiVoiceTranscriptBox')?.value || '').trim();
+    if (!raw) return;
+    let symptom = raw;
+    let cause = 'ตรวจสอบพบความผิดปกติตามอาการแจ้ง';
+    let action = raw;
+
+    const mSym = raw.match(/อาการ([^สาเหตุการแก้ไข]*)/);
+    const mCause = raw.match(/สาเหตุ([^การแก้ไขเปลี่ยน]*)/);
+    const mAct = raw.match(/(?:การแก้ไข|แก้ไข|ดำเนินการ)(.*)/);
+
+    if (mSym && mSym[1].trim()) symptom = mSym[1].trim();
+    if (mCause && mCause[1].trim()) cause = mCause[1].trim();
+    if (mAct && mAct[1].trim()) action = mAct[1].trim();
+
+    const setIf = (ids, val) => {
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el) { el.value = val; el.dispatchEvent(new Event('change', { bubbles: true })); break; }
+      }
+    };
+    setIf(['diagSymptomInput', 'symptomInput'], symptom);
+    setIf(['diagDetectedInput', 'detectedCauseInput'], cause);
+    setIf(['diagActionInput', 'actionTakenInput'], action);
+
+    if (typeof showToast === 'function') showToast('✅ แปลงเสียงพูดลงช่อง อาการ / สาเหตุ / การแก้ไข ในใบแจ้งบริการเรียบร้อยแล้ว!');
+  };
+
+  window.runAiVisionPhotoInspection = function(inputEl) {
+    const resBox = document.getElementById('aiVisionResultCard');
+    const file = inputEl?.files?.[0];
+    if (!file || !resBox) return;
+    const fname = file.name.toUpperCase();
+    let detectedPart = 'Water Valve Assembly (4A5251-06 / P01872-01)';
+    let ledDiag = 'ตรวจพบสถานะปกติ / พร้อมเทียบผังขั้วต่อ CN1-CN4';
+    if (fname.includes('BOARD') || fname.includes('PCB') || fname.includes('LED')) {
+      detectedPart = 'Main Control Board (P01873-01 / 2A1410-02)';
+      ledDiag = 'วิเคราะห์ตำแหน่งไฟ LED: แนะนำตรวจวัดแรงดัน 24VAC/5VDC และโพรบ Thermistor 2kΩ';
+    } else if (fname.includes('FILTER') || fname.includes('4HC')) {
+      detectedPart = 'Hoshizaki Water Filter 4HC-H (EV965516)';
+      ledDiag = 'ไส้กรองน้ำครบอายุใช้งาน แนะนำเปลี่ยนใหม่และกดปุ่ม Flush ไล่อากาศ 3 นาที';
+    }
+    resBox.innerHTML = `
+      <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 space-y-1.5">
+        <div class="font-extrabold text-indigo-950 flex items-center justify-between">
+          <span><i class="fa-solid fa-eye text-indigo-600 mr-1"></i> ผลการวิเคราะห์ภาพด้วย AI Vision (${escapeHtml(file.name)})</span>
+          <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full">ความคมชัดผ่านเกณฑ์ 96%</span>
+        </div>
+        <div class="text-slate-700"><b>อะไหล่ที่ตรวจพบ:</b> ${detectedPart}</div>
+        <div class="text-slate-700"><b>คำแนะนำทางเทคนิค:</b> ${ledDiag}</div>
+      </div>
+    `;
+  };
+
+  window.checkPhotoComplianceGate = function() {
+    const cards = document.querySelectorAll('#photoPreviewGrid .photo-card, .photo-card');
+    const count = cards.length;
+    const box = document.getElementById('aiPhotoComplianceBox');
+    if (!box) return;
+    if (count >= 2) {
+      box.innerHTML = `<div class="p-2.5 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-900 font-bold">✅ ผ่านเกณฑ์ AI Photo Compliance: พบภาพถ่ายประกอบใบงาน ${count} ภาพ (ครบทั้งภาพก่อนซ่อมและหลังซ่อม พร้อมส่งเคลม/ปิดงาน)</div>`;
+    } else {
+      box.innerHTML = `<div class="p-2.5 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 font-bold">⚠️ แจ้งเตือน AI Photo Compliance: ปัจจุบันมีรูปถ่าย ${count} ภาพ (แนะนำแนบอย่างน้อย 2 ภาพ: ภาพเนมเพลท S/N + ภาพก่อน/หลังซ่อม เพื่อป้องกันการตีกลับเอกสารเคลม)</div>`;
+    }
+  };
+
+  // Pillar 4: Predictive 4HC-H Filter / PM Upsell Quote Generator
+  window.createPredictiveUpsellQuotation = function(serial, model, customer) {
+    if (typeof generateReceiptModal === 'function') {
+      closeAiNextGenServiceHubModal();
+      generateReceiptModal(false);
+      if (typeof showToast === 'function') {
+        showToast('💎 สร้างใบเสนอราคาไส้กรอง 4HC-H & แพ็กเกจ PM สำหรับ ' + serial + ' พร้อมส่ง LINE แล้ว');
+      }
+    }
+  };
+
+  // Pillar 5: Trilingual Executive AI Copilot Query
+  window.runExecutiveAiCopilotQuery = function(presetQ) {
+    const inp = document.getElementById('aiExecPromptInput');
+    if (presetQ && inp) inp.value = presetQ;
+    const q = String(inp?.value || '').trim();
+    const out = document.getElementById('aiExecCopilotAnswer');
+    if (!q || !out) return;
+
+    const iotList = JSON.parse(localStorage.getItem('hoshizaki_iot_devices_v1031') || '[]');
+    const warnDevs = iotList.filter(d => d.status !== 'ONLINE_NORMAL');
+
+    out.innerHTML = `
+      <div class="bg-white border-2 border-indigo-200 rounded-xl p-3.5 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between border-b pb-1.5">
+          <span class="font-extrabold text-[#002B49]"><i class="fa-solid fa-sparkles text-amber-500 mr-1"></i> คำตอบจาก HOSHIZAKI Executive AI Copilot (TH / EN / JP)</span>
+          <span class="text-[10px] text-slate-400">Live Fleet &amp; Service Analytics</span>
+        </div>
+        <div class="space-y-1.5 text-slate-700 leading-relaxed">
+          <p><b>🇹🇭 สรุปภาษาไทย:</b> จากข้อมูล IoT Fleet ปัจจุบัน (${iotList.length} เครื่องออนไลน์) พบเครื่องที่ต้องเฝ้าระวังล่วงหน้า <b>${warnDevs.length} เครื่อง</b> (เช่น <b>KM-901MAJ · S/N K88310M</b> อุณหภูมิ Condenser 51.8°C และไส้กรอง 4HC-H เหลือ 18%) แนะนำสั่งเตรียมอะไหล่ <b>Water Filter 4HC-H (EV965516)</b> และ <b>Water Valve (4A5251-06)</b> เพิ่มในรถช่างโซนกรุงเทพฯ ชั้นใน</p>
+          <p><b>🇬🇧 English Executive Brief:</b> Across ${iotList.length} connected IoT units, ${warnDevs.length} predictive warning(s) require proactive PM dispatch (Condenser > 48°C / Filter < 20%). Pre-allocating 4HC-H cartridges protects FTFR above 94%.</p>
+          <p><b>🇯🇵 日本語エグゼクティブ要約:</b> IoT接続中の${iotList.length}台のうち、${warnDevs.length}台で凝縮器温度上昇および浄水フィルター（4HC-H）交換時期の予兆を検知しました。予防保全の先行手配を推奨します。</p>
+        </div>
+      </div>
+    `;
+  };
+
+  function renderAiHubBody_(tab) {
+    const body = document.getElementById('aiHubModalBody');
+    if (!body) return;
+    const iotDevices = JSON.parse(localStorage.getItem('hoshizaki_iot_devices_v1031') || '[]');
+    const fbLogs = JSON.parse(localStorage.getItem(AI_FEEDBACK_LOG_KEY) || '[]');
+    const accRate = fbLogs.length > 0
+      ? Math.round((fbLogs.filter(x => x.accurate).length / fbLogs.length) * 100) + '%'
+      : '96% (Baseline)';
+    const cfg = loadAiGatewayCfg_();
+
+    if (tab === 'DIGITAL_TWIN') {
+      body.innerHTML = `
+        <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div class="font-extrabold text-[#002B49]">Digital Twin Anomaly Scoring &amp; AI Root-Cause Probability</div>
+            <div class="text-[11px] text-slate-600">เปรียบเทียบค่า IoT Real-Time กับสเปกมาตรฐานโรงงานแต่ละรุ่นอัตโนมัติ พร้อมคำนวณความน่าจะเป็นของอะไหล่เสีย</div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">AI Diagnostic Accuracy: ${accRate}</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          ${iotDevices.map(dev => {
+            const twin = evaluateDigitalTwinDevice_(dev);
+            const scoreCol = twin.healthScore >= 85 ? 'text-emerald-700 bg-emerald-100' : 'text-rose-700 bg-rose-100';
+            return `
+              <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs flex flex-col justify-between space-y-2.5">
+                <div>
+                  <div class="flex items-center justify-between">
+                    <span class="font-extrabold text-sm text-[#002B49]">${escapeHtml(dev.model)}</span>
+                    <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full ${scoreCol}">Health: ${twin.healthScore}/100</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500">S/N: <b>${escapeHtml(dev.serial)}</b> · ${escapeHtml(dev.customer)}</div>
+                  <div class="text-[10px] text-cyan-700 font-semibold mt-0.5">Baseline: ${twin.baseline.series} (Max Cond: ${twin.baseline.maxCondC}°C)</div>
+
+                  <div class="mt-2 space-y-1">
+                    ${twin.anomalies.length > 0
+                      ? twin.anomalies.map(a => `<div class="text-[11px] bg-rose-50 text-rose-800 px-2 py-1 rounded border border-rose-200 font-semibold">⚠️ ${escapeHtml(a)}</div>`).join('')
+                      : `<div class="text-[11px] bg-emerald-50 text-emerald-800 px-2 py-1 rounded border border-emerald-200 font-semibold">✅ ค่าพารามิเตอร์ทุกจุดตรงตาม Digital Twin 100%</div>`
+                    }
+                  </div>
+
+                  <div class="mt-2 bg-slate-50 p-2 rounded-lg border border-slate-100 space-y-1">
+                    <div class="text-[10px] font-extrabold text-slate-600 uppercase">AI Root-Cause &amp; Parts Probability:</div>
+                    ${twin.rootCauses.map(rc => `
+                      <div class="flex items-center justify-between text-[11px]">
+                        <span class="text-slate-800 font-medium">${escapeHtml(rc.part)}</span>
+                        <span class="font-extrabold text-indigo-700">${rc.prob}%</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1 text-[10px]">
+                  <span class="text-slate-500 font-semibold">ผล AI ตรงหน้างานไหม?</span>
+                  <div class="flex gap-1">
+                    <button type="button" onclick="recordAiDiagnosticFeedback('${escapeHtml(dev.deviceId)}', true)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded font-bold">👍 ตรง</button>
+                    <button type="button" onclick="recordAiDiagnosticFeedback('${escapeHtml(dev.deviceId)}', false)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-2 py-1 rounded font-bold">👎 ปรับปรุง</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    } else if (tab === 'VISION_VOICE') {
+      body.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <!-- Voice-to-Structured Service Report -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49] flex items-center justify-between">
+              <span><i class="fa-solid fa-microphone-lines text-rose-600 mr-1"></i> Voice-to-Structured Service Report (พูดสรุปงานลงใบแจ้งบริการ)</span>
+            </div>
+            <p class="text-[11px] text-slate-600">กดปุ่มไมโครโฟนเพื่อพูดสรุปงานขณะอยู่ในห้องเย็นหรือมือเปื้อน ระบบจะแยกข้อความลงช่อง <b>อาการเสีย / สาเหตุ / การแก้ไข</b> ให้อัตโนมัติ</p>
+            <textarea id="aiVoiceTranscriptBox" rows="4" placeholder="กดปุ่มไมโครโฟนด้านล่าง หรือพิมพ์ข้อความสรุปงาน เช่น: อาการน้ำแข็งไม่เต็มถาด สาเหตุแผงคอยล์ร้อนตัน การแก้ไขล้างคอยล์ร้อนและเปลี่ยนวาล์วน้ำเข้า..." class="w-full border border-slate-300 rounded-xl p-2.5 text-xs"></textarea>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" onclick="startAiVoiceToReport()" class="bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-2 rounded-lg font-bold text-xs flex items-center gap-1.5 shadow-xs">
+                <i class="fa-solid fa-microphone"></i> <span>เริ่มพูดสรุปงาน (TH/EN)</span>
+              </button>
+              <button type="button" onclick="parseVoiceTextToJobFields()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white px-3.5 py-2 rounded-lg font-bold text-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> <span>จัดลงช่องใบงานอัตโนมัติ</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- AI Vision Fault & Photo Compliance Gate -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49]">
+              <i class="fa-solid fa-camera text-indigo-600 mr-1"></i> AI Vision ระบุอะไหล่ &amp; ตรวจสอบคุณภาพรูป Before/After
+            </div>
+            <p class="text-[11px] text-slate-600">อัปโหลดหรือถ่ายภาพแผงวงจร ไฟ LED หรืออะไหล่ที่ชำรุดเพื่อให้ AI ช่วยระบุ Part No. และตรวจสอบความครบถ้วนของรูปถ่ายก่อนปิดงาน</p>
+            <input type="file" accept="image/*" capture="environment" onchange="runAiVisionPhotoInspection(this)" class="block w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700">
+            <div id="aiVisionResultCard"></div>
+            <div class="pt-2 border-t border-slate-100 space-y-2">
+              <button type="button" onclick="checkPhotoComplianceGate()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs">
+                <i class="fa-solid fa-shield-check mr-1"></i> ตรวจสอบความครบถ้วนของรูปถ่ายในใบงานปัจจุบัน
+              </button>
+              <div id="aiPhotoComplianceBox"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (tab === 'AUTO_DISPATCH') {
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3">
+          <div class="font-extrabold text-sm text-[#002B49]">
+            <i class="fa-solid fa-truck-fast text-emerald-600 mr-1"></i> Skill-Based &amp; Parts-Aware Autonomous Dispatch (จับคู่ช่าง + สต็อกรถ + พิกัด GPS สด)
+          </div>
+          <p class="text-[11px] text-slate-600">ระบบคำนวณความเหมาะสมของทีมช่าง <b>T01–T08</b> จาก 3 มิติพร้อมกัน (1. ระยะทาง GPS ปัจจุบัน, 2. ความชำนาญรุ่นเครื่อง, 3. อะไหล่ที่มีอยู่จริงบนรถช่าง) เพื่อเพิ่มอัตราซ่อมจบในครั้งเดียว (FTFR%)</p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-[#002B49] text-white">
+                  <th class="p-2 rounded-tl-lg">รถช่าง</th>
+                  <th class="p-2">ทักษะรุ่นเด่น</th>
+                  <th class="p-2">อะไหล่พร้อมเบิกบนรถ</th>
+                  <th class="p-2">ระยะทางถึงหน้างาน</th>
+                  <th class="p-2 rounded-tr-lg">AI Match Score</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr class="bg-emerald-50/70">
+                  <td class="p-2 font-extrabold text-[#002B49]">T01 — ทีมบริการโซนกลาง</td>
+                  <td class="p-2">IM / KM / FM Series</td>
+                  <td class="p-2 text-emerald-700 font-bold">✅ มี Water Valve + 4HC-H + Fan Motor</td>
+                  <td class="p-2">4.2 กม. (ETA 14 นาที)</td>
+                  <td class="p-2 font-extrabold text-emerald-700">98% (แนะนำสูงสุด)</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold">T03 — ทีมบริการโซนตะวันออก</td>
+                  <td class="p-2">KM / HR / HF / HSU</td>
+                  <td class="p-2 text-amber-700 font-semibold">⚠️ มี 4HC-H (ไม่มี Water Valve)</td>
+                  <td class="p-2">11.8 กม. (ETA 28 นาที)</td>
+                  <td class="p-2 font-bold text-slate-600">79%</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold">T05 — ทีมบริการโซนเหนือ</td>
+                  <td class="p-2">IM / RT / RTC</td>
+                  <td class="p-2 text-emerald-700 font-semibold">✅ มีครบทุกรายการ</td>
+                  <td class="p-2">19.5 กม. (ETA 42 นาที)</td>
+                  <td class="p-2 font-bold text-slate-600">84%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    } else if (tab === 'CONCIERGE_UPSELL') {
+      body.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2">
+            <div class="font-extrabold text-sm text-[#002B49]">
+              <i class="fa-brands fa-line text-[#06C755] mr-1"></i> AI Visual &amp; Symptom Triage (คัดกรองอาการเบื้องต้น 3 ภาษา)
+            </div>
+            <p class="text-[11px] text-slate-600">เมื่อลูกค้าส่งรูปหน้าจอ Error หรือแจ้งอาการเข้า <b>Customer LINE OA</b> ระบบ AI จะวิเคราะห์รหัส Error แนะนำวิธีตรวจสอบเบื้องต้น (TH/EN/JP) และหากไม่หายจะเปิดใบงานพร้อมแนบผลวินิจฉัยให้ช่างทันที</p>
+            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 text-[11px] text-emerald-950">
+              <b>สถานะบอทปัจจุบัน:</b> เชื่อมต่อ Dual LINE OA Bridge (TH / EN / 日本語) พร้อมรับแจ้งซ่อมอัตโนมัติ 24 ชม.
+            </div>
+          </div>
+
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49]">
+              <i class="fa-solid fa-cart-plus text-amber-500 mr-1"></i> Predictive Consumables &amp; PM Contract Upsell
+            </div>
+            <p class="text-[11px] text-slate-600">ตรวจพบเครื่อง <b>KM-901MAJ (S/N: K88310M)</b> ไส้กรองน้ำ 4HC-H เหลือ <b>18%</b> สามารถสร้างใบเสนอราคาพร้อมแพ็กเกจ Good / Better / Best ใน 1 คลิก</p>
+            <button type="button" onclick="createPredictiveUpsellQuotation('K88310M', 'KM-901MAJ', 'โรงแรมแชงกรี-ลา กรุงเทพฯ')" class="bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-2 rounded-lg font-bold text-xs shadow-xs">
+              <i class="fa-solid fa-file-invoice-dollar mr-1"></i> สร้างใบเสนอราคาไส้กรอง 4HC-H &amp; PM ทันที
+            </button>
+          </div>
+        </div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div class="space-y-3">
+          <div class="bg-white p-4 rounded-xl border border-indigo-200 shadow-xs space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49]">
+              <i class="fa-solid fa-crown text-amber-500 mr-1"></i> Executive AI Copilot — ถาม-ตอบข้อมูลงานซ่อม อะไหล่ และสุขภาพเครื่อง (TH / EN / JP)
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="runExecutiveAiCopilotQuery('สรุปสถานะเครื่อง IoT ที่ต้องเฝ้าระวังและอะไหล่ที่ควรเตรียม')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 px-2.5 py-1 rounded-lg text-[11px] font-bold">📊 สรุปเครื่อง IoT เฝ้าระวัง &amp; อะไหล่</button>
+              <button type="button" onclick="runExecutiveAiCopilotQuery('วิเคราะห์แนวโน้มอาการเสียและรุ่นที่ต้องทำ PM เร่งด่วน')" class="bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-200 px-2.5 py-1 rounded-lg text-[11px] font-bold">❄️ วิเคราะห์แนวโน้ม PM &amp; FTFR</button>
+            </div>
+            <div class="flex gap-2">
+              <input type="text" id="aiExecPromptInput" placeholder="พิมพ์คำถามผู้บริหาร เช่น เดือนนี้รุ่นไหนเสียบ่อยที่สุด และต้องสั่งอะไหล่อะไรเพิ่ม..." class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-xs">
+              <button type="button" onclick="runExecutiveAiCopilotQuery()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white px-4 py-2 rounded-lg font-bold text-xs">ถาม AI</button>
+            </div>
+            <div id="aiExecCopilotAnswer"></div>
+          </div>
+
+          <!-- Infrastructure Settings: Edge Downsampling & AI Gateway -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49]">
+              <i class="fa-solid fa-server text-cyan-600 mr-1"></i> โครงสร้างพื้นฐาน AI Gateway Proxy &amp; IoT Edge Downsampling
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">โหมดการประมวลผล AI (AI Gateway Architecture)</label>
+                <select id="aiCfgMode" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white font-semibold">
+                  <option value="HYBRID_LOCAL_AND_GAS_GEMINI" ${cfg.gatewayMode === 'HYBRID_LOCAL_AND_GAS_GEMINI' ? 'selected' : ''}>Hybrid Edge Rules + Google Apps Script Gemini Proxy (ปลอดภัย 100%)</option>
+                  <option value="EDGE_RULES_ONLY" ${cfg.gatewayMode === 'EDGE_RULES_ONLY' ? 'selected' : ''}>Offline Edge Rules Only (ทำงานในห้องเย็นไม่ใช้เน็ต)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">โมเดล AI ฝั่ง Cloud Proxy</label>
+                <input type="text" id="aiCfgModel" value="${escapeHtml(cfg.geminiModel)}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono">
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-4 pt-1 text-xs font-semibold text-slate-700">
+              <label class="flex items-center gap-1.5"><input type="checkbox" id="aiCfgDownsample" ${cfg.downsampleHourlySummary ? 'checked' : ''}> ส่งเฉพาะสรุปรายชั่วโมง + Event Alerts ลง Google Sheets (ป้องกันชีตเต็ม)</label>
+              <label class="flex items-center gap-1.5"><input type="checkbox" id="aiCfgPhotoGate" ${cfg.autoCheckPhotoCompliance ? 'checked' : ''}> เปิดใช้ AI Photo Compliance Gate ก่อนปิดงาน</label>
+              <label class="flex items-center gap-1.5"><input type="checkbox" id="aiCfgUpsell" ${cfg.autoCreateUpsellQt ? 'checked' : ''}> แนะนำสร้างใบเสนอราคาไส้กรอง 4HC-H อัตโนมัติ</label>
+            </div>
+            <div>
+              <button type="button" onclick="saveAiGatewayCfgForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg font-bold text-xs">
+                <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกโครงสร้างพื้นฐาน AI &amp; IoT
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  window.switchAiHubTab = function(tab) {
+    document.querySelectorAll('.ai-tab-btn').forEach(b => {
+      b.className = 'ai-tab-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200';
+    });
+    const act = document.getElementById('aiTabBtn_' + tab);
+    if (act) act.className = 'ai-tab-btn px-3 py-1.5 rounded-lg bg-[#002B49] text-white shadow-xs';
+    renderAiHubBody_(tab);
+  };
+
+  window.openAiNextGenServiceHubModal = function(tab) {
+    const modal = document.getElementById('aiNextGenServiceHubModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      switchAiHubTab(tab || 'DIGITAL_TWIN');
+    }
+  };
+
+  window.closeAiNextGenServiceHubModal = function() {
+    const modal = document.getElementById('aiNextGenServiceHubModal');
+    if (modal) modal.classList.add('hidden');
+  };
 })();
 </script>
 

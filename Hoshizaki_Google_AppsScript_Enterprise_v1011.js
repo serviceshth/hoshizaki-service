@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1021-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1022-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -175,6 +175,23 @@ function doPost(e) {
       var action = data.actionType || 'SAVE_JOB';
 
       // --- v1013 New Endpoints ---
+      // --- v1022 Holistic Expansion & Outsource Parts Tracking Endpoints ---
+      if (action === 'UPSERT_OUTSOURCE_PARTS_APPT') {
+        return jsonOut(upsertOutsourcePartsAppointment_(ss, data, secrets));
+      }
+
+      if (action === 'GET_OUTSOURCE_PARTS_APPT_LIST') {
+        return jsonOut(getOutsourcePartsAppointmentsList_(ss, data));
+      }
+
+      if (action === 'SYNC_VAN_MINMAX_RESTOCK') {
+        return jsonOut(syncVanMinMaxRestockBatch_(ss, data, secrets));
+      }
+
+      if (action === 'SYNC_OUTSOURCE_MONTHLY_BILLING') {
+        return jsonOut(syncOutsourceMonthlyBilling_(ss, data));
+      }
+
       if (action === 'SYNC_COMPANY_STAFF_DIRECTORY') {
         return jsonOut(syncCompanyStaffDirectory_(ss, data));
       }
@@ -7494,4 +7511,171 @@ function getCsatAnalyticsDashboard_(ss) {
     distribution: dist,
     recentRatings: rows
   };
+}
+
+
+// ============================================================================
+// SECTION 19: ENTERPRISE v1022 — OUTSOURCE PARTS SHIPMENT & APPOINTMENT SYNC
+// ============================================================================
+function upsertOutsourcePartsAppointment_(ss, data, secrets) {
+  var record = data.record || data || {};
+  var sheetName = 'Outsource_Parts_Appointments';
+  var sheet = ss.getSheetByName(sheetName);
+  var headers = [
+    'Tracking_ID', 'Job_No', 'Outsource_Vendor', 'Customer_Store', 'Customer_Phone',
+    'Parts_Summary', 'Courier', 'Tracking_No', 'Shipped_Date',
+    'Workflow_Status', 'OS_Received_At', 'OS_Received_Note',
+    'Proposed_Appt_Date', 'Proposed_Appt_Slot',
+    'Confirmed_Appt_Date', 'Confirmed_Appt_Slot', 'Customer_Contact',
+    'Confirm_Channel', 'Last_Updated'
+  ];
+
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length)
+      .setBackground('#002B49')
+      .setFontColor('#FFFFFF')
+      .setFontWeight('bold');
+  }
+
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var rowValues = [
+    String(record.id || ''),
+    String(record.jobNo || ''),
+    String(record.vendorName || ''),
+    String(record.storeName || ''),
+    String(record.customerPhone || ''),
+    String(record.partsSummary || ''),
+    String(record.courierName || ''),
+    String(record.trackingNo || ''),
+    String(record.shippedDate || ''),
+    String(record.status || 'PARTS_SHIPPED'),
+    String(record.receivedAt || ''),
+    String(record.receivedNote || ''),
+    String(record.proposedApptDate || ''),
+    String(record.proposedApptSlot || ''),
+    String(record.confirmedApptDate || ''),
+    String(record.confirmedApptSlot || ''),
+    String(record.confirmedWithCustomerName || ''),
+    String(record.confirmChannel || ''),
+    String(record.updatedAt || nowStr)
+  ];
+
+  var rows = sheet.getDataRange().getValues();
+  var targetRow = -1;
+  for (var i = 1; i < rows.length; i++) {
+    if ((record.id && String(rows[i][0]) === String(record.id)) ||
+        (record.jobNo && String(rows[i][1]) === String(record.jobNo))) {
+      targetRow = i + 1;
+      break;
+    }
+  }
+
+  if (targetRow > 0) {
+    sheet.getRange(targetRow, 1, 1, rowValues.length).setValues([rowValues]);
+  } else {
+    sheet.appendRow(rowValues);
+  }
+
+  return {
+    status: 'ok',
+    sheet: sheetName,
+    trackingId: record.id || '',
+    jobNo: record.jobNo || '',
+    workflowStatus: record.status || 'PARTS_SHIPPED',
+    updatedAt: nowStr
+  };
+}
+
+function getOutsourcePartsAppointmentsList_(ss, data) {
+  var sheet = ss.getSheetByName('Outsource_Parts_Appointments');
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { status: 'ok', rows: [] };
+  }
+  var vals = sheet.getDataRange().getValues();
+  var filterJob = String((data && data.jobNo) || '').trim();
+  var out = [];
+  for (var i = vals.length - 1; i >= 1; i--) {
+    var r = vals[i];
+    if (filterJob && String(r[1]) !== filterJob && String(r[0]) !== filterJob) continue;
+    out.push({
+      id: String(r[0] || ''),
+      jobNo: String(r[1] || ''),
+      vendorName: String(r[2] || ''),
+      storeName: String(r[3] || ''),
+      customerPhone: String(r[4] || ''),
+      partsSummary: String(r[5] || ''),
+      courierName: String(r[6] || ''),
+      trackingNo: String(r[7] || ''),
+      shippedDate: String(r[8] || ''),
+      status: String(r[9] || 'PARTS_SHIPPED'),
+      receivedAt: String(r[10] || ''),
+      receivedNote: String(r[11] || ''),
+      proposedApptDate: String(r[12] || ''),
+      proposedApptSlot: String(r[13] || ''),
+      confirmedApptDate: String(r[14] || ''),
+      confirmedApptSlot: String(r[15] || ''),
+      confirmedWithCustomerName: String(r[16] || ''),
+      confirmChannel: String(r[17] || ''),
+      updatedAt: String(r[18] || '')
+    });
+  }
+  return { status: 'ok', rows: out };
+}
+
+function syncVanMinMaxRestockBatch_(ss, data) {
+  var sheetName = 'Van_MinMax_Restock_Requests';
+  var sheet = ss.getSheetByName(sheetName);
+  var headers = ['Timestamp', 'Request_ID', 'Van_Code', 'Part_No', 'Description', 'Current_Qty', 'Min_Qty', 'Max_Qty', 'Order_Qty', 'Status'];
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var items = (data && Array.isArray(data.items)) ? data.items : [];
+  items.forEach(function(it) {
+    sheet.appendRow([
+      nowStr,
+      String(it.reqId || ('RST-' + Date.now())),
+      String(it.vanCode || 'T01'),
+      String(it.partNo || ''),
+      String(it.desc || ''),
+      Number(it.currentQty || 0),
+      Number(it.minQty || 0),
+      Number(it.maxQty || 0),
+      Number(it.orderQty || 0),
+      String(it.status || 'REQUESTED')
+    ]);
+  });
+  return { status: 'ok', count: items.length };
+}
+
+function syncOutsourceMonthlyBilling_(ss, data) {
+  var sheetName = 'Outsource_Monthly_Billing';
+  var sheet = ss.getSheetByName(sheetName);
+  var headers = ['Billing_Month', 'Vendor_Name', 'Total_Jobs', 'Completed_Within_SLA', 'Base_Service_Fee', 'OT_Surcharge', 'VAT_7_Pct', 'Grand_Total_THB', 'Generated_At'];
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var s = (data && data.summary) || {};
+  sheet.appendRow([
+    String(s.month || ''),
+    String(s.vendor || ''),
+    Number(s.totalJobs || 0),
+    Number(s.slaPass || 0),
+    Number(s.baseFee || 0),
+    Number(s.otFee || 0),
+    Number(s.vat || 0),
+    Number(s.grandTotal || 0),
+    nowStr
+  ]);
+  return { status: 'ok', loggedAt: nowStr };
 }

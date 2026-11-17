@@ -774,7 +774,7 @@
                                     <span>Executive Report</span>
                                     <i class="fa-solid fa-chevron-down text-[9px] opacity-85"></i>
                                 </button>
-                                <div id="topExecutiveReportDropdownMenu" onclick="event.stopPropagation()" class="hidden absolute right-0 mt-1.5 w-72 bg-white text-slate-800 rounded-xl shadow-2xl border border-amber-200/80 p-1.5 z-50 text-xs">
+                                <div id="topExecutiveReportDropdownMenu" onclick="event.stopPropagation()" class="hidden fixed inset-x-3 top-16 sm:inset-x-auto sm:absolute sm:right-0 sm:top-full sm:mt-1.5 w-auto sm:w-80 bg-white text-slate-800 rounded-xl shadow-2xl border border-amber-200/80 p-2 z-[120] text-xs">
                                     <div class="px-2.5 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#002B49] bg-sky-50/80 rounded-lg mb-1 flex items-center justify-between">
                                         <span><i class="fa-solid fa-chart-pie text-[#00A3E0] mr-1"></i> Executive Report Suite</span>
                                         <span class="text-[9px] text-slate-500">TH / EN / JP</span>
@@ -833,6 +833,12 @@
                         </button>
                         <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="hzk-compact-pill text-[10.5px] bg-amber-400 hover:bg-amber-300 text-slate-950 border border-white px-2.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อสลับโหมดระหว่าง ผู้จัดการ/จ่ายงาน และ ช่างดำเนินงาน">
                             <i class="fa-solid fa-user-shield"></i> <span>โหมด: ผู้จัดการ/จ่ายงาน</span>
+                        </button>
+                        <button type="button" id="btnPwaDirectInstall" onclick="triggerPwaInstall()" class="hidden hzk-compact-pill text-[10px] bg-teal-500/35 hover:bg-teal-500/55 text-teal-100 border border-teal-300/60 px-2.5 rounded-full font-extrabold transition inline-flex items-center gap-1 whitespace-nowrap" title="ติดตั้งแอปลงเครื่องทันที (PWA Install)">
+                            <i class="fa-solid fa-download text-amber-300"></i> <span>ติดตั้ง App</span>
+                        </button>
+                        <button type="button" onclick="openInstallGuideModal()" class="hzk-compact-pill text-[10px] bg-cyan-500/25 hover:bg-cyan-500/45 text-cyan-100 border border-cyan-300/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เพิ่มแอปลงหน้าจอหลัก (Add to Home Screen / ติดตั้ง App)">
+                            <i class="fa-solid fa-mobile-screen-button text-amber-300"></i> <span>ติดตั้ง App</span>
                         </button>
                         <button type="button" onclick="forceAppCacheUpdateNow()" class="hzk-compact-pill text-[10px] bg-rose-500/25 hover:bg-rose-500/45 text-rose-100 border border-rose-300/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ล้างแคชเก่าและโหลดแอปเวอร์ชันล่าสุดทันที">
                             <i class="fa-solid fa-rotate text-amber-300"></i> <span>อัปเดตแอป</span>
@@ -949,7 +955,7 @@
                             <i class="fa-solid fa-mobile-screen text-amber-200"></i> <span>พอร์ทัลลูกค้าสด (GPS/อนุมัติ)</span>
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openRouteAndPmCertModal('ROUTE')" class="tb-action-item bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm">
-                            <i class="fa-solid fa-route text-amber-200"></i> <span>จัดเส้นทางวิ่งงาน &amp; ใบรับรอง PM</span>
+                            <i class="fa-solid fa-route text-amber-200"></i> <span>จัดเส้นทางวิ่งงาน (Route Optimizer)</span>
                         </button>
                         <button type="button" data-tb-cat="SERVICE" onclick="openPhase2DepartmentalBridgeModal()" class="tb-action-item bg-slate-700 hover:bg-slate-800 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-diagram-project text-amber-300"></i> <span>เบิกอะไหล่ล่วงหน้า &amp; บัญชี (Phase 2)</span>
@@ -960,9 +966,50 @@
                         <button type="button" data-tb-cat="SERVICE" onclick="openFieldStampAndExpenseModal('TRAVEL_EXP')" class="tb-action-item bg-teal-700 hover:bg-teal-800 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-receipt text-amber-200"></i> <span>ค่าทางด่วน / จอดรถ / เดินทาง</span>
                         </button>
-                        <button type="button" data-tb-cat="SERVICE" onclick="openFieldStampAndExpenseModal('OUTSOURCE_LINK')" class="tb-action-item col-span-2 bg-rose-700 hover:bg-rose-800 text-white font-extrabold shadow-sm border border-rose-300/40">
-                            <i class="fa-solid fa-shield-halved text-amber-200"></i> <span>ส่งลิงก์งานให้ Outsource (แยกสิทธิ์ปลอดภัย ไม่เห็นข้อมูลอื่น)</span>
-                        </button>
+                        <!-- Unified Outsource Command Hub Dropdown -->
+                        <div class="relative col-span-2" id="outsourceHubDropdownWrap" data-tb-cat="SERVICE">
+                            <button type="button" onclick="toggleOutsourceHubDropdown(event)" class="tb-action-item w-full bg-gradient-to-r from-rose-800 via-rose-700 to-amber-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-amber-300/50 justify-between">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i class="fa-solid fa-handshake-angle text-amber-200"></i>
+                                    <span>ศูนย์บริหารงาน Outsource (ส่งลิงก์ · ฐานราคา · ตรวจรับรายงาน)</span>
+                                </span>
+                                <i class="fa-solid fa-chevron-down text-xs opacity-90"></i>
+                            </button>
+                            <div id="outsourceHubDropdownMenu" onclick="event.stopPropagation()" class="hidden absolute left-0 right-0 mt-1.5 bg-white text-slate-800 rounded-xl shadow-2xl border border-rose-200 p-1.5 z-[116] text-xs space-y-1">
+                                <div class="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-rose-950 bg-rose-50 rounded-lg flex items-center justify-between">
+                                    <span><i class="fa-solid fa-shield-halved text-rose-600 mr-1"></i> Outsource Management Suite</span>
+                                    <span>5 บริษัทคู่ค้า</span>
+                                </div>
+                                <button type="button" onclick="closeOutsourceHubDropdown(); openOutsourceCommandHubModal('SEND_LINK');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-rose-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-rose-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-link text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">1. ส่งลิงก์งานให้ Outsource (แยกสิทธิ์ปลอดภัย ไม่เห็นข้อมูลอื่น)</div>
+                                        <div class="text-[10px] text-slate-500">สร้างลิงก์เฉพาะใบงาน (รองรับรูป Before/After 30 ภาพ + OCR เนมเพลท + Auto-Stamp)</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closeOutsourceHubDropdown(); openOutsourceCommandHubModal('RATES_CALC');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-amber-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-amber-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-calculator text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">2. ฐานราคา &amp; คำนวณค่าจ้าง Outsource (Lucky Star + Outsource 1-4)</div>
+                                        <div class="text-[10px] text-slate-500">เลือกบริษัท Outsource จาก Dropdown + คำนวณค่าจ้างตามจังหวัดและเงื่อนไข</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closeOutsourceHubDropdown(); openOutsourceCommandHubModal('JOB_REPORTS');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-sky-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-sky-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-list-check text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">3. รายการ Job Report จาก Outsource (แยกตามชื่อ Outsource / Job No.)</div>
+                                        <div class="text-[10px] text-slate-500">ดูตารางงานทั้งหมด คลิกเปิดดูรายละเอียด รูป Before/After และดึงเข้าใบงานหลัก</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closeOutsourceHubDropdown(); openOutsourceCommandHubModal('IMPORT_RATES');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-emerald-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-file-import text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">4. นำเข้าข้อมูลราคา &amp; เงื่อนไข Outsource ใหม่ (Excel / PDF)</div>
+                                        <div class="text-[10px] text-slate-500">อัปโหลดไฟล์ Excel (.xlsx/.csv) หรือ PDF ใบเสนอราคาของ Outsource รายใหม่</div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
                         <button type="button" data-tb-cat="SERVICE" onclick="openInstallAndLoanerModal('INSTALL')" class="tb-action-item col-span-2 bg-emerald-800 hover:bg-emerald-900 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-boxes-packing text-amber-300"></i> <span>ส่งมอบติดตั้งเครื่องใหม่ &amp; ทะเบียนเครื่องสำรอง (Loaner)</span>
                         </button>
@@ -1014,23 +1061,60 @@
                         <button type="button" data-tb-cat="STOCK_PM" onclick="openVanStockModal()" class="tb-action-item bg-orange-600 hover:bg-orange-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-truck-ramp-box"></i> <span>สต็อกรถช่าง / Van Stock</span>
                         </button>
-                        <button type="button" data-tb-cat="STOCK_PM" onclick="openPmPricebookModal('PM_MATRIX')" class="tb-action-item col-span-2 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold shadow-sm border border-emerald-300/40">
-                            <i class="fa-solid fa-sparkles text-amber-200"></i> <span>ราคา PM &amp; Big Cleaning (รายครั้ง/6ด./1ปี ตามสเปค)</span>
-                        </button>
-                        <button type="button" data-tb-cat="STOCK_PM" onclick="openVanTransferAndSkillModal('VAN_TRANSFER')" class="tb-action-item col-span-2 bg-orange-700 hover:bg-orange-800 text-white font-bold shadow-sm">
-                            <i class="fa-solid fa-right-left text-amber-200"></i> <span>โอนอะไหล่ระหว่างรถช่าง &amp; ค่าเดินทางตามโซน</span>
-                        </button>
-
                         <button type="button" data-tb-cat="STOCK_PM" onclick="openWaitingPartsBackorderModal()" class="tb-action-item bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-hourglass-half"></i> <span>งานรออะไหล่ (<span id="waitingPartsInlineCount">0</span>)</span>
+                        </button>
+                        <!-- Unified PM Hub Dropdown Menu -->
+                        <div class="relative col-span-2" id="pmSuiteDropdownWrap" data-tb-cat="STOCK_PM">
+                            <button type="button" onclick="togglePmSuiteDropdown(event)" class="tb-action-item w-full bg-gradient-to-r from-emerald-700 via-teal-700 to-violet-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-emerald-300/50 justify-between">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i class="fa-solid fa-calendar-check text-amber-300"></i>
+                                    <span>ศูนย์รวมงาน PM &amp; Big Cleaning (4 เมนูครบวงจร)</span>
+                                    <span id="pmDueBadgeCount" class="hidden bg-amber-400 text-hoshizaki-navy text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
+                                </span>
+                                <i class="fa-solid fa-chevron-down text-xs opacity-90"></i>
+                            </button>
+                            <div id="pmSuiteDropdownMenu" onclick="event.stopPropagation()" class="hidden absolute left-0 right-0 mt-1.5 bg-white text-slate-800 rounded-xl shadow-2xl border border-emerald-200 p-1.5 z-[115] text-xs space-y-1">
+                                <div class="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-emerald-900 bg-emerald-50 rounded-lg flex items-center justify-between">
+                                    <span><i class="fa-solid fa-sparkles text-emerald-600 mr-1"></i> PM &amp; Big Cleaning Management Suite</span>
+                                    <span>4 โมดูล</span>
+                                </div>
+                                <button type="button" onclick="closePmSuiteDropdown(); openPmPricebookModal('PM_MATRIX');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-emerald-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-tags text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">1. ตารางราคา PM &amp; Big Cleaning ตามสเปคเครื่อง</div>
+                                        <div class="text-[10px] text-slate-500">คำนวณราคา 1 ครั้ง / สัญญา 6 เดือน / 1 ปี + ส่งลงใบเสนอราคา</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closePmSuiteDropdown(); openPmPricebookModal('PM_CONTRACTS');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-teal-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-teal-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-file-contract text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">2. ทะเบียนสัญญา PM (PM Contracts &amp; รอบเข้าบริการ)</div>
+                                        <div class="text-[10px] text-slate-500">ติดตามรอบ PM ประจำปีและประวัติการเข้าบำรุงรักษาลูกค้า</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closePmSuiteDropdown(); openRouteAndPmCertModal('PM_CERT');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-sky-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-sky-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-award text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">3. ออกใบรับรอง PM มาตรฐานโรงงาน (A4 PM Certificate)</div>
+                                        <div class="text-[10px] text-slate-500">พิมพ์/บันทึก PDF ใบรับรองการล้างและบำรุงรักษาเครื่องขนาด A4</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closePmSuiteDropdown(); openPmAndAnalyticsModal();" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-violet-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-violet-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-bell text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">4. แจ้งเตือนครบกำหนด PM 30 วัน &amp; สถิติ PM</div>
+                                        <div class="text-[10px] text-slate-500">ตรวจสอบเครื่องที่ใกล้ถึงรอบ PM และออกรายงานแจ้งเตือน</div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" data-tb-cat="STOCK_PM" onclick="openVanTransferAndSkillModal('VAN_TRANSFER')" class="tb-action-item col-span-2 bg-orange-700 hover:bg-orange-800 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-right-left text-amber-200"></i> <span>โอนอะไหล่ระหว่างรถช่าง &amp; ค่าเดินทางตามโซน</span>
                         </button>
                         <button type="button" data-tb-cat="STOCK_PM" onclick="openWarehouseInspectionModal()" class="tb-action-item col-span-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm border border-emerald-300/40">
                             <i class="fa-solid fa-clipboard-check text-amber-200"></i> <span>ตรวจรับเครื่องเข้าคลัง · ออก QCF &amp; Memo เคลม</span>
                             <span id="inspectionDamagedBadge" class="hidden bg-rose-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
-                        </button>
-                        <button type="button" data-tb-cat="STOCK_PM" onclick="openPmAndAnalyticsModal()" class="tb-action-item col-span-2 bg-violet-600 hover:bg-violet-700 text-white font-bold shadow-sm">
-                            <i class="fa-solid fa-chart-pie"></i> <span>แจ้งเตือน PM &amp; สถิติ / PM &amp; KPI</span>
-                            <span id="pmDueBadgeCount" class="hidden bg-amber-400 text-hoshizaki-navy text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
                         </button>
                     </div>
                 </section>
@@ -1063,12 +1147,6 @@
                         </button>
                         <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openTeamCloudSyncModal()" class="tb-action-item bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm">
                             <i class="fa-solid fa-cloud-arrow-up"></i> <span>ซิงค์ &amp; สำรองข้อมูล</span>
-                        </button>
-                        <button type="button" data-tb-cat="MANUAL_TEAM" id="btnPwaDirectInstall" onclick="triggerPwaInstall()" class="hidden tb-action-item bg-teal-700 hover:bg-teal-800 text-white font-bold shadow-sm">
-                            <i class="fa-solid fa-download"></i> <span>ติดตั้งแอป</span>
-                        </button>
-                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openInstallGuideModal()" class="tb-action-item col-span-2 bg-sky-700 hover:bg-sky-800 text-white font-medium shadow-sm">
-                            <i class="fa-solid fa-mobile-screen-button"></i> <span>เพิ่มแอปลงหน้าจอ (Add to Home Screen)</span>
                         </button>
 
                     </div>
@@ -19291,36 +19369,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 </head>
                 <body onload="setTimeout(() => { window.print(); }, 400);">
                     ${sheetHtml}
-                
-    <script id="hzk-top-exec-report-menu-logic">
-    (function() {
-        window.toggleTopExecutiveReportDropdown = function(e) {
-            if (e) e.stopPropagation();
-            const menu = document.getElementById('topExecutiveReportDropdownMenu');
-            if (!menu) return;
-            const willOpen = menu.classList.contains('hidden');
-            const manualMenu = document.getElementById('manualSearchMenu');
-            if (manualMenu) manualMenu.classList.add('hidden');
-            menu.classList.toggle('hidden', !willOpen);
-        };
-        window.closeTopExecutiveReportDropdown = function() {
-            const menu = document.getElementById('topExecutiveReportDropdownMenu');
-            if (menu) menu.classList.add('hidden');
-        };
-        document.addEventListener('click', function(e) {
-            const wrap = document.getElementById('topExecReportDropdownWrap');
-            if (wrap && !wrap.contains(e.target)) {
-                window.closeTopExecutiveReportDropdown();
-            }
-        });
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                window.closeTopExecutiveReportDropdown();
-            }
-        });
-    })();
-    </script>
-</body>
+                </body>
                 </html>
             `);
             win.document.close();
@@ -33289,12 +33338,335 @@ Defect: ${defectText}`;
         }
     };
 
+    const OS_DRAFTS_KEY = 'hoshizaki_outsource_drafts_v1022';
+    let osPhotoGallery = [];
+
+    function getOsDrafts_() {
+        try { return JSON.parse(localStorage.getItem(OS_DRAFTS_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function saveOsDrafts_(list) {
+        localStorage.setItem(OS_DRAFTS_KEY, JSON.stringify(list));
+    }
+
+    window.osPerformAutoTimeStamp = function(type) {
+        const tStr = nowBangkokTime_();
+        const fullStamp = nowBangkokFullStamp_();
+        captureQuickGps_(function(gpsStr) {
+            if (type === 'IN') {
+                const elIn = document.getElementById('osTimeIn');
+                if (elIn) elIn.value = tStr;
+                const elStampIn = document.getElementById('osAutoStampInFull');
+                if (elStampIn) elStampIn.value = `${fullStamp} | GPS: ${gpsStr}`;
+            } else {
+                const elOut = document.getElementById('osTimeOut');
+                if (elOut) elOut.value = tStr;
+                const elStampOut = document.getElementById('osAutoStampOutFull');
+                if (elStampOut) elStampOut.value = `${fullStamp} | GPS: ${gpsStr}`;
+            }
+            const elGps = document.getElementById('osGps');
+            if (elGps && (!elGps.value || elGps.value.indexOf(',') === -1 || type === 'IN')) {
+                elGps.value = gpsStr;
+            }
+            const badge = document.getElementById('osStampAuditDisplay');
+            if (badge) {
+                const inTxt = document.getElementById('osAutoStampInFull')?.value || '-';
+                const outTxt = document.getElementById('osAutoStampOutFull')?.value || '-';
+                badge.innerHTML = `🟢 เข้า: <b>${inTxt}</b><br>🔵 ออก: <b>${outTxt}</b>`;
+            }
+            window.osSaveDeferredDraft(true);
+            alert((type === 'IN' ? '✅ ประทับเวลาเข้าหน้างาน (Auto Time-Stamp IN): ' : '🏁 ประทับเวลาออกหน้างาน (Auto Time-Stamp OUT): ') + tStr + '\nพิกัด GPS: ' + gpsStr + '\n\nระบบบันทึกเวลาและพิกัดไว้แล้ว คุณสามารถกลับมากรอกรายละเอียดและแนบรูป Before/After ย้อนหลังได้ครับ');
+        });
+    };
+
+    window.osSaveDeferredDraft = function(silent) {
+        const jobNo = document.getElementById('osJobNo')?.value || ('OS-' + Date.now().toString().slice(-6));
+        const draft = {
+            jobNo: jobNo,
+            date: document.getElementById('osJobDate')?.value || new Date().toISOString().slice(0, 10),
+            partner: document.getElementById('osPartnerName')?.value || '',
+            gasUrl: document.getElementById('osGasUrl')?.value || '',
+            jobCategory: document.getElementById('osJobCategory')?.value || 'REPAIR',
+            store: document.getElementById('osStore')?.value || '',
+            contact: document.getElementById('osContact')?.value || '',
+            address: document.getElementById('osAddress')?.value || '',
+            model: document.getElementById('osModel')?.value || '',
+            serial: document.getElementById('osSerial')?.value || '',
+            timeIn: document.getElementById('osTimeIn')?.value || '',
+            timeOut: document.getElementById('osTimeOut')?.value || '',
+            autoStampInFull: document.getElementById('osAutoStampInFull')?.value || '',
+            autoStampOutFull: document.getElementById('osAutoStampOutFull')?.value || '',
+            gps: document.getElementById('osGps')?.value || '',
+            techPerson: document.getElementById('osTechPerson')?.value || '',
+            symptom: document.getElementById('osSymptom')?.value || '',
+            cause: document.getElementById('osCause')?.value || '',
+            action: document.getElementById('osAction')?.value || '',
+            parts: document.getElementById('osParts')?.value || '',
+            custSignName: document.getElementById('osCustSignName')?.value || '',
+            photos: osPhotoGallery.slice(0, 30),
+            updatedAt: nowBangkokFullStamp_()
+        };
+        let drafts = getOsDrafts_();
+        const idx = drafts.findIndex(x => x.jobNo === jobNo);
+        if (idx >= 0) drafts[idx] = draft;
+        else drafts.unshift(draft);
+        try {
+            saveOsDrafts_(drafts);
+        } catch (err) {
+            const lightDraft = Object.assign({}, draft, { photos: [] });
+            if (idx >= 0) drafts[idx] = lightDraft; else drafts[0] = lightDraft;
+            try { saveOsDrafts_(drafts); } catch (e2) {}
+        }
+        window.renderOsSavedDraftsBar_();
+        if (!silent) {
+            alert('💾 บันทึกฉบับร่าง (Deferred Report Draft) เรียบร้อยแล้ว!\nสามารถเปิดลิงก์นี้กลับมาแก้ไขข้อมูลและแนบรูปภาพย้อนหลังได้ทุกเมื่อก่อนกดส่งรายงานจริงครับ');
+        }
+    };
+
+    window.osLoadDraftByJobNo = function(jobNo) {
+        const drafts = getOsDrafts_();
+        const d = drafts.find(x => x.jobNo === jobNo);
+        if (!d) return;
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el && v !== undefined) el.value = v; };
+        setVal('osJobNo', d.jobNo);
+        setVal('osJobDate', d.date);
+        setVal('osJobCategory', d.jobCategory || 'REPAIR');
+        setVal('osStore', d.store);
+        setVal('osContact', d.contact);
+        setVal('osAddress', d.address);
+        setVal('osModel', d.model);
+        setVal('osSerial', d.serial);
+        setVal('osTimeIn', d.timeIn);
+        setVal('osTimeOut', d.timeOut);
+        setVal('osAutoStampInFull', d.autoStampInFull);
+        setVal('osAutoStampOutFull', d.autoStampOutFull);
+        setVal('osGps', d.gps);
+        setVal('osTechPerson', d.techPerson);
+        setVal('osSymptom', d.symptom);
+        setVal('osCause', d.cause);
+        setVal('osAction', d.action);
+        setVal('osParts', d.parts);
+        setVal('osCustSignName', d.custSignName);
+        if (Array.isArray(d.photos) && d.photos.length > 0) {
+            osPhotoGallery = d.photos;
+        }
+        const badge = document.getElementById('osStampAuditDisplay');
+        if (badge) {
+            badge.innerHTML = `🟢 เข้า: <b>${d.autoStampInFull || d.timeIn || '-'}</b><br>🔵 ออก: <b>${d.autoStampOutFull || d.timeOut || '-'}</b>`;
+        }
+        window.renderOsPhotoGallery_();
+    };
+
+    window.renderOsSavedDraftsBar_ = function() {
+        const box = document.getElementById('osSavedDraftsContainer');
+        if (!box) return;
+        const drafts = getOsDrafts_();
+        if (drafts.length === 0) {
+            box.innerHTML = '';
+            return;
+        }
+        box.innerHTML = `
+            <div class="bg-amber-50 border border-amber-300 rounded-xl p-2.5 space-y-1.5 text-xs">
+                <div class="font-extrabold text-amber-950 flex items-center justify-between">
+                    <span><i class="fa-solid fa-clock-rotate-left text-amber-600 mr-1"></i> ใบงานที่บันทึกค้างไว้ / กรอกย้อนหลัง (${drafts.length} รายการ):</span>
+                </div>
+                <div class="space-y-1">
+                    ${drafts.slice(0, 8).map(d => `
+                        <div class="flex items-center justify-between gap-2 bg-white px-2.5 py-1.5 rounded-lg border border-amber-200">
+                            <div class="min-w-0 truncate">
+                                <span class="font-bold text-hoshizaki-navy">${d.jobNo}</span> • ${d.store || '-'} <span class="text-[10px] text-slate-500">(${d.updatedAt || d.date})</span>
+                            </div>
+                            <button type="button" onclick="osLoadDraftByJobNo('${d.jobNo}')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1 rounded text-[11px] flex-shrink-0">
+                                โหลดมาแก้ไขต่อ
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    };
+
+    window.osHandleNameplateOcr = async function(inputEl) {
+        if (!inputEl || !inputEl.files || !inputEl.files[0]) return;
+        const file = inputEl.files[0];
+        const statusEl = document.getElementById('osOcrStatusBadge');
+        if (statusEl) {
+            statusEl.classList.remove('hidden');
+            statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> กำลังสแกน OCR อ่าน Model และ Serial No. จากภาพเนมเพลท...';
+        }
+        try {
+            await window.osProcessPhotoFiles([file], 'NAMEPLATE');
+
+            if (typeof Tesseract === 'undefined') {
+                throw new Error('ไม่พบโมดูล Tesseract OCR');
+            }
+            const res = await Tesseract.recognize(file, 'eng');
+            const rawText = (res && res.data && res.data.text) ? res.data.text : '';
+            const cleanText = rawText.replace(/[|\]/g, ' ').toUpperCase();
+
+            const modelMatch = cleanText.match(/\b(IM|KM|FM|DCM|AM|CM|DM|EM|HR|HF|HFW|HRW|RT|RTC|FT|F|B|C|KMD|KMS|FMA|FMB)-[A-Z0-9]{2,10}\b/);
+            const snLabelMatch = cleanText.match(/(?:SER(?:IAL)?\.?\s*NO\.?|S\/N|SERIAL)[:\s#-]*([A-Z0-9]{6,14})/);
+            const snFallbackMatch = cleanText.match(/\b([A-Z]\d{5,9}[A-Z0-9]?)\b/);
+
+            const foundModel = modelMatch ? modelMatch[0] : '';
+            const foundSn = snLabelMatch ? snLabelMatch[1] : (snFallbackMatch ? snFallbackMatch[1] : '');
+
+            if (foundModel && document.getElementById('osModel')) {
+                document.getElementById('osModel').value = foundModel;
+            }
+            if (foundSn && document.getElementById('osSerial')) {
+                document.getElementById('osSerial').value = foundSn;
+            }
+
+            if (statusEl) {
+                if (foundModel || foundSn) {
+                    statusEl.className = 'mt-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 rounded-lg px-2.5 py-1.5';
+                    statusEl.innerHTML = `✅ สแกนเนมเพลทสำเร็จ! Model: <b>${foundModel || 'ไม่พบ'}</b> • S/N: <b>${foundSn || 'ไม่พบ'}</b> (แนบรูปเนมเพลทเข้าแกลเลอรีให้อัตโนมัติแล้ว)`;
+                } else {
+                    statusEl.className = 'mt-1.5 text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-300 rounded-lg px-2.5 py-1.5';
+                    statusEl.innerHTML = '⚠️ แนบรูปเนมเพลทเรียบร้อยแล้ว แต่ข้อความบนป้ายจางเกินไป กรุณาพิมพ์ Model / S/N ตรวจสอบเพิ่มเติมครับ';
+                }
+            }
+        } catch (err) {
+            if (statusEl) {
+                statusEl.className = 'mt-1.5 text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-300 rounded-lg px-2.5 py-1.5';
+                statusEl.innerHTML = '⚠️ แนบรูปเนมเพลทเรียบร้อยแล้ว (OCR ออฟไลน์: กรุณากรอก Model / S/N ด้วยตนเอง)';
+            }
+        } finally {
+            inputEl.value = '';
+        }
+    };
+
+    window.osHandleCategorizedPhotos = async function(inputEl, category) {
+        if (!inputEl || !inputEl.files || inputEl.files.length === 0) return;
+        await window.osProcessPhotoFiles(Array.from(inputEl.files), category);
+        inputEl.value = '';
+    };
+
+    window.osProcessPhotoFiles = async function(files, category) {
+        const remaining = 30 - osPhotoGallery.length;
+        if (remaining <= 0) {
+            alert('แนบรูปภาพครบสูงสุด 30 ภาพแล้วครับ กรุณาลบรูปที่ไม่ต้องการออกก่อนเพิ่มใหม่');
+            return;
+        }
+        const batch = files.slice(0, remaining);
+        const catMeta = {
+            BEFORE: { label: 'ก่อนทำ (BEFORE)' },
+            AFTER: { label: 'หลังทำ (AFTER)' },
+            NAMEPLATE: { label: 'เนมเพลท (NAMEPLATE)' },
+            OTHER: { label: 'หน้างาน/อะไหล่ (SERVICE)' }
+        };
+        const meta = catMeta[category] || catMeta.OTHER;
+        const jobNo = document.getElementById('osJobNo')?.value || 'OUTSOURCE';
+        const stamp = nowBangkokFullStamp_();
+
+        for (const file of batch) {
+            const dataUrl = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const maxDim = 1024;
+                        const scale = Math.max(img.width, img.height) > maxDim ? (maxDim / Math.max(img.width, img.height)) : 1;
+                        canvas.width = Math.round(img.width * scale);
+                        canvas.height = Math.round(img.height * scale);
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = 'rgba(0, 43, 73, 0.82)';
+                        ctx.fillRect(0, canvas.height - 28, canvas.width, 28);
+                        ctx.fillStyle = '#fde047';
+                        ctx.font = 'bold 12px sans-serif';
+                        ctx.fillText(`HOSHIZAKI [${meta.label}] | ${jobNo} | ${stamp}`, 8, canvas.height - 9);
+                        resolve(canvas.toDataURL('image/jpeg', 0.78));
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+            osPhotoGallery.push({
+                id: 'OSP-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+                category: category,
+                categoryLabel: meta.label,
+                caption: '',
+                dataUrl: dataUrl,
+                timestamp: stamp
+            });
+        }
+        window.renderOsPhotoGallery_();
+        window.osSaveDeferredDraft(true);
+    };
+
+    window.osUpdatePhotoCategory = function(photoId, newCat) {
+        const labels = {
+            BEFORE: 'ก่อนทำ (BEFORE)',
+            AFTER: 'หลังทำ (AFTER)',
+            NAMEPLATE: 'เนมเพลท (NAMEPLATE)',
+            OTHER: 'หน้างาน/อะไหล่ (SERVICE)'
+        };
+        const item = osPhotoGallery.find(x => x.id === photoId);
+        if (item) {
+            item.category = newCat;
+            item.categoryLabel = labels[newCat] || newCat;
+            window.renderOsPhotoGallery_();
+        }
+    };
+
+    window.osUpdatePhotoCaption = function(photoId, text) {
+        const item = osPhotoGallery.find(x => x.id === photoId);
+        if (item) item.caption = text;
+    };
+
+    window.osRemovePhoto = function(photoId) {
+        osPhotoGallery = osPhotoGallery.filter(x => x.id !== photoId);
+        window.renderOsPhotoGallery_();
+    };
+
+    window.renderOsPhotoGallery_ = function() {
+        const grid = document.getElementById('osPhotoGalleryGrid');
+        const counter = document.getElementById('osPhotoTotalCount');
+        if (counter) counter.textContent = `${osPhotoGallery.length} / 30 ภาพ`;
+        if (!grid) return;
+        if (osPhotoGallery.length === 0) {
+            grid.innerHTML = '<div class="col-span-full text-center text-slate-400 py-4 text-[11px]">ยังไม่มีรูปภาพ — สามารถถ่ายรูปหรืออัปโหลดแยกหมวด Before / After / เนมเพลท ได้สูงสุด 30 ภาพ</div>';
+            return;
+        }
+        const badgeStyles = {
+            BEFORE: 'bg-amber-600 text-white',
+            AFTER: 'bg-emerald-600 text-white',
+            NAMEPLATE: 'bg-sky-600 text-white',
+            OTHER: 'bg-slate-600 text-white'
+        };
+        grid.innerHTML = osPhotoGallery.map((p, idx) => `
+            <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs flex flex-col">
+                <div class="relative aspect-video bg-slate-100">
+                    <img src="${p.dataUrl}" alt="${p.categoryLabel}" class="w-full h-full object-cover">
+                    <span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded text-[10px] font-extrabold ${badgeStyles[p.category] || badgeStyles.OTHER}">
+                        #${idx + 1} ${p.categoryLabel}
+                    </span>
+                    <button type="button" onclick="osRemovePhoto('${p.id}')" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-rose-600 text-white font-bold text-xs flex items-center justify-center shadow">&times;</button>
+                </div>
+                <div class="p-1.5 space-y-1">
+                    <select onchange="osUpdatePhotoCategory('${p.id}', this.value)" class="w-full border border-slate-200 rounded px-1.5 py-1 text-[10.5px] font-bold bg-slate-50">
+                        <option value="BEFORE" ${p.category === 'BEFORE' ? 'selected' : ''}>🟡 ก่อนทำ (Before)</option>
+                        <option value="AFTER" ${p.category === 'AFTER' ? 'selected' : ''}>🟢 หลังทำ (After)</option>
+                        <option value="NAMEPLATE" ${p.category === 'NAMEPLATE' ? 'selected' : ''}>🔵 เนมเพลท (Nameplate)</option>
+                        <option value="OTHER" ${p.category === 'OTHER' ? 'selected' : ''}>⚪ หน้างาน/อะไหล่</option>
+                    </select>
+                    <input type="text" value="${(p.caption || '').replace(/"/g, '&quot;')}" oninput="osUpdatePhotoCaption('${p.id}', this.value)" placeholder="คำอธิบายรูปภาพ..." class="w-full border border-slate-200 rounded px-1.5 py-1 text-[10.5px]">
+                </div>
+            </div>
+        `).join('');
+    };
+
     window.submitOutsourceIsolatedReport = function() {
         const jobNo = document.getElementById('osJobNo')?.value || '';
         const partner = document.getElementById('osPartnerName')?.value || 'Outsource Tech';
         const techPerson = document.getElementById('osTechPerson')?.value || partner;
+        const jobCategory = document.getElementById('osJobCategory')?.value || 'REPAIR';
         const timeIn = document.getElementById('osTimeIn')?.value || nowBangkokTime_();
         const timeOut = document.getElementById('osTimeOut')?.value || nowBangkokTime_();
+        const stampInFull = document.getElementById('osAutoStampInFull')?.value || timeIn;
+        const stampOutFull = document.getElementById('osAutoStampOutFull')?.value || timeOut;
         const cause = document.getElementById('osCause')?.value || '';
         const action = document.getElementById('osAction')?.value || '';
         const parts = document.getElementById('osParts')?.value || '';
@@ -33306,10 +33678,17 @@ Defect: ${defectText}`;
             return;
         }
 
+        const beforeCount = osPhotoGallery.filter(x => x.category === 'BEFORE').length;
+        const afterCount = osPhotoGallery.filter(x => x.category === 'AFTER').length;
+        const npCount = osPhotoGallery.filter(x => x.category === 'NAMEPLATE').length;
+        const photoSummary = `แนบรูป ${osPhotoGallery.length} ภาพ (Before: ${beforeCount}, After: ${afterCount}, Nameplate: ${npCount})`;
+
         const record = {
             jobNo: jobNo,
             date: document.getElementById('osJobDate')?.value || new Date().toISOString().slice(0, 10),
             jobStatus: 'Completed',
+            jobCategory: jobCategory,
+            partnerVendor: partner,
             techCode: 'OUTSOURCE',
             responsibleTech: `[Outsource: ${partner}] ${techPerson}`,
             store: document.getElementById('osStore')?.value || '',
@@ -33319,20 +33698,28 @@ Defect: ${defectText}`;
             serial: document.getElementById('osSerial')?.value || '',
             timeIn: timeIn,
             timeOut: timeOut,
+            autoStampInFull: stampInFull,
+            autoStampOutFull: stampOutFull,
             diagGps: document.getElementById('osGps')?.value || '',
             diagSymptom: document.getElementById('osSymptom')?.value || '',
             diagDetected: cause,
-            diagAction: action,
+            diagAction: `${action}
+[${photoSummary}]
+[Auto-Stamp IN: ${stampInFull} | OUT: ${stampOutFull}]`,
             partsSummary: parts || 'ไม่มีการเปลี่ยนอะไหล่',
             nameCustomer: custSignName,
+            photoCount: osPhotoGallery.length,
+            photos: osPhotoGallery.map(p => ({ category: p.categoryLabel, caption: p.caption, dataUrl: p.dataUrl })),
             submittedAt: nowBangkokFullStamp_()
         };
 
-        // Save locally & push directly to Hoshizaki Google Apps Script endpoint if configured
         let subs = [];
         try { subs = JSON.parse(localStorage.getItem(OUTSOURCE_SUBMISSIONS_KEY) || '[]'); } catch (e) {}
-        subs.unshift(record);
-        localStorage.setItem(OUTSOURCE_SUBMISSIONS_KEY, JSON.stringify(subs));
+        const existingIdx = subs.findIndex(x => x.jobNo === jobNo);
+        if (existingIdx >= 0) subs[existingIdx] = record;
+        else subs.unshift(record);
+        try { localStorage.setItem(OUTSOURCE_SUBMISSIONS_KEY, JSON.stringify(subs)); } catch (e) {}
+        saveOsDrafts_(getOsDrafts_().filter(x => x.jobNo !== jobNo));
 
         if (gasUrl && gasUrl.indexOf('http') === 0) {
             fetch(gasUrl, {
@@ -33351,8 +33738,14 @@ Defect: ${defectText}`;
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
                     <h3 class="text-lg font-extrabold text-hoshizaki-navy">ส่งรายงานปฏิบัติงานเข้าศูนย์บริการ HOSHIZAKI เรียบร้อยแล้ว!</h3>
-                    <p class="text-xs text-slate-600">เลขที่ใบงาน: <b>${jobNo}</b> • ผู้ส่งรายงาน: <b>${record.responsibleTech}</b></p>
-                    <p class="text-[11px] text-slate-500">ขอบคุณที่ร่วมให้บริการมาตรฐาน HOSHIZAKI (THAILAND) LIMITED สามารถปิดหน้าต่างนี้ได้ทันทีครับ</p>
+                    <p class="text-xs text-slate-600">เลขที่ใบงาน: <b>${jobNo}</b> • ประเภทงาน: <b>${jobCategory}</b> • ผู้ส่งรายงาน: <b>${record.responsibleTech}</b></p>
+                    <p class="text-xs text-emerald-700 font-bold">${photoSummary}</p>
+                    <div class="pt-2">
+                        <button type="button" onclick="location.reload()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2 rounded-xl text-xs">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> แก้ไขรายงานหรือแนบรูปภาพเพิ่มเติมภายหลัง
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-slate-500">ขอบคุณที่ร่วมให้บริการมาตรฐาน HOSHIZAKI (THAILAND) LIMITED</p>
                 </div>
             `;
         }
@@ -33362,7 +33755,6 @@ Defect: ${defectText}`;
         const params = new URLSearchParams(window.location.search);
         if (params.get('portal') !== 'outsource') return;
 
-        // Strictly hide main corporate UI so Outsource partner cannot inspect any internal menus/data
         const headerEl = document.querySelector('header');
         const mainEl = document.getElementById('jobSheetContainer');
         const navEl = document.getElementById('mobileSectionNav');
@@ -33385,17 +33777,72 @@ Defect: ${defectText}`;
             partner: 'Outsource Partner'
         };
 
+        osPhotoGallery = [];
+
         body.innerHTML = `
             <input type="hidden" id="osJobNo" value="${data.jobNo || ''}">
             <input type="hidden" id="osJobDate" value="${data.date || ''}">
             <input type="hidden" id="osPartnerName" value="${data.partner || 'Outsource Partner'}">
             <input type="hidden" id="osGasUrl" value="${data.gasUrl || ''}">
+            <input type="hidden" id="osAutoStampInFull" value="">
+            <input type="hidden" id="osAutoStampOutFull" value="">
 
-            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-1">
-                <div class="font-extrabold text-hoshizaki-navy text-sm">ใบงานเลขที่: ${data.jobNo || '-'} (${data.date || '-'})</div>
-                <div><b>บริษัท/ทีม Outsource:</b> ${data.partner || '-'}</div>
+            <div id="osSavedDraftsContainer"></div>
+
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <div class="font-extrabold text-hoshizaki-navy text-sm">ใบงานเลขที่: ${data.jobNo || '-'} (${data.date || '-'})</div>
+                    <div class="text-xs"><b>บริษัท/ทีม Outsource:</b> ${data.partner || '-'}</div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-600 block">ประเภทงาน (Job Type):</label>
+                    <select id="osJobCategory" class="border border-sky-300 rounded-lg px-2.5 py-1.5 bg-white font-extrabold text-hoshizaki-navy text-xs">
+                        <option value="REPAIR">🔧 งานซ่อมแก้ไข (Repair / Breakdown)</option>
+                        <option value="PM_BIG_CLEANING">✨ งานบำรุงรักษา &amp; ล้างใหญ่ (PM / Big Cleaning)</option>
+                        <option value="INSTALL">📦 งานติดตั้งเครื่องใหม่ (Installation)</option>
+                        <option value="INSPECTION">📋 งานตรวจเช็กประเมินอาการ (Inspection)</option>
+                    </select>
+                </div>
             </div>
 
+            <!-- 1. Auto Time-Stamp & GPS + Deferred Report -->
+            <div class="bg-slate-900 text-white rounded-xl p-3 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-1.5">
+                    <div class="font-bold text-amber-300"><i class="fa-solid fa-stopwatch mr-1"></i> 1. ระบบประทับเวลาอัตโนมัติ (Auto Time-Stamp &amp; GPS)</div>
+                    <button type="button" onclick="osSaveDeferredDraft(false)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-2.5 py-1 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกร่างไว้กรอก/แนบรูปย้อนหลัง
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div>
+                        <label class="text-[10px] text-slate-300 block">เวลาเข้าหน้างาน (Time In):</label>
+                        <div class="flex gap-1 mt-0.5">
+                            <input type="time" id="osTimeIn" class="flex-1 rounded px-2 py-1.5 text-slate-900 font-bold">
+                            <button type="button" onclick="osPerformAutoTimeStamp('IN')" class="bg-emerald-600 hover:bg-emerald-500 px-2.5 py-1.5 rounded font-extrabold text-[11px] whitespace-nowrap">
+                                <i class="fa-solid fa-location-dot mr-0.5"></i> Stamp เข้า
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-300 block">เวลาออกหน้างาน (Time Out):</label>
+                        <div class="flex gap-1 mt-0.5">
+                            <input type="time" id="osTimeOut" class="flex-1 rounded px-2 py-1.5 text-slate-900 font-bold">
+                            <button type="button" onclick="osPerformAutoTimeStamp('OUT')" class="bg-sky-600 hover:bg-sky-500 px-2.5 py-1.5 rounded font-extrabold text-[11px] whitespace-nowrap">
+                                <i class="fa-solid fa-flag-checkered mr-0.5"></i> Stamp ออก
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-300 block">พิกัด GPS หน้างาน:</label>
+                        <input type="text" id="osGps" placeholder="กด Stamp เพื่อบันทึกพิกัดอัตโนมัติ" class="w-full rounded px-2 py-1.5 text-slate-900 mt-0.5 text-xs">
+                    </div>
+                </div>
+                <div id="osStampAuditDisplay" class="text-[10.5px] text-emerald-300 bg-slate-800/90 rounded-lg px-2.5 py-1.5 border border-slate-700">
+                    🟢 เข้า: <b>ยังไม่ประทับเวลา</b> • 🔵 ออก: <b>ยังไม่ประทับเวลา</b> (กดปุ่ม Stamp เข้า/ออก เพื่อบันทึกเวลาจริงและกลับมากรอกรายละเอียดภายหลังได้)
+                </div>
+            </div>
+
+            <!-- 2. Customer & Machine Info + Nameplate OCR Scanner -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">ชื่อร้านค้า / ลูกค้า:</label>
@@ -33409,40 +33856,33 @@ Defect: ${defectText}`;
                     <label class="font-bold text-slate-700 block mb-1">สถานที่ปฏิบัติงาน:</label>
                     <input type="text" id="osAddress" value="${data.address || ''}" class="w-full border rounded-lg px-2.5 py-2">
                 </div>
+                <div class="sm:col-span-2 bg-cyan-50/80 border border-cyan-200 rounded-xl p-2.5">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="font-extrabold text-hoshizaki-navy text-xs"><i class="fa-solid fa-camera text-cyan-700 mr-1"></i> สแกน OCR ถ่ายเนมเพลทเครื่อง (ดึง Model &amp; S/N อัตโนมัติ)</span>
+                        <div class="flex gap-1.5">
+                            <label class="cursor-pointer bg-cyan-700 hover:bg-cyan-800 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] inline-flex items-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-camera"></i> <span>ถ่ายภาพเนมเพลท OCR</span>
+                                <input type="file" accept="image/*" capture="environment" onchange="osHandleNameplateOcr(this)" class="hidden">
+                            </label>
+                            <label class="cursor-pointer bg-sky-600 hover:bg-sky-700 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] inline-flex items-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-image"></i> <span>เลือกจากอัลบั้ม OCR</span>
+                                <input type="file" accept="image/*" onchange="osHandleNameplateOcr(this)" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+                    <div id="osOcrStatusBadge" class="hidden mt-1.5 text-[11px] font-bold text-cyan-900 bg-white border border-cyan-200 rounded-lg px-2.5 py-1.5"></div>
+                </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">รุ่นเครื่อง (Model):</label>
-                    <input type="text" id="osModel" value="${data.model || ''}" class="w-full border rounded-lg px-2.5 py-2 font-bold">
+                    <input type="text" id="osModel" value="${data.model || ''}" placeholder="เช่น IM-100NE, KM-50B..." class="w-full border rounded-lg px-2.5 py-2 font-bold">
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">หมายเลขเครื่อง (Serial No.):</label>
-                    <input type="text" id="osSerial" value="${data.serial || ''}" class="w-full border rounded-lg px-2.5 py-2 font-bold">
+                    <input type="text" id="osSerial" value="${data.serial || ''}" placeholder="สแกนเนมเพลทหรือพิมพ์ S/N" class="w-full border rounded-lg px-2.5 py-2 font-bold">
                 </div>
             </div>
 
-            <div class="bg-slate-900 text-white rounded-xl p-3 space-y-2">
-                <div class="font-bold text-amber-300"><i class="fa-solid fa-stopwatch mr-1"></i> บันทึกเวลาเข้า-ออกหน้างาน (Time Auto-Stamp &amp; GPS)</div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    <div>
-                        <label class="text-[10px] text-slate-300 block">เวลาเข้า (Time In):</label>
-                        <div class="flex gap-1 mt-0.5">
-                            <input type="time" id="osTimeIn" class="flex-1 rounded px-2 py-1 text-slate-900 font-bold">
-                            <button type="button" onclick="document.getElementById('osTimeIn').value='${nowBangkokTime_()}'; navigator.geolocation && navigator.geolocation.getCurrentPosition(p=>{document.getElementById('osGps').value=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);});" class="bg-emerald-600 px-2 py-1 rounded font-bold text-[10px]">Stamp</button>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-slate-300 block">เวลาออก (Time Out):</label>
-                        <div class="flex gap-1 mt-0.5">
-                            <input type="time" id="osTimeOut" class="flex-1 rounded px-2 py-1 text-slate-900 font-bold">
-                            <button type="button" onclick="document.getElementById('osTimeOut').value='${nowBangkokTime_()}'" class="bg-sky-600 px-2 py-1 rounded font-bold text-[10px]">Stamp</button>
-                        </div>
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="text-[10px] text-slate-300 block">พิกัด GPS:</label>
-                        <input type="text" id="osGps" placeholder="กด Stamp เพื่อจับพิกัด" class="w-full rounded px-2 py-1 text-slate-900 mt-0.5">
-                    </div>
-                </div>
-            </div>
-
+            <!-- 3. Technical Details -->
             <div class="space-y-2.5">
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">ชื่อช่างผู้ปฏิบัติงาน (Outsource Technician Name) *:</label>
@@ -33457,23 +33897,64 @@ Defect: ${defectText}`;
                     <textarea id="osCause" rows="2" placeholder="ระบุสาเหตุความผิดปกติที่ตรวจพบ..." class="w-full border rounded-lg px-2.5 py-2"></textarea>
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">รายละเอียดการซ่อมและแก้ไข (Action Taken) *:</label>
-                    <textarea id="osAction" rows="3" placeholder="ระบุขั้นตอนการซ่อม ผลการทดสอบเครื่องหลังซ่อม..." class="w-full border rounded-lg px-2.5 py-2"></textarea>
+                    <label class="font-bold text-slate-700 block mb-1">รายละเอียดการซ่อม / PM และผลการทดสอบ (Action Taken) *:</label>
+                    <textarea id="osAction" rows="3" placeholder="ระบุขั้นตอนการซ่อม การล้าง PM ผลการทดสอบเครื่องหลังทำ..." class="w-full border rounded-lg px-2.5 py-2"></textarea>
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">รายการอะไหล่ที่ใช้ (ถ้ามี):</label>
-                    <input type="text" id="osParts" placeholder="เช่น Water Valve 1 ชิ้น, ล้างแผงคอยล์ร้อน" class="w-full border rounded-lg px-2.5 py-2">
-                </div>
-                <div>
-                    <label class="font-bold text-slate-700 block mb-1">ชื่อผู้รับมอบงานฝั่งลูกค้า (Customer Sign-off Name):</label>
-                    <input type="text" id="osCustSignName" placeholder="ชื่อผู้จัดการร้าน / พนักงานผู้รับมอบงาน" class="w-full border rounded-lg px-2.5 py-2">
+                    <input type="text" id="osParts" placeholder="เช่น Water Valve 1 ชิ้น, ล้างแผงคอยล์ร้อนและถังเก็บน้ำแข็ง" class="w-full border rounded-lg px-2.5 py-2">
                 </div>
             </div>
 
-            <button type="button" onclick="submitOutsourceIsolatedReport()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-xl shadow-lg text-sm">
-                <i class="fa-solid fa-paper-plane mr-1.5"></i> ส่งรายงานซ่อมเข้าศูนย์บริการ HOSHIZAKI
-            </button>
+            <!-- 4. Categorized Photo Attachments (Up to 30 photos: Before / After / Nameplate / Service) -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="font-extrabold text-hoshizaki-navy text-xs">
+                        <i class="fa-solid fa-images text-hoshizaki-blue mr-1"></i> แนบรูปภาพปฏิบัติงานแยกหมวดหมู่ Before / After (สูงสุด 30 ภาพ)
+                    </div>
+                    <span id="osPhotoTotalCount" class="bg-hoshizaki-navy text-white px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">0 / 30 ภาพ</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                    <label class="cursor-pointer bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-2 rounded-lg text-[11px] text-center shadow-xs">
+                        <i class="fa-solid fa-camera mr-1"></i> + รูปก่อนทำ (Before)
+                        <input type="file" accept="image/*" multiple onchange="osHandleCategorizedPhotos(this, 'BEFORE')" class="hidden">
+                    </label>
+                    <label class="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-2 rounded-lg text-[11px] text-center shadow-xs">
+                        <i class="fa-solid fa-camera mr-1"></i> + รูปหลังทำ (After)
+                        <input type="file" accept="image/*" multiple onchange="osHandleCategorizedPhotos(this, 'AFTER')" class="hidden">
+                    </label>
+                    <label class="cursor-pointer bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-2 rounded-lg text-[11px] text-center shadow-xs">
+                        <i class="fa-solid fa-barcode mr-1"></i> + รูปเนมเพลท
+                        <input type="file" accept="image/*" multiple onchange="osHandleCategorizedPhotos(this, 'NAMEPLATE')" class="hidden">
+                    </label>
+                    <label class="cursor-pointer bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-2 rounded-lg text-[11px] text-center shadow-xs">
+                        <i class="fa-solid fa-screwdriver-wrench mr-1"></i> + รูปหน้างาน/อะไหล่
+                        <input type="file" accept="image/*" multiple onchange="osHandleCategorizedPhotos(this, 'OTHER')" class="hidden">
+                    </label>
+                </div>
+                <div id="osPhotoGalleryGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
+            </div>
+
+            <div>
+                <label class="font-bold text-slate-700 block mb-1">ชื่อผู้รับมอบงานฝั่งลูกค้า (Customer Sign-off Name):</label>
+                <input type="text" id="osCustSignName" placeholder="ชื่อผู้จัดการร้าน / พนักงานผู้รับมอบงาน" class="w-full border rounded-lg px-2.5 py-2">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <button type="button" onclick="osSaveDeferredDraft(false)" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-3 rounded-xl shadow text-xs">
+                    <i class="fa-solid fa-clock-rotate-left mr-1"></i> บันทึกร่างไว้แก้ไข/แนบรูปภายหลัง
+                </button>
+                <button type="button" onclick="submitOutsourceIsolatedReport()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-xl shadow-lg text-sm">
+                    <i class="fa-solid fa-paper-plane mr-1.5"></i> ส่งรายงานซ่อมเข้าศูนย์ HOSHIZAKI
+                </button>
+            </div>
         `;
+
+        window.renderOsSavedDraftsBar_();
+        window.renderOsPhotoGallery_();
+        if (data.jobNo) {
+            window.osLoadDraftByJobNo(data.jobNo);
+        }
     }
 
     // =========================================================================
@@ -33694,7 +34175,7 @@ Defect: ${defectText}`;
                 <button type="button" onclick="openFieldStampAndExpenseModal('TRAVEL_EXP')" class="bg-teal-600 hover:bg-teal-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
                     <i class="fa-solid fa-receipt mr-1"></i> ค่าทางด่วน/จอดรถ/เดินทาง
                 </button>
-                <button type="button" onclick="openFieldStampAndExpenseModal('OUTSOURCE_LINK')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+                <button type="button" onclick="openOutsourceCommandHubModal('SEND_LINK')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
                     <i class="fa-solid fa-shield-halved mr-1"></i> ส่งลิงก์ Outsource (จำกัดสิทธิ์)
                 </button>
             </div>
@@ -35936,130 +36417,399 @@ try {
     };
 
     // =========================================================================
-    // OUTSOURCE SERVICE FEE CALCULATOR, RATE MANAGER & JOB INJECTION (LUCKY STAR)
+    // OUTSOURCE COMMAND HUB: SEND LINK + 5 VENDORS (LUCKY STAR & OUTSOURCE 1-4) +
+    // RATE CALCULATOR + OUTSOURCE JOB REPORT LIST + EXCEL/PDF RATE IMPORTER
     // =========================================================================
-    window.openOutsourceRateManagerModal = function() {
-        let modal = document.getElementById('outsourceRateManagerModal');
+    const OUTSOURCE_VENDORS_KEY = 'hoshizaki_outsource_vendors_v1022';
+
+    function getDefaultOutsourceVendors_() {
+        return [
+            {
+                id: 'LUCKY_STAR',
+                name: 'Lucky Star Solution Co., Ltd.',
+                code: 'OS-00',
+                refNo: 'LSS-2025/2/13',
+                contact: 'ฝ่ายบริการเครือข่ายทั่วประเทศ (84 พื้นที่)',
+                warrantyDays: 90,
+                creditDays: 30,
+                otMultiplier: 1.20,
+                conditions: 'รวมค่าเดินทาง (เครื่องทำน้ำแข็ง <=50 กก./วัน และตู้แช่ Chiller/Freezer, ไม่รวม Deep Freezer, ไม่รวมค่าอะไหล่ และไม่รวม VAT 7%) | นอกเวลา/วันอาทิตย์ +20% | รับประกันงานซ่อม 90 วัน | เครดิต 30 วัน'
+            },
+            {
+                id: 'OUTSOURCE_1',
+                name: 'Outsource 1 (บริษัทคู่ค้าบริการภาคกลาง & ปริมณฑล)',
+                code: 'OS-01',
+                refNo: 'OS1-2025/01',
+                contact: 'หัวหน้าทีมช่าง Outsource 1',
+                warrantyDays: 90,
+                creditDays: 30,
+                otMultiplier: 1.20,
+                conditions: 'ฐานราคาอ้างอิงมาตรฐาน Lucky Star (รวมค่าเดินทาง, ไม่รวมค่าอะไหล่ และไม่รวม VAT 7%) | นอกเวลา/วันอาทิตย์ +20% | รับประกันงานซ่อม 90 วัน | เครดิต 30 วัน'
+            },
+            {
+                id: 'OUTSOURCE_2',
+                name: 'Outsource 2 (บริษัทคู่ค้าบริการภาคเหนือ & อีสาน)',
+                code: 'OS-02',
+                refNo: 'OS2-2025/02',
+                contact: 'หัวหน้าทีมช่าง Outsource 2',
+                warrantyDays: 90,
+                creditDays: 30,
+                otMultiplier: 1.20,
+                conditions: 'ฐานราคาอ้างอิงมาตรฐาน Lucky Star (รวมค่าเดินทาง, ไม่รวมค่าอะไหล่ และไม่รวม VAT 7%) | นอกเวลา/วันอาทิตย์ +20% | รับประกันงานซ่อม 90 วัน | เครดิต 30 วัน'
+            },
+            {
+                id: 'OUTSOURCE_3',
+                name: 'Outsource 3 (บริษัทคู่ค้าบริการภาคตะวันออก)',
+                code: 'OS-03',
+                refNo: 'OS3-2025/03',
+                contact: 'หัวหน้าทีมช่าง Outsource 3',
+                warrantyDays: 90,
+                creditDays: 30,
+                otMultiplier: 1.20,
+                conditions: 'ฐานราคาอ้างอิงมาตรฐาน Lucky Star (รวมค่าเดินทาง, ไม่รวมค่าอะไหล่ และไม่รวม VAT 7%) | นอกเวลา/วันอาทิตย์ +20% | รับประกันงานซ่อม 90 วัน | เครดิต 30 วัน'
+            },
+            {
+                id: 'OUTSOURCE_4',
+                name: 'Outsource 4 (บริษัทคู่ค้าบริการภาคใต้)',
+                code: 'OS-04',
+                refNo: 'OS4-2025/04',
+                contact: 'หัวหน้าทีมช่าง Outsource 4',
+                warrantyDays: 90,
+                creditDays: 30,
+                otMultiplier: 1.20,
+                conditions: 'ฐานราคาอ้างอิงมาตรฐาน Lucky Star (รวมค่าเดินทาง, ไม่รวมค่าอะไหล่ และไม่รวม VAT 7%) | นอกเวลา/วันอาทิตย์ +20% | รับประกันงานซ่อม 90 วัน | เครดิต 30 วัน'
+            }
+        ];
+    }
+
+    function getOutsourceVendors_() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(OUTSOURCE_VENDORS_KEY) || 'null');
+            if (Array.isArray(saved) && saved.length > 0) return saved;
+        } catch (e) {}
+        const def = getDefaultOutsourceVendors_();
+        localStorage.setItem(OUTSOURCE_VENDORS_KEY, JSON.stringify(def));
+        return def;
+    }
+
+    function saveOutsourceVendors_(list) {
+        localStorage.setItem(OUTSOURCE_VENDORS_KEY, JSON.stringify(list));
+    }
+
+    function getExpandedOutsourceRates_() {
+        const baseRates = getOutsourceRates_();
+        const vendors = getOutsourceVendors_();
+        const luckyBase = baseRates.filter(r => (r.vendor || '').toLowerCase().indexOf('lucky star') > -1);
+        const seedSource = luckyBase.length > 0 ? luckyBase : baseRates;
+
+        let merged = baseRates.slice();
+        let added = false;
+        vendors.forEach(v => {
+            if (v.id === 'LUCKY_STAR') return;
+            const hasVendorRates = merged.some(r => (r.vendorId === v.id) || (r.vendor || '').toLowerCase() === v.name.toLowerCase());
+            if (!hasVendorRates && seedSource.length > 0) {
+                seedSource.forEach((sr, idx) => {
+                    merged.push(Object.assign({}, sr, {
+                        id: `${v.code}-${idx + 1}`,
+                        vendorId: v.id,
+                        vendor: v.name,
+                        refNo: v.refNo || sr.refNo,
+                        conditions: v.conditions || sr.conditions
+                    }));
+                });
+                added = true;
+            }
+        });
+        if (added) {
+            saveOutsourceRates_(merged);
+        }
+        return merged;
+    }
+
+    function getOutsourceSubmittedReports_() {
+        let subs = [];
+        try { subs = JSON.parse(localStorage.getItem('hoshizaki_outsource_submissions_v1016') || '[]'); } catch (e) {}
+        let hist = [];
+        try { hist = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch (e) {}
+        hist.forEach(h => {
+            const techStr = String(h.responsibleTech || h.techCode || '');
+            if (techStr.toUpperCase().indexOf('OUTSOURCE') > -1) {
+                if (!subs.some(s => s.jobNo === h.jobNo)) {
+                    const mVendor = techStr.match(/\[Outsource:\s*([^\]]+)\]/i);
+                    subs.push({
+                        jobNo: h.jobNo || '-',
+                        date: h.date || '-',
+                        jobStatus: h.jobStatus || 'Completed',
+                        jobCategory: h.jobCategory || 'REPAIR',
+                        partnerVendor: mVendor ? mVendor[1].trim() : 'Outsource Partner',
+                        responsibleTech: techStr,
+                        store: h.store || '-',
+                        contact: h.contact || '-',
+                        address: h.address || '-',
+                        model: h.model || '-',
+                        serial: h.serial || '-',
+                        timeIn: h.timeIn || '-',
+                        timeOut: h.timeOut || '-',
+                        diagGps: h.diagGps || '-',
+                        diagSymptom: h.diagSymptom || '-',
+                        diagDetected: h.diagDetected || '-',
+                        diagAction: h.diagAction || '-',
+                        partsSummary: h.partsSummary || '-',
+                        nameCustomer: h.nameCustomer || '-',
+                        photoCount: Array.isArray(h.photos) ? h.photos.length : 0,
+                        photos: Array.isArray(h.photos) ? h.photos : [],
+                        submittedAt: h.savedAt || h.date || '-'
+                    });
+                }
+            }
+        });
+        return subs;
+    }
+
+    window.openOutsourceCommandHubModal = function(initialTab) {
+        getExpandedOutsourceRates_();
+        let modal = document.getElementById('outsourceCommandHubModal');
         if (!modal) {
             modal = document.createElement('div');
-            modal.id = 'outsourceRateManagerModal';
-            modal.className = 'hidden fixed inset-0 bg-slate-900/75 backdrop-blur-xs z-[95] flex items-center justify-center p-2 sm:p-4';
+            modal.id = 'outsourceCommandHubModal';
+            modal.className = 'hidden fixed inset-0 bg-slate-900/80 backdrop-blur-xs z-[110] flex items-center justify-center p-2 sm:p-4';
             modal.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full flex flex-col overflow-hidden border border-slate-200">
-                    <div class="bg-gradient-to-r from-rose-900 via-hoshizaki-navy to-slate-900 text-white px-4 py-3 flex items-center justify-between">
+                <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[94vh] flex flex-col overflow-hidden border border-slate-200">
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-rose-950 via-hoshizaki-navy to-slate-900 text-white px-4 py-3 flex items-center justify-between flex-shrink-0">
                         <div>
-                            <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-handshake-angle text-amber-300 mr-1.5"></i>ฐานราคาค่าบริการ Outsource &amp; คำนวณค่าจ้างตามเงื่อนไข (Lucky Star Solution)</h3>
-                            <p class="text-[11px] text-sky-200">ดึงราคาตามจังหวัด/ประเภทงาน + เงื่อนไขนอกเวลา (+20%), รับประกันงานซ่อม 90 วัน, เครดิต 30 วัน (ไม่รวม VAT 7% และค่าอะไหล่)</p>
+                            <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
+                                <i class="fa-solid fa-handshake-angle text-amber-300"></i>
+                                <span>ศูนย์บริหารงาน Outsource ครบวงจร (Outsource Management Hub)</span>
+                            </h3>
+                            <p class="text-[11px] text-sky-200">ส่งลิงก์แยกสิทธิ์ปลอดภัย • ฐานราคา &amp; คำนวณค่าจ้าง (Lucky Star + Outsource 1-4) • รายการ Job Report • นำเข้า Excel/PDF</p>
                         </div>
-                        <button type="button" onclick="document.getElementById('outsourceRateManagerModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-black text-lg">&times;</button>
+                        <button type="button" onclick="document.getElementById('outsourceCommandHubModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-black text-lg flex-shrink-0">&times;</button>
                     </div>
 
-                    <div class="p-4 overflow-y-auto space-y-3 text-xs">
-                        <!-- Calculator Box -->
-                        <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 space-y-2.5">
-                            <div class="font-extrabold text-hoshizaki-navy text-sm flex items-center justify-between">
-                                <span><i class="fa-solid fa-calculator text-amber-600 mr-1"></i>คำนวณค่าจ้าง Outsource ตามเงื่อนไขสัญญา (Ref: LSS-2025/2/13)</span>
-                                <span class="text-[11px] bg-amber-200 text-amber-950 px-2 py-0.5 rounded-full">รับประกันงานซ่อม 90 วัน | เครดิต 30 วัน</span>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                                <div>
-                                    <label class="font-bold text-slate-700 block mb-1">1. จังหวัด / พื้นที่หน้างาน:</label>
-                                    <select id="outCalcCitySelect" onchange="recalcOutsourceFeePreview()" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold text-hoshizaki-navy"></select>
+                    <!-- 4 Navigation Tabs -->
+                    <div class="bg-slate-100 px-3 py-2 border-b border-slate-200 flex flex-wrap items-center gap-1.5 text-xs flex-shrink-0">
+                        <button type="button" id="osHubTabBtn_SEND_LINK" onclick="switchOutsourceHubTab('SEND_LINK')" class="px-3 py-1.5 rounded-lg font-extrabold bg-hoshizaki-navy text-white transition">
+                            <i class="fa-solid fa-shield-halved mr-1 text-amber-300"></i> 1. ส่งลิงก์งาน Outsource (แยกสิทธิ์)
+                        </button>
+                        <button type="button" id="osHubTabBtn_RATES_CALC" onclick="switchOutsourceHubTab('RATES_CALC')" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-800 border border-slate-300 transition">
+                            <i class="fa-solid fa-calculator mr-1 text-amber-600"></i> 2. ฐานราคา &amp; คำนวณค่าจ้าง Outsource
+                        </button>
+                        <button type="button" id="osHubTabBtn_JOB_REPORTS" onclick="switchOutsourceHubTab('JOB_REPORTS')" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-800 border border-slate-300 transition">
+                            <i class="fa-solid fa-list-check mr-1 text-sky-600"></i> 3. รายการ Job Report จาก Outsource <span id="osHubReportCountBadge" class="ml-1 bg-rose-600 text-white text-[10px] px-1.5 py-0.2 rounded-full">0</span>
+                        </button>
+                        <button type="button" id="osHubTabBtn_IMPORT_RATES" onclick="switchOutsourceHubTab('IMPORT_RATES')" class="px-3 py-1.5 rounded-lg font-bold bg-white text-slate-800 border border-slate-300 transition">
+                            <i class="fa-solid fa-file-import mr-1 text-emerald-600"></i> 4. นำเข้า Excel / PDF ราคา &amp; เงื่อนไขใหม่
+                        </button>
+                    </div>
+
+                    <!-- Body Panels -->
+                    <div class="p-4 overflow-y-auto flex-1 space-y-3 text-xs">
+                        <div id="osHubPanel_SEND_LINK" class="space-y-3"></div>
+
+                        <div id="osHubPanel_RATES_CALC" class="hidden space-y-3">
+                            <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 space-y-2.5">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <div class="font-extrabold text-hoshizaki-navy text-sm">
+                                        <i class="fa-solid fa-calculator text-amber-600 mr-1"></i>คำนวณค่าจ้าง Outsource ตามบริษัทคู่ค้า พื้นที่ และเงื่อนไขสัญญา
+                                    </div>
+                                    <button type="button" onclick="openAddNewOutsourceVendorPrompt()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+                                        + เพิ่มชื่อบริษัท Outsource ใหม่
+                                    </button>
                                 </div>
-                                <div>
-                                    <label class="font-bold text-slate-700 block mb-1">2. ประเภทงานซ่อม/ติดตั้ง:</label>
-                                    <select id="outCalcJobTypeSelect" onchange="recalcOutsourceFeePreview()" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold text-slate-800">
-                                        <option value="checkInstall">ตรวจเช็ก / ติดตั้ง (Check / Installation)</option>
-                                        <option value="electrical">ซ่อมระบบไฟฟ้า (Electrical Repair)</option>
-                                        <option value="cooling">ซ่อมระบบทำความเย็น + น้ำยา/ดรายเออร์ (Cooling Repair)</option>
-                                        <option value="compressor">เปลี่ยนคอมเพรสเซอร์ + น้ำยา/ดรายเออร์ (Compressor)</option>
-                                    </select>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                                    <div class="sm:col-span-2">
+                                        <label class="font-bold text-slate-700 block mb-1">1. เลือกบริษัท Outsource (Dropdown):</label>
+                                        <select id="outCalcVendorSelect" onchange="onOutsourceVendorDropdownChange()" class="w-full border-2 border-amber-400 rounded-lg px-2.5 py-2 bg-white font-extrabold text-rose-900"></select>
+                                    </div>
+                                    <div>
+                                        <label class="font-bold text-slate-700 block mb-1">2. จังหวัด / พื้นที่หน้างาน:</label>
+                                        <select id="outCalcCitySelect" onchange="recalcOutsourceFeePreview()" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold text-hoshizaki-navy"></select>
+                                    </div>
+                                    <div>
+                                        <label class="font-bold text-slate-700 block mb-1">3. ประเภทงานซ่อม/ติดตั้ง:</label>
+                                        <select id="outCalcJobTypeSelect" onchange="recalcOutsourceFeePreview()" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold text-slate-800">
+                                            <option value="checkInstall">ตรวจเช็ก / ติดตั้ง (Check / Installation)</option>
+                                            <option value="electrical">ซ่อมระบบไฟฟ้า (Electrical Repair)</option>
+                                            <option value="cooling">ซ่อมระบบทำความเย็น + น้ำยา/ดรายเออร์</option>
+                                            <option value="compressor">เปลี่ยนคอมเพรสเซอร์ + น้ำยา/ดรายเออร์</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="font-bold text-slate-700 block mb-1">4. ช่วงเวลา &amp; ขนาดเครื่อง:</label>
+                                        <div class="space-y-1">
+                                            <select id="outCalcTimeModeSelect" onchange="recalcOutsourceFeePreview()" class="w-full border border-slate-300 rounded-lg px-2 py-1 bg-white font-bold text-[11px]">
+                                                <option value="NORMAL">เวลาปกติ (จ.-ส. 08:00-17:00)</option>
+                                                <option value="OT">นอกเวลา / วันอาทิตย์ (+20%)</option>
+                                            </select>
+                                            <select id="outCalcMachineTypeSelect" onchange="recalcOutsourceFeePreview()" class="w-full border border-slate-300 rounded-lg px-2 py-1 bg-white font-bold text-[11px]">
+                                                <option value="ICE_LE50">น้ำแข็ง <=50 กก. / ตู้แช่ (ในเงื่อนไข)</option>
+                                                <option value="ICE_GT50">น้ำแข็ง >50 กก. / Deep Freezer (นอกเงื่อนไข)</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="font-bold text-slate-700 block mb-1">3. ช่วงเวลาปฏิบัติงาน:</label>
-                                    <select id="outCalcTimeModeSelect" onchange="recalcOutsourceFeePreview()" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold text-slate-800">
-                                        <option value="NORMAL">เวลาปกติ (จันทร์-เสาร์ 08:00-17:00 น.)</option>
-                                        <option value="OT">นอกเวลา / วันอาทิตย์ (+20% ตามเงื่อนไข)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="font-bold text-slate-700 block mb-1">4. ประเภทเครื่อง (ตรวจสอบเงื่อนไข):</label>
-                                    <select id="outCalcMachineTypeSelect" onchange="recalcOutsourceFeePreview()" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold text-slate-800">
-                                        <option value="ICE_LE50">เครื่องทำน้ำแข็งไม่เกิน 50 กก./วัน (ตามเรต)</option>
-                                        <option value="CHILLER_FREEZER">ตู้แช่ Chiller / Freezer (ตามเรต)</option>
-                                        <option value="ICE_GT50">เครื่องทำน้ำแข็ง > 50 กก. / Deep Freezer (นอกเงื่อนไขมาตรฐาน)</option>
-                                    </select>
-                                </div>
+
+                                <div id="outCalcResultBanner" class="bg-white border border-amber-300 rounded-xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2"></div>
                             </div>
 
-                            <div id="outCalcResultBanner" class="bg-white border border-amber-300 rounded-xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2"></div>
-                        </div>
+                            <details class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                                <summary class="font-bold text-hoshizaki-navy cursor-pointer"><i class="fa-solid fa-pen-to-square text-emerald-600 mr-1"></i>เพิ่ม / แก้ไขราคาพื้นที่หรือเงื่อนไขของ Outsource รายที่เลือก</summary>
+                                <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 mt-2.5">
+                                    <input type="text" id="outEditVendor" placeholder="ชื่อบริษัท Outsource" class="col-span-2 border rounded-lg px-2 py-1.5 font-bold">
+                                    <input type="text" id="outEditHub" placeholder="Service Hub (เช่น BKK)" class="border rounded-lg px-2 py-1.5">
+                                    <input type="text" id="outEditRegion" placeholder="ภาค (Central/North...)" class="border rounded-lg px-2 py-1.5">
+                                    <input type="text" id="outEditCity" placeholder="จังหวัด / พื้นที่ *" class="border rounded-lg px-2 py-1.5 font-bold">
+                                    <input type="text" id="outEditSla" value="24 hr" placeholder="SLA (เช่น 24 hr)" class="border rounded-lg px-2 py-1.5">
+                                    <input type="number" id="outEditCheck" placeholder="ค่าตรวจเช็ก/ติดตั้ง" class="border rounded-lg px-2 py-1.5">
+                                    <input type="number" id="outEditElec" placeholder="ค่าซ่อมไฟฟ้า" class="border rounded-lg px-2 py-1.5">
+                                    <input type="number" id="outEditCool" placeholder="ค่าซ่อมความเย็น" class="border rounded-lg px-2 py-1.5">
+                                    <input type="number" id="outEditComp" placeholder="ค่าเปลี่ยนคอมฯ" class="border rounded-lg px-2 py-1.5">
+                                    <button type="button" onclick="saveOrUpdateOutsourceCityRate()" class="col-span-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg py-1.5 px-3">
+                                        <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึก / อัปเดตราคาพื้นที่นี้
+                                    </button>
+                                </div>
+                            </details>
 
-                        <!-- Add / Edit Outsource Rate Form -->
-                        <details class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-                            <summary class="font-bold text-hoshizaki-navy cursor-pointer"><i class="fa-solid fa-plus-circle text-emerald-600 mr-1"></i>เพิ่ม / แก้ไขข้อมูลบริษัท Outsource หรือปรับราคาพื้นที่ย้อนหลัง</summary>
-                            <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 mt-2.5">
-                                <input type="text" id="outEditVendor" value="Lucky Star Solution Co., Ltd." placeholder="ชื่อบริษัท Outsource" class="col-span-2 border rounded-lg px-2 py-1.5">
-                                <input type="text" id="outEditHub" placeholder="Service Hub (เช่น BKK)" class="border rounded-lg px-2 py-1.5">
-                                <input type="text" id="outEditRegion" placeholder="ภาค (Central/North...)" class="border rounded-lg px-2 py-1.5">
-                                <input type="text" id="outEditCity" placeholder="จังหวัด / พื้นที่ *" class="border rounded-lg px-2 py-1.5 font-bold">
-                                <input type="text" id="outEditSla" value="24 hr" placeholder="SLA (เช่น 24 hr)" class="border rounded-lg px-2 py-1.5">
-                                <input type="number" id="outEditCheck" placeholder="ค่าตรวจเช็ก/ติดตั้ง" class="border rounded-lg px-2 py-1.5">
-                                <input type="number" id="outEditElec" placeholder="ค่าซ่อมไฟฟ้า" class="border rounded-lg px-2 py-1.5">
-                                <input type="number" id="outEditCool" placeholder="ค่าซ่อมความเย็น" class="border rounded-lg px-2 py-1.5">
-                                <input type="number" id="outEditComp" placeholder="ค่าเปลี่ยนคอมฯ" class="border rounded-lg px-2 py-1.5">
-                                <button type="button" onclick="saveOrUpdateOutsourceCityRate()" class="col-span-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg py-1.5 px-3">
-                                    <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึก / อัปเดตราคาพื้นที่นี้
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <input type="text" id="outRateSearchInput" oninput="renderOutsourceRatesTable(this.value)" placeholder="ค้นหาจังหวัด, ภาค, Service Hub..." class="flex-1 border border-slate-300 rounded-lg px-3 py-1.5">
+                                <button type="button" onclick="syncOutsourceRatesToCloudNow()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold px-3 py-1.5 rounded-lg">
+                                    <i class="fa-solid fa-cloud-arrow-up mr-1"></i> ซิงค์ตาราง Outsource ขึ้น Sheets
                                 </button>
                             </div>
-                        </details>
+                            <div class="overflow-x-auto max-h-60 border border-slate-200 rounded-xl">
+                                <table class="w-full text-left border-collapse text-[11px]">
+                                    <thead class="bg-hoshizaki-navy text-white sticky top-0">
+                                        <tr>
+                                            <th class="p-2">บริษัท Outsource</th>
+                                            <th class="p-2">Hub / ภาค</th>
+                                            <th class="p-2">จังหวัด / พื้นที่</th>
+                                            <th class="p-2 text-right">ตรวจเช็ก/ติดตั้ง</th>
+                                            <th class="p-2 text-right">ซ่อมไฟฟ้า</th>
+                                            <th class="p-2 text-right">ซ่อมความเย็น</th>
+                                            <th class="p-2 text-right">เปลี่ยนคอมฯ</th>
+                                            <th class="p-2 text-center">SLA</th>
+                                            <th class="p-2 text-center">จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="outsourceRatesTableBody" class="divide-y divide-slate-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
 
-                        <!-- Search & Full 84-Province Rate Table -->
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <input type="text" id="outRateSearchInput" oninput="renderOutsourceRatesTable(this.value)" placeholder="ค้นหาจังหวัด, ภาค, Service Hub หรือบริษัท Outsource..." class="flex-1 border border-slate-300 rounded-lg px-3 py-1.5">
-                            <button type="button" onclick="syncOutsourceRatesToCloudNow()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold px-3 py-1.5 rounded-lg">
-                                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> ซิงค์ตาราง Outsource ขึ้น Sheets
-                            </button>
-                        </div>
-                        <div class="overflow-x-auto max-h-64 border border-slate-200 rounded-xl">
-                            <table class="w-full text-left border-collapse text-[11px]">
-                                <thead class="bg-hoshizaki-navy text-white sticky top-0">
-                                    <tr>
-                                        <th class="p-2">บริษัท Outsource</th>
-                                        <th class="p-2">Hub / ภาค</th>
-                                        <th class="p-2">จังหวัด / พื้นที่</th>
-                                        <th class="p-2 text-right">ตรวจเช็ก/ติดตั้ง</th>
-                                        <th class="p-2 text-right">ซ่อมไฟฟ้า</th>
-                                        <th class="p-2 text-right">ซ่อมความเย็น</th>
-                                        <th class="p-2 text-right">เปลี่ยนคอมฯ</th>
-                                        <th class="p-2 text-center">SLA</th>
-                                        <th class="p-2 text-center">จัดการ</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="outsourceRatesTableBody" class="divide-y divide-slate-200"></tbody>
-                            </table>
-                        </div>
+                        <div id="osHubPanel_JOB_REPORTS" class="hidden space-y-3"></div>
+                        <div id="osHubPanel_IMPORT_RATES" class="hidden space-y-3"></div>
                     </div>
                 </div>
             `;
             document.body.appendChild(modal);
         }
 
+        const subs = getOutsourceSubmittedReports_();
+        const badge = document.getElementById('osHubReportCountBadge');
+        if (badge) badge.textContent = String(subs.length);
+
+        populateOutsourceVendorDropdown_();
         populateOutsourceCityDropdown_();
         renderOutsourceRatesTable('');
         recalcOutsourceFeePreview();
+        renderOutsourceSendLinkTab_();
+        renderOutsourceJobReportsTab_();
+        renderOutsourceImportRatesTab_();
+
         modal.classList.remove('hidden');
+        window.switchOutsourceHubTab(initialTab || 'SEND_LINK');
+    };
+
+    window.openOutsourceRateManagerModal = function() {
+        window.openOutsourceCommandHubModal('RATES_CALC');
+    };
+
+    window.switchOutsourceHubTab = function(tab) {
+        const tabs = ['SEND_LINK', 'RATES_CALC', 'JOB_REPORTS', 'IMPORT_RATES'];
+        tabs.forEach(t => {
+            const p = document.getElementById('osHubPanel_' + t);
+            const b = document.getElementById('osHubTabBtn_' + t);
+            if (p) p.classList.toggle('hidden', t !== tab);
+            if (b) {
+                b.className = (t === tab)
+                    ? 'px-3 py-1.5 rounded-lg font-extrabold bg-hoshizaki-navy text-white transition shadow-xs'
+                    : 'px-3 py-1.5 rounded-lg font-bold bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 transition';
+            }
+        });
+        if (tab === 'SEND_LINK') renderOutsourceSendLinkTab_();
+        if (tab === 'JOB_REPORTS') renderOutsourceJobReportsTab_();
+        if (tab === 'IMPORT_RATES') renderOutsourceImportRatesTab_();
+    };
+
+    function populateOutsourceVendorDropdown_() {
+        const vendors = getOutsourceVendors_();
+        const opts = vendors.map(v => `<option value="${v.id}">${v.name} (${v.refNo || v.code})</option>`).join('');
+        const selCalc = document.getElementById('outCalcVendorSelect');
+        if (selCalc) selCalc.innerHTML = opts;
+        const selSend = document.getElementById('outsourcePartnerSelectDropdown');
+        if (selSend) selSend.innerHTML = opts;
+        const selRepFilter = document.getElementById('osReportVendorFilterSelect');
+        if (selRepFilter) {
+            selRepFilter.innerHTML = `<option value="ALL">-- แสดงงานจาก Outsource ทั้งหมดทุกบริษัท --</option>` +
+                vendors.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+        }
+        const selImp = document.getElementById('osImportTargetVendorSelect');
+        if (selImp) {
+            selImp.innerHTML = opts + `<option value="__NEW__">+ สร้างชื่อบริษัท Outsource ใหม่ตามไฟล์ที่นำเข้า</option>`;
+        }
+    }
+
+    window.openAddNewOutsourceVendorPrompt = function() {
+        const name = prompt('ระบุชื่อบริษัท / ทีม Outsource ใหม่ (เช่น Outsource 5 - บจก. เอสเค คูลลิ่ง):');
+        if (!name || !name.trim()) return;
+        const refNo = prompt('ระบุเลขที่อ้างอิงสัญญา / ใบเสนอราคา (ถ้ามี):', 'OS-2025/NEW') || 'OS-2025/NEW';
+        const vendors = getOutsourceVendors_();
+        const newId = 'OS_' + Date.now().toString().slice(-5);
+        vendors.push({
+            id: newId,
+            name: name.trim(),
+            code: 'OS-' + String(vendors.length).padStart(2, '0'),
+            refNo: refNo.trim(),
+            contact: '',
+            warrantyDays: 90,
+            creditDays: 30,
+            otMultiplier: 1.20,
+            conditions: vendors[0].conditions
+        });
+        saveOutsourceVendors_(vendors);
+        getExpandedOutsourceRates_();
+        populateOutsourceVendorDropdown_();
+        const selCalc = document.getElementById('outCalcVendorSelect');
+        if (selCalc) selCalc.value = newId;
+        onOutsourceVendorDropdownChange();
+        if (typeof showToast === 'function') showToast('✅ เพิ่มบริษัท Outsource "' + name.trim() + '" พร้อมคัดลอกฐานราคามาตรฐานเรียบร้อย');
+    };
+
+    window.onOutsourceVendorDropdownChange = function() {
+        populateOutsourceCityDropdown_();
+        renderOutsourceRatesTable(document.getElementById('outRateSearchInput')?.value || '');
+        recalcOutsourceFeePreview();
     };
 
     function populateOutsourceCityDropdown_() {
         const sel = document.getElementById('outCalcCitySelect');
         if (!sel) return;
-        const rates = getOutsourceRates_();
-        sel.innerHTML = rates.map((r, idx) => `<option value="${idx}">${r.city} (${r.region} - ${r.vendor})</option>`).join('');
+        const vendorId = document.getElementById('outCalcVendorSelect')?.value || 'LUCKY_STAR';
+        const vendors = getOutsourceVendors_();
+        const vObj = vendors.find(x => x.id === vendorId) || vendors[0];
+        const rates = getExpandedOutsourceRates_();
+        const filtered = rates.map((r, idx) => ({ r, idx })).filter(({ r }) => {
+            if (r.vendorId) return r.vendorId === vObj.id;
+            return (r.vendor || '').toLowerCase() === (vObj.name || '').toLowerCase();
+        });
+        const listToUse = filtered.length > 0 ? filtered : rates.map((r, idx) => ({ r, idx }));
+        sel.innerHTML = listToUse.map(({ r, idx }) => `<option value="${idx}">${r.city} (${r.region} - ${r.hub})</option>`).join('');
     }
 
     window.recalcOutsourceFeePreview = function() {
-        const rates = getOutsourceRates_();
+        const rates = getExpandedOutsourceRates_();
         const idx = Number(document.getElementById('outCalcCitySelect')?.value || 0);
         const r = rates[idx] || rates[0];
         if (!r) return;
@@ -36106,7 +36856,7 @@ try {
     };
 
     window.insertOutsourceFeeIntoCurrentJob = function(idx, jobType, timeMode) {
-        const rates = getOutsourceRates_();
+        const rates = getExpandedOutsourceRates_();
         const r = rates[idx];
         if (!r) return;
         const baseFee = Number(r[jobType] || 0);
@@ -36122,7 +36872,7 @@ try {
         if (typeof window.addPartsRow === 'function') {
             window.addPartsRow({ partNo: r.refNo || 'OUTSOURCE-FEE', desc: desc, qty: 1, price: totalExVat });
         }
-        document.getElementById('outsourceRateManagerModal')?.classList.add('hidden');
+        document.getElementById('outsourceCommandHubModal')?.classList.add('hidden');
         if (typeof showToast === 'function') showToast(`✅ ดึงค่าจ้าง Outsource (${r.city}: ${totalExVat.toLocaleString()} บาท) เข้าตารางรายการแล้ว`);
     };
 
@@ -36130,8 +36880,13 @@ try {
         const tbody = document.getElementById('outsourceRatesTableBody');
         if (!tbody) return;
         const term = String(q || '').trim().toLowerCase();
-        const rates = getOutsourceRates_();
+        const vendorId = document.getElementById('outCalcVendorSelect')?.value || 'LUCKY_STAR';
+        const vendors = getOutsourceVendors_();
+        const vObj = vendors.find(x => x.id === vendorId) || vendors[0];
+        const rates = getExpandedOutsourceRates_();
         const filtered = rates.map((r, i) => ({ r, i })).filter(({ r }) => {
+            const matchVendor = r.vendorId ? (r.vendorId === vObj.id) : ((r.vendor || '').toLowerCase() === (vObj.name || '').toLowerCase());
+            if (!matchVendor) return false;
             if (!term) return true;
             return `${r.vendor} ${r.hub} ${r.region} ${r.city}`.toLowerCase().indexOf(term) > -1;
         });
@@ -36154,7 +36909,7 @@ try {
     };
 
     window.editOutsourceRowToForm = function(idx) {
-        const r = getOutsourceRates_()[idx];
+        const r = getExpandedOutsourceRates_()[idx];
         if (!r) return;
         document.getElementById('outEditVendor').value = r.vendor || '';
         document.getElementById('outEditHub').value = r.hub || '';
@@ -36165,7 +36920,7 @@ try {
         document.getElementById('outEditElec').value = r.electrical || 0;
         document.getElementById('outEditCool').value = r.cooling || 0;
         document.getElementById('outEditComp').value = r.compressor || 0;
-        document.querySelector('#outsourceRateManagerModal details')?.setAttribute('open', 'true');
+        document.querySelector('#outsourceCommandHubModal details')?.setAttribute('open', 'true');
     };
 
     window.selectOutsourceRowForCalc = function(idx) {
@@ -36174,15 +36929,19 @@ try {
     };
 
     window.saveOrUpdateOutsourceCityRate = function() {
-        const vendor = document.getElementById('outEditVendor').value.trim() || 'Lucky Star Solution Co., Ltd.';
+        const vendorId = document.getElementById('outCalcVendorSelect')?.value || 'LUCKY_STAR';
+        const vendors = getOutsourceVendors_();
+        const vObj = vendors.find(x => x.id === vendorId) || vendors[0];
+        const vendor = document.getElementById('outEditVendor').value.trim() || vObj.name;
         const city = document.getElementById('outEditCity').value.trim();
         if (!city) { if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุชื่อจังหวัดหรือพื้นที่ครับ'); return; }
-        const rates = getOutsourceRates_();
-        const existingIdx = rates.findIndex(x => x.vendor.toLowerCase() === vendor.toLowerCase() && x.city.toLowerCase() === city.toLowerCase());
+        const rates = getExpandedOutsourceRates_();
+        const existingIdx = rates.findIndex(x => (x.vendorId === vObj.id || x.vendor.toLowerCase() === vendor.toLowerCase()) && x.city.toLowerCase() === city.toLowerCase());
         const item = {
-            id: existingIdx >= 0 ? rates[existingIdx].id : ('LSS-' + (rates.length + 1)),
+            id: existingIdx >= 0 ? rates[existingIdx].id : (`${vObj.code}-${rates.length + 1}`),
+            vendorId: vObj.id,
             vendor: vendor,
-            refNo: 'LSS-2025/2/13',
+            refNo: vObj.refNo || 'LSS-2025/2/13',
             hub: document.getElementById('outEditHub').value.trim() || 'Service Hub',
             region: document.getElementById('outEditRegion').value.trim() || 'Central',
             city: city,
@@ -36191,7 +36950,7 @@ try {
             cooling: Number(document.getElementById('outEditCool').value) || 0,
             compressor: Number(document.getElementById('outEditComp').value) || 0,
             sla: document.getElementById('outEditSla').value.trim() || '24 hr',
-            conditions: PRELOADED_V1021.outsourceRates[0].conditions
+            conditions: vObj.conditions
         };
         if (existingIdx >= 0) rates[existingIdx] = item;
         else rates.push(item);
@@ -36199,7 +36958,409 @@ try {
         populateOutsourceCityDropdown_();
         renderOutsourceRatesTable('');
         recalcOutsourceFeePreview();
-        if (typeof showToast === 'function') showToast(`✅ บันทึก/อัปเดตราคา Outsource พื้นที่ ${city} เรียบร้อยแล้ว`);
+        if (typeof showToast === 'function') showToast(`✅ บันทึก/อัปเดตราคา Outsource (${vendor}) พื้นที่ ${city} เรียบร้อยแล้ว`);
+    };
+
+    function renderOutsourceSendLinkTab_() {
+        const panel = document.getElementById('osHubPanel_SEND_LINK');
+        if (!panel) return;
+        const jobNo = document.getElementById('jobNo')?.value || ('JOB-' + Date.now().toString().slice(-6));
+        const store = document.getElementById('storeName')?.value || '-';
+        const model = document.getElementById('machineModel')?.value || '-';
+        const vendors = getOutsourceVendors_();
+
+        panel.innerHTML = `
+            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 space-y-3">
+                <div class="font-extrabold text-rose-950 text-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved text-rose-600"></i>
+                    <span>สร้างและส่งลิงก์งานให้ Outsource (Zero-Leakage Isolated Job Link)</span>
+                </div>
+                <p class="text-xs text-rose-900 leading-relaxed">
+                    เมื่อช่าง Outsource เปิดลิงก์นี้บนมือถือ <b>ระบบจะซ่อนเมนูและข้อมูลภายในบริษัททั้งหมด</b> (ไม่เห็นฐานลูกค้า 6,749 เครื่อง, ไม่เห็นราคาทุน/GP%, ไม่เห็นใบงานอื่น) โดย Outsource สามารถทำรายการได้เฉพาะใบงาน <b>${jobNo} (${store} • ${model})</b> พร้อมระบบ <b>Auto Time-Stamp, สแกน OCR เนมเพลท, แนบรูป Before/After สูงสุด 30 ภาพ และบันทึกร่างกรอกย้อนหลัง</b>
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">เลือกบริษัท Outsource ที่รับงาน (Dropdown):</label>
+                        <select id="outsourcePartnerSelectDropdown" onchange="document.getElementById('outsourcePartnerNameInput').value=this.options[this.selectedIndex].dataset.name; generateHubOutsourceUrl_();" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold text-hoshizaki-navy">
+                            ${vendors.map(v => `<option value="${v.id}" data-name="${v.name}">${v.name}</option>`).join('')}
+                        </select>
+                        <input type="text" id="outsourcePartnerNameInput" value="${vendors[0].name}" oninput="generateHubOutsourceUrl_()" placeholder="หรือพิมพ์ชื่อบริษัท/ทีมช่าง Outsource..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white mt-1.5 text-xs">
+                    </div>
+                    <div class="flex flex-col justify-end gap-2">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="copyHubOutsourceLink_(false)" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold py-2.5 px-3 rounded-xl shadow-xs">
+                                <i class="fa-solid fa-copy mr-1"></i> สร้าง &amp; คัดลอกลิงก์
+                            </button>
+                            <button type="button" onclick="copyHubOutsourceLink_(true)" class="bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-2.5 px-3 rounded-xl shadow-xs">
+                                <i class="fa-brands fa-line mr-1"></i> ส่งเข้า LINE Outsource
+                            </button>
+                        </div>
+                        <button type="button" onclick="window.open(document.getElementById('outsourceGeneratedLinkOutput').value, '_blank')" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-3 rounded-xl text-xs">
+                            <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> เปิดทดสอบหน้าจอ Outsource Service Report ทันที
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-600 block mb-1">ลิงก์เฉพาะใบงานสำหรับ Outsource:</label>
+                    <input type="text" id="outsourceGeneratedLinkOutput" readonly class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-mono text-[11px] text-slate-700">
+                </div>
+            </div>
+        `;
+        window.generateHubOutsourceUrl_();
+    }
+
+    window.generateHubOutsourceUrl_ = function() {
+        const partnerName = (document.getElementById('outsourcePartnerNameInput')?.value || 'Lucky Star Solution Co., Ltd.').trim();
+        const payload = {
+            v: '1022-OS',
+            jobNo: document.getElementById('jobNo')?.value || ('JOB-' + Date.now().toString().slice(-6)),
+            date: document.getElementById('jobDate')?.value || new Date().toISOString().slice(0, 10),
+            store: document.getElementById('storeName')?.value || '',
+            contact: document.getElementById('contactPerson')?.value || '',
+            address: document.getElementById('storeAddress')?.value || '',
+            model: document.getElementById('machineModel')?.value || '',
+            serial: document.getElementById('serialNumber')?.value || '',
+            symptom: document.getElementById('diagSymptom')?.value || '',
+            partner: partnerName,
+            gasUrl: localStorage.getItem('hoshizaki_gas_url') || ''
+        };
+        const jsonStr = JSON.stringify(payload);
+        const bytes = new TextEncoder().encode(jsonStr);
+        let bin = '';
+        bytes.forEach(b => bin += String.fromCharCode(b));
+        const token = btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const baseUrl = window.location.href.split('?')[0].split('#')[0];
+        const shareUrl = `${baseUrl}?portal=outsource&token=${encodeURIComponent(token)}`;
+        const out = document.getElementById('outsourceGeneratedLinkOutput');
+        if (out) out.value = shareUrl;
+        return shareUrl;
+    };
+
+    window.copyHubOutsourceLink_ = function(sendLine) {
+        const url = window.generateHubOutsourceUrl_();
+        if (navigator.clipboard) navigator.clipboard.writeText(url);
+        if (sendLine) {
+            const jobNo = document.getElementById('jobNo')?.value || '';
+            const store = document.getElementById('storeName')?.value || '';
+            const model = document.getElementById('machineModel')?.value || '';
+            const msg = `🔧 [HOSHIZAKI OUTSOURCE JOB]\nเลขที่ใบงาน: ${jobNo}\nลูกค้า: ${store}\nรุ่นเครื่อง: ${model}\n\nกรุณากดลิงก์ด้านล่างเพื่อประทับเวลา Auto-Stamp, สแกนเนมเพลท, แนบรูป Before/After และส่งรายงานซ่อม/PM:\n${url}`;
+            window.open('https://line.me/R/msg/text/?' + encodeURIComponent(msg), '_blank');
+        } else if (typeof showToast === 'function') {
+            showToast('📋 คัดลอกลิงก์งาน Outsource เรียบร้อยแล้ว');
+        }
+    };
+
+    function renderOutsourceJobReportsTab_() {
+        const panel = document.getElementById('osHubPanel_JOB_REPORTS');
+        if (!panel) return;
+        const vendors = getOutsourceVendors_();
+
+        panel.innerHTML = `
+            <div class="bg-sky-50 border border-sky-200 rounded-2xl p-3 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="font-extrabold text-hoshizaki-navy text-sm">
+                        <i class="fa-solid fa-list-check text-sky-600 mr-1"></i>รายการ Job Report ที่ส่งมาจาก Outsource (คลิกเปิดดูรายละเอียด &amp; รูป Before/After ได้ทันที)
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">กรองตามชื่อ Outsource (Dropdown):</label>
+                        <select id="osReportVendorFilterSelect" onchange="filterOutsourceJobReportsTable_()" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold text-hoshizaki-navy">
+                            <option value="ALL">-- แสดงงานจาก Outsource ทั้งหมดทุกบริษัท --</option>
+                            ${vendors.map(v => `<option value="${v.name}">${v.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="font-bold text-slate-700 block mb-1">ค้นหาตาม Job Service Number / ชื่อลูกค้า / รุ่นเครื่อง / S/N:</label>
+                        <input type="text" id="osReportJobNoSearchInput" oninput="filterOutsourceJobReportsTable_()" placeholder="พิมพ์เลขที่ Job Service Number เช่น JOB-2026... หรือชื่อร้าน..." class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                <table class="w-full text-left border-collapse text-[11px]">
+                    <thead class="bg-hoshizaki-navy text-white">
+                        <tr>
+                            <th class="p-2.5">Job Service No.</th>
+                            <th class="p-2.5">วันที่ / ประเภทงาน</th>
+                            <th class="p-2.5">บริษัท Outsource / ช่าง</th>
+                            <th class="p-2.5">ลูกค้า / สถานที่</th>
+                            <th class="p-2.5">รุ่นเครื่อง / S/N</th>
+                            <th class="p-2.5 text-center">รูปภาพ</th>
+                            <th class="p-2.5 text-center">ดูรายงาน / นำเข้าใบงาน</th>
+                        </tr>
+                    </thead>
+                    <tbody id="osJobReportsTableBody" class="divide-y divide-slate-200"></tbody>
+                </table>
+            </div>
+
+            <div id="osReportDetailViewerBox" class="hidden bg-slate-50 border-2 border-sky-300 rounded-2xl p-4 space-y-3"></div>
+        `;
+        window.filterOutsourceJobReportsTable_();
+    }
+
+    window.filterOutsourceJobReportsTable_ = function() {
+        const tbody = document.getElementById('osJobReportsTableBody');
+        if (!tbody) return;
+        const vendorFilter = (document.getElementById('osReportVendorFilterSelect')?.value || 'ALL').toLowerCase();
+        const q = (document.getElementById('osReportJobNoSearchInput')?.value || '').trim().toLowerCase();
+        const allSubs = getOutsourceSubmittedReports_();
+
+        const filtered = allSubs.filter(item => {
+            const vStr = `${item.partnerVendor || ''} ${item.responsibleTech || ''}`.toLowerCase();
+            if (vendorFilter !== 'all' && vStr.indexOf(vendorFilter) === -1) return false;
+            if (q) {
+                const hay = `${item.jobNo} ${item.store} ${item.model} ${item.serial} ${item.responsibleTech}`.toLowerCase();
+                if (hay.indexOf(q) === -1) return false;
+            }
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500">ไม่พบรายการ Job Report ของ Outsource ตามเงื่อนไขที่เลือก — เมื่อช่าง Outsource กดส่งรายงานผ่านลิงก์ รายการจะปรากฏในตารางนี้ทันทีครับ</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(r => `
+            <tr class="hover:bg-sky-50 transition">
+                <td class="p-2.5 font-extrabold text-hoshizaki-navy">${r.jobNo}</td>
+                <td class="p-2.5">
+                    <div class="font-semibold">${r.date}</div>
+                    <span class="inline-block bg-sky-100 text-sky-900 px-1.5 py-0.2 rounded text-[10px] font-bold">${r.jobCategory || 'REPAIR'}</span>
+                </td>
+                <td class="p-2.5 font-bold text-rose-900">${r.responsibleTech || r.partnerVendor || '-'}</td>
+                <td class="p-2.5">${r.store || '-'}</td>
+                <td class="p-2.5 font-mono font-bold">${r.model || '-'} / ${r.serial || '-'}</td>
+                <td class="p-2.5 text-center">
+                    <span class="bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded-full font-extrabold">${r.photoCount || (r.photos ? r.photos.length : 0)} ภาพ</span>
+                </td>
+                <td class="p-2.5 text-center space-x-1">
+                    <button type="button" onclick="viewOutsourceJobReportDetail_('${r.jobNo}')" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-2.5 py-1 rounded-lg">
+                        <i class="fa-solid fa-eye mr-0.5"></i> เปิดดูรายงาน
+                    </button>
+                    <button type="button" onclick="loadOutsourceReportIntoMainSheet_('${r.jobNo}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded-lg">
+                        <i class="fa-solid fa-file-import mr-0.5"></i> ดึงเข้าใบงานหลัก
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    };
+
+    window.viewOutsourceJobReportDetail_ = function(jobNo) {
+        const box = document.getElementById('osReportDetailViewerBox');
+        if (!box) return;
+        const r = getOutsourceSubmittedReports_().find(x => x.jobNo === jobNo);
+        if (!r) return;
+        const photos = Array.isArray(r.photos) ? r.photos : [];
+        box.classList.remove('hidden');
+        box.innerHTML = `
+            <div class="flex items-center justify-between border-b border-sky-200 pb-2">
+                <div class="font-extrabold text-hoshizaki-navy text-sm">
+                    <i class="fa-solid fa-file-lines text-sky-600 mr-1"></i> รายละเอียด Job Report: ${r.jobNo} (${r.store})
+                </div>
+                <button type="button" onclick="document.getElementById('osReportDetailViewerBox').classList.add('hidden')" class="text-rose-600 font-extrabold px-2 py-0.5 rounded hover:bg-rose-100">ปิดหน้าต่างดูรายละเอียด &times;</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-white p-3 rounded-xl border border-slate-200">
+                <div><b>ทีม Outsource:</b> ${r.responsibleTech || '-'}</div>
+                <div><b>รุ่นเครื่อง / S/N:</b> ${r.model || '-'} / ${r.serial || '-'}</div>
+                <div><b>เวลาเข้า - ออก:</b> ${r.autoStampInFull || r.timeIn || '-'} ถึง ${r.autoStampOutFull || r.timeOut || '-'}</div>
+                <div><b>พิกัด GPS:</b> ${r.diagGps || '-'}</div>
+                <div><b>ผู้เซ็นรับมอบงาน:</b> ${r.nameCustomer || '-'}</div>
+                <div><b>ส่งรายงานเมื่อ:</b> ${r.submittedAt || '-'}</div>
+                <div class="sm:col-span-3"><b>อาการแจ้งซ่อม:</b> ${r.diagSymptom || '-'}</div>
+                <div class="sm:col-span-3"><b>สาเหตุที่ตรวจพบ:</b> ${r.diagDetected || '-'}</div>
+                <div class="sm:col-span-3 whitespace-pre-line"><b>รายละเอียดการแก้ไข / PM:</b> ${r.diagAction || '-'}</div>
+                <div class="sm:col-span-3"><b>รายการอะไหล่ที่ใช้:</b> ${r.partsSummary || '-'}</div>
+            </div>
+            ${photos.length > 0 ? `
+                <div>
+                    <div class="font-extrabold text-hoshizaki-navy mb-1.5">รูปภาพประกอบรายงานแยกหมวดหมู่ (${photos.length} ภาพ):</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        ${photos.map((p, idx) => `
+                            <div class="bg-white border rounded-xl overflow-hidden shadow-xs">
+                                <img src="${p.dataUrl}" alt="${p.category || ''}" class="w-full aspect-video object-cover cursor-pointer" onclick="window.open('${p.dataUrl}', '_blank')">
+                                <div class="p-1.5 text-[10px]">
+                                    <div class="font-extrabold text-sky-900">#${idx + 1} ${p.category || ''}</div>
+                                    <div class="text-slate-600">${p.caption || '-'}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : '<div class="text-slate-500 text-[11px]">ไม่มีรูปภาพแนบในรายงานฉบับนี้</div>'}
+        `;
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+
+    window.loadOutsourceReportIntoMainSheet_ = function(jobNo) {
+        const r = getOutsourceSubmittedReports_().find(x => x.jobNo === jobNo);
+        if (!r) return;
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+        setVal('jobNo', r.jobNo);
+        setVal('jobDate', r.date);
+        setVal('storeName', r.store);
+        setVal('contactPerson', r.contact);
+        setVal('storeAddress', r.address);
+        setVal('machineModel', r.model);
+        setVal('serialNumber', r.serial);
+        setVal('timeIn', r.timeIn);
+        setVal('timeOut', r.timeOut);
+        setVal('diagGps', r.diagGps);
+        setVal('diagSymptom', r.diagSymptom);
+        setVal('diagDetected', r.diagDetected);
+        setVal('diagAction', r.diagAction);
+        setVal('responsibleTech', r.responsibleTech);
+        setVal('nameCustomer', r.nameCustomer);
+        document.getElementById('outsourceCommandHubModal')?.classList.add('hidden');
+        if (typeof showToast === 'function') {
+            showToast('✅ ดึงข้อมูลรายงาน Outsource เลขที่ ' + r.jobNo + ' เข้าสู่ใบงานหลักเรียบร้อยแล้ว');
+        }
+    };
+
+    function renderOutsourceImportRatesTab_() {
+        const panel = document.getElementById('osHubPanel_IMPORT_RATES');
+        if (!panel) return;
+        const vendors = getOutsourceVendors_();
+        panel.innerHTML = `
+            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 space-y-3">
+                <div class="font-extrabold text-emerald-950 text-sm">
+                    <i class="fa-solid fa-file-import text-emerald-600 mr-1"></i>
+                    นำเข้าข้อมูลฐานราคา &amp; เงื่อนไข Outsource ใหม่จากไฟล์ Excel (.xlsx / .xls / .csv) หรือ PDF
+                </div>
+                <p class="text-xs text-emerald-900">
+                    รองรับทั้งการอัปโหลดตารางราคา Excel ของบริษัท Outsource รายใหม่ และไฟล์ใบเสนอราคา PDF (ระบบจะสกัดราคาและเงื่อนไขสัญญาให้อัตโนมัติพร้อมตรวจสอบก่อนบันทึก)
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">เลือกบริษัท Outsource ปลายทางที่จะอัปเดตข้อมูล:</label>
+                        <select id="osImportTargetVendorSelect" onchange="document.getElementById('osImportNewVendorNameWrap').classList.toggle('hidden', this.value !== '__NEW__')" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold text-hoshizaki-navy">
+                            ${vendors.map(v => `<option value="${v.id}">${v.name}</option>`).join('')}
+                            <option value="__NEW__">+ สร้างชื่อบริษัท Outsource ใหม่</option>
+                        </select>
+                        <div id="osImportNewVendorNameWrap" class="hidden mt-1.5">
+                            <input type="text" id="osImportNewVendorNameInput" placeholder="ระบุชื่อบริษัท Outsource ใหม่..." class="w-full border border-emerald-400 rounded-lg px-2.5 py-1.5 bg-white font-bold">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">เลือกไฟล์ Excel (.xlsx, .csv) หรือ PDF ใบเสนอราคา:</label>
+                        <input type="file" id="osRateImportFileInput" accept=".xlsx,.xls,.csv,.pdf" onchange="handleImportOutsourceRatesFile_(this)" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-xs">
+                    </div>
+                </div>
+                <div id="osRateImportPreviewBox" class="hidden bg-white border border-emerald-300 rounded-xl p-3 space-y-2"></div>
+            </div>
+        `;
+    }
+
+    window.handleImportOutsourceRatesFile_ = async function(inputEl) {
+        if (!inputEl || !inputEl.files || !inputEl.files[0]) return;
+        const file = inputEl.files[0];
+        const previewBox = document.getElementById('osRateImportPreviewBox');
+        if (!previewBox) return;
+        previewBox.classList.remove('hidden');
+        previewBox.innerHTML = `<div class="text-sky-800 font-bold"><i class="fa-solid fa-spinner fa-spin mr-1"></i> กำลังอ่านและวิเคราะห์ข้อมูลจากไฟล์ <b>${file.name}</b>...</div>`;
+
+        const targetSel = document.getElementById('osImportTargetVendorSelect')?.value || 'LUCKY_STAR';
+        const vendors = getOutsourceVendors_();
+        let vendorObj = vendors.find(v => v.id === targetSel) || vendors[0];
+        if (targetSel === '__NEW__') {
+            const newName = (document.getElementById('osImportNewVendorNameInput')?.value || file.name.replace(/\.[^.]+$/, '')).trim();
+            vendorObj = {
+                id: 'OS_' + Date.now().toString().slice(-5),
+                name: newName,
+                code: 'OS-' + String(vendors.length).padStart(2, '0'),
+                refNo: 'IMP-' + new Date().toISOString().slice(0, 10),
+                contact: '',
+                warrantyDays: 90,
+                creditDays: 30,
+                otMultiplier: 1.20,
+                conditions: vendorObj.conditions
+            };
+            vendors.push(vendorObj);
+            saveOutsourceVendors_(vendors);
+            populateOutsourceVendorDropdown_();
+        }
+
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (ext === 'pdf') {
+            previewBox.innerHTML = `
+                <div class="font-extrabold text-hoshizaki-navy">📄 นำเข้าเอกสาร PDF สำเร็จ: ${file.name} (สำหรับ: ${vendorObj.name})</div>
+                <div class="space-y-1.5">
+                    <label class="font-bold text-slate-700 block">เงื่อนไขสัญญา / หมายเหตุราคาจากไฟล์ PDF (สามารถแก้ไขเพิ่มเติมได้):</label>
+                    <textarea id="osPdfImportedConditions" rows="3" class="w-full border rounded-lg p-2 text-xs">${vendorObj.conditions}\n[แนบเอกสารอ้างอิง: ${file.name}]</textarea>
+                </div>
+                <button type="button" onclick="applyImportedPdfConditionsToVendor_('${vendorObj.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl text-xs">
+                    <i class="fa-solid fa-check mr-1"></i> บันทึกเงื่อนไขลงโปรไฟล์ ${vendorObj.name}
+                </button>
+            `;
+        } else if (typeof XLSX !== 'undefined') {
+            const buf = await file.arrayBuffer();
+            const wb = XLSX.read(buf, { type: 'array' });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+            let importedCount = 0;
+            const rates = getExpandedOutsourceRates_();
+
+            rows.forEach((row, idx) => {
+                const keys = Object.keys(row);
+                const findVal = (patterns) => {
+                    const k = keys.find(key => patterns.some(p => key.toLowerCase().indexOf(p) > -1));
+                    return k ? row[k] : '';
+                };
+                const city = String(findVal(['city', 'province', 'จังหวัด', 'พื้นที่', 'area']) || '').trim();
+                if (!city) return;
+                const hub = String(findVal(['hub', 'ศูนย์']) || 'Service Hub').trim();
+                const region = String(findVal(['region', 'ภาค']) || 'Central').trim();
+                const checkInstall = Number(String(findVal(['check', 'install', 'ตรวจ', 'ติดตั้ง'])).replace(/[^0-9.]/g, '')) || 0;
+                const electrical = Number(String(findVal(['elec', 'ไฟฟ้า'])).replace(/[^0-9.]/g, '')) || 0;
+                const cooling = Number(String(findVal(['cool', 'ความเย็น'])).replace(/[^0-9.]/g, '')) || 0;
+                const compressor = Number(String(findVal(['comp', 'คอม'])).replace(/[^0-9.]/g, '')) || 0;
+                const sla = String(findVal(['sla', 'ระยะเวลา']) || '24 hr').trim();
+
+                const existIdx = rates.findIndex(r => r.vendorId === vendorObj.id && r.city.toLowerCase() === city.toLowerCase());
+                const rec = {
+                    id: existIdx >= 0 ? rates[existIdx].id : `${vendorObj.code}-IMP-${idx + 1}`,
+                    vendorId: vendorObj.id,
+                    vendor: vendorObj.name,
+                    refNo: vendorObj.refNo,
+                    hub: hub,
+                    region: region,
+                    city: city,
+                    checkInstall: checkInstall,
+                    electrical: electrical,
+                    cooling: cooling,
+                    compressor: compressor,
+                    sla: sla,
+                    conditions: vendorObj.conditions
+                };
+                if (existIdx >= 0) rates[existIdx] = rec;
+                else rates.push(rec);
+                importedCount++;
+            });
+
+            saveOutsourceRates_(rates);
+            populateOutsourceCityDropdown_();
+            renderOutsourceRatesTable('');
+            recalcOutsourceFeePreview();
+
+            previewBox.innerHTML = `
+                <div class="font-extrabold text-emerald-800">✅ นำเข้าตารางราคา Excel (${file.name}) สำเร็จจำนวน ${importedCount} พื้นที่ สำหรับ <b>${vendorObj.name}</b>!</div>
+                <button type="button" onclick="switchOutsourceHubTab('RATES_CALC')" class="bg-hoshizaki-navy text-white font-bold px-3 py-1.5 rounded-lg text-xs">
+                    เปิดดูตารางราคา &amp; ทดสอบคำนวณค่าจ้างทันที
+                </button>
+            `;
+        }
+        inputEl.value = '';
+    };
+
+    window.applyImportedPdfConditionsToVendor_ = function(vendorId) {
+        const txt = document.getElementById('osPdfImportedConditions')?.value || '';
+        const vendors = getOutsourceVendors_();
+        const v = vendors.find(x => x.id === vendorId);
+        if (v) {
+            v.conditions = txt;
+            saveOutsourceVendors_(vendors);
+            if (typeof showToast === 'function') showToast('✅ บันทึกเงื่อนไข Outsource จากไฟล์ PDF เรียบร้อยแล้ว');
+        }
     };
 
     window.syncOutsourceRatesToCloudNow = async function() {
@@ -36216,14 +37377,13 @@ try {
                 body: JSON.stringify({
                     actionType: 'SYNC_OUTSOURCE_RATE_CARD',
                     apiSecretKey: cfg.apiSecretKey || '',
-                    rates: getOutsourceRates_()
+                    rates: getExpandedOutsourceRates_()
                 })
             });
             if (typeof showToast === 'function') showToast('✅ ซิงค์ตารางราคา Outsource ขึ้น Google Sheets เรียบร้อย');
         } catch (e) {}
     };
 
-    // Inject quick buttons into Toolbar Category 2 (DOCS) and Category 4 (MANUAL_TEAM)
     function injectV1021ToolbarButtons_() {
         const docsGrid = document.querySelector('[data-tb-group="DOCS"] .tb-btn-grid');
         if (docsGrid && !document.getElementById('btnOpenSmartExcelDedup')) {
@@ -36235,18 +37395,6 @@ try {
             btnEx.className = 'tb-action-item col-span-2 bg-gradient-to-r from-emerald-700 to-teal-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-emerald-300/40';
             btnEx.innerHTML = '<i class="fa-solid fa-file-excel text-amber-200"></i> <span>นำเข้า Excel เก่า (QT/ราคาอะไหล่) + คัดกรองข้อมูลซ้ำอัตโนมัติ</span>';
             docsGrid.appendChild(btnEx);
-        }
-
-        const svcGrid = document.querySelector('[data-tb-group="SERVICE"] .tb-btn-grid');
-        if (svcGrid && !document.getElementById('btnOpenOutsourceRates')) {
-            const btnOut = document.createElement('button');
-            btnOut.id = 'btnOpenOutsourceRates';
-            btnOut.type = 'button';
-            btnOut.setAttribute('data-tb-cat', 'SERVICE');
-            btnOut.onclick = openOutsourceRateManagerModal;
-            btnOut.className = 'tb-action-item col-span-2 bg-gradient-to-r from-rose-800 to-amber-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-amber-300/40';
-            btnOut.innerHTML = '<i class="fa-solid fa-handshake-angle text-amber-200"></i> <span>ฐานราคา &amp; คำนวณค่าจ้าง Outsource (Lucky Star 84 พื้นที่)</span>';
-            svcGrid.appendChild(btnOut);
         }
     }
 
@@ -36262,5 +37410,74 @@ try {
 })();
 </script>
 
+
+    <script id="hzk-top-exec-and-pm-dropdown-logic">
+    (function() {
+        window.toggleTopExecutiveReportDropdown = function(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('topExecutiveReportDropdownMenu');
+            if (!menu) return;
+            const willOpen = menu.classList.contains('hidden');
+            document.getElementById('manualSearchMenu')?.classList.add('hidden');
+            document.getElementById('pmSuiteDropdownMenu')?.classList.add('hidden');
+            document.getElementById('outsourceHubDropdownMenu')?.classList.add('hidden');
+            menu.classList.toggle('hidden', !willOpen);
+        };
+        window.closeTopExecutiveReportDropdown = function() {
+            document.getElementById('topExecutiveReportDropdownMenu')?.classList.add('hidden');
+        };
+
+        window.togglePmSuiteDropdown = function(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('pmSuiteDropdownMenu');
+            if (!menu) return;
+            const willOpen = menu.classList.contains('hidden');
+            document.getElementById('manualSearchMenu')?.classList.add('hidden');
+            document.getElementById('topExecutiveReportDropdownMenu')?.classList.add('hidden');
+            document.getElementById('outsourceHubDropdownMenu')?.classList.add('hidden');
+            menu.classList.toggle('hidden', !willOpen);
+        };
+        window.closePmSuiteDropdown = function() {
+            document.getElementById('pmSuiteDropdownMenu')?.classList.add('hidden');
+        };
+
+        window.toggleOutsourceHubDropdown = function(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('outsourceHubDropdownMenu');
+            if (!menu) return;
+            const willOpen = menu.classList.contains('hidden');
+            document.getElementById('manualSearchMenu')?.classList.add('hidden');
+            document.getElementById('topExecutiveReportDropdownMenu')?.classList.add('hidden');
+            document.getElementById('pmSuiteDropdownMenu')?.classList.add('hidden');
+            menu.classList.toggle('hidden', !willOpen);
+        };
+        window.closeOutsourceHubDropdown = function() {
+            document.getElementById('outsourceHubDropdownMenu')?.classList.add('hidden');
+        };
+
+        document.addEventListener('click', function(e) {
+            const erWrap = document.getElementById('topExecReportDropdownWrap');
+            if (erWrap && !erWrap.contains(e.target)) {
+                window.closeTopExecutiveReportDropdown();
+            }
+            const pmWrap = document.getElementById('pmSuiteDropdownWrap');
+            if (pmWrap && !pmWrap.contains(e.target)) {
+                window.closePmSuiteDropdown();
+            }
+            const osWrap = document.getElementById('outsourceHubDropdownWrap');
+            if (osWrap && !osWrap.contains(e.target)) {
+                window.closeOutsourceHubDropdown();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                window.closeTopExecutiveReportDropdown();
+                window.closePmSuiteDropdown();
+                window.closeOutsourceHubDropdown();
+            }
+        });
+    })();
+    </script>
 </body>
 </html>

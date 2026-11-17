@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1025-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1029-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -189,6 +189,10 @@ function doPost(e) {
       }
 
       
+      if (action === 'UPSERT_PARAMETER_KB_ENTRY') {
+        return jsonOut(upsertParameterKbEntryToSheet_(ss, data));
+      }
+
       if (action === 'SYNC_V1025_GOVERNANCE_APPROVAL') {
         return jsonOut(syncV1025GovernanceApproval_(ss, data));
       }
@@ -1054,7 +1058,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1021-FINAL',
+    version: 'Enterprise-v1029-FINAL',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1087,7 +1091,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1021-FINAL',
+    version: 'Enterprise-v1029-FINAL',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -7869,4 +7873,38 @@ function lookupControllerAndMachineParametersText_(rawQuery) {
   }
 
   return '';
+}
+
+
+// =========================================================================
+// ENTERPRISE v1029: PARAMETER & MANUAL KNOWLEDGE BASE CLOUD SYNC
+// =========================================================================
+function upsertParameterKbEntryToSheet_(ss, data) {
+  var sheetName = 'Parameter_Manual_KB';
+  var sheet = ss.getSheetByName(sheetName);
+  var headers = ['Entry_ID', 'Category', 'Model_Title', 'Aliases', 'Doc_Sources', 'Password_Info', 'Quick_Operation', 'Key_Parameters_JSON', 'Install_Specs', 'Updated_At'];
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var e = (data && data.entry) || {};
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var rowVals = [
+    String(e.id || ''),
+    String(e.category || ''),
+    String(e.modelTitle || ''),
+    Array.isArray(e.aliases) ? e.aliases.join(', ') : String(e.aliases || ''),
+    String(e.docSources || ''),
+    String(e.passwordInfo || ''),
+    String(e.quickOperation || ''),
+    JSON.stringify(e.keyParameters || []),
+    String(e.installAndSpecs || ''),
+    nowStr
+  ];
+  var rowIdx = findRowByExactKey(sheet, 1, String(e.id || ''));
+  if (rowIdx >= 2) sheet.getRange(rowIdx, 1, 1, rowVals.length).setValues([rowVals]);
+  else sheet.appendRow(rowVals);
+  return { status: 'ok', entryId: e.id || '', updatedAt: nowStr };
 }

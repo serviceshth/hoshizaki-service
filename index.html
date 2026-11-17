@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1028</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1029</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -4554,7 +4554,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1028</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1029</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20692,7 +20692,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1028) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1029) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -23594,7 +23594,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1028 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1029 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -31510,7 +31510,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1028)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1029)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31713,7 +31713,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1028)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1029)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31722,7 +31722,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1028)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1029)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -31731,7 +31731,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1028)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1029)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31813,21 +31813,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1028) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1029) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1028 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1029 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1028）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1029）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -34681,9 +34681,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1028',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1028)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1028)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1029',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1029)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1029)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34732,7 +34732,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1028 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1029 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -34958,7 +34958,7 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
         <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1028 — Multi-Branch &amp; White-Label Ready)</h3>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1029 — Multi-Branch &amp; White-Label Ready)</h3>
                 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
             </div>
             <div class="flex items-center gap-1.5">
@@ -39003,7 +39003,7 @@ try {
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1028 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1029 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -39530,7 +39530,7 @@ try {
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1028</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1029</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -40442,7 +40442,7 @@ ${portalUrl}`;
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1028</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1029</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -41471,6 +41471,469 @@ ${portalUrl}`;
       setToolbarCollapsedState(true, true);
     } else {
       renderCompactPinnedDock();
+    }
+  });
+})();
+</script>
+
+
+<script id="hzk-v1029-indexeddb-profile-kb-editor">
+(function() {
+  // =========================================================================
+  // 1. INDEXEDDB LARGE-SCALE STORAGE ENGINE (Prevents 5MB localStorage Quota)
+  // =========================================================================
+  const IDB_NAME = 'HoshizakiServiceEnterpriseIDB_v1029';
+  const IDB_STORE = 'kv_large_datasets';
+  const IDB_VERSION = 1;
+  const LARGE_KEY_PATTERNS = [
+    'serial', 'quotation_archive', 'qt_archive', 'legacy_service', 'history',
+    'parts_catalog', 'customer_master', 'offline_queue', 'photo', 'snapshot', 'kb_custom'
+  ];
+
+  function isLargeStorageKey(k) {
+    const low = String(k || '').toLowerCase();
+    return LARGE_KEY_PATTERNS.some(p => low.includes(p));
+  }
+
+  const memCache = {};
+  let idbInstance = null;
+
+  function openHzkIdb() {
+    if (idbInstance) return Promise.resolve(idbInstance);
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) return reject(new Error('IndexedDB unsupported'));
+      const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+      req.onupgradeneeded = function(e) {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(IDB_STORE)) {
+          db.createObjectStore(IDB_STORE);
+        }
+      };
+      req.onsuccess = function(e) {
+        idbInstance = e.target.result;
+        resolve(idbInstance);
+      };
+      req.onerror = function(e) {
+        reject(e.target.error);
+      };
+    });
+  }
+
+  window.HZK_IDB = {
+    get: async function(key) {
+      if (memCache[key] !== undefined) return memCache[key];
+      try {
+        const db = await openHzkIdb();
+        return await new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, 'readonly');
+          const store = tx.objectStore(IDB_STORE);
+          const req = store.get(key);
+          req.onsuccess = () => {
+            if (req.result !== undefined) memCache[key] = req.result;
+            resolve(req.result);
+          };
+          req.onerror = () => resolve(undefined);
+        });
+      } catch (e) {
+        return undefined;
+      }
+    },
+    set: async function(key, val) {
+      memCache[key] = val;
+      try {
+        const db = await openHzkIdb();
+        return await new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, 'readwrite');
+          const store = tx.objectStore(IDB_STORE);
+          const req = store.put(val, key);
+          req.onsuccess = () => resolve(true);
+          req.onerror = () => resolve(false);
+        });
+      } catch (e) {
+        return false;
+      }
+    },
+    remove: async function(key) {
+      delete memCache[key];
+      try {
+        const db = await openHzkIdb();
+        return await new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, 'readwrite');
+          const store = tx.objectStore(IDB_STORE);
+          const req = store.delete(key);
+          req.onsuccess = () => resolve(true);
+          req.onerror = () => resolve(false);
+        });
+      } catch (e) {
+        return false;
+      }
+    },
+    migrateFromLocalStorage: async function() {
+      let migratedCount = 0;
+      let freedBytes = 0;
+      const keysToMigrate = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        const v = localStorage.getItem(k) || '';
+        if (isLargeStorageKey(k) || v.length > 65000) {
+          keysToMigrate.push({ k, v });
+        }
+      }
+      for (const item of keysToMigrate) {
+        const ok = await window.HZK_IDB.set(item.k, item.v);
+        if (ok) {
+          localStorage.removeItem(item.k);
+          migratedCount++;
+          freedBytes += item.v.length;
+        }
+      }
+      return { migratedCount, freedKB: (freedBytes / 1024).toFixed(1) };
+    }
+  };
+
+  // Transparent safeStorage wrapper + QuotaExceededError auto-eviction guard
+  const origSetItem = Storage.prototype.setItem;
+  const origGetItem = Storage.prototype.getItem;
+  const origRemoveItem = Storage.prototype.removeItem;
+
+  Storage.prototype.getItem = function(key) {
+    const direct = origGetItem.call(this, key);
+    if (direct !== null) return direct;
+    if (memCache[key] !== undefined) {
+      return typeof memCache[key] === 'string' ? memCache[key] : JSON.stringify(memCache[key]);
+    }
+    return null;
+  };
+
+  Storage.prototype.setItem = function(key, value) {
+    const strVal = String(value);
+    if (isLargeStorageKey(key) || strVal.length > 120000) {
+      window.HZK_IDB.set(key, strVal);
+      try { origRemoveItem.call(this, key); } catch (e) {}
+      return;
+    }
+    try {
+      origSetItem.call(this, key, strVal);
+    } catch (err) {
+      // On QuotaExceededError, migrate heavy keys to IndexedDB and retry
+      window.HZK_IDB.migrateFromLocalStorage().then(() => {
+        try {
+          origSetItem.call(localStorage, key, strVal);
+        } catch (e2) {
+          window.HZK_IDB.set(key, strVal);
+        }
+      });
+    }
+  };
+
+  Storage.prototype.removeItem = function(key) {
+    try { origRemoveItem.call(this, key); } catch (e) {}
+    window.HZK_IDB.remove(key);
+  };
+
+  // Pre-warm IndexedDB cache on boot
+  (async function preloadIdbIntoMemory() {
+    try {
+      const db = await openHzkIdb();
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const store = tx.objectStore(IDB_STORE);
+      const keysReq = store.getAllKeys();
+      keysReq.onsuccess = function() {
+        const allKeys = keysReq.result || [];
+        allKeys.forEach(k => {
+          const g = store.get(k);
+          g.onsuccess = () => { memCache[k] = g.result; };
+        });
+      };
+      setTimeout(() => { window.HZK_IDB.migrateFromLocalStorage(); }, 1500);
+    } catch (e) {}
+  })();
+
+  // =========================================================================
+  // 2. BIND AUTO-HIDE & PINNED MENU PREFERENCES TO ACTIVE TECHNICIAN PROFILE
+  // =========================================================================
+  const BASE_PREF_KEY = 'hzk_toolbar_autohide_pin_prefs_v1028';
+  const TECH_KEY_NAME = 'hoshizaki_active_tech_profile_v1016';
+
+  function getActiveTechStorageSuffix() {
+    const rawTech = (localStorage.getItem(TECH_KEY_NAME) || '').trim();
+    if (!rawTech) return 'DEFAULT';
+    return rawTech.replace(/[^a-zA-Z0-9ก-๙_-]/g, '_').slice(0, 48);
+  }
+
+  function getProfileScopedPrefKey() {
+    return `${BASE_PREF_KEY}__${getActiveTechStorageSuffix()}`;
+  }
+
+  // Intercept toolbar preference reads/writes so each technician profile keeps its own Auto-Hide & Pinned Buttons
+  const rawGet = Storage.prototype.getItem;
+  const rawSet = Storage.prototype.setItem;
+  Storage.prototype.getItem = function(key) {
+    if (key === BASE_PREF_KEY) {
+      const scoped = rawGet.call(this, getProfileScopedPrefKey());
+      if (scoped !== null) return scoped;
+    }
+    return rawGet.call(this, key);
+  };
+  Storage.prototype.setItem = function(key, val) {
+    if (key === BASE_PREF_KEY) {
+      rawSet.call(this, getProfileScopedPrefKey(), val);
+    }
+    return rawSet.call(this, key, val);
+  };
+
+  // Hook into selectTechQuickProfile / clearTechQuickProfile to reload toolbar pins for that technician
+  window.addEventListener('DOMContentLoaded', function() {
+    const origSelect = window.selectTechQuickProfile;
+    if (typeof origSelect === 'function') {
+      window.selectTechQuickProfile = function(techName) {
+        origSelect.apply(this, arguments);
+        reloadToolbarPrefsForCurrentTech();
+      };
+    }
+    const origClear = window.clearTechQuickProfile;
+    if (typeof origClear === 'function') {
+      window.clearTechQuickProfile = function() {
+        origClear.apply(this, arguments);
+        reloadToolbarPrefsForCurrentTech();
+      };
+    }
+  });
+
+  function reloadToolbarPrefsForCurrentTech() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(BASE_PREF_KEY) || '{}');
+      const group = saved.pinnedGroup || 'ALL';
+      if (typeof window.setPinnedMenuGroupPreference === 'function') {
+        window.setPinnedMenuGroupPreference(group);
+      }
+      if (typeof window.setToolbarCollapsedState === 'function') {
+        window.setToolbarCollapsedState(Boolean(saved.collapsed), true);
+      }
+    } catch (e) {}
+  }
+
+  // =========================================================================
+  // 3. NO-CODE TECHNICAL PARAMETER & MANUAL KB EDITOR (UI + CLOUD SYNC)
+  // =========================================================================
+  const CUSTOM_KB_STORAGE_KEY = 'hzk_custom_param_manual_kb_v1029';
+
+  function loadCustomKbEntries() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_KB_STORAGE_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function mergeCustomKbIntoGlobal() {
+    if (!Array.isArray(window.HZK_PARAMETER_MANUAL_KB_V1027)) {
+      window.HZK_PARAMETER_MANUAL_KB_V1027 = [];
+    }
+    const customList = loadCustomKbEntries();
+    customList.forEach(item => {
+      const idx = window.HZK_PARAMETER_MANUAL_KB_V1027.findIndex(x => x.id === item.id);
+      if (idx > -1) window.HZK_PARAMETER_MANUAL_KB_V1027[idx] = item;
+      else window.HZK_PARAMETER_MANUAL_KB_V1027.unshift(item);
+    });
+  }
+
+  window.openParameterKbEditorModal = function(editId) {
+    mergeCustomKbIntoGlobal();
+    const existing = editId
+      ? (window.HZK_PARAMETER_MANUAL_KB_V1027 || []).find(x => x.id === editId)
+      : null;
+
+    let edModal = document.getElementById('hzkParamKbEditorModalV1029');
+    if (!edModal) {
+      edModal = document.createElement('div');
+      edModal.id = 'hzkParamKbEditorModalV1029';
+      edModal.className = 'fixed inset-0 z-[10050] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-3 overflow-y-auto';
+      document.body.appendChild(edModal);
+    }
+
+    const paramsText = existing && Array.isArray(existing.keyParameters)
+      ? existing.keyParameters.map(p => `${p.code} | ${p.name} | ${p.range} | ${p.defaultVal}`).join('\n')
+      : 'P01 | Tank Temp Set (อุณหภูมิน้ำล้าง) | 4~100°C | 55°C\nP02 | Boiler Temp Set (อุณหภูมิน้ำลวก) | 4~100°C | 80°C';
+
+    edModal.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl border border-slate-200 overflow-hidden text-xs">
+        <div class="bg-[#002B49] text-white px-5 py-3.5 flex items-center justify-between">
+          <div class="font-bold text-sm sm:text-base flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-amber-300"></i>
+            <span>${existing ? 'แก้ไขคู่มือพารามิเตอร์: ' + existing.modelTitle : '+ เพิ่มรุ่นเครื่อง / คู่มือตั้งค่าพารามิเตอร์ใหม่'}</span>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkParamKbEditorModalV1029').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-rose-600 text-white font-bold">&times;</button>
+        </div>
+        <div class="p-4 sm:p-5 space-y-3 max-h-[82vh] overflow-y-auto">
+          <input type="hidden" id="kbEdId" value="${existing ? existing.id : ''}">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">หมวดหมู่สินค้า *</label>
+              <select id="kbEdCategory" class="w-full border border-slate-300 rounded-lg px-3 py-2 font-semibold">
+                <option value="DISHWASHER" ${existing?.category === 'DISHWASHER' ? 'selected' : ''}>🍽️ เครื่องล้างจาน (Dishwasher)</option>
+                <option value="ICE_MACHINE" ${existing?.category === 'ICE_MACHINE' ? 'selected' : ''}>🧊 เครื่องทำน้ำแข็ง (Ice Machine)</option>
+                <option value="REFRIGERATOR" ${existing?.category === 'REFRIGERATOR' ? 'selected' : ''}>❄️ ตู้แช่เย็น / ตู้แช่แข็ง (Refrigerator)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">ชื่อรุ่นเครื่อง / Controller *</label>
+              <input type="text" id="kbEdModelTitle" value="${existing ? existing.modelTitle.replace(/"/g, '&quot;') : ''}" placeholder="เช่น HOSHIZAKI KM-320AJ หรือ HW-800B" class="w-full border border-slate-300 rounded-lg px-3 py-2 font-bold text-[#002B49]">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">คำค้นหา / ชื่อย่อ (คั่นด้วยจุลภาค ,)</label>
+              <input type="text" id="kbEdAliases" value="${existing ? (existing.aliases || []).join(', ') : ''}" placeholder="เช่น KM-320, KM320, DIP S4" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">เอกสารอ้างอิง (Manual Source)</label>
+              <input type="text" id="kbEdDocSources" value="${existing ? (existing.docSources || '') : 'Service Manual / Technical Bulletin'}" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+            </div>
+          </div>
+          <div>
+            <label class="block font-bold text-amber-900 mb-1">🔑 รหัสผ่าน &amp; วิธีเข้า Service Menu</label>
+            <textarea id="kbEdPasswordInfo" rows="2" class="w-full border border-amber-300 bg-amber-50/40 rounded-lg p-2.5">${existing ? existing.passwordInfo : ''}</textarea>
+          </div>
+          <div>
+            <label class="block font-bold text-sky-900 mb-1">👆 การใช้งานหน้าเครื่อง (User Operation)</label>
+            <textarea id="kbEdQuickOp" rows="2" class="w-full border border-sky-200 bg-sky-50/40 rounded-lg p-2.5">${existing ? existing.quickOperation : ''}</textarea>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-800 mb-1">📊 ตารางพารามิเตอร์หลัก (บรรทัดละ 1 รายการ: รหัส | ชื่อพารามิเตอร์ | ช่วงปรับ | ค่าโรงงาน)</label>
+            <textarea id="kbEdParamsRows" rows="4" class="w-full border border-slate-300 rounded-lg p-2.5 font-mono text-[11px]">${paramsText}</textarea>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-800 mb-1">🔧 ข้อกำหนดติดตั้ง &amp; Error Code (Installation &amp; Spec)</label>
+            <textarea id="kbEdInstallSpecs" rows="2" class="w-full border border-slate-300 rounded-lg p-2.5">${existing ? existing.installAndSpecs : ''}</textarea>
+          </div>
+          <div class="pt-2 flex flex-wrap justify-end gap-2 border-t border-slate-200">
+            <button type="button" onclick="document.getElementById('hzkParamKbEditorModalV1029').classList.add('hidden')" class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 font-bold text-slate-700">ยกเลิก</button>
+            <button type="button" onclick="saveParameterKbEntryV1029()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm flex items-center gap-1.5">
+              <i class="fa-solid fa-floppy-disk"></i> บันทึก &amp; ซิงค์ขึ้น Cloud ทันที
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    edModal.classList.remove('hidden');
+  };
+
+  window.saveParameterKbEntryV1029 = function() {
+    const idRaw = document.getElementById('kbEdId')?.value.trim();
+    const category = document.getElementById('kbEdCategory')?.value || 'DISHWASHER';
+    const modelTitle = document.getElementById('kbEdModelTitle')?.value.trim();
+    if (!modelTitle) {
+      alert('กรุณากรอกชื่อรุ่นเครื่องหรือ Controller ครับ');
+      return;
+    }
+    const catLabels = {
+      DISHWASHER: 'เครื่องล้างจาน (Dishwasher)',
+      ICE_MACHINE: 'เครื่องทำน้ำแข็ง (Ice Machine)',
+      REFRIGERATOR: 'ตู้แช่เย็น / ตู้แช่แข็ง (Refrigerator & Freezer)'
+    };
+    const aliases = (document.getElementById('kbEdAliases')?.value || '')
+      .split(',').map(s => s.trim()).filter(Boolean);
+    const docSources = document.getElementById('kbEdDocSources')?.value.trim() || 'Technical Manual';
+    const passwordInfo = document.getElementById('kbEdPasswordInfo')?.value.trim() || '-';
+    const quickOperation = document.getElementById('kbEdQuickOp')?.value.trim() || '-';
+    const installAndSpecs = document.getElementById('kbEdInstallSpecs')?.value.trim() || '-';
+
+    const rawRows = (document.getElementById('kbEdParamsRows')?.value || '').split('\n').map(l => l.trim()).filter(Boolean);
+    const keyParameters = rawRows.map(line => {
+      const parts = line.split('|').map(p => p.trim());
+      return {
+        code: parts[0] || '-',
+        name: parts[1] || '-',
+        range: parts[2] || '-',
+        defaultVal: parts[3] || '-'
+      };
+    });
+
+    const entryId = idRaw || ('CUSTOM-KB-' + Date.now());
+    const newObj = {
+      id: entryId,
+      category,
+      categoryLabel: catLabels[category] || category,
+      modelTitle,
+      aliases: aliases.length > 0 ? aliases : [modelTitle],
+      docSources,
+      passwordInfo,
+      quickOperation,
+      keyParameters,
+      installAndSpecs,
+      dealerReplyTemplate: `📋 คู่มือตั้งค่า ${modelTitle}\n${passwordInfo}\n${quickOperation}`
+    };
+
+    const customList = loadCustomKbEntries();
+    const idx = customList.findIndex(x => x.id === entryId);
+    if (idx > -1) customList[idx] = newObj;
+    else customList.unshift(newObj);
+    localStorage.setItem(CUSTOM_KB_STORAGE_KEY, JSON.stringify(customList));
+
+    mergeCustomKbIntoGlobal();
+
+    // Sync to Google Sheets backend if configured
+    if (typeof syncToGoogleSheetsBackend === 'function') {
+      try {
+        syncToGoogleSheetsBackend({
+          actionType: 'UPSERT_PARAMETER_KB_ENTRY',
+          entry: newObj
+        });
+      } catch (e) {}
+    }
+
+    document.getElementById('hzkParamKbEditorModalV1029')?.classList.add('hidden');
+    if (typeof window.renderParameterManualList === 'function') {
+      window.renderParameterManualList('ALL');
+    }
+    if (typeof showToast === 'function') {
+      showToast(`✅ บันทึกคู่มือ "${modelTitle}" เรียบร้อยแล้ว`, 'success');
+    }
+  };
+
+  // Inject "+ เพิ่มรุ่น / แก้ไขพารามิเตอร์" button into Parameter Manual Modal & Edit button on cards
+  document.addEventListener('DOMContentLoaded', function() {
+    mergeCustomKbIntoGlobal();
+
+    const origOpenParam = window.openParameterManualGuideModal;
+    if (typeof origOpenParam === 'function') {
+      window.openParameterManualGuideModal = function(initialQuery) {
+        mergeCustomKbIntoGlobal();
+        origOpenParam.apply(this, arguments);
+        const tabsBar = document.getElementById('hzkParamCatTabs');
+        if (tabsBar && !document.getElementById('btnAddNewParamKbV1029')) {
+          const addBtn = document.createElement('button');
+          addBtn.id = 'btnAddNewParamKbV1029';
+          addBtn.type = 'button';
+          addBtn.onclick = function() { openParameterKbEditorModal(''); };
+          addBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1';
+          addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> เพิ่มรุ่น / แก้ไขพารามิเตอร์';
+          tabsBar.appendChild(addBtn);
+        }
+      };
+    }
+
+    const origRenderList = window.renderParameterManualList;
+    if (typeof origRenderList === 'function') {
+      window.renderParameterManualList = function(catOverride) {
+        origRenderList.apply(this, arguments);
+        const body = document.getElementById('hzkParamManualBody');
+        if (!body) return;
+        body.querySelectorAll('button[onclick^="copyDealerParameterAnswer"]').forEach(copyBtn => {
+          const m = copyBtn.getAttribute('onclick').match(/copyDealerParameterAnswer\('([^']+)'\)/);
+          if (m && copyBtn.parentElement && !copyBtn.parentElement.querySelector('.hzk-edit-kb-btn')) {
+            const edBtn = document.createElement('button');
+            edBtn.type = 'button';
+            edBtn.className = 'hzk-edit-kb-btn px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-xs flex items-center gap-1 transition';
+            edBtn.innerHTML = '<i class="fa-solid fa-pen"></i> แก้ไข';
+            edBtn.onclick = function() { openParameterKbEditorModal(m[1]); };
+            copyBtn.parentElement.insertBefore(edBtn, copyBtn);
+          }
+        });
+      };
     }
   });
 })();

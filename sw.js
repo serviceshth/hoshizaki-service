@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1013-sms';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1013-final';
 const BASE_PATH = '/hoshizaki-service-management-system';
 
 const CORE_ASSETS = [
@@ -45,10 +45,11 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(req.url);
 
-  // ป้องกันการแคชไฟล์ข้อมูลต้นทุนลับ (1013-SEC Security Guard)
+  // Security Guard: ห้ามแคชไฟล์ข้อมูลต้นทุนลับลงเบราว์เซอร์โดยเด็ดขาด
   if (url.pathname.includes('parts_cost_2025.json')) return;
   if (url.origin !== self.location.origin) return;
 
+  // Network-First สำหรับหน้า HTML หลัก เพื่อรับอัปเดตล่าสุดทันที
   if (req.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === `${BASE_PATH}/`) {
     event.respondWith(
       fetch(req)
@@ -62,6 +63,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Cache-First + Background Refresh สำหรับไฟล์ฐานข้อมูล JSON
   event.respondWith(
     caches.match(req).then((cached) => {
       const fetchPromise = fetch(req)

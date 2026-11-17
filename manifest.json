@@ -1,7 +1,7 @@
 {
   "name": "HOSHIZAKI Service Management System",
   "short_name": "HOSHIZAKI SMS",
-  "description": "ระบบบริหารจัดการงานบริการและอะไหล่ภาคสนาม บริษัท โฮชิซากิ (ประเทศไทย) จำกัด (Enterprise v1013)",
+  "description": "ระบบบริหารจัดการงานบริการและอะไหล่ภาคสนาม บริษัท โฮชิซากิ (ประเทศไทย) จำกัด (Enterprise v1013-FINAL)",
   "version": "1013-SEC",
   "start_url": "/hoshizaki-service-management-system/",
   "scope": "/hoshizaki-service-management-system/",

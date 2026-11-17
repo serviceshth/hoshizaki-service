@@ -19377,447 +19377,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 <body onload="setTimeout(() => { window.print(); }, 400);">
                     ${sheetHtml}
                 
-<!-- ============================================================================
-     DUAL LINE OA, TRILINGUAL CHATBOT & MOBILE SMS DISPATCH SUITE (v1021-LINE+)
-     ============================================================================ -->
-<div id="hzkDualLineCommandModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-xs z-[105] flex items-center justify-center p-2 sm:p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[92dvh] border border-slate-200 overflow-hidden">
-        <div class="bg-gradient-to-r from-[#002B49] via-[#003d66] to-[#06C755] text-white px-4 py-3 flex items-center justify-between">
-            <div>
-                <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
-                    <i class="fa-brands fa-line text-xl text-white"></i>
-                    <span>HOSHIZAKI Dual LINE OA, Trilingual Chatbot &amp; Mobile SMS Hub</span>
-                </h3>
-                <p class="text-[11px] text-sky-100">Phase 1 Active: Service Unit &amp; Service Center • รองรับ TH / EN / 日本語 + ส่งลิงก์ผ่าน SMS เบอร์มือถือ</p>
-            </div>
-            <button type="button" onclick="closeDualLineCommandCenterModal()" class="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
-        </div>
 
-        <div class="bg-slate-100 px-3 py-2 border-b flex flex-wrap gap-1.5 text-xs font-bold">
-            <button type="button" id="tabDualLineBridge" onclick="switchDualLineCenterTab('BRIDGE')" class="px-3 py-1.5 rounded-lg bg-[#002B49] text-white">1. ตั้งค่า Dual LINE OA &amp; Rich Menu</button>
-            <button type="button" id="tabDualLineTickets" onclick="switchDualLineCenterTab('TICKETS')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">2. คิวแชท &amp; แจ้งซ่อมลูกค้า (<span id="dualLineOpenTicketBadge">0</span>)</button>
-            <button type="button" id="tabDualLineSms" onclick="switchDualLineCenterTab('SMS')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">3. ส่งลิงก์เข้าเบอร์มือถือ (SMS Fallback)</button>
-            <button type="button" id="tabDualLineSim" onclick="switchDualLineCenterTab('SIM')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">4. คู่มือคำสั่งบอท 3 ภาษา (TH/EN/JP)</button>
-        </div>
-
-        <div id="dualLineCenterBody" class="p-4 overflow-y-auto flex-1 space-y-3 text-xs"></div>
-    </div>
-</div>
-
-<script id="v1021-dual-line-sms-suite">
-(function() {
-    const DUAL_LINE_KEY = 'hoshizaki_dual_line_bridge_v1021';
-    const SMS_LOG_KEY = 'hoshizaki_mobile_sms_logs_v1021';
-
-    function getDualLineCfg_() {
-        try { return JSON.parse(localStorage.getItem(DUAL_LINE_KEY) || '{}'); } catch (e) { return {}; }
-    }
-
-    function saveDualLineCfg_(obj) {
-        localStorage.setItem(DUAL_LINE_KEY, JSON.stringify(obj));
-    }
-
-    window.openDualLineCommandCenterModal = function(initialTab) {
-        const modal = document.getElementById('hzkDualLineCommandModal');
-        if (!modal) return;
-        modal.classList.remove('hidden');
-        window.switchDualLineCenterTab(initialTab || 'BRIDGE');
-    };
-
-    window.closeDualLineCommandCenterModal = function() {
-        document.getElementById('hzkDualLineCommandModal')?.classList.add('hidden');
-    };
-
-    window.switchDualLineCenterTab = function(tab) {
-        const tabs = ['BRIDGE', 'TICKETS', 'SMS', 'SIM'];
-        tabs.forEach(t => {
-            const btn = document.getElementById('tabDualLine' + t.charAt(0) + t.slice(1).toLowerCase());
-            if (btn) {
-                btn.className = (t === tab)
-                    ? 'px-3 py-1.5 rounded-lg bg-[#002B49] text-white font-bold shadow-xs'
-                    : 'px-3 py-1.5 rounded-lg bg-white text-slate-800 border border-slate-300 font-bold hover:bg-slate-50';
-            }
-        });
-        const body = document.getElementById('dualLineCenterBody');
-        if (!body) return;
-
-        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-        const cfg = getDualLineCfg_();
-        const legacyLine = (() => { try { return JSON.parse(localStorage.getItem('hoshizaki_line_config') || '{}'); } catch(e){ return {}; } })();
-        const custWebhook = gasUrl ? (gasUrl + '?bot=customer') : 'กรุณาตั้งค่า Google Apps Script Web App URL ในเมนู ซิงค์ & สำรองข้อมูล ก่อน';
-        const intWebhook = gasUrl ? (gasUrl + '?bot=internal') : 'กรุณาตั้งค่า Google Apps Script Web App URL ในเมนู ซิงค์ & สำรองข้อมูล ก่อน';
-
-        if (tab === 'BRIDGE') {
-            body.innerHTML = `
-                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-1">
-                    <div class="font-extrabold text-emerald-950"><i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> ขอบเขตการใช้งาน Phase 1: Service Unit &amp; Service Center เท่านั้น</div>
-                    <div class="text-[11px] text-emerald-800">ระบบแจ้งเตือนอัตโนมัติ การจ่ายงาน และแชทบอทถูกจำกัดสิทธิ์เฉพาะ <b>Service Unit</b> และ <b>Service Center (คุณภวัต)</b> โดยไม่รบกวนแผนกอื่น</div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div class="border border-sky-200 bg-sky-50/60 rounded-xl p-3 space-y-2">
-                        <div class="font-extrabold text-[#002B49]"><i class="fa-solid fa-user-check text-sky-600 mr-1"></i> บัญชีที่ 1: Customer LINE OA (สำหรับลูกค้า)</div>
-                        <label class="block font-bold text-slate-700">Customer Channel Access Token:</label>
-                        <input type="password" id="dualCustTokenInput" value="${cfg.customerLineToken || ''}" placeholder="วาง Channel Access Token ของบัญชีลูกค้า..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
-                        <label class="block font-bold text-slate-700">Webhook URL (นำไปวางใน LINE Developers Console):</label>
-                        <div class="flex gap-1">
-                            <input type="text" readonly value="${custWebhook}" id="dualCustWebhookInput" class="flex-1 border border-slate-300 rounded-lg px-2 py-1 bg-white font-mono text-[10px]">
-                            <button type="button" onclick="navigator.clipboard?.writeText(document.getElementById('dualCustWebhookInput').value); if(typeof showToast==='function') showToast('คัดลอก Customer Webhook URL แล้ว');" class="bg-sky-700 text-white px-2.5 py-1 rounded-lg font-bold">คัดลอก</button>
-                        </div>
-                        <div class="pt-1">
-                            <label class="block font-bold text-slate-700">ทดสอบส่งเข้า LINE User ID ลูกค้า (ถ้ามี):</label>
-                            <input type="text" id="dualTestCustUidInput" value="${cfg.testCustomerUserId || ''}" placeholder="Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
-                        </div>
-                    </div>
-
-                    <div class="border border-emerald-200 bg-emerald-50/60 rounded-xl p-3 space-y-2">
-                        <div class="font-extrabold text-[#002B49]"><i class="fa-solid fa-screwdriver-wrench text-emerald-600 mr-1"></i> บัญชีที่ 2: Internal Service Bot OA (สำหรับช่าง &amp; ศูนย์บริการ)</div>
-                        <label class="block font-bold text-slate-700">Internal Bot Channel Access Token:</label>
-                        <input type="password" id="dualIntTokenInput" value="${cfg.internalLineToken || legacyLine.token || ''}" placeholder="วาง Channel Access Token ของ ServiceBot..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
-                        <label class="block font-bold text-slate-700">Webhook URL (นำไปวางใน LINE Developers Console):</label>
-                        <div class="flex gap-1">
-                            <input type="text" readonly value="${intWebhook}" id="dualIntWebhookInput" class="flex-1 border border-slate-300 rounded-lg px-2 py-1 bg-white font-mono text-[10px]">
-                            <button type="button" onclick="navigator.clipboard?.writeText(document.getElementById('dualIntWebhookInput').value); if(typeof showToast==='function') showToast('คัดลอก Internal Webhook URL แล้ว');" class="bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-bold">คัดลอก</button>
-                        </div>
-                        <div class="grid grid-cols-2 gap-1.5 pt-1">
-                            <div>
-                                <label class="block font-bold text-slate-700">Service Group ID:</label>
-                                <input type="text" id="dualGroupIdInput" value="${cfg.lineGroupId || legacyLine.groupId || 'Cef7603e1024beffe64c1d030450014c2'}" class="w-full border border-slate-300 rounded-lg px-2 py-1 bg-white font-mono text-[10.5px]">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700">Bot Basic ID:</label>
-                                <input type="text" id="dualBotBasicIdInput" value="${cfg.lineBotId || legacyLine.botId || ''}" placeholder="@servicebot_hth" class="w-full border border-slate-300 rounded-lg px-2 py-1 bg-white font-mono text-[10.5px]">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap gap-2 pt-1">
-                    <button type="button" onclick="saveDualLineBridgeFromModal_()" class="bg-[#002B49] hover:bg-sky-900 text-white font-extrabold px-4 py-2 rounded-xl shadow-sm">
-                        <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกการตั้งค่าขึ้น Google Cloud
-                    </button>
-                    <button type="button" onclick="testDualLineBridgeFromModal_()" class="bg-[#06C755] hover:bg-[#05b34c] text-white font-extrabold px-4 py-2 rounded-xl shadow-sm">
-                        <i class="fa-solid fa-paper-plane mr-1"></i> ทดสอบยิงข้อความเข้า LINE จริง
-                    </button>
-                    <button type="button" onclick="triggerCreateCrossLinkRichMenus_()" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-4 py-2 rounded-xl shadow-sm">
-                        <i class="fa-solid fa-table-cells-large mr-1"></i> สร้าง Rich Menu เชื่อม 2 บัญชีอัตโนมัติ
-                    </button>
-                </div>
-            `;
-        } else if (tab === 'TICKETS') {
-            body.innerHTML = `<div class="text-center py-6 text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-1"></i> กำลังโหลดคิวแชทและใบแจ้งซ่อมจาก LINE OA...</div>`;
-            window.loadDualLineTicketsIntoModal_();
-        } else if (tab === 'SMS') {
-            const jobNo = document.getElementById('jobNo')?.value || 'JOB-LIVE';
-            const customer = document.getElementById('storeName')?.value || '';
-            const model = document.getElementById('machineModel')?.value || '';
-            const serial = document.getElementById('serialNumber')?.value || '';
-            const tech = document.getElementById('responsibleTech')?.value || 'ทีมช่าง HOSHIZAKI';
-            const total = document.getElementById('grandTotalDisplay')?.textContent || '0.00';
-            const defaultPhone = (document.getElementById('contactPerson')?.value || '').match(/0\d{8,9}/)?.[0] || '';
-            const baseUrl = window.location.origin + window.location.pathname;
-            const portalUrl = baseUrl + '?portal=customer&jobNo=' + encodeURIComponent(jobNo) + '&customer=' + encodeURIComponent(customer) + '&model=' + encodeURIComponent(model) + '&serial=' + encodeURIComponent(serial) + '&tech=' + encodeURIComponent(tech) + '&total=' + encodeURIComponent(total);
-
-            const logs = (() => { try { return JSON.parse(localStorage.getItem(SMS_LOG_KEY) || '[]'); } catch(e){ return []; } })();
-            body.innerHTML = `
-                <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 space-y-2">
-                    <div class="font-extrabold text-amber-950 text-sm"><i class="fa-solid fa-comment-sms text-amber-600 mr-1"></i> ส่งลิงก์พอร์ทัลลูกค้า / ใบเสนอราคา เข้าเบอร์โทรศัพท์มือถือ (SMS)</div>
-                    <p class="text-[11px] text-amber-900">ใช้สำหรับกรณีที่ <b>ลูกค้าไม่มีอีเมล และไม่มี LINE</b> — ระบบจะสร้างลิงก์เปิดดูสถานะช่าง ใบเสนอราคา และกดอนุมัติซ่อมบนเบราว์เซอร์มือถือได้ทันทีโดยไม่ต้องติดตั้งแอป</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                            <label class="block font-bold text-slate-700 mb-1">เบอร์โทรศัพท์มือถือลูกค้า *:</label>
-                            <input type="tel" id="smsHubPhoneInput" value="${defaultPhone}" placeholder="เช่น 0812345678" class="w-full border border-amber-400 rounded-lg px-3 py-2 bg-white font-extrabold text-sm">
-                        </div>
-                        <div>
-                            <label class="block font-bold text-slate-700 mb-1">ชื่อร้านค้า / ลูกค้า:</label>
-                            <input type="text" id="smsHubCustomerInput" value="${customer}" placeholder="ระบุชื่อร้านค้า..." class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white font-bold">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">ข้อความ SMS พร้อมลิงก์พอร์ทัลลูกค้า:</label>
-                        <textarea id="smsHubMessageText" rows="3" class="w-full border border-slate-300 rounded-lg p-2.5 bg-white text-xs">HOSHIZAKI Service (${jobNo}): ติดตามสถานะช่างและอนุมัติรายการซ่อมได้ที่ ${portalUrl}</textarea>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" onclick="executeMobileSmsDispatchFromHub_('${jobNo}', '${portalUrl.replace(/'/g, '')}')" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-4 py-2 rounded-xl shadow-sm">
-                            <i class="fa-solid fa-sms mr-1"></i> เปิดแอป SMS มือถือ &amp; บันทึกประวัติส่ง
-                        </button>
-                        <button type="button" onclick="navigator.clipboard?.writeText(document.getElementById('smsHubMessageText').value); if(typeof showToast==='function') showToast('คัดลอกข้อความ SMS เรียบร้อย');" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-3.5 py-2 rounded-xl">
-                            <i class="fa-solid fa-copy mr-1"></i> คัดลอกข้อความ SMS
-                        </button>
-                    </div>
-                </div>
-
-                <div class="border border-slate-200 rounded-xl p-3 space-y-1.5">
-                    <div class="font-extrabold text-[#002B49]">ประวัติการส่งลิงก์เข้าเบอร์มือถือล่าสุด (${logs.length} รายการ)</div>
-                    ${logs.length === 0 ? '<div class="text-slate-400">ยังไม่มีประวัติการส่ง SMS ในเครื่องนี้</div>' : logs.slice(0, 10).map(l => `
-                        <div class="bg-slate-50 border rounded-lg p-2 flex items-center justify-between gap-2">
-                            <div>
-                                <div class="font-bold text-slate-900">📱 ${l.phone} — ${l.customer || '-'} (${l.refNo})</div>
-                                <div class="text-[10px] text-slate-500">${l.sentAt}</div>
-                            </div>
-                            <a href="sms:${l.phone}?body=${encodeURIComponent(l.message)}" class="bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-lg font-bold text-[10.5px]">ส่งซ้ำ</a>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        } else if (tab === 'SIM') {
-            body.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div class="border border-sky-200 bg-sky-50 rounded-xl p-3 space-y-1.5">
-                        <div class="font-extrabold text-[#002B49]">📱 คำสั่งฝั่ง Customer LINE OA (รองรับ 3 ภาษา TH / EN / JP)</div>
-                        <ul class="space-y-1 text-[11px] text-slate-800 list-disc pl-4">
-                            <li><b>ลงทะเบียน 0812345678</b> / <b>REGISTER 0812345678</b> / <b>登録 0812345678</b> — ผูกเบอร์มือถือรับแจ้งเตือนอัตโนมัติ</li>
-                            <li><b>เช็กสถานะ 0812345678</b> / <b>STATUS H12345J</b> / <b>ステータス ...</b> — ดูสถานะใบงาน ชื่อช่าง และเปิดพอร์ทัล GPS สด</li>
-                            <li><b>แจ้งซ่อม IM-130NE ไม่ทำน้ำแข็ง</b> / <b>REPAIR ...</b> / <b>修理依頼 ...</b> — เปิดใบแจ้งซ่อมอัตโนมัติ</li>
-                            <li><b>กดปุ่ม 1-5 ดาว (CSAT)</b> / <b>เลือกแพ็กเกจ GOOD·BETTER·BEST</b> / <b>ยืนยันเวลานัดหมาย</b></li>
-                        </ul>
-                    </div>
-                    <div class="border border-emerald-200 bg-emerald-50 rounded-xl p-3 space-y-1.5">
-                        <div class="font-extrabold text-[#002B49]">🛠️ คำสั่งฝั่ง Internal Service Bot (ทีมช่าง &amp; ศูนย์บริการ)</div>
-                        <ul class="space-y-1 text-[11px] text-slate-800 list-disc pl-4">
-                            <li><b>SN H12345J</b> — ดูประวัติซ่อม 360° อายุเครื่อง ประกัน และใบเสนอราคา</li>
-                            <li><b>SPEC IM-100NE</b> / <b>MANUAL KM-50B</b> — ส่งรูปสเปกเต็มจอและลิงก์ PDF</li>
-                            <li><b>ERR IM-100NE E1</b> / <b>PINOUT IM</b> — คู่มือวิเคราะห์ Error Code และผังขั้วบอร์ด</li>
-                            <li><b>PM DUE</b> / <b>VAN STOCK T01</b> / <b>BI REPORT</b> — เช็กรอบ PM, สต็อกรถช่าง, KPI</li>
-                            <li><b>TICKETS</b> / <b>REPLY TK-xxxxxx &lt;คำตอบ&gt;</b> — ตอบกลับแชทลูกค้าโดยตรง</li>
-                        </ul>
-                    </div>
-                </div>
-            `;
-        }
-    };
-
-    window.saveDualLineBridgeFromModal_ = async function() {
-        const cfg = {
-            customerLineToken: (document.getElementById('dualCustTokenInput')?.value || '').trim(),
-            internalLineToken: (document.getElementById('dualIntTokenInput')?.value || '').trim(),
-            lineGroupId: (document.getElementById('dualGroupIdInput')?.value || '').trim(),
-            lineBotId: (document.getElementById('dualBotBasicIdInput')?.value || '').trim(),
-            testCustomerUserId: (document.getElementById('dualTestCustUidInput')?.value || '').trim(),
-            pwaWebAppUrl: window.location.origin + window.location.pathname
-        };
-        saveDualLineCfg_(cfg);
-        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-        if (gasUrl) {
-            try {
-                await fetch(gasUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(Object.assign({ actionType: 'SAVE_DUAL_LINE_BRIDGE_CONFIG' }, cfg))
-                });
-            } catch (e) {}
-        }
-        if (typeof showToast === 'function') showToast('✅ บันทึกการตั้งค่า Dual LINE OA Bridge เรียบร้อยแล้ว');
-    };
-
-    window.testDualLineBridgeFromModal_ = async function() {
-        await window.saveDualLineBridgeFromModal_();
-        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-        const cfg = getDualLineCfg_();
-        if (!gasUrl) {
-            if (typeof showToast === 'function') showToast('⚠️ กรุณาตั้งค่า Google Apps Script URL ก่อนทดสอบส่ง');
-            return;
-        }
-        try {
-            await fetch(gasUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    actionType: 'TEST_DUAL_LINE_BRIDGE',
-                    testCustomerUserId: cfg.testCustomerUserId || ''
-                })
-            });
-            if (typeof showToast === 'function') showToast('📨 ส่งคำสั่งทดสอบ Dual LINE OA Bridge สำเร็จ! ตรวจสอบในห้องแชท LINE');
-        } catch (e) {}
-    };
-
-    window.triggerCreateCrossLinkRichMenus_ = async function() {
-        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-        if (!gasUrl) return;
-        try {
-            await fetch(gasUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ actionType: 'CREATE_CROSS_LINK_RICH_MENUS' })
-            });
-            if (typeof showToast === 'function') showToast('🎛️ สร้าง Rich Menu เชื่อมโยง 2 บัญชี LINE OA เรียบร้อยแล้ว');
-        } catch (e) {}
-    };
-
-    window.loadDualLineTicketsIntoModal_ = async function() {
-        const body = document.getElementById('dualLineCenterBody');
-        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-        if (!body) return;
-        if (!gasUrl) {
-            body.innerHTML = '<div class="p-4 text-center text-slate-500">กรุณาเชื่อมต่อ Google Apps Script URL เพื่อดึงรายการแชทจาก LINE OA</div>';
-            return;
-        }
-        try {
-            const res = await fetch(gasUrl + '?action=getLineTickets');
-            const data = await res.json();
-            const tickets = data.tickets || [];
-            const openCount = tickets.filter(t => t.status === 'OPEN').length;
-            const b1 = document.getElementById('dualLineOpenTicketBadge');
-            const b2 = document.getElementById('topLineTicketCountBadge');
-            if (b1) b1.textContent = String(openCount);
-            if (b2) {
-                b2.textContent = String(openCount);
-                b2.classList.toggle('hidden', openCount === 0);
-            }
-            if (tickets.length === 0) {
-                body.innerHTML = '<div class="p-6 text-center text-slate-500 font-bold">✅ ยังไม่มีคิวคำถามหรือแจ้งซ่อมค้างตอบจาก LINE OA</div>';
-                return;
-            }
-            body.innerHTML = tickets.slice(0, 30).map((t, idx) => `
-                <div class="border ${t.status === 'OPEN' ? 'border-rose-300 bg-rose-50/40' : 'border-slate-200 bg-slate-50'} rounded-xl p-3 space-y-1.5">
-                    <div class="flex flex-wrap items-center justify-between gap-1">
-                        <span class="font-extrabold text-[#002B49]">${t.ticketId} • ${t.customerName || 'ลูกค้า LINE'} (${t.topic || '-'})</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${t.status === 'OPEN' ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'}">${t.status}</span>
-                    </div>
-                    <div class="text-slate-800 bg-white border rounded-lg p-2">${t.message || '-'}</div>
-                    <div class="text-[10px] text-slate-500">เวลา: ${t.createdAt || '-'}</div>
-                    ${t.status === 'OPEN' ? `
-                        <div class="flex gap-1.5 pt-1">
-                            <input type="text" id="dualLineReplyInp_${idx}" placeholder="พิมพ์ข้อความตอบกลับไปยัง LINE ลูกค้าโดยตรง..." class="flex-1 border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white">
-                            <button type="button" onclick="sendDualLineTicketReply_('${t.ticketId}', ${idx})" class="bg-[#06C755] hover:bg-[#05b34c] text-white font-extrabold px-3 py-1.5 rounded-lg">ส่งตอบกลับ LINE</button>
-                        </div>
-                    ` : `<div class="text-[11px] text-emerald-800 font-bold">ตอบกลับแล้ว: ${t.techReply || '-'} (${t.repliedAt || ''})</div>`}
-                </div>
-            `).join('');
-        } catch (e) {
-            body.innerHTML = '<div class="p-4 text-center text-rose-600">ไม่สามารถโหลดข้อมูล Ticket ได้ชั่วคราว</div>';
-        }
-    };
-
-    window.sendDualLineTicketReply_ = async function(ticketId, idx) {
-        const msg = (document.getElementById('dualLineReplyInp_' + idx)?.value || '').trim();
-        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-        if (!msg || !gasUrl) return;
-        try {
-            await fetch(gasUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    actionType: 'REPLY_LINE_TICKET',
-                    ticketId: ticketId,
-                    replyMessage: msg
-                })
-            });
-            if (typeof showToast === 'function') showToast('✅ ส่งคำตอบกลับไปยัง LINE ลูกค้า (' + ticketId + ') เรียบร้อยแล้ว');
-            setTimeout(() => window.loadDualLineTicketsIntoModal_(), 900);
-        } catch (e) {}
-    };
-
-    // Mobile Phone SMS Fallback (when customer has no Email and no LINE)
-    window.sendCustomerPortalToMobileSms_ = function(jobNo, customer) {
-        const rawPhone = (document.getElementById('custPortalMobilePhoneInput')?.value || '').trim();
-        const digits = rawPhone.replace(/\D/g, '');
-        if (digits.length < 9) {
-            if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุเบอร์โทรศัพท์มือถือลูกค้า 9-10 หลัก');
-            return;
-        }
-        const shareUrl = document.getElementById('custPortalShareUrlInput')?.value || (window.location.origin + window.location.pathname + '?portal=customer&jobNo=' + encodeURIComponent(jobNo));
-        const smsText = `HOSHIZAKI Service (${jobNo}): ติดตามสถานะช่างและอนุมัติซ่อมได้ที่ ${shareUrl}`;
-        window.dispatchSmsAndLog_(digits, jobNo, customer, shareUrl, smsText);
-    };
-
-    window.executeMobileSmsDispatchFromHub_ = function(jobNo, portalUrl) {
-        const rawPhone = (document.getElementById('smsHubPhoneInput')?.value || '').trim();
-        const customer = (document.getElementById('smsHubCustomerInput')?.value || '').trim();
-        const smsText = (document.getElementById('smsHubMessageText')?.value || '').trim();
-        const digits = rawPhone.replace(/\D/g, '');
-        if (digits.length < 9) {
-            if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุเบอร์โทรศัพท์มือถือลูกค้า 9-10 หลัก');
-            return;
-        }
-        window.dispatchSmsAndLog_(digits, jobNo, customer, portalUrl, smsText);
-        setTimeout(() => window.switchDualLineCenterTab('SMS'), 400);
-    };
-
-    window.dispatchSmsAndLog_ = function(digits, refNo, customer, portalUrl, smsText) {
-        const intlPhone = digits.startsWith('0') ? ('+66' + digits.slice(1)) : ('+' + digits);
-        const logs = (() => { try { return JSON.parse(localStorage.getItem(SMS_LOG_KEY) || '[]'); } catch(e){ return []; } })();
-        logs.unshift({
-            phone: digits,
-            refNo: refNo,
-            customer: customer,
-            portalUrl: portalUrl,
-            message: smsText,
-            sentAt: new Date().toLocaleString('th-TH')
-        });
-        localStorage.setItem(SMS_LOG_KEY, JSON.stringify(logs.slice(0, 100)));
-
-        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-        if (gasUrl) {
-            fetch(gasUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    actionType: 'LOG_MOBILE_SMS_DISPATCH',
-                    refNo: refNo,
-                    customer: customer,
-                    phone: digits,
-                    portalUrl: portalUrl,
-                    message: smsText
-                })
-            }).catch(() => {});
-        }
-        if (typeof showToast === 'function') showToast('📱 กำลังเปิดแอปข้อความ SMS เพื่อส่งลิงก์ไปยังเบอร์ ' + digits);
-        window.location.href = `sms:${intlPhone}?body=${encodeURIComponent(smsText)}`;
-    };
-
-    window.pushCustomerPortalViaLineOa_ = async function(jobNo, customer) {
-        const rawPhone = (document.getElementById('custPortalMobilePhoneInput')?.value || '').trim();
-        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-        if (!gasUrl) {
-            if (typeof showToast === 'function') showToast('⚠️ กรุณาเชื่อมต่อ Google Apps Script URL ก่อนส่งผ่าน LINE OA');
-            return;
-        }
-        try {
-            await fetch(gasUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    actionType: 'SEND_CUSTOMER_APPOINTMENT_FLEX',
-                    jobNo: jobNo,
-                    customer: customer,
-                    phone: rawPhone,
-                    date: document.getElementById('serviceDate')?.value || '',
-                    time: document.getElementById('timeIn')?.value || '',
-                    tech: document.getElementById('responsibleTech')?.value || ''
-                })
-            });
-            if (typeof showToast === 'function') showToast('💬 ส่งการ์ด Flex แจ้งเตือนเข้า LINE OA ลูกค้าเรียบร้อย (หากยังไม่ผูก LINE สามารถกดส่ง SMS ได้ทันที)');
-        } catch (e) {}
-    };
-
-    // Background polling for open LINE OA customer tickets every 90s
-    document.addEventListener('DOMContentLoaded', function() {
-        const pollOpenLineTickets = async () => {
-            const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-            if (!gasUrl) return;
-            try {
-                const res = await fetch(gasUrl + '?action=getLineTickets');
-                const data = await res.json();
-                const openCount = (data.tickets || []).filter(t => t.status === 'OPEN').length;
-                const badge = document.getElementById('topLineTicketCountBadge');
-                if (badge) {
-                    badge.textContent = String(openCount);
-                    badge.classList.toggle('hidden', openCount === 0);
-                }
-            } catch (e) {}
-        };
-        setTimeout(pollOpenLineTickets, 5000);
-        setInterval(pollOpenLineTickets, 90000);
-    });
-})();
-</script>
 
 </body>
                 </html>
@@ -38112,5 +37672,498 @@ try {
         });
     })();
     </script>
+
+<!-- ============================================================================
+     DUAL LINE OA, TRILINGUAL CHATBOT & MOBILE SMS DISPATCH SUITE (v1021-LINE+)
+     ============================================================================ -->
+<div id="hzkDualLineCommandModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-xs z-[105] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[92dvh] border border-slate-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-[#002B49] via-[#003d66] to-[#06C755] text-white px-4 py-3 flex items-center justify-between">
+            <div>
+                <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
+                    <i class="fa-brands fa-line text-xl text-white"></i>
+                    <span>HOSHIZAKI Dual LINE OA, Trilingual Chatbot &amp; Mobile SMS Hub</span>
+                </h3>
+                <p class="text-[11px] text-sky-100">Phase 1 Active: Service Unit &amp; Service Center • รองรับ TH / EN / 日本語 + ส่งลิงก์ผ่าน SMS เบอร์มือถือ</p>
+            </div>
+            <button type="button" onclick="closeDualLineCommandCenterModal()" class="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+        </div>
+
+        <div class="bg-slate-100 px-3 py-2 border-b flex flex-wrap gap-1.5 text-xs font-bold">
+            <button type="button" id="tabDualLineBridge" onclick="switchDualLineCenterTab('BRIDGE')" class="px-3 py-1.5 rounded-lg bg-[#002B49] text-white">1. ตั้งค่า Dual LINE OA &amp; Rich Menu</button>
+            <button type="button" id="tabDualLineTickets" onclick="switchDualLineCenterTab('TICKETS')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">2. คิวแชท &amp; แจ้งซ่อมลูกค้า (<span id="dualLineOpenTicketBadge">0</span>)</button>
+            <button type="button" id="tabDualLineSms" onclick="switchDualLineCenterTab('SMS')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">3. ส่งลิงก์เข้าเบอร์มือถือ (SMS Fallback)</button>
+            <button type="button" id="tabDualLineSim" onclick="switchDualLineCenterTab('SIM')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">4. คู่มือคำสั่งบอท 3 ภาษา (TH/EN/JP)</button>
+        </div>
+
+        <div id="dualLineCenterBody" class="p-4 overflow-y-auto flex-1 space-y-3 text-xs"></div>
+    </div>
+</div>
+
+<script id="v1021-dual-line-sms-suite">
+(function() {
+    const DUAL_LINE_KEY = 'hoshizaki_dual_line_bridge_v1021';
+    const SMS_LOG_KEY = 'hoshizaki_mobile_sms_logs_v1021';
+
+    function getDualLineCfg_() {
+        try { return JSON.parse(localStorage.getItem(DUAL_LINE_KEY) || '{}'); } catch (e) { return {}; }
+    }
+
+    function saveDualLineCfg_(obj) {
+        localStorage.setItem(DUAL_LINE_KEY, JSON.stringify(obj));
+    }
+
+    window.openDualLineCommandCenterModal = function(initialTab) {
+        const modal = document.getElementById('hzkDualLineCommandModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        window.switchDualLineCenterTab(initialTab || 'BRIDGE');
+    };
+
+    window.closeDualLineCommandCenterModal = function() {
+        document.getElementById('hzkDualLineCommandModal')?.classList.add('hidden');
+    };
+
+    window.switchDualLineCenterTab = function(tab) {
+        const tabs = ['BRIDGE', 'TICKETS', 'SMS', 'SIM'];
+        tabs.forEach(t => {
+            const btn = document.getElementById('tabDualLine' + t.charAt(0) + t.slice(1).toLowerCase());
+            if (btn) {
+                btn.className = (t === tab)
+                    ? 'px-3 py-1.5 rounded-lg bg-[#002B49] text-white font-bold shadow-xs'
+                    : 'px-3 py-1.5 rounded-lg bg-white text-slate-800 border border-slate-300 font-bold hover:bg-slate-50';
+            }
+        });
+        const body = document.getElementById('dualLineCenterBody');
+        if (!body) return;
+
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        const cfg = getDualLineCfg_();
+        const legacyLine = (() => { try { return JSON.parse(localStorage.getItem('hoshizaki_line_config') || '{}'); } catch(e){ return {}; } })();
+        const custWebhook = gasUrl ? (gasUrl + '?bot=customer') : 'กรุณาตั้งค่า Google Apps Script Web App URL ในเมนู ซิงค์ & สำรองข้อมูล ก่อน';
+        const intWebhook = gasUrl ? (gasUrl + '?bot=internal') : 'กรุณาตั้งค่า Google Apps Script Web App URL ในเมนู ซิงค์ & สำรองข้อมูล ก่อน';
+
+        if (tab === 'BRIDGE') {
+            body.innerHTML = `
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-1">
+                    <div class="font-extrabold text-emerald-950"><i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> ขอบเขตการใช้งาน Phase 1: Service Unit &amp; Service Center เท่านั้น</div>
+                    <div class="text-[11px] text-emerald-800">ระบบแจ้งเตือนอัตโนมัติ การจ่ายงาน และแชทบอทถูกจำกัดสิทธิ์เฉพาะ <b>Service Unit</b> และ <b>Service Center (คุณภวัต)</b> โดยไม่รบกวนแผนกอื่น</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="border border-sky-200 bg-sky-50/60 rounded-xl p-3 space-y-2">
+                        <div class="font-extrabold text-[#002B49]"><i class="fa-solid fa-user-check text-sky-600 mr-1"></i> บัญชีที่ 1: Customer LINE OA (สำหรับลูกค้า)</div>
+                        <label class="block font-bold text-slate-700">Customer Channel Access Token:</label>
+                        <input type="password" id="dualCustTokenInput" value="${cfg.customerLineToken || ''}" placeholder="วาง Channel Access Token ของบัญชีลูกค้า..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
+                        <label class="block font-bold text-slate-700">Webhook URL (นำไปวางใน LINE Developers Console):</label>
+                        <div class="flex gap-1">
+                            <input type="text" readonly value="${custWebhook}" id="dualCustWebhookInput" class="flex-1 border border-slate-300 rounded-lg px-2 py-1 bg-white font-mono text-[10px]">
+                            <button type="button" onclick="navigator.clipboard?.writeText(document.getElementById('dualCustWebhookInput').value); if(typeof showToast==='function') showToast('คัดลอก Customer Webhook URL แล้ว');" class="bg-sky-700 text-white px-2.5 py-1 rounded-lg font-bold">คัดลอก</button>
+                        </div>
+                        <div class="pt-1">
+                            <label class="block font-bold text-slate-700">ทดสอบส่งเข้า LINE User ID ลูกค้า (ถ้ามี):</label>
+                            <input type="text" id="dualTestCustUidInput" value="${cfg.testCustomerUserId || ''}" placeholder="Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
+                        </div>
+                    </div>
+
+                    <div class="border border-emerald-200 bg-emerald-50/60 rounded-xl p-3 space-y-2">
+                        <div class="font-extrabold text-[#002B49]"><i class="fa-solid fa-screwdriver-wrench text-emerald-600 mr-1"></i> บัญชีที่ 2: Internal Service Bot OA (สำหรับช่าง &amp; ศูนย์บริการ)</div>
+                        <label class="block font-bold text-slate-700">Internal Bot Channel Access Token:</label>
+                        <input type="password" id="dualIntTokenInput" value="${cfg.internalLineToken || legacyLine.token || ''}" placeholder="วาง Channel Access Token ของ ServiceBot..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-mono text-[11px]">
+                        <label class="block font-bold text-slate-700">Webhook URL (นำไปวางใน LINE Developers Console):</label>
+                        <div class="flex gap-1">
+                            <input type="text" readonly value="${intWebhook}" id="dualIntWebhookInput" class="flex-1 border border-slate-300 rounded-lg px-2 py-1 bg-white font-mono text-[10px]">
+                            <button type="button" onclick="navigator.clipboard?.writeText(document.getElementById('dualIntWebhookInput').value); if(typeof showToast==='function') showToast('คัดลอก Internal Webhook URL แล้ว');" class="bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-bold">คัดลอก</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5 pt-1">
+                            <div>
+                                <label class="block font-bold text-slate-700">Service Group ID:</label>
+                                <input type="text" id="dualGroupIdInput" value="${cfg.lineGroupId || legacyLine.groupId || 'Cef7603e1024beffe64c1d030450014c2'}" class="w-full border border-slate-300 rounded-lg px-2 py-1 bg-white font-mono text-[10.5px]">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700">Bot Basic ID:</label>
+                                <input type="text" id="dualBotBasicIdInput" value="${cfg.lineBotId || legacyLine.botId || ''}" placeholder="@servicebot_hth" class="w-full border border-slate-300 rounded-lg px-2 py-1 bg-white font-mono text-[10.5px]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 pt-1">
+                    <button type="button" onclick="saveDualLineBridgeFromModal_()" class="bg-[#002B49] hover:bg-sky-900 text-white font-extrabold px-4 py-2 rounded-xl shadow-sm">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกการตั้งค่าขึ้น Google Cloud
+                    </button>
+                    <button type="button" onclick="testDualLineBridgeFromModal_()" class="bg-[#06C755] hover:bg-[#05b34c] text-white font-extrabold px-4 py-2 rounded-xl shadow-sm">
+                        <i class="fa-solid fa-paper-plane mr-1"></i> ทดสอบยิงข้อความเข้า LINE จริง
+                    </button>
+                    <button type="button" onclick="triggerCreateCrossLinkRichMenus_()" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-4 py-2 rounded-xl shadow-sm">
+                        <i class="fa-solid fa-table-cells-large mr-1"></i> สร้าง Rich Menu เชื่อม 2 บัญชีอัตโนมัติ
+                    </button>
+                </div>
+            `;
+        } else if (tab === 'TICKETS') {
+            body.innerHTML = `<div class="text-center py-6 text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-1"></i> กำลังโหลดคิวแชทและใบแจ้งซ่อมจาก LINE OA...</div>`;
+            window.loadDualLineTicketsIntoModal_();
+        } else if (tab === 'SMS') {
+            const jobNo = document.getElementById('jobNo')?.value || 'JOB-LIVE';
+            const customer = document.getElementById('storeName')?.value || '';
+            const model = document.getElementById('machineModel')?.value || '';
+            const serial = document.getElementById('serialNumber')?.value || '';
+            const tech = document.getElementById('responsibleTech')?.value || 'ทีมช่าง HOSHIZAKI';
+            const total = document.getElementById('grandTotalDisplay')?.textContent || '0.00';
+            const defaultPhone = (document.getElementById('contactPerson')?.value || '').match(/0\d{8,9}/)?.[0] || '';
+            const baseUrl = window.location.origin + window.location.pathname;
+            const portalUrl = baseUrl + '?portal=customer&jobNo=' + encodeURIComponent(jobNo) + '&customer=' + encodeURIComponent(customer) + '&model=' + encodeURIComponent(model) + '&serial=' + encodeURIComponent(serial) + '&tech=' + encodeURIComponent(tech) + '&total=' + encodeURIComponent(total);
+
+            const logs = (() => { try { return JSON.parse(localStorage.getItem(SMS_LOG_KEY) || '[]'); } catch(e){ return []; } })();
+            body.innerHTML = `
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 space-y-2">
+                    <div class="font-extrabold text-amber-950 text-sm"><i class="fa-solid fa-comment-sms text-amber-600 mr-1"></i> ส่งลิงก์พอร์ทัลลูกค้า / ใบเสนอราคา เข้าเบอร์โทรศัพท์มือถือ (SMS)</div>
+                    <p class="text-[11px] text-amber-900">ใช้สำหรับกรณีที่ <b>ลูกค้าไม่มีอีเมล และไม่มี LINE</b> — ระบบจะสร้างลิงก์เปิดดูสถานะช่าง ใบเสนอราคา และกดอนุมัติซ่อมบนเบราว์เซอร์มือถือได้ทันทีโดยไม่ต้องติดตั้งแอป</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">เบอร์โทรศัพท์มือถือลูกค้า *:</label>
+                            <input type="tel" id="smsHubPhoneInput" value="${defaultPhone}" placeholder="เช่น 0812345678" class="w-full border border-amber-400 rounded-lg px-3 py-2 bg-white font-extrabold text-sm">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">ชื่อร้านค้า / ลูกค้า:</label>
+                            <input type="text" id="smsHubCustomerInput" value="${customer}" placeholder="ระบุชื่อร้านค้า..." class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white font-bold">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">ข้อความ SMS พร้อมลิงก์พอร์ทัลลูกค้า:</label>
+                        <textarea id="smsHubMessageText" rows="3" class="w-full border border-slate-300 rounded-lg p-2.5 bg-white text-xs">HOSHIZAKI Service (${jobNo}): ติดตามสถานะช่างและอนุมัติรายการซ่อมได้ที่ ${portalUrl}</textarea>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="executeMobileSmsDispatchFromHub_('${jobNo}', '${portalUrl.replace(/'/g, '')}')" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-4 py-2 rounded-xl shadow-sm">
+                            <i class="fa-solid fa-sms mr-1"></i> เปิดแอป SMS มือถือ &amp; บันทึกประวัติส่ง
+                        </button>
+                        <button type="button" onclick="navigator.clipboard?.writeText(document.getElementById('smsHubMessageText').value); if(typeof showToast==='function') showToast('คัดลอกข้อความ SMS เรียบร้อย');" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-3.5 py-2 rounded-xl">
+                            <i class="fa-solid fa-copy mr-1"></i> คัดลอกข้อความ SMS
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-xl p-3 space-y-1.5">
+                    <div class="font-extrabold text-[#002B49]">ประวัติการส่งลิงก์เข้าเบอร์มือถือล่าสุด (${logs.length} รายการ)</div>
+                    ${logs.length === 0 ? '<div class="text-slate-400">ยังไม่มีประวัติการส่ง SMS ในเครื่องนี้</div>' : logs.slice(0, 10).map(l => `
+                        <div class="bg-slate-50 border rounded-lg p-2 flex items-center justify-between gap-2">
+                            <div>
+                                <div class="font-bold text-slate-900">📱 ${l.phone} — ${l.customer || '-'} (${l.refNo})</div>
+                                <div class="text-[10px] text-slate-500">${l.sentAt}</div>
+                            </div>
+                            <a href="sms:${l.phone}?body=${encodeURIComponent(l.message)}" class="bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-lg font-bold text-[10.5px]">ส่งซ้ำ</a>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else if (tab === 'SIM') {
+            body.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="border border-sky-200 bg-sky-50 rounded-xl p-3 space-y-1.5">
+                        <div class="font-extrabold text-[#002B49]">📱 คำสั่งฝั่ง Customer LINE OA (รองรับ 3 ภาษา TH / EN / JP)</div>
+                        <ul class="space-y-1 text-[11px] text-slate-800 list-disc pl-4">
+                            <li><b>ลงทะเบียน 0812345678</b> / <b>REGISTER 0812345678</b> / <b>登録 0812345678</b> — ผูกเบอร์มือถือรับแจ้งเตือนอัตโนมัติ</li>
+                            <li><b>เช็กสถานะ 0812345678</b> / <b>STATUS H12345J</b> / <b>ステータス ...</b> — ดูสถานะใบงาน ชื่อช่าง และเปิดพอร์ทัล GPS สด</li>
+                            <li><b>แจ้งซ่อม IM-130NE ไม่ทำน้ำแข็ง</b> / <b>REPAIR ...</b> / <b>修理依頼 ...</b> — เปิดใบแจ้งซ่อมอัตโนมัติ</li>
+                            <li><b>กดปุ่ม 1-5 ดาว (CSAT)</b> / <b>เลือกแพ็กเกจ GOOD·BETTER·BEST</b> / <b>ยืนยันเวลานัดหมาย</b></li>
+                        </ul>
+                    </div>
+                    <div class="border border-emerald-200 bg-emerald-50 rounded-xl p-3 space-y-1.5">
+                        <div class="font-extrabold text-[#002B49]">🛠️ คำสั่งฝั่ง Internal Service Bot (ทีมช่าง &amp; ศูนย์บริการ)</div>
+                        <ul class="space-y-1 text-[11px] text-slate-800 list-disc pl-4">
+                            <li><b>SN H12345J</b> — ดูประวัติซ่อม 360° อายุเครื่อง ประกัน และใบเสนอราคา</li>
+                            <li><b>SPEC IM-100NE</b> / <b>MANUAL KM-50B</b> — ส่งรูปสเปกเต็มจอและลิงก์ PDF</li>
+                            <li><b>ERR IM-100NE E1</b> / <b>PINOUT IM</b> — คู่มือวิเคราะห์ Error Code และผังขั้วบอร์ด</li>
+                            <li><b>PM DUE</b> / <b>VAN STOCK T01</b> / <b>BI REPORT</b> — เช็กรอบ PM, สต็อกรถช่าง, KPI</li>
+                            <li><b>TICKETS</b> / <b>REPLY TK-xxxxxx &lt;คำตอบ&gt;</b> — ตอบกลับแชทลูกค้าโดยตรง</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+    };
+
+    window.saveDualLineBridgeFromModal_ = async function() {
+        const cfg = {
+            customerLineToken: (document.getElementById('dualCustTokenInput')?.value || '').trim(),
+            internalLineToken: (document.getElementById('dualIntTokenInput')?.value || '').trim(),
+            lineGroupId: (document.getElementById('dualGroupIdInput')?.value || '').trim(),
+            lineBotId: (document.getElementById('dualBotBasicIdInput')?.value || '').trim(),
+            testCustomerUserId: (document.getElementById('dualTestCustUidInput')?.value || '').trim(),
+            pwaWebAppUrl: window.location.origin + window.location.pathname
+        };
+        saveDualLineCfg_(cfg);
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (gasUrl) {
+            try {
+                await fetch(gasUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(Object.assign({ actionType: 'SAVE_DUAL_LINE_BRIDGE_CONFIG' }, cfg))
+                });
+            } catch (e) {}
+        }
+        if (typeof showToast === 'function') showToast('✅ บันทึกการตั้งค่า Dual LINE OA Bridge เรียบร้อยแล้ว');
+    };
+
+    window.testDualLineBridgeFromModal_ = async function() {
+        await window.saveDualLineBridgeFromModal_();
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        const cfg = getDualLineCfg_();
+        if (!gasUrl) {
+            if (typeof showToast === 'function') showToast('⚠️ กรุณาตั้งค่า Google Apps Script URL ก่อนทดสอบส่ง');
+            return;
+        }
+        try {
+            await fetch(gasUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    actionType: 'TEST_DUAL_LINE_BRIDGE',
+                    testCustomerUserId: cfg.testCustomerUserId || ''
+                })
+            });
+            if (typeof showToast === 'function') showToast('📨 ส่งคำสั่งทดสอบ Dual LINE OA Bridge สำเร็จ! ตรวจสอบในห้องแชท LINE');
+        } catch (e) {}
+    };
+
+    window.triggerCreateCrossLinkRichMenus_ = async function() {
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (!gasUrl) return;
+        try {
+            await fetch(gasUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ actionType: 'CREATE_CROSS_LINK_RICH_MENUS' })
+            });
+            if (typeof showToast === 'function') showToast('🎛️ สร้าง Rich Menu เชื่อมโยง 2 บัญชี LINE OA เรียบร้อยแล้ว');
+        } catch (e) {}
+    };
+
+    window.loadDualLineTicketsIntoModal_ = async function() {
+        const body = document.getElementById('dualLineCenterBody');
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (!body) return;
+        if (!gasUrl) {
+            body.innerHTML = '<div class="p-4 text-center text-slate-500">กรุณาเชื่อมต่อ Google Apps Script URL เพื่อดึงรายการแชทจาก LINE OA</div>';
+            return;
+        }
+        try {
+            const res = await fetch(gasUrl + '?action=getLineTickets');
+            const data = await res.json();
+            const tickets = data.tickets || [];
+            const openCount = tickets.filter(t => t.status === 'OPEN').length;
+            const b1 = document.getElementById('dualLineOpenTicketBadge');
+            const b2 = document.getElementById('topLineTicketCountBadge');
+            if (b1) b1.textContent = String(openCount);
+            if (b2) {
+                b2.textContent = String(openCount);
+                b2.classList.toggle('hidden', openCount === 0);
+            }
+            if (tickets.length === 0) {
+                body.innerHTML = '<div class="p-6 text-center text-slate-500 font-bold">✅ ยังไม่มีคิวคำถามหรือแจ้งซ่อมค้างตอบจาก LINE OA</div>';
+                return;
+            }
+            body.innerHTML = tickets.slice(0, 30).map((t, idx) => `
+                <div class="border ${t.status === 'OPEN' ? 'border-rose-300 bg-rose-50/40' : 'border-slate-200 bg-slate-50'} rounded-xl p-3 space-y-1.5">
+                    <div class="flex flex-wrap items-center justify-between gap-1">
+                        <span class="font-extrabold text-[#002B49]">${t.ticketId} • ${t.customerName || 'ลูกค้า LINE'} (${t.topic || '-'})</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${t.status === 'OPEN' ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'}">${t.status}</span>
+                    </div>
+                    <div class="text-slate-800 bg-white border rounded-lg p-2">${t.message || '-'}</div>
+                    <div class="text-[10px] text-slate-500">เวลา: ${t.createdAt || '-'}</div>
+                    ${t.status === 'OPEN' ? `
+                        <div class="flex gap-1.5 pt-1">
+                            <input type="text" id="dualLineReplyInp_${idx}" placeholder="พิมพ์ข้อความตอบกลับไปยัง LINE ลูกค้าโดยตรง..." class="flex-1 border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white">
+                            <button type="button" onclick="sendDualLineTicketReply_('${t.ticketId}', ${idx})" class="bg-[#06C755] hover:bg-[#05b34c] text-white font-extrabold px-3 py-1.5 rounded-lg">ส่งตอบกลับ LINE</button>
+                        </div>
+                    ` : `<div class="text-[11px] text-emerald-800 font-bold">ตอบกลับแล้ว: ${t.techReply || '-'} (${t.repliedAt || ''})</div>`}
+                </div>
+            `).join('');
+        } catch (e) {
+            body.innerHTML = '<div class="p-4 text-center text-rose-600">ไม่สามารถโหลดข้อมูล Ticket ได้ชั่วคราว</div>';
+        }
+    };
+
+    window.sendDualLineTicketReply_ = async function(ticketId, idx) {
+        const msg = (document.getElementById('dualLineReplyInp_' + idx)?.value || '').trim();
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (!msg || !gasUrl) return;
+        try {
+            await fetch(gasUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    actionType: 'REPLY_LINE_TICKET',
+                    ticketId: ticketId,
+                    replyMessage: msg
+                })
+            });
+            if (typeof showToast === 'function') showToast('✅ ส่งคำตอบกลับไปยัง LINE ลูกค้า (' + ticketId + ') เรียบร้อยแล้ว');
+            setTimeout(() => window.loadDualLineTicketsIntoModal_(), 900);
+        } catch (e) {}
+    };
+
+    // Mobile Phone SMS Fallback (when customer has no Email and no LINE)
+    window.sendCustomerPortalToMobileSms_ = function(jobNo, customer) {
+        const rawPhone = (document.getElementById('custPortalMobilePhoneInput')?.value || '').trim();
+        const digits = rawPhone.replace(/\D/g, '');
+        if (digits.length < 9) {
+            if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุเบอร์โทรศัพท์มือถือลูกค้า 9-10 หลัก');
+            return;
+        }
+        const shareUrl = document.getElementById('custPortalShareUrlInput')?.value || (window.location.origin + window.location.pathname + '?portal=customer&jobNo=' + encodeURIComponent(jobNo));
+        const smsText = `HOSHIZAKI Service (${jobNo}): ติดตามสถานะช่างและอนุมัติซ่อมได้ที่ ${shareUrl}`;
+        window.dispatchSmsAndLog_(digits, jobNo, customer, shareUrl, smsText);
+    };
+
+    window.executeMobileSmsDispatchFromHub_ = function(jobNo, portalUrl) {
+        const rawPhone = (document.getElementById('smsHubPhoneInput')?.value || '').trim();
+        const customer = (document.getElementById('smsHubCustomerInput')?.value || '').trim();
+        const smsText = (document.getElementById('smsHubMessageText')?.value || '').trim();
+        const digits = rawPhone.replace(/\D/g, '');
+        if (digits.length < 9) {
+            if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุเบอร์โทรศัพท์มือถือลูกค้า 9-10 หลัก');
+            return;
+        }
+        window.dispatchSmsAndLog_(digits, jobNo, customer, portalUrl, smsText);
+        setTimeout(() => window.switchDualLineCenterTab('SMS'), 400);
+    };
+
+    window.dispatchSmsAndLog_ = function(digits, refNo, customer, portalUrl, smsText) {
+        const intlPhone = digits.startsWith('0') ? ('+66' + digits.slice(1)) : ('+' + digits);
+        const logs = (() => { try { return JSON.parse(localStorage.getItem(SMS_LOG_KEY) || '[]'); } catch(e){ return []; } })();
+        logs.unshift({
+            phone: digits,
+            refNo: refNo,
+            customer: customer,
+            portalUrl: portalUrl,
+            message: smsText,
+            sentAt: new Date().toLocaleString('th-TH')
+        });
+        localStorage.setItem(SMS_LOG_KEY, JSON.stringify(logs.slice(0, 100)));
+
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (gasUrl) {
+            fetch(gasUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    actionType: 'LOG_MOBILE_SMS_DISPATCH',
+                    refNo: refNo,
+                    customer: customer,
+                    phone: digits,
+                    portalUrl: portalUrl,
+                    message: smsText
+                })
+            }).catch(() => {});
+        }
+        if (typeof showToast === 'function') showToast('📱 กำลังเปิดแอปข้อความ SMS เพื่อส่งลิงก์ไปยังเบอร์ ' + digits);
+        window.location.href = `sms:${intlPhone}?body=${encodeURIComponent(smsText)}`;
+    };
+
+    window.pushCustomerPortalViaLineOa_ = async function(jobNo, customer) {
+        const rawPhone = (document.getElementById('custPortalMobilePhoneInput')?.value || '').trim();
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        if (!gasUrl) {
+            if (typeof showToast === 'function') showToast('⚠️ กรุณาเชื่อมต่อ Google Apps Script URL ก่อนส่งผ่าน LINE OA');
+            return;
+        }
+        try {
+            await fetch(gasUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    actionType: 'SEND_CUSTOMER_APPOINTMENT_FLEX',
+                    jobNo: jobNo,
+                    customer: customer,
+                    phone: rawPhone,
+                    date: document.getElementById('serviceDate')?.value || '',
+                    time: document.getElementById('timeIn')?.value || '',
+                    tech: document.getElementById('responsibleTech')?.value || ''
+                })
+            });
+            if (typeof showToast === 'function') showToast('💬 ส่งการ์ด Flex แจ้งเตือนเข้า LINE OA ลูกค้าเรียบร้อย (หากยังไม่ผูก LINE สามารถกดส่ง SMS ได้ทันที)');
+        } catch (e) {}
+    };
+
+    // Background polling for open LINE OA customer tickets every 90s
+    document.addEventListener('DOMContentLoaded', function() {
+        const pollOpenLineTickets = async () => {
+            const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+            if (!gasUrl) return;
+            try {
+                const res = await fetch(gasUrl + '?action=getLineTickets');
+                const data = await res.json();
+                const openCount = (data.tickets || []).filter(t => t.status === 'OPEN').length;
+                const badge = document.getElementById('topLineTicketCountBadge');
+                if (badge) {
+                    badge.textContent = String(openCount);
+                    badge.classList.toggle('hidden', openCount === 0);
+                }
+            } catch (e) {}
+        };
+        setTimeout(pollOpenLineTickets, 5000);
+        setInterval(pollOpenLineTickets, 90000);
+    });
+})();
+</script>
+
+<script id="v1021-qt-sms-bridge">
+(function() {
+    window.sendCurrentQuotationToMobileSms = function() {
+        const offerNo = (document.getElementById('receiptOfferNo')?.textContent || document.getElementById('docOfferNoInput')?.value || 'QT-LIVE').trim();
+        const customer = (document.getElementById('receiptCustomerName')?.textContent || document.getElementById('storeName')?.value || 'ลูกค้า HOSHIZAKI').trim();
+        const model = (document.getElementById('machineModel')?.value || '').trim();
+        const serial = (document.getElementById('serialNumber')?.value || '').trim();
+        const tech = (document.getElementById('responsibleTech')?.value || 'ทีมช่าง HOSHIZAKI').trim();
+        const total = (document.getElementById('receiptGrandTotal')?.textContent || document.getElementById('grandTotalDisplay')?.textContent || '0.00').trim();
+        const contactRaw = (document.getElementById('contactPerson')?.value || '').trim();
+        const defaultPhone = (contactRaw.match(/0\d{8,9}/) || [''])[0];
+        const phoneInput = prompt('ระบุเบอร์โทรศัพท์มือถือลูกค้า (9-10 หลัก) เพื่อส่งลิงก์ใบเสนอราคา/อนุมัติซ่อมทาง SMS:', defaultPhone);
+        if (!phoneInput) return;
+        const digits = phoneInput.replace(/\D/g, '');
+        if (digits.length < 9) {
+            if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุเบอร์โทรศัพท์มือถือให้ครบ 9-10 หลัก');
+            return;
+        }
+        const baseUrl = window.location.origin + window.location.pathname;
+        const portalUrl = baseUrl + '?portal=customer&jobNo=' + encodeURIComponent(offerNo) +
+            '&customer=' + encodeURIComponent(customer) +
+            '&model=' + encodeURIComponent(model) +
+            '&serial=' + encodeURIComponent(serial) +
+            '&tech=' + encodeURIComponent(tech) +
+            '&total=' + encodeURIComponent(total.replace(/,/g, ''));
+        const smsText = `HOSHIZAKI (${offerNo}): ตรวจสอบรายละเอียดใบเสนอราคา/ยอดรวม ${total} บาท และกดอนุมัติได้ที่ ${portalUrl}`;
+        if (typeof window.dispatchSmsAndLog_ === 'function') {
+            window.dispatchSmsAndLog_(digits, offerNo, customer, portalUrl, smsText);
+        } else {
+            const intlPhone = digits.startsWith('0') ? ('+66' + digits.slice(1)) : ('+' + digits);
+            window.location.href = `sms:${intlPhone}?body=${encodeURIComponent(smsText)}`;
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inject a sleek "ส่งเข้าเบอร์มือถือ (SMS)" button next to "แชร์ PDF เข้า LINE" in Receipt/Quotation modal if present
+        const receiptShareBtn = document.querySelector('#receiptModal [onclick*="shareReceiptPDFToLine"]');
+        if (receiptShareBtn && !document.getElementById('btnReceiptSendMobileSms')) {
+            const smsBtn = document.createElement('button');
+            smsBtn.type = 'button';
+            smsBtn.id = 'btnReceiptSendMobileSms';
+            smsBtn.onclick = function() { window.sendCurrentQuotationToMobileSms(); };
+            smsBtn.className = 'bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1.5 rounded font-bold flex items-center gap-1 shadow-xs';
+            smsBtn.innerHTML = '<i class="fa-solid fa-comment-sms"></i> <span>ส่งเข้าเบอร์มือถือ (SMS)</span>';
+            receiptShareBtn.parentNode.insertBefore(smsBtn, receiptShareBtn.nextSibling);
+        }
+    });
+})();
+</script>
+
 </body>
 </html>

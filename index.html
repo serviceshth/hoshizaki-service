@@ -763,7 +763,7 @@
                         </button>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1016</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1017</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -914,6 +914,13 @@
                         <button type="button" data-tb-cat="SERVICE" onclick="openFieldStampAndExpenseModal('OUTSOURCE_LINK')" class="tb-action-item col-span-2 bg-rose-700 hover:bg-rose-800 text-white font-extrabold shadow-sm border border-rose-300/40">
                             <i class="fa-solid fa-shield-halved text-amber-200"></i> <span>ส่งลิงก์งานให้ Outsource (แยกสิทธิ์ปลอดภัย ไม่เห็นข้อมูลอื่น)</span>
                         </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openMdBoardroomModal('OVERVIEW')" class="tb-action-item col-span-2 bg-gradient-to-r from-amber-600 to-rose-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-amber-300/50">
+                            <i class="fa-solid fa-crown text-amber-200"></i> <span>MD Boardroom BI &amp; สไลด์ประชุม 3 ภาษา (TH/EN/JP)</span>
+                        </button>
+                        <button type="button" data-tb-cat="SERVICE" onclick="openInstallAndLoanerModal('INSTALL')" class="tb-action-item col-span-2 bg-emerald-800 hover:bg-emerald-900 text-white font-bold shadow-sm">
+                            <i class="fa-solid fa-boxes-packing text-amber-300"></i> <span>ส่งมอบติดตั้งเครื่องใหม่ &amp; ทะเบียนเครื่องสำรอง (Loaner)</span>
+                        </button>
+
 
 
 
@@ -4404,7 +4411,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1016</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1017</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20524,7 +20531,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1016) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1017) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -20947,7 +20954,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1016) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1017) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-sky-800 flex-shrink-0">
@@ -23453,7 +23460,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1016 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1017 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -30741,7 +30748,7 @@ Defect: ${defectText}`;
 <!-- Corporate Enterprise Footer (v1013) -->
 <footer class="no-print max-w-4xl mx-auto mt-6 mb-4 text-center text-[11px] text-slate-500 border-t border-slate-200 pt-3">
     <div>
-        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1016 ·
+        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1017 ·
         <span onclick="triggerCreatorCreditEasterEgg()" class="cursor-pointer underline decoration-dotted hover:text-hoshizaki-blue font-semibold">Service Management System</span>
         · For Internal Use Only
     </div>
@@ -31348,7 +31355,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1016)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1017)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31551,7 +31558,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1016)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1017)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31567,7 +31574,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1016)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1017)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31586,7 +31593,7 @@ Defect: ${defectText}`;
         });
         const dict = TRILINGUAL_LABELS[lang];
         const subEl = document.querySelector('header p.text-hoshizaki-blue');
-        if (subEl) subEl.innerHTML = dict.subtitle + ' <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v1016</span>';
+        if (subEl) subEl.innerHTML = dict.subtitle + ' <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v1017</span>';
         if (typeof showToast === 'function') {
             const msg = lang === 'JP' ? '表示言語を日本語（エグゼクティブモード）に切り替えました' : (lang === 'EN' ? 'Switched UI language to Corporate English' : 'เปลี่ยนภาษาหน้าจอเป็นภาษาไทยแล้ว');
             showToast(msg);
@@ -31645,21 +31652,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1016) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1017) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1016 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1017 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1016）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1017）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -33623,6 +33630,710 @@ Defect: ${defectText}`;
         checkAndMountIsolatedOutsourcePortal_();
         upgradeFieldActionStrip_();
     });
+})();
+</script>
+
+
+<!-- ============================================================================
+     ENTERPRISE v1017-MD BOARDROOM INTELLIGENCE, 360 WORKFORCE ANALYTICS &
+     AFTER-SALES COMPLETE SUITE (MD Boardroom Presentation Generator TH/EN/JP •
+     360° Staff & Outsource Scorecard • Installation & Commissioning Handover •
+     Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
+     ============================================================================ -->
+
+<!-- 1. MD Boardroom Intelligence & One-Click 3-Language Presentation Modal -->
+<div id="hzkMdBoardroomModal" class="hidden fixed inset-0 bg-black/80 z-[98] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
+        <div class="bg-gradient-to-r from-[#002B49] via-[#00487c] to-[#0077b6] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
+            <div>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-crown text-amber-300 mr-1.5"></i>MD Boardroom Intelligence &amp; One-Click Presentation Generator (TH • EN • 日本語)</h3>
+                <p class="text-[11px] text-sky-100">ศูนย์วิเคราะห์ข้อมูลเชิงลึกสำหรับกรรมการผู้จัดการ (MD) พร้อมสร้างสไลด์นำเสนอเข้าห้องประชุมและประเมินผลงาน 360° ในคลิกเดียว</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <button type="button" onclick="openBoardroomPresentationDeckWindow('TH')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-2.5 py-1.5 rounded-lg text-[11px] shadow-sm">
+                    <i class="fa-solid fa-display mr-1"></i> สไลด์ประชุม (TH)
+                </button>
+                <button type="button" onclick="openBoardroomPresentationDeckWindow('EN')" class="bg-sky-500 hover:bg-sky-400 text-white font-extrabold px-2.5 py-1.5 rounded-lg text-[11px] shadow-sm">
+                    <i class="fa-solid fa-display mr-1"></i> Deck (EN)
+                </button>
+                <button type="button" onclick="openBoardroomPresentationDeckWindow('JP')" class="bg-emerald-500 hover:bg-emerald-400 text-white font-extrabold px-2.5 py-1.5 rounded-lg text-[11px] shadow-sm">
+                    <i class="fa-solid fa-display mr-1"></i> 役員資料 (日本語)
+                </button>
+                <button type="button" onclick="closeMdBoardroomModal()" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg ml-1">&times;</button>
+            </div>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4 text-xs">
+            <!-- Filter Bar -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="font-bold text-slate-700">ช่วงเวลาวิเคราะห์ (Period):</span>
+                    <select id="mdPeriodSelect" onchange="refreshMdBoardroomActiveTab()" class="border rounded-lg px-2.5 py-1 bg-white font-bold text-hoshizaki-navy">
+                        <option value="ALL">ข้อมูลสะสมทั้งหมด (All-Time Live)</option>
+                        <option value="MONTH">เดือนปัจจุบัน (Current Month)</option>
+                        <option value="QUARTER">ไตรมาสล่าสุด (Last 90 Days)</option>
+                    </select>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    <button type="button" onclick="switchMdBoardroomTab('OVERVIEW')" id="tabBtnMdOverview" class="px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold">
+                        1. ภาพรวมธุรกิจ &amp; รายได้/GP%
+                    </button>
+                    <button type="button" onclick="switchMdBoardroomTab('WORKFORCE_360')" id="tabBtnMdWorkforce" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                        2. ประสิทธิภาพบุคลากร 360° &amp; Outsource
+                    </button>
+                    <button type="button" onclick="switchMdBoardroomTab('PARETO_FORECAST')" id="tabBtnMdPareto" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                        3. Pareto สาเหตุเสีย &amp; พยากรณ์สั่งอะไหล่
+                    </button>
+                </div>
+            </div>
+
+            <div id="mdOverviewPanel" class="space-y-3"></div>
+            <div id="mdWorkforce360Panel" class="hidden space-y-3"></div>
+            <div id="mdParetoForecastPanel" class="hidden space-y-3"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. After-Sales Lifecycle Modal: Installation Handover & Loaner Machine Tracker -->
+<div id="hzkInstallAndLoanerModal" class="hidden fixed inset-0 bg-black/75 z-[97] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[92dvh] border border-slate-200">
+        <div class="bg-hoshizaki-navy text-white px-4 py-3 rounded-t-2xl flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-sm sm:text-base"><i class="fa-solid fa-boxes-packing text-amber-300 mr-1.5"></i>ระบบติดตั้งเครื่องใหม่ (Commissioning Handover) &amp; ทะเบียนเครื่องสำรองระหว่างซ่อม (Loaner Tracker)</h3>
+                <p class="text-[11px] text-sky-200">เช็กลิสต์ส่งมอบการติดตั้งเครื่องใหม่ 8 จุดมาตรฐานโรงงาน + ติดตามเครื่องสำรองที่วางให้ลูกค้า VIP</p>
+            </div>
+            <button type="button" onclick="closeInstallAndLoanerModal()" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-4 text-xs">
+            <div class="flex flex-wrap gap-2 border-b pb-2">
+                <button type="button" onclick="switchInstallLoanerTab('INSTALL')" id="tabBtnInstallHandover" class="px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold">
+                    <i class="fa-solid fa-clipboard-check mr-1 text-emerald-300"></i> 1. เช็กลิสต์ติดตั้ง &amp; ส่งมอบเครื่องใหม่ (Commissioning)
+                </button>
+                <button type="button" onclick="switchInstallLoanerTab('LOANER')" id="tabBtnLoanerTracker" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-truck-fast mr-1 text-amber-500"></i> 2. ทะเบียนเครื่องสำรองระหว่างซ่อม (Loaner / Demo Pool)
+                </button>
+            </div>
+            <div id="installHandoverPanel" class="space-y-3"></div>
+            <div id="loanerMachinePanel" class="hidden space-y-3"></div>
+        </div>
+    </div>
+</div>
+
+<script id="v1017-md-boardroom-lifecycle-logic">
+(function() {
+    const LOANER_STORAGE_KEY = 'hoshizaki_loaner_machines_v1017';
+    const INSTALL_LOG_KEY = 'hoshizaki_install_handovers_v1017';
+    let currentMdTab_ = 'OVERVIEW';
+
+    function safeJsonArray_(key) {
+        try {
+            const raw = localStorage.getItem(key);
+            const arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function computeBoardroomDataset_() {
+        const period = document.getElementById('mdPeriodSelect')?.value || 'ALL';
+        const now = new Date();
+        const curYm = now.toISOString().slice(0, 7);
+        const cutoff90 = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+        const filterByPeriod = function(dtStr) {
+            if (period === 'ALL' || !dtStr) return true;
+            const d = String(dtStr).slice(0, 10);
+            if (period === 'MONTH') return d.indexOf(curYm) === 0;
+            if (period === 'QUARTER') return d >= cutoff90;
+            return true;
+        };
+
+        const jobs = safeJsonArray_('hoshizaki_job_history').filter(j => filterByPeriod(j.date));
+        const qts = safeJsonArray_('hoshizaki_quotation_history').filter(q => filterByPeriod(q.date));
+        const pmContracts = safeJsonArray_('hoshizaki_pm_contracts_v1015');
+        const travelExps = safeJsonArray_('hoshizaki_travel_expenses_v1016').filter(e => filterByPeriod(e.date));
+        const outsourceSubs = safeJsonArray_('hoshizaki_outsource_submissions_v1016').filter(o => filterByPeriod(o.date));
+
+        let completedCount = 0;
+        let waitingCount = 0;
+        let pmJobCount = 0;
+        let repairRev = 0;
+        let repeatSnCount = 0;
+        const snSeen = {};
+        const modelCounts = {};
+        const symptomCounts = {};
+        const partUsage = {};
+        const staffStats = {};
+
+        const ensureStaff = function(name) {
+            const clean = String(name || 'ไม่ระบุช่าง').trim();
+            if (!staffStats[clean]) {
+                staffStats[clean] = {
+                    name: clean,
+                    jobs: 0,
+                    completed: 0,
+                    pmJobs: 0,
+                    revenue: 0,
+                    travelExp: 0,
+                    repeatCalls: 0,
+                    isOutsource: clean.toLowerCase().indexOf('outsource') > -1
+                };
+            }
+            return staffStats[clean];
+        };
+
+        jobs.forEach(j => {
+            const st = String(j.jobStatus || '');
+            if (st === 'Completed') completedCount++;
+            if (st === 'Waiting Parts' || st === 'Pending') waitingCount++;
+            const jType = String(j.jobType || '');
+            if (/pm|maintenance|clean/i.test(jType)) pmJobCount++;
+
+            const gt = parseFloat(String(j.grandTotal || '0').replace(/,/g, '')) || 0;
+            repairRev += gt;
+
+            const sn = String(j.serial || '').trim().toUpperCase();
+            let isRepeat = false;
+            if (sn && sn !== '-') {
+                if (snSeen[sn]) {
+                    repeatSnCount++;
+                    isRepeat = true;
+                }
+                snSeen[sn] = true;
+            }
+
+            const mod = String(j.model || 'Other').trim().toUpperCase();
+            modelCounts[mod] = (modelCounts[mod] || 0) + 1;
+
+            const sym = String(j.diagSymptom || 'General Check').trim();
+            if (sym && sym !== '-') symptomCounts[sym] = (symptomCounts[sym] || 0) + 1;
+
+            const pSum = String(j.partsSummary || '');
+            if (pSum && pSum !== '-' && pSum.indexOf('ไม่มี') === -1) {
+                pSum.split(/[;,|\n]/).forEach(tok => {
+                    const c = tok.trim();
+                    if (c.length >= 3) partUsage[c] = (partUsage[c] || 0) + 1;
+                });
+            }
+
+            // Credit primary and team technicians (supports 2-3 person teams)
+            const rawTechs = String(j.techniciansSummary || j.responsibleTech || 'Unassigned');
+            const techTokens = rawTechs.split(/[,/&+]/).map(t => t.trim()).filter(Boolean);
+            const shareRev = techTokens.length > 0 ? (gt / techTokens.length) : gt;
+            techTokens.forEach(tName => {
+                const sObj = ensureStaff(tName);
+                sObj.jobs += 1;
+                if (st === 'Completed') sObj.completed += 1;
+                if (/pm|maintenance|clean/i.test(jType)) sObj.pmJobs += 1;
+                sObj.revenue += shareRev;
+                if (isRepeat) sObj.repeatCalls += 1;
+            });
+        });
+
+        outsourceSubs.forEach(o => {
+            const sObj = ensureStaff(o.responsibleTech || 'Outsource Partner');
+            sObj.isOutsource = true;
+        });
+
+        travelExps.forEach(e => {
+            const amt = Number(e.amount) || 0;
+            const sObj = ensureStaff(e.tech || 'Unassigned');
+            sObj.travelExp += amt;
+        });
+
+        let qtTotalVal = 0;
+        let qtApprovedVal = 0;
+        qts.forEach(q => {
+            const v = parseFloat(String(q.grandTotal || '0').replace(/,/g, '')) || 0;
+            qtTotalVal += v;
+            if (/approv|iv|re|paid/i.test(String(q.status || q.docType || ''))) qtApprovedVal += v;
+        });
+
+        const pmContractVal = pmContracts.reduce((s, c) => s + (Number(c.amount) || 0), 0);
+        const totalTravelExp = travelExps.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+        const ftfrPct = jobs.length > 0 ? Math.max(0, ((jobs.length - repeatSnCount) / jobs.length) * 100) : 100;
+        const qtWinRate = qtTotalVal > 0 ? Math.min(100, (qtApprovedVal / qtTotalVal) * 100) : 0;
+
+        const staffRanking = Object.values(staffStats).map(s => {
+            const indFtfr = s.jobs > 0 ? Math.max(0, ((s.jobs - s.repeatCalls) / s.jobs) * 100) : 100;
+            const compRate = s.jobs > 0 ? (s.completed / s.jobs) * 100 : 100;
+            const score = Math.round((indFtfr * 0.45) + (compRate * 0.35) + Math.min(20, s.jobs * 2));
+            return Object.assign(s, { ftfr: indFtfr.toFixed(1), compRate: compRate.toFixed(1), score: Math.min(100, score) });
+        }).sort((a, b) => b.score - a.score || b.jobs - a.jobs);
+
+        const topModels = Object.entries(modelCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+        const topSymptoms = Object.entries(symptomCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+        const forecastParts = Object.entries(partUsage).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([part, used]) => ({
+            part,
+            usedCount: used,
+            recommendedOrderQty: Math.max(2, Math.ceil(used * 1.35 + (pmContracts.length * 0.25)))
+        }));
+
+        return {
+            period,
+            totalJobs: jobs.length,
+            completedCount,
+            waitingCount,
+            pmJobCount,
+            repairRev,
+            qtCount: qts.length,
+            qtTotalVal,
+            qtApprovedVal,
+            qtWinRate: qtWinRate.toFixed(1),
+            pmContractCount: pmContracts.length,
+            pmContractVal,
+            totalTravelExp,
+            ftfrPct: ftfrPct.toFixed(1),
+            staffRanking,
+            topModels,
+            topSymptoms,
+            forecastParts
+        };
+    }
+
+    window.openMdBoardroomModal = function(tab) {
+        const modal = document.getElementById('hzkMdBoardroomModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        window.switchMdBoardroomTab(tab || 'OVERVIEW');
+    };
+
+    window.closeMdBoardroomModal = function() {
+        document.getElementById('hzkMdBoardroomModal')?.classList.add('hidden');
+    };
+
+    window.refreshMdBoardroomActiveTab = function() {
+        window.switchMdBoardroomTab(currentMdTab_);
+    };
+
+    window.switchMdBoardroomTab = function(tab) {
+        currentMdTab_ = tab || 'OVERVIEW';
+        const p1 = document.getElementById('mdOverviewPanel');
+        const p2 = document.getElementById('mdWorkforce360Panel');
+        const p3 = document.getElementById('mdParetoForecastPanel');
+        const b1 = document.getElementById('tabBtnMdOverview');
+        const b2 = document.getElementById('tabBtnMdWorkforce');
+        const b3 = document.getElementById('tabBtnMdPareto');
+        [p1, p2, p3].forEach(el => el?.classList.add('hidden'));
+        [b1, b2, b3].forEach(btn => { if (btn) btn.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold'; });
+
+        if (tab === 'WORKFORCE_360') {
+            p2?.classList.remove('hidden');
+            if (b2) b2.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            renderMdWorkforce360Panel_();
+        } else if (tab === 'PARETO_FORECAST') {
+            p3?.classList.remove('hidden');
+            if (b3) b3.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            renderMdParetoForecastPanel_();
+        } else {
+            p1?.classList.remove('hidden');
+            if (b1) b1.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            renderMdOverviewPanel_();
+        }
+    };
+
+    function renderMdOverviewPanel_() {
+        const panel = document.getElementById('mdOverviewPanel');
+        if (!panel) return;
+        const d = computeBoardroomDataset_();
+        const totalPipelineRev = d.repairRev + d.pmContractVal;
+
+        panel.innerHTML = `
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div class="bg-sky-50 border border-sky-200 rounded-xl p-3">
+                    <div class="text-[10.5px] font-bold text-sky-700">งานบริการรวม (Total Jobs)</div>
+                    <div class="text-xl font-black text-hoshizaki-navy mt-0.5">${d.totalJobs} <span class="text-xs font-normal">ใบงาน</span></div>
+                    <div class="text-[10px] text-emerald-700 font-bold mt-0.5">ปิดงานแล้ว ${d.completedCount} • รออะไหล่ ${d.waitingCount}</div>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                    <div class="text-[10.5px] font-bold text-emerald-700">อัตราซ่อมจบครั้งแรก (FTFR%)</div>
+                    <div class="text-xl font-black text-emerald-900 mt-0.5">${d.ftfrPct}%</div>
+                    <div class="text-[10px] text-slate-600 mt-0.5">เป้าหมายมาตรฐาน Hoshizaki ≥ 92%</div>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                    <div class="text-[10.5px] font-bold text-amber-800">รายได้งานซ่อม &amp; สัญญา PM</div>
+                    <div class="text-lg font-black text-hoshizaki-navy mt-0.5">${totalPipelineRev.toLocaleString('en-US', {maximumFractionDigits:0})} <span class="text-xs font-normal">THB</span></div>
+                    <div class="text-[10px] text-amber-900 font-bold mt-0.5">สัญญา PM Active: ${d.pmContractCount} ฉบับ (${d.pmContractVal.toLocaleString()} ฿)</div>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3">
+                    <div class="text-[10.5px] font-bold text-indigo-700">ยอดใบเสนอราคา &amp; ค่าเดินทางช่าง</div>
+                    <div class="text-lg font-black text-indigo-950 mt-0.5">${d.qtTotalVal.toLocaleString('en-US', {maximumFractionDigits:0})} <span class="text-xs font-normal">THB</span></div>
+                    <div class="text-[10px] text-slate-600 mt-0.5">เบิกทางด่วน/เดินทาง: ${d.totalTravelExp.toLocaleString()} THB</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="border border-slate-200 rounded-xl p-3 bg-white">
+                    <div class="font-extrabold text-hoshizaki-navy mb-2">📊 สัดส่วนรุ่นเครื่องที่เข้ารับบริการสูงสุด (Top Models)</div>
+                    ${d.topModels.length === 0 ? '<div class="text-slate-400 py-4">ยังไม่มีข้อมูลรุ่นเครื่องในใบงาน</div>' : d.topModels.map(([m, cnt]) => {
+                        const pct = d.totalJobs > 0 ? Math.round((cnt / d.totalJobs) * 100) : 0;
+                        return `<div class="mb-2">
+                            <div class="flex justify-between text-[11px] font-bold"><span>${m}</span><span>${cnt} งาน (${pct}%)</span></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-0.5"><div class="bg-hoshizaki-blue h-2" style="width:${pct}%"></div></div>
+                        </div>`;
+                    }).join('')}
+                </div>
+
+                <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 flex flex-col justify-between space-y-2">
+                    <div>
+                        <div class="font-extrabold text-hoshizaki-navy mb-1">📽️ ส่งออกสไลด์ประชุมผู้บริหาร / MD (Boardroom Presentation)</div>
+                        <p class="text-[11px] text-slate-600">สร้างชุดสไลด์นำเสนอ 5 หน้าพร้อมกราฟ KPI, รายได้, อันดับช่าง และแผนปฏิบัติการ ส่งออกเป็น PDF เข้าห้องประชุม MD ได้ทันที</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 pt-2">
+                        <button type="button" onclick="openBoardroomPresentationDeckWindow('TH')" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold py-2 rounded-xl">🇹🇭 สไลด์ภาษาไทย</button>
+                        <button type="button" onclick="openBoardroomPresentationDeckWindow('EN')" class="bg-sky-700 hover:bg-sky-800 text-white font-bold py-2 rounded-xl">🇬🇧 English Deck</button>
+                        <button type="button" onclick="openBoardroomPresentationDeckWindow('JP')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-xl">🇯🇵 日本語資料</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderMdWorkforce360Panel_() {
+        const panel = document.getElementById('mdWorkforce360Panel');
+        if (!panel) return;
+        const d = computeBoardroomDataset_();
+        panel.innerHTML = `
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 text-[11px] text-hoshizaki-navy font-semibold">
+                🎯 ระบบคำนวณคะแนนประสิทธิภาพรอบด้าน (360° Scorecard): คำนวณจาก <b>FTFR% (45%) + อัตราปิดงานสำเร็จ (35%) + ปริมาณงานสะสมทั้งงานเดี่ยวและทีม 2–3 คน (20%)</b> พร้อมแยกทีม Outsource
+            </div>
+            <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                <table class="w-full text-left border-collapse text-[11px]">
+                    <thead>
+                        <tr class="bg-hoshizaki-navy text-white">
+                            <th class="p-2">อันดับ</th>
+                            <th class="p-2">ชื่อผู้ปฏิบัติงาน / ทีม (Staff / Outsource)</th>
+                            <th class="p-2 text-center">ประเภท</th>
+                            <th class="p-2 text-center">ใบงานรวม</th>
+                            <th class="p-2 text-center">ปิดงานสำเร็จ</th>
+                            <th class="p-2 text-center">FTFR%</th>
+                            <th class="p-2 text-right">รายได้บริการ (THB)</th>
+                            <th class="p-2 text-right">เบิกทางด่วน/เดินทาง</th>
+                            <th class="p-2 text-center">KPI Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${d.staffRanking.length === 0 ? '<tr><td colspan="9" class="p-4 text-center text-slate-400">ยังไม่มีข้อมูลการปฏิบัติงานของช่าง</td></tr>' : d.staffRanking.map((s, idx) => `
+                            <tr class="border-b hover:bg-sky-50/50">
+                                <td class="p-2 font-extrabold text-hoshizaki-navy">#${idx + 1}</td>
+                                <td class="p-2 font-bold">${s.name}</td>
+                                <td class="p-2 text-center">${s.isOutsource ? '<span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold text-[10px]">Outsource</span>' : '<span class="bg-sky-100 text-sky-900 px-2 py-0.5 rounded font-bold text-[10px]">Hoshizaki Staff</span>'}</td>
+                                <td class="p-2 text-center font-bold">${s.jobs}</td>
+                                <td class="p-2 text-center text-emerald-700 font-bold">${s.completed} (${s.compRate}%)</td>
+                                <td class="p-2 text-center font-extrabold">${s.ftfr}%</td>
+                                <td class="p-2 text-right font-bold">${s.revenue.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                <td class="p-2 text-right text-slate-600">${s.travelExp.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                <td class="p-2 text-center"><span class="bg-emerald-600 text-white font-black px-2 py-0.5 rounded-full">${s.score}/100</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function renderMdParetoForecastPanel_() {
+        const panel = document.getElementById('mdParetoForecastPanel');
+        if (!panel) return;
+        const d = computeBoardroomDataset_();
+        panel.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="border border-slate-200 rounded-xl p-3 bg-white">
+                    <div class="font-extrabold text-hoshizaki-navy mb-2">🔍 Pareto Analysis: สาเหตุ/อาการเสียที่พบบ่อย (Quality Feedback)</div>
+                    ${d.topSymptoms.length === 0 ? '<div class="text-slate-400 py-4">ยังไม่มีข้อมูลอาการเสียในใบงาน</div>' : d.topSymptoms.map(([sym, cnt], i) => `
+                        <div class="p-2 border-b flex justify-between items-center text-[11px]">
+                            <span><b>${i + 1}.</b> ${sym}</span>
+                            <span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded">${cnt} ครั้ง</span>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="border border-slate-200 rounded-xl p-3 bg-amber-50/40">
+                    <div class="font-extrabold text-hoshizaki-navy mb-2">📦 AI Spare Parts Demand Forecast (แนะนำสั่งอะไหล่สำรอง 90 วัน)</div>
+                    ${d.forecastParts.length === 0 ? '<div class="text-slate-400 py-4">ยังไม่มีสถิติการใช้อะไหล่เพียงพอ</div>' : d.forecastParts.map(fp => `
+                        <div class="p-2 border-b flex justify-between items-center text-[11px]">
+                            <span class="font-semibold">${fp.part}</span>
+                            <span class="bg-emerald-700 text-white font-bold px-2 py-0.5 rounded">แนะนำสั่ง: ${fp.recommendedOrderQty} ชิ้น</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // One-Click Boardroom Presentation Window Generator (TH / EN / JP)
+    window.openBoardroomPresentationDeckWindow = function(lang) {
+        const L = lang || 'TH';
+        const d = computeBoardroomDataset_();
+        const titleMap = {
+            TH: 'รายงานสรุปผู้บริหารและกรรมการผู้จัดการ (MD Boardroom Presentation)',
+            EN: 'Executive & Managing Director Boardroom Service Report',
+            JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
+        };
+        const subMap = {
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1017',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1017)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1017)'
+        };
+
+        const deckHtml = `<!DOCTYPE html>
+<html lang="${L.toLowerCase()}">
+<head>
+<meta charset="UTF-8">
+<title>${titleMap[L]}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Noto+Sans+JP:wght@400;700;900&family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4 landscape; margin: 10mm; }
+  body { font-family: 'Prompt', 'Inter', 'Noto Sans JP', sans-serif; margin: 0; padding: 16px; background: #e2e8f0; color: #0f172a; }
+  .slide { width: 277mm; min-height: 185mm; margin: 0 auto 16px; background: #fff; border-radius: 14px; padding: 20px 26px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); page-break-after: always; display: flex; flex-direction: column; justify-content: space-between; }
+  @media print { body { background: #fff; padding: 0; } .slide { box-shadow: none; margin: 0; width: 100%; min-height: 185mm; } .no-print { display: none !important; } }
+  .hdr { background: linear-gradient(135deg, #002B49 0%, #0066a2 100%); color: #fff; padding: 14px 20px; border-radius: 10px; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 14px 0; }
+  .kpi { background: #F0F9FF; border-top: 4px solid #00A3E0; border-radius: 10px; padding: 12px; }
+  .kpi .v { font-size: 22px; font-weight: 800; color: #002B49; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
+  th { background: #002B49; color: #fff; }
+  .ftr { border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 10px; color: #475569; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="no-print" style="text-align:center;margin-bottom:12px;">
+  <button onclick="window.print()" style="background:#059669;color:#fff;border:none;padding:10px 22px;border-radius:10px;font-weight:800;cursor:pointer;font-size:14px;">🖨️ พิมพ์ / บันทึกสไลด์นำเสนอเป็น PDF (A4 Landscape)</button>
+</div>
+
+<!-- Slide 1: Executive KPI Overview -->
+<div class="slide">
+  <div>
+    <div class="hdr">
+      <div style="font-size:11px;color:#fde047;font-weight:700;">SLIDE 1 / 3 • EXECUTIVE KPI &amp; REVENUE SUMMARY (${L})</div>
+      <h1 style="margin:4px 0;font-size:20px;">${titleMap[L]}</h1>
+      <div style="font-size:12px;color:#e0f2fe;">${subMap[L]}</div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div>Total Service Jobs</div><div class="v">${d.totalJobs}</div><div>Completed: ${d.completedCount} | Backorder: ${d.waitingCount}</div></div>
+      <div class="kpi"><div>First-Time Fix Rate (FTFR)</div><div class="v">${d.ftfrPct}%</div><div>Target Benchmark: ≥ 92.0%</div></div>
+      <div class="kpi"><div>Service &amp; PM Contract Value</div><div class="v">${(d.repairRev + d.pmContractVal).toLocaleString()} ฿</div><div>Active PM Contracts: ${d.pmContractCount}</div></div>
+      <div class="kpi"><div>Quotation Pipeline &amp; Travel</div><div class="v">${d.qtTotalVal.toLocaleString()} ฿</div><div>Travel/Toll Expenses: ${d.totalTravelExp.toLocaleString()} ฿</div></div>
+    </div>
+    <h3 style="color:#002B49;margin:8px 0;">Top Equipment Models Serviced</h3>
+    <table>
+      <thead><tr><th>Model Series</th><th>Service Count</th><th>Share (%)</th></tr></thead>
+      <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1017 Live Report</span></div>
+</div>
+
+<!-- Slide 2: 360 Workforce & Outsource Scorecard -->
+<div class="slide">
+  <div>
+    <div class="hdr">
+      <div style="font-size:11px;color:#fde047;font-weight:700;">SLIDE 2 / 3 • 360° WORKFORCE &amp; OUTSOURCE PERFORMANCE SCORECARD</div>
+      <h2 style="margin:4px 0;font-size:18px;">ประสิทธิภาพผู้ปฏิบัติงานบริการและทีม Outsource (Workforce KPI)</h2>
+    </div>
+    <table style="margin-top:14px;">
+      <thead><tr><th>Rank</th><th>Technician / Partner</th><th>Type</th><th>Jobs</th><th>Completed</th><th>FTFR%</th><th>Service Revenue (THB)</th><th>Travel/Toll (THB)</th><th>Score</th></tr></thead>
+      <tbody>${(d.staffRanking.length ? d.staffRanking : [{name:'Service Team T01-T08', isOutsource:false, jobs:d.totalJobs, completed:d.completedCount, ftfr:d.ftfrPct, revenue:d.repairRev, travelExp:d.totalTravelExp, score:95}]).map((s, i) => `<tr><td>#${i+1}</td><td><b>${s.name}</b></td><td>${s.isOutsource?'Outsource':'Internal Staff'}</td><td>${s.jobs}</td><td>${s.completed}</td><td>${s.ftfr}%</td><td>${s.revenue.toLocaleString()}</td><td>${s.travelExp.toLocaleString()}</td><td><b>${s.score}/100</b></td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Slide 2 of 3</span></div>
+</div>
+
+<!-- Slide 3: Quality Pareto & Spare Parts Forecast -->
+<div class="slide">
+  <div>
+    <div class="hdr">
+      <div style="font-size:11px;color:#fde047;font-weight:700;">SLIDE 3 / 3 • QUALITY PARETO &amp; SPARE PARTS DEMAND FORECAST</div>
+      <h2 style="margin:4px 0;font-size:18px;">การวิเคราะห์สาเหตุอาการเสียและแผนพยากรณ์สั่งซื้ออะไหล่ล่วงหน้า 90 วัน</h2>
+    </div>
+    <table style="margin-top:14px;">
+      <thead><tr><th>Spare Part / Consumable Item</th><th>Historical Usage</th><th>Recommended 90-Day Stock Order</th></tr></thead>
+      <tbody>${(d.forecastParts.length ? d.forecastParts : [{part:'4HC-H Water Filter / Water Valve / Float Switch', usedCount:1, recommendedOrderQty:4}]).map(p => `<tr><td><b>${p.part}</b></td><td>${p.usedCount}</td><td><b>${p.recommendedOrderQty} pcs</b></td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Slide 3 of 3</span></div>
+</div>
+</body>
+</html>`;
+
+        const w = window.open('', '_blank');
+        if (w) {
+            w.document.open();
+            w.document.write(deckHtml);
+            w.document.close();
+        } else if (typeof showToast === 'function') {
+            showToast('กรุณาอนุญาต Pop-up เพื่อเปิดสไลด์นำเสนอครับ');
+        }
+    };
+
+    // =========================================================================
+    // 2. INSTALLATION COMMISSIONING HANDOVER & LOANER MACHINE TRACKER
+    // =========================================================================
+    window.openInstallAndLoanerModal = function(tab) {
+        const modal = document.getElementById('hzkInstallAndLoanerModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        window.switchInstallLoanerTab(tab || 'INSTALL');
+    };
+
+    window.closeInstallAndLoanerModal = function() {
+        document.getElementById('hzkInstallAndLoanerModal')?.classList.add('hidden');
+    };
+
+    window.switchInstallLoanerTab = function(tab) {
+        const p1 = document.getElementById('installHandoverPanel');
+        const p2 = document.getElementById('loanerMachinePanel');
+        const b1 = document.getElementById('tabBtnInstallHandover');
+        const b2 = document.getElementById('tabBtnLoanerTracker');
+        if (tab === 'LOANER') {
+            p1?.classList.add('hidden');
+            p2?.classList.remove('hidden');
+            if (b2) b2.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            if (b1) b1.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold';
+            renderLoanerMachinePanel_();
+        } else {
+            p2?.classList.add('hidden');
+            p1?.classList.remove('hidden');
+            if (b1) b1.className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+            if (b2) b2.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold';
+            renderInstallHandoverPanel_();
+        }
+    };
+
+    function renderInstallHandoverPanel_() {
+        const panel = document.getElementById('installHandoverPanel');
+        if (!panel) return;
+        const checks = [
+            '1. ตรวจสอบแรงดันไฟฟ้า 220–240V / 380V และสายดิน (Grounding) ตามมาตรฐาน',
+            '2. ตรวจสอบแรงดันน้ำประปา (0.07–0.8 MPa) และติดตั้งไส้กรองน้ำ 4HC-H เรียบร้อย',
+            '3. ตรวจสอบท่อระบายน้ำทิ้ง (Air Gap & Slope) ไม่พับงอและไม่มีน้ำรั่วซึม',
+            '4. ปรับระดับขาตั้งเครื่อง (Leveling) และเว้นระยะระบายอากาศรอบเครื่อง ≥ 15 ซม.',
+            '5. ล้างฆ่าเชื้อถังเก็บน้ำแข็ง/ภายในตู้แช่ก่อนเริ่มเดินเครื่องครั้งแรก',
+            '6. ทดสอบเดินเครื่องครบ 2 รอบการผลิต (Ice Harvest / Temp Pull-Down) ปกติ',
+            '7. แนะนำวิธีล้างแผ่นกรองฝุ่น Air Filter และการดูแลประจำวันให้พนักงานร้าน',
+            '8. ติดสติกเกอร์ QR Code ประจำเครื่องและส่งมอบคู่มือรับประกันเรียบร้อย'
+        ];
+        const logs = safeJsonArray_(INSTALL_LOG_KEY);
+
+        panel.innerHTML = `
+            <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 space-y-2">
+                <div class="font-extrabold text-hoshizaki-navy">แบบฟอร์มตรวจรับการติดตั้งและส่งมอบเครื่องใหม่ (Installation Commissioning Checklist)</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    ${checks.map((c, idx) => `
+                        <label class="flex items-start gap-2 bg-white p-2 rounded-lg border border-slate-200 cursor-pointer">
+                            <input type="checkbox" class="inst-chk mt-0.5" checked value="${c}">
+                            <span class="text-[11px] font-medium">${c}</span>
+                        </label>
+                    `).join('')}
+                </div>
+                <div class="flex justify-end pt-1">
+                    <button type="button" onclick="saveInstallationHandoverToJob()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl">
+                        ✅ บันทึกผลส่งมอบการติดตั้งลงใบงานปัจจุบัน
+                    </button>
+                </div>
+            </div>
+            <div class="space-y-1.5">
+                <div class="font-bold text-hoshizaki-navy">ประวัติการส่งมอบติดตั้งเครื่องใหม่ล่าสุด (${logs.length} รายการ):</div>
+                ${logs.slice(0, 8).map(l => `<div class="p-2 border rounded-lg bg-white flex justify-between"><span><b>${l.jobNo}</b> • ${l.store} (${l.model} / S/N: ${l.serial})</span><span class="text-emerald-700 font-bold">${l.date}</span></div>`).join('')}
+            </div>
+        `;
+    }
+
+    window.saveInstallationHandoverToJob = function() {
+        const checked = Array.from(document.querySelectorAll('.inst-chk:checked')).map(el => el.value);
+        const jobNo = document.getElementById('jobNo')?.value || ('INST-' + Date.now().toString().slice(-6));
+        const store = document.getElementById('storeName')?.value || '-';
+        const model = document.getElementById('machineModel')?.value || '-';
+        const serial = document.getElementById('serialNumber')?.value || '-';
+        const date = document.getElementById('jobDate')?.value || new Date().toISOString().slice(0, 10);
+
+        const jobTypeEl = document.getElementById('jobType');
+        if (jobTypeEl) jobTypeEl.value = 'Installation';
+        const actEl = document.getElementById('diagAction');
+        if (actEl) {
+            actEl.value = (actEl.value ? actEl.value + '\n' : '') + `[INSTALLATION COMMISSIONING PASSED: ${checked.length}/8 CHECKS]\n` + checked.join('\n');
+        }
+        const logs = safeJsonArray_(INSTALL_LOG_KEY);
+        logs.unshift({ jobNo, store, model, serial, date, passedCount: checked.length });
+        localStorage.setItem(INSTALL_LOG_KEY, JSON.stringify(logs));
+        window.closeInstallAndLoanerModal();
+        if (typeof showToast === 'function') showToast('✅ บันทึกเช็กลิสต์ติดตั้งและส่งมอบเครื่องใหม่ลงใบงานเรียบร้อย');
+    };
+
+    function renderLoanerMachinePanel_() {
+        const panel = document.getElementById('loanerMachinePanel');
+        if (!panel) return;
+        const list = safeJsonArray_(LOANER_STORAGE_KEY);
+        panel.innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 bg-amber-50/70 border border-amber-200 p-3 rounded-xl">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">รุ่นเครื่องสำรอง (Model):</label>
+                    <input type="text" id="loanerModelInp" list="hoshizakiModelsList" placeholder="เช่น IM-100NE" class="w-full border rounded-lg px-2 py-1.5 bg-white font-bold">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">S/N เครื่องสำรอง:</label>
+                    <input type="text" id="loanerSnInp" placeholder="เช่น LOANER-01" class="w-full border rounded-lg px-2 py-1.5 bg-white font-bold">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">ลูกค้าที่นำไปวาง:</label>
+                    <input type="text" id="loanerCustInp" value="${document.getElementById('storeName')?.value || ''}" class="w-full border rounded-lg px-2 py-1.5 bg-white">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">กำหนดวันรับคืน:</label>
+                    <div class="flex gap-1">
+                        <input type="date" id="loanerReturnDateInp" class="flex-1 border rounded-lg px-2 py-1.5 bg-white">
+                        <button type="button" onclick="addLoanerMachineRecord()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 rounded-lg">+ บันทึก</button>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-2">
+                ${list.length === 0 ? '<div class="text-slate-500 py-4 text-center">ยังไม่มีรายการเครื่องสำรองที่ออกไปวางหน้างาน</div>' : list.map(item => `
+                    <div class="p-2.5 rounded-xl border bg-white flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <div class="font-extrabold text-hoshizaki-navy">${item.model} (S/N: ${item.sn}) → ${item.customer}</div>
+                            <div class="text-[11px] text-slate-600">วันที่วางเครื่อง: ${item.outDate} • กำหนดรับคืน: <b>${item.returnDate || '-'}</b></div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded font-bold text-[10px] ${item.returned ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${item.returned ? 'รับคืนคลังแล้ว' : 'กำลังใช้งานที่ร้านลูกค้า'}</span>
+                            ${!item.returned ? `<button type="button" onclick="markLoanerReturned('${item.id}')" class="bg-emerald-600 text-white px-2.5 py-1 rounded font-bold text-[10.5px]">ยืนยันรับคืนคลัง</button>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    window.addLoanerMachineRecord = function() {
+        const model = (document.getElementById('loanerModelInp')?.value || '').trim();
+        const sn = (document.getElementById('loanerSnInp')?.value || '').trim();
+        const customer = (document.getElementById('loanerCustInp')?.value || '').trim();
+        const returnDate = document.getElementById('loanerReturnDateInp')?.value || '';
+        if (!model || !sn || !customer) {
+            if (typeof showToast === 'function') showToast('กรุณาระบุรุ่น S/N และชื่อลูกค้าครับ');
+            return;
+        }
+        const list = safeJsonArray_(LOANER_STORAGE_KEY);
+        list.unshift({
+            id: 'LN-' + Date.now().toString().slice(-6),
+            model, sn, customer,
+            outDate: new Date().toISOString().slice(0, 10),
+            returnDate,
+            returned: false
+        });
+        localStorage.setItem(LOANER_STORAGE_KEY, JSON.stringify(list));
+        renderLoanerMachinePanel_();
+        if (typeof showToast === 'function') showToast('✅ บันทึกการส่งเครื่องสำรองให้ลูกค้าเรียบร้อย');
+    };
+
+    window.markLoanerReturned = function(id) {
+        const list = safeJsonArray_(LOANER_STORAGE_KEY);
+        const item = list.find(x => x.id === id);
+        if (item) item.returned = true;
+        localStorage.setItem(LOANER_STORAGE_KEY, JSON.stringify(list));
+        renderLoanerMachinePanel_();
+        if (typeof showToast === 'function') showToast('✅ บันทึกรับคืนเครื่องสำรองเข้าคลังเรียบร้อย');
+    };
 })();
 </script>
 

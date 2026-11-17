@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1019-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1021-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -134,7 +134,7 @@ function installEnterpriseDailyTriggers() {
   ScriptApp.newTrigger('autoImportNavReportsFromGmail_').timeBased().everyHours(4).create();
   ScriptApp.newTrigger('rebuildDrivePdfIndexSheet').timeBased().everyDays(1).atHour(2).create();
   ScriptApp.newTrigger('archiveOldServiceJobsToYearlySheets').timeBased().onMonthDay(1).atHour(3).create();
-  Logger.log('✅ ติดตั้ง Enterprise v1019 Triggers ครบทั้งหมด 6 รายการเรียบร้อยแล้ว');
+  Logger.log('✅ ติดตั้ง Enterprise v1021 Triggers ครบทั้งหมด 6 รายการเรียบร้อยแล้ว');
 }
 
 function isLineTokenConfigured() {
@@ -245,6 +245,14 @@ function doPost(e) {
 
       if (action === 'RESTORE_LATEST_NIGHTLY_BACKUP_TO_SHEETS') {
         return jsonOut(restoreLatestNightlyBackupToSheets_(ss));
+      }
+
+      if (action === 'SYNC_OUTSOURCE_RATE_CARD') {
+        return jsonOut(syncOutsourceRateCardToSheet_(ss, data));
+      }
+
+      if (action === 'UPSERT_DEDUPLICATED_MASTER_BATCH') {
+        return jsonOut(upsertDeduplicatedMasterBatch_(ss, data));
       }
 
       // --- Core Existing Endpoints ---
@@ -763,6 +771,10 @@ function doGet(e) {
     return jsonOut(getCompanyStaffDirectory_(ss));
   }
 
+  if (action === 'getOutsourceRateCard') {
+    return jsonOut(getOutsourceRateCardFromSheet_(ss));
+  }
+
   if (action === 'getLiveTechGpsRadar') {
     return jsonOut(getLiveTechGpsRadar_(ss));
   }
@@ -993,7 +1005,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1019-FINAL',
+    version: 'Enterprise-v1021-FINAL',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1026,7 +1038,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1019-FINAL',
+    version: 'Enterprise-v1021-FINAL',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -6984,4 +6996,160 @@ function restoreLatestNightlyBackupToSheets_(ss) {
     restoredSheetsCount: restoredSheets.length,
     restoredSheets: restoredSheets
   };
+}
+
+
+// ============================================================================
+// 18. ENTERPRISE v1021 SMART EXCEL DEDUPLICATION ENGINE & OUTSOURCE RATE CARD
+// ============================================================================
+
+function syncOutsourceRateCardToSheet_(ss, data) {
+  var sheet = ss.getSheetByName('Outsource_Service_Rates');
+  if (!sheet) {
+    sheet = ss.insertSheet('Outsource_Service_Rates');
+    sheet.getRange(1, 1, 1, 12).setValues([[
+      'Rate ID', 'Vendor Name', 'Quotation Ref', 'Service Hub', 'Region',
+      'Province / City', 'Check/Install (THB)', 'Electrical (THB)', 'Cooling (THB)',
+      'Compressor (THB)', 'SLA', 'Conditions JSON'
+    ]]).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+  var rates = Array.isArray(data.rates) ? data.rates : [];
+  if (sheet.getLastRow() > 1) {
+    sheet.getRange(2, 1, sheet.getLastRow() - 1, 12).clearContent();
+  }
+  if (rates.length > 0) {
+    var rows = rates.map(function(r, idx) {
+      return [
+        String(r.id || ('LSS-' + (idx + 1))),
+        String(r.vendor || 'Lucky Star Solution Co., Ltd.'),
+        String(r.refNo || 'LSS-2025/2/13'),
+        String(r.hub || ''),
+        String(r.region || ''),
+        String(r.city || ''),
+        Number(r.checkInstall || 0),
+        Number(r.electrical || 0),
+        Number(r.cooling || 0),
+        Number(r.compressor || 0),
+        String(r.sla || '24-48 hr'),
+        JSON.stringify(r.conditions || {})
+      ];
+    });
+    sheet.getRange(2, 1, rows.length, 12).setValues(rows);
+  }
+  return { status: 'ok', count: rates.length };
+}
+
+function getOutsourceRateCardFromSheet_(ss) {
+  var sheet = ss.getSheetByName('Outsource_Service_Rates');
+  if (!sheet || sheet.getLastRow() < 2) return { status: 'ok', rates: [] };
+  var vals = sheet.getRange(2, 1, sheet.getLastRow() - 1, 12).getValues();
+  var rates = vals.map(function(r) {
+    var cond = {};
+    try { cond = JSON.parse(String(r[11] || '{}')); } catch (e) {}
+    return {
+      id: r[0], vendor: r[1], refNo: r[2], hub: r[3], region: r[4], city: r[5],
+      checkInstall: Number(r[6] || 0), electrical: Number(r[7] || 0),
+      cooling: Number(r[8] || 0), compressor: Number(r[9] || 0),
+      sla: r[10], conditions: cond
+    };
+  });
+  return { status: 'ok', rates: rates };
+}
+
+function upsertDeduplicatedMasterBatch_(ss, data) {
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var addedQt = 0, addedSn = 0, addedParts = 0;
+
+  // 1. Deduplicated Quotation Archive Upsert by Offer No.
+  if (Array.isArray(data.quotations) && data.quotations.length > 0) {
+    var qaSheet = ss.getSheetByName('Quotation_Archive_Master');
+    if (!qaSheet) {
+      qaSheet = ss.insertSheet('Quotation_Archive_Master');
+      qaSheet.getRange(1, 1, 1, 8).setValues([['Serial No.', 'Date', 'Offer No.', 'Customer', 'Model', 'Model/Detail Line', 'Items Summary', 'Grand Total (THB)']])
+        .setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+      qaSheet.setFrozenRows(1);
+    }
+    var existingOffers = {};
+    if (qaSheet.getLastRow() >= 2) {
+      var oVals = qaSheet.getRange(2, 3, qaSheet.getLastRow() - 1, 1).getValues();
+      oVals.forEach(function(r) { if (r[0]) existingOffers[String(r[0]).trim().toUpperCase()] = true; });
+    }
+    var newQaRows = [];
+    data.quotations.forEach(function(q) {
+      var oKey = String(q.o || '').trim().toUpperCase();
+      if (oKey && !existingOffers[oKey]) {
+        existingOffers[oKey] = true;
+        newQaRows.push([String(q.sn || '').toUpperCase(), String(q.dt || ''), oKey, String(q.s || ''), String(q.m || ''), String(q.ml || ''), String(q.sum || ''), Number(q.gt || 0)]);
+        addedQt++;
+      }
+    });
+    if (newQaRows.length > 0) {
+      qaSheet.getRange(qaSheet.getLastRow() + 1, 1, newQaRows.length, 8).setValues(newQaRows);
+    }
+  }
+
+  // 2. Deduplicated Serial Master Upsert by Serial No.
+  if (Array.isArray(data.serials) && data.serials.length > 0) {
+    var smSheet = ss.getSheetByName('Serial_Database_Master');
+    if (!smSheet) {
+      smSheet = ss.insertSheet('Serial_Database_Master');
+      smSheet.getRange(1, 1, 1, 8).setValues([['Serial No.', 'Product Type', 'Model', 'Date Out', 'Invoice No.', 'Customer', 'PO No.', 'Updated At']])
+        .setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+      smSheet.setFrozenRows(1);
+    }
+    var existingSns = {};
+    if (smSheet.getLastRow() >= 2) {
+      var sVals = smSheet.getRange(2, 1, smSheet.getLastRow() - 1, 1).getValues();
+      sVals.forEach(function(r) { if (r[0]) existingSns[String(r[0]).trim().toUpperCase()] = true; });
+    }
+    var newSnRows = [];
+    data.serials.forEach(function(s) {
+      var snKey = String(s.serial || '').trim().toUpperCase();
+      if (snKey && !existingSns[snKey]) {
+        existingSns[snKey] = true;
+        newSnRows.push([snKey, String(s.productType || ''), String(s.model || ''), String(s.dateOut || ''), String(s.invoiceNo || ''), String(s.customer || ''), String(s.poNo || ''), nowStr]);
+        addedSn++;
+      }
+    });
+    if (newSnRows.length > 0) {
+      smSheet.getRange(smSheet.getLastRow() + 1, 1, newSnRows.length, 8).setValues(newSnRows);
+    }
+  }
+
+  // 3. Deduplicated Parts Catalog Upsert by Part No.
+  if (Array.isArray(data.parts) && data.parts.length > 0) {
+    var pSheet = ss.getSheetByName('Parts_Catalog_Master');
+    if (!pSheet) {
+      pSheet = ss.insertSheet('Parts_Catalog_Master');
+      pSheet.getRange(1, 1, 1, 5).setValues([['Part No.', 'Description', 'Price (THB)', 'Compatible Models', 'Updated At']])
+        .setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+      pSheet.setFrozenRows(1);
+    }
+    var existingParts = {};
+    if (pSheet.getLastRow() >= 2) {
+      var pVals = pSheet.getRange(2, 1, pSheet.getLastRow() - 1, 1).getValues();
+      pVals.forEach(function(r, i) { if (r[0]) existingParts[String(r[0]).trim().toUpperCase()] = i + 2; });
+    }
+    var newPartRows = [];
+    data.parts.forEach(function(p) {
+      var pKey = String(p.partNo || '').trim().toUpperCase();
+      if (!pKey) return;
+      var modelsStr = Array.isArray(p.models) ? p.models.join(', ') : String(p.models || '');
+      if (existingParts[pKey]) {
+        var rIdx = existingParts[pKey];
+        if (Number(p.price || 0) > 0) pSheet.getRange(rIdx, 3).setValue(Number(p.price));
+        pSheet.getRange(rIdx, 5).setValue(nowStr);
+      } else {
+        existingParts[pKey] = -1;
+        newPartRows.push([pKey, String(p.desc || ''), Number(p.price || 0), modelsStr, nowStr]);
+        addedParts++;
+      }
+    });
+    if (newPartRows.length > 0) {
+      pSheet.getRange(pSheet.getLastRow() + 1, 1, newPartRows.length, 5).setValues(newPartRows);
+    }
+  }
+
+  return { status: 'ok', addedQuotations: addedQt, addedSerials: addedSn, addedParts: addedParts };
 }

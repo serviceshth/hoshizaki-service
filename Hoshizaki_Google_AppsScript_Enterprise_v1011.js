@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1017-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1018-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -134,7 +134,7 @@ function installEnterpriseDailyTriggers() {
   ScriptApp.newTrigger('autoImportNavReportsFromGmail_').timeBased().everyHours(4).create();
   ScriptApp.newTrigger('rebuildDrivePdfIndexSheet').timeBased().everyDays(1).atHour(2).create();
   ScriptApp.newTrigger('archiveOldServiceJobsToYearlySheets').timeBased().onMonthDay(1).atHour(3).create();
-  Logger.log('✅ ติดตั้ง Enterprise v1017 Triggers ครบทั้งหมด 6 รายการเรียบร้อยแล้ว');
+  Logger.log('✅ ติดตั้ง Enterprise v1018 Triggers ครบทั้งหมด 6 รายการเรียบร้อยแล้ว');
 }
 
 function isLineTokenConfigured() {

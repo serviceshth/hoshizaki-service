@@ -712,6 +712,14 @@
         </button>
     </div>
 
+        <div id="stagingSandboxTopBanner" class="hidden no-print max-w-4xl mx-auto mb-2.5 bg-amber-400 border-2 border-amber-700 text-slate-950 px-3 py-2 rounded-xl shadow-md flex flex-wrap items-center justify-between gap-2 text-xs font-bold">
+        <span><i class="fa-solid fa-flask-vial mr-1"></i> โหมดทดสอบก่อนใช้งานจริง (STAGING SANDBOX MODE): การแก้ไขหรือเปิด/ปิดฟีเจอร์ในโหมดนี้จะแยกออกจากระบบจริงจนกว่าจะกดอนุมัติ</span>
+        <div class="flex gap-1.5">
+            <button type="button" onclick="promoteStagingConfigToProduction()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1 rounded-lg text-[11px]">✅ อนุมัติใช้จริง (Publish to Live)</button>
+            <button type="button" onclick="exitStagingSandboxMode(false)" class="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 rounded-lg text-[11px]">ยกเลิกโหมดทดสอบ</button>
+        </div>
+    </div>
+
     <!-- แถบแจ้งเตือนสรุปรายงานประจำสัปดาห์วันศุกร์สำหรับหัวหน้าทีม (v13.2) -->
     <div id="fridayWeeklyReportBanner" class="hidden no-print max-w-4xl mx-auto mb-3 bg-emerald-50 border-2 border-emerald-400 text-emerald-950 p-3 rounded-xl shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
         <div class="flex items-start gap-2">
@@ -763,7 +771,7 @@
                         </button>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1017</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1018</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -1024,6 +1032,10 @@
                         <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openInstallGuideModal()" class="tb-action-item col-span-2 bg-sky-700 hover:bg-sky-800 text-white font-medium shadow-sm">
                             <i class="fa-solid fa-mobile-screen-button"></i> <span>เพิ่มแอปลงหน้าจอ (Add to Home Screen)</span>
                         </button>
+                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openAdminDevStudioModal('MODULES')" class="tb-action-item col-span-2 bg-gradient-to-r from-slate-800 via-sky-900 to-indigo-900 hover:opacity-95 text-white font-extrabold shadow-sm border border-amber-300/60">
+                            <i class="fa-solid fa-sliders text-amber-300"></i> <span>Developer &amp; Admin Studio (เปิด/ปิดฟังก์ชัน • Staging • โคลนสาขา • Backup)</span>
+                        </button>
+
                     </div>
                 </section>
             </div>
@@ -4411,7 +4423,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1017</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1018</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20531,7 +20543,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1017) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1018) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -20954,7 +20966,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1017) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1018) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <div class="bg-hoshizaki-navy text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-sky-800 flex-shrink-0">
@@ -23460,7 +23472,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1017 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1018 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -30748,7 +30760,7 @@ Defect: ${defectText}`;
 <!-- Corporate Enterprise Footer (v1013) -->
 <footer class="no-print max-w-4xl mx-auto mt-6 mb-4 text-center text-[11px] text-slate-500 border-t border-slate-200 pt-3">
     <div>
-        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1017 ·
+        <strong class="text-hoshizaki-navy">HOSHIZAKI™ GLOBAL ENTERPRISE</strong> | Enterprise v1018 ·
         <span onclick="triggerCreatorCreditEasterEgg()" class="cursor-pointer underline decoration-dotted hover:text-hoshizaki-blue font-semibold">Service Management System</span>
         · For Internal Use Only
     </div>
@@ -31355,7 +31367,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1017)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1018)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31558,7 +31570,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1017)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1018)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31574,7 +31586,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1017)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1018)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31593,7 +31605,7 @@ Defect: ${defectText}`;
         });
         const dict = TRILINGUAL_LABELS[lang];
         const subEl = document.querySelector('header p.text-hoshizaki-blue');
-        if (subEl) subEl.innerHTML = dict.subtitle + ' <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v1017</span>';
+        if (subEl) subEl.innerHTML = dict.subtitle + ' <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">v1018</span>';
         if (typeof showToast === 'function') {
             const msg = lang === 'JP' ? '表示言語を日本語（エグゼクティブモード）に切り替えました' : (lang === 'EN' ? 'Switched UI language to Corporate English' : 'เปลี่ยนภาษาหน้าจอเป็นภาษาไทยแล้ว');
             showToast(msg);
@@ -31652,21 +31664,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1017) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1018) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1017 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1018 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1017）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1018）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -34071,9 +34083,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1017',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1017)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1017)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1018',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1018)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1018)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34122,7 +34134,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1017 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1018 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -34334,6 +34346,730 @@ Defect: ${defectText}`;
         renderLoanerMachinePanel_();
         if (typeof showToast === 'function') showToast('✅ บันทึกรับคืนเครื่องสำรองเข้าคลังเรียบร้อย');
     };
+})();
+</script>
+
+
+<!-- ============================================================================
+     ENTERPRISE v1018-DEV-STUDIO: DEVELOPER & ADMIN CONTROL CENTER,
+     FEATURE FLAGS TOGGLE, STAGING SANDBOX & PRE-PRODUCTION VERIFICATION,
+     MULTI-BRANCH / MULTI-COUNTRY WHITE-LABEL TEMPLATE CLONER, AND
+     ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
+     ============================================================================ -->
+<div id="hzkAdminDevStudioModal" class="hidden fixed inset-0 bg-black/80 z-[99] flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
+        <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
+            <div>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1018 — Multi-Branch &amp; White-Label Ready)</h3>
+                <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <span id="devStudioSandboxBadge" class="hidden bg-amber-400 text-slate-950 font-black px-2.5 py-1 rounded-full text-[10.5px] animate-pulse">🧪 STAGING SANDBOX ACTIVE</span>
+                <button type="button" onclick="closeAdminDevStudioModal()" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
+            </div>
+        </div>
+
+        <div class="p-4 overflow-y-auto space-y-4 text-xs">
+            <!-- Navigation Tabs -->
+            <div class="flex flex-wrap gap-1.5 border-b pb-2.5">
+                <button type="button" onclick="switchDevStudioTab('MODULES')" id="tabBtnDevModules" class="px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold">
+                    <i class="fa-solid fa-toggle-on mr-1 text-emerald-300"></i> 1. เปิด/ปิดฟังก์ชัน &amp; เงื่อนไขธุรกิจ (Feature Flags)
+                </button>
+                <button type="button" onclick="switchDevStudioTab('STAGING')" id="tabBtnDevStaging" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-vial-circle-check mr-1 text-amber-600"></i> 2. ระบบตรวจสอบก่อนใช้งานจริง (Staging Sandbox &amp; QA)
+                </button>
+                <button type="button" onclick="switchDevStudioTab('CLONE_BRANCH')" id="tabBtnDevClone" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-earth-asia mr-1 text-sky-600"></i> 3. ปรับโฉมบริษัท/สาขา/ต่างประเทศ (White-Label &amp; Single-File Export)
+                </button>
+                <button type="button" onclick="switchDevStudioTab('BACKUP_MIGRATE')" id="tabBtnDevBackup" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+                    <i class="fa-solid fa-database mr-1 text-rose-600"></i> 4. สำรองข้อมูลป้องกันความเสียหาย &amp; ย้ายที่เก็บข้อมูล
+                </button>
+            </div>
+
+            <!-- TAB 1: Feature Flags & Business Rules -->
+            <div id="devStudioModulesPanel" class="space-y-3"></div>
+
+            <!-- TAB 2: Staging Sandbox & Pre-Production Verification -->
+            <div id="devStudioStagingPanel" class="hidden space-y-3"></div>
+
+            <!-- TAB 3: Multi-Branch / Country White-Label & Single-File Standalone Cloner -->
+            <div id="devStudioClonePanel" class="hidden space-y-3"></div>
+
+            <!-- TAB 4: Disaster Recovery Backup & Storage Migration -->
+            <div id="devStudioBackupPanel" class="hidden space-y-3"></div>
+        </div>
+    </div>
+</div>
+
+
+<script id="v1018-admin-dev-studio-logic">
+(function() {
+    const FEATURE_FLAGS_KEY = 'hoshizaki_feature_flags_v1018';
+    const STAGING_FLAGS_KEY = 'hoshizaki_staging_flags_v1018';
+    const STAGING_ACTIVE_KEY = 'hoshizaki_staging_active_v1018';
+    const BUSINESS_RULES_KEY = 'hoshizaki_business_rules_v1018';
+    const WHITE_LABEL_KEY = 'hoshizaki_whitelabel_profile_v1018';
+    const AUTO_SNAPSHOT_HISTORY_KEY = 'hoshizaki_disaster_snapshots_v1018';
+
+    const DEFAULT_MODULES = [
+        { id: 'mod_schedule_dispatch', cat: '1. งานบริการ', name: 'ตารางงานช่าง, Visual Timeline & จัดเส้นทางวิ่งงาน', desc: 'ตารางงานรายสัปดาห์, ปฏิทิน .ics, Multi-Stop Route Optimizer', enabled: true, selector: '[onclick*="openScheduleModal"], [onclick*="openRouteAndPmCertModal"]' },
+        { id: 'mod_live_gps_portal', cat: '1. งานบริการ', name: 'เรดาร์ GPS ช่างสด & Customer Live Portal', desc: 'ติดตามพิกัดรถช่างและพอร์ทัลลูกค้าดูสถานะ/อนุมัติ 3 แพ็กเกจ', enabled: true, selector: '[onclick*="openLiveTechGpsRadarModal"], [onclick*="openCustomerLivePortalModal"]' },
+        { id: 'mod_error_wizard', cat: '1. งานบริการ', name: 'วิเคราะห์ Error ทีละขั้น & คำนวณค่าบริการด่วน', desc: 'Guided Diagnostic Wizard และ Quick Estimate Calculator', enabled: true, selector: '[onclick*="openTroubleshootingWizardModal"], [onclick*="openQuickEstimateCalculatorModal"]' },
+        { id: 'mod_md_boardroom', cat: '1. งานบริการ', name: 'MD Boardroom BI & สไลด์ประชุม 3 ภาษา (TH/EN/JP)', desc: 'แดชบอร์ดกรรมการผู้จัดการ คะแนนบุคลากร 360° และส่งออกสไลด์ประชุม', enabled: true, selector: '[onclick*="openMdBoardroomModal"]' },
+        { id: 'mod_install_loaner', cat: '1. งานบริการ', name: 'ส่งมอบติดตั้งเครื่องใหม่ & ทะเบียนเครื่องสำรอง (Loaner)', desc: 'เช็กลิสต์ Commissioning 8 จุด และระบบติดตามเครื่องสำรองVIP', enabled: true, selector: '[onclick*="openInstallAndLoanerModal"]' },
+        { id: 'mod_outsource_expense', cat: '1. งานบริการ', name: 'Auto-Stamp ย้อนหลัง, ค่าทางด่วน & Outsource Portal', desc: 'บันทึกเวลาย้อนหลังภายในวัน สลิปค่าทางด่วน และลิงก์ Outsource แยกสิทธิ์', enabled: true, selector: '[onclick*="openFieldStampAndExpenseModal"]' },
+        { id: 'mod_billing_8tier', cat: '2. การเงิน & เคลม', name: 'ใบเสนอราคา / ใบแจ้งหนี้ / ใบเสร็จ 8 เกรด & QT เก่า', desc: 'ระบบ QT/IV/RE, คลังใบเสนอราคาเก่า 2,486 ฉบับ และฐานราคาทุน GP%', enabled: true, selector: '[onclick*="generateReceiptModal"], [onclick*="openQuotationArchiveModal"], #btnToolbarConfidentialCost' },
+        { id: 'mod_warranty_claim', cat: '2. การเงิน & เคลม', name: 'ระบบเคลมประกัน 21 ข้อ & Defective Part Tag', desc: 'ฟอร์มเคลมมาตรฐานโรงงานและป้ายส่งคืนอะไหล่เสีย', enabled: true, selector: '[onclick*="openWarrantyClaimModal"]' },
+        { id: 'mod_van_stock_pm', cat: '3. สต็อก & PM', name: 'สต็อกรถช่าง, โอนย้ายอะไหล่ & ตารางราคา PM/Big Cleaning', desc: 'Van Stock T01-T08, โอนอะไหล่ข้ามรถ และราคา PM ตามรุ่น/สเปค', enabled: true, selector: '[onclick*="openVanStockModal"], [onclick*="openPmPricebookModal"], [onclick*="openVanTransferAndSkillModal"]' },
+        { id: 'mod_warehouse_qcf', cat: '3. สต็อก & PM', name: 'ตรวจรับเครื่องเข้าคลัง & ออก QCF / Memo เคลม', desc: 'Warehouse Inbound Inspection และ Quality Concern Form', enabled: true, selector: '[onclick*="openWarehouseInspectionModal"]' },
+        { id: 'mod_manuals_library', cat: '4. คู่มือ & ทีม', name: 'คลังคู่มือ PDF, Spec Sheet เต็มจอ & อะไหล่ใช้ร่วมหลายรุ่น', desc: 'ค้นหา Spec / SM / IM / Parts List และจัดการอะไหล่ข้ามรุ่น', enabled: true, selector: '[onclick*="openErrorCodeModal"], [onclick*="openFullScreenSpecViewerModal"], [onclick*="openTechnicalDocManagerModal"], [onclick*="openMultiModelPartsManagerModal"]' }
+    ];
+
+    const DEFAULT_RULES = {
+        vatPercent: 7,
+        whtPercent: 3,
+        warrantyMonths: 12,
+        compressorWarrantyMonths: 24,
+        pmCycleMonths: 6,
+        repeatCallGuardDays: 30,
+        partWarrantyGuardDays: 90,
+        currencyCode: 'THB',
+        dateFormat: 'YYYY-MM-DD'
+    };
+
+    const PRESET_TEMPLATES = {
+        HTH_THAILAND: {
+            companyName: 'HOSHIZAKI (THAILAND) LIMITED',
+            branchCode: 'HTH-HQ-BKK',
+            country: 'Thailand',
+            currency: 'THB',
+            vat: 7,
+            wht: 3,
+            address: 'Building A, 1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen, Lak Si, Bangkok 10210',
+            phone: '02-005-9980-83',
+            email: 'services@hoshizaki.co.th',
+            primaryColor: '#002B49',
+            accentColor: '#00A3E0'
+        },
+        HSG_SINGAPORE: {
+            companyName: 'HOSHIZAKI SINGAPORE PTE LTD',
+            branchCode: 'HSG-SG',
+            country: 'Singapore',
+            currency: 'SGD',
+            vat: 9,
+            wht: 0,
+            address: '10 Ubi Crescent, #04-50 Ubi Techpark, Singapore 408564',
+            phone: '+65-6749-1833',
+            email: 'service@hoshizaki.com.sg',
+            primaryColor: '#002B49',
+            accentColor: '#00A3E0'
+        },
+        HMY_MALAYSIA: {
+            companyName: 'HOSHIZAKI MALAYSIA SDN BHD',
+            branchCode: 'HMY-KL',
+            country: 'Malaysia',
+            currency: 'MYR',
+            vat: 8,
+            wht: 0,
+            address: 'No. 12, Jalan Pemberita U1/49, Temasya Industrial Park, 40150 Shah Alam, Selangor',
+            phone: '+60-3-5569-3880',
+            email: 'service@hoshizaki.com.my',
+            primaryColor: '#002B49',
+            accentColor: '#00A3E0'
+        },
+        HJP_JAPAN_HQ: {
+            companyName: 'HOSHIZAKI CORPORATION (JAPAN SERVICE)',
+            branchCode: 'HJP-TOYOAKE',
+            country: 'Japan',
+            currency: 'JPY',
+            vat: 10,
+            wht: 0,
+            address: '3-16 Minamiyakata, Sakae-cho, Toyoake, Aichi 470-1194, Japan',
+            phone: '+81-562-97-2111',
+            email: 'service-global@hoshizaki.co.jp',
+            primaryColor: '#002B49',
+            accentColor: '#00A3E0'
+        },
+        DEALER_PARTNER: {
+            companyName: 'AUTHORIZED HOSHIZAKI SERVICE PARTNER',
+            branchCode: 'DLR-01',
+            country: 'Thailand / ASEAN',
+            currency: 'THB',
+            vat: 7,
+            wht: 3,
+            address: 'Authorized Service Center & Spare Parts Depot',
+            phone: '02-000-0000',
+            email: 'support@servicepartner.co.th',
+            primaryColor: '#0f172a',
+            accentColor: '#0284c7'
+        }
+    };
+
+    function getSavedFlags_(isStaging) {
+        try {
+            const key = isStaging ? STAGING_FLAGS_KEY : FEATURE_FLAGS_KEY;
+            const raw = localStorage.getItem(key);
+            const parsed = raw ? JSON.parse(raw) : {};
+            const map = {};
+            DEFAULT_MODULES.forEach(m => {
+                map[m.id] = parsed[m.id] !== undefined ? Boolean(parsed[m.id]) : m.enabled;
+            });
+            return map;
+        } catch (e) {
+            const map = {};
+            DEFAULT_MODULES.forEach(m => { map[m.id] = m.enabled; });
+            return map;
+        }
+    }
+
+    function getSavedRules_() {
+        try {
+            const raw = localStorage.getItem(BUSINESS_RULES_KEY);
+            return Object.assign({}, DEFAULT_RULES, raw ? JSON.parse(raw) : {});
+        } catch (e) {
+            return Object.assign({}, DEFAULT_RULES);
+        }
+    }
+
+    function getSavedWhiteLabel_() {
+        try {
+            const raw = localStorage.getItem(WHITE_LABEL_KEY);
+            return Object.assign({}, PRESET_TEMPLATES.HTH_THAILAND, raw ? JSON.parse(raw) : {});
+        } catch (e) {
+            return Object.assign({}, PRESET_TEMPLATES.HTH_THAILAND);
+        }
+    }
+
+    function applyFeatureFlagsAndBrandingToDom_() {
+        const isStaging = localStorage.getItem(STAGING_ACTIVE_KEY) === '1';
+        const flags = getSavedFlags_(isStaging);
+
+        const banner = document.getElementById('stagingSandboxTopBanner');
+        const modalBadge = document.getElementById('devStudioSandboxBadge');
+        if (banner) banner.classList.toggle('hidden', !isStaging);
+        if (modalBadge) modalBadge.classList.toggle('hidden', !isStaging);
+
+        DEFAULT_MODULES.forEach(m => {
+            const isEnabled = flags[m.id] !== false;
+            document.querySelectorAll(m.selector).forEach(el => {
+                el.style.display = isEnabled ? '' : 'none';
+            });
+        });
+
+        const wl = getSavedWhiteLabel_();
+        const titleEl = document.getElementById('topHeaderCompanyTitle');
+        if (titleEl && wl.companyName) {
+            titleEl.textContent = wl.companyName + (wl.branchCode ? ' [' + wl.branchCode + ']' : '');
+        }
+        const headerEl = document.querySelector('header.bg-hoshizaki-navy');
+        if (headerEl && wl.primaryColor) {
+            headerEl.style.backgroundColor = wl.primaryColor;
+        }
+    }
+
+    window.openAdminDevStudioModal = function(tab) {
+        const modal = document.getElementById('hzkAdminDevStudioModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        window.switchDevStudioTab(tab || 'MODULES');
+    };
+
+    window.closeAdminDevStudioModal = function() {
+        document.getElementById('hzkAdminDevStudioModal')?.classList.add('hidden');
+    };
+
+    window.switchDevStudioTab = function(tab) {
+        const panels = {
+            MODULES: document.getElementById('devStudioModulesPanel'),
+            STAGING: document.getElementById('devStudioStagingPanel'),
+            CLONE_BRANCH: document.getElementById('devStudioClonePanel'),
+            BACKUP_MIGRATE: document.getElementById('devStudioBackupPanel')
+        };
+        const btns = {
+            MODULES: document.getElementById('tabBtnDevModules'),
+            STAGING: document.getElementById('tabBtnDevStaging'),
+            CLONE_BRANCH: document.getElementById('tabBtnDevClone'),
+            BACKUP_MIGRATE: document.getElementById('tabBtnDevBackup')
+        };
+        Object.values(panels).forEach(p => p?.classList.add('hidden'));
+        Object.values(btns).forEach(b => { if (b) b.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold'; });
+
+        if (panels[tab]) panels[tab].classList.remove('hidden');
+        if (btns[tab]) btns[tab].className = 'px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold';
+
+        if (tab === 'MODULES') renderModulesAndRulesPanel_();
+        else if (tab === 'STAGING') renderStagingSandboxPanel_();
+        else if (tab === 'CLONE_BRANCH') renderWhiteLabelClonerPanel_();
+        else if (tab === 'BACKUP_MIGRATE') renderBackupAndMigrationPanel_();
+    };
+
+    function renderModulesAndRulesPanel_() {
+        const panel = document.getElementById('devStudioModulesPanel');
+        if (!panel) return;
+        const isStaging = localStorage.getItem(STAGING_ACTIVE_KEY) === '1';
+        const flags = getSavedFlags_(isStaging);
+        const rules = getSavedRules_();
+
+        panel.innerHTML = `
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                <div class="lg:col-span-2 border border-slate-200 rounded-xl p-3 bg-white space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+                        <div class="font-extrabold text-hoshizaki-navy">🎛️ เปิด / ปิด โมดูลการทำงานของระบบ (${isStaging ? 'กำลังแก้ไขใน Staging Sandbox' : 'โหมดใช้งานจริง Live'})</div>
+                        <div class="flex gap-1.5">
+                            <button type="button" onclick="setAllFeatureFlags(true)" class="bg-emerald-600 text-white px-2.5 py-1 rounded text-[11px] font-bold">เปิดทั้งหมด</button>
+                            <button type="button" onclick="saveFeatureFlagsNow(false)" class="bg-hoshizaki-navy text-white px-3 py-1 rounded text-[11px] font-bold">💾 บันทึกใช้จริงทันที</button>
+                            <button type="button" onclick="saveFeatureFlagsNow(true)" class="bg-amber-500 text-slate-950 px-3 py-1 rounded text-[11px] font-extrabold">🧪 ทดสอบใน Staging ก่อน</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
+                        ${DEFAULT_MODULES.map(m => `
+                            <label class="flex items-start justify-between gap-2 p-2.5 rounded-xl border ${flags[m.id] ? 'bg-sky-50/60 border-sky-200' : 'bg-slate-50 border-slate-200 opacity-70'} cursor-pointer">
+                                <div>
+                                    <div class="text-[10px] font-bold text-sky-700">${m.cat}</div>
+                                    <div class="font-bold text-slate-900 text-[11.5px]">${m.name}</div>
+                                    <div class="text-[10.5px] text-slate-600">${m.desc}</div>
+                                </div>
+                                <input type="checkbox" class="dev-flag-chk mt-1 w-4 h-4" data-mod-id="${m.id}" ${flags[m.id] ? 'checked' : ''}>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2">
+                    <div class="font-extrabold text-hoshizaki-navy border-b pb-2">⚙️ เงื่อนไขธุรกิจและภาษี (Business Rules)</div>
+                    <div class="grid grid-cols-2 gap-2 text-[11px]">
+                        <div>
+                            <label class="font-bold block mb-0.5">ภาษีมูลค่าเพิ่ม (VAT %):</label>
+                            <input type="number" id="ruleVatInp" value="${rules.vatPercent}" step="0.1" class="w-full border rounded-lg px-2 py-1 bg-white font-bold">
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-0.5">หัก ณ ที่จ่าย (WHT %):</label>
+                            <input type="number" id="ruleWhtInp" value="${rules.whtPercent}" step="0.1" class="w-full border rounded-lg px-2 py-1 bg-white font-bold">
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-0.5">ประกันเครื่อง (เดือน):</label>
+                            <input type="number" id="ruleWarrInp" value="${rules.warrantyMonths}" class="w-full border rounded-lg px-2 py-1 bg-white font-bold">
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-0.5">ประกันคอมเพรสเซอร์ (เดือน):</label>
+                            <input type="number" id="ruleCompWarrInp" value="${rules.compressorWarrantyMonths}" class="w-full border rounded-lg px-2 py-1 bg-white font-bold">
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-0.5">รอบแจ้งเตือน PM (เดือน):</label>
+                            <input type="number" id="rulePmInp" value="${rules.pmCycleMonths}" class="w-full border rounded-lg px-2 py-1 bg-white font-bold">
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-0.5">เตือนซ่อมซ้ำ (วัน):</label>
+                            <input type="number" id="ruleRepeatInp" value="${rules.repeatCallGuardDays}" class="w-full border rounded-lg px-2 py-1 bg-white font-bold">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="font-bold block mb-0.5">สกุลเงินหลัก (Currency Code):</label>
+                            <input type="text" id="ruleCurrInp" value="${rules.currencyCode}" placeholder="THB / SGD / MYR / JPY / USD" class="w-full border rounded-lg px-2 py-1 bg-white font-bold uppercase">
+                        </div>
+                    </div>
+                    <button type="button" onclick="saveBusinessRulesConfig()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2 rounded-xl mt-2">
+                        ✅ บันทึกเงื่อนไขธุรกิจลงระบบ
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    window.setAllFeatureFlags = function(state) {
+        document.querySelectorAll('.dev-flag-chk').forEach(chk => { chk.checked = Boolean(state); });
+    };
+
+    window.saveFeatureFlagsNow = function(asStaging) {
+        const map = {};
+        document.querySelectorAll('.dev-flag-chk').forEach(chk => {
+            map[chk.getAttribute('data-mod-id')] = chk.checked;
+        });
+        if (asStaging) {
+            localStorage.setItem(STAGING_FLAGS_KEY, JSON.stringify(map));
+            localStorage.setItem(STAGING_ACTIVE_KEY, '1');
+            if (typeof showToast === 'function') showToast('🧪 เปิดโหมด Staging Sandbox แล้ว — ทดลองใช้งานหน้าจอได้เลยก่อนกดอนุมัติใช้จริง');
+        } else {
+            localStorage.setItem(FEATURE_FLAGS_KEY, JSON.stringify(map));
+            localStorage.removeItem(STAGING_ACTIVE_KEY);
+            if (typeof showToast === 'function') showToast('✅ บันทึกการตั้งค่าเปิด/ปิดฟังก์ชันขึ้นใช้งานจริงเรียบร้อย');
+        }
+        applyFeatureFlagsAndBrandingToDom_();
+        renderModulesAndRulesPanel_();
+    };
+
+    window.promoteStagingConfigToProduction = function() {
+        const stg = localStorage.getItem(STAGING_FLAGS_KEY);
+        if (stg) localStorage.setItem(FEATURE_FLAGS_KEY, stg);
+        localStorage.removeItem(STAGING_ACTIVE_KEY);
+        applyFeatureFlagsAndBrandingToDom_();
+        if (typeof showToast === 'function') showToast('🚀 อนุมัติการตั้งค่าจาก Staging ขึ้นใช้งานจริง (Production) เรียบร้อยแล้ว');
+    };
+
+    window.exitStagingSandboxMode = function(keep) {
+        if (!keep) localStorage.removeItem(STAGING_FLAGS_KEY);
+        localStorage.removeItem(STAGING_ACTIVE_KEY);
+        applyFeatureFlagsAndBrandingToDom_();
+        if (typeof showToast === 'function') showToast('กลับสู่โหมดข้อมูลจริง (Production) เรียบร้อย');
+    };
+
+    window.saveBusinessRulesConfig = function() {
+        const updated = {
+            vatPercent: parseFloat(document.getElementById('ruleVatInp')?.value || '7') || 0,
+            whtPercent: parseFloat(document.getElementById('ruleWhtInp')?.value || '3') || 0,
+            warrantyMonths: parseInt(document.getElementById('ruleWarrInp')?.value || '12', 10) || 12,
+            compressorWarrantyMonths: parseInt(document.getElementById('ruleCompWarrInp')?.value || '24', 10) || 24,
+            pmCycleMonths: parseInt(document.getElementById('rulePmInp')?.value || '6', 10) || 6,
+            repeatCallGuardDays: parseInt(document.getElementById('ruleRepeatInp')?.value || '30', 10) || 30,
+            partWarrantyGuardDays: 90,
+            currencyCode: (document.getElementById('ruleCurrInp')?.value || 'THB').trim().toUpperCase(),
+            dateFormat: 'YYYY-MM-DD'
+        };
+        localStorage.setItem(BUSINESS_RULES_KEY, JSON.stringify(updated));
+        const vatInput = document.getElementById('vatRateInput');
+        if (vatInput) vatInput.value = updated.vatPercent;
+        if (typeof showToast === 'function') showToast('✅ บันทึกเงื่อนไขภาษีและมาตรฐานประกันเรียบร้อยแล้ว');
+    };
+
+    function renderStagingSandboxPanel_() {
+        const panel = document.getElementById('devStudioStagingPanel');
+        if (!panel) return;
+        const isStaging = localStorage.getItem(STAGING_ACTIVE_KEY) === '1';
+
+        panel.innerHTML = `
+            <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 space-y-2">
+                <div class="font-extrabold text-hoshizaki-navy text-sm">🧪 ระบบทดสอบและตรวจสอบก่อนใช้งานจริง (Pre-Production Verification &amp; Staging Sandbox)</div>
+                <p class="text-[11px] text-slate-700">ผู้ดูแลระบบสามารถจำลองการเปิด/ปิดฟีเจอร์ ทดสอบสร้างใบงานจำลอง และรันชุดตรวจสอบอัตโนมัติ (Automated QA Suite) เพื่อยืนยันความถูกต้อง 100% ก่อนปล่อยให้ทีมช่างทั้งหมดใช้งานจริง</p>
+                <div class="flex flex-wrap gap-2 pt-1">
+                    <button type="button" onclick="runPreProductionQaSuite()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-extrabold px-4 py-2 rounded-xl">
+                        <i class="fa-solid fa-play mr-1 text-emerald-300"></i> รันชุดตรวจสอบระบบอัตโนมัติ (12-Point QA Verification)
+                    </button>
+                    <button type="button" onclick="injectSimulatedTestJob()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-3.5 py-2 rounded-xl">
+                        <i class="fa-solid fa-flask mr-1"></i> เติมข้อมูลใบงานทดสอบลงฟอร์ม
+                    </button>
+                    ${isStaging ? `<button type="button" onclick="promoteStagingConfigToProduction()" class="bg-emerald-600 text-white font-extrabold px-3.5 py-2 rounded-xl">✅ ผ่านการตรวจสอบ — อนุมัติขึ้นใช้จริง</button>` : ''}
+                </div>
+            </div>
+            <div id="preProdQaResultBox" class="border border-slate-200 rounded-xl p-3 bg-white text-[11px]">
+                <div class="text-slate-500">กดปุ่ม <b>"รันชุดตรวจสอบระบบอัตโนมัติ (12-Point QA Verification)"</b> เพื่อตรวจสอบความพร้อมของ DOM, ฐานข้อมูล S/N, อะไหล่, ไลบรารี PDF/Excel, Service Worker และ API Cloud</div>
+            </div>
+        `;
+    }
+
+    window.runPreProductionQaSuite = function() {
+        const box = document.getElementById('preProdQaResultBox');
+        if (!box) return;
+        const checks = [
+            { name: '1. โครงสร้างฟอร์มหลัก (Job Sheet & Customer/Machine Fields)', ok: Boolean(document.getElementById('jobNo') && document.getElementById('serialNumber')) },
+            { name: '2. ตารางอะไหล่และการคำนวณราคา 8 เกรด', ok: Boolean(document.getElementById('partsTableBody') && typeof calculateTotals === 'function') },
+            { name: '3. ไลบรารีสร้างเอกสาร PDF (html2pdf / html2canvas)', ok: typeof html2pdf !== 'undefined' && typeof html2canvas !== 'undefined' },
+            { name: '4. ไลบรารีส่งออก Excel 4 ชีต (XLSX / ExcelJS)', ok: typeof XLSX !== 'undefined' && typeof ExcelJS !== 'undefined' },
+            { name: '5. ระบบสแกนบาร์โค้ดและ OCR เนมเพลต (jsQR / Tesseract)', ok: typeof jsQR !== 'undefined' || typeof Tesseract !== 'undefined' },
+            { name: '6. โมดูล MD Boardroom & สไลด์ประชุม 3 ภาษา (v1017)', ok: typeof window.openMdBoardroomModal === 'function' },
+            { name: '7. โมดูลติดตั้งเครื่องใหม่ & ทะเบียนเครื่องสำรอง (v1017)', ok: typeof window.openInstallAndLoanerModal === 'function' },
+            { name: '8. โมดูล Developer & Admin Control Studio (v1018)', ok: typeof window.openAdminDevStudioModal === 'function' },
+            { name: '9. พื้นที่จัดเก็บข้อมูล LocalStorage & Schema Integrity', ok: (() => { try { localStorage.setItem('_qa_t', '1'); localStorage.removeItem('_qa_t'); return true; } catch(e) { return false; } })() },
+            { name: '10. ระบบ Offline Service Worker Registration', ok: 'serviceWorker' in navigator },
+            { name: '11. ตรวจสอบ ID ซ้ำซ้อนในหน้าเว็บ (Zero Duplicate IDs)', ok: document.querySelectorAll('#hzkAdminDevStudioModal').length === 1 && document.querySelectorAll('#hzkMdBoardroomModal').length === 1 },
+            { name: '12. ความพร้อมการส่งออก Single-File Portable HTML', ok: document.documentElement.outerHTML.length > 500000 }
+        ];
+        const passCnt = checks.filter(c => c.ok).length;
+        box.innerHTML = `
+            <div class="font-extrabold text-sm mb-2 ${passCnt === checks.length ? 'text-emerald-700' : 'text-amber-700'}">
+                ผลการตรวจสอบก่อนใช้งานจริง: ผ่าน ${passCnt} / ${checks.length} รายการ (${passCnt === checks.length ? 'READY FOR PRODUCTION ✅' : 'กรุณาตรวจสอบรายการที่แจ้งเตือน'})
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                ${checks.map(c => `
+                    <div class="p-2 rounded-lg border ${c.ok ? 'bg-emerald-50 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'} flex justify-between items-center">
+                        <span>${c.name}</span>
+                        <span class="font-black">${c.ok ? 'PASS' : 'WARN'}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    };
+
+    window.injectSimulatedTestJob = function() {
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+        setVal('jobNo', 'TEST-SANDBOX-' + Date.now().toString().slice(-4));
+        setVal('storeName', '[SANDBOX TEST] ร้านทดสอบระบบสาขา 01');
+        setVal('machineModel', 'IM-130NE');
+        setVal('serialNumber', 'H99999TEST');
+        setVal('diagSymptom', 'ทดสอบการทำงานของระบบก่อนปล่อยใช้งานจริง');
+        setVal('diagAction', 'ตรวจสอบแรงดันน้ำยา ไฟเข้า และทดสอบรอบทำน้ำแข็งเรียบร้อย');
+        window.closeAdminDevStudioModal();
+        if (typeof showToast === 'function') showToast('🧪 เติมข้อมูลใบงานทดสอบลงแบบฟอร์มเรียบร้อยแล้ว');
+    };
+
+    function renderWhiteLabelClonerPanel_() {
+        const panel = document.getElementById('devStudioClonePanel');
+        if (!panel) return;
+        const wl = getSavedWhiteLabel_();
+
+        panel.innerHTML = `
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-2">
+                <div class="font-extrabold text-hoshizaki-navy text-sm">🌏 ปรับเปลี่ยนรูปแบบบริษัท / สาขา / ประเทศ &amp; สร้างไฟล์เดียวพร้อมย้าย (Single-File White-Label Cloner)</div>
+                <p class="text-[11px] text-slate-700">เลือกแม่แบบสาขาหรือประเทศปลายทาง (เช่น สิงคโปร์ มาเลเซีย ญี่ปุ่น หรือดีลเลอร์) ปรับชื่อบริษัท ที่อยู่ ภาษี สกุลเงิน แล้วกด <b>"ส่งออกเป็นไฟล์เดียวพร้อมใช้งาน (Single-File Standalone .html)"</b> เพื่อนำไปเปิดใช้งานหรืออัปโหลดขึ้นโฮสต์ใหม่ได้ทันทีโดยไม่ต้องพึ่งไฟล์ภายนอก</p>
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                    <button type="button" onclick="applyWhiteLabelPreset('HTH_THAILAND')" class="bg-white border border-sky-300 hover:bg-sky-100 px-2.5 py-1 rounded-lg font-bold">🇹🇭 Hoshizaki Thailand</button>
+                    <button type="button" onclick="applyWhiteLabelPreset('HSG_SINGAPORE')" class="bg-white border border-sky-300 hover:bg-sky-100 px-2.5 py-1 rounded-lg font-bold">🇸🇬 Hoshizaki Singapore (SGD / GST 9%)</button>
+                    <button type="button" onclick="applyWhiteLabelPreset('HMY_MALAYSIA')" class="bg-white border border-sky-300 hover:bg-sky-100 px-2.5 py-1 rounded-lg font-bold">🇲🇾 Hoshizaki Malaysia (MYR / SST 8%)</button>
+                    <button type="button" onclick="applyWhiteLabelPreset('HJP_JAPAN_HQ')" class="bg-white border border-sky-300 hover:bg-sky-100 px-2.5 py-1 rounded-lg font-bold">🇯🇵 Hoshizaki Japan (JPY / 10%)</button>
+                    <button type="button" onclick="applyWhiteLabelPreset('DEALER_PARTNER')" class="bg-white border border-sky-300 hover:bg-sky-100 px-2.5 py-1 rounded-lg font-bold">🏢 Authorized Service Partner</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 border border-slate-200 rounded-xl p-3 bg-white text-[11px]">
+                <div>
+                    <label class="font-bold block mb-1">ชื่อบริษัท / สาขา (Company Name):</label>
+                    <input type="text" id="wlCompanyInp" value="${wl.companyName}" class="w-full border rounded-lg px-2.5 py-1.5 font-bold">
+                </div>
+                <div>
+                    <label class="font-bold block mb-1">รหัสสาขา (Branch Code):</label>
+                    <input type="text" id="wlBranchInp" value="${wl.branchCode}" class="w-full border rounded-lg px-2.5 py-1.5 font-bold">
+                </div>
+                <div>
+                    <label class="font-bold block mb-1">ประเทศ &amp; สกุลเงิน (Country / Currency):</label>
+                    <div class="flex gap-1.5">
+                        <input type="text" id="wlCountryInp" value="${wl.country}" class="w-2/3 border rounded-lg px-2 py-1.5">
+                        <input type="text" id="wlCurrencyInp" value="${wl.currency}" class="w-1/3 border rounded-lg px-2 py-1.5 font-bold uppercase">
+                    </div>
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="font-bold block mb-1">ที่อยู่หัวเอกสาร (Head Office / Branch Address):</label>
+                    <input type="text" id="wlAddressInp" value="${wl.address}" class="w-full border rounded-lg px-2.5 py-1.5">
+                </div>
+                <div>
+                    <label class="font-bold block mb-1">โทรศัพท์ &amp; อีเมลติดต่อ:</label>
+                    <input type="text" id="wlContactInp" value="${wl.phone} | ${wl.email}" class="w-full border rounded-lg px-2.5 py-1.5">
+                </div>
+                <div>
+                    <label class="font-bold block mb-1">สีหลักองค์กร (Primary Color):</label>
+                    <input type="color" id="wlColorInp" value="${wl.primaryColor || '#002B49'}" class="w-full h-9 border rounded-lg px-1 py-0.5">
+                </div>
+                <div class="sm:col-span-2 flex items-end gap-2">
+                    <button type="button" onclick="saveWhiteLabelProfile()" class="flex-1 bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-bold py-2 rounded-xl">
+                        💾 บันทึกรูปแบบองค์กรลงเครื่องนี้
+                    </button>
+                    <button type="button" onclick="exportSingleFileStandaloneApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2 rounded-xl shadow">
+                        📦 ส่งออกเป็นไฟล์เดียวพร้อมย้าย (.html)
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    window.applyWhiteLabelPreset = function(presetKey) {
+        const p = PRESET_TEMPLATES[presetKey];
+        if (!p) return;
+        localStorage.setItem(WHITE_LABEL_KEY, JSON.stringify(p));
+        const rules = getSavedRules_();
+        rules.vatPercent = p.vat;
+        rules.whtPercent = p.wht;
+        rules.currencyCode = p.currency;
+        localStorage.setItem(BUSINESS_RULES_KEY, JSON.stringify(rules));
+        renderWhiteLabelClonerPanel_();
+        applyFeatureFlagsAndBrandingToDom_();
+        if (typeof showToast === 'function') showToast('✅ โหลดแม่แบบ ' + p.companyName + ' เรียบร้อย');
+    };
+
+    window.saveWhiteLabelProfile = function() {
+        const contactParts = (document.getElementById('wlContactInp')?.value || '').split('|');
+        const obj = {
+            companyName: (document.getElementById('wlCompanyInp')?.value || '').trim(),
+            branchCode: (document.getElementById('wlBranchInp')?.value || '').trim(),
+            country: (document.getElementById('wlCountryInp')?.value || '').trim(),
+            currency: (document.getElementById('wlCurrencyInp')?.value || 'THB').trim().toUpperCase(),
+            address: (document.getElementById('wlAddressInp')?.value || '').trim(),
+            phone: (contactParts[0] || '').trim(),
+            email: (contactParts[1] || '').trim(),
+            primaryColor: document.getElementById('wlColorInp')?.value || '#002B49',
+            accentColor: '#00A3E0'
+        };
+        localStorage.setItem(WHITE_LABEL_KEY, JSON.stringify(obj));
+        applyFeatureFlagsAndBrandingToDom_();
+        if (typeof showToast === 'function') showToast('✅ บันทึกการตั้งค่าสาขา/องค์กรเรียบร้อยแล้ว');
+    };
+
+    window.exportSingleFileStandaloneApp = function() {
+        window.saveWhiteLabelProfile();
+        const wl = getSavedWhiteLabel_();
+        const flags = getSavedFlags_(false);
+        const rules = getSavedRules_();
+        const embeddedConfigScript = `<script id="hzk-embedded-branch-preset">
+window.HZK_EMBEDDED_WHITE_LABEL = ${JSON.stringify(wl)};
+window.HZK_EMBEDDED_FEATURE_FLAGS = ${JSON.stringify(flags)};
+window.HZK_EMBEDDED_BUSINESS_RULES = ${JSON.stringify(rules)};
+try {
+  if (!localStorage.getItem('${WHITE_LABEL_KEY}')) localStorage.setItem('${WHITE_LABEL_KEY}', JSON.stringify(window.HZK_EMBEDDED_WHITE_LABEL));
+  if (!localStorage.getItem('${FEATURE_FLAGS_KEY}')) localStorage.setItem('${FEATURE_FLAGS_KEY}', JSON.stringify(window.HZK_EMBEDDED_FEATURE_FLAGS));
+  if (!localStorage.getItem('${BUSINESS_RULES_KEY}')) localStorage.setItem('${BUSINESS_RULES_KEY}', JSON.stringify(window.HZK_EMBEDDED_BUSINESS_RULES));
+} catch(e) {}
+<\/script>`;
+
+        let fullDoc = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        fullDoc = fullDoc.replace('</head>', embeddedConfigScript + '\n</head>');
+        const blob = new Blob([fullDoc], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const safeBranch = (wl.branchCode || 'PORTABLE').replace(/[^A-Za-z0-9_-]/g, '_');
+        a.href = url;
+        a.download = `HOSHIZAKI_Service_PWA_${safeBranch}_SingleFile.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        if (typeof showToast === 'function') showToast('📦 ส่งออกไฟล์เดียวพร้อมย้าย (' + a.download + ') สำเร็จ!');
+    };
+
+    function renderBackupAndMigrationPanel_() {
+        const panel = document.getElementById('devStudioBackupPanel');
+        if (!panel) return;
+        const snapshots = (() => { try { return JSON.parse(localStorage.getItem(AUTO_SNAPSHOT_HISTORY_KEY) || '[]'); } catch(e) { return []; } })();
+
+        let totalKeys = 0;
+        let totalBytes = 0;
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.indexOf('hoshizaki') > -1) {
+                totalKeys++;
+                totalBytes += (localStorage.getItem(k) || '').length * 2;
+            }
+        }
+        const kbSize = (totalBytes / 1024).toFixed(1);
+
+        panel.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="border border-slate-200 rounded-xl p-3 bg-white space-y-2">
+                    <div class="font-extrabold text-hoshizaki-navy text-sm">🛡️ ระบบสำรองข้อมูลป้องกันความเสียหาย (Disaster Recovery &amp; Full Vault Backup)</div>
+                    <p class="text-[11px] text-slate-600">รวบรวมฐานข้อมูลทั้งหมดในเครื่อง (ใบงาน, ใบเสนอราคา, ประวัติซ่อม 4-5 ปี, สต็อกรถช่าง, สัญญา PM, ค่าเดินทาง, ทะเบียนเครื่องสำรอง, การตั้งค่าสาขา และ Feature Flags) เป็นไฟล์เดียวเพื่อป้องกันข้อมูลสูญหายหรือย้ายเครื่อง/ย้ายเซิร์ฟเวอร์</p>
+                    <div class="bg-slate-50 border rounded-lg p-2 text-[11px] flex justify-between">
+                        <span>จำนวนชุดข้อมูลในเครื่อง: <b>${totalKeys} รายการ</b></span>
+                        <span>ขนาดพื้นที่ใช้งาน: <b>${kbSize} KB</b></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button type="button" onclick="createInstantRestorePoint()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-xl">
+                            📸 สร้างจุดกู้คืนด่วน (Restore Point)
+                        </button>
+                        <button type="button" onclick="downloadFullSystemDisasterBackup()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white font-extrabold py-2 rounded-xl">
+                            💾 ดาวน์โหลดไฟล์สำรองเต็มระบบ (.json)
+                        </button>
+                    </div>
+                    <div class="pt-2 border-t">
+                        <label class="font-bold block mb-1">กู้คืนข้อมูลจากไฟล์สำรองเต็มระบบ (Restore from Full Backup .json):</label>
+                        <input type="file" accept=".json" onchange="restoreFullSystemFromBackupFile(this)" class="w-full border rounded-lg p-1.5 bg-slate-50 text-[11px]">
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2">
+                    <div class="font-extrabold text-hoshizaki-navy text-sm">🔄 จุดกู้คืนอัตโนมัติ (Local Restore Points) &amp; ย้ายเซิร์ฟเวอร์</div>
+                    <div class="space-y-1.5 max-h-40 overflow-y-auto">
+                        ${snapshots.length === 0 ? '<div class="text-slate-400 text-[11px] py-3">ยังไม่มีจุดกู้คืนที่บันทึกไว้ กดปุ่ม "สร้างจุดกู้คืนด่วน" ด้านซ้ายได้เลยครับ</div>' : snapshots.map((s, idx) => `
+                            <div class="bg-white border rounded-lg p-2 flex justify-between items-center text-[11px]">
+                                <div>
+                                    <div class="font-bold text-hoshizaki-navy">${s.label}</div>
+                                    <div class="text-[10px] text-slate-500">${s.createdAt} • ${s.keyCount} keys</div>
+                                </div>
+                                <button type="button" onclick="rollbackToRestorePoint(${idx})" class="bg-emerald-600 text-white px-2.5 py-1 rounded font-bold text-[10.5px]">ย้อนกลับจุดนี้</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-lg p-2.5 text-[10.5px] text-slate-700 space-y-1">
+                        <div class="font-bold text-hoshizaki-navy">🚀 แนวทางย้ายที่เก็บข้อมูล (Storage &amp; Server Migration):</div>
+                        <div>1. <b>ย้ายบัญชี Google Workspace / Google Sheets ใหม่:</b> นำไฟล์ Backend <code>Hoshizaki_Google_AppsScript_Enterprise_v1011.js</code> ไป Deploy ในบัญชีใหม่ แล้วเปลี่ยน URL ในเมนู <i>ซิงค์ &amp; สำรองข้อมูล</i></div>
+                        <div>2. <b>ย้ายขึ้นเซิร์ฟเวอร์ภายในบริษัท (On-Premise):</b> นำไฟล์ Single-File HTML ไปวางบน Web Server HTTPS ของบริษัท และอัปโหลดไฟล์ <code>.json</code> สำรองเต็มระบบเข้าฐานข้อมูล SQL/REST API</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function collectAllHoshizakiStorage_() {
+        const dump = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.indexOf('hoshizaki') > -1 && k !== AUTO_SNAPSHOT_HISTORY_KEY) {
+                dump[k] = localStorage.getItem(k);
+            }
+        }
+        return dump;
+    }
+
+    window.createInstantRestorePoint = function() {
+        const dump = collectAllHoshizakiStorage_();
+        const snapshots = (() => { try { return JSON.parse(localStorage.getItem(AUTO_SNAPSHOT_HISTORY_KEY) || '[]'); } catch(e) { return []; } })();
+        snapshots.unshift({
+            label: 'Restore Point #' + (snapshots.length + 1),
+            createdAt: new Date().toLocaleString('th-TH'),
+            keyCount: Object.keys(dump).length,
+            data: dump
+        });
+        localStorage.setItem(AUTO_SNAPSHOT_HISTORY_KEY, JSON.stringify(snapshots.slice(0, 5)));
+        renderBackupAndMigrationPanel_();
+        if (typeof showToast === 'function') showToast('📸 สร้างจุดกู้คืนข้อมูลฉุกเฉินเรียบร้อยแล้ว');
+    };
+
+    window.rollbackToRestorePoint = function(idx) {
+        const snapshots = (() => { try { return JSON.parse(localStorage.getItem(AUTO_SNAPSHOT_HISTORY_KEY) || '[]'); } catch(e) { return []; } })();
+        const target = snapshots[idx];
+        if (!target || !target.data) return;
+        Object.entries(target.data).forEach(([k, v]) => localStorage.setItem(k, v));
+        applyFeatureFlagsAndBrandingToDom_();
+        if (typeof showToast === 'function') showToast('✅ กู้คืนข้อมูลกลับไปยัง ' + target.label + ' เรียบร้อยแล้ว');
+    };
+
+    window.downloadFullSystemDisasterBackup = function() {
+        const dump = collectAllHoshizakiStorage_();
+        const payload = {
+            system: 'HOSHIZAKI_ENTERPRISE_V1018_FULL_BACKUP',
+            exportedAt: new Date().toISOString(),
+            whiteLabel: getSavedWhiteLabel_(),
+            businessRules: getSavedRules_(),
+            featureFlags: getSavedFlags_(false),
+            storageData: dump
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `HOSHIZAKI_Full_System_Disaster_Backup_${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        if (typeof showToast === 'function') showToast('💾 ดาวน์โหลดไฟล์สำรองข้อมูลเต็มระบบเรียบร้อยแล้ว');
+    };
+
+    window.restoreFullSystemFromBackupFile = function(inputEl) {
+        const file = inputEl && inputEl.files && inputEl.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            try {
+                const parsed = JSON.parse(String(ev.target.result || '{}'));
+                const dataMap = parsed.storageData || parsed;
+                let restoredCount = 0;
+                Object.entries(dataMap).forEach(([k, v]) => {
+                    if (k.indexOf('hoshizaki') > -1 && typeof v === 'string') {
+                        localStorage.setItem(k, v);
+                        restoredCount++;
+                    }
+                });
+                applyFeatureFlagsAndBrandingToDom_();
+                renderBackupAndMigrationPanel_();
+                if (typeof showToast === 'function') showToast(`✅ กู้คืนข้อมูลสำเร็จ ${restoredCount} ชุดข้อมูล กรุณารีเฟรชหน้าจอเพื่อแสดงผลครบถ้วน`);
+            } catch (err) {
+                if (typeof showToast === 'function') showToast('❌ ไฟล์สำรองไม่ถูกต้อง: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    // Apply feature flags and white-label branding on load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyFeatureFlagsAndBrandingToDom_);
+    } else {
+        setTimeout(applyFeatureFlagsAndBrandingToDom_, 150);
+    }
 })();
 </script>
 

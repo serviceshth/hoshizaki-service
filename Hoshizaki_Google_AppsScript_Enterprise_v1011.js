@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1036-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1038-IMS-COMPLETE)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -180,6 +180,14 @@ function doPost(e) {
 
       // --- v1013 New Endpoints ---
       // --- v1024 Holistic Expansion & Outsource Parts Tracking Endpoints ---
+      if (action === 'SYNC_ENTERPRISE_IMS_BATCH') {
+        return jsonOut(syncEnterpriseImsBatchToSheets_(ss, data, secrets));
+      }
+
+      if (action === 'GET_ENTERPRISE_IMS_DATA') {
+        return jsonOut(getEnterpriseImsDataFromSheets_(ss));
+      }
+
       if (action === 'UPSERT_OUTSOURCE_PARTS_APPT') {
         return jsonOut(upsertOutsourcePartsAppointment_(ss, data, secrets));
       }
@@ -1139,7 +1147,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1036-FINAL',
+    version: 'Enterprise-v1038-IMS-COMPLETE',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1178,7 +1186,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1036-FINAL',
+    version: 'Enterprise-v1038-IMS-COMPLETE',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -2010,11 +2018,67 @@ function routeDualLineWebhook_(events, botMode) {
           return;
         }
 
-        // 3) Detect Serial Number (e.g. H14289J, 51967170400060) or Explicit Service Request
+        // 3) Product & Service Knowledge Base FAQ (IM / KM / FM / HR-HF / HSU / Filter / PM / Warranty / Install)
+        var faqHit = matchComprehensiveHoshizakiProductFaq_(txt, lang);
+        if (faqHit) {
+          var faqFlex = {
+            type: 'flex',
+            altText: faqHit.title,
+            contents: {
+              type: 'bubble',
+              size: 'mega',
+              header: {
+                type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+                contents: [
+                  { type: 'text', text: faqHit.badge, color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+                  { type: 'text', text: faqHit.title, color: '#FFFFFF', size: 'sm', weight: 'bold', margin: 'xs', wrap: true }
+                ]
+              },
+              body: {
+                type: 'box', layout: 'vertical', paddingAll: '12px', paddingBottom: '56px',
+                contents: [
+                  {
+                    type: 'image',
+                    url: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=4',
+                    position: 'absolute',
+                    align: 'end',
+                    gravity: 'bottom',
+                    offsetEnd: '8px',
+                    offsetBottom: '4px',
+                    size: 'lg',
+                    aspectRatio: '1:1',
+                    aspectMode: 'fit'
+                  },
+                  {
+                    type: 'box', layout: 'vertical', spacing: 'sm',
+                    contents: [
+                      { type: 'text', text: faqHit.body, size: 'xs', color: '#1E293B', wrap: true },
+                      { type: 'separator', margin: 'sm' },
+                      { type: 'text', text: '💡 หากมีเครื่องอยู่แล้ว สามารถพิมพ์ Serial Number (S/N) 7 หลัก (เช่น H14289J) เพื่อเช็กประวัติและตัวแทนที่ดูแลได้ทันทีครับ', size: 'xxs', color: '#0369A1', weight: 'bold', wrap: true }
+                    ]
+                  }
+                ]
+              },
+              footer: {
+                type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '10px',
+                contents: [
+                  {
+                    type: 'button', style: 'primary', color: '#0284C7', height: 'sm',
+                    action: { type: 'postback', label: faqHit.actionLabel, data: faqHit.actionData, displayText: faqHit.actionLabel }
+                  }
+                ]
+              }
+            }
+          };
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [faqFlex]);
+          return;
+        }
+
+        // 4) Detect Serial Number (e.g. H14289J, 51967170400060) or Explicit Service Request with S/N
         var snMatch = txt.match(/\b([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})\b/i);
         var wantsTechNow = /^(แจ้งซ่อม|ขอซ่อม|นัดช่าง|ขอช่าง|REPAIR|SERVICE\s*CALL|BOOK|修理|点検依頼)/i.test(txt);
 
-        if (snMatch && (wantsTechNow || /^([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})$/i.test(txt) || /(S\/N|SN|SERIAL|ตัวแทน|ดีลเลอร์|ซ่อม|ไม่เย็น|ไม่ทำน้ำแข็ง)/i.test(txt))) {
+        if (snMatch && (wantsTechNow || /^([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})$/i.test(txt) || /(S\/N|SN|SERIAL|ตัวแทน|ดีลเลอร์|ซ่อม|ไม่เย็น|ไม่ทำน้ำแข็ง|น้ำแข็งไม่ผลิต)/i.test(txt))) {
           var detectedSn = snMatch[1].toUpperCase();
           var routeOutcome = routeCustomerCaseToDealerOrDirect_(ss, {
             serialNo: detectedSn,
@@ -2026,9 +2090,9 @@ function routeDualLineWebhook_(events, botMode) {
           return;
         }
 
-        // 4) Symptom Triage + Self-Check First + Button to Escalate with S/N
+        // 5) Symptom Triage + Self-Check First + Button to Escalate with S/N
         var guide = diagnoseSymptomGuide_(txt);
-        var aiAdvice = callGeminiLineTextAssistant_(
+        var aiAdvice = guide ? '' : callGeminiLineTextAssistant_(
           'คุณคือผู้ช่วยศูนย์บริการ HOSHIZAKI (THAILAND) ตอบคำถามลูกค้าอย่างสุภาพ กระชับ ชัดเจน ' +
           'หากลูกค้าแจ้งอาการเสีย ให้แนะนำวิธีตรวจเช็กเบื้องต้นที่ปลอดภัย 3-4 ข้อ และขอให้ลูกค้าพิมพ์ Serial Number (S/N) หน้าเครื่อง (เช่น H14289J) เพื่อตรวจสอบตัวแทนจำหน่ายที่ดูแลหรือส่งช่างเข้าตรวจเช็ก\n' +
           'ข้อความลูกค้า: ' + txt
@@ -2103,7 +2167,26 @@ function routeDualLineWebhook_(events, botMode) {
     return;
   }
 
-  // Internal Bot or Default Mode
+  // Internal Bot or Default Mode:
+  // If botMode is empty (''), route 1:1 user messages through Customer OA handler automatically
+  // so Customer LINE OA works out-of-the-box even if ?bot=customer wasn't appended to the Webhook URL!
+  if (!botMode) {
+    var userEvents = events.filter(function(ev) {
+      var st = (ev.source && ev.source.type) || 'user';
+      var txt = (ev.message && ev.message.text) ? String(ev.message.text).trim().toUpperCase() : '';
+      var isInternalCmd = /^(SPEC |MANUAL |PDF |SN |S\/N |STATUS |ERR |ERROR |PINOUT|BOARD|LED |PARAM|SETTING|VAN STOCK|VANSTOCK|PM DUE|BI REPORT|QT FOLLOWUP|TICKETS|REPLY |RENAME |ID$|GROUPID$|MYID$)/.test(txt);
+      return st === 'user' && !isInternalCmd;
+    });
+    var internalEvents = events.filter(function(ev) {
+      return userEvents.indexOf(ev) === -1;
+    });
+    if (userEvents.length > 0) {
+      routeDualLineWebhook_(userEvents, 'customer');
+    }
+    if (internalEvents.length === 0) return;
+    events = internalEvents;
+  }
+
   events.forEach(function(ev) {
     if (ev.type === 'postback' && ev.postback && ev.postback.data && String(ev.postback.data).indexOf('ACCEPT_DISPATCH_JOB:') === 0) {
       var dId = String(ev.postback.data).split(':')[1] || '';
@@ -2123,15 +2206,22 @@ function routeDualLineWebhook_(events, botMode) {
 }
 
 function replyLineMessagesWithToken_(token, replyToken, messagesArr) {
-  if (!token || !replyToken || !Array.isArray(messagesArr)) return false;
-  var res = UrlFetchApp.fetch('https://api.line.me/v2/bot/message/reply', {
-    method: 'post',
-    contentType: 'application/json',
-    headers: { Authorization: 'Bearer ' + String(token).trim() },
-    payload: JSON.stringify({ replyToken: replyToken, messages: messagesArr.slice(0, 5) }),
-    muteHttpExceptions: true
+  if (!replyToken || !Array.isArray(messagesArr) || messagesArr.length === 0) return false;
+  var secrets = getAppSecrets_();
+  var candidates = [token, secrets.customerLineToken, secrets.lineToken, secrets.lineMainOfficeToken].filter(function(t, idx, arr) {
+    return t && String(t).trim().length > 20 && arr.indexOf(t) === idx;
   });
-  return res.getResponseCode() === 200;
+  for (var i = 0; i < candidates.length; i++) {
+    var res = UrlFetchApp.fetch('https://api.line.me/v2/bot/message/reply', {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { Authorization: 'Bearer ' + String(candidates[i]).trim() },
+      payload: JSON.stringify({ replyToken: replyToken, messages: messagesArr.slice(0, 5) }),
+      muteHttpExceptions: true
+    });
+    if (res.getResponseCode() === 200) return true;
+  }
+  return false;
 }
 
 
@@ -3347,17 +3437,155 @@ function buildSerial360FlexMessage_(dossier, pwaUrl) {
   };
 }
 
+function matchComprehensiveHoshizakiProductFaq_(rawText, lang) {
+  var t = String(rawText || '').toLowerCase();
+  var isEn = (lang === 'EN');
+  var isJp = (lang === 'JP');
+
+  // 1. Cube Ice Makers (IM Series: IM-21CNE to IM-240DNE)
+  if (/(เครื่องทำน้ำแข็งก้อน|น้ำแข็งสี่เหลี่ยม|น้ำแข็งยูนิต|cube ice|เครื่องทำน้ำแข็ง\s*im|รุ่น\s*im|im-21|im-30|im-45|im-65|im-100|im-130|im-240|\bim\s*series|\bim\b)/i.test(t) && !/(เสีย|ซ่อม|ไม่ทำ|ไม่ผลิต|error|รั่ว|ดัง)/i.test(t)) {
+    return {
+      badge: '🧊 PRODUCT SPEC & GUIDE · IM SERIES',
+      title: 'เครื่องทำน้ำแข็งก้อนสี่เหลี่ยม (Cube Ice Maker — IM Series)',
+      body: '• รุ่นมาตรฐาน: IM-21CNE (21 กก.), IM-30CNE (30 กก.), IM-45NE (45 กก.), IM-65NE (65 กก.), IM-100NE (100 กก.), IM-130NE (130 กก.) และรุ่นหัวแยก IM-240DNE (240 กก./วัน)\n' +
+            '• จุดเด่น: ระบบฉีดน้ำเซลล์ปิด (Closed-Cell) ได้ก้อนน้ำแข็งใสบริสุทธิ์ ละลายช้า ปลอดเชื้อ 100% พร้อมตัวเลือกขนาดก้อน -21 (เล็ก), -23 (กลาง) และมาตรฐาน 28x28x32 มม.\n' +
+            '• สเปกติดตั้ง: ไฟ 1 เฟส 220-240V 50Hz | แรงดันน้ำ 0.07-0.8 MPa | ควรติดตั้งคู่กับไส้กรองน้ำ 4HC-H',
+      actionLabel: '📄 ขอสเปกชีต / ติดต่อตัวแทนจำหน่าย',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('สนใจข้อมูลสเปก/ราคาเครื่องทำน้ำแข็ง IM Series')
+    };
+  }
+
+  // 2. Crescent Cube Ice Makers (KM / KMD Series)
+  if (/(น้ำแข็งเสี้ยวพระจันทร์|เสี้ยวพระจันทร์|crescent|เครื่องทำน้ำแข็ง\s*km|รุ่น\s*km|km-40|km-60|km-80|km-100|km-150|km-231|km-515|km-660|km-901|km-1301|kmd|\bkm\s*series|\bkm\b)/i.test(t) && !/(เสีย|ซ่อม|ไม่ทำ|ไม่ผลิต|error|รั่ว|ดัง)/i.test(t)) {
+    return {
+      badge: '🌙 PRODUCT SPEC & GUIDE · KM / KMD SERIES',
+      title: 'เครื่องทำน้ำแข็งเสี้ยวพระจันทร์ (Crescent Cube — KM Series)',
+      body: '• รุ่นมาตรฐาน: แบบถังในตัว KM-40B / 60B / 80B / 100B / 150B และรุ่นหัวแยกกำลังผลิตสูง KM-231BAJ / 515MAH / 660MAJ / 901MAJ / 1301SAJ (215 - 1,100+ กก./วัน)\n' +
+            '• จุดเด่น: คอยล์เย็นสเตนเลส 2 ด้าน (CycleSaver™) ประหยัดน้ำและไฟสูงสุด ก้อนทรงเสี้ยวพระจันทร์ตักง่ายไม่เกาะติดกัน มีระบบแจ้งเตือนอัจฉริยะ EverCheck™',
+      actionLabel: '📄 ขอสเปกชีต / ติดต่อตัวแทนจำหน่าย',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('สนใจข้อมูลสเปก/ราคาเครื่องทำน้ำแข็ง KM Series')
+    };
+  }
+
+  // 3. Flake & Nugget Ice Makers (FM Series)
+  if (/(เกล็ดน้ำแข็ง|น้ำแข็งเกล็ด|นักเก็ต|flake|nugget|เครื่องทำน้ำแข็ง\s*fm|รุ่น\s*fm|fm-80|fm-120|fm-150|fm-170|fm-300|fm-480|fm-600|fm-750|fm-1000|\bfm\s*series|\bfm\b)/i.test(t) && !/(เสีย|ซ่อม|ไม่ทำ|ไม่ผลิต|error|รั่ว|ดัง)/i.test(t)) {
+    return {
+      badge: '❄️ PRODUCT SPEC & GUIDE · FM SERIES',
+      title: 'เครื่องทำเกล็ดน้ำแข็ง & นักเก็ต (Flake / Nugget Ice — FM Series)',
+      body: '• รุ่นมาตรฐาน: FM-80KE, FM-150KE, FM-170AKE, FM-300AKE, FM-480AKE, FM-600AKE, FM-750AKE, FM-1000AKE (80 - 1,000+ กก./วัน)\n' +
+            '• จุดเด่น: ระบบสกรูรีดน้ำแข็งต่อเนื่อง (Auger System) ใช้น้ำ 1 ลิตรได้น้ำแข็ง 1 กก. (ประหยัดน้ำสูงสุด) เหมาะสำหรับร้านกาแฟ สมูทตี้ ซูเปอร์มาร์เก็ต แช่อาหารทะเล และโรงพยาบาล',
+      actionLabel: '📄 ขอสเปกชีต / ติดต่อตัวแทนจำหน่าย',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('สนใจข้อมูลสเปก/ราคาเครื่องทำเกล็ดน้ำแข็ง FM Series')
+    };
+  }
+
+  // 4. Commercial Refrigerators & Freezers (HR / HF / RT / RTC / RTF / HNC)
+  if (/(ตู้แช่|ตู้เย็น|ตู้เคาน์เตอร์|ตู้ซูชิ|chiller|freezer|undercounter|sushi|hr-|hf-|rt-|rtc-|rtf-|hnc-)/i.test(t) && !/(เสีย|ซ่อม|ไม่เย็น|อุณหภูมิ|error|รั่ว|ดัง)/i.test(t)) {
+    return {
+      badge: '🧊 COMMERCIAL REFRIGERATION · HR / HF / RT / HNC',
+      title: 'ตู้แช่เย็น ตู้แช่แข็ง ตู้เคาน์เตอร์ และตู้ซูชิ HOSHIZAKI',
+      body: '• ตู้แช่ทรงยืน (Upright): HR-68MA-S / 126MA-S / 148MA-S (แช่เย็น +1°C ถึง +6°C) และ HF Series (แช่แข็ง -18°C ถึง -23°C)\n' +
+            '• ตู้เคาน์เตอร์เตรียมอาหาร (Undercounter): RT-126MA-S / 156MA-S / 186MA-S และ RTC/RTF Series\n' +
+            '• ตู้โชว์ซูชิ (Sushi Case): HNC-120BE / 150BE / 180BE / 210BE รักษาความชื้นวัตถุดิบไม่ให้แห้ง',
+      actionLabel: '📄 ขอสเปกชีต / ติดต่อตัวแทนจำหน่าย',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('สนใจข้อมูลตู้แช่เชิงพาณิชย์ HOSHIZAKI')
+    };
+  }
+
+  // 5. Commercial Dishwashers & Beer Dispensers (HSU / JWE / DBF / DCM)
+  if (/(เครื่องล้างจาน|ตู้กดเบียร์|กดน้ำแข็ง|dishwasher|beer|dispenser|hsu-|jwe-|dbf-|dcm-)/i.test(t) && !/(เสีย|ซ่อม|ไม่สะอาด|ไม่ร้อน|error|รั่ว)/i.test(t)) {
+    return {
+      badge: '🍽️ SPECIALTY EQUIPMENT · HSU / JWE / DBF / DCM',
+      title: 'เครื่องล้างจาน ตู้กดน้ำแข็งอัตโนมัติ และเครื่องจ่ายเบียร์สด',
+      body: '• เครื่องล้างจานเชิงพาณิชย์: รุ่นใต้เคาน์เตอร์ HSU-400 / 500 และรุ่นเปิดฝาบน Hood-Type JWE-400 / 450 / 500 / 620 / 680 ล้างสะอาดฆ่าเชื้อที่อุณหภูมิน้ำล้างสุดท้าย 80-85°C\n' +
+            '• เครื่องจ่ายน้ำแข็งและน้ำดื่ม (DCM-60KE / 120KE) และเครื่องจ่ายเบียร์สด (DBF-25SB / 43WD)',
+      actionLabel: '📄 ขอสเปกชีต / ติดต่อตัวแทนจำหน่าย',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('สนใจข้อมูลเครื่องล้างจาน / เครื่องจ่ายเบียร์ / DCM')
+    };
+  }
+
+  // 6. Water Filter 4HC-H & Genuine Spare Parts
+  if (/(ไส้กรอง|กรองน้ำ|4hc|water filter|เปลี่ยนไส้กรอง|สั่งไส้กรอง|อะไหล่แท้|spare part)/i.test(t)) {
+    return {
+      badge: '💧 GENUINE FILTER & SPARE PARTS · 4HC-H',
+      title: 'ไส้กรองน้ำแท้ HOSHIZAKI (รุ่น 4HC-H) & อะไหล่มาตรฐานโรงงาน',
+      body: '• รุ่นแนะนำ: ไส้กรองน้ำแท้ HOSHIZAKI 4HC-H (รหัส EV965516) ช่วยกรองตะกอน คลอรีน กลิ่น และยับยั้งตะกรันหินปูน ยืดอายุวาล์วน้ำและคอยล์เย็น\n' +
+            '• รอบเปลี่ยนมาตรฐาน: แนะนำเปลี่ยนทุกๆ 6 เดือน หรือเมื่อแรงดันน้ำลดลง\n' +
+            '• วิธีสั่งซื้อ: พิมพ์ Serial Number (S/N) ของเครื่อง หรือกดปุ่มด้านล่างเพื่อให้ตัวแทนจำหน่าย/ฝ่ายอะไหล่ติดต่อกลับทันทีครับ',
+      actionLabel: '💧 สั่งซื้อไส้กรองน้ำ / อะไหล่แท้',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('สั่งซื้อไส้กรองน้ำ 4HC-H / อะไหล่แท้ HOSHIZAKI')
+    };
+  }
+
+  // 7. Preventive Maintenance (PM) & Big Cleaning Packages
+  if (/(ล้างเครื่อง|บำรุงรักษา|ล้างใหญ่|pm\b|big cleaning|สัญญาบริการ|รายปี|ค่าล้าง)/i.test(t)) {
+    return {
+      badge: '🧼 PREVENTIVE MAINTENANCE & BIG CLEANING',
+      title: 'บริการล้างบำรุงรักษาใหญ่ (PM & Big Cleaning) มาตรฐานโรงงาน',
+      body: '• รายการตรวจเช็ก 12 ขั้นตอน: ถอดล้างถาดน้ำ ปั๊มน้ำ ลูกลอย ล้างฆ่าเชื้อระบบผลิตน้ำแข็ง ล้างแผงคอยล์ร้อน วัดแรงดันน้ำยา กระแสคอมเพรสเซอร์ และออกใบรับรองมาตรฐาน (PM Certificate)\n' +
+            '• แพ็กเกจบริการ: มีทั้งแบบรายครั้ง (1-Time), สัญญา 6 เดือน (2 ครั้ง) และสัญญารายปี (4 ครั้ง ทุก 3 เดือน)\n' +
+            '• เพียงพิมพ์ Serial Number (S/N) หน้าเครื่อง ระบบจะประเมินราคาและจัดส่งผู้ดูแลให้ทันทีครับ',
+      actionLabel: '🧼 ขอราคาแพ็กเกจล้างเครื่อง PM',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('ขอใบเสนอราคาแพ็กเกจล้างเครื่อง PM / Big Cleaning')
+    };
+  }
+
+  // 8. Warranty Policy & Dealer / Purchase Inquiry
+  if (/(รับประกัน|ประกันกี่ปี|หมดประกัน|ตัวแทนจำหน่าย|ดีลเลอร์|ซื้อเครื่อง|ขอใบเสนอราคา|ราคาเครื่อง|warranty|dealer|buy|quote)/i.test(t)) {
+    return {
+      badge: '🛡️ WARRANTY & AUTHORIZED DEALER NETWORK',
+      title: 'นโยบายการรับประกัน & ช่องทางจัดจำหน่ายอย่างเป็นทางการ',
+      body: '• การรับประกันมาตรฐาน: รับประกันอะไหล่และค่าแรง 1 ปีเต็ม และรับประกันคอมเพรสเซอร์สูงสุด 2 ปี (ตามเงื่อนไขรุ่นสินค้าและการติดตั้งที่ได้มาตรฐาน)\n' +
+            '• ช่องทางจัดจำหน่าย: ผลิตภัณฑ์ HOSHIZAKI จัดจำหน่ายผ่านเครือข่ายตัวแทนจำหน่ายที่ได้รับการแต่งตั้งอย่างเป็นทางการทั่วประเทศ\n' +
+            '• เช็กประกันเครื่องเดิม: เพียงพิมพ์ Serial Number (S/N) 7 หลัก (เช่น H14289J) ระบบจะตรวจสอบวันที่ซื้อและตัวแทนที่ดูแลให้อัตโนมัติครับ',
+      actionLabel: '🏢 ติดต่อตัวแทนจำหน่าย / ฝ่ายบริการ',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('สอบถามการรับประกัน / ติดต่อตัวแทนจำหน่าย')
+    };
+  }
+
+  // 9. Installation Site Preparation Requirements
+  if (/(ติดตั้ง|เตรียมพื้นที่|ขนาดท่อ|เบรกเกอร์|แรงดันน้ำ|ระบายอากาศ|installation|site prep)/i.test(t)) {
+    return {
+      badge: '📐 INSTALLATION & SITE PREPARATION GUIDE',
+      title: 'ข้อกำหนดการเตรียมหน้างานก่อนติดตั้งเครื่อง HOSHIZAKI',
+      body: '1. ระบบไฟฟ้า: เบรกเกอร์แยกเฉพาะเครื่อง 220-240V 50Hz พร้อมสายดิน (Ground) ที่ได้มาตรฐาน\n' +
+            '2. ระบบน้ำประปา: วาล์วน้ำดีเกลียวนอก 1/2 นิ้ว แรงดันน้ำ 0.07 - 0.8 MPa (1 - 8 บาร์) ควรติดตั้งร่วมกับไส้กรองน้ำ\n' +
+            '3. ระบบน้ำทิ้ง: ท่อน้ำทิ้งขนาด 3/4 นิ้ว ระดับต่ำกว่าจุดระบายน้ำหลังเครื่องและมีความลาดเอียงลงท่อระบาย\n' +
+            '4. การระบายความร้อน: เว้นระยะห่างด้านข้างและด้านหลังอย่างน้อย 15-30 ซม. และอุณหภูมิห้องไม่เกิน 38-40°C',
+      actionLabel: '👷 นัดช่างตรวจสอบหน้างาน / ติดตั้ง',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('สอบถามการเตรียมหน้างานและนัดติดตั้งเครื่อง')
+    };
+  }
+
+  // 10. Greeting / Menu Overview
+  if (/^(สวัสดี|หวัดดี|ทักทาย|สอบถาม|ข้อมูล|สินค้า|เมนู|help|hi|hello|menu|こんにちは)/i.test(t)) {
+    return {
+      badge: '🐧 HOSHIZAKI (THAILAND) SMART ASSISTANT',
+      title: 'ยินดีต้อนรับสู่ศูนย์บริการและข้อมูลผลิตภัณฑ์ HOSHIZAKI',
+      body: 'คุณสามารถพิมพ์สอบถามได้ทันทีทุกเรื่อง เช่น:\n' +
+            '• ข้อมูลสินค้า & สเปก: "เครื่องทำน้ำแข็ง IM", "เครื่องทำน้ำแข็ง KM", "เกล็ดน้ำแข็ง FM", "ตู้แช่ HR/HF", "เครื่องล้างจาน"\n' +
+            '• แจ้งซ่อม & ตรวจเช็กเบื้องต้น: "น้ำแข็งไม่ผลิต", "ตู้แช่ไม่เย็น", "น้ำรั่ว", "ขึ้น Error E1"\n' +
+            '• เช็กประกัน & เรียกช่าง: พิมพ์ Serial Number (S/N) หน้าเครื่อง เช่น H14289J\n' +
+            '• สั่งไส้กรองน้ำ 4HC-H / นัดล้างใหญ่ PM / ลงทะเบียน 08x-xxx-xxxx',
+      actionLabel: '🔧 แจ้งซ่อม / ติดต่อตัวแทนจำหน่าย',
+      actionData: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent('ต้องการติดต่อเจ้าหน้าที่ / แจ้งซ่อม')
+    };
+  }
+
+  return null;
+}
+
 function diagnoseSymptomGuide_(rawText) {
   var t = String(rawText || '').toLowerCase();
   var guides = [
     {
-      match: /(ไม่ทำน้ำแข็ง|น้ำแข็งไม่ออก|น้ำไม่เข้า|น้ำไม่ไหล|ไม่ผลิตน้ำแข็ง|no ice|not making ice|water)/,
-      title: '❄️ แนวทางตรวจเช็กเบื้องต้น: เครื่องทำน้ำแข็งไม่ผลิตน้ำแข็ง / น้ำไม่เข้า',
+      match: /(ไม่ทำน้ำแข็ง|น้ำแข็งไม่ผลิต|น้ำแข็งไม่ออก|ไม่ผลิตน้ำแข็ง|น้ำแข็งบาง|น้ำแข็งเล็ก|ละลายเร็ว|น้ำไม่เข้า|น้ำไม่ไหล|no ice|not making ice|thin ice|water)/,
+      title: '❄️ แนวทางตรวจเช็กเบื้องต้น: เครื่องไม่ผลิตน้ำแข็ง / น้ำไม่เข้า / ก้อนบาง',
       steps: [
-        '1. ตรวจสอบวาล์วน้ำประปาหลักและวาล์วหลังเครื่องว่าเปิดสุด และมีน้ำไหลปกติหรือไม่',
-        '2. ตรวจสอบไส้กรองน้ำ (Water Filter) หากใช้งานเกิน 6 เดือนหรือแรงดันน้ำตกให้ลองเปลี่ยน/บายพาสทดสอบ',
-        '3. ตรวจสอบแผ่นกรองฝุ่นด้านหน้า/ด้านข้าง (Air Filter) หากมีฝุ่นตันให้ถอดล้างด้วยน้ำสะอาดและเป่าให้แห้ง',
-        '4. ปิดสวิตช์ที่ตัวเครื่องหรือเบรกเกอร์ทิ้งไว้ 3 นาที แล้วเปิดใหม่เพื่อรีเซ็ตระบบควบคุม'
+        '1. ตรวจสอบวาล์วน้ำประปาหลักและวาล์วหลังเครื่องว่าเปิดสุด และมีน้ำไหลเข้าถังพักปกติหรือไม่',
+        '2. ตรวจสอบไส้กรองน้ำ (Water Filter 4HC-H) หากใช้งานเกิน 6 เดือนหรือแรงดันน้ำตกให้ลองเปลี่ยนไส้กรองใหม่',
+        '3. ตรวจสอบแผ่นกรองฝุ่นด้านหน้า/ด้านข้าง (Air Filter) หากมีฝุ่นอุดตันให้ถอดล้างด้วยน้ำสะอาดและเป่าให้แห้ง',
+        '4. ปิดสวิตช์ที่ตัวเครื่องหรือเบรกเกอร์ทิ้งไว้ 3 นาที แล้วเปิดใหม่เพื่อรีเซ็ตระบบควบคุม (หากยังไม่ผลิตน้ำแข็ง กรุณาพิมพ์ S/N 7 หลักบนสติกเกอร์ข้างเครื่องส่งกลับมาครับ)'
       ]
     },
     {
@@ -9006,4 +9234,126 @@ function sendCustomFlexBroadcast_(ss, data, secrets) {
   }
 
   return { status: sentCount > 0 ? 'ok' : 'warning', sentCount: sentCount, failedCount: failedCount };
+}
+
+
+// ============================================================================
+// 26. ENTERPRISE v1038 HOLISTIC INVENTORY MANAGEMENT SYSTEM (IMS) BACKEND
+// ============================================================================
+function syncEnterpriseImsBatchToSheets_(ss, data, secrets) {
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var items = Array.isArray(data.items) ? data.items : [];
+  var lots = Array.isArray(data.lots) ? data.lots : [];
+  var moves = Array.isArray(data.movements) ? data.movements : [];
+  var orders = Array.isArray(data.reorderOrders) ? data.reorderOrders : [];
+
+  var mSheet = ss.getSheetByName('IMS_Inventory_Master');
+  if (!mSheet) {
+    mSheet = ss.insertSheet('IMS_Inventory_Master');
+    mSheet.getRange(1, 1, 1, 14).setValues([[
+      'SKU', 'Item Name', 'Inventory Type (RM/WIP/FG/MRO)', 'ABC Class',
+      'WMS Zone', 'WMS Bin', 'On-Hand Qty', 'UOM', 'Unit Cost (THB)',
+      'Total Stock Value (THB)', 'Safety Stock', 'Reorder Point (ROP)', 'EOQ Qty', 'Updated At'
+    ]]).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    mSheet.setFrozenRows(1);
+  }
+  if (items.length > 0) {
+    if (mSheet.getLastRow() > 1) mSheet.getRange(2, 1, mSheet.getLastRow() - 1, 14).clearContent();
+    var mRows = items.map(function(x) {
+      return [
+        String(x.sku || ''), String(x.name || ''), String(x.invType || 'RM'), String(x.abcClass || 'C'),
+        String(x.zone || ''), String(x.bin || ''), Number(x.onHandQty || 0), String(x.uom || 'PCS'),
+        Number(x.unitCost || 0), Number(x.stockValue || 0), Number(x.safetyStock || 0),
+        Number(x.reorderPoint || 0), Number(x.eoq || 1), nowStr
+      ];
+    });
+    mSheet.getRange(2, 1, mRows.length, 14).setValues(mRows);
+  }
+
+  var lSheet = ss.getSheetByName('IMS_FIFO_Lots_WMS');
+  if (!lSheet) {
+    lSheet = ss.insertSheet('IMS_FIFO_Lots_WMS');
+    lSheet.getRange(1, 1, 1, 11).setValues([[
+      'Lot ID', 'SKU', 'Item Name', 'Inv Type', 'Received Date (FIFO)',
+      'Expiry Date', 'WMS Zone', 'WMS Bin', 'Initial Qty', 'Remaining Qty', 'PO Ref'
+    ]]).setFontWeight('bold').setBackground('#065F46').setFontColor('#FFFFFF');
+    lSheet.setFrozenRows(1);
+  }
+  if (lots.length > 0) {
+    if (lSheet.getLastRow() > 1) lSheet.getRange(2, 1, lSheet.getLastRow() - 1, 11).clearContent();
+    var lRows = lots.map(function(l) {
+      return [
+        String(l.lotId || ''), String(l.sku || ''), String(l.name || ''), String(l.invType || ''),
+        String(l.receivedDate || ''), String(l.expiryDate || ''), String(l.zone || ''),
+        String(l.bin || ''), Number(l.initialQty || 0), Number(l.remainingQty || 0), String(l.poRef || '')
+      ];
+    });
+    lSheet.getRange(2, 1, lRows.length, 11).setValues(lRows);
+  }
+
+  var mvSheet = ss.getSheetByName('IMS_Movement_Ledger');
+  if (!mvSheet) {
+    mvSheet = ss.insertSheet('IMS_Movement_Ledger');
+    mvSheet.getRange(1, 1, 1, 9).setValues([[
+      'Move ID', 'Timestamp', 'Type', 'SKU', 'Item Name', 'Qty Delta', 'From Location', 'To Location', 'FIFO Lot & Ref Doc'
+    ]]).setFontWeight('bold').setBackground('#1E293B').setFontColor('#FFFFFF');
+    mvSheet.setFrozenRows(1);
+  }
+  if (moves.length > 0) {
+    if (mvSheet.getLastRow() > 1) mvSheet.getRange(2, 1, mvSheet.getLastRow() - 1, 9).clearContent();
+    var mvRows = moves.slice(0, 300).map(function(m) {
+      return [
+        String(m.moveId || ''), String(m.timestamp || nowStr), String(m.type || ''),
+        String(m.sku || ''), String(m.name || ''), Number(m.qty || 0),
+        String(m.fromLoc || ''), String(m.toLoc || ''), String((m.lotId || '') + ' | ' + (m.refDoc || ''))
+      ];
+    });
+    mvSheet.getRange(2, 1, mvRows.length, 9).setValues(mvRows);
+  }
+
+  var poSheet = ss.getSheetByName('IMS_JIT_EOQ_Reorder_Orders');
+  if (!poSheet) {
+    poSheet = ss.insertSheet('IMS_JIT_EOQ_Reorder_Orders');
+    poSheet.getRange(1, 1, 1, 10).setValues([[
+      'Order ID', 'Created At', 'SKU', 'Item Name', 'Inv Type', 'Policy (JIT/EOQ)',
+      'Current Qty', 'ROP', 'Suggested Order Qty', 'Est. Cost (THB)'
+    ]]).setFontWeight('bold').setBackground('#9F1239').setFontColor('#FFFFFF');
+    poSheet.setFrozenRows(1);
+  }
+  if (orders.length > 0) {
+    if (poSheet.getLastRow() > 1) poSheet.getRange(2, 1, poSheet.getLastRow() - 1, 10).clearContent();
+    var poRows = orders.map(function(p) {
+      return [
+        String(p.poId || ''), String(p.createdAt || nowStr), String(p.sku || ''),
+        String(p.name || ''), String(p.invType || ''), String(p.mode || ''),
+        Number(p.currentQty || 0), Number(p.rop || 0), Number(p.suggestedOrderQty || 0), Number(p.estCost || 0)
+      ];
+    });
+    poSheet.getRange(2, 1, poRows.length, 10).setValues(poRows);
+  }
+
+  return {
+    status: 'ok',
+    syncedItems: items.length,
+    syncedLots: lots.length,
+    syncedMovements: moves.length,
+    syncedReorderOrders: orders.length
+  };
+}
+
+function getEnterpriseImsDataFromSheets_(ss) {
+  var mSheet = ss.getSheetByName('IMS_Inventory_Master');
+  var items = [];
+  if (mSheet && mSheet.getLastRow() >= 2) {
+    var vals = mSheet.getRange(2, 1, mSheet.getLastRow() - 1, 14).getValues();
+    items = vals.map(function(r) {
+      return {
+        sku: r[0], name: r[1], invType: r[2], abcClass: r[3], zone: r[4], bin: r[5],
+        onHandQty: Number(r[6] || 0), uom: r[7], unitCost: Number(r[8] || 0),
+        stockValue: Number(r[9] || 0), safetyStock: Number(r[10] || 0),
+        reorderPoint: Number(r[11] || 0), eoq: Number(r[12] || 1)
+      };
+    });
+  }
+  return { status: 'ok', items: items };
 }

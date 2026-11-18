@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1036</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1038</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -897,7 +897,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                 <div class="flex flex-wrap items-center gap-1.5">
                     <button type="button" onclick="switchToolbarCategory('ALL')" id="tbCatBtn_ALL" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-hoshizaki-blue text-white font-bold transition shadow-xs">
-                        <i class="fa-solid fa-border-all mr-1"></i>ทั้งหมด (4 หมวด)
+                        <i class="fa-solid fa-border-all mr-1"></i>ทั้งหมด (5 หมวด)
                     </button>
                     <button type="button" onclick="switchToolbarCategory('SERVICE')" id="tbCatBtn_SERVICE" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
                         <i class="fa-solid fa-wrench mr-1 text-amber-300"></i>1. งานบริการ
@@ -906,11 +906,15 @@
                         <i class="fa-solid fa-file-invoice-dollar mr-1 text-emerald-300"></i>2. เอกสาร &amp; เคลม
                     </button>
                     <button type="button" onclick="switchToolbarCategory('STOCK_PM')" id="tbCatBtn_STOCK_PM" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
-                        <i class="fa-solid fa-boxes-stacked mr-1 text-orange-300"></i>3. สต็อก &amp; PM
-                        <span id="waitingPartsTopBadge" class="hidden ml-1 bg-rose-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
+                        <i class="fa-solid fa-calendar-check mr-1 text-emerald-300"></i>3. งาน PM &amp; ตรวจรับ
                     </button>
                     <button type="button" onclick="switchToolbarCategory('MANUAL_TEAM')" id="tbCatBtn_MANUAL_TEAM" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition">
                         <i class="fa-solid fa-book-open mr-1 text-cyan-300"></i>4. คู่มือ &amp; ระบบ
+                    </button>
+                    <button type="button" onclick="switchToolbarCategory('IMS_INVENTORY')" id="tbCatBtn_IMS_INVENTORY" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600/80 to-teal-600/80 hover:opacity-95 text-white font-extrabold border border-cyan-300/50 transition shadow-xs">
+                        <i class="fa-solid fa-warehouse mr-1 text-amber-300"></i>5. ระบบคลังสินค้า IMS
+                        <span id="waitingPartsTopBadge" class="hidden ml-1 bg-rose-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
+                        <span id="imsLowStockTopTabBadge" class="ml-1 bg-amber-400 text-slate-950 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">IMS</span>
                     </button>
                 </div>
 
@@ -1073,19 +1077,13 @@
                     </div>
                 </section>
 
-                <!-- หมวด 3: สต็อกรถช่าง & PM / ค้างอะไหล่ -->
+                <!-- หมวด 3: งาน PM, บำรุงรักษา & ตรวจรับเครื่อง -->
                 <section class="tb-group-card" data-tb-group="STOCK_PM">
                     <div class="tb-group-header">
-                        <span><i class="fa-solid fa-boxes-stacked text-orange-300 mr-1.5"></i>3. สต็อกรถช่าง, PM &amp; ค้างอะไหล่ (Stock &amp; PM)</span>
-                        <span class="text-[10px] text-white/60 font-normal">3 คำสั่ง</span>
+                        <span><i class="fa-solid fa-calendar-check text-emerald-300 mr-1.5"></i>3. งาน PM, บำรุงรักษา &amp; ตรวจรับเครื่อง (PM &amp; QC)</span>
+                        <span class="text-[10px] text-white/60 font-normal">2 ชุดคำสั่ง</span>
                     </div>
                     <div class="tb-btn-grid">
-                        <button type="button" data-tb-cat="STOCK_PM" onclick="openVanStockModal()" class="tb-action-item bg-orange-600 hover:bg-orange-700 text-white font-bold shadow-sm">
-                            <i class="fa-solid fa-truck-ramp-box"></i> <span>สต็อกรถช่าง / Van Stock</span>
-                        </button>
-                        <button type="button" data-tb-cat="STOCK_PM" onclick="openWaitingPartsBackorderModal()" class="tb-action-item bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-sm">
-                            <i class="fa-solid fa-hourglass-half"></i> <span>งานรออะไหล่ (<span id="waitingPartsInlineCount">0</span>)</span>
-                        </button>
                         <!-- Unified PM Hub Dropdown Menu -->
                         <div class="relative col-span-2" id="pmSuiteDropdownWrap" data-tb-cat="STOCK_PM">
                             <button type="button" onclick="togglePmSuiteDropdown(event)" class="tb-action-item w-full bg-gradient-to-r from-emerald-700 via-teal-700 to-violet-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-emerald-300/50 justify-between">
@@ -1131,9 +1129,6 @@
                                 </button>
                             </div>
                         </div>
-                        <button type="button" data-tb-cat="STOCK_PM" onclick="openVanTransferAndSkillModal('VAN_TRANSFER')" class="tb-action-item col-span-2 bg-orange-700 hover:bg-orange-800 text-white font-bold shadow-sm">
-                            <i class="fa-solid fa-right-left text-amber-200"></i> <span>โอนอะไหล่ระหว่างรถช่าง &amp; ค่าเดินทางตามโซน</span>
-                        </button>
                         <button type="button" data-tb-cat="STOCK_PM" onclick="openWarehouseInspectionModal()" class="tb-action-item col-span-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm border border-emerald-300/40">
                             <i class="fa-solid fa-clipboard-check text-amber-200"></i> <span>ตรวจรับเครื่องเข้าคลัง · ออก QCF &amp; Memo เคลม</span>
                             <span id="inspectionDamagedBadge" class="hidden bg-rose-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
@@ -1145,7 +1140,7 @@
                 <section class="tb-group-card" data-tb-group="MANUAL_TEAM">
                     <div class="tb-group-header">
                         <span><i class="fa-solid fa-book-open text-cyan-300 mr-1.5"></i>4. คู่มือช่าง, บุคลากร &amp; ระบบ (Manual &amp; System)</span>
-                        <span class="text-[10px] text-white/60 font-normal">5 คำสั่ง</span>
+                        <span class="text-[10px] text-white/60 font-normal">7 คำสั่ง</span>
                     </div>
                     <div class="tb-btn-grid">
                         <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openErrorCodeModal()" class="tb-action-item bg-slate-700 hover:bg-slate-800 text-white font-bold shadow-sm">
@@ -1156,9 +1151,6 @@
                         </button>
                         <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openTechnicalDocManagerModal()" class="tb-action-item col-span-2 bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-sm">
                             <i class="fa-solid fa-folder-plus text-amber-100"></i> <span>เพิ่ม/แก้ไข Spec · Parts · SM · IM · Drawing</span>
-                        </button>
-                        <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openMultiModelPartsManagerModal()" class="tb-action-item col-span-2 bg-teal-700 hover:bg-teal-800 text-white font-bold shadow-sm border border-teal-300/30">
-                            <i class="fa-solid fa-gears text-amber-200"></i> <span>จัดการข้อมูลอะไหล่ &amp; รูปภาพ (ใช้ร่วมหลายรุ่น/หลาย Part No.)</span>
                         </button>
                         <button type="button" data-tb-cat="MANUAL_TEAM" id="btnManualSearchTrigger" onclick="toggleManualSearchMenu(event)" class="tb-action-item bg-cyan-600 hover:bg-cyan-700 text-white font-semibold shadow-sm">
                             <i class="fa-solid fa-book-open"></i> <span>ค้นหาคู่มือ / Parts (PDF)</span>
@@ -1173,7 +1165,114 @@
                         <button type="button" data-tb-cat="MANUAL_TEAM" onclick="openEnterpriseGovernanceEhsErpModal('GOVERNANCE')" class="tb-action-item col-span-2 bg-gradient-to-r from-[#002B49] via-slate-800 to-emerald-800 hover:opacity-95 text-white font-extrabold shadow-sm border border-amber-300/50">
                             <i class="fa-solid fa-shield-halved text-amber-300"></i> <span>ศูนย์ธรรมาภิบาล PDPA · EHS/ESG · NAV ERP &amp; คู่มือโต้ตอบ (v1033)</span>
                         </button>
+                    </div>
+                </section>
 
+                <!-- หมวด 5 (เมนูหลักใหม่): ระบบบริหารจัดการสินค้าคงคลังครบวงจร (IMS) + เมนูย่อยเชื่อมโยงสต็อกทุกด้าน -->
+                <section class="tb-group-card col-span-1 md:col-span-2 border-cyan-300/50 bg-gradient-to-br from-[#001F36]/90 via-[#002B49]/90 to-teal-950/90" data-tb-group="IMS_INVENTORY">
+                    <div class="tb-group-header border-cyan-300/30">
+                        <span class="text-cyan-200 font-extrabold"><i class="fa-solid fa-warehouse text-amber-300 mr-1.5"></i>5. ระบบบริหารจัดการสินค้าคงคลังครบวงจร (Inventory Management System - IMS)</span>
+                        <span class="text-[10px] text-cyan-200/80 font-bold">RM · WIP · FG · MRO | ABC · FIFO · JIT · EOQ · ROP · WMS · ERP</span>
+                    </div>
+                    <div class="tb-btn-grid">
+                        <!-- Sub-menu 5.1: ศูนย์บัญชาการ IMS (4 ประเภทสต็อก + ABC/FIFO/EOQ/JIT/WMS) -->
+                        <div class="relative col-span-2" id="imsCoreSubmenuWrap" data-tb-cat="IMS_INVENTORY">
+                            <button type="button" onclick="toggleImsCoreSubmenuDropdown(event)" class="tb-action-item w-full bg-gradient-to-r from-cyan-600 via-sky-600 to-teal-600 hover:opacity-95 text-white font-extrabold shadow-md border border-cyan-200/60 justify-between">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i class="fa-solid fa-cubes-stacked text-amber-300"></i>
+                                    <span>5.1 ศูนย์บริหารคลังสินค้า IMS (RM · WIP · FG · MRO | ABC · FIFO · EOQ · JIT · WMS)</span>
+                                    <span id="imsLowStockAlertBadge" class="bg-rose-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">IMS</span>
+                                </span>
+                                <i class="fa-solid fa-chevron-down text-xs opacity-90"></i>
+                            </button>
+                            <div id="imsCoreSubmenuDropdown" onclick="event.stopPropagation()" class="hidden absolute left-0 right-0 mt-1.5 bg-white text-slate-800 rounded-xl shadow-2xl border border-cyan-300 p-2 z-[118] text-xs space-y-1">
+                                <div class="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#002B49] bg-cyan-50 rounded-lg flex items-center justify-between">
+                                    <span><i class="fa-solid fa-warehouse text-cyan-700 mr-1"></i> IMS Core Modules (แยกฟังก์ชันชัดเจน)</span>
+                                    <span>6 โมดูลย่อย</span>
+                                </div>
+                                <button type="button" onclick="closeImsSubmenus(); openEnterpriseInventoryImsModal('OVERVIEW');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-cyan-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-[#002B49] text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-chart-pie text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">1) ภาพรวมประเภทสินค้าคงคลัง (RM · WIP · FG · MRO)</div>
+                                        <div class="text-[10px] text-slate-500">แยกติดตามวัตถุดิบ/อะไหล่, งานระหว่างผลิต, สินค้าสำเร็จรูปพร้อมขาย และวัสดุสิ้นเปลืองซ่อมบำรุง</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closeImsSubmenus(); openEnterpriseInventoryImsModal('ABC_EOQ');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-indigo-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-calculator text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">2) ABC Analysis (80/15/5) · EOQ · Safety Stock &amp; Reorder Point (ROP)</div>
+                                        <div class="text-[10px] text-slate-500">จัดกลุ่มมูลค่า ABC, คำนวณปริมาณสั่งซื้อประหยัดสุด (EOQ), สต็อกกันชน และจุดสั่งซื้ออัตโนมัติ</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closeImsSubmenus(); openEnterpriseInventoryImsModal('FIFO_WMS');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-emerald-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-layer-group text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">3) ระบบ WMS พื้นที่จัดเก็บ (Zone/Bin) &amp; ลำดับจ่ายออก FIFO (เข้าก่อน-ออกก่อน)</div>
+                                        <div class="text-[10px] text-slate-500">ควบคุมพิกัดชั้นวางคลังสินค้า, วันหมดอายุ และตัดจ่ายลอตเก่าก่อนตามมาตรฐานบัญชีไทย</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closeImsSubmenus(); openEnterpriseInventoryImsModal('MOVEMENTS');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-amber-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-amber-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-right-left text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">4) รับเข้าคลัง (GRN) · เบิกจ่าย FIFO · คำสั่งซื้อ JIT &amp; สมุดรายวันสต็อก (Ledger)</div>
+                                        <div class="text-[10px] text-slate-500">บันทึกรับสินค้าเข้าสร้าง Lot ใหม่, เบิกจ่ายตัดสต็อก และคิวสั่งซื้อแบบ Just-In-Time (JIT)</div>
+                                    </div>
+                                </button>
+                                <button type="button" onclick="closeImsSubmenus(); openEnterpriseInventoryImsModal('ERP_BRIDGE');" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-rose-50 transition flex items-start gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-rose-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-network-wired text-[11px]"></i></span>
+                                    <div>
+                                        <div class="font-bold text-slate-900">5) แผนผังเชื่อมโยงทุกแผนก (Service Jobs · QT/IV · Van Stock · GIT · NAV ERP)</div>
+                                        <div class="text-[10px] text-slate-500">ตรวจสอบสถานะการซิงค์ข้อมูลสต็อกข้ามฝ่ายแบบเรียลไทม์และส่งออก CSV เข้าระบบบัญชี</div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sub-menu 5.2: สต็อกรถช่าง & โอนย้ายระหว่างรถช่าง (ย้ายมาจากหมวดเดิมเป็นซับเมนูชัดเจน) -->
+                        <div class="relative col-span-2 sm:col-span-1" id="imsVanSubmenuWrap" data-tb-cat="IMS_INVENTORY">
+                            <button type="button" onclick="toggleImsVanSubmenuDropdown(event)" class="tb-action-item w-full bg-orange-600 hover:bg-orange-700 text-white font-bold shadow-sm justify-between">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i class="fa-solid fa-truck-ramp-box text-amber-200"></i>
+                                    <span>5.2 คลังรถช่าง &amp; ตรวจนับ (Van Stock)</span>
+                                </span>
+                                <i class="fa-solid fa-chevron-down text-[10px] opacity-90"></i>
+                            </button>
+                            <div id="imsVanSubmenuDropdown" onclick="event.stopPropagation()" class="hidden absolute left-0 right-0 mt-1.5 bg-white text-slate-800 rounded-xl shadow-2xl border border-orange-200 p-1.5 z-[118] text-xs space-y-1">
+                                <div class="px-2.5 py-1 text-[10px] font-extrabold text-orange-950 bg-orange-50 rounded-lg">คลังอะไหล่รถช่างภาคสนาม (T01–T08)</div>
+                                <button type="button" onclick="closeImsSubmenus(); openVanStockModal();" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-orange-50 font-bold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-boxes-stacked text-orange-600"></i> <span>1. จัดการสต็อกรถช่าง &amp; เบิกเติม Min/Max</span>
+                                </button>
+                                <button type="button" onclick="closeImsSubmenus(); openVanTransferAndSkillModal('VAN_TRANSFER');" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-amber-50 font-bold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-right-left text-amber-600"></i> <span>2. โอนย้ายอะไหล่ระหว่างรถช่าง (Van-to-Van)</span>
+                                </button>
+                                <button type="button" onclick="closeImsSubmenus(); openEnterpriseGovernanceEhsErpModal('CYCLE_COUNT');" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-sky-50 font-bold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-clipboard-list text-sky-600"></i> <span>3. ตรวจนับสต็อกรถช่าง (Cycle Count) &amp; คืนซาก DFR</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sub-menu 5.3: งานรออะไหล่, GIT นำเข้า & จัดการอะไหล่หลายรุ่น -->
+                        <div class="relative col-span-2 sm:col-span-1" id="imsSupplySubmenuWrap" data-tb-cat="IMS_INVENTORY">
+                            <button type="button" onclick="toggleImsSupplySubmenuDropdown(event)" class="tb-action-item w-full bg-rose-700 hover:bg-rose-800 text-white font-bold shadow-sm justify-between">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i class="fa-solid fa-ship text-amber-200"></i>
+                                    <span>5.3 งานรออะไหล่ · GIT นำเข้า &amp; แคตตาล็อก (<span id="waitingPartsInlineCount">0</span>)</span>
+                                </span>
+                                <i class="fa-solid fa-chevron-down text-[10px] opacity-90"></i>
+                            </button>
+                            <div id="imsSupplySubmenuDropdown" onclick="event.stopPropagation()" class="hidden absolute left-0 right-0 mt-1.5 bg-white text-slate-800 rounded-xl shadow-2xl border border-rose-200 p-1.5 z-[118] text-xs space-y-1">
+                                <div class="px-2.5 py-1 text-[10px] font-extrabold text-rose-950 bg-rose-50 rounded-lg">เชื่อมโยงจัดซื้อ นำเข้า &amp; แคตตาล็อกอะไหล่</div>
+                                <button type="button" onclick="closeImsSubmenus(); openWaitingPartsBackorderModal();" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-rose-50 font-bold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-hourglass-half text-rose-600"></i> <span>1. ติดตามงานรออะไหล่ค้างส่ง (Waiting Parts Backorder)</span>
+                                </button>
+                                <button type="button" onclick="closeImsSubmenus(); openPhase2DepartmentalBridgeModal();" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 font-bold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-truck-fast text-indigo-600"></i> <span>2. ใบเบิกอะไหล่ล่วงหน้า 6 ขั้นตอน &amp; สถานะเรือ GIT/ETA</span>
+                                </button>
+                                <button type="button" onclick="closeImsSubmenus(); openMultiModelPartsManagerModal();" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-teal-50 font-bold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-gears text-teal-600"></i> <span>3. ฐานข้อมูลอะไหล่ &amp; รูปภาพ (ใช้ร่วมหลายรุ่น/หลาย Part No.)</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -4566,7 +4665,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1036</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1038</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -20705,7 +20804,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1036) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1038) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -23607,7 +23706,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1036 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1038 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -31523,7 +31622,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1036)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1038)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31726,7 +31825,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1036)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1038)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31735,7 +31834,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1036)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1038)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -31744,7 +31843,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1036)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1038)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31826,21 +31925,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1036) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1038) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1036 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1038 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1036）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1038）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -34871,9 +34970,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1036',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1036)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1036)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1038',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1038)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1038)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34922,7 +35021,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1036 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1038 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -35148,7 +35247,7 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
         <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1036 — Multi-Branch &amp; White-Label Ready)</h3>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1038 — Multi-Branch &amp; White-Label Ready)</h3>
                 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
             </div>
             <div class="flex items-center gap-1.5">
@@ -39194,7 +39293,7 @@ try {
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1036 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1038 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -39721,7 +39820,7 @@ try {
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1036</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1038</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -40633,7 +40732,7 @@ ${portalUrl}`;
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1036</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1038</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -42754,7 +42853,7 @@ ${portalUrl}`;
         <div>
           <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
             <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-            <span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1036</span>
+            <span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1038</span>
           </h2>
           <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
         </div>
@@ -43283,7 +43382,7 @@ ${portalUrl}`;
         <div>
           <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
             <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-            <span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1036</span>
+            <span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1038</span>
           </h2>
           <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
         </div>
@@ -44834,6 +44933,10 @@ ${portalUrl}`;
   // UPGRADE 2: FULL-STACK DEEP-SCAN AUTO-CHECK & AUTO-HEAL ENGINE (24 CHECKS)
   // =========================================================================
   const ALL_STORAGE_SCHEMAS_V1036 = [
+    { key: 'hoshizaki_ims_master_items_v1', type: 'array', label: 'ฐานข้อมูลสินค้าคงคลัง IMS Master (RM/WIP/FG/MRO)' },
+    { key: 'hoshizaki_ims_fifo_lots_v1', type: 'array', label: 'ลอตสินค้าและพื้นที่จัดเก็บ WMS/FIFO Lots' },
+    { key: 'hoshizaki_ims_movements_v1', type: 'array', label: 'ประวัติรับเข้า-จ่ายออก-โอนย้าย IMS Ledger' },
+    { key: 'hoshizaki_ims_po_jit_v1', type: 'array', label: 'ใบสั่งซื้อ JIT & Reorder Alerts' },
     { key: 'hoshizaki_service_history_v1', type: 'array', label: 'ประวัติใบแจ้งบริการ (Service Jobs)' },
     { key: 'hoshizaki_quotations_v1', type: 'array', label: 'คลังใบเสนอราคา (Quotations)' },
     { key: 'hoshizaki_schedule_items_v1', type: 'array', label: 'ตารางนัดหมายและจ่ายงานช่าง' },
@@ -44923,7 +45026,7 @@ ${portalUrl}`;
     }
 
     const passed = checks.filter(c => c.ok).length;
-    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1036)</span>`;
+    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1038)</span>`;
     listEl.innerHTML = checks.map(c => `
       <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/75 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
         <div>
@@ -45006,5 +45109,963 @@ ${portalUrl}`;
   }, 2000);
 })();
 </script>
+
+<!-- =========================================================================
+     ENTERPRISE v1038 HOLISTIC INVENTORY MANAGEMENT SYSTEM (IMS)
+     - Main Menu Category #5 + Dedicated Submenus (5.1 Core IMS, 5.2 Van Stock, 5.3 Supply & GIT)
+     - 4 Inventory Types: Raw Materials (RM), Work in Process (WIP),
+       Finished Goods (FG), MRO Supplies
+     - 5 Core Inventory Methodologies: ABC Analysis (80/15/5 Pareto),
+       FIFO Lot Tracking & Allocation, JIT Auto-Trigger, EOQ Calculator,
+       Safety Stock & Reorder Point (ROP) Engine
+     - WMS Bin/Zone Locator + Deep Cross-Module Sync (Service Jobs, Quotations,
+       Van Stock T01-T08, Parts Catalog, Factory GIT/ETA & NAV ERP CSV)
+     ========================================================================= -->
+<div id="enterpriseImsModal" class="fixed inset-0 z-[9995] hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
+  <div class="bg-white w-full max-w-7xl max-h-[94vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+    <!-- Top Corporate Navy Header -->
+    <div class="bg-gradient-to-r from-[#002B49] via-[#003B66] to-sky-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-300/40 flex items-center justify-center text-cyan-300 text-lg">
+          <i class="fa-solid fa-warehouse"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 class="text-base sm:text-lg font-extrabold tracking-tight">HOSHIZAKI ENTERPRISE IMS · ระบบบริหารสินค้าคงคลังครบวงจร</h2>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-200 border border-cyan-300/30">RM · WIP · FG · MRO</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-200 border border-emerald-300/30">ABC · FIFO · JIT · EOQ · ROP · WMS</span>
+          </div>
+          <p class="text-[11px] text-sky-200">เชื่อมโยงเรียลไทม์: Service Jobs · Quotations · Van Stock · Parts Catalog · Factory GIT · NAV ERP</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <button type="button" onclick="syncImsWithAllEcosystemModules(true)" class="px-2.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-arrows-rotate"></i> <span>ซิงค์เชื่อมโยงทุกโมดูล + Cloud</span>
+        </button>
+        <button type="button" onclick="exportImsFullWorkbookCsv()" class="px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-file-excel"></i> <span>Export Excel / NAV CSV</span>
+        </button>
+        <button type="button" onclick="closeEnterpriseInventoryImsModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-rose-600 text-white flex items-center justify-center font-bold">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-slate-100 border-b border-slate-200 px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 text-xs font-bold">
+      <button type="button" data-ims-tab="OVERVIEW" onclick="switchEnterpriseImsTab('OVERVIEW')" class="ims-tab-btn px-3 py-2 rounded-t-lg border-b-2 border-[#002B49] bg-white text-[#002B49] whitespace-nowrap">
+        <i class="fa-solid fa-chart-pie mr-1 text-sky-600"></i>1. ภาพรวม &amp; ประเภทสต็อก (RM/WIP/FG/MRO)
+      </button>
+      <button type="button" data-ims-tab="ABC_EOQ" onclick="switchEnterpriseImsTab('ABC_EOQ')" class="ims-tab-btn px-3 py-2 rounded-t-lg border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap">
+        <i class="fa-solid fa-calculator mr-1 text-indigo-600"></i>2. ABC Analysis · EOQ · Safety Stock &amp; ROP
+      </button>
+      <button type="button" data-ims-tab="FIFO_WMS" onclick="switchEnterpriseImsTab('FIFO_WMS')" class="ims-tab-btn px-3 py-2 rounded-t-lg border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap">
+        <i class="fa-solid fa-layer-group mr-1 text-emerald-600"></i>3. WMS พื้นที่จัดเก็บ &amp; ลอต FIFO (เข้าก่อน-ออกก่อน)
+      </button>
+      <button type="button" data-ims-tab="MOVEMENTS" onclick="switchEnterpriseImsTab('MOVEMENTS')" class="ims-tab-btn px-3 py-2 rounded-t-lg border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap">
+        <i class="fa-solid fa-right-left mr-1 text-amber-600"></i>4. รับเข้า · เบิกจ่าย FIFO · โอนย้าย &amp; JIT PO
+      </button>
+      <button type="button" data-ims-tab="ERP_BRIDGE" onclick="switchEnterpriseImsTab('ERP_BRIDGE')" class="ims-tab-btn px-3 py-2 rounded-t-lg border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap">
+        <i class="fa-solid fa-network-wired mr-1 text-rose-600"></i>5. ศูนย์เชื่อมโยงทุกแผนก (Jobs · QT · Vans · GIT · NAV)
+      </button>
+    </div>
+
+    <!-- Body Content Container -->
+    <div id="enterpriseImsBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-4"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const IMS_ITEMS_KEY = 'hoshizaki_ims_master_items_v1';
+  const IMS_LOTS_KEY = 'hoshizaki_ims_fifo_lots_v1';
+  const IMS_MOVES_KEY = 'hoshizaki_ims_movements_v1';
+  const IMS_PO_KEY = 'hoshizaki_ims_po_jit_v1';
+  let _currentImsTab = 'OVERVIEW';
+
+  // Sub-menu dropdown toggles for Main Menu #5 (IMS)
+  window.closeImsSubmenus = function() {
+    ['imsCoreSubmenuDropdown', 'imsVanSubmenuDropdown', 'imsSupplySubmenuDropdown'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    });
+  };
+  window.toggleImsCoreSubmenuDropdown = function(ev) {
+    if (ev) ev.stopPropagation();
+    const el = document.getElementById('imsCoreSubmenuDropdown');
+    const wasHidden = el && el.classList.contains('hidden');
+    window.closeImsSubmenus();
+    if (el && wasHidden) el.classList.remove('hidden');
+  };
+  window.toggleImsVanSubmenuDropdown = function(ev) {
+    if (ev) ev.stopPropagation();
+    const el = document.getElementById('imsVanSubmenuDropdown');
+    const wasHidden = el && el.classList.contains('hidden');
+    window.closeImsSubmenus();
+    if (el && wasHidden) el.classList.remove('hidden');
+  };
+  window.toggleImsSupplySubmenuDropdown = function(ev) {
+    if (ev) ev.stopPropagation();
+    const el = document.getElementById('imsSupplySubmenuDropdown');
+    const wasHidden = el && el.classList.contains('hidden');
+    window.closeImsSubmenus();
+    if (el && wasHidden) el.classList.remove('hidden');
+  };
+  document.addEventListener('click', function() {
+    window.closeImsSubmenus();
+  });
+
+  function getImsItems() {
+    try { return JSON.parse(localStorage.getItem(IMS_ITEMS_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveImsItems(list) {
+    localStorage.setItem(IMS_ITEMS_KEY, JSON.stringify(list || []));
+  }
+  function getImsLots() {
+    try { return JSON.parse(localStorage.getItem(IMS_LOTS_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveImsLots(list) {
+    localStorage.setItem(IMS_LOTS_KEY, JSON.stringify(list || []));
+  }
+  function getImsMoves() {
+    try { return JSON.parse(localStorage.getItem(IMS_MOVES_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveImsMoves(list) {
+    localStorage.setItem(IMS_MOVES_KEY, JSON.stringify((list || []).slice(0, 1000)));
+  }
+  function getImsPos() {
+    try { return JSON.parse(localStorage.getItem(IMS_PO_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveImsPos(list) {
+    localStorage.setItem(IMS_PO_KEY, JSON.stringify(list || []));
+  }
+
+  // EOQ Formula: sqrt((2 * D * S) / H)
+  function calcEoqMetrics(item) {
+    const annualDemand = Math.max(1, Number(item.annualDemand || 24));
+    const orderCost = Math.max(10, Number(item.orderCost || 350));
+    const unitCost = Math.max(1, Number(item.unitCost || 100));
+    const holdingPct = Math.max(0.05, Number(item.holdingRatePct || 20) / 100);
+    const holdingCostPerUnit = unitCost * holdingPct;
+    const eoq = Math.max(1, Math.round(Math.sqrt((2 * annualDemand * orderCost) / holdingCostPerUnit)));
+
+    const dailyUsage = annualDemand / 365;
+    const leadTimeDays = Math.max(1, Number(item.leadTimeDays || 7));
+    const maxDailyUsage = dailyUsage * 1.35;
+    const maxLeadTime = Math.ceil(leadTimeDays * 1.3);
+    const safetyStock = Math.max(1, Math.ceil((maxDailyUsage * maxLeadTime) - (dailyUsage * leadTimeDays)));
+    const reorderPoint = Math.max(safetyStock + 1, Math.ceil((dailyUsage * leadTimeDays) + safetyStock));
+
+    return {
+      eoq: eoq,
+      safetyStock: safetyStock,
+      reorderPoint: reorderPoint,
+      dailyUsage: dailyUsage.toFixed(2),
+      holdingCostPerUnit: holdingCostPerUnit.toFixed(2),
+      ordersPerYear: (annualDemand / eoq).toFixed(1)
+    };
+  }
+
+  // ABC Pareto Classification (80% Value = A, Next 15% = B, Remaining 5% = C)
+  function computeAbcClassification(items) {
+    const enriched = items.map(function(it) {
+      const m = calcEoqMetrics(it);
+      const annualConsumptionVal = Math.max(1, Number(it.annualDemand || 12)) * Math.max(1, Number(it.unitCost || 100));
+      const stockValue = Number(it.onHandQty || 0) * Number(it.unitCost || 0);
+      return Object.assign({}, it, m, { annualConsumptionVal: annualConsumptionVal, stockValue: stockValue });
+    });
+    enriched.sort(function(a, b) { return b.annualConsumptionVal - a.annualConsumptionVal; });
+    const totalAnnualVal = enriched.reduce(function(acc, x) { return acc + x.annualConsumptionVal; }, 0) || 1;
+    let cumVal = 0;
+    return enriched.map(function(x) {
+      cumVal += x.annualConsumptionVal;
+      const cumPct = (cumVal / totalAnnualVal) * 100;
+      let abcClass = 'C';
+      if (cumPct <= 80.5) abcClass = 'A';
+      else if (cumPct <= 95.5) abcClass = 'B';
+      return Object.assign(x, { abcClass: abcClass, cumPct: cumPct.toFixed(1) });
+    });
+  }
+
+  // Comprehensive Enterprise Seed across RM, WIP, FG, MRO + Van Stock + Parts Catalog
+  function seedInitialImsDataIfEmpty() {
+    let items = getImsItems();
+    if (items.length > 0) return;
+
+    const today = new Date().toISOString().slice(0, 10);
+    const seeds = [
+      // Finished Goods (FG - เครื่องสำเร็จรูปพร้อมขายและติดตั้ง)
+      { sku: 'FG-IM-130NE', name: 'เครื่องทำน้ำแข็งก้อน HOSHIZAKI IM-130NE (130 กก./วัน)', invType: 'FG', uom: 'Unit', zone: 'WMS-FG-A1', bin: 'A1-01', onHandQty: 6, allocatedQty: 1, unitCost: 78500, sellingPrice: 115000, annualDemand: 48, leadTimeDays: 14, orderCost: 1200, holdingRatePct: 18, jitEnabled: false },
+      { sku: 'FG-IM-65NE', name: 'เครื่องทำน้ำแข็งก้อน HOSHIZAKI IM-65NE (65 กก./วัน)', invType: 'FG', uom: 'Unit', zone: 'WMS-FG-A1', bin: 'A1-02', onHandQty: 8, allocatedQty: 2, unitCost: 49500, sellingPrice: 74500, annualDemand: 72, leadTimeDays: 14, orderCost: 1100, holdingRatePct: 18, jitEnabled: false },
+      { sku: 'FG-KM-515MAH', name: 'หัวเครื่องทำน้ำแข็งเสี้ยวพระจันทร์ KM-515MAH (240 กก./วัน)', invType: 'FG', uom: 'Unit', zone: 'WMS-FG-A2', bin: 'A2-03', onHandQty: 3, allocatedQty: 0, unitCost: 92000, sellingPrice: 138000, annualDemand: 30, leadTimeDays: 21, orderCost: 1500, holdingRatePct: 18, jitEnabled: true },
+      { sku: 'FG-FM-300AKE', name: 'เครื่องทำเกล็ดน้ำแข็ง HOSHIZAKI FM-300AKE (300 กก./วัน)', invType: 'FG', uom: 'Unit', zone: 'WMS-FG-A3', bin: 'A3-01', onHandQty: 4, allocatedQty: 1, unitCost: 84000, sellingPrice: 126000, annualDemand: 36, leadTimeDays: 18, orderCost: 1400, holdingRatePct: 18, jitEnabled: false },
+      { sku: 'FG-HR-126MA-S', name: 'ตู้แช่เย็นสเตนเลส 4 ประตู HR-126MA-S (+1°C ถึง +6°C)', invType: 'FG', uom: 'Unit', zone: 'WMS-FG-B1', bin: 'B1-02', onHandQty: 4, allocatedQty: 1, unitCost: 54000, sellingPrice: 82000, annualDemand: 36, leadTimeDays: 14, orderCost: 1000, holdingRatePct: 18, jitEnabled: false },
+      // Raw Materials & OEM Core Parts (RM)
+      { sku: 'P01873-01', name: 'แผงบอร์ดควบคุมหลัก Control Board IM Series (P01873-01)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-C1', bin: 'C1-04', onHandQty: 14, allocatedQty: 2, unitCost: 4850, sellingPrice: 8900, annualDemand: 96, leadTimeDays: 10, orderCost: 450, holdingRatePct: 20, jitEnabled: true },
+      { sku: '2A1410-02', name: 'แผงบอร์ดควบคุม EverCheck Board KM Series (2A1410-02)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-C1', bin: 'C1-05', onHandQty: 9, allocatedQty: 1, unitCost: 5600, sellingPrice: 10200, annualDemand: 60, leadTimeDays: 12, orderCost: 450, holdingRatePct: 20, jitEnabled: true },
+      { sku: '4A5251-06', name: 'วาล์วน้ำเข้า Water Inlet Valve KM Series (4A5251-06)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-C2', bin: 'C2-01', onHandQty: 18, allocatedQty: 1, unitCost: 1450, sellingPrice: 2950, annualDemand: 140, leadTimeDays: 7, orderCost: 300, holdingRatePct: 20, jitEnabled: false },
+      { sku: 'P01872-01', name: 'วาล์วน้ำเข้า Water Inlet Valve IM Series (P01872-01)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-C2', bin: 'C2-02', onHandQty: 16, allocatedQty: 2, unitCost: 1380, sellingPrice: 2750, annualDemand: 130, leadTimeDays: 7, orderCost: 300, holdingRatePct: 20, jitEnabled: false },
+      { sku: 'PA0613', name: 'มอเตอร์ปั๊มน้ำหมุนเวียน Water Pump Motor KM (PA0613)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-C2', bin: 'C2-05', onHandQty: 9, allocatedQty: 1, unitCost: 3600, sellingPrice: 6800, annualDemand: 72, leadTimeDays: 10, orderCost: 400, holdingRatePct: 20, jitEnabled: false },
+      { sku: 'P03755-01', name: 'มอเตอร์พลิกถาดน้ำ Actuator Motor IM Series (P03755-01)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-C3', bin: 'C3-01', onHandQty: 11, allocatedQty: 1, unitCost: 2450, sellingPrice: 4600, annualDemand: 84, leadTimeDays: 10, orderCost: 350, holdingRatePct: 20, jitEnabled: false },
+      { sku: '432491-01', name: 'ซีลแกนสว่าน Mechanical Seal FM Series (432491-01)', invType: 'RM', uom: 'SET', zone: 'WMS-RM-C3', bin: 'C3-02', onHandQty: 12, allocatedQty: 0, unitCost: 2100, sellingPrice: 4200, annualDemand: 84, leadTimeDays: 10, orderCost: 350, holdingRatePct: 20, jitEnabled: false },
+      { sku: 'EV965516', name: 'ไส้กรองน้ำแท้ HOSHIZAKI 4HC-H Water Filter Cartridge', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-D1', bin: 'D1-01', onHandQty: 42, allocatedQty: 4, unitCost: 1650, sellingPrice: 3200, annualDemand: 320, leadTimeDays: 5, orderCost: 250, holdingRatePct: 15, jitEnabled: true },
+      // Work in Process (WIP - ชุดประกอบย่อยและเครื่องปรับสภาพรอ QC)
+      { sku: 'WIP-EVAP-IM130', name: 'ชุดประกอบคอยล์เย็น + ถาดน้ำพลิก IM-130NE (Pre-Tested Sub-Assembly)', invType: 'WIP', uom: 'SET', zone: 'WMS-WIP-W1', bin: 'W1-01', onHandQty: 3, allocatedQty: 1, unitCost: 14200, sellingPrice: 22500, annualDemand: 24, leadTimeDays: 5, orderCost: 500, holdingRatePct: 22, jitEnabled: true },
+      { sku: 'WIP-REFURB-KM60', name: 'เครื่องปรับสภาพรอทดสอบ QC 24 ชม. (KM-60B Refurbish Line)', invType: 'WIP', uom: 'Unit', zone: 'WMS-WIP-W2', bin: 'W2-02', onHandQty: 2, allocatedQty: 0, unitCost: 24000, sellingPrice: 39000, annualDemand: 18, leadTimeDays: 4, orderCost: 600, holdingRatePct: 22, jitEnabled: true },
+      // MRO Supplies (วัสดุสิ้นเปลืองในการซ่อมบำรุงและปฏิบัติงาน)
+      { sku: 'MRO-R290-CAN', name: 'สารทำความเย็น R290 Hydrocarbon เกรดบริการ (370g)', invType: 'MRO', uom: 'CAN', zone: 'WMS-MRO-M1', bin: 'M1-01', onHandQty: 26, allocatedQty: 2, unitCost: 420, sellingPrice: 850, annualDemand: 180, leadTimeDays: 3, orderCost: 200, holdingRatePct: 18, jitEnabled: false },
+      { sku: 'MRO-R404A-CYL', name: 'สารทำความเย็น R404A ถังมาตรฐาน 10.9 kg สำหรับงานบริการ', invType: 'MRO', uom: 'CYL', zone: 'WMS-MRO-M1', bin: 'M1-02', onHandQty: 8, allocatedQty: 1, unitCost: 3450, sellingPrice: 5200, annualDemand: 48, leadTimeDays: 4, orderCost: 220, holdingRatePct: 18, jitEnabled: false },
+      { sku: 'MRO-CLEAN-SCALE', name: 'น้ำยาล้างตะกรันและฆ่าเชื้อระบบทำน้ำแข็ง Food-Grade (4L)', invType: 'MRO', uom: 'BTL', zone: 'WMS-MRO-M1', bin: 'M1-03', onHandQty: 15, allocatedQty: 0, unitCost: 580, sellingPrice: 1200, annualDemand: 150, leadTimeDays: 4, orderCost: 200, holdingRatePct: 18, jitEnabled: false },
+      { sku: 'MRO-NITRO-40L', name: 'ก๊าซไนโตรเจนแห้งสำหรับไล่ระบบท่อทองแดง & เทสรั่ว', invType: 'MRO', uom: 'CYL', zone: 'WMS-MRO-M2', bin: 'M2-01', onHandQty: 5, allocatedQty: 0, unitCost: 950, sellingPrice: 1500, annualDemand: 48, leadTimeDays: 2, orderCost: 180, holdingRatePct: 15, jitEnabled: false }
+    ];
+
+    saveImsItems(seeds);
+
+    const lots = [];
+    seeds.forEach(function(s, idx) {
+      const q1 = Math.max(1, Math.floor(s.onHandQty * 0.6));
+      const q2 = s.onHandQty - q1;
+      lots.push({
+        lotId: 'LOT-2609-' + String(idx + 1).padStart(3, '0'),
+        sku: s.sku,
+        name: s.name,
+        invType: s.invType,
+        receivedDate: '2026-09-12',
+        expiryDate: s.invType === 'MRO' ? '2027-09-12' : '',
+        zone: s.zone,
+        bin: s.bin,
+        initialQty: q1,
+        remainingQty: q1,
+        unitCost: s.unitCost,
+        poRef: 'PO-NAV-2026-089'
+      });
+      if (q2 > 0) {
+        lots.push({
+          lotId: 'LOT-2611-' + String(idx + 1).padStart(3, '0'),
+          sku: s.sku,
+          name: s.name,
+          invType: s.invType,
+          receivedDate: today,
+          expiryDate: s.invType === 'MRO' ? '2027-11-18' : '',
+          zone: s.zone,
+          bin: s.bin,
+          initialQty: q2,
+          remainingQty: q2,
+          unitCost: Math.round(s.unitCost * 1.02),
+          poRef: 'PO-NAV-2026-114'
+        });
+      }
+    });
+    saveImsLots(lots);
+
+    saveImsMoves([{
+      moveId: 'MOV-' + Date.now(),
+      timestamp: new Date().toLocaleString('th-TH'),
+      type: 'INITIAL_SYNC',
+      sku: 'SYSTEM',
+      name: 'เริ่มต้นฐานข้อมูล IMS (RM / WIP / FG / MRO + FIFO Lots)',
+      qty: seeds.length,
+      fromLoc: 'NAV ERP / Catalog',
+      toLoc: 'WMS Central',
+      lotId: 'ALL-LOTS',
+      refDoc: 'IMS-INIT-v1038',
+      by: 'System Admin'
+    }]);
+  }
+
+  // FIFO Deduction Engine: Always consumes oldest receivedDate lot first!
+  window.deductImsStockFifo = function(sku, qtyToIssue, toLoc, refDoc, actorName) {
+    const cleanSku = String(sku || '').trim().toUpperCase();
+    let reqQty = Math.max(1, Number(qtyToIssue || 1));
+    const items = getImsItems();
+    const itemIdx = items.findIndex(function(x) { return String(x.sku).toUpperCase() === cleanSku; });
+    if (itemIdx === -1) return { ok: false, message: 'ไม่พบรหัส SKU: ' + cleanSku };
+
+    const lots = getImsLots();
+    const matchingLots = lots
+      .filter(function(l) { return String(l.sku).toUpperCase() === cleanSku && Number(l.remainingQty) > 0; })
+      .sort(function(a, b) { return String(a.receivedDate).localeCompare(String(b.receivedDate)); });
+
+    let issuedTotal = 0;
+    const consumedLogs = [];
+    for (let i = 0; i < matchingLots.length && reqQty > 0; i++) {
+      const lot = matchingLots[i];
+      const take = Math.min(Number(lot.remainingQty), reqQty);
+      lot.remainingQty = Number(lot.remainingQty) - take;
+      reqQty -= take;
+      issuedTotal += take;
+      consumedLogs.push(lot.lotId + ' (' + take + ')');
+    }
+
+    if (issuedTotal === 0 && Number(items[itemIdx].onHandQty) > 0) {
+      issuedTotal = Math.min(Number(items[itemIdx].onHandQty), Number(qtyToIssue || 1));
+      consumedLogs.push('UNLOTTED (' + issuedTotal + ')');
+    }
+
+    items[itemIdx].onHandQty = Math.max(0, Number(items[itemIdx].onHandQty || 0) - issuedTotal);
+    saveImsLots(lots);
+    saveImsItems(items);
+
+    const moves = getImsMoves();
+    moves.unshift({
+      moveId: 'MOV-' + Date.now().toString().slice(-7),
+      timestamp: new Date().toLocaleString('th-TH'),
+      type: 'FIFO_ISSUE',
+      sku: cleanSku,
+      name: items[itemIdx].name,
+      qty: -issuedTotal,
+      fromLoc: items[itemIdx].zone + ' / ' + items[itemIdx].bin,
+      toLoc: toLoc || 'Service Job / Customer',
+      lotId: consumedLogs.join(', '),
+      refDoc: refDoc || '-',
+      by: actorName || 'Service Staff'
+    });
+    saveImsMoves(moves);
+
+    const m = calcEoqMetrics(items[itemIdx]);
+    if (items[itemIdx].onHandQty <= m.reorderPoint) {
+      triggerJitOrEoqReorderAlert(items[itemIdx], m);
+    }
+    updateImsLowStockBadge();
+    return { ok: true, issued: issuedTotal, lotsUsed: consumedLogs };
+  };
+
+  window.receiveImsStockBatch = function(payload) {
+    const sku = String(payload.sku || '').trim().toUpperCase();
+    const qty = Math.max(1, Number(payload.qty || 1));
+    const items = getImsItems();
+    let idx = items.findIndex(function(x) { return String(x.sku).toUpperCase() === sku; });
+
+    if (idx === -1) {
+      items.push({
+        sku: sku,
+        name: payload.name || sku,
+        invType: payload.invType || 'RM',
+        uom: payload.uom || 'PCS',
+        zone: payload.zone || 'WMS-RM-C1',
+        bin: payload.bin || 'C1-01',
+        onHandQty: qty,
+        allocatedQty: 0,
+        unitCost: Number(payload.unitCost || 1000),
+        sellingPrice: Number(payload.sellingPrice || 1800),
+        annualDemand: Number(payload.annualDemand || 36),
+        leadTimeDays: Number(payload.leadTimeDays || 7),
+        orderCost: Number(payload.orderCost || 300),
+        holdingRatePct: 20,
+        jitEnabled: Boolean(payload.jitEnabled)
+      });
+      idx = items.length - 1;
+    } else {
+      items[idx].onHandQty = Number(items[idx].onHandQty || 0) + qty;
+      if (payload.unitCost) items[idx].unitCost = Number(payload.unitCost);
+      if (payload.zone) items[idx].zone = payload.zone;
+      if (payload.bin) items[idx].bin = payload.bin;
+    }
+
+    const lotId = 'LOT-' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.floor(Math.random() * 900 + 100);
+    const lots = getImsLots();
+    lots.push({
+      lotId: lotId,
+      sku: sku,
+      name: items[idx].name,
+      invType: items[idx].invType,
+      receivedDate: payload.receivedDate || new Date().toISOString().slice(0, 10),
+      expiryDate: payload.expiryDate || '',
+      zone: items[idx].zone,
+      bin: items[idx].bin,
+      initialQty: qty,
+      remainingQty: qty,
+      unitCost: items[idx].unitCost,
+      poRef: payload.poRef || 'GRN-MANUAL'
+    });
+
+    const moves = getImsMoves();
+    moves.unshift({
+      moveId: 'GRN-' + Date.now().toString().slice(-7),
+      timestamp: new Date().toLocaleString('th-TH'),
+      type: 'GOODS_RECEIPT',
+      sku: sku,
+      name: items[idx].name,
+      qty: +qty,
+      fromLoc: payload.poRef || 'Supplier / Factory GIT',
+      toLoc: items[idx].zone + ' / ' + items[idx].bin,
+      lotId: lotId,
+      refDoc: payload.poRef || 'GRN',
+      by: payload.by || 'Warehouse Admin'
+    });
+
+    saveImsItems(items);
+    saveImsLots(lots);
+    saveImsMoves(moves);
+    updateImsLowStockBadge();
+    return { lotId: lotId, item: items[idx] };
+  };
+
+  function triggerJitOrEoqReorderAlert(item, metrics) {
+    const pos = getImsPos();
+    const existingOpen = pos.find(function(p) { return p.sku === item.sku && p.status === 'PENDING_ORDER'; });
+    if (existingOpen) return;
+    const orderQty = item.jitEnabled ? Math.max(1, metrics.safetyStock) : metrics.eoq;
+    pos.unshift({
+      poId: (item.jitEnabled ? 'JIT-' : 'EOQ-') + Date.now().toString().slice(-6),
+      createdAt: new Date().toLocaleString('th-TH'),
+      sku: item.sku,
+      name: item.name,
+      invType: item.invType,
+      mode: item.jitEnabled ? 'JIT (Just-In-Time)' : 'EOQ (Economic Order Qty)',
+      currentQty: item.onHandQty,
+      rop: metrics.reorderPoint,
+      safetyStock: metrics.safetyStock,
+      suggestedOrderQty: orderQty,
+      estCost: orderQty * Number(item.unitCost || 0),
+      status: 'PENDING_ORDER'
+    });
+    saveImsPos(pos);
+  }
+
+  function updateImsLowStockBadge() {
+    const enriched = computeAbcClassification(getImsItems());
+    const lowCount = enriched.filter(function(x) { return Number(x.onHandQty) <= Number(x.reorderPoint); }).length;
+    ['imsLowStockAlertBadge', 'imsLowStockTopTabBadge'].forEach(function(id) {
+      const badge = document.getElementById(id);
+      if (!badge) return;
+      badge.textContent = lowCount > 0 ? (lowCount + ' ROP') : 'OK';
+      badge.className = lowCount > 0
+        ? 'ml-1 bg-rose-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full animate-pulse'
+        : 'ml-1 bg-emerald-400 text-slate-950 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full';
+    });
+  }
+
+  // Deep Ecosystem Integration across Service Jobs, Quotations, Van Stock, Warehouse Inspections, Factory GIT & Cloud
+  window.syncImsWithAllEcosystemModules = async function(notifyUser) {
+    seedInitialImsDataIfEmpty();
+    const items = getImsItems();
+    const itemMap = {};
+    items.forEach(function(it) { itemMap[String(it.sku).toUpperCase()] = it; });
+
+    // 1. Pull Van Stock (T01..T08)
+    let vanMap = {};
+    try { vanMap = JSON.parse(localStorage.getItem('hoshizaki_van_stock_db') || '{}'); } catch (e) {}
+    let vanTotalUnits = 0;
+    Object.keys(vanMap).forEach(function(tc) {
+      Object.keys(vanMap[tc] || {}).forEach(function(partLabel) {
+        vanTotalUnits += Number(vanMap[tc][partLabel] || 0);
+      });
+    });
+
+    // 2. Pull Service Jobs & Waiting Parts
+    let jobs = [];
+    try { jobs = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch (e) {}
+    const waitingJobs = jobs.filter(function(j) { return j.jobStatus === 'Waiting Parts'; });
+
+    // 3. Pull Open Quotations for Allocated Stock Calculation
+    let qts = [];
+    try { qts = JSON.parse(localStorage.getItem('hoshizaki_quotations_v1') || '[]'); } catch (e) {}
+
+    // 4. Evaluate Reorder Points across all items
+    const enriched = computeAbcClassification(items);
+    enriched.forEach(function(x) {
+      if (Number(x.onHandQty) <= Number(x.reorderPoint)) {
+        triggerJitOrEoqReorderAlert(x, x);
+      }
+    });
+
+    // 5. Sync to Google Apps Script Cloud Backend
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+    if (gasUrl) {
+      try {
+        await fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            actionType: 'SYNC_ENTERPRISE_IMS_BATCH',
+            items: enriched,
+            lots: getImsLots(),
+            movements: getImsMoves().slice(0, 150),
+            reorderOrders: getImsPos(),
+            vanStockTotalUnits: vanTotalUnits,
+            waitingPartsJobsCount: waitingJobs.length,
+            openQuotationsCount: qts.length
+          })
+        });
+      } catch (eCloud) {}
+    }
+
+    updateImsLowStockBadge();
+    if (_currentImsTab) renderEnterpriseImsTab(_currentImsTab);
+    if (notifyUser && typeof showToast === 'function') {
+      showToast('🔄 ซิงค์ระบบ IMS เชื่อมโยงกับ Service Jobs (' + jobs.length + '), Quotations (' + qts.length + '), Van Stock (' + vanTotalUnits + ' ชิ้น), Waiting Parts (' + waitingJobs.length + ') และ Google Sheets เรียบร้อย');
+    }
+  };
+
+  window.openEnterpriseInventoryImsModal = function(tabName) {
+    seedInitialImsDataIfEmpty();
+    const modal = document.getElementById('enterpriseImsModal');
+    if (modal) modal.classList.remove('hidden');
+    switchEnterpriseImsTab(tabName || 'OVERVIEW');
+  };
+
+  window.closeEnterpriseInventoryImsModal = function() {
+    const modal = document.getElementById('enterpriseImsModal');
+    if (modal) modal.classList.add('hidden');
+  };
+
+  window.switchEnterpriseImsTab = function(tabName) {
+    _currentImsTab = tabName || 'OVERVIEW';
+    document.querySelectorAll('.ims-tab-btn').forEach(function(btn) {
+      const active = btn.getAttribute('data-ims-tab') === _currentImsTab;
+      btn.className = active
+        ? 'ims-tab-btn px-3 py-2 rounded-t-lg border-b-2 border-[#002B49] bg-white text-[#002B49] whitespace-nowrap font-extrabold'
+        : 'ims-tab-btn px-3 py-2 rounded-t-lg border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap font-bold';
+    });
+    renderEnterpriseImsTab(_currentImsTab);
+  };
+
+  function renderEnterpriseImsTab(tab) {
+    const body = document.getElementById('enterpriseImsBody');
+    if (!body) return;
+    const items = computeAbcClassification(getImsItems());
+    const lots = getImsLots();
+    const moves = getImsMoves();
+    const pos = getImsPos();
+
+    const totalStockValue = items.reduce(function(s, x) { return s + x.stockValue; }, 0);
+    const lowStockItems = items.filter(function(x) { return Number(x.onHandQty) <= Number(x.reorderPoint); });
+    const typeCounts = { RM: 0, WIP: 0, FG: 0, MRO: 0 };
+    const typeValues = { RM: 0, WIP: 0, FG: 0, MRO: 0 };
+    items.forEach(function(x) {
+      const t = typeCounts[x.invType] !== undefined ? x.invType : 'RM';
+      typeCounts[t] += Number(x.onHandQty || 0);
+      typeValues[t] += x.stockValue;
+    });
+
+    if (tab === 'OVERVIEW') {
+      body.innerHTML = `
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-500">มูลค่าสินค้าคงคลังรวม (Total Stock Value)</div>
+            <div class="text-xl font-extrabold text-[#002B49] mt-1">${totalStockValue.toLocaleString('en-US')} <span class="text-xs font-semibold">THB</span></div>
+            <div class="text-[10px] text-emerald-600 font-bold mt-1">ครอบคลุม ${items.length} SKU / ${lots.filter(function(l) { return l.remainingQty > 0; }).length} FIFO Lots</div>
+          </div>
+          <div class="bg-sky-50 p-3.5 rounded-xl border border-sky-200 shadow-sm">
+            <div class="text-[11px] font-bold text-sky-800">1. วัตถุดิบ &amp; อะไหล่ (Raw Materials)</div>
+            <div class="text-xl font-extrabold text-sky-950 mt-1">${typeCounts.RM.toLocaleString()} <span class="text-xs">ชิ้น</span></div>
+            <div class="text-[10px] text-sky-700 font-semibold mt-1">มูลค่า ${typeValues.RM.toLocaleString()} THB</div>
+          </div>
+          <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200 shadow-sm">
+            <div class="text-[11px] font-bold text-amber-800">2. งานระหว่างผลิต/ประกอบ (WIP)</div>
+            <div class="text-xl font-extrabold text-amber-950 mt-1">${typeCounts.WIP.toLocaleString()} <span class="text-xs">ชุด</span></div>
+            <div class="text-[10px] text-amber-700 font-semibold mt-1">มูลค่า ${typeValues.WIP.toLocaleString()} THB</div>
+          </div>
+          <div class="bg-emerald-50 p-3.5 rounded-xl border border-emerald-200 shadow-sm">
+            <div class="text-[11px] font-bold text-emerald-800">3. สินค้าสำเร็จรูปพร้อมขาย (FG)</div>
+            <div class="text-xl font-extrabold text-emerald-950 mt-1">${typeCounts.FG.toLocaleString()} <span class="text-xs">เครื่อง</span></div>
+            <div class="text-[10px] text-emerald-700 font-semibold mt-1">มูลค่า ${typeValues.FG.toLocaleString()} THB</div>
+          </div>
+          <div class="bg-purple-50 p-3.5 rounded-xl border border-purple-200 shadow-sm">
+            <div class="text-[11px] font-bold text-purple-800">4. วัสดุสิ้นเปลืองซ่อมบำรุง (MRO)</div>
+            <div class="text-xl font-extrabold text-purple-950 mt-1">${typeCounts.MRO.toLocaleString()} <span class="text-xs">หน่วย</span></div>
+            <div class="text-[10px] text-purple-700 font-semibold mt-1">มูลค่า ${typeValues.MRO.toLocaleString()} THB</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border ${lowStockItems.length > 0 ? 'border-rose-300' : 'border-emerald-300'} p-3.5 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <h3 class="text-sm font-extrabold ${lowStockItems.length > 0 ? 'text-rose-700' : 'text-emerald-700'}">
+              <i class="fa-solid ${lowStockItems.length > 0 ? 'fa-bell text-rose-600' : 'fa-circle-check text-emerald-600'} mr-1.5"></i>
+              แจ้งเตือนจุดสั่งซื้อใหม่ &amp; Safety Stock (${lowStockItems.length} รายการถึงจุด ROP)
+            </h3>
+            <div class="flex items-center gap-2 flex-wrap">
+              <select id="imsFilterTypeSel" onchange="renderEnterpriseImsMasterTable()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold bg-white">
+                <option value="ALL">แสดงทุกประเภท (RM · WIP · FG · MRO)</option>
+                <option value="RM">RM — วัตถุดิบ / อะไหล่แท้</option>
+                <option value="WIP">WIP — งานระหว่างผลิต / ประกอบ</option>
+                <option value="FG">FG — สินค้าสำเร็จรูปพร้อมขาย</option>
+                <option value="MRO">MRO — วัสดุสิ้นเปลืองซ่อมบำรุง</option>
+              </select>
+              <input id="imsSearchInput" oninput="renderEnterpriseImsMasterTable()" placeholder="ค้นหารหัส SKU / ชื่อสินค้า / โซน WMS..." class="text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 w-56 bg-white">
+            </div>
+          </div>
+          <div id="imsMasterTableWrap" class="overflow-x-auto"></div>
+        </div>
+      `;
+      window.renderEnterpriseImsMasterTable();
+      return;
+    }
+
+    if (tab === 'ABC_EOQ') {
+      const aItems = items.filter(function(x) { return x.abcClass === 'A'; });
+      const bItems = items.filter(function(x) { return x.abcClass === 'B'; });
+      const cItems = items.filter(function(x) { return x.abcClass === 'C'; });
+
+      body.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="bg-rose-50 border border-rose-200 rounded-xl p-3.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-rose-600 text-white text-xs font-extrabold">กลุ่ม A (High Value · ~80% มูลค่า)</span>
+              <span class="text-lg font-extrabold text-rose-900">${aItems.length} SKU</span>
+            </div>
+            <p class="text-[11px] text-rose-800 mt-1.5">สินค้ามูลค่าสูง/สำคัญสูงสุด ต้องตรวจนับ Cycle Count ทุกสัปดาห์และคุม Safety Stock เข้มงวด</p>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-amber-600 text-white text-xs font-extrabold">กลุ่ม B (Medium Value · ~15% มูลค่า)</span>
+              <span class="text-lg font-extrabold text-amber-900">${bItems.length} SKU</span>
+            </div>
+            <p class="text-[11px] text-amber-800 mt-1.5">สินค้าหมุนเวียนปานกลาง ตรวจนับรายเดือนและสั่งซื้ออัตโนมัติตามจุด Reorder Point (ROP)</p>
+          </div>
+          <div class="bg-sky-50 border border-sky-200 rounded-xl p-3.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-sky-600 text-white text-xs font-extrabold">กลุ่ม C (Low Value · ~5% มูลค่า)</span>
+              <span class="text-lg font-extrabold text-sky-900">${cItems.length} SKU</span>
+            </div>
+            <p class="text-[11px] text-sky-800 mt-1.5">วัสดุสิ้นเปลือง/อะไหล่ราคาประหยัด สั่งซื้อเป็นลอตใหญ่ตามค่า EOQ เพื่อลดค่าขนส่งต่อครั้ง</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <h3 class="text-sm font-extrabold text-[#002B49] mb-2"><i class="fa-solid fa-sliders text-indigo-600 mr-1.5"></i>เครื่องคำนวณ EOQ (ปริมาณสั่งซื้อที่ประหยัดที่สุด) &amp; จุดสั่งซื้อ (ROP)</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2.5 text-xs">
+            <div><label class="font-bold text-slate-600">ความต้องการ/ปี (D)</label><input id="simEoqD" type="number" value="120" oninput="recalcImsSimulator()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold"></div>
+            <div><label class="font-bold text-slate-600">ค่าสั่งซื้อ/ครั้ง (S ฿)</label><input id="simEoqS" type="number" value="350" oninput="recalcImsSimulator()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold"></div>
+            <div><label class="font-bold text-slate-600">ราคาทุน/หน่วย (C ฿)</label><input id="simEoqC" type="number" value="1500" oninput="recalcImsSimulator()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold"></div>
+            <div><label class="font-bold text-slate-600">ค่าเก็บรักษา (%/ปี)</label><input id="simEoqH" type="number" value="20" oninput="recalcImsSimulator()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold"></div>
+            <div><label class="font-bold text-slate-600">Lead Time (วัน)</label><input id="simEoqLt" type="number" value="7" oninput="recalcImsSimulator()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold"></div>
+            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-2 flex flex-col justify-center">
+              <div class="text-[10px] font-bold text-indigo-700">ผลลัพธ์ EOQ / ROP / SS</div>
+              <div id="simEoqOut" class="text-xs font-extrabold text-indigo-950 mt-0.5">EOQ: 17 | ROP: 5 | SS: 3</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-sm overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-[#002B49] text-white">
+                <th class="p-2">ABC</th>
+                <th class="p-2">ประเภท</th>
+                <th class="p-2">SKU / รายการ</th>
+                <th class="p-2 text-right">มูลค่าใช้/ปี</th>
+                <th class="p-2 text-right">คงเหลือจริง</th>
+                <th class="p-2 text-right">Safety Stock</th>
+                <th class="p-2 text-right">จุดสั่งซื้อ (ROP)</th>
+                <th class="p-2 text-right">ปริมาณ EOQ</th>
+                <th class="p-2 text-center">นโยบาย</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              ${items.map(function(x) {
+                const abcBadge = x.abcClass === 'A' ? 'bg-rose-600 text-white' : (x.abcClass === 'B' ? 'bg-amber-500 text-white' : 'bg-sky-600 text-white');
+                const isLow = Number(x.onHandQty) <= Number(x.reorderPoint);
+                return `<tr class="${isLow ? 'bg-rose-50/70' : 'hover:bg-slate-50'}">
+                  <td class="p-2"><span class="px-2 py-0.5 rounded font-extrabold text-[11px] ${abcBadge}">Class ${x.abcClass}</span></td>
+                  <td class="p-2 font-bold">${x.invType}</td>
+                  <td class="p-2"><div class="font-bold text-slate-900">${x.sku}</div><div class="text-[11px] text-slate-600">${x.name}</div></td>
+                  <td class="p-2 text-right font-semibold">${x.annualConsumptionVal.toLocaleString()} ฿</td>
+                  <td class="p-2 text-right font-extrabold ${isLow ? 'text-rose-700' : 'text-emerald-700'}">${x.onHandQty} ${x.uom}</td>
+                  <td class="p-2 text-right font-bold text-slate-700">${x.safetyStock}</td>
+                  <td class="p-2 text-right font-extrabold text-amber-700">${x.reorderPoint}</td>
+                  <td class="p-2 text-right font-extrabold text-indigo-700">${x.eoq} ${x.uom}</td>
+                  <td class="p-2 text-center">${x.jitEnabled ? '<span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold text-[10px]">⚡ JIT</span>' : '<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold text-[10px]">📦 EOQ</span>'}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      return;
+    }
+
+    if (tab === 'FIFO_WMS') {
+      const sortedLots = lots.slice().sort(function(a, b) { return String(a.receivedDate).localeCompare(String(b.receivedDate)); });
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h3 class="text-sm font-extrabold text-[#002B49]"><i class="fa-solid fa-boxes-packing text-emerald-600 mr-1.5"></i>ระบบ WMS พื้นที่จัดเก็บ &amp; ลำดับการจ่ายออก FIFO (เข้าก่อน-ออกก่อน)</h3>
+              <p class="text-[11px] text-slate-600">ระบบเรียงลำดับลอตตามวันที่รับเข้า (Oldest First) เพื่อให้คลังสินค้าและช่างเบิกจ่ายลอตเก่าก่อนเสมอตามมาตรฐานบัญชีไทย</p>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="bg-emerald-900 text-white">
+                  <th class="p-2">ลำดับจ่าย FIFO</th>
+                  <th class="p-2">Lot ID</th>
+                  <th class="p-2">วันที่รับเข้า</th>
+                  <th class="p-2">วันหมดอายุ</th>
+                  <th class="p-2">พื้นที่จัดเก็บ WMS (Zone / Bin)</th>
+                  <th class="p-2">SKU / รายการ</th>
+                  <th class="p-2 text-right">คงเหลือในลอต</th>
+                  <th class="p-2 text-right">ทุน/หน่วย</th>
+                  <th class="p-2 text-center">เบิกจ่าย FIFO</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                ${sortedLots.map(function(l, i) {
+                  return `<tr class="${l.remainingQty <= 0 ? 'opacity-45 bg-slate-100' : (i === 0 ? 'bg-emerald-50/70' : 'hover:bg-slate-50')}">
+                    <td class="p-2 font-extrabold text-emerald-800">${l.remainingQty > 0 ? ('#' + (i + 1) + ' จ่ายก่อน') : 'หมดลอต'}</td>
+                    <td class="p-2 font-bold">${l.lotId}</td>
+                    <td class="p-2 font-semibold">${l.receivedDate}</td>
+                    <td class="p-2 text-rose-700 font-semibold">${l.expiryDate || '-'}</td>
+                    <td class="p-2"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-bold">${l.zone} · ${l.bin}</span></td>
+                    <td class="p-2"><div class="font-bold">${l.sku}</div><div class="text-[11px] text-slate-600">${l.name}</div></td>
+                    <td class="p-2 text-right font-extrabold">${l.remainingQty} / ${l.initialQty}</td>
+                    <td class="p-2 text-right">${Number(l.unitCost || 0).toLocaleString()} ฿</td>
+                    <td class="p-2 text-center">
+                      ${l.remainingQty > 0 ? `<button type="button" onclick="quickIssueFifoFromUi('${l.sku}')" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px]">จ่าย 1 หน่วย</button>` : '-'}
+                    </td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    if (tab === 'MOVEMENTS') {
+      body.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl border border-emerald-200 p-4 shadow-sm space-y-2.5">
+            <h3 class="text-sm font-extrabold text-emerald-900"><i class="fa-solid fa-dolly mr-1.5"></i>รับสินค้าเข้าคลัง (Goods Receipt · สร้าง Lot FIFO อัตโนมัติ)</h3>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div><label class="font-bold">รหัส SKU *</label><input id="imsGrnSku" placeholder="เช่น P01873-01 หรือ FG-IM-65NE" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold"></div>
+              <div><label class="font-bold">ประเภทสินค้า</label>
+                <select id="imsGrnType" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold">
+                  <option value="RM">RM — วัตถุดิบ / อะไหล่</option>
+                  <option value="WIP">WIP — งานระหว่างผลิต</option>
+                  <option value="FG">FG — สินค้าสำเร็จรูป</option>
+                  <option value="MRO">MRO — วัสดุสิ้นเปลืองซ่อมบำรุง</option>
+                </select>
+              </div>
+              <div class="col-span-2"><label class="font-bold">ชื่อรายการสินค้า *</label><input id="imsGrnName" placeholder="ระบุชื่อเครื่องหรืออะไหล่..." class="w-full mt-1 border rounded-lg px-2.5 py-1.5"></div>
+              <div><label class="font-bold">จำนวนรับเข้า *</label><input id="imsGrnQty" type="number" value="5" min="1" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold"></div>
+              <div><label class="font-bold">ต้นทุน/หน่วย (THB)</label><input id="imsGrnCost" type="number" value="1500" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold"></div>
+              <div><label class="font-bold">โซน WMS / Bin</label><input id="imsGrnZone" value="WMS-RM-C1 / C1-02" class="w-full mt-1 border rounded-lg px-2.5 py-1.5"></div>
+              <div><label class="font-bold">เลขที่ PO / GIT อ้างอิง</label><input id="imsGrnPo" value="PO-NAV-2026-120" class="w-full mt-1 border rounded-lg px-2.5 py-1.5"></div>
+            </div>
+            <button type="button" onclick="submitImsGrnForm()" class="w-full py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+              <i class="fa-solid fa-plus-circle mr-1"></i> บันทึกรับเข้าคลัง &amp; สร้าง Lot FIFO ใหม่
+            </button>
+          </div>
+
+          <div class="bg-white rounded-xl border border-amber-200 p-4 shadow-sm space-y-2.5">
+            <h3 class="text-sm font-extrabold text-amber-900"><i class="fa-solid fa-truck-fast mr-1.5"></i>เบิกจ่าย / กระจายสินค้าออก (ตัดสต็อก FIFO อัตโนมัติ)</h3>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div><label class="font-bold">เลือก SKU ที่ต้องการจ่าย *</label>
+                <select id="imsIssSku" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold">
+                  ${items.map(function(x) { return `<option value="${x.sku}">${x.sku} (คงเหลือ ${x.onHandQty} ${x.uom})</option>`; }).join('')}
+                </select>
+              </div>
+              <div><label class="font-bold">จำนวนเบิกจ่าย *</label><input id="imsIssQty" type="number" value="1" min="1" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold"></div>
+              <div><label class="font-bold">ปลายทาง (รถช่าง / ลูกค้า / ไลน์ผลิต)</label><input id="imsIssDest" value="รถช่าง T01 / ใบงานซ่อม" class="w-full mt-1 border rounded-lg px-2.5 py-1.5"></div>
+              <div><label class="font-bold">เอกสารอ้างอิง (JOB / QT / SO)</label><input id="imsIssRef" value="JOB-20261118-001" class="w-full mt-1 border rounded-lg px-2.5 py-1.5"></div>
+            </div>
+            <button type="button" onclick="submitImsIssueForm()" class="w-full py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold shadow-sm">
+              <i class="fa-solid fa-check-double mr-1"></i> ยืนยันจ่ายสินค้าแบบ FIFO (ตัดลอตเก่าสุดก่อน)
+            </button>
+
+            <div class="pt-2 border-t border-slate-200">
+              <div class="text-xs font-extrabold text-rose-700 mb-1">⚡ รายการสั่งซื้ออัตโนมัติ JIT / EOQ (${pos.length} รายการ)</div>
+              <div class="max-h-28 overflow-y-auto space-y-1 text-[11px]">
+                ${pos.length === 0 ? '<div class="text-slate-500">ไม่มีรายการค้างสั่งซื้อ</div>' : pos.map(function(p) {
+                  return `<div class="flex items-center justify-between bg-rose-50 px-2.5 py-1 rounded border border-rose-200">
+                    <span><b>${p.poId}</b> · ${p.sku} (${p.mode}) สั่ง <b>${p.suggestedOrderQty}</b> หน่วย</span>
+                    <span class="font-bold text-rose-800">${p.estCost.toLocaleString()} ฿</span>
+                  </div>`;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm overflow-x-auto">
+          <h3 class="text-sm font-extrabold text-[#002B49] mb-2"><i class="fa-solid fa-clock-rotate-left mr-1.5"></i>สมุดรายวันเคลื่อนไหวสินค้าคงคลัง (Inventory Ledger)</h3>
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-800 text-white">
+                <th class="p-2">วัน-เวลา</th>
+                <th class="p-2">ประเภท</th>
+                <th class="p-2">SKU / รายการ</th>
+                <th class="p-2 text-right">จำนวน</th>
+                <th class="p-2">Lot FIFO</th>
+                <th class="p-2">ต้นทาง → ปลายทาง</th>
+                <th class="p-2">เอกสารอ้างอิง</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              ${moves.slice(0, 30).map(function(m) {
+                return `<tr>
+                  <td class="p-2 text-[11px]">${m.timestamp}</td>
+                  <td class="p-2 font-bold">${m.type}</td>
+                  <td class="p-2"><b>${m.sku}</b> — ${m.name}</td>
+                  <td class="p-2 text-right font-extrabold ${m.qty >= 0 ? 'text-emerald-700' : 'text-rose-700'}">${m.qty >= 0 ? ('+' + m.qty) : m.qty}</td>
+                  <td class="p-2 text-[11px] font-mono">${m.lotId}</td>
+                  <td class="p-2 text-[11px]">${m.fromLoc} → ${m.toLoc}</td>
+                  <td class="p-2 font-semibold">${m.refDoc}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      return;
+    }
+
+    if (tab === 'ERP_BRIDGE') {
+      let jobs = [];
+      let qts = [];
+      let vanMap = {};
+      try { jobs = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch (e) {}
+      try { qts = JSON.parse(localStorage.getItem('hoshizaki_quotations_v1') || '[]'); } catch (e) {}
+      try { vanMap = JSON.parse(localStorage.getItem('hoshizaki_van_stock_db') || '{}'); } catch (e) {}
+      const vanTechCount = Object.keys(vanMap).length;
+
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-4">
+          <div>
+            <h3 class="text-base font-extrabold text-[#002B49]"><i class="fa-solid fa-diagram-project text-cyan-600 mr-1.5"></i>สถาปัตยกรรมเชื่อมโยงระบบ IMS เข้ากับทุกฝ่ายในองค์กร (End-to-End ERP &amp; Service Bridge)</h3>
+            <p class="text-xs text-slate-600 mt-0.5">ทุกการเคลื่อนไหวของงานซ่อม ใบเสนอราคา คลังรถช่าง การนำเข้าจากโรงงาน และบัญชี NAV ERP เชื่อมโยงเป็นฐานข้อมูลเดียวแบบเรียลไทม์</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 space-y-1.5">
+              <div class="font-extrabold text-sky-950 text-sm"><i class="fa-solid fa-screwdriver-wrench text-sky-600 mr-1"></i>1. งานซ่อมภาคสนาม (Field Service Jobs)</div>
+              <p class="text-slate-700">เมื่อช่างปิดงานซ่อมและระบุอะไหล่ที่ใช้ ระบบจะตัดยอดสต็อกรถช่างและบันทึก FIFO Ledger อัตโนมัติ พร้อมแจ้งเตือนหากต่ำกว่า Safety Stock</p>
+              <div class="font-bold text-sky-800">เชื่อมต่อแล้ว: ${jobs.length} ใบงานในระบบ</div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1.5">
+              <div class="font-extrabold text-emerald-950 text-sm"><i class="fa-solid fa-file-invoice-dollar text-emerald-600 mr-1"></i>2. ฝ่ายขาย &amp; ใบเสนอราคา (QT / IV / Billing)</div>
+              <p class="text-slate-700">เชื่อมโยงราคาขาย 8 ระดับ (Direct–Special) ต้นทุน FIFO และจองสต็อก (Allocated Qty) ทันทีที่ลูกค้าอนุมัติใบเสนอราคา</p>
+              <div class="font-bold text-emerald-800">เชื่อมต่อแล้ว: ${qts.length} ใบเสนอราคา</div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 space-y-1.5">
+              <div class="font-extrabold text-amber-950 text-sm"><i class="fa-solid fa-truck-moving text-amber-600 mr-1"></i>3. คลังรถช่าง &amp; อะไหล่นำเข้า (Vans &amp; GIT)</div>
+              <p class="text-slate-700">รวมสต็อกรถช่าง ${vanTechCount} คัน (T01–T08) ใบเบิกอะไหล่ 6 ขั้นตอน และตารางเรือเข้าโรงงาน (Factory GIT/ETA) ไว้ในหน้าเดียว</p>
+              <button type="button" onclick="syncImsWithAllEcosystemModules(true)" class="mt-1 px-3 py-1.5 rounded-lg bg-[#002B49] text-white font-bold text-[11px]">ซิงค์ข้อมูลทุกโมดูลทันที</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  window.renderEnterpriseImsMasterTable = function() {
+    const wrap = document.getElementById('imsMasterTableWrap');
+    if (!wrap) return;
+    const typeFilter = (document.getElementById('imsFilterTypeSel') || {}).value || 'ALL';
+    const q = String((document.getElementById('imsSearchInput') || {}).value || '').trim().toLowerCase();
+    let items = computeAbcClassification(getImsItems());
+    if (typeFilter !== 'ALL') items = items.filter(function(x) { return x.invType === typeFilter; });
+    if (q) items = items.filter(function(x) { return (x.sku + ' ' + x.name + ' ' + x.zone + ' ' + x.bin).toLowerCase().includes(q); });
+
+    wrap.innerHTML = `
+      <table class="w-full text-xs text-left border-collapse">
+        <thead>
+          <tr class="bg-[#002B49] text-white">
+            <th class="p-2">ประเภท</th>
+            <th class="p-2">ABC</th>
+            <th class="p-2">รหัส SKU / ชื่อสินค้า</th>
+            <th class="p-2">พื้นที่ WMS</th>
+            <th class="p-2 text-right">คงเหลือ</th>
+            <th class="p-2 text-right">Safety Stock / ROP</th>
+            <th class="p-2 text-right">EOQ</th>
+            <th class="p-2 text-right">มูลค่าสต็อก</th>
+            <th class="p-2 text-center">สถานะ</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          ${items.map(function(x) {
+            const isLow = Number(x.onHandQty) <= Number(x.reorderPoint);
+            const typeBadge = x.invType === 'FG' ? 'bg-emerald-100 text-emerald-800' : (x.invType === 'WIP' ? 'bg-amber-100 text-amber-800' : (x.invType === 'MRO' ? 'bg-purple-100 text-purple-800' : 'bg-sky-100 text-sky-800'));
+            return `<tr class="${isLow ? 'bg-rose-50/80' : 'hover:bg-slate-50'}">
+              <td class="p-2"><span class="px-2 py-0.5 rounded font-extrabold text-[10px] ${typeBadge}">${x.invType}</span></td>
+              <td class="p-2 font-extrabold">${x.abcClass}</td>
+              <td class="p-2"><div class="font-bold text-slate-900">${x.sku}</div><div class="text-[11px] text-slate-600">${x.name}</div></td>
+              <td class="p-2 font-mono text-[11px]">${x.zone} (${x.bin})</td>
+              <td class="p-2 text-right font-extrabold ${isLow ? 'text-rose-700' : 'text-slate-900'}">${x.onHandQty} ${x.uom}</td>
+              <td class="p-2 text-right text-slate-700">SS: <b>${x.safetyStock}</b> / ROP: <b class="text-amber-700">${x.reorderPoint}</b></td>
+              <td class="p-2 text-right font-bold text-indigo-700">${x.eoq}</td>
+              <td class="p-2 text-right font-bold">${x.stockValue.toLocaleString()} ฿</td>
+              <td class="p-2 text-center">${isLow ? '<span class="px-2 py-0.5 rounded-full bg-rose-600 text-white font-bold text-[10px]">⚠️ สั่งซื้อใหม่</span>' : '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">✅ พอดี</span>'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  };
+
+  window.recalcImsSimulator = function() {
+    const D = Math.max(1, Number((document.getElementById('simEoqD') || {}).value || 120));
+    const S = Math.max(1, Number((document.getElementById('simEoqS') || {}).value || 350));
+    const C = Math.max(1, Number((document.getElementById('simEoqC') || {}).value || 1500));
+    const Hpct = Math.max(1, Number((document.getElementById('simEoqH') || {}).value || 20));
+    const Lt = Math.max(1, Number((document.getElementById('simEoqLt') || {}).value || 7));
+    const res = calcEoqMetrics({ annualDemand: D, orderCost: S, unitCost: C, holdingRatePct: Hpct, leadTimeDays: Lt });
+    const out = document.getElementById('simEoqOut');
+    if (out) out.textContent = 'EOQ: ' + res.eoq + ' | ROP: ' + res.reorderPoint + ' | SS: ' + res.safetyStock;
+  };
+
+  window.submitImsGrnForm = function() {
+    const sku = (document.getElementById('imsGrnSku') || {}).value;
+    const name = (document.getElementById('imsGrnName') || {}).value;
+    if (!sku || !name) { alert('กรุณาระบุรหัส SKU และชื่อรายการสินค้าครับ'); return; }
+    const zParts = String((document.getElementById('imsGrnZone') || {}).value || 'WMS-RM-C1 / C1-01').split('/');
+    const res = window.receiveImsStockBatch({
+      sku: sku,
+      name: name,
+      invType: (document.getElementById('imsGrnType') || {}).value || 'RM',
+      qty: Number((document.getElementById('imsGrnQty') || {}).value || 1),
+      unitCost: Number((document.getElementById('imsGrnCost') || {}).value || 1000),
+      zone: (zParts[0] || 'WMS-RM-C1').trim(),
+      bin: (zParts[1] || 'C1-01').trim(),
+      poRef: (document.getElementById('imsGrnPo') || {}).value || 'GRN-MANUAL'
+    });
+    if (typeof showToast === 'function') showToast('✅ รับสินค้าเข้าคลังสำเร็จ: ' + res.item.sku + ' (Lot FIFO: ' + res.lotId + ')');
+    renderEnterpriseImsTab('MOVEMENTS');
+  };
+
+  window.submitImsIssueForm = function() {
+    const sku = (document.getElementById('imsIssSku') || {}).value;
+    const qty = Number((document.getElementById('imsIssQty') || {}).value || 1);
+    const dest = (document.getElementById('imsIssDest') || {}).value || 'Field Service';
+    const ref = (document.getElementById('imsIssRef') || {}).value || 'ISSUE';
+    const res = window.deductImsStockFifo(sku, qty, dest, ref, 'Service/Warehouse');
+    if (typeof showToast === 'function') showToast('📦 จ่ายสินค้า FIFO สำเร็จ: ' + sku + ' จำนวน ' + res.issued + ' หน่วย จาก ' + res.lotsUsed.join(', '));
+    renderEnterpriseImsTab('MOVEMENTS');
+  };
+
+  window.quickIssueFifoFromUi = function(sku) {
+    const res = window.deductImsStockFifo(sku, 1, 'Quick Dispatch / Service Job', 'FIFO-QUICK-' + Date.now().toString().slice(-4), 'Warehouse');
+    if (typeof showToast === 'function') showToast('✅ ตัดจ่าย FIFO 1 หน่วย (' + sku + ') จาก ' + res.lotsUsed.join(', '));
+    renderEnterpriseImsTab('FIFO_WMS');
+  };
+
+  window.exportImsFullWorkbookCsv = function() {
+    const items = computeAbcClassification(getImsItems());
+    const headers = ['SKU', 'Name', 'Inventory_Type', 'ABC_Class', 'WMS_Zone', 'WMS_Bin', 'OnHand_Qty', 'UOM', 'Unit_Cost_THB', 'Stock_Value_THB', 'Safety_Stock', 'Reorder_Point_ROP', 'EOQ_Qty', 'JIT_Mode'];
+    const rows = items.map(function(x) {
+      return [
+        x.sku, '"' + String(x.name || '').replace(/"/g, '""') + '"', x.invType, x.abcClass,
+        x.zone, x.bin, x.onHandQty, x.uom, x.unitCost, x.stockValue, x.safetyStock, x.reorderPoint, x.eoq, x.jitEnabled ? 'JIT' : 'EOQ'
+      ].join(',');
+    });
+    const csv = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'HOSHIZAKI_Enterprise_IMS_Export_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+  };
+
+  setTimeout(function() {
+    seedInitialImsDataIfEmpty();
+    updateImsLowStockBadge();
+  }, 1500);
+})();
+</script>
+
 </body>
 </html>

@@ -2053,22 +2053,29 @@ function routeDualLineWebhook_(events, botMode) {
               ]
             },
             body: {
-              type: 'box', layout: 'vertical', paddingAll: '12px',
+              type: 'box',
+              layout: 'vertical',
+              paddingAll: '12px',
+              paddingBottom: '56px',
               contents: [
                 {
                   type: 'image',
-                  url: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=2',
+                  url: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=4',
                   position: 'absolute',
-                  align: 'center',
-                  gravity: 'center',
-                  size: 'xxl',
+                  align: 'end',
+                  gravity: 'bottom',
+                  offsetEnd: '8px',
+                  offsetBottom: '4px',
+                  size: 'lg',
                   aspectRatio: '1:1',
                   aspectMode: 'fit'
                 },
                 {
-                  type: 'box', layout: 'vertical', spacing: 'sm',
+                  type: 'box',
+                  layout: 'vertical',
+                  spacing: 'sm',
                   contents: [
-                    { type: 'text', text: adviceText.substring(0, 1500), size: 'xs', color: '#1E293B', wrap: true },
+                    { type: 'text', text: adviceText.replace(/\*\*/g, '').substring(0, 1500), size: 'xs', color: '#1E293B', wrap: true },
                     { type: 'separator', margin: 'sm' },
                     { type: 'text', text: '📌 หากลองตรวจเช็กเบื้องต้นแล้วยังไม่หาย กรุณาพิมพ์ Serial Number (S/N) ของเครื่องส่งกลับมา หรือกดปุ่มด้านล่างครับ', size: 'xxs', color: '#0369A1', weight: 'bold', wrap: true }
                   ]
@@ -2084,7 +2091,7 @@ function routeDualLineWebhook_(events, botMode) {
                 },
                 {
                   type: 'button', style: 'primary', color: '#DC2626', height: 'sm',
-                  action: { type: 'postback', label: '🔧 ยังไม่หาย / ขอช่างหรือตัวแทนดูแล', data: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent(txt.substring(0, 120)), displayText: 'ยังไม่หาย ขอส่งเรื่องให้ตัวแทนจำหน่ายหรือช่างเข้าตรวจเช็กครับ' }
+                  action: { type: 'postback', label: '🔧 ยังไม่หาย / ขอช่างดูแล', data: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent(txt.substring(0, 120)), displayText: 'ยังไม่หาย ขอส่งเรื่องให้ตัวแทนจำหน่ายหรือช่างเข้าตรวจเช็กครับ' }
                 }
               ]
             }

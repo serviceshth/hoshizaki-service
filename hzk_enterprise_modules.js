@@ -3585,12 +3585,12 @@
   }, 1500);
 })();
 
- * HOSHIZAKI (THAILAND) Enterprise Deferred Modules Bundle (v1040-FINAL)
+ * HOSHIZAKI (THAILAND) Enterprise Deferred Modules Bundle (v1041-FINAL)
  * Includes: IoT Telemetry, AI Co-Pilot, Governance/EHS/ERP, Dealer Router,
  * LINE Flex Studio, and Holistic Inventory Management System (IMS)
  * ========================================================================== */
 
-// --- Module Block #53 (Enterprise v1040-FINAL: Portal Dropdowns 5.1-5.5 + Document Preview/Add/Edit/Delete Sandbox + Hybrid Service Accounting & Full Dynamics NAV ERP + 5-Dimension Edge ML + 360 Self-Test Auto-Heal) ---
+// --- Module Block #53 (Enterprise v1041-FINAL: Portal Dropdowns 5.1-5.5 + Document Preview/Add/Edit/Delete Sandbox + Hybrid Service Accounting & Full Dynamics NAV ERP + 5-Dimension Edge ML + 360 Self-Test Auto-Heal) ---
 (function() {
   const V1040_IMS_PR_KEY = 'hoshizaki_ims_pr_approvals_v1040';
   const V1040_ADV_KEY = 'hoshizaki_advance_parts_v1040';
@@ -4659,4 +4659,852 @@
       localStorage.setItem('hzk_v1040_final_examples_seeded', '1');
     }
   }, 1500);
+})();
+
+// ============================================================================
+// --- Module Block #54 (Enterprise v1041-FINAL: Full Japanese/English Menu &
+//     Submenu Localization + 8-Department Role-Based KPI Report Studio with
+//     5 Live Previewable/Addable/Deletable Sample Reports + 100-Seat RBAC) ---
+// ============================================================================
+(function() {
+  const V1041_KPI_REPORTS_KEY = 'hoshizaki_kpi_custom_reports_v1041';
+  const V1041_RBAC_USERS_KEY = 'hoshizaki_100seat_rbac_users_v1041';
+  const V1041_ACTIVE_SEAT_KEY = 'hoshizaki_active_seat_user_v1041';
+
+  // --------------------------------------------------------------------------
+  // 1. JAPANESE / ENGLISH FULL MENU & SUBMENU TRANSLATION DICTIONARY
+  //    When user clicks "日本語", ALL menus, category tabs, group headers,
+  //    sub-menus, and Section 5 floating dropdowns switch cleanly to JP / EN!
+  // --------------------------------------------------------------------------
+  const JP_EN_MENU_MAP = [
+    // Top Header Pills & Dropdowns
+    ['Executive Report', 'エグゼクティブ報告 / Executive Report'],
+    ['KPI Report Studio', 'KPIレポート作成 / KPI Report Studio'],
+    ['ตั้งค่าสาขา โลโก้', '拠点・ロゴ設定 / Branch & Logo'],
+    ['Admin Studio', '管理スタジオ / Admin Studio'],
+    ['เลือกโปรไฟล์ช่าง', 'エンジニア選択 / Tech Profile'],
+    ['ดึงข้อมูล Cloud', 'クラウド同期 / Cloud Sync'],
+    ['Auto-Sync พร้อม', '自動同期準備完了 / Auto-Sync Ready'],
+    ['แดชบอร์ด KPI', 'KPIダッシュボード / KPI Dashboard'],
+    ['Install App', 'アプリ導入 / Install App'],
+    ['LINE OA & Bot', 'LINE公式 & ボット / LINE OA & Bot'],
+    ['อัปเดตแอป', 'アプリ更新 / Update App'],
+    ['พรีวิวตัวอย่างไฟล์ (v1040)', 'サンプルプレビュー / Sample Preview'],
+    ['พรีวิวตัวอย่างไฟล์ (v1041)', 'サンプルプレビュー / Sample Preview'],
+    ['สลับเป็นโหมดช่างดำเนินงาน', 'エンジニアモードへ切替 / Switch to Tech'],
+
+    // Category Filter Tabs
+    ['ทั้งหมด (5 หมวด)', '全カテゴリー (5部門) / All Categories'],
+    ['1. งานบริการ', '1. サービス業務 / Service'],
+    ['2. เอกสาร & เคลม', '2. 書類・クレーム / Docs & Claim'],
+    ['3. งาน PM & ตรวจรับ', '3. 定期点検・検収 / PM & QC'],
+    ['4. คู่มือ & ระบบ', '4. マニュアル・管理 / Manual & System'],
+    ['5. ระบบคลังสินค้า IMS', '5. 統合在庫管理 IMS / Inventory IMS'],
+
+    // Group Headers
+    ['1. งานบริการ & ตารางช่าง (Service & Job)', '1. サービス業務・作業スケジュール / Service & Job Schedule'],
+    ['2. เอกสารการเงิน, เคลม & ส่งออก (Docs & Export)', '2. 見積・請求・クレーム・出力 / Docs, Claims & Export'],
+    ['3. งาน PM, บำรุงรักษา & ตรวจรับเครื่อง (PM & QC)', '3. 定期保守点検・入庫検収 / PM & Warehouse QC'],
+    ['4. คู่มือช่าง, บุคลากร & ระบบ (Manual & System)', '4. 技術資料・人員・システム / Manual & System'],
+    ['5. ระบบบริหารจัดการสินค้าคงคลังครบวงจร (Inventory Management System - IMS)', '5. 統合在庫管理システム (IMS) / Holistic Inventory Management'],
+
+    // Section 1 Buttons
+    ['ตารางงาน / Schedule', '作業予定表 / Schedule'],
+    ['ใบงานใหม่ / New Job', '新規サービス伝票 / New Job'],
+    ['บันทึก / Save', '保存 / Save'],
+    ['ประวัติ / History', '履歴検索 / History'],
+    ['พรีวิว / Preview', 'プレビュー / Preview'],
+    ['พิมพ์ / Print', '印刷 / Print'],
+    ['เรดาร์ GPS ช่างสด', 'GPSリアルタイム追跡 / Live Tech GPS'],
+    ['วิเคราะห์ Error ทีละขั้น', 'エラー診断ウィザード / Error Wizard'],
+    ['คำนวณค่าบริการด่วน', '簡易料金見積 / Quick Estimate'],
+    ['เพิ่มอะไหล่ทดแทน/อิสระ', '代替・自由部品追加 / Custom Part'],
+    ['พอร์ทัลลูกค้าสด (GPS/อนุมัติ)', '顧客ライブポータル / Customer Portal'],
+    ['จัดเส้นทางวิ่งงาน (Route Optimizer)', '最適ルート作成 / Route Optimizer'],
+    ['เบิกอะไหล่ล่วงหน้า & บัญชี (Phase 2)', '先行部品出庫・経理連携 / Parts & Accounting'],
+    ['Auto-Stamp & กรอกย้อนหลัง', '打刻・事後入力 / Auto-Stamp'],
+    ['ค่าทางด่วน / จอดรถ / เดินทาง', '交通費・高速代精算 / Travel Expense'],
+    ['ศูนย์บริหารงาน Outsource (ส่งลิงก์ · ฐานราคา · ตรวจรับรายงาน)', '外部委託管理ハブ / Outsource Command Hub'],
+    ['ส่งมอบติดตั้งเครื่องใหม่ & ทะเบียนเครื่องสำรอง (Loaner)', '新規納品・代替機管理 / Install & Loaner'],
+
+    // Section 2 Buttons
+    ['ใบเสนอราคา & บิล / QT·IV·RE', '見積書・請求書・領収書 / QT·IV·RE'],
+    ['ใบเคลมประกัน / Warranty', '保証クレーム申請 / Warranty Claim'],
+    ['ฐานราคาทุน & วิเคราะห์ GP% (Confidential · Manager)', '原価・粗利率分析 (機密) / Cost & GP%'],
+    ['สรุปประจำสัปดาห์ (4 ชีต)', '週次レポート出力 (4シート) / Weekly Excel'],
+    ['แชร์ PDF เข้า LINE', 'PDFをLINEへ共有 / Share PDF to LINE'],
+    ['ส่งอีเมล PDF', 'PDFメール送信 / Send PDF Email'],
+
+    // Section 3 Buttons
+    ['ศูนย์รวมงาน PM & Big Cleaning (4 เมนูครบวงจร)', '定期保守・洗浄スイート / PM & Big Cleaning'],
+    ['ตรวจรับเครื่องเข้าคลัง · ออก QCF & Memo เคลม', '入庫検収・QCFクレーム発行 / Warehouse QC & QCF'],
+
+    // Section 4 Buttons
+    ['คู่มือ & Error Code', 'マニュアル・エラーコード / Manual & Error'],
+    ['ตาราง Spec Sheet เต็มจอ', '仕様書全画面表示 / Spec Sheet Viewer'],
+    ['เพิ่ม/แก้ไข Spec · Parts · SM · IM · Drawing', '技術資料・図面登録 / Tech Doc Manager'],
+    ['ค้นหาคู่มือ / Parts (PDF)', 'PDFマニュアル・部品検索 / Search PDF'],
+    ['จัดการบุคลากร / Staff', 'スタッフ管理 / Staff Manager'],
+    ['ซิงค์ & สำรองข้อมูล', 'クラウド同期・バックアップ / Sync & Backup'],
+    ['ศูนย์ธรรมาภิบาล PDPA · EHS/ESG · NAV ERP & คู่มือโต้ตอบ (v1033)', 'ガバナンス・PDPA・ESG・NAV ERP / Governance Center'],
+
+    // Section 5 Sub-Menus (5.1 - 5.5)
+    ['5.1 ศูนย์บริหารคลังสินค้า IMS (RM·WIP·FG·MRO)', '5.1 統合在庫管理センター IMS (RM·WIP·FG·MRO)'],
+    ['5.2 คลังรถช่าง & ตรวจนับ (Van Stock T01–T08)', '5.2 サービス車両在庫・棚卸 (Van Stock T01–T08)'],
+    ['5.3 งานรออะไหล่ · GIT นำเข้า & แคตตาล็อก', '5.3 部品待ち・輸入GIT・カタログ / Backorder & GIT'],
+    ['5.4 PSI (Rank A–D) · PR (SM→GM→MD) & ตัวอย่างไฟล์', '5.4 PSI在庫計画・PR承認・サンプル / PSI & PR'],
+    ['5.5 ระบบบัญชีบริการ (AR/AP/ภาษี) · Dynamics NAV ERP Standby & Edge ML', '5.5 サービス会計・Dynamics NAV ERP・Edge ML']
+  ];
+
+  // Store original Thai/EN text on first run so switching back to TH/EN restores cleanly
+  function cacheOriginalMenuTexts_() {
+    document.querySelectorAll('header button, header span, header div.tb-group-header span').forEach(function(el) {
+      if (el.children.length === 0 && !el.dataset.origMenuText) {
+        const t = el.textContent.trim();
+        if (t.length >= 2) el.dataset.origMenuText = t;
+      }
+    });
+  }
+
+  function applyJapaneseEnglishMenus_(isJp) {
+    cacheOriginalMenuTexts_();
+    document.querySelectorAll('header button, header span, header div.tb-group-header span').forEach(function(el) {
+      if (el.children.length > 0) return;
+      const orig = el.dataset.origMenuText || el.textContent.trim();
+      if (!orig) return;
+      if (!isJp) {
+        if (el.dataset.origMenuText) el.textContent = el.dataset.origMenuText;
+        return;
+      }
+      for (let i = 0; i < JP_EN_MENU_MAP.length; i++) {
+        if (orig === JP_EN_MENU_MAP[i][0] || orig.indexOf(JP_EN_MENU_MAP[i][0]) === 0) {
+          el.textContent = JP_EN_MENU_MAP[i][1];
+          break;
+        }
+      }
+    });
+
+    // Also localize dropdown menus (Executive Report, Outsource, PM Suite)
+    const dropdownContainers = [
+      document.getElementById('topExecutiveReportDropdownMenu'),
+      document.getElementById('outsourceHubDropdownMenu'),
+      document.getElementById('pmSuiteDropdownMenu')
+    ];
+    dropdownContainers.forEach(function(box) {
+      if (!box) return;
+      box.querySelectorAll('div, span').forEach(function(node) {
+        if (node.children.length > 0) return;
+        if (!node.dataset.origDropText) node.dataset.origDropText = node.textContent.trim();
+        const o = node.dataset.origDropText;
+        if (!isJp) {
+          node.textContent = o;
+          return;
+        }
+        const dropPairs = [
+          ['MD Boardroom BI & สไลด์ประชุม 3 ภาษา (TH/EN/JP)', '経営ボードルームBI・3言語プレゼン (日/英/タイ) / MD Boardroom'],
+          ['แดชบอร์ดผู้บริหาร 360° & สไลด์นำเสนอ 3 ภาษา', '360°経営ダッシュボード & プレゼン資料 / Executive 360°'],
+          ['สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)', 'エグゼクティブKPIサマリー (日/英/タイ) / Trilingual Brief'],
+          ['รายงานสรุป KPI ประจำวัน/สัปดาห์ (ไทย • EN • 日本語)', '日次・週次KPIレポート / Daily & Weekly KPI Summary'],
+          ['1. ส่งลิงก์งานให้ Outsource (แยกสิทธิ์ปลอดภัย ไม่เห็นข้อมูลอื่น)', '1. 外部委託リンク発行 (権限分離) / Send Outsource Link'],
+          ['2. ฐานราคา & คำนวณค่าจ้าง Outsource (Lucky Star + Outsource 1-4)', '2. 外部委託単価表・費用計算 / Outsource Rate Card'],
+          ['3. รายการ Job Report จาก Outsource (แยกตามชื่อ Outsource / Job No.)', '3. 外部委託作業報告書一覧 / Outsource Job Reports'],
+          ['4. นำเข้าข้อมูลราคา & เงื่อนไข Outsource ใหม่ (Excel / PDF)', '4. 新規委託単価インポート / Import Outsource Rates'],
+          ['1. ตารางราคา PM & Big Cleaning ตามสเปคเครื่อง', '1. 機種別PM・洗浄価格表 / PM & Big Cleaning Pricebook'],
+          ['2. ทะเบียนสัญญา PM (PM Contracts & รอบเข้าบริการ)', '2. 年間保守契約台帳 / PM Contracts Registry'],
+          ['3. ออกใบรับรอง PM มาตรฐานโรงงาน (A4 PM Certificate)', '3. メーカー標準PM証明書発行 / A4 PM Certificate'],
+          ['4. แจ้งเตือนครบกำหนด PM 30 วัน & สถิติ PM', '4. 30日前PM期限アラート・統計 / 30-Day PM Alerts']
+        ];
+        for (let k = 0; k < dropPairs.length; k++) {
+          if (o === dropPairs[k][0]) {
+            node.textContent = dropPairs[k][1];
+            break;
+          }
+        }
+      });
+    });
+
+    // Update top role banner in JP/EN when JP is active
+    const roleBanner = document.getElementById('activeRoleModeStatusText');
+    if (roleBanner && isJp) {
+      roleBanner.innerHTML = '<i class="fa-solid fa-user-shield text-amber-300 mr-1"></i> 現在のモード (Current Mode): <b>管理者・ディスパッチ (MANAGER / DISPATCH)</b> — 原価・粗利率表示有効';
+    }
+  }
+
+  // Wrap setHoshizakiUiLanguage so clicking "日本語" translates ALL menus & sub-menus
+  const prevSetLang = window.setHoshizakiUiLanguage;
+  window.setHoshizakiUiLanguage = function(lang, silent) {
+    if (typeof prevSetLang === 'function') {
+      prevSetLang(lang, silent);
+    } else {
+      window.HZK_CURRENT_LANG = lang;
+      localStorage.setItem('hoshizaki_ui_language_v1021', lang);
+    }
+    applyJapaneseEnglishMenus_(lang === 'JP');
+  };
+
+  // Override toggleImsFloatingMenu so Section 5 floating menus also render in Japanese / English when JP is selected!
+  const prevToggleIms = window.toggleImsFloatingMenu;
+  window.toggleImsFloatingMenu = function(ev, menuId, triggerBtnId) {
+    if (typeof prevToggleIms === 'function') {
+      prevToggleIms(ev, menuId, triggerBtnId);
+    }
+    const pop = document.getElementById(menuId);
+    if (!pop) return;
+    const isJp = (window.HZK_CURRENT_LANG === 'JP');
+    const jpSubPairs = [
+      ['1) ภาพรวมประเภทสินค้าคงคลัง (RM · WIP · FG · MRO)', '1) 在庫区分サマリー (RM · WIP · FG · MRO) / Inventory Overview'],
+      ['2) ABC Analysis (80/15/5) · EOQ · Safety Stock & ROP', '2) ABC分析 (80/15/5) · EOQ · 安全在庫・発注点 / ABC & EOQ'],
+      ['3) ระบบ WMS พื้นที่จัดเก็บ (Zone/Bin) & ลำดับจ่ายออก FIFO', '3) WMS棚番管理 & 先入先出 (FIFO) 出庫 / WMS & FIFO'],
+      ['4) รับเข้าคลัง (GRN) · เบิกจ่าย FIFO & สมุดรายวันสต็อก', '4) 入庫検収 (GRN) · FIFO出庫・在庫台帳 / GRN & Ledger'],
+      ['5) แผนผังเชื่อมโยงทุกแผนก (Jobs · QT/IV · Vans · GIT · NAV)', '5) 全部門連携マップ (Jobs · QT/IV · Vans · GIT · NAV)'],
+      ['1. จัดการสต็อกรถช่าง & เบิกเติม Min/Max', '1. 車両在庫管理・Min/Max補充 / Van Stock & Restock'],
+      ['2. โอนย้ายอะไหล่ระหว่างรถช่าง (Van-to-Van)', '2. 車両間部品移動 / Van-to-Van Transfer'],
+      ['3. ตรวจนับสต็อกรถช่าง (Cycle Count) & คืนซาก DFR', '3. 車両棚卸 (Cycle Count) & 不良部品返却 DFR'],
+      ['1. ติดตามงานรออะไหล่ค้างส่ง (Waiting Parts Backorder)', '1. 部品待ち案件追跡 / Waiting Parts Backorder'],
+      ['2. ใบเบิกอะไหล่ล่วงหน้า 6 ขั้นตอน & สถานะเรือ GIT/ETA', '2. 6段階先行部品出庫 & 船積GIT/ETA追跡 / Parts & GIT'],
+      ['3. ฐานข้อมูลอะไหล่ & รูปภาพ (ใช้ร่วมหลายรุ่น/หลาย Part No.)', '3. 共通部品・写真データベース / Multi-Model Parts DB'],
+      ['1. คำนวณ PSI (Rank A=3M / B=2M / C=1pc) & อนุมัติ PR (SM→GM→MD)', '1. PSI需給計算 (Rank A–D) & PR決裁 (SM→GM→MD)'],
+      ['2. ใบเบิกอะไหล่ซ่อม/เคลมล่วงหน้า (Advance Part) & SLA 24 ชม.', '2. 修理・クレーム先行部品出庫 & 24h SLA管理 / Advance Parts'],
+      ['3. ศูนย์จัดการตัวอย่างไฟล์ Input → Output (5 รายการ/เมนู · พรีวิว/เพิ่ม/ลบได้)', '3. サンプルデータ管理 (各5件 · プレビュー・追加・削除) / Sample Sandbox'],
+      ['1. บัญชีงานบริการ (QT → IV/TAX → RE · ลูกหนี้ AR Aging 30/60/90 วัน)', '1. サービス会計 (QT→IV→RE · 売掛金年齢調べ) / Service AR/AP'],
+      ['2. โหมดทดแทน Microsoft Dynamics NAV เต็มรูปแบบ (GL · COA · JV · ภ.พ.30)', '2. Microsoft Dynamics NAV 完全代替モード (GL · COA · JV)'],
+      ['3. ศูนย์ประมวลผล Edge Machine Learning 5 ด้าน (พยากรณ์เสีย/อะไหล่/ดีมานด์/AR)', '3. 5次元 Edge機械学習エンジン / 5-Dimension Edge ML'],
+      ['4. สแกนตรวจสอบระบบเชิงลึก 360° & Auto-Heal อัตโนมัติ (Active Verification)', '4. 360°システム自己診断 & 自動修復 / Self-Test & Auto-Heal']
+    ];
+    pop.querySelectorAll('span, div').forEach(function(el) {
+      if (el.children.length > 0) return;
+      if (!el.dataset.origPopText) el.dataset.origPopText = el.textContent.trim();
+      const orig = el.dataset.origPopText;
+      if (!isJp) {
+        el.textContent = orig;
+        return;
+      }
+      for (let i = 0; i < jpSubPairs.length; i++) {
+        if (orig === jpSubPairs[i][0]) {
+          el.textContent = jpSubPairs[i][1];
+          break;
+        }
+      }
+    });
+  };
+
+  // --------------------------------------------------------------------------
+  // 2. 100-SEAT ENTERPRISE RBAC DIRECTORY (8 DEPARTMENTS · MAX 100 USERS)
+  // --------------------------------------------------------------------------
+  const DEPARTMENTS_8 = [
+    { id: 'SERVICE_FIELD', nameTh: '1. แผนกบริการภาคสนาม (Service Technicians)', nameJpEn: '1. フィールドサービス部 / Field Service Technicians' },
+    { id: 'SERVICE_MGMT', nameTh: '2. ผู้บริหารฝ่ายบริการ & หัวหน้าทีม (Service Manager / Deputy SM)', nameJpEn: '2. サービス管理職 / Service Manager & Deputy SM' },
+    { id: 'WAREHOUSE_IMS', nameTh: '3. ศูนย์บริการ & คลังอะไหล่ (Service Center & Warehouse IMS)', nameJpEn: '3. サービスセンター・倉庫IMS / Service Center & IMS' },
+    { id: 'ADMIN_UNIT', nameTh: '4. ธุรการบริการ & ประสานงานอะไหล่ (Service Admin Unit)', nameJpEn: '4. サービス事務部門 / Service Admin Unit' },
+    { id: 'ACCOUNTING_NAV', nameTh: '5. ฝ่ายบัญชีและการเงิน (Accounting & Dynamics NAV ERP)', nameJpEn: '5. 経理・財務部 / Accounting & NAV ERP' },
+    { id: 'SALES_DOMESTIC', nameTh: '6. ฝ่ายขายในประเทศ & สัญญา PM (Domestic Sales & PM)', nameJpEn: '6. 国内営業・保守契約部 / Domestic Sales & PM' },
+    { id: 'JAPANESE_CORP', nameTh: '7. ฝ่ายลูกค้าองค์กรญี่ปุ่น (Japanese Corporate Unit)', nameJpEn: '7. 日系法人営業・サービス部 / Japanese Corporate Unit' },
+    { id: 'EXEC_MARKETING', nameTh: '8. ผู้บริหารระดับสูง & การตลาด (Executive MD / GM & Marketing)', nameJpEn: '8. 経営陣・マーケティング部 / Executive MD & Marketing' }
+  ];
+
+  function getDefault100SeatUsers_() {
+    return [
+      { seatId: 'U-001', name: 'Noparin Homhoul', role: 'Deputy Service Manager', dept: 'SERVICE_MGMT', accessLevel: 'EXEC_ALL', active: true },
+      { seatId: 'U-002', name: 'Daisuke Suzuki', role: 'Managing Director (MD)', dept: 'EXEC_MARKETING', accessLevel: 'EXEC_ALL', active: true },
+      { seatId: 'U-003', name: 'Thanakrit Chanmokonpanit (Tae)', role: 'Service Manager', dept: 'SERVICE_MGMT', accessLevel: 'DEPT_MANAGER', active: true },
+      { seatId: 'U-004', name: 'Pawat Warongtheradet', role: 'Service Center Supervisor', dept: 'WAREHOUSE_IMS', accessLevel: 'DEPT_MANAGER', active: true },
+      { seatId: 'U-005', name: 'Surin S. (T01)', role: 'Senior Field Technician', dept: 'SERVICE_FIELD', accessLevel: 'STAFF', active: true },
+      { seatId: 'U-006', name: 'Jeerapan Phrasawang (T02)', role: 'Field Service Technician', dept: 'SERVICE_FIELD', accessLevel: 'STAFF', active: true },
+      { seatId: 'U-007', name: 'Wanwipha (Admin)', role: 'Service Coordinator & Billing Admin', dept: 'ADMIN_UNIT', accessLevel: 'STAFF', active: true },
+      { seatId: 'U-008', name: 'Waraporn (Accounting)', role: 'Senior Accountant (NAV ERP)', dept: 'ACCOUNTING_NAV', accessLevel: 'DEPT_MANAGER', active: true },
+      { seatId: 'U-009', name: 'Kulathida (Sales)', role: 'Sales & PM Key Account', dept: 'SALES_DOMESTIC', accessLevel: 'STAFF', active: true },
+      { seatId: 'U-010', name: 'Suleewan / Naoki Furujo', role: 'Japanese Corporate Coordinator', dept: 'JAPANESE_CORP', accessLevel: 'DEPT_MANAGER', active: true }
+    ];
+  }
+
+  function load100SeatUsers_() {
+    try {
+      const raw = localStorage.getItem(V1041_RBAC_USERS_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length > 0) return arr;
+      }
+    } catch (e) {}
+    const def = getDefault100SeatUsers_();
+    localStorage.setItem(V1041_RBAC_USERS_KEY, JSON.stringify(def));
+    return def;
+  }
+
+  // --------------------------------------------------------------------------
+  // 3. CUSTOM MULTI-DEPARTMENT KPI REPORT STUDIO + 5 LIVE SAMPLE REPORTS
+  //    (Supports Weekly / Monthly / Quarterly / Yearly + Infographic Preview
+  //     + Full-Screen Presentation Deck + Add / Edit / Delete + PDF / Excel)
+  // --------------------------------------------------------------------------
+  const DEFAULT_5_KPI_SAMPLE_REPORTS = [
+    {
+      reportId: 'KPI-SMP-001',
+      isSample: true,
+      title: 'รายงานสรุปประสิทธิภาพงานบริการภาคสนาม (Service Field & FTFR Scorecard)',
+      titleJpEn: 'フィールドサービス実績・初回修理完了率レポート / Service Field KPI Report',
+      dept: 'SERVICE_FIELD',
+      roleTitle: 'Deputy Service Manager & Field Team (T01–T08)',
+      periodType: 'MONTHLY',
+      periodLabel: 'พฤศจิกายน 2026 (Monthly — Nov 2026)',
+      author: 'Noparin Homhoul (Deputy Service Manager)',
+      kpis: [
+        { label: 'First-Time Fix Rate (FTFR)', value: '94.8%', target: '≥ 92.0%', growth: '+2.4%', pct: 95, color: '#059669' },
+        { label: 'ปิดงานซ่อมสำเร็จ (Completed)', value: '186 ใบ', target: '175 ใบ', growth: '+6.3%', pct: 92, color: '#00A3E0' },
+        { label: 'คะแนนความพึงพอใจ (CSAT)', value: '4.92 / 5.0', target: '≥ 4.70', growth: '+0.15', pct: 98, color: '#002B49' },
+        { label: 'เฉลี่ยเวลาเข้าถึงหน้างาน (SLA)', value: '3.4 ชม.', target: '≤ 4.0 ชม.', growth: '-15% เร็วขึ้น', pct: 88, color: '#D97706' }
+      ],
+      chartBars: [
+        { name: 'T01 Surin', val: 42 },
+        { name: 'T02 Jeerapan', val: 38 },
+        { name: 'T03 Noparin', val: 35 },
+        { name: 'T04 Beer', val: 37 },
+        { name: 'T05 Pui', val: 34 }
+      ],
+      insightsTh: 'อัตราซ่อมจบในครั้งเดียว (FTFR) สูงถึง 94.8% สูงกว่าเป้าหมาย 2.8% จากการเบิกอะไหล่ล่วงหน้า (Advance Part) และการสแกน S/N 360° ก่อนออกเดินทาง แนะนำเพิ่มสต็อก Water Valve P01872-01 บนรถโซนชลบุรีและภูเก็ตอีก 20% รองรับช่วงไฮซีซัน',
+      insightsJpEn: '初回修理完了率(FTFR)は94.8%を達成し目標を上回りました。事前部品手配とS/N 360°履歴確認が奏功しています。繁忙期に向け主要部品の車載在庫を20%増強することを推奨します。'
+    },
+    {
+      reportId: 'KPI-SMP-002',
+      isSample: true,
+      title: 'รายงานสุขภาพคลังสินค้า IMS & PSI (RM · WIP · FG · MRO & Factory GIT)',
+      titleJpEn: '統合在庫管理 IMS・PSI需給・船積GITレポート / Warehouse & IMS KPI',
+      dept: 'WAREHOUSE_IMS',
+      roleTitle: 'Service Center & Warehouse Supervisor',
+      periodType: 'WEEKLY',
+      periodLabel: 'สัปดาห์ที่ 46 / 2026 (Weekly — Nov W3)',
+      author: 'Pawat Warongtheradet (Service Center)',
+      kpis: [
+        { label: 'มูลค่าสต็อกรวม (RM/WIP/FG/MRO)', value: '3.89M THB', target: '≤ 4.20M', growth: '-4.2%', pct: 86, color: '#002B49' },
+        { label: 'ความพร้อมจ่ายอะไหล่ Rank A', value: '97.2%', target: '≥ 95.0%', growth: '+1.8%', pct: 97, color: '#059669' },
+        { label: 'ความแม่นยำตรวจนับ Cycle Count', value: '99.4%', target: '≥ 98.5%', growth: '+0.6%', pct: 99, color: '#00A3E0' },
+        { label: 'งานค้างรออะไหล่ (Backorder)', value: '4 ใบงาน', target: '≤ 8 ใบงาน', growth: '-50%', pct: 90, color: '#D97706' }
+      ],
+      chartBars: [
+        { name: 'RM อะไหล่แท้', val: 62 },
+        { name: 'FG เครื่องพร้อมขาย', val: 24 },
+        { name: 'WIP ปรับสภาพ', val: 8 },
+        { name: 'MRO วัสดุสิ้นเปลือง', val: 6 }
+      ],
+      insightsTh: 'อะไหล่กลุ่ม Criticality Rank A (เช่น 355003A01 และ 6262.00043.17) มีความพร้อมจ่าย 97.2% ลดงานค้างรออะไหล่ลง 50% เรือรอบถัดไปจากโรงงาน HC และ OZTI จะเข้าคลัง HHE ภายใน 9 วัน',
+      insightsJpEn: '重要度Rank A部品の即納率は97.2%に達し、部品待ち案件が50%減少しました。HC・OZTI工場からの次回コンテナは9日以内にHHE倉庫へ入庫予定です。'
+    },
+    {
+      reportId: 'KPI-SMP-003',
+      isSample: true,
+      title: 'รายงานรายได้งานบริการ, กำไรขั้นต้น GP% & ลูกหนี้ NAV ERP (Quarterly Q4)',
+      titleJpEn: 'サービス売上・粗利率GP%・売掛金分析レポート / Financial & NAV KPI',
+      dept: 'ACCOUNTING_NAV',
+      roleTitle: 'Accounting & Finance Manager (Dynamics NAV)',
+      periodType: 'QUARTERLY',
+      periodLabel: 'ไตรมาส 4 / 2026 (Quarterly — Q4 2026)',
+      author: 'Waraporn (Accounting Unit)',
+      kpis: [
+        { label: 'รายได้บริการและอะไหล่รวม', value: '8.64M THB', target: '8.00M THB', growth: '+11.5%', pct: 96, color: '#059669' },
+        { label: 'อัตรากำไรขั้นต้นเฉลี่ย (GP%)', value: '41.8%', target: '≥ 38.0%', growth: '+3.1%', pct: 92, color: '#002B49' },
+        { label: 'จัดเก็บหนี้ตรงเวลา (AR 0-30d)', value: '91.4%', target: '≥ 88.0%', growth: '+2.9%', pct: 91, color: '#00A3E0' },
+        { label: 'ออกใบกำกับภาษี/ใบเสร็จตรงเวลา', value: '98.8%', target: '≥ 95.0%', growth: '+1.2%', pct: 99, color: '#D97706' }
+      ],
+      chartBars: [
+        { name: 'Direct Service', val: 48 },
+        { name: 'Dealer A/B/C', val: 31 },
+        { name: 'JP Corporate', val: 14 },
+        { name: 'PM Contracts', val: 7 }
+      ],
+      insightsTh: 'อัตรากำไรขั้นต้น (GP%) เพิ่มขึ้นเป็น 41.8% จากระบบควบคุมราคาขาย 8 เกรดและการอนุมัติส่วนลดพิเศษผ่าน Governance Studio ยอดลูกหนี้ค้างเกิน 60 วันลดลงเหลือเพียง 3.2%',
+      insightsJpEn: '粗利率(GP%)は8段階価格管理と承認フローにより41.8%へ向上しました。60日超の売掛金比率は3.2%まで低減し、Dynamics NAVへの仕訳連携も100%正常稼働中です。'
+    },
+    {
+      reportId: 'KPI-SMP-004',
+      isSample: true,
+      title: 'รายงานบริการลูกค้าองค์กรญี่ปุ่น (Japanese Corporate VIP SLA & PM Report)',
+      titleJpEn: '日系法人顧客向け保守・SLA実績報告書 / Japanese Corporate Unit KPI',
+      dept: 'JAPANESE_CORP',
+      roleTitle: 'Japanese Corporate Unit & Service Liaison',
+      periodType: 'MONTHLY',
+      periodLabel: 'พฤศจิกายน 2026 (Monthly — 日系法人月次報告)',
+      author: 'Suleewan & Naoki Furujo (Japanese Corporate Unit)',
+      kpis: [
+        { label: 'ความพร้อมใช้งานเครื่องลูกค้า JP', value: '99.6%', target: '≥ 99.0%', growth: '+0.4%', pct: 99, color: '#002B49' },
+        { label: 'เข้าซ่อมเร่งด่วนภายใน 4 ชม. (SLA)', value: '96.5%', target: '≥ 95.0%', growth: '+1.5%', pct: 96, color: '#059669' },
+        { label: 'ปฏิบัติงาน PM ตรงตามแผน 100%', value: '48 / 48 เครื่อง', target: '100%', growth: 'On-Schedule', pct: 100, color: '#00A3E0' },
+        { label: 'ความพึงพอใจลูกค้าญี่ปุ่น (CSAT)', value: '4.96 / 5.0', target: '≥ 4.80', growth: '+0.12', pct: 99, color: '#D97706' }
+      ],
+      chartBars: [
+        { name: 'นิคมอมตะ/บ่อวิน', val: 44 },
+        { name: 'กรุงเทพฯ/สุขุมวิท', val: 32 },
+        { name: 'อยุธยา/ปทุมธานี', val: 16 },
+        { name: 'ระยอง/อีสเทิร์น', val: 8 }
+      ],
+      insightsTh: 'กลุ่มโรงงานและร้านอาหารญี่ปุ่นในนิคมอมตะซิตี้และกรุงเทพฯ มีอัตราเครื่องพร้อมใช้งาน 99.6% ด้วยระบบแจ้งเตือนล่วงหน้า 1 วันและรายงาน 3 ภาษา (ไทย/อังกฤษ/ญี่ปุ่น)',
+      insightsJpEn: 'アマタシティ工業団地およびバンコクの日系工場・飲食店における機器稼働率は99.6%を維持。前日リマインドと日英タイ3言語報告書により高い顧客満足度を獲得しています。'
+    },
+    {
+      reportId: 'KPI-SMP-005',
+      isSample: true,
+      title: 'รายงานภาพรวมองค์กรประจำปีสำหรับผู้บริหาร (Annual Executive 360° Board Report)',
+      titleJpEn: '年次経営戦略・全部門統合KPI報告書 / Annual MD Boardroom Report',
+      dept: 'EXEC_MARKETING',
+      roleTitle: 'Managing Director (MD) & Department Heads (100-Seat Org)',
+      periodType: 'YEARLY',
+      periodLabel: 'ปีงบประมาณ 2026 (Yearly — FY 2026)',
+      author: 'Noparin Homhoul — Deputy Service Manager',
+      kpis: [
+        { label: 'รายได้งานบริการ & อะไหล่ทั้งปี', value: '34.8M THB', target: '32.0M THB', growth: '+14.2% YoY', pct: 97, color: '#002B49' },
+        { label: 'สัญญา PM รายปี & ไส้กรอง 4HC-H', value: '412 สัญญา', target: '360 สัญญา', growth: '+22.8% YoY', pct: 95, color: '#059669' },
+        { label: 'ประหยัดเวลาเอกสารด้วยระบบ PWA', value: '68% เร็วขึ้น', target: '≥ 50%', growth: 'Zero Paper', pct: 94, color: '#00A3E0' },
+        { label: 'ลดคาร์บอน ESG (R290 Green Tech)', value: '-18.4 ตัน CO2e', target: '-15.0 ตัน', growth: 'ESG Pass', pct: 92, color: '#10B981' }
+      ],
+      chartBars: [
+        { name: 'Q1 2026', val: 78 },
+        { name: 'Q2 2026 (Peak)', val: 96 },
+        { name: 'Q3 2026', val: 84 },
+        { name: 'Q4 2026', val: 90 }
+      ],
+      insightsTh: 'การเปลี่ยนผ่านสู่ระบบดิจิทัล HOSHIZAKI Service PWA ครอบคลุม 8 แผนก (100 Users) ช่วยเพิ่มรายได้บริการ +14.2% YoY เพิ่มยอดต่อสัญญา PM +22.8% และลดเวลางานเอกสารลง 68%',
+      insightsJpEn: '全部門(最大100名)へのデジタルサービス基盤展開により、サービス売上は前年比+14.2%、年間保守契約は+22.8%成長し、事務処理時間を68%削減しました。'
+    }
+  ];
+
+  function loadKpiReportsList_() {
+    try {
+      const raw = localStorage.getItem(V1041_KPI_REPORTS_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length > 0) return arr;
+      }
+    } catch (e) {}
+    const seeded = JSON.parse(JSON.stringify(DEFAULT_5_KPI_SAMPLE_REPORTS));
+    localStorage.setItem(V1041_KPI_REPORTS_KEY, JSON.stringify(seeded));
+    return seeded;
+  }
+
+  function saveKpiReportsList_(list) {
+    localStorage.setItem(V1041_KPI_REPORTS_KEY, JSON.stringify(list || []));
+  }
+
+  // Render modern SVG/HTML Infographic Card & Presentation Preview for any KPI Report
+  function buildInfographicReportHtml_(rep, isPresentationSlide) {
+    const isJp = (window.HZK_CURRENT_LANG === 'JP');
+    const titleText = isJp && rep.titleJpEn ? rep.titleJpEn : rep.title;
+    const insightText = isJp && rep.insightsJpEn ? rep.insightsJpEn : rep.insightsTh;
+    const deptObj = DEPARTMENTS_8.find(function(d) { return d.id === rep.dept; });
+    const deptLabel = deptObj ? (isJp ? deptObj.nameJpEn : deptObj.nameTh) : rep.dept;
+
+    const kpiCardsHtml = (rep.kpis || []).map(function(k) {
+      return `
+        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm relative overflow-hidden">
+          <div style="background:${k.color || '#00A3E0'}" class="absolute top-0 left-0 right-0 h-1.5"></div>
+          <div class="text-[11px] font-bold text-slate-500">${k.label}</div>
+          <div style="color:${k.color || '#002B49'}" class="text-xl sm:text-2xl font-black mt-1">${k.value}</div>
+          <div class="flex items-center justify-between text-[10px] mt-1.5">
+            <span class="text-slate-500 font-semibold">Target: <b>${k.target}</b></span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-extrabold">${k.growth}</span>
+          </div>
+          <div class="w-full bg-slate-100 h-2 rounded-full mt-2 overflow-hidden">
+            <div style="width:${Math.min(100, Number(k.pct || 85))}%; background:${k.color || '#00A3E0'}" class="h-full rounded-full"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const maxBar = Math.max.apply(null, (rep.chartBars || [{ val: 100 }]).map(function(b) { return Number(b.val || 1); })) || 100;
+    const barsHtml = (rep.chartBars || []).map(function(b, idx) {
+      const hPct = Math.max(18, Math.round((Number(b.val || 0) / maxBar) * 100));
+      const palette = ['#002B49', '#00A3E0', '#059669', '#D97706', '#6366F1'];
+      const col = palette[idx % palette.length];
+      return `
+        <div class="flex-1 flex flex-col items-center justify-end h-36 gap-1">
+          <div class="text-xs font-extrabold text-slate-800">${b.val}</div>
+          <div style="height:${hPct}%; background:linear-gradient(180deg, ${col}, #002B49)" class="w-full max-w-[46px] rounded-t-xl shadow-xs transition-all"></div>
+          <div class="text-[10px] font-bold text-slate-600 text-center leading-tight">${b.name}</div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="bg-gradient-to-br from-[#F0F9FF] via-white to-sky-50 rounded-2xl border-2 border-[#002B49]/20 p-4 sm:p-6 space-y-4 shadow-lg">
+        <!-- Corporate Infographic Header -->
+        <div class="bg-gradient-to-r from-[#002B49] via-[#004675] to-[#00A3E0] text-white rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-md">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-1.5 bg-white/15 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase">
+              <i class="fa-solid fa-chart-pie text-amber-300"></i> ${deptLabel} · ${rep.periodType}
+            </div>
+            <h3 class="text-base sm:text-xl font-black leading-snug">${titleText}</h3>
+            <div class="text-[11px] text-sky-100">
+              <b>ช่วงเวลา (Period):</b> ${rep.periodLabel} &nbsp;|&nbsp; <b>ตำแหน่ง (Role):</b> ${rep.roleTitle} &nbsp;|&nbsp; <b>จัดทำโดย:</b> ${rep.author}
+            </div>
+          </div>
+          <div class="text-right bg-white/10 backdrop-blur-xs px-3 py-2 rounded-xl border border-white/20">
+            <div class="text-[10px] text-amber-300 font-extrabold">HOSHIZAKI (THAILAND)</div>
+            <div class="text-xs font-bold">${rep.reportId}</div>
+          </div>
+        </div>
+
+        <!-- 4 KPI Scorecards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          ${kpiCardsHtml}
+        </div>
+
+        <!-- Visual Chart + Strategic AI Insights -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          <div class="lg:col-span-6 bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center justify-between border-b pb-2 mb-3">
+              <span class="font-extrabold text-xs sm:text-sm text-[#002B49]"><i class="fa-solid fa-chart-column text-[#00A3E0] mr-1.5"></i>กราฟเปรียบเทียบผลงานเชิงลึก (Performance Breakdown)</span>
+              <span class="text-[10px] bg-sky-50 text-sky-800 px-2 py-0.5 rounded font-bold">${rep.periodType}</span>
+            </div>
+            <div class="flex items-end justify-around gap-2 pt-4 px-2 border-b border-slate-200 pb-2">
+              ${barsHtml}
+            </div>
+          </div>
+
+          <div class="lg:col-span-6 bg-gradient-to-br from-[#002B49] to-slate-900 text-white rounded-2xl p-4 shadow-sm flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center gap-1.5 text-amber-300 font-extrabold text-xs sm:text-sm">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span>บทวิเคราะห์เชิงลึกเพื่อการตัดสินใจ (Executive Strategic Insights)</span>
+              </div>
+              <p class="text-xs sm:text-[13px] text-sky-50 leading-relaxed mt-2">${insightText}</p>
+            </div>
+            <div class="pt-2 border-t border-white/15 flex flex-wrap items-center justify-between gap-2 text-[10px] text-sky-200">
+              <span>Prepared by: <b>Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Ltd.</b></span>
+              <span class="italic text-amber-200">"Since it’s better in every respect, why wouldn’t you use it?"</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  window.previewSingleKpiReport = function(reportId) {
+    const list = loadKpiReportsList_();
+    const rep = list.find(function(r) { return r.reportId === reportId; });
+    if (!rep) return;
+
+    let pv = document.getElementById('hzkKpiFullSlidePreviewModal');
+    if (!pv) {
+      pv = document.createElement('div');
+      pv.id = 'hzkKpiFullSlidePreviewModal';
+      pv.className = 'fixed inset-0 z-[9999] hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4';
+      document.body.appendChild(pv);
+    }
+
+    pv.innerHTML = `
+      <div class="bg-white w-full max-w-6xl max-h-[94vh] rounded-2xl shadow-2xl border-2 border-[#00A3E0] flex flex-col overflow-hidden">
+        <div class="bg-[#002B49] text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <div class="font-extrabold text-xs sm:text-sm flex items-center gap-2">
+            <i class="fa-solid fa-display text-amber-300"></i>
+            <span>พรีวิวงานนำเสนอ KPI Infographic เต็มจอ (${rep.reportId})</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">
+              <i class="fa-solid fa-print mr-1"></i> พิมพ์ / บันทึก PDF
+            </button>
+            <button type="button" onclick="exportSingleKpiReportExcel('${rep.reportId}')" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs">
+              <i class="fa-solid fa-file-excel mr-1"></i> ส่งออก Excel (.xlsx)
+            </button>
+            <button type="button" onclick="document.getElementById('hzkKpiFullSlidePreviewModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+          </div>
+        </div>
+        <div class="p-4 overflow-y-auto flex-1 bg-slate-100">
+          ${buildInfographicReportHtml_(rep, true)}
+        </div>
+      </div>
+    `;
+    pv.classList.remove('hidden');
+  };
+
+  window.exportSingleKpiReportExcel = function(reportId) {
+    const list = loadKpiReportsList_();
+    const rep = list.find(function(r) { return r.reportId === reportId; });
+    if (!rep || typeof XLSX === 'undefined') return;
+    const wb = XLSX.utils.book_new();
+    const kpiRows = [['Metric', 'Actual Value', 'Target', 'Growth / Delta', 'Achievement %']].concat(
+      (rep.kpis || []).map(function(k) { return [k.label, k.value, k.target, k.growth, k.pct + '%']; })
+    );
+    const ws1 = XLSX.utils.aoa_to_sheet([
+      ['HOSHIZAKI (THAILAND) LIMITED — KPI EXECUTIVE REPORT'],
+      ['Report ID', rep.reportId, 'Period', rep.periodLabel],
+      ['Department', rep.dept, 'Role', rep.roleTitle],
+      ['Prepared By', rep.author],
+      [],
+      ...kpiRows,
+      [],
+      ['Strategic Insights', rep.insightsTh]
+    ]);
+    XLSX.utils.book_append_sheet(wb, ws1, 'KPI_Summary');
+    XLSX.writeFile(wb, rep.reportId + '_' + rep.periodType + '.xlsx');
+    if (typeof showToast === 'function') showToast('📊 ส่งออกไฟล์ Excel ' + rep.reportId + '.xlsx เรียบร้อยแล้ว');
+  };
+
+  window.createNewCustomKpiReport = function() {
+    const dept = document.getElementById('kpiCreateDept')?.value || 'SERVICE_FIELD';
+    const roleTitle = document.getElementById('kpiCreateRole')?.value.trim() || 'Department Staff / Manager';
+    const periodType = document.getElementById('kpiCreatePeriodType')?.value || 'MONTHLY';
+    const periodLabel = document.getElementById('kpiCreatePeriodLabel')?.value.trim() || 'ประจำเดือน พฤศจิกายน 2026';
+    const title = document.getElementById('kpiCreateTitle')?.value.trim() || ('รายงาน KPI ประจำ' + periodType + ' — ' + roleTitle);
+    const author = document.getElementById('kpiCreateAuthor')?.value.trim() || 'Noparin Homhoul (Deputy Service Manager)';
+    const k1Name = document.getElementById('kpiCreateM1Name')?.value.trim() || 'อัตราความสำเร็จตามเป้าหมาย (Target Achievement)';
+    const k1Val = document.getElementById('kpiCreateM1Val')?.value.trim() || '96.5%';
+    const k2Name = document.getElementById('kpiCreateM2Name')?.value.trim() || 'จำนวนรายการที่ดำเนินการเสร็จสิ้น (Completed Volume)';
+    const k2Val = document.getElementById('kpiCreateM2Val')?.value.trim() || '142 รายการ';
+    const insight = document.getElementById('kpiCreateInsight')?.value.trim() || 'ผลการดำเนินงานเป็นไปตามเป้าหมายที่กำหนด สามารถเชื่อมโยงข้อมูลข้ามแผนกได้อย่างมีประสิทธิภาพ';
+
+    const newRep = {
+      reportId: 'KPI-' + new Date().getFullYear() + '-' + Math.floor(100 + Math.random() * 899),
+      isSample: false,
+      title: title,
+      titleJpEn: title + ' / KPI Report',
+      dept: dept,
+      roleTitle: roleTitle,
+      periodType: periodType,
+      periodLabel: periodLabel,
+      author: author,
+      kpis: [
+        { label: k1Name, value: k1Val, target: '≥ 90%', growth: '+4.5%', pct: 96, color: '#059669' },
+        { label: k2Name, value: k2Val, target: '130 รายการ', growth: '+9.2%', pct: 92, color: '#00A3E0' },
+        { label: 'ความถูกต้องของข้อมูล (Data Integrity)', value: '99.5%', target: '≥ 98%', growth: '+1.5%', pct: 99, color: '#002B49' },
+        { label: 'คะแนนความพึงพอใจ (CSAT / SLA)', value: '4.90 / 5.0', target: '≥ 4.70', growth: '+0.20', pct: 98, color: '#D97706' }
+      ],
+      chartBars: [
+        { name: 'Week 1 / Q1', val: 82 },
+        { name: 'Week 2 / Q2', val: 89 },
+        { name: 'Week 3 / Q3', val: 94 },
+        { name: 'Week 4 / Q4', val: 97 }
+      ],
+      insightsTh: insight,
+      insightsJpEn: insight
+    };
+
+    const list = loadKpiReportsList_();
+    list.unshift(newRep);
+    saveKpiReportsList_(list);
+    if (typeof showToast === 'function') showToast('✅ สร้างและบันทึกรายงาน KPI "' + newRep.reportId + '" เรียบร้อยแล้ว');
+    window.previewSingleKpiReport(newRep.reportId);
+    renderKpiStudioBody_('LIBRARY');
+  };
+
+  window.deleteKpiReportById = function(reportId) {
+    const list = loadKpiReportsList_().filter(function(r) { return r.reportId !== reportId; });
+    saveKpiReportsList_(list);
+    if (typeof showToast === 'function') showToast('🗑️ ลบรายงาน ' + reportId + ' ออกเรียบร้อยแล้ว');
+    renderKpiStudioBody_('LIBRARY');
+  };
+
+  window.restoreDefault5KpiSampleReports = function() {
+    const cur = loadKpiReportsList_();
+    const ids = new Set(cur.map(function(r) { return r.reportId; }));
+    DEFAULT_5_KPI_SAMPLE_REPORTS.forEach(function(s) {
+      if (!ids.has(s.reportId)) cur.push(JSON.parse(JSON.stringify(s)));
+    });
+    saveKpiReportsList_(cur);
+    if (typeof showToast === 'function') showToast('🧪 เติมรายงานตัวอย่าง KPI ครบทั้ง 5 รายการแล้ว');
+    renderKpiStudioBody_('LIBRARY');
+  };
+
+  window.add100SeatUserAccount = function() {
+    const users = load100SeatUsers_();
+    if (users.length >= 100) {
+      if (typeof showToast === 'function') showToast('⚠️ ครบโควตาสูงสุด 100 Users ของแพ็กเกจองค์กรแล้ว');
+      return;
+    }
+    const name = document.getElementById('seatAddName')?.value.trim();
+    const role = document.getElementById('seatAddRole')?.value.trim() || 'Specialist';
+    const dept = document.getElementById('seatAddDept')?.value || 'SERVICE_FIELD';
+    const accessLevel = document.getElementById('seatAddLevel')?.value || 'STAFF';
+    if (!name) return;
+    users.push({
+      seatId: 'U-' + String(users.length + 1).padStart(3, '0'),
+      name: name,
+      role: role,
+      dept: dept,
+      accessLevel: accessLevel,
+      active: true
+    });
+    localStorage.setItem(V1041_RBAC_USERS_KEY, JSON.stringify(users));
+    if (typeof showToast === 'function') showToast('✅ เพิ่มพนักงาน "' + name + '" เข้าสู่ระบบ 100-Seat RBAC แล้ว (' + users.length + '/100)');
+    renderKpiStudioBody_('RBAC_100');
+  };
+
+  window.openKpiReportStudioModal = function(tab) {
+    let modal = document.getElementById('hzkKpiReportStudioModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkKpiReportStudioModal';
+      modal.className = 'fixed inset-0 z-[9996] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4';
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+          <div class="bg-gradient-to-r from-[#002B49] via-sky-900 to-emerald-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div>
+              <h2 class="text-base sm:text-lg font-extrabold"><i class="fa-solid fa-chart-column text-amber-300 mr-1.5"></i>HOSHIZAKI KPI Report &amp; Infographic Studio (8 แผนก · 100 Users)</h2>
+              <p class="text-[11px] text-sky-200">สร้างรายงาน KPI และสไลด์นำเสนอรายสัปดาห์ / รายเดือน / รายไตรมาส / รายปี สำหรับทุกตำแหน่งและทุกแผนก</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkKpiReportStudioModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-rose-600 text-white flex items-center justify-center font-bold">&times;</button>
+          </div>
+          <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 text-xs font-bold">
+            <button type="button" onclick="renderKpiStudioBody_('LIBRARY')" class="px-3 py-2 rounded-t-lg bg-white text-[#002B49] border-b-2 border-[#002B49]">1. คลังรายงาน KPI &amp; ตัวอย่าง 5 รายการ (พรีวิว/ลบได้)</button>
+            <button type="button" onclick="renderKpiStudioBody_('BUILDER')" class="px-3 py-2 rounded-t-lg bg-white text-emerald-800 border-b-2 border-emerald-600">2. สร้างรายงาน KPI ใหม่ (รายสัปดาห์/เดือน/ไตรมาส/ปี)</button>
+            <button type="button" onclick="renderKpiStudioBody_('RBAC_100')" class="px-3 py-2 rounded-t-lg bg-white text-indigo-800 border-b-2 border-indigo-600">3. จัดการสิทธิ์ 100 Users &amp; 8 แผนก (100-Seat RBAC)</button>
+          </div>
+          <div id="hzkKpiStudioBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-4 text-xs"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    window.renderKpiStudioBody_(tab || 'LIBRARY');
+  };
+
+  window.renderKpiStudioBody_ = function(tab) {
+    const body = document.getElementById('hzkKpiStudioBody');
+    if (!body) return;
+    const reports = loadKpiReportsList_();
+
+    if (tab === 'LIBRARY' || tab === 'DASHBOARD') {
+      const featured = reports[0];
+      body.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-white p-3 rounded-xl border border-slate-200">
+          <div class="font-extrabold text-[#002B49]">คลังรายงาน KPI ทั้งหมด (${reports.length} ฉบับ) — คลิก "พรีวิวสไลด์เต็มจอ" หรือ "สร้างรายงานใหม่" ได้ทันที</div>
+          <div class="flex gap-2">
+            <button type="button" onclick="restoreDefault5KpiSampleReports()" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold">🧪 เติมรายงานตัวอย่าง 5 รายการ</button>
+            <button type="button" onclick="renderKpiStudioBody_('BUILDER')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold">+ สร้างรายงาน KPI ใหม่</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          ${reports.map(function(r) {
+            return `
+              <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs flex flex-col justify-between space-y-2.5">
+                <div>
+                  <div class="flex items-center justify-between gap-1">
+                    <span class="px-2 py-0.5 rounded-full bg-[#002B49] text-white text-[10px] font-extrabold">${r.periodType}</span>
+                    <span class="font-mono text-[10px] text-slate-500">${r.reportId}</span>
+                  </div>
+                  <div class="font-extrabold text-sm text-slate-900 mt-1.5 leading-snug">${r.title}</div>
+                  <div class="text-[11px] text-sky-700 font-semibold mt-0.5">${r.periodLabel}</div>
+                  <div class="text-[10px] text-slate-500 mt-0.5">ตำแหน่ง: ${r.roleTitle} | ผู้จัดทำ: ${r.author}</div>
+                </div>
+                <div class="pt-2 border-t flex items-center justify-between gap-1.5">
+                  <button type="button" onclick="previewSingleKpiReport('${r.reportId}')" class="flex-1 py-1.5 rounded-lg bg-gradient-to-r from-[#002B49] to-[#00A3E0] text-white font-extrabold text-[11px]">
+                    <i class="fa-solid fa-eye mr-1"></i> พรีวิวสไลด์เต็มจอ
+                  </button>
+                  <button type="button" onclick="exportSingleKpiReportExcel('${r.reportId}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-100 text-emerald-900 font-bold text-[11px]" title="Excel">XLSX</button>
+                  <button type="button" onclick="deleteKpiReportById('${r.reportId}')" class="px-2.5 py-1.5 rounded-lg bg-rose-100 hover:bg-rose-600 text-rose-800 hover:text-white font-bold text-[11px]">ลบ</button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        ${featured ? `<div class="pt-2"><div class="font-extrabold text-sm text-[#002B49] mb-2">ตัวอย่างการแสดงผล Infographic ล่าสุด (${featured.reportId}):</div>${buildInfographicReportHtml_(featured, false)}</div>` : ''}
+      `;
+    } else if (tab === 'BUILDER') {
+      body.innerHTML = `
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3 max-w-4xl mx-auto">
+          <div class="font-extrabold text-sm text-[#002B49] border-b pb-2"><i class="fa-solid fa-wand-magic-sparkles text-emerald-600 mr-1.5"></i>สร้างรายงาน KPI Infographic ประจำตำแหน่งและแผนก (Self-Service Report Builder)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700">เลือกแผนก (Department - 8 แผนก):</label>
+              <select id="kpiCreateDept" class="w-full mt-1 border rounded-lg px-2.5 py-2 font-bold bg-white">
+                ${DEPARTMENTS_8.map(function(d) { return `<option value="${d.id}">${d.nameTh}</option>`; }).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700">ตำแหน่งผู้จัดทำ (Position / Role):</label>
+              <input id="kpiCreateRole" value="Deputy Service Manager / Field Supervisor" class="w-full mt-1 border rounded-lg px-2.5 py-2">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700">รอบระยะเวลา (Reporting Period):</label>
+              <select id="kpiCreatePeriodType" class="w-full mt-1 border rounded-lg px-2.5 py-2 font-bold bg-white">
+                <option value="WEEKLY">รายสัปดาห์ (Weekly Report)</option>
+                <option value="MONTHLY" selected>รายเดือน (Monthly Report)</option>
+                <option value="QUARTERLY">รายไตรมาส (Quarterly Q1–Q4)</option>
+                <option value="YEARLY">รายปี (Yearly FY Report)</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700">ระบุช่วงเวลา (เช่น Q4 2026 / พ.ย. 2026):</label>
+              <input id="kpiCreatePeriodLabel" value="พฤศจิกายน 2026 (Monthly — Nov 2026)" class="w-full mt-1 border rounded-lg px-2.5 py-2">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="font-bold text-slate-700">หัวข้อรายงานนำเสนอ (Report Title):</label>
+              <input id="kpiCreateTitle" value="รายงานสรุปตัวชี้วัด KPI และประสิทธิภาพการดำเนินงานประจำเดือน" class="w-full mt-1 border rounded-lg px-2.5 py-2 font-bold">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700">ตัวชี้วัดหลักที่ 1 (KPI Metric 1):</label>
+              <input id="kpiCreateM1Name" value="อัตราความสำเร็จตามเป้าหมาย (SLA / FTFR%)" class="w-full mt-1 border rounded-lg px-2.5 py-1.5">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700">ผลลัพธ์ตัวชี้วัดที่ 1:</label>
+              <input id="kpiCreateM1Val" value="95.4%" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-extrabold text-emerald-700">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700">ตัวชี้วัดหลักที่ 2 (KPI Metric 2):</label>
+              <input id="kpiCreateM2Name" value="ปริมาณงานที่ปิดสำเร็จ (Completed Volume)" class="w-full mt-1 border rounded-lg px-2.5 py-1.5">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700">ผลลัพธ์ตัวชี้วัดที่ 2:</label>
+              <input id="kpiCreateM2Val" value="164 รายการ" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-extrabold text-[#002B49]">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="font-bold text-slate-700">บทวิเคราะห์เชิงลึก &amp; ข้อเสนอแนะเพื่อการตัดสินใจ (Strategic Insights):</label>
+              <textarea id="kpiCreateInsight" rows="3" class="w-full mt-1 border rounded-lg px-2.5 py-2">ผลการดำเนินงานสูงกว่าเป้าหมายที่วางไว้ สามารถเชื่อมโยงข้อมูลงานบริการ สต็อกอะไหล่ และบัญชีได้อย่างแม่นยำ แนะนำขยายผลใช้งานครบทั้ง 8 แผนก</textarea>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="font-bold text-slate-700">ผู้จัดทำรายงาน (Prepared By):</label>
+              <input id="kpiCreateAuthor" value="Noparin Homhoul — Deputy Service Manager" class="w-full mt-1 border rounded-lg px-2.5 py-1.5">
+            </div>
+          </div>
+          <button type="button" onclick="createNewCustomKpiReport()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#002B49] via-sky-700 to-emerald-600 text-white font-extrabold text-sm shadow-md">
+            <i class="fa-solid fa-sparkles mr-1.5"></i> สร้างและพรีวิวรายงาน KPI Infographic ทันที
+          </button>
+        </div>
+      `;
+    } else {
+      const users = load100SeatUsers_();
+      body.innerHTML = `
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div class="font-extrabold text-sm text-indigo-950">สถาปัตยกรรมรองรับพนักงาน 100 Users (100-Seat Enterprise RBAC &amp; Delta Sync)</div>
+            <div class="text-[11px] text-indigo-800">ใช้งานแล้ว <b>${users.length} / 100 ที่นั่ง (Seats)</b> · แบ่งสิทธิ์การเข้าถึงและ KPI Dashboard ตามแผนกและตำแหน่งอัตโนมัติ</div>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-emerald-600 text-white font-extrabold">Active Capacity: ${users.length}/100 Seats</span>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+          <div class="font-extrabold text-sm text-[#002B49]">เพิ่มพนักงานเข้าสู่ระบบ 100-Seat Directory</div>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <input id="seatAddName" placeholder="ชื่อ-นามสกุลพนักงาน *" class="border rounded-lg px-2.5 py-1.5">
+            <input id="seatAddRole" placeholder="ตำแหน่ง (เช่น Technician / Admin)" class="border rounded-lg px-2.5 py-1.5">
+            <select id="seatAddDept" class="border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+              ${DEPARTMENTS_8.map(function(d) { return `<option value="${d.id}">${d.nameTh}</option>`; }).join('')}
+            </select>
+            <select id="seatAddLevel" class="border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+              <option value="STAFF">สิทธิ์ระดับพนักงาน (ดู KPI แผนกตน)</option>
+              <option value="DEPT_MANAGER">สิทธิ์หัวหน้าแผนก (ดูทั้งแผนก)</option>
+              <option value="EXEC_ALL">สิทธิ์ผู้บริหาร (ดูครบทั้ง 8 แผนก)</option>
+            </select>
+          </div>
+          <button type="button" onclick="add100SeatUserAccount()" class="px-4 py-1.5 rounded-lg bg-[#002B49] text-white font-bold">+ เพิ่มผู้ใช้งาน (Seat)</button>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">Seat ID</th><th class="p-2">ชื่อพนักงาน</th><th class="p-2">ตำแหน่ง</th><th class="p-2">แผนก</th><th class="p-2">ระดับสิทธิ์ RBAC</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${users.map(function(u) {
+                return `<tr><td class="p-2 font-mono font-bold">${u.seatId}</td><td class="p-2 font-bold">${u.name}</td><td class="p-2">${u.role}</td><td class="p-2">${u.dept}</td><td class="p-2"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-bold text-[10px]">${u.accessLevel}</span></td></tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+  };
+
+  setTimeout(function() {
+    loadKpiReportsList_();
+    load100SeatUsers_();
+    if (window.HZK_CURRENT_LANG === 'JP') {
+      applyJapaneseEnglishMenus_(true);
+    }
+  }, 1600);
 })();

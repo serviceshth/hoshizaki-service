@@ -1,5 +1,5 @@
 {
-  "name": "HOSHIZAKI Service Management (Enterprise v1040-FINAL)",
+  "name": "HOSHIZAKI Service Management (Enterprise v1041-FINAL)",
   "short_name": "Hoshizaki Service",
   "description": "ระบบบริหารจัดการงานบริการ ใบแจ้งบริการ ใบเสนอราคา และคลังสินค้า IMS ครบวงจร HOSHIZAKI (THAILAND) Enterprise v1040-COMPLETE",
   "start_url": "./index.html",
@@ -22,5 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "1040-FINAL"
+  "version": "1041-FINAL"
 }

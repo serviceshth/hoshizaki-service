@@ -5516,7 +5516,7 @@
 //     8-Department RBAC, Account Lock/Unlock & Immediate System_Audit_Log Sync) ---
 // ============================================================================
 (function() {
-  const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
+  const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1051_sec6';
   const ACTIVE_SESSION_KEY = 'hoshizaki_active_auth_session_v1042';
   const KNOWN_DEVICE_USERS_KEY = 'hoshizaki_known_device_users_v1042';
   const LOCKOUT_MAP_KEY = 'hoshizaki_login_lockout_map_v1042';
@@ -5525,28 +5525,28 @@
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
 
   const DEFAULT_STAFF_ROSTER_V1043 = [
-    { id: 'SVC-02', code: 'T02', name: 'Mr. Noparin Homhoul', nickname: 'Rinny', department: 'Service Unit', position: 'Deputy Services Unit Manager (Sole Super Admin)', rbacRole: 'SUPER_ADMIN', defaultPin: '1002', email: 'noparin@hoshizaki.co.th', phone: '097-230-5941' },
-    { id: 'SVC-01', code: 'T01', name: 'Mr. Thanakrit Chanmokonpanit', nickname: 'Tae', department: 'Service Unit', position: 'Services Unit Manager', rbacRole: 'SERVICE_MANAGER', defaultPin: '1001', email: 'thanakrit@hoshizaki.co.th', phone: '096-804-3989' },
-    { id: 'SVC-03', code: 'T03', name: 'Mr. Surin Sarawong', nickname: 'Rin', department: 'Service Unit', position: 'Senior Services Staff', rbacRole: 'SUPERVISOR', defaultPin: '1003', email: 'surin@hoshizaki.co.th', phone: '091-767-2018' },
-    { id: 'SVC-04', code: 'T05', name: 'Mr. Nirun Sornrat', nickname: 'Pui', department: 'Service Unit', position: 'Services Staff', rbacRole: 'TECHNICIAN', defaultPin: '1004', email: 'nirun@hoshizaki.co.th', phone: '091-767-2038' },
-    { id: 'SVC-05', code: 'T08', name: 'Ms. Wanwipha Nakamrod', nickname: 'Oh', department: 'Service Unit', position: 'Services Admin Staff', rbacRole: 'SUPERVISOR', defaultPin: '1005', email: 'wanwipha@hoshizaki.co.th', phone: '093-827-8132' },
-    { id: 'SVC-06', code: 'T06', name: 'Mr. Surin Tharapai', nickname: 'Beer', department: 'Service Unit', position: 'Services Staff', rbacRole: 'TECHNICIAN', defaultPin: '1006', email: 'surin.t@hoshizaki.co.th', phone: '063-865-5442' },
-    { id: 'SVC-07', code: 'T04', name: 'Mr. Jeerapan Phrasawang', nickname: 'Ceasar', department: 'Service Unit', position: 'Services Staff', rbacRole: 'TECHNICIAN', defaultPin: '1007', email: 'jeerapan@hoshizaki.co.th', phone: '091-767-2079' },
-    { id: 'CTR-01', code: 'T07', name: 'Mr. Pawat Warongtheradet', nickname: 'Prince', department: 'Service Center', position: 'Service Center & Warehouse IMS', rbacRole: 'SERVICE_CENTER_IMS', defaultPin: '1008', email: 'pawat@hoshizaki.co.th', phone: '099-508-1908' },
-    { id: 'EXE-01', code: 'EXE', name: 'Mr. Daisuke Suzuki', nickname: 'Suzuki', department: 'Executive Management', position: 'Managing Director / GM Accounting & Admin', rbacRole: 'EXECUTIVE', defaultPin: '8888', email: 'suzuki@hoshizaki.co.th', phone: '088-985-5979' },
-    { id: 'ADM-01', code: 'ADM1', name: 'Ms. Kanokwan Treesukol', nickname: 'Kanokwan', department: 'Admin Unit', position: 'Admin Unit (Parts & Logistics)', rbacRole: 'ADMIN_UNIT', defaultPin: '2001', email: 'kanokwan@hoshizaki.co.th', phone: '097-135-6304' },
-    { id: 'ADM-02', code: 'ADM2', name: 'Mr. Nattapong Chataram', nickname: 'Nattapong', department: 'Admin Unit', position: 'Admin Unit', rbacRole: 'ADMIN_UNIT', defaultPin: '2002', email: 'nattapong@hoshizaki.co.th', phone: '091-772-7423' },
-    { id: 'ADM-03', code: 'ADM3', name: 'Mr. Chayanin Kuptrakul', nickname: 'Chayanin', department: 'Admin Unit', position: 'Admin Unit', rbacRole: 'ADMIN_UNIT', defaultPin: '2003', email: 'chayanin@hoshizaki.co.th', phone: '-' },
-    { id: 'ACC-01', code: 'ACC1', name: 'Ms. Waraporn Kianthong', nickname: 'Waraporn', department: 'Accounting Unit', position: 'Accounting Unit (QT/IV/RE/NAV)', rbacRole: 'ACCOUNTING_UNIT', defaultPin: '3001', email: 'waraporn@hoshizaki.co.th', phone: '093-645-5623' },
-    { id: 'ACC-02', code: 'ACC2', name: 'Ms. Duangkamon Tantayanon', nickname: 'Duangkamon', department: 'Accounting Unit', position: 'Accounting Unit', rbacRole: 'ACCOUNTING_UNIT', defaultPin: '3002', email: 'duangkamon@hoshizaki.co.th', phone: '081-372-8190' },
-    { id: 'ACC-03', code: 'ACC3', name: 'Ms. Witharat Riangpha', nickname: 'Witharat', department: 'Accounting Unit', position: 'Accounting Unit', rbacRole: 'ACCOUNTING_UNIT', defaultPin: '3003', email: 'witharat@hoshizaki.co.th', phone: '095-959-4734' },
-    { id: 'SLS-01', code: 'SLS1', name: 'Ms. Kulathida Charoenying', nickname: 'Kulathida', department: 'Sales Unit', position: 'Sales Unit (PM & Replacement)', rbacRole: 'SALES_UNIT', defaultPin: '4001', email: 'kulathida@hoshizaki.co.th', phone: '096-898-3388' },
-    { id: 'SLS-02', code: 'SLS2', name: 'Ms. Janyaluck Paithaisong', nickname: 'Janyaluck', department: 'Sales Unit', position: 'Sales Unit', rbacRole: 'SALES_UNIT', defaultPin: '4002', email: 'janyaluck@hoshizaki.co.th', phone: '090-972-0947' },
-    { id: 'SLS-03', code: 'SLS3', name: 'Ms. Ketsaraporn Porjai', nickname: 'Ketsaraporn', department: 'Sales Unit', position: 'Sales Unit', rbacRole: 'SALES_UNIT', defaultPin: '4003', email: 'ketsaraporn@hoshizaki.co.th', phone: '096-804-3988' },
-    { id: 'MKT-01', code: 'MKT1', name: 'Ms. Taksaon Tipsrisombat', nickname: 'Taksaon', department: 'Marketing Unit', position: 'Marketing Unit (CSAT & Brand)', rbacRole: 'MARKETING_UNIT', defaultPin: '5001', email: 'taksaon@hoshizaki.co.th', phone: '091-767-2092' },
-    { id: 'MKT-02', code: 'MKT2', name: 'Mr. Khajornyot Jewkrang', nickname: 'Khajornyot', department: 'Marketing Unit', position: 'Marketing Unit', rbacRole: 'MARKETING_UNIT', defaultPin: '5002', email: 'khajornyot@hoshizaki.co.th', phone: '063-821-1294' },
-    { id: 'JPC-01', code: 'JPC1', name: 'Ms. Suleewan Siripirom', nickname: 'Suleewan', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Unit', rbacRole: 'JAPANESE_CORP', defaultPin: '6001', email: 'suleewan@hoshizaki.co.th', phone: '063-810-8586' },
-    { id: 'JPC-02', code: 'JPC2', name: 'Mr. Naoki Furujo', nickname: 'Furujo', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Manager', rbacRole: 'JAPANESE_CORP', defaultPin: '6002', email: 'furujo@hoshizaki.co.th', phone: '064-148-4245' }
+    { id: 'SVC-02', code: 'T02', name: 'Mr. Noparin Homhoul', nickname: 'Rinny', department: 'Service Unit', position: 'Deputy Services Unit Manager (Sole Super Admin)', rbacRole: 'SUPER_ADMIN', defaultPin: '12345678', email: 'noparin@hoshizaki.co.th', phone: '097-230-5941' },
+    { id: 'SVC-01', code: 'T01', name: 'Mr. Thanakrit Chanmokonpanit', nickname: 'Tae', department: 'Service Unit', position: 'Services Unit Manager', rbacRole: 'SERVICE_MANAGER', defaultPin: '12345678', email: 'thanakrit@hoshizaki.co.th', phone: '096-804-3989' },
+    { id: 'SVC-03', code: 'T03', name: 'Mr. Surin Sarawong', nickname: 'Rin', department: 'Service Unit', position: 'Senior Services Staff', rbacRole: 'SUPERVISOR', defaultPin: '12345678', email: 'surin@hoshizaki.co.th', phone: '091-767-2018' },
+    { id: 'SVC-04', code: 'T05', name: 'Mr. Nirun Sornrat', nickname: 'Pui', department: 'Service Unit', position: 'Services Staff', rbacRole: 'TECHNICIAN', defaultPin: '12345678', email: 'nirun@hoshizaki.co.th', phone: '091-767-2038' },
+    { id: 'SVC-05', code: 'T08', name: 'Ms. Wanwipha Nakamrod', nickname: 'Oh', department: 'Service Unit', position: 'Services Admin Staff', rbacRole: 'SUPERVISOR', defaultPin: '12345678', email: 'wanwipha@hoshizaki.co.th', phone: '093-827-8132' },
+    { id: 'SVC-06', code: 'T06', name: 'Mr. Surin Tharapai', nickname: 'Beer', department: 'Service Unit', position: 'Services Staff', rbacRole: 'TECHNICIAN', defaultPin: '12345678', email: 'surin.t@hoshizaki.co.th', phone: '063-865-5442' },
+    { id: 'SVC-07', code: 'T04', name: 'Mr. Jeerapan Phrasawang', nickname: 'Ceasar', department: 'Service Unit', position: 'Services Staff', rbacRole: 'TECHNICIAN', defaultPin: '12345678', email: 'jeerapan@hoshizaki.co.th', phone: '091-767-2079' },
+    { id: 'CTR-01', code: 'T07', name: 'Mr. Pawat Warongtheradet', nickname: 'Prince', department: 'Service Center', position: 'Service Center & Warehouse IMS', rbacRole: 'SERVICE_CENTER_IMS', defaultPin: '12345678', email: 'pawat@hoshizaki.co.th', phone: '099-508-1908' },
+    { id: 'EXE-01', code: 'EXE', name: 'Mr. Daisuke Suzuki', nickname: 'Suzuki', department: 'Executive Management', position: 'Managing Director / GM Accounting & Admin', rbacRole: 'EXECUTIVE', defaultPin: '12345678', email: 'suzuki@hoshizaki.co.th', phone: '088-985-5979' },
+    { id: 'ADM-01', code: 'ADM1', name: 'Ms. Kanokwan Treesukol', nickname: 'Kanokwan', department: 'Admin Unit', position: 'Admin Unit (Parts & Logistics)', rbacRole: 'ADMIN_UNIT', defaultPin: '12345678', email: 'kanokwan@hoshizaki.co.th', phone: '097-135-6304' },
+    { id: 'ADM-02', code: 'ADM2', name: 'Mr. Nattapong Chataram', nickname: 'Nattapong', department: 'Admin Unit', position: 'Admin Unit', rbacRole: 'ADMIN_UNIT', defaultPin: '12345678', email: 'nattapong@hoshizaki.co.th', phone: '091-772-7423' },
+    { id: 'ADM-03', code: 'ADM3', name: 'Mr. Chayanin Kuptrakul', nickname: 'Chayanin', department: 'Admin Unit', position: 'Admin Unit', rbacRole: 'ADMIN_UNIT', defaultPin: '12345678', email: 'chayanin@hoshizaki.co.th', phone: '-' },
+    { id: 'ACC-01', code: 'ACC1', name: 'Ms. Waraporn Kianthong', nickname: 'Waraporn', department: 'Accounting Unit', position: 'Accounting Unit (QT/IV/RE/NAV)', rbacRole: 'ACCOUNTING_UNIT', defaultPin: '12345678', email: 'waraporn@hoshizaki.co.th', phone: '093-645-5623' },
+    { id: 'ACC-02', code: 'ACC2', name: 'Ms. Duangkamon Tantayanon', nickname: 'Duangkamon', department: 'Accounting Unit', position: 'Accounting Unit', rbacRole: 'ACCOUNTING_UNIT', defaultPin: '12345678', email: 'duangkamon@hoshizaki.co.th', phone: '081-372-8190' },
+    { id: 'ACC-03', code: 'ACC3', name: 'Ms. Witharat Riangpha', nickname: 'Witharat', department: 'Accounting Unit', position: 'Accounting Unit', rbacRole: 'ACCOUNTING_UNIT', defaultPin: '12345678', email: 'witharat@hoshizaki.co.th', phone: '095-959-4734' },
+    { id: 'SLS-01', code: 'SLS1', name: 'Ms. Kulathida Charoenying', nickname: 'Kulathida', department: 'Sales Unit', position: 'Sales Unit (PM & Replacement)', rbacRole: 'SALES_UNIT', defaultPin: '12345678', email: 'kulathida@hoshizaki.co.th', phone: '096-898-3388' },
+    { id: 'SLS-02', code: 'SLS2', name: 'Ms. Janyaluck Paithaisong', nickname: 'Janyaluck', department: 'Sales Unit', position: 'Sales Unit', rbacRole: 'SALES_UNIT', defaultPin: '12345678', email: 'janyaluck@hoshizaki.co.th', phone: '090-972-0947' },
+    { id: 'SLS-03', code: 'SLS3', name: 'Ms. Ketsaraporn Porjai', nickname: 'Ketsaraporn', department: 'Sales Unit', position: 'Sales Unit', rbacRole: 'SALES_UNIT', defaultPin: '12345678', email: 'ketsaraporn@hoshizaki.co.th', phone: '096-804-3988' },
+    { id: 'MKT-01', code: 'MKT1', name: 'Ms. Taksaon Tipsrisombat', nickname: 'Taksaon', department: 'Marketing Unit', position: 'Marketing Unit (CSAT & Brand)', rbacRole: 'MARKETING_UNIT', defaultPin: '12345678', email: 'taksaon@hoshizaki.co.th', phone: '091-767-2092' },
+    { id: 'MKT-02', code: 'MKT2', name: 'Mr. Khajornyot Jewkrang', nickname: 'Khajornyot', department: 'Marketing Unit', position: 'Marketing Unit', rbacRole: 'MARKETING_UNIT', defaultPin: '12345678', email: 'khajornyot@hoshizaki.co.th', phone: '063-821-1294' },
+    { id: 'JPC-01', code: 'JPC1', name: 'Ms. Suleewan Siripirom', nickname: 'Suleewan', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Unit', rbacRole: 'JAPANESE_CORP', defaultPin: '12345678', email: 'suleewan@hoshizaki.co.th', phone: '063-810-8586' },
+    { id: 'JPC-02', code: 'JPC2', name: 'Mr. Naoki Furujo', nickname: 'Furujo', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Manager', rbacRole: 'JAPANESE_CORP', defaultPin: '12345678', email: 'furujo@hoshizaki.co.th', phone: '064-148-4245' }
   ];
 
   const RBAC_ROLE_LABELS = {
@@ -5642,8 +5642,9 @@
           salt: salt,
           passwordHash: hash,
           isTempPassword: false,
+          isDefaultInitialPin: true,
           tempExpiresAt: 0,
-          mustChangePassword: false,
+          mustChangePassword: true,
           suspended: false,
           active: true,
           updatedAt: new Date().toISOString()
@@ -5828,7 +5829,7 @@
             </div>
           </div>
           <div id="changeOwnPasswordWrap" class="hidden p-2.5 rounded-xl bg-slate-100 border border-slate-300 space-y-2">
-            <div class="font-bold text-slate-800 text-[11px]">ตั้งรหัสผ่านถาวรใหม่สำหรับ ${sess.name} (อย่างน้อย 4 ตัวอักษร):</div>
+            <div class="font-bold text-slate-800 text-[11px]">ตั้งรหัสผ่านถาวรใหม่ 6 หลักขึ้นไปสำหรับ ${sess.name} (ห้ามใช้เลขเรียง 123456 / เลขซ้ำ):</div>
             <div class="flex gap-1.5">
               <input type="password" id="ownNewPassInput" placeholder="รหัสผ่านใหม่..." class="flex-1 border rounded-lg px-2.5 py-1.5 text-xs bg-white">
               <button type="button" onclick="submitChangeOwnPassword()" class="px-3 py-1.5 rounded-lg bg-[#002B49] text-white font-bold text-xs">บันทึก</button>
@@ -6000,7 +6001,7 @@
       await window.openTechQuickLoginModal();
       window.openChangeOwnPasswordBox();
       if (typeof showToast === 'function') {
-        showToast('🔑 คุณเข้าสู่ระบบด้วยรหัสผ่านชั่วคราว กรุณาตั้งรหัสผ่านถาวรใหม่ของคุณทันที');
+        showToast('🔑 คุณเข้าสู่ระบบด้วยรหัสเริ่มต้น (12345678) กรุณาตั้งรหัสผ่านถาวรใหม่ 6 หลักขึ้นไปทันทีครับ');
       }
       return;
     }
@@ -6016,11 +6017,22 @@
     document.getElementById('changeOwnPasswordWrap')?.classList.toggle('hidden');
   };
 
+  function isWeakSequentialOrRepeatedPin_(pw) {
+    const s = String(pw || '').trim();
+    if (/^(\d)\1+$/.test(s)) return true; // e.g. 111111, 000000
+    if ('01234567890123456789'.includes(s) || '98765432109876543210'.includes(s)) return true; // e.g. 123456, 12345678, 654321
+    return false;
+  }
+
   window.submitChangeOwnPassword = async function() {
     const sess = getActiveAuthSession_();
     const newPw = (document.getElementById('ownNewPassInput')?.value || '').trim();
-    if (!sess || newPw.length < 4) {
-      if (typeof showToast === 'function') showToast('⚠️ รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษรครับ');
+    if (!sess || newPw.length < 6) {
+      if (typeof showToast === 'function') showToast('⚠️ รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 6 หลัก/ตัวอักษรขึ้นไปครับ');
+      return;
+    }
+    if (isWeakSequentialOrRepeatedPin_(newPw)) {
+      if (typeof showToast === 'function') showToast('⛔ ห้ามตั้งรหัสผ่านใหม่เป็นเลขเรียงหรือเลขซ้ำ (เช่น 123456, 12345678, 111111) กรุณาตั้งรหัสใหม่ครับ');
       return;
     }
     const vault = await ensureCredentialVaultInitialized_();
@@ -6441,7 +6453,7 @@
 //     and IndexedDB Cold-Archive & Storage Auto-Compaction Engine) ---
 // ============================================================================
 (function() {
-  const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
+  const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1051_sec6';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
   const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1051';
   const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1051';

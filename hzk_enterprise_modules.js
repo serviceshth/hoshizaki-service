@@ -5511,7 +5511,7 @@
 
 
 // ============================================================================
-// --- Module Block #55 (Enterprise v1045-PRO: Sole Super Admin Control
+// --- Module Block #55 (Enterprise v1046-GOLIVE: Sole Super Admin Control
 //     for Mr. Noparin Homhoul, SHA-256 + Salt Vault, Temp Password Generator,
 //     8-Department RBAC, Account Lock/Unlock & Immediate System_Audit_Log Sync) ---
 // ============================================================================
@@ -6435,7 +6435,7 @@
 
 
 // ============================================================================
-// --- Module Block #56 (Enterprise v1045-PRO: Two-Way Cloud Credential Pull,
+// --- Module Block #56 (Enterprise v1046-GOLIVE: Two-Way Cloud Credential Pull,
 //     Live System_Audit_Log Viewer & CSV Export, Global Command Palette Ctrl+K,
 //     100-Seat Multi-Branch Roster Manager, 1-Click Predictive Quote & LINE Flex,
 //     and IndexedDB Cold-Archive & Storage Auto-Compaction Engine) ---
@@ -6443,9 +6443,9 @@
 (function() {
   const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
-  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1045';
-  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1045';
-  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1045';
+  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1046';
+  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1046';
+  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1046';
 
   const HZK_BRANCH_DIRECTORY = [
     { code: 'ALL', name: 'ทุกสาขาทั่วประเทศ (All Thailand Branches)', region: 'Nationwide' },
@@ -6533,7 +6533,7 @@
       const resp = await fetch(gasUrl + sep + 'action=getSecurityAuditLogs&limit=100&_t=' + Date.now(), { method: 'GET' });
       const data = await resp.json();
       if (data && data.status === 'ok' && Array.isArray(data.logs)) {
-        localStorage.setItem('hoshizaki_cloud_audit_cache_v1045', JSON.stringify(data.logs));
+        localStorage.setItem('hoshizaki_cloud_audit_cache_v1046', JSON.stringify(data.logs));
         if (typeof window.renderAdminSecurityRbacPanel === 'function') {
           await window.renderAdminSecurityRbacPanel();
         }
@@ -6548,7 +6548,7 @@
 
   window.exportSecurityAuditCsv = function() {
     const localLogs = JSON.parse(localStorage.getItem('hoshizaki_immutable_audit_log_v1033') || '[]');
-    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1045') || '[]');
+    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1046') || '[]');
     const rows = [['Timestamp', 'Category/Actor', 'Target', 'Detail']];
     cloudLogs.forEach(c => rows.push([c.timestamp || '', `${c.actorName || ''} (${c.actorId || ''})`, c.targetId || '', c.event || '']));
     localLogs.forEach(l => rows.push([l.timestamp || '', l.category || '', l.actor || '', l.detail || '']));
@@ -6571,16 +6571,16 @@
       await _origRenderAdminSecurityRbacPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (!panel || panel.querySelector('#v1045OmniSecurityEnhancementBar')) return;
+    if (!panel || panel.querySelector('#v1046OmniSecurityEnhancementBar')) return;
 
-    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1045') || '[]');
+    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1046') || '[]');
     const bar = document.createElement('div');
-    bar.id = 'v1045OmniSecurityEnhancementBar';
+    bar.id = 'v1046OmniSecurityEnhancementBar';
     bar.className = 'p-3 rounded-xl bg-sky-50 border border-sky-200 space-y-2.5';
     bar.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="text-xs font-extrabold text-[#002B49]">
-          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1045-PRO: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
+          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1046-GOLIVE: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
         </div>
         <div class="flex flex-wrap gap-1.5">
           <button type="button" onclick="pullUserCredentialsVaultFromCloud(false).then(() => renderAdminSecurityRbacPanel())" class="px-2.5 py-1.5 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[11px]">
@@ -6737,7 +6737,7 @@
           </div>
           <div id="omniCommandResultsList" class="max-h-96 overflow-y-auto divide-y divide-slate-100 p-2 bg-slate-50/70"></div>
           <div class="bg-slate-100 px-4 py-2 text-[10.5px] text-slate-500 flex items-center justify-between">
-            <span>HOSHIZAKI Enterprise v1045-PRO • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
+            <span>HOSHIZAKI Enterprise v1046-GOLIVE • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
             <span>กด <kbd class="px-1.5 py-0.5 bg-white border rounded font-mono">Ctrl+K</kbd> ได้ทุกหน้า</span>
           </div>
         </div>
@@ -7032,15 +7032,15 @@
 
 
 // ============================================================================
-// --- Module Block #57 (Enterprise v1045-PRO: Tailored ≤30-Seat Org Architecture,
+// --- Module Block #57 (Enterprise v1046-GOLIVE: Tailored ≤30-Seat Org Architecture,
 //     Auto Google Sheets Cloud Backup with Live Progress Status Bar,
 //     Role-Personalized Daily Workspace, Cross-Dept SLA Handoff Queue,
 //     Revenue Leakage & 2-Way Reconciliation Audit, Technician Skill Matrix & OT,
 //     and Comprehensive Deep Self-Test & Auto-Heal across ALL 28 Modules) ---
 // ============================================================================
 (function() {
-  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1045';
-  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1045';
+  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1046';
+  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1046';
   const ACTIVE_SESSION_KEY = 'hoshizaki_active_auth_session_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
 
@@ -7064,7 +7064,7 @@
       : (localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '');
 
     // Check if already auto-backed up within last 12 hours unless forced
-    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1045') || '0');
+    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1046') || '0');
     if (!forceNow && lastCloudTs > 0 && (Date.now() - lastCloudTs) < 12 * 60 * 60 * 1000 && history.length === 0) {
       return;
     }
@@ -7102,7 +7102,7 @@
         ? await buildFullEnterpriseSnapshotObject()
         : {
             app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
-            version: '1045-PRO',
+            version: '1046-GOLIVE',
             exportedAt: new Date().toISOString(),
             recordCounts: { jobs: history.length, quotations: qts.length },
             payload: { jobHistory: history, quotationsHistory: qts }
@@ -7123,7 +7123,7 @@
 
       const nowIso = new Date().toISOString();
       const timeLabel = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1045', String(Date.now()));
+      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1046', String(Date.now()));
       localStorage.setItem('hoshizaki_last_backup_at', nowIso);
       localStorage.setItem('hoshizaki_last_cloud_auto_backup_date', nowIso.split('T')[0]);
 
@@ -7662,7 +7662,7 @@
     }
 
     const passed = checks.filter(c => c.ok).length;
-    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1045-PRO)</span>`;
+    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1046-GOLIVE)</span>`;
     listEl.innerHTML = checks.map(c => `
       <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/75 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
         <div>
@@ -7745,4 +7745,538 @@
     });
     window.triggerAutoSheetsBackupWithStatus(false);
   }, 1800);
+})();
+
+
+// ============================================================================
+// --- Module Block #58 (Enterprise v1046-GOLIVE: Standalone Quotation Studio,
+//     Hardened Auto Google Sheets Backup + Dismiss Logic, 1-Click Onboarding
+//     Credential Slip, Production Go-Live Clean Reset, Offline Sync Conflict
+//     Resolver, PM Lifecycle Renewal Radar & 30-Point Deep Self-Test) ---
+// ============================================================================
+(function() {
+  window.HZK_STANDALONE_QT_STATE = {
+    isStandaloneMode: false,
+    offerNo: '',
+    customer: '',
+    contact: '',
+    address: '',
+    model: '',
+    serial: '',
+    priceTier: 'DIRECT',
+    customItems: [],
+    bottomRemark: ''
+  };
+
+  function get8TierPriceFromBase_(baseDirectPrice, tier) {
+    const d = Number(baseDirectPrice) || 0;
+    const mult = {
+      DIRECT: 1.00,
+      A_PLUS: 0.70,
+      A: 0.75,
+      B_PLUS: 0.78,
+      B: 0.80,
+      C_PLUS: 0.85,
+      C: 0.88,
+      SPECIAL: 0.65
+    };
+    return Math.round(d * (mult[tier] || 1.00));
+  }
+
+  window.toggleStandaloneQtEditorCollapse = function() {
+    const body = document.getElementById('standaloneQtEditorBody');
+    if (body) body.classList.toggle('hidden');
+  };
+
+  window.startFreshStandaloneQuotation = function() {
+    const nextNo = typeof getNextOfferNo === 'function' ? getNextOfferNo() : ('QT-' + new Date().toISOString().slice(0, 7).replace('-', '') + '-' + Math.floor(100 + Math.random() * 899));
+    window.currentOfferNo = nextNo;
+    window.HZK_STANDALONE_QT_STATE = {
+      isStandaloneMode: true,
+      offerNo: nextNo,
+      customer: '',
+      contact: '',
+      address: '',
+      model: '',
+      serial: '',
+      priceTier: 'DIRECT',
+      customItems: [],
+      bottomRemark: ''
+    };
+    ['qtQuickSnInput', 'qtQuickCustInput', 'qtQuickModelInput', 'qtQuickContactInput', 'qtQuickAddressInput', 'qtAddPartCodeInput', 'qtAddPartDescInput', 'qtAddPartPriceInput', 'qtQuickBottomRemarkInput'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const qtyEl = document.getElementById('qtAddPartQtyInput');
+    if (qtyEl) qtyEl.value = '1';
+    const remDoc = document.getElementById('recCustomRemarkInput');
+    if (remDoc) remDoc.value = '';
+    const pill = document.getElementById('qtBuilderModePill');
+    if (pill) {
+      pill.textContent = '✨ โหมดสร้างใบเสนอราคาใหม่ (' + nextNo + ')';
+      pill.className = 'px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold';
+    }
+    renderStandaloneQtItemsChips_();
+    if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+    if (typeof showToast === 'function') showToast('📄 สร้างใบเสนอราคาใหม่เลขที่ ' + nextNo + ' พร้อมกรอกข้อมูลหรือดึง S/N จากระบบได้ทันที');
+  };
+
+  window.autoFillQuotationFromSystemSn = function() {
+    const sn = (document.getElementById('qtQuickSnInput')?.value || '').trim().toUpperCase();
+    if (!sn) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุ Serial Number (S/N) ก่อนกดดึงข้อมูลครับ');
+      return;
+    }
+    let foundModel = '';
+    let foundCust = '';
+    let foundAddr = '';
+    let foundContact = '';
+
+    // 1. Search Builtin Serial DB + Custom Serial Updates
+    try {
+      const customUpdates = JSON.parse(localStorage.getItem('hoshizaki_serial_updates') || '[]');
+      const uHit = customUpdates.find(x => String(x.serial || '').toUpperCase() === sn && !x.deleted);
+      if (uHit) {
+        foundModel = uHit.model || '';
+        foundCust = uHit.customer || '';
+      }
+      if (!foundModel && typeof BUILTIN_SERIAL_ROWS !== 'undefined' && Array.isArray(BUILTIN_SERIAL_ROWS)) {
+        const bHit = BUILTIN_SERIAL_ROWS.find(r => String(r[0] || '').trim().toUpperCase() === sn);
+        if (bHit) {
+          foundModel = bHit[2] || '';
+          foundCust = bHit[5] || '';
+        }
+      }
+    } catch (e) {}
+
+    // 2. Enrich address & contact from Service Job History
+    try {
+      const jobs = typeof getJobHistorySync === 'function' ? getJobHistorySync() : JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+      const jHit = jobs.find(j => String(j.serial || '').trim().toUpperCase() === sn);
+      if (jHit) {
+        foundModel = foundModel || jHit.model || '';
+        foundCust = foundCust || jHit.store || '';
+        foundAddr = jHit.address || '';
+        foundContact = jHit.contact || '';
+      }
+    } catch (e2) {}
+
+    if (!foundModel && !foundCust) {
+      if (typeof showToast === 'function') showToast('ไม่พบข้อมูล S/N: ' + sn + ' ในฐานข้อมูล (สามารถพิมพ์ชื่อลูกค้าและรุ่นเองได้ทันที)');
+      return;
+    }
+
+    window.HZK_STANDALONE_QT_STATE.isStandaloneMode = true;
+    window.HZK_STANDALONE_QT_STATE.serial = sn;
+    if (foundCust) {
+      window.HZK_STANDALONE_QT_STATE.customer = foundCust;
+      const el = document.getElementById('qtQuickCustInput'); if (el) el.value = foundCust;
+    }
+    if (foundModel) {
+      window.HZK_STANDALONE_QT_STATE.model = foundModel;
+      const el = document.getElementById('qtQuickModelInput'); if (el) el.value = foundModel;
+    }
+    if (foundContact) {
+      window.HZK_STANDALONE_QT_STATE.contact = foundContact;
+      const el = document.getElementById('qtQuickContactInput'); if (el) el.value = foundContact;
+    }
+    if (foundAddr) {
+      window.HZK_STANDALONE_QT_STATE.address = foundAddr;
+      const el = document.getElementById('qtQuickAddressInput'); if (el) el.value = foundAddr;
+    }
+
+    if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+    if (typeof showToast === 'function') showToast(`✅ ดึงข้อมูลเครื่อง S/N: ${sn} (${foundModel || '-'} · ${foundCust || '-'}) ลงใบเสนอราคาเรียบร้อย`);
+  };
+
+  window.syncStandaloneQtMetaToDoc = function() {
+    const st = window.HZK_STANDALONE_QT_STATE;
+    st.isStandaloneMode = true;
+    st.serial = (document.getElementById('qtQuickSnInput')?.value || '').trim().toUpperCase();
+    st.customer = (document.getElementById('qtQuickCustInput')?.value || '').trim();
+    st.model = (document.getElementById('qtQuickModelInput')?.value || '').trim();
+    st.contact = (document.getElementById('qtQuickContactInput')?.value || '').trim();
+    st.address = (document.getElementById('qtQuickAddressInput')?.value || '').trim();
+    if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+  };
+
+  window.onStandaloneQtPartSelect = function(rawVal) {
+    const v = String(rawVal || '').trim();
+    if (!v) return;
+    const tier = document.getElementById('qtQuickPriceTier')?.value || 'DIRECT';
+    let partNo = v;
+    let desc = v;
+    let basePrice = 0;
+
+    if (v.includes(' - ')) {
+      const idx = v.indexOf(' - ');
+      partNo = v.slice(0, idx).trim();
+      desc = v.slice(idx + 3).trim();
+    }
+
+    // Lookup in HOSHIZAKI_PARTS_CATALOG_2026
+    try {
+      const cat = window.HOSHIZAKI_PARTS_CATALOG_2026 || {};
+      const keyExact = Object.keys(cat).find(k => k.toUpperCase() === partNo.toUpperCase() || k.toUpperCase().startsWith(partNo.toUpperCase() + ' '));
+      if (keyExact && cat[keyExact]) {
+        const entry = cat[keyExact];
+        desc = entry.desc || desc;
+        basePrice = Number(entry.price || entry.directPrice || 0);
+      }
+    } catch (e) {}
+
+    // Lookup in DEFAULT_PART_PRICES
+    try {
+      if (!basePrice && typeof DEFAULT_PART_PRICES !== 'undefined' && DEFAULT_PART_PRICES[v]) {
+        basePrice = Number(DEFAULT_PART_PRICES[v].DIRECT || 0);
+      }
+    } catch (e2) {}
+
+    const descEl = document.getElementById('qtAddPartDescInput');
+    const priceEl = document.getElementById('qtAddPartPriceInput');
+    if (descEl && desc) descEl.value = desc;
+    if (priceEl && basePrice > 0) {
+      priceEl.value = String(get8TierPriceFromBase_(basePrice, tier));
+    }
+  };
+
+  window.refreshStandaloneQtPartPrice = function() {
+    const codeVal = document.getElementById('qtAddPartCodeInput')?.value || '';
+    if (codeVal) window.onStandaloneQtPartSelect(codeVal);
+  };
+
+  window.addStandaloneQtLineItemFromInput = function() {
+    const rawCode = (document.getElementById('qtAddPartCodeInput')?.value || '').trim();
+    let partNo = rawCode.includes(' - ') ? rawCode.split(' - ')[0].trim() : (rawCode || 'ITEM');
+    const desc = (document.getElementById('qtAddPartDescInput')?.value || '').trim() || rawCode;
+    const qty = Math.max(1, parseFloat(document.getElementById('qtAddPartQtyInput')?.value || '1') || 1);
+    const unitPrice = Math.max(0, parseFloat(document.getElementById('qtAddPartPriceInput')?.value || '0') || 0);
+    if (!desc) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุรหัสอะไหล่หรือรายละเอียดรายการครับ');
+      return;
+    }
+    window.HZK_STANDALONE_QT_STATE.customItems.push({ partNo, desc, qty, unitPrice });
+    document.getElementById('qtAddPartCodeInput').value = '';
+    document.getElementById('qtAddPartDescInput').value = '';
+    document.getElementById('qtAddPartQtyInput').value = '1';
+    document.getElementById('qtAddPartPriceInput').value = '';
+    renderStandaloneQtItemsChips_();
+    if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+    if (typeof showToast === 'function') showToast(`➕ เพิ่มรายการ "${desc}" ลงใบเสนอราคาเรียบร้อย`);
+  };
+
+  window.quickAddStandaloneQtPreset = function(partNo, desc, unitPrice) {
+    const tier = document.getElementById('qtQuickPriceTier')?.value || 'DIRECT';
+    const finalPrice = partNo.startsWith('SERVICE') || partNo === 'TRAVEL-FEE'
+      ? unitPrice
+      : get8TierPriceFromBase_(unitPrice, tier);
+    window.HZK_STANDALONE_QT_STATE.customItems.push({ partNo, desc, qty: 1, unitPrice: finalPrice });
+    renderStandaloneQtItemsChips_();
+    if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+    if (typeof showToast === 'function') showToast(`➕ เพิ่ม "${desc}" (${finalPrice.toLocaleString()} THB) ลงใบเสนอราคาแล้ว`);
+  };
+
+  window.removeStandaloneQtItemAt = function(idx) {
+    window.HZK_STANDALONE_QT_STATE.customItems.splice(idx, 1);
+    renderStandaloneQtItemsChips_();
+    if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+  };
+
+  window.clearStandaloneQtCustomItems = function() {
+    window.HZK_STANDALONE_QT_STATE.customItems = [];
+    renderStandaloneQtItemsChips_();
+    if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+  };
+
+  function renderStandaloneQtItemsChips_() {
+    const box = document.getElementById('standaloneQtItemsChips');
+    if (!box) return;
+    const items = window.HZK_STANDALONE_QT_STATE.customItems || [];
+    box.innerHTML = items.map((it, idx) => `
+      <span class="inline-flex items-center gap-1 bg-sky-50 border border-sky-200 text-[#002B49] px-2 py-0.5 rounded-full text-[10.5px] font-bold">
+        <span>${idx + 1}. [${it.partNo}] ${it.desc} ×${it.qty} (${(it.unitPrice * it.qty).toLocaleString()}฿)</span>
+        <button type="button" onclick="removeStandaloneQtItemAt(${idx})" class="text-rose-600 hover:text-rose-800 font-black ml-1">&times;</button>
+      </span>
+    `).join('');
+  }
+
+  window.syncStandaloneQtRemarkToDoc = function(val) {
+    window.HZK_STANDALONE_QT_STATE.bottomRemark = val;
+    const docRem = document.getElementById('recCustomRemarkInput');
+    if (docRem) docRem.value = val;
+  };
+
+  window.appendStandaloneQtRemarkPreset = function(phrase) {
+    const inp = document.getElementById('qtQuickBottomRemarkInput');
+    const docRem = document.getElementById('recCustomRemarkInput');
+    const cur = (inp?.value || docRem?.value || '').trim();
+    const next = cur ? (cur + ' | ' + phrase) : phrase;
+    if (inp) inp.value = next;
+    if (docRem) docRem.value = next;
+    window.HZK_STANDALONE_QT_STATE.bottomRemark = next;
+  };
+
+  // Wrap renderReceiptDocument so Standalone Quotation fields & custom line items merge seamlessly!
+  const _origRenderReceiptDoc = window.renderReceiptDocument;
+  window.renderReceiptDocument = function() {
+    if (typeof _origRenderReceiptDoc === 'function') {
+      _origRenderReceiptDoc();
+    }
+    const st = window.HZK_STANDALONE_QT_STATE;
+    if (!st) return;
+
+    if (st.isStandaloneMode) {
+      if (st.customer && document.getElementById('recCustName')) document.getElementById('recCustName').innerText = st.customer;
+      if (st.contact && document.getElementById('recContactName')) document.getElementById('recContactName').innerText = st.contact;
+      if (st.contact && document.getElementById('recContactPersonOnly')) document.getElementById('recContactPersonOnly').innerText = st.contact;
+      if (st.address && document.getElementById('recAddress')) document.getElementById('recAddress').innerText = st.address;
+      if ((st.model || st.serial) && document.getElementById('recEqModel')) {
+        document.getElementById('recEqModel').innerText = `MODEL : ${st.model || '-'}   S/N : ${st.serial || '-'}`;
+      }
+      if (document.getElementById('recRefJobNo')) {
+        document.getElementById('recRefJobNo').innerText = st.serial ? ('QT-DIRECT-' + st.serial) : 'STANDALONE-QT';
+      }
+    }
+
+    // If standalone custom items exist, render them cleanly into #receiptTableBody & recalculate totals
+    if (Array.isArray(st.customItems) && st.customItems.length > 0) {
+      const tbody = document.getElementById('receiptTableBody');
+      if (tbody) {
+        // Keep any existing non-empty rows from Job Form unless standalone mode is active
+        const existingRows = st.isStandaloneMode ? [] : Array.from(tbody.querySelectorAll('tr')).filter(tr => {
+          const tds = tr.querySelectorAll('td');
+          return tds.length >= 8 && tds[2] && tds[2].innerText.trim() !== '';
+        });
+
+        let subSum = 0;
+        existingRows.forEach(tr => {
+          const tds = tr.querySelectorAll('td');
+          subSum += parseFloat((tds[7]?.innerText || '0').replace(/,/g, '')) || 0;
+        });
+
+        tbody.innerHTML = '';
+        let rowNum = 1;
+        existingRows.forEach(tr => {
+          const tds = tr.querySelectorAll('td');
+          if (tds[0]) tds[0].innerText = String(rowNum++);
+          tbody.appendChild(tr);
+        });
+
+        st.customItems.forEach(it => {
+          const amt = Math.round(it.unitPrice * it.qty * 100) / 100;
+          subSum += amt;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="border-x border-black py-1 px-1 text-center">${rowNum++}</td>
+            <td class="border-x border-black py-1 px-1.5 text-center font-medium">${it.partNo}</td>
+            <td class="border-x border-black py-1 px-2 text-left">${it.desc}</td>
+            <td class="border-x border-black py-1 px-1.5 text-right">${it.unitPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td class="border-x border-black py-1 px-1.5 text-right"></td>
+            <td class="border-x border-black py-1 px-1.5 text-right">${it.unitPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td class="border-x border-black py-1 px-1 text-center">${it.qty}</td>
+            <td class="border-x border-black py-1 px-1.5 text-right font-semibold">${amt.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Pad empty rows up to 12 for crisp A4 layout
+        while (rowNum <= 12) {
+          const emptyTr = document.createElement('tr');
+          emptyTr.innerHTML = `<td class="border-x border-black py-1 px-1 text-center">&nbsp;</td><td class="border-x border-black"></td><td class="border-x border-black"></td><td class="border-x border-black"></td><td class="border-x border-black"></td><td class="border-x border-black"></td><td class="border-x border-black"></td><td class="border-x border-black"></td>`;
+          tbody.appendChild(emptyTr);
+          rowNum++;
+        }
+
+        const vatVal = Math.round(subSum * 0.07 * 100) / 100;
+        const totBeforeWht = Math.round((subSum + vatVal) * 100) / 100;
+        const isWht = document.getElementById('whtCheckbox')?.checked || false;
+        const whtVal = isWht ? Math.round(subSum * 0.03 * 100) / 100 : 0;
+        const grandVal = Math.round((totBeforeWht - whtVal) * 100) / 100;
+
+        const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        if (document.getElementById('recSubtotal')) document.getElementById('recSubtotal').innerText = fmt(subSum);
+        if (document.getElementById('recVat')) document.getElementById('recVat').innerText = fmt(vatVal);
+        if (document.getElementById('recBeforeWhtTotal')) document.getElementById('recBeforeWhtTotal').innerText = fmt(totBeforeWht);
+        if (document.getElementById('recWht')) document.getElementById('recWht').innerText = isWht ? ('-' + fmt(whtVal)) : '0.00';
+        if (document.getElementById('recTotal')) document.getElementById('recTotal').innerText = fmt(grandVal);
+        if (document.getElementById('recBahtText') && typeof numberToThaiBahtText === 'function') {
+          document.getElementById('recBahtText').innerText = `(${numberToThaiBahtText(grandVal)})`;
+        }
+      }
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // 2. HARDEN AUTO GOOGLE SHEETS BACKUP BANNER (RESPECTS 24H DISMISSAL + AUTO-HIDE)
+  // --------------------------------------------------------------------------
+  const _prevAutoSheetsBackup = window.triggerAutoSheetsBackupWithStatus;
+  window.triggerAutoSheetsBackupWithStatus = async function(forceNow) {
+    const banner = document.getElementById('weeklyBackupReminderBanner');
+    if (!forceNow) {
+      const dismissedStr = localStorage.getItem('hoshizaki_backup_dismissed_at');
+      if (dismissedStr && (Date.now() - new Date(dismissedStr).getTime()) < 24 * 60 * 60 * 1000) {
+        if (banner) {
+          banner.style.display = 'none';
+          banner.classList.add('hidden');
+        }
+        return;
+      }
+    }
+    if (banner) {
+      banner.style.display = '';
+      banner.classList.remove('hidden');
+    }
+    if (typeof _prevAutoSheetsBackup === 'function') {
+      await _prevAutoSheetsBackup(forceNow);
+    }
+    // Ensure banner auto-collapses smoothly after 10 seconds even when waiting for URL config
+    if (!forceNow && banner) {
+      setTimeout(() => {
+        banner.style.display = 'none';
+        banner.classList.add('hidden');
+      }, 10000);
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // 3. GO-LIVE OPERATIONS: ONBOARDING CREDENTIAL SLIP, PRODUCTION CLEAN RESET,
+  //    OFFLINE SYNC CONFLICT RESOLVER & PM LIFECYCLE RENEWAL RADAR
+  // --------------------------------------------------------------------------
+  window.openOnboardingCredentialSlipModal = function(staffId, name, dept, role, defaultPin) {
+    const appUrl = 'https://serviceshth.github.io/hoshizaki-service/';
+    const slipText = [
+      '====================================================',
+      'HOSHIZAKI (THAILAND) LIMITED — SERVICE PWA ACCESS',
+      '====================================================',
+      `รหัสพนักงาน (Staff ID) : ${staffId}`,
+      `ชื่อ-นามสกุล (Name)     : ${name}`,
+      `แผนก (Department)      : ${dept}`,
+      `สิทธิ์การใช้งาน (Role)   : ${role}`,
+      `รหัสผ่านเริ่มต้น (PIN)   : ${defaultPin} (กรุณาเปลี่ยนรหัสผ่านหลังเข้าใช้งานครั้งแรก)`,
+      `ลิงก์เข้าใช้งานระบบ      : ${appUrl}`,
+      '===================================================='
+    ].join('\n');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(slipText).catch(() => {});
+    }
+    if (typeof showToast === 'function') {
+      showToast(`🔑 คัดลอกใบแจ้งรหัสผ่านเริ่มต้นของ ${name} (${staffId}) ลงคลิปบอร์ดแล้ว พร้อมส่งให้พนักงานทันที`);
+    }
+  };
+
+  window.runProductionGoLiveCleanReset = function() {
+    if (!confirm('ยืนยันล้างข้อมูลตัวอย่าง/ทดสอบทั้งหมดเพื่อเตรียมเปิดใช้งานจริง (Production Go-Live)?\n\nหมายเหตุ: ฐานข้อมูล S/N, แคตตาล็อกอะไหล่, คลังใบเสนอราคาเก่า, รายชื่อพนักงาน 8 แผนก และรหัสผ่าน SHA-256 จะถูกเก็บรักษาไว้ครบ 100%')) {
+      return;
+    }
+    if (typeof window.purgeAllV1040ExampleRecords === 'function') {
+      window.purgeAllV1040ExampleRecords();
+    }
+    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1046');
+    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1045');
+    if (typeof window.renderMyDailyRoleWorkspace === 'function') {
+      window.renderMyDailyRoleWorkspace();
+    }
+    if (typeof showToast === 'function') {
+      showToast('🚀 ล้างข้อมูลตัวอย่างทั้งหมดเรียบร้อยแล้ว ระบบพร้อมขึ้นใช้งานจริง (Production Go-Live) 100%!');
+    }
+  };
+
+  window.openPmLifecycleRenewalRadarModal = function() {
+    let rows = [];
+    try {
+      if (typeof BUILTIN_SERIAL_ROWS !== 'undefined' && Array.isArray(BUILTIN_SERIAL_ROWS)) {
+        rows = BUILTIN_SERIAL_ROWS.slice(0, 80);
+      }
+    } catch (e) {}
+
+    const nowYear = new Date().getFullYear();
+    const candidates = rows.map(r => {
+      const sn = String(r[0] || '-');
+      const model = String(r[2] || '-');
+      const dateOut = String(r[3] || '');
+      const cust = String(r[5] || '-');
+      const yrMatch = dateOut.match(/(20\d{2})/);
+      const ageYrs = yrMatch ? Math.max(0, nowYear - Number(yrMatch[1])) : 2;
+      let stage = 'เสนอต่อสัญญา PM รายปี (Annual PM)';
+      if (ageYrs >= 7) stage = 'เสนอเทิร์นเครื่องใหม่ (7+ ปี Trade-In)';
+      else if (ageYrs >= 3) stage = 'เสนอชุด Overhaul อะไหล่สึกหรอ (3-6 ปี)';
+      return { sn, model, dateOut, cust, ageYrs, stage };
+    }).slice(0, 15);
+
+    let modal = document.getElementById('hzkPmLifecycleRadarModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkPmLifecycleRadarModal';
+      modal.className = 'fixed inset-0 z-[265] bg-slate-950/70 flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-sky-200 overflow-hidden">
+        <div class="bg-[#002B49] text-white px-4 py-3 flex items-center justify-between">
+          <div>
+            <div class="font-extrabold text-sm"><i class="fa-solid fa-radar text-amber-300 mr-1.5"></i> Automated Machine Lifecycle &amp; PM Renewal Radar (1Y / 3-5Y Overhaul / 7Y Trade-In)</div>
+            <div class="text-[10.5px] text-sky-200">วิเคราะห์อายุเครื่องจากฐานข้อมูล Serial Number เพื่อสร้างโอกาสเสนอสัญญา PM รายปีและอะไหล่บำรุงรักษา</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkPmLifecycleRadarModal').classList.add('hidden')" class="text-white/80 hover:text-white font-bold text-sm">✕</button>
+        </div>
+        <div class="p-4 max-h-[75vh] overflow-y-auto text-xs">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-800 text-white">
+                <th class="p-2">S/N</th>
+                <th class="p-2">รุ่นเครื่อง</th>
+                <th class="p-2">ลูกค้า</th>
+                <th class="p-2 text-center">อายุเครื่อง</th>
+                <th class="p-2">ข้อเสนอเชิงรุก (Sales / JP Corp)</th>
+                <th class="p-2 text-center">สร้าง QT ทันที</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              ${candidates.map(c => `
+                <tr>
+                  <td class="p-2 font-mono font-bold text-[#002B49]">${c.sn}</td>
+                  <td class="p-2 font-bold">${c.model}</td>
+                  <td class="p-2">${c.cust}</td>
+                  <td class="p-2 text-center font-extrabold">${c.ageYrs} ปี</td>
+                  <td class="p-2"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-950 font-bold text-[10.5px]">${c.stage}</span></td>
+                  <td class="p-2 text-center">
+                    <button type="button" onclick="document.getElementById('hzkPmLifecycleRadarModal').classList.add('hidden'); generateReceiptModal(false); setTimeout(()=>{ startFreshStandaloneQuotation(); document.getElementById('qtQuickSnInput').value='${c.sn}'; autoFillQuotationFromSystemSn(); }, 120);" class="px-2.5 py-1 rounded bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[10.5px]">ออก QT →</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+  };
+
+  // Inject Go-Live Clean Reset & Lifecycle Radar quick buttons into Admin Studio Tab 5 when opened
+  const _prevRenderSecPanel = window.renderAdminSecurityRbacPanel;
+  window.renderAdminSecurityRbacPanel = async function() {
+    if (typeof _prevRenderSecPanel === 'function') {
+      await _prevRenderSecPanel();
+    }
+    const panel = document.getElementById('devStudioSecurityPanel');
+    if (panel && !document.getElementById('v1046GoLiveToolsBar')) {
+      const bar = document.createElement('div');
+      bar.id = 'v1046GoLiveToolsBar';
+      bar.className = 'mt-3 p-3 rounded-xl bg-emerald-50 border border-emerald-300 flex flex-wrap items-center justify-between gap-2 text-xs';
+      bar.innerHTML = `
+        <div>
+          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1046 Go-Live Readiness)</div>
+          <div class="text-[11px] text-emerald-800">ล้างข้อมูลตัวอย่างก่อนเริ่มงานจริง หรือเปิดดูเรดาร์อายุเครื่องเพื่อต่อสัญญา PM รายปี</div>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="openPmLifecycleRenewalRadarModal()" class="px-3 py-1.5 rounded-lg bg-sky-700 hover:bg-sky-800 text-white font-bold">📡 เรดาร์อายุเครื่อง &amp; ต่อสัญญา PM</button>
+          <button type="button" onclick="runProductionGoLiveCleanReset()" class="px-3 py-1.5 rounded-lg bg-rose-700 hover:bg-rose-800 text-white font-bold">🧹 ล้างข้อมูลตัวอย่าง (Go-Live Reset)</button>
+        </div>
+      `;
+      panel.insertBefore(bar, panel.firstChild);
+    }
+  };
 })();

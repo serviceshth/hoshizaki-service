@@ -1164,7 +1164,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1045-PRO',
+    version: 'Enterprise-v1046-GOLIVE',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1203,7 +1203,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1045-PRO',
+    version: 'Enterprise-v1046-GOLIVE',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -9385,7 +9385,7 @@ function getEnterpriseImsDataFromSheets_(ss) {
 
 
 // ============================================================================
-// 26. ENTERPRISE v1045-PRO: MULTI-USER SHA-256 CREDENTIAL VAULT,
+// 26. ENTERPRISE v1046-GOLIVE: MULTI-USER SHA-256 CREDENTIAL VAULT,
 //     SOLE SUPER ADMIN (MR. NOPARIN) & IMMEDIATE SYSTEM_AUDIT_LOG SYNC
 // ============================================================================
 
@@ -9446,7 +9446,7 @@ function logSecurityAuditEventToSheet_(ss, data) {
 
 
 // ============================================================================
-// SECTION 28: ENTERPRISE v1045-PRO TWO-WAY CREDENTIAL VAULT & AUDIT LOG READERS
+// SECTION 28: ENTERPRISE v1046-GOLIVE TWO-WAY CREDENTIAL VAULT & AUDIT LOG READERS
 // ============================================================================
 function getUserCredentialsVaultFromSheet_(ss) {
   var sheet = ss.getSheetByName('System_User_Credentials');

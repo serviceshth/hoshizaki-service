@@ -1,7 +1,7 @@
 {
-  "name": "HOSHIZAKI Service Management (Enterprise v1045 Pro)",
+  "name": "HOSHIZAKI Service Management (Enterprise v1046 Go-Live)",
   "short_name": "Hoshizaki Service",
-  "description": "ระบบบริหารจัดการงานบริการ ใบเสนอราคา คลังสินค้า IMS และการทำงานร่วมกันทั้ง 8 แผนก (≤30 Core Users) พร้อม Auto Google Sheets Backup, My Daily Workspace, Cross-Dept SLA & Deep Self-Heal 360°",
+  "description": "ระบบบริหารจัดการงานบริการ ใบเสนอราคาอิสระ (Standalone Quotation Studio) คลังสินค้า IMS และการทำงานร่วมกันทั้ง 8 แผนก (≤30 Core Users) พร้อม Auto Google Sheets Backup, Cross-Version Excel Engine และ Deep Self-Test 360°",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -22,5 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "1045-PRO"
+  "version": "1046-GOLIVE"
 }

@@ -730,7 +730,7 @@ transform: scale(0.96);
 <button type="button" onclick="dismissFridayWeeklyReportBanner()" class="bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-1.5 rounded-lg font-medium">ปิด</button>
 </div>
 </div>
-<!-- แถบสถานะระบบสำรองข้อมูลเข้า Google Sheets อัตโนมัติ (Auto Cloud Backup Status Bar — v1045-PRO) -->
+<!-- แถบสถานะระบบสำรองข้อมูลเข้า Google Sheets อัตโนมัติ (Auto Cloud Backup Status Bar — v1046-GOLIVE) -->
 <div id="weeklyBackupReminderBanner" class="hidden no-print max-w-4xl mx-auto mb-3 bg-gradient-to-r from-sky-50 via-cyan-50 to-emerald-50 border border-sky-300 text-sky-950 p-3 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
 <div class="flex items-start gap-2.5 min-w-0 flex-1">
 <span id="autoSheetsBackupIconWrap" class="w-7 h-7 rounded-lg bg-sky-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
@@ -752,16 +752,11 @@ transform: scale(0.96);
 <i class="fa-solid fa-rotate"></i> <span>ส่งสำรองทันที</span>
 </button>
 <button type="button" onclick="exportBackupJSON(false)" class="bg-white hover:bg-sky-100 text-sky-900 border border-sky-300 px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1" title="ดาวน์โหลดไฟล์สำรอง .json เก็บไว้ในเครื่องเพิ่มเติม">
-<i class="fa-solid fa-download"></i> <span>.json</span>
-</button>
-</div>
-</div>
-</div>
-<div class="flex items-center gap-1.5 w-full sm:w-auto justify-end flex-shrink-0">
-<button type="button" onclick="exportBackupJSON()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-xs flex items-center gap-1">
 <i class="fa-solid fa-download"></i> <span>สำรอง (.json)</span>
 </button>
-<button type="button" onclick="dismissWeeklyBackupBanner()" class="bg-white hover:bg-sky-100 text-sky-800 border border-sky-300 px-2.5 py-1.5 rounded-lg font-medium">ไว้ทีหลัง</button>
+<button type="button" onclick="dismissWeeklyBackupBanner()" class="bg-white/90 hover:bg-rose-50 text-slate-700 hover:text-rose-700 border border-slate-300 px-2.5 py-1.5 rounded-lg font-semibold transition" title="ปิดแถบแจ้งเตือนนี้ชั่วคราว (24 ชม.)">
+<span>ไว้ทีหลัง</span>
+</button>
 </div>
 </div>
 <!-- Top Action Toolbar (Responsive สำหรับมือถือ แท็บเล็ต และพีซี) -->
@@ -828,7 +823,7 @@ transform: scale(0.96);
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-1.5 mt-1">
-<p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1045-PRO</span></p>
+<p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1046-GOLIVE</span></p>
 </div>
 <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
 <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -892,7 +887,7 @@ transform: scale(0.96);
 สลับเป็นโหมดช่างดำเนินงาน
 </button>
 </div>
-<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1045-PRO · ≤30 Core Users) -->
+<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1046-GOLIVE · ≤30 Core Users) -->
 <div id="myDailyRoleWorkspaceBar" class="mt-2 rounded-xl bg-white/10 border border-white/20 p-2 text-xs">
 <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5 px-1">
 <span id="myDailyWorkspaceTitle" class="font-extrabold text-sky-200 flex items-center gap-1.5">
@@ -2470,7 +2465,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <!-- Web App UI Footer -->
 <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
 <div class="font-extrabold tracking-wide text-amber-300">
-HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1045-PRO</span>
+HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1046-GOLIVE</span>
 </div>
 <div class="text-white/80 font-medium">
 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -3052,6 +3047,83 @@ HOSHIZAKI (THAILAND) LIMITED · Official Service Document · All Rights Reserved
 </div>
 </div>
 <!-- Receipt Printable Content Area -->
+<!-- Standalone Quotation Builder Studio (v1046-GOLIVE: Create New QT, Auto-Fill S/N & Parts, Service A/B/Travel & Custom Remark) -->
+<div id="standaloneQuotationBuilderPanel" class="bg-gradient-to-r from-sky-50 via-white to-amber-50/70 border border-sky-200 rounded-xl p-2.5 sm:p-3 space-y-2 text-xs flex-shrink-0">
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="font-extrabold text-[#002B49] flex items-center gap-1.5">
+<i class="fa-solid fa-file-circle-plus text-amber-600"></i>
+<span>สร้าง &amp; ปรับแต่งใบเสนอราคาใหม่อิสระ (Standalone Quotation Studio)</span>
+<span id="qtBuilderModePill" class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-900 text-[10px] font-bold">เชื่อมข้อมูลใบงานอัตโนมัติ</span>
+</div>
+<div class="flex flex-wrap items-center gap-1.5">
+<button type="button" onclick="startFreshStandaloneQuotation()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold px-2.5 py-1 rounded-lg shadow-2xs flex items-center gap-1 transition">
+<i class="fa-solid fa-plus"></i> <span>สร้างใบเสนอราคาใหม่ (New QT)</span>
+</button>
+<button type="button" onclick="toggleStandaloneQtEditorCollapse()" id="btnToggleQtStudioBody" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2 py-1 rounded-lg font-semibold">
+<span>ซ่อน/แสดงแผงกรอกข้อมูล</span>
+</button>
+</div>
+</div>
+<div id="standaloneQtEditorBody" class="space-y-2 pt-1 border-t border-sky-200/70">
+<div class="grid grid-cols-1 sm:grid-cols-6 gap-1.5">
+<div class="sm:col-span-2 flex gap-1">
+<input type="text" id="qtQuickSnInput" list="hoshizakiSerialsList" placeholder="ค้นหา S/N ในระบบเพื่อดึงข้อมูลลูกค้า/รุ่น..." class="flex-1 border border-slate-300 rounded-lg px-2 py-1 text-xs font-mono uppercase bg-white">
+<button type="button" onclick="autoFillQuotationFromSystemSn()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-2.5 py-1 rounded-lg whitespace-nowrap" title="ดึงชื่อลูกค้า ที่อยู่ รุ่นเครื่อง จากฐานข้อมูล S/N">ดึง S/N</button>
+</div>
+<input type="text" id="qtQuickCustInput" oninput="syncStandaloneQtMetaToDoc()" placeholder="ชื่อลูกค้า / บริษัท *" class="sm:col-span-2 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold bg-white">
+<input type="text" id="qtQuickModelInput" list="hoshizakiModelsList" oninput="syncStandaloneQtMetaToDoc()" placeholder="รุ่นเครื่อง (Model)" class="border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">
+<select id="qtQuickPriceTier" onchange="refreshStandaloneQtPartPrice()" class="border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold bg-amber-50 text-[#002B49]" title="เลือกระดับราคา 8 เกรด">
+<option value="DIRECT">ราคาขายตรง (Direct)</option>
+<option value="A_PLUS">ดีลเลอร์ เกรด A+</option>
+<option value="A">ดีลเลอร์ เกรด A</option>
+<option value="B_PLUS">ดีลเลอร์ เกรด B+</option>
+<option value="B">ดีลเลอร์ เกรด B</option>
+<option value="C_PLUS">ดีลเลอร์ เกรด C+</option>
+<option value="C">ดีลเลอร์ เกรด C</option>
+<option value="SPECIAL">ราคาพิเศษ (Special)</option>
+</select>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-6 gap-1.5">
+<input type="text" id="qtQuickContactInput" oninput="syncStandaloneQtMetaToDoc()" placeholder="ผู้ติดต่อ / เบอร์โทร" class="sm:col-span-2 border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">
+<input type="text" id="qtQuickAddressInput" oninput="syncStandaloneQtMetaToDoc()" placeholder="ที่อยู่ลูกค้า / สถานที่จัดส่ง" class="sm:col-span-4 border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">
+</div>
+<div class="bg-white p-2 rounded-lg border border-slate-200 space-y-1.5">
+<div class="grid grid-cols-1 sm:grid-cols-12 gap-1.5 items-center">
+<div class="sm:col-span-4">
+<input type="text" id="qtAddPartCodeInput" list="hoshizakiPartsList" oninput="onStandaloneQtPartSelect(this.value)" placeholder="พิมพ์ Part No. หรือเลือกจากแคตตาล็อก..." class="w-full border border-slate-300 rounded-lg px-2 py-1 text-xs font-semibold">
+</div>
+<div class="sm:col-span-4">
+<input type="text" id="qtAddPartDescInput" placeholder="รายละเอียดสินค้า / บริการ" class="w-full border border-slate-300 rounded-lg px-2 py-1 text-xs">
+</div>
+<div class="sm:col-span-1">
+<input type="number" id="qtAddPartQtyInput" value="1" min="1" placeholder="Qty" class="w-full border border-slate-300 rounded-lg px-1.5 py-1 text-xs text-center font-bold">
+</div>
+<div class="sm:col-span-2">
+<input type="number" id="qtAddPartPriceInput" step="0.01" placeholder="ราคา/หน่วย" class="w-full border border-slate-300 rounded-lg px-2 py-1 text-xs text-right font-bold">
+</div>
+<div class="sm:col-span-1">
+<button type="button" onclick="addStandaloneQtLineItemFromInput()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-1 px-2 rounded-lg">+ เพิ่ม</button>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+<span class="text-[10.5px] font-bold text-slate-500">เพิ่มรายการมาตรฐานด่วน:</span>
+<button type="button" onclick="quickAddStandaloneQtPreset('SERVICE-A', 'ค่าบริการตรวจเช็กและล้างบำรุงรักษา (Service A — PM Cleaning)', 1800)" class="px-2 py-0.5 rounded bg-sky-100 hover:bg-sky-200 text-sky-950 font-bold text-[10.5px]">+ Service A (PM 1,800฿)</button>
+<button type="button" onclick="quickAddStandaloneQtPreset('SERVICE-B', 'ค่าบริการซ่อมแซมและเปลี่ยนอะไหล่ (Service B — Repair & Overhaul)', 2500)" class="px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-[10.5px]">+ Service B (ซ่อม 2,500฿)</button>
+<button type="button" onclick="quickAddStandaloneQtPreset('TRAVEL-FEE', 'ค่าเดินทางและขนส่งปฏิบัติงานนอกสถานที่ (Travel & Transportation Fee)', 800)" class="px-2 py-0.5 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-950 font-bold text-[10.5px]">+ ค่าเดินทาง (800฿)</button>
+<button type="button" onclick="quickAddStandaloneQtPreset('4HC-H', 'ไส้กรองน้ำแท้ HOSHIZAKI 4HC-H (EV965516)', 3200)" class="px-2 py-0.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold text-[10.5px]">+ ไส้กรอง 4HC-H</button>
+<button type="button" onclick="clearStandaloneQtCustomItems()" class="ml-auto px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[10.5px]">ล้างรายการเพิ่ม</button>
+</div>
+<div id="standaloneQtItemsChips" class="flex flex-wrap gap-1"></div>
+</div>
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="text-[10.5px] font-bold text-slate-600">หมายเหตุเพิ่มเติม (Remark):</span>
+<input type="text" id="qtQuickBottomRemarkInput" oninput="syncStandaloneQtRemarkToDoc(this.value)" placeholder="พิมพ์หมายเหตุเพิ่มเติมด้านล่างใบเสนอราคา หรือกดเลือกข้อความมาตรฐาน..." class="flex-1 min-w-[220px] border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">
+<button type="button" onclick="appendStandaloneQtRemarkPreset('ระยะเวลาส่งมอบอะไหล่ 3-5 วันทำการหลังได้รับใบสั่งซื้อ (PO)')" class="px-2 py-0.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold text-[10px]">+ ส่งมอบ 3-5 วัน</button>
+<button type="button" onclick="appendStandaloneQtRemarkPreset('รับประกันงานซ่อมและอะไหล่ที่เปลี่ยน 90 วัน')" class="px-2 py-0.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold text-[10px]">+ ประกัน 90 วัน</button>
+<button type="button" onclick="appendStandaloneQtRemarkPreset('เงื่อนไขชำระเงิน: มัดจำ 50% ก่อนดำเนินการ ส่วนที่เหลือชำระวันส่งมอบ')" class="px-2 py-0.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold text-[10px]">+ มัดจำ 50%</button>
+</div>
+</div>
+</div>
 <div class="overflow-auto mobile-scroll-x flex-1 p-2 bg-gray-50 border rounded-lg">
 <div id="receiptContainer" class="bg-white p-6 sm:p-8 rounded shadow-sm text-[11px] text-black border border-gray-300" style="min-width: 720px; font-family: 'Times New Roman', 'Prompt', serif;">
 <!-- Top Header: Penguin Logo Left + Company Address Center + Title Right -->
@@ -6910,23 +6982,32 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
         }
 
         async function exportReceiptExcel() {
-            const offerNo = document.getElementById('recOfferNo')?.innerText || 'Quotation';
-            const dateStr = document.getElementById('recDate')?.innerText || '-';
-            const custCode = document.getElementById('recCustCode')?.innerText || 'AR00000149';
-            const custName = document.getElementById('recCustName')?.innerText || '-';
-            const buyerTaxId = document.getElementById('recBuyerTaxId')?.innerText || '-';
-            const contactPerson = document.getElementById('recContactPersonOnly')?.innerText || '-';
-            const address = document.getElementById('recAddress')?.innerText || '-';
-            const telNo = document.getElementById('recContactName')?.innerText || '-';
-            const eqModelHeader = document.getElementById('recEqModel')?.innerText || 'MODEL : -  S/N : -';
-            const customRemark = document.getElementById('recCustomRemarkInput')?.value.trim() || '';
-            const docMainTitle = currentFinancialDocMode === 'RECEIPT' ? 'RECEIPT / TAX INVOICE' : (currentFinancialDocMode === 'INVOICE' ? 'INVOICE / TAX INVOICE' : 'QUOTATION');
+            const offerNo = (document.getElementById('recOfferNo')?.innerText || 'Quotation').trim();
+            const dateStr = (document.getElementById('recDate')?.innerText || '-').trim();
+            const custCode = (document.getElementById('recCustCode')?.innerText || 'AR00000149').trim();
+            const custName = (document.getElementById('recCustName')?.innerText || '-').trim();
+            const buyerTaxId = (document.getElementById('recBuyerTaxId')?.innerText || '-').trim();
+            const contactPerson = (document.getElementById('recContactPersonOnly')?.innerText || '-').trim();
+            const address = (document.getElementById('recAddress')?.innerText || '-').trim();
+            const telNo = (document.getElementById('recContactName')?.innerText || '-').trim();
+            const eqModelHeader = (document.getElementById('recEqModel')?.innerText || 'MODEL : -   S/N : -').trim();
+            const modelStr = (document.getElementById('qtQuickModelInput')?.value || document.getElementById('eqModel')?.value || '-').trim();
+            const serialStr = (document.getElementById('qtQuickSnInput')?.value || document.getElementById('eqSerial')?.value || '-').trim();
+            const customRemark = (document.getElementById('recCustomRemarkInput')?.value || document.getElementById('qtQuickBottomRemarkInput')?.value || '').trim();
+            const bankTransferText = (document.getElementById('recBankTransferDisplay')?.innerText || 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2').trim();
+            const warehouseNoteText = (document.getElementById('recWarehouseNoteDisplay')?.innerText || 'The above offer is Ex-warehouse of Hoshizaki Thailand office (in Hankyu Hanshin Express W/H)').trim();
+
+            const docMainTitle = currentFinancialDocMode === 'RECEIPT'
+                ? 'RECEIPT / TAX INVOICE (ใบเสร็จรับเงิน / ใบกำกับภาษี)'
+                : (currentFinancialDocMode === 'INVOICE'
+                    ? 'INVOICE / TAX INVOICE (ใบแจ้งหนี้ / ใบกำกับภาษี)'
+                    : 'QUOTATION (ใบเสนอราคา)');
+
             const cfg = typeof getGlobalCompanyConfig === 'function' ? getGlobalCompanyConfig() : {
                 companyName: 'HOSHIZAKI (THAILAND) LIMITED',
-                address: 'Building A ,1st floor, No. 10/11 Soi Vibhavadi Rangsit 64(Mahanakorn)\nTalat Bang Khen Subdistrict,Lak Si District,Bangkok 10210 Thailand.',
-                telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646\nTAX ID : 0135558002599 (HEAD OFFICE)',
-                emailWeb: 'Email : services@hoshizaki.co.th\nWebsite : www.hoshizaki-sea.com',
-                bankInfo: 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2'
+                address: 'Building A, 1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen, Lak Si, Bangkok 10210 Thailand.',
+                telTax: 'TEL : 02-005-9980-83 FAX : 02-516-2646 | TAX ID : 0135558002599 (HEAD OFFICE)',
+                bankInfo: bankTransferText
             };
 
             const subTotal = parseFloat((document.getElementById('recSubtotal')?.innerText || '0').replace(/,/g, '')) || 0;
@@ -6935,16 +7016,16 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             const isWht = document.getElementById('whtCheckbox')?.checked || false;
             const whtAmt = isWht ? (Math.round(subTotal * 0.03 * 100) / 100) : 0;
             const grandTotal = parseFloat((document.getElementById('recTotal')?.innerText || '0').replace(/,/g, '')) || 0;
-            const shortDate = document.getElementById('recIssueDate')?.innerText || dateStr;
-            const sheetModelTab = (document.getElementById('eqModel')?.value || docMainTitle).replace(/[\/:?*\[\]]/g, '').substring(0, 28) || 'Document';
+            const shortDate = (document.getElementById('recIssueDate')?.innerText || dateStr).trim();
+            const safeSheetName = (offerNo || 'Document').replace(/[\\\/:?*\[\]]/g, '_').substring(0, 30) || 'Quotation';
             const filePrefix = currentFinancialDocMode === 'RECEIPT' ? 'Hoshizaki_Receipt' : (currentFinancialDocMode === 'INVOICE' ? 'Hoshizaki_Invoice' : 'Hoshizaki_Quotation');
 
-            // Extract line items dynamically (supports any row count, no 16-row truncation!)
             const tableRows = Array.from(document.querySelectorAll('#receiptTableBody tr'));
             const parsedItems = [];
             tableRows.forEach((tr, i) => {
                 const tds = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
-                const itemNo = tds[0] && tds[0] !== '' ? (parseInt(tds[0], 10) || (i + 1)) : (i + 1);
+                if (tds.length < 8) return;
+                const itemNo = tds[0] !== '' ? (parseInt(tds[0], 10) || (i + 1)) : (i + 1);
                 const partNo = tds[1] || '';
                 const desc = tds[2] || '';
                 const uPrice = tds[3] ? (parseFloat(tds[3].replace(/,/g, '')) || 0) : 0;
@@ -6960,346 +7041,340 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                 parsedItems.push({ hasData: false });
             }
 
-            // Use ExcelJS to embed Company Logo PNG + Real Signatures + Full Borders, Styling & A4 Fit-to-Page
             if (typeof ExcelJS !== 'undefined') {
-                try {
-                    const wb = new ExcelJS.Workbook();
-                    wb.creator = 'HOSHIZAKI (THAILAND) LIMITED';
-                    wb.created = new Date();
-                    const ws = wb.addWorksheet(sheetModelTab, {
-                        pageSetup: {
-                            paperSize: 9, // A4
-                            orientation: 'portrait',
-                            fitToPage: true,
-                            fitToWidth: 1,
-                            fitToHeight: 1,
-                            margins: { left: 0.35, right: 0.35, top: 0.35, bottom: 0.35, header: 0.2, footer: 0.2 }
-                        }
-                    });
-
-                    ws.columns = [
-                        { key: 'A', width: 15 },
-                        { key: 'B', width: 18 },
-                        { key: 'C', width: 42 },
-                        { key: 'D', width: 17 },
-                        { key: 'E', width: 14 },
-                        { key: 'F', width: 17 },
-                        { key: 'G', width: 12 },
-                        { key: 'H', width: 18 }
-                    ];
-
-                    const thinBorder = {
-                        top: { style: 'thin', color: { argb: 'FF94A3B8' } },
-                        left: { style: 'thin', color: { argb: 'FF94A3B8' } },
-                        bottom: { style: 'thin', color: { argb: 'FF94A3B8' } },
-                        right: { style: 'thin', color: { argb: 'FF94A3B8' } }
-                    };
-
-                    // Embed Company Logo
+                (async function() {
                     try {
-                        const logoImgEl = document.getElementById('docHeaderCustomLogoImg') || document.getElementById('topHeaderCustomLogoImg');
-                        if (logoImgEl && logoImgEl.src && logoImgEl.src.startsWith('data:image/')) {
-                            const ext = logoImgEl.src.includes('image/jpeg') ? 'jpeg' : 'png';
-                            const logoId = wb.addImage({ base64: logoImgEl.src, extension: ext });
-                            ws.addImage(logoId, { tl: { col: 0.15, row: 0.15 }, ext: { width: 76, height: 76 } });
-                        }
-                    } catch (eLogo) {}
+                        const wb = new ExcelJS.Workbook();
+                        wb.creator = 'HOSHIZAKI (THAILAND) LIMITED';
+                        wb.lastModifiedBy = 'HOSHIZAKI Service Management v1046';
+                        wb.created = new Date();
+                        wb.calcProperties = { fullCalcOnLoad: true };
 
-                    // Rows 1-5: Corporate Header
-                    ws.mergeCells('B1:H1');
-                    ws.getCell('B1').value = cfg.companyName || 'HOSHIZAKI (THAILAND) LIMITED';
-                    ws.getCell('B1').font = { name: 'Calibri', size: 15, bold: true, color: { argb: 'FF002B49' } };
-                    ws.getRow(1).height = 22;
-
-                    ws.mergeCells('B2:H2');
-                    ws.getCell('B2').value = cfg.address || 'Building A, 1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen, Lak Si, Bangkok 10210 Thailand';
-                    ws.getCell('B2').font = { name: 'Calibri', size: 9, color: { argb: 'FF334155' } };
-
-                    ws.mergeCells('B3:H3');
-                    ws.getCell('B3').value = cfg.telTax || 'TEL : 02-005-9980-83  FAX : 02-516-2646  |  TAX ID : 0135558002599 (HEAD OFFICE)';
-                    ws.getCell('B3').font = { name: 'Calibri', size: 9, bold: true, color: { argb: 'FF0F172A' } };
-
-                    ws.mergeCells('B4:H4');
-                    ws.getCell('B4').value = 'Email : services@hoshizaki.co.th   |   Website : www.hoshizaki-sea.com';
-                    ws.getCell('B4').font = { name: 'Calibri', size: 9, color: { argb: 'FF0369A1' } };
-
-                    // Row 7: Document Title Banner
-                    ws.mergeCells('A7:H7');
-                    ws.getCell('A7').value = docTitleThEn;
-                    ws.getCell('A7').font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
-                    ws.getCell('A7').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
-                    ws.getCell('A7').alignment = { horizontal: 'center', vertical: 'middle' };
-                    ws.getRow(7).height = 24;
-
-                    // Rows 8-12: Customer Info & Document Metadata
-                    const custMetaRows = [
-                        ['รหัสลูกค้า / Cust Code :', custCode, 'วันที่ / Date', dateStr],
-                        ['ชื่อลูกค้า / Customer :', custName, 'เลขที่เอกสาร / Doc No.', offerNo],
-                        ['ผู้ซื้อ / Buyer Tax ID :', buyerTaxId, 'เงื่อนไขชำระเงิน / Term', '30 DAYS'],
-                        ['ผู้ติดต่อ / Contact :', contactPerson, 'เบอร์โทร / Tel.', telNo],
-                        ['ที่อยู่ / Address :', address, 'อ้างอิงใบงาน / Ref Job', document.getElementById('jobNo')?.value || '-']
-                    ];
-                    custMetaRows.forEach((rowArr, idx) => {
-                        const r = 8 + idx;
-                        ws.getRow(r).height = idx === 4 ? 28 : 19;
-                        ws.getCell(`A${r}`).value = rowArr[0];
-                        ws.getCell(`A${r}`).font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF0F172A' } };
-                        ws.getCell(`B${r}`).value = rowArr[1];
-                        ws.getCell(`B${r}`).font = { name: 'Calibri', size: 9.5, color: { argb: 'FF0F172A' } };
-                        ws.getCell(`B${r}`).alignment = { vertical: 'middle', wrapText: true };
-                        ws.mergeCells(`B${r}:F${r}`);
-
-                        ws.getCell(`G${r}`).value = rowArr[2];
-                        ws.getCell(`G${r}`).font = { name: 'Calibri', size: 9, bold: true, color: { argb: 'FF002B49' } };
-                        ws.getCell(`G${r}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
-                        ws.getCell(`H${r}`).value = rowArr[3];
-                        ws.getCell(`H${r}`).font = { name: 'Calibri', size: 9.5, bold: idx === 1, color: { argb: 'FF0F172A' } };
-                        ws.getCell(`H${r}`).alignment = { vertical: 'middle', wrapText: true };
-
-                        for (let c = 1; c <= 8; c++) ws.getRow(r).getCell(c).border = thinBorder;
-                    });
-
-                    // Row 14: Equipment Model & Serial Banner
-                    ws.mergeCells('A14:H14');
-                    ws.getCell('A14').value = `EQUIPMENT / MODEL : ${modelStr || '-'}     |     SERIAL NO. : ${serialStr || '-'}`;
-                    ws.getCell('A14').font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF002B49' } };
-                    ws.getCell('A14').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0F2FE' } };
-                    ws.getCell('A14').alignment = { vertical: 'middle', indent: 1 };
-                    ws.getRow(14).height = 20;
-                    for (let c = 1; c <= 8; c++) ws.getRow(14).getCell(c).border = thinBorder;
-
-                    // Row 15: Table Headers
-                    const headers = ['ITEM', 'PART NO.', 'DESCRIPTION', 'UNIT PRICE (THB)', 'DISCOUNT', 'NET UNIT PRICE', 'QTY (PCS)', 'AMOUNT (THB)'];
-                    const hdrRow = ws.getRow(15);
-                    hdrRow.height = 24;
-                    headers.forEach((hText, idx) => {
-                        const cell = hdrRow.getCell(idx + 1);
-                        cell.value = hText;
-                        cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FFFFFFFF' } };
-                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
-                        cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
-                        cell.border = thinBorder;
-                    });
-
-                    // Dynamic Item Rows (Row 16 .. lastItemRow)
-                    const firstItemRow = 16;
-                    parsedItems.forEach((item, i) => {
-                        const rNum = firstItemRow + i;
-                        const row = ws.getRow(rNum);
-                        const descLen = String(item.desc || '').length;
-                        row.height = descLen > 55 ? 30 : 20;
-                        const netFormula = `IF(ISNUMBER(D${rNum}),ROUND(MAX(0,D${rNum}-N(E${rNum})),2),0)`;
-                        const amtFormula = `IF(ISNUMBER(G${rNum}),ROUND(F${rNum}*G${rNum},2),0)`;
-
-                        row.getCell(1).value = item.hasData ? item.itemNo : '';
-                        row.getCell(2).value = item.hasData ? item.partNo : '';
-                        row.getCell(3).value = item.hasData ? item.desc : '';
-                        row.getCell(4).value = item.hasData ? item.uPrice : null;
-                        row.getCell(5).value = item.hasData ? item.disc : null;
-                        row.getCell(6).value = { formula: netFormula, result: item.hasData ? item.netV : 0 };
-                        row.getCell(7).value = item.hasData ? item.qty : null;
-                        row.getCell(8).value = { formula: amtFormula, result: item.hasData ? item.amtV : 0 };
-
-                        row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
-                        row.getCell(2).alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
-                        row.getCell(3).alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
-                        [4, 5, 6, 8].forEach(c => {
-                            row.getCell(c).numFmt = '#,##0.00';
-                            row.getCell(c).alignment = { horizontal: 'right', vertical: 'middle' };
+                        const ws = wb.addWorksheet(safeSheetName, {
+                            views: [{ showGridLines: true }],
+                            pageSetup: {
+                                paperSize: 9,
+                                orientation: 'portrait',
+                                fitToPage: true,
+                                fitToWidth: 1,
+                                fitToHeight: 1,
+                                horizontalCentered: true,
+                                margins: { left: 0.35, right: 0.35, top: 0.35, bottom: 0.35, header: 0.2, footer: 0.2 }
+                            }
                         });
-                        row.getCell(7).numFmt = '#,##0';
-                        row.getCell(7).alignment = { horizontal: 'center', vertical: 'middle' };
 
-                        for (let c = 1; c <= 8; c++) {
-                            const cell = row.getCell(c);
-                            cell.font = { name: 'Calibri', size: 9.5, color: { argb: 'FF0F172A' } };
+                        ws.columns = [
+                            { key: 'A', width: 14 },
+                            { key: 'B', width: 20 },
+                            { key: 'C', width: 44 },
+                            { key: 'D', width: 18 },
+                            { key: 'E', width: 15 },
+                            { key: 'F', width: 18 },
+                            { key: 'G', width: 13 },
+                            { key: 'H', width: 20 }
+                        ];
+
+                        const fontBase = 'Tahoma';
+                        const thinBorder = {
+                            top: { style: 'thin', color: { argb: 'FF64748B' } },
+                            left: { style: 'thin', color: { argb: 'FF64748B' } },
+                            bottom: { style: 'thin', color: { argb: 'FF64748B' } },
+                            right: { style: 'thin', color: { argb: 'FF64748B' } }
+                        };
+
+                        try {
+                            const logoImgEl = document.getElementById('recOfficialLogoImg') || document.getElementById('docHeaderCustomLogoImg');
+                            if (logoImgEl && logoImgEl.src && logoImgEl.src.startsWith('data:image/')) {
+                                const ext = logoImgEl.src.includes('image/jpeg') ? 'jpeg' : 'png';
+                                const logoId = wb.addImage({ base64: logoImgEl.src, extension: ext });
+                                ws.addImage(logoId, { tl: { col: 0, row: 0 }, ext: { width: 78, height: 78 } });
+                            }
+                        } catch (eLogo) {}
+
+                        ws.mergeCells('B1:H1');
+                        ws.getCell('B1').value = cfg.companyName || 'HOSHIZAKI (THAILAND) LIMITED';
+                        ws.getCell('B1').font = { name: fontBase, size: 14, bold: true, color: { argb: 'FF002B49' } };
+                        ws.getRow(1).height = 24;
+
+                        ws.mergeCells('B2:H2');
+                        ws.getCell('B2').value = String(cfg.address || 'Building A, 1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen, Lak Si, Bangkok 10210 Thailand').replace(/\n/g, ' ');
+                        ws.getCell('B2').font = { name: fontBase, size: 9, color: { argb: 'FF334155' } };
+                        ws.getRow(2).height = 18;
+
+                        ws.mergeCells('B3:H3');
+                        ws.getCell('B3').value = String(cfg.telTax || 'TEL : 02-005-9980-83  FAX : 02-516-2646  |  TAX ID : 0135558002599 (HEAD OFFICE)').replace(/\n/g, ' ');
+                        ws.getCell('B3').font = { name: fontBase, size: 9, bold: true, color: { argb: 'FF0F172A' } };
+                        ws.getRow(3).height = 18;
+
+                        ws.mergeCells('B4:H4');
+                        ws.getCell('B4').value = 'Email : services@hoshizaki.co.th   |   Website : www.hoshizaki-sea.com';
+                        ws.getCell('B4').font = { name: fontBase, size: 9, color: { argb: 'FF0369A1' } };
+                        ws.getRow(4).height = 18;
+                        ws.getRow(5).height = 10;
+
+                        ws.mergeCells('A6:H6');
+                        ws.getCell('A6').value = docMainTitle;
+                        ws.getCell('A6').font = { name: fontBase, size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
+                        ws.getCell('A6').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
+                        ws.getCell('A6').alignment = { horizontal: 'center', vertical: 'middle' };
+                        ws.getRow(6).height = 26;
+
+                        const custMetaRows = [
+                            ['รหัสลูกค้า / Cust Code :', custCode, 'วันที่ / Date', dateStr],
+                            ['ชื่อลูกค้า / Customer :', custName, 'เลขที่เอกสาร / Doc No.', offerNo],
+                            ['ผู้ซื้อ / Buyer Tax ID :', buyerTaxId, 'เงื่อนไขชำระ / Term', '30 DAYS'],
+                            ['ผู้ติดต่อ / Contact :', contactPerson, 'เบอร์โทร / Tel.', telNo],
+                            ['ที่อยู่ / Address :', address, 'อ้างอิงใบงาน / Ref Job', document.getElementById('jobNo')?.value || '-']
+                        ];
+                        custMetaRows.forEach((rowArr, idx) => {
+                            const r = 7 + idx;
+                            const addrLines = idx === 4 ? Math.max(1, Math.ceil(String(address).length / 55)) : 1;
+                            ws.getRow(r).height = idx === 4 ? Math.max(24, addrLines * 16) : 20;
+
+                            ws.getCell(`A${r}`).value = rowArr[0];
+                            ws.getCell(`A${r}`).font = { name: fontBase, size: 9, bold: true, color: { argb: 'FF0F172A' } };
+                            ws.getCell(`A${r}`).alignment = { vertical: 'middle' };
+
+                            ws.mergeCells(`B${r}:F${r}`);
+                            ws.getCell(`B${r}`).value = rowArr[1];
+                            ws.getCell(`B${r}`).font = { name: fontBase, size: 9, bold: idx === 1, color: { argb: 'FF0F172A' } };
+                            ws.getCell(`B${r}`).alignment = { vertical: 'middle', wrapText: true };
+
+                            ws.getCell(`G${r}`).value = rowArr[2];
+                            ws.getCell(`G${r}`).font = { name: fontBase, size: 8.5, bold: true, color: { argb: 'FF002B49' } };
+                            ws.getCell(`G${r}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
+                            ws.getCell(`G${r}`).alignment = { vertical: 'middle' };
+
+                            ws.getCell(`H${r}`).value = rowArr[3];
+                            ws.getCell(`H${r}`).font = { name: fontBase, size: 9, bold: idx === 1, color: { argb: 'FF0F172A' } };
+                            ws.getCell(`H${r}`).alignment = { vertical: 'middle', wrapText: true };
+
+                            for (let c = 1; c <= 8; c++) ws.getRow(r).getCell(c).border = thinBorder;
+                        });
+
+                        ws.mergeCells('A12:H12');
+                        ws.getCell('A12').value = eqModelHeader || `MODEL : ${modelStr}   S/N : ${serialStr}`;
+                        ws.getCell('A12').font = { name: fontBase, size: 9.5, bold: true, color: { argb: 'FF002B49' } };
+                        ws.getCell('A12').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0F2FE' } };
+                        ws.getCell('A12').alignment = { vertical: 'middle', indent: 1 };
+                        ws.getRow(12).height = 22;
+                        for (let c = 1; c <= 8; c++) ws.getRow(12).getCell(c).border = thinBorder;
+
+                        const headers = ['ITEM', 'PART NO.', 'DESCRIPTION', 'UNIT PRICE (THB)', 'DISCOUNT', 'NET UNIT PRICE', 'QTY (PCS)', 'AMOUNT (THB)'];
+                        const hdrRow = ws.getRow(13);
+                        hdrRow.height = 26;
+                        headers.forEach((hText, idx) => {
+                            const cell = hdrRow.getCell(idx + 1);
+                            cell.value = hText;
+                            cell.font = { name: fontBase, size: 9, bold: true, color: { argb: 'FFFFFFFF' } };
+                            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
+                            cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
                             cell.border = thinBorder;
-                            if (i % 2 === 1) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+                        });
+
+                        const firstItemRow = 14;
+                        parsedItems.forEach((item, i) => {
+                            const rNum = firstItemRow + i;
+                            const row = ws.getRow(rNum);
+                            const descLines = Math.max(1, Math.ceil(String(item.desc || '').length / 42));
+                            row.height = Math.max(20, descLines * 16);
+
+                            row.getCell(1).value = item.hasData ? item.itemNo : '';
+                            row.getCell(2).value = item.hasData ? item.partNo : '';
+                            row.getCell(3).value = item.hasData ? item.desc : '';
+                            row.getCell(4).value = item.hasData ? item.uPrice : null;
+                            row.getCell(5).value = item.hasData ? (item.disc > 0 ? item.disc : null) : null;
+                            row.getCell(6).value = item.hasData
+                                ? { formula: `ROUND(MAX(0,D${rNum}-E${rNum}),2)`, result: item.netV }
+                                : null;
+                            row.getCell(7).value = item.hasData ? item.qty : null;
+                            row.getCell(8).value = item.hasData
+                                ? { formula: `ROUND(F${rNum}*G${rNum},2)`, result: item.amtV }
+                                : null;
+
+                            row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+                            row.getCell(2).alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+                            row.getCell(3).alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+                            [4, 5, 6, 8].forEach(c => {
+                                row.getCell(c).numFmt = '#,##0.00';
+                                row.getCell(c).alignment = { horizontal: 'right', vertical: 'middle' };
+                            });
+                            row.getCell(7).numFmt = '#,##0';
+                            row.getCell(7).alignment = { horizontal: 'center', vertical: 'middle' };
+
+                            for (let c = 1; c <= 8; c++) {
+                                const cell = row.getCell(c);
+                                cell.font = { name: fontBase, size: 9, color: { argb: 'FF0F172A' } };
+                                cell.border = thinBorder;
+                                if (i % 2 === 1) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+                            }
+                        });
+
+                        const lastItemRow = firstItemRow + parsedItems.length - 1;
+                        const totStart = lastItemRow + 1;
+
+                        ws.mergeCells(`A${totStart}:C${totStart + 3}`);
+                        const remarkCombined = customRemark
+                            ? `REMARK : ${customRemark}\nVALIDITY : QUOTATION IS VALID FOR 30 DAYS`
+                            : 'VALIDITY : QUOTATION IS VALID FOR 30 DAYS';
+                        ws.getCell(`A${totStart}`).value = remarkCombined;
+                        ws.getCell(`A${totStart}`).alignment = { vertical: 'top', wrapText: true };
+                        ws.getCell(`A${totStart}`).font = { name: fontBase, size: 9, bold: true, color: { argb: 'FF0F172A' } };
+
+                        const totalsMeta = [
+                            { r: totStart, label: 'SUB TOTAL', formula: `ROUND(SUM(H${firstItemRow}:H${lastItemRow}),2)`, result: subTotal, bold: false },
+                            { r: totStart + 1, label: 'VAT 7%', formula: `ROUND(G${totStart}*0.07,2)`, result: vatAmt, bold: false },
+                            { r: totStart + 2, label: 'TOTAL', formula: `ROUND(G${totStart}+G${totStart + 1},2)`, result: beforeWhtTotal, bold: true },
+                            { r: totStart + 3, label: 'WHT 3%', formula: isWht ? `ROUND(-G${totStart}*0.03,2)` : null, result: isWht ? -whtAmt : 0, bold: false },
+                            { r: totStart + 4, label: 'GRAND TOTAL', formula: `ROUND(G${totStart + 2}+G${totStart + 3},2)`, result: grandTotal, bold: true, highlight: true }
+                        ];
+
+                        totalsMeta.forEach(t => {
+                            ws.getRow(t.r).height = t.highlight ? 24 : 19;
+                            ws.mergeCells(`D${t.r}:F${t.r}`);
+                            ws.mergeCells(`G${t.r}:H${t.r}`);
+                            const lblCell = ws.getCell(`D${t.r}`);
+                            const valCell = ws.getCell(`G${t.r}`);
+                            lblCell.value = t.label;
+                            lblCell.alignment = { horizontal: 'right', vertical: 'middle', indent: 1 };
+                            lblCell.font = { name: fontBase, size: t.highlight ? 10 : 9, bold: true, color: { argb: t.highlight ? 'FFFFFFFF' : 'FF0F172A' } };
+
+                            valCell.value = t.formula ? { formula: t.formula, result: t.result } : t.result;
+                            valCell.numFmt = '#,##0.00';
+                            valCell.alignment = { horizontal: 'right', vertical: 'middle' };
+                            valCell.font = { name: fontBase, size: t.highlight ? 10.5 : 9, bold: t.bold, color: { argb: t.highlight ? 'FFFFFFFF' : 'FF0F172A' } };
+
+                            if (t.highlight) {
+                                lblCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
+                                valCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
+                            }
+                        });
+
+                        const gtRow = totStart + 4;
+                        ws.getCell(`A${gtRow}`).value = 'THB';
+                        ws.getCell(`A${gtRow}`).font = { name: fontBase, size: 9.5, bold: true };
+                        ws.getCell(`A${gtRow}`).alignment = { horizontal: 'center', vertical: 'middle' };
+                        ws.mergeCells(`B${gtRow}:C${gtRow}`);
+                        const bahtTxt = typeof numberToThaiBahtText === 'function' ? numberToThaiBahtText(grandTotal) : '';
+                        ws.getCell(`B${gtRow}`).value = bahtTxt ? `(${bahtTxt})` : '';
+                        ws.getCell(`B${gtRow}`).font = { name: fontBase, size: 9, bold: true, color: { argb: 'FF002B49' } };
+                        ws.getCell(`B${gtRow}`).alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+
+                        for (let r = totStart; r <= gtRow; r++) {
+                            for (let c = 1; c <= 8; c++) ws.getRow(r).getCell(c).border = thinBorder;
                         }
-                    });
 
-                    const lastItemRow = firstItemRow + parsedItems.length - 1;
-                    const totStart = lastItemRow + 1;
+                        const bankRow1 = gtRow + 2;
+                        const bankRow2 = gtRow + 3;
+                        ws.getRow(bankRow1).height = 19;
+                        ws.getRow(bankRow2).height = 19;
+                        ws.getCell(`A${bankRow1}`).value = 'Remark :';
+                        ws.getCell(`A${bankRow1}`).font = { name: fontBase, size: 9, bold: true };
+                        ws.mergeCells(`B${bankRow1}:H${bankRow1}`);
+                        ws.getCell(`B${bankRow1}`).value = bankTransferText;
+                        ws.getCell(`B${bankRow1}`).font = { name: fontBase, size: 9 };
+                        ws.mergeCells(`B${bankRow2}:H${bankRow2}`);
+                        ws.getCell(`B${bankRow2}`).value = warehouseNoteText;
+                        ws.getCell(`B${bankRow2}`).font = { name: fontBase, size: 9 };
 
-                    // Totals & Remark Block (Dynamic Row Anchors!)
-                    ws.mergeCells(`A${totStart}:C${totStart + 3}`);
-                    ws.getCell(`A${totStart}`).value = customRemark
-                        ? `REMARK : ${customRemark}
-VALIDITY : QUOTATION IS VALID FOR 30 DAYS`
-                        : 'VALIDITY : QUOTATION IS VALID FOR 30 DAYS';
-                    ws.getCell(`A${totStart}`).alignment = { vertical: 'top', wrapText: true };
-                    ws.getCell(`A${totStart}`).font = { name: 'Calibri', size: 9.5, color: { argb: 'FF1E293B' } };
+                        const sigHdrRow = bankRow2 + 2;
+                        const sigImgRow = sigHdrRow + 1;
+                        const sigNameRow = sigHdrRow + 2;
+                        const sigRoleRow = sigHdrRow + 3;
 
-                    const totalsMeta = [
-                        { r: totStart, label: 'SUB TOTAL', formula: `ROUND(SUM(H${firstItemRow}:H${lastItemRow}),2)`, result: subTotal, bold: false },
-                        { r: totStart + 1, label: 'VAT 7%', formula: `ROUND(G${totStart}*0.07,2)`, result: vatAmt, bold: false },
-                        { r: totStart + 2, label: 'TOTAL', formula: `ROUND(G${totStart}+G${totStart + 1},2)`, result: beforeWhtTotal, bold: true },
-                        { r: totStart + 3, label: 'WHT 3%', formula: null, result: isWht ? -whtAmt : 0, bold: false },
-                        { r: totStart + 4, label: 'GRAND TOTAL', formula: `ROUND(G${totStart + 2}+G${totStart + 3},2)`, result: grandTotal, bold: true, highlight: true }
-                    ];
+                        ws.getRow(sigHdrRow).height = 20;
+                        ws.mergeCells(`A${sigHdrRow}:B${sigHdrRow}`); ws.getCell(`A${sigHdrRow}`).value = 'Issued By';
+                        ws.getCell(`C${sigHdrRow}`).value = 'Checked By';
+                        ws.mergeCells(`D${sigHdrRow}:E${sigHdrRow}`); ws.getCell(`D${sigHdrRow}`).value = 'Approved By';
+                        ws.mergeCells(`F${sigHdrRow}:H${sigHdrRow}`); ws.getCell(`F${sigHdrRow}`).value = 'Confirmed Purchase (Customer)';
+                        ['A', 'C', 'D', 'F'].forEach(col => {
+                            const c = ws.getCell(`${col}${sigHdrRow}`);
+                            c.font = { name: fontBase, size: 9, bold: true, color: { argb: 'FF002B49' } };
+                            c.alignment = { horizontal: 'center', vertical: 'middle' };
+                            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
+                        });
 
-                    totalsMeta.forEach(t => {
-                        ws.getRow(t.r).height = t.highlight ? 22 : 18;
-                        ws.mergeCells(`D${t.r}:F${t.r}`);
-                        ws.mergeCells(`G${t.r}:H${t.r}`);
-                        const lblCell = ws.getCell(`D${t.r}`);
-                        const valCell = ws.getCell(`G${t.r}`);
-                        lblCell.value = t.label;
-                        lblCell.alignment = { horizontal: 'right', vertical: 'middle' };
-                        lblCell.font = { name: 'Calibri', size: t.highlight ? 10.5 : 9.5, bold: true, color: { argb: t.highlight ? 'FFFFFFFF' : 'FF0F172A' } };
+                        ws.getRow(sigImgRow).height = 48;
+                        ws.mergeCells(`A${sigImgRow}:B${sigImgRow}`);
+                        ws.mergeCells(`D${sigImgRow}:E${sigImgRow}`);
+                        ws.mergeCells(`F${sigImgRow}:H${sigImgRow}`);
 
-                        valCell.value = t.formula ? { formula: t.formula, result: t.result } : t.result;
-                        valCell.numFmt = '#,##0.00';
-                        valCell.alignment = { horizontal: 'right', vertical: 'middle' };
-                        valCell.font = { name: 'Calibri', size: t.highlight ? 11 : 9.5, bold: t.bold, color: { argb: t.highlight ? 'FFFFFFFF' : 'FF0F172A' } };
+                        const extractSigBase64 = (boxId, fallbackCanvasId) => {
+                            const boxImg = document.querySelector(`#${boxId} img`);
+                            if (boxImg && boxImg.src && boxImg.src.startsWith('data:image/')) return boxImg.src;
+                            const cvs = document.getElementById(fallbackCanvasId);
+                            if (cvs && typeof cvs.toDataURL === 'function') {
+                                try { return cvs.toDataURL('image/png'); } catch (e) {}
+                            }
+                            return '';
+                        };
 
-                        if (t.highlight) {
-                            lblCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
-                            valCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002B49' } };
-                        }
-                    });
+                        const sigPlacements = [
+                            { dataUrl: extractSigBase64('recIssueSigBox', 'sigTech'), col: 0, row: sigImgRow - 1 },
+                            { dataUrl: extractSigBase64('recCheckedSigBox', 'sigServiceMgr'), col: 2, row: sigImgRow - 1 },
+                            { dataUrl: extractSigBase64('recApprovedSigBox', 'sigServiceMgr'), col: 3, row: sigImgRow - 1 },
+                            { dataUrl: extractSigBase64('recCustSigBox', 'sigCustomer'), col: 6, row: sigImgRow - 1 }
+                        ];
+                        sigPlacements.forEach(sp => {
+                            if (sp.dataUrl && sp.dataUrl.startsWith('data:image/')) {
+                                try {
+                                    const imgId = wb.addImage({ base64: sp.dataUrl, extension: 'png' });
+                                    ws.addImage(imgId, { tl: { col: sp.col, row: sp.row }, ext: { width: 110, height: 42 } });
+                                } catch (eSig) {}
+                            }
+                        });
 
-                    const gtRow = totStart + 4;
-                    ws.getCell(`A${gtRow}`).value = 'THB';
-                    ws.getCell(`A${gtRow}`).font = { name: 'Calibri', size: 10, bold: true };
-                    ws.getCell(`A${gtRow}`).alignment = { horizontal: 'center', vertical: 'middle' };
-                    ws.mergeCells(`B${gtRow}:C${gtRow}`);
-                    ws.getCell(`B${gtRow}`).value = `(${numberToThaiBahtText(grandTotal)})`;
-                    ws.getCell(`B${gtRow}`).font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF002B49' } };
-                    ws.getCell(`B${gtRow}`).alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+                        const issueSignerName = document.getElementById('recIssueSignerName')?.innerText?.trim() || 'MS.WANWIPHA';
+                        const checkedSignerName = document.getElementById('recCheckedSignerName')?.innerText?.trim() || 'MR.THANAKRIT';
+                        const approvedSignerName = document.getElementById('recApprovedSignerName')?.innerText?.trim() || 'MR.NOPARIN HOMHOUL';
+                        const custSignerName = document.getElementById('nameCustomer')?.value?.trim() || custName || 'ผู้มีอำนาจลงนามสั่งซื้อ';
 
-                    for (let r = totStart; r <= gtRow; r++) {
-                        for (let c = 1; c <= 8; c++) ws.getRow(r).getCell(c).border = thinBorder;
-                    }
+                        ws.getRow(sigNameRow).height = 19;
+                        ws.getRow(sigRoleRow).height = 18;
+                        ws.mergeCells(`A${sigNameRow}:B${sigNameRow}`); ws.getCell(`A${sigNameRow}`).value = issueSignerName;
+                        ws.getCell(`C${sigNameRow}`).value = checkedSignerName;
+                        ws.mergeCells(`D${sigNameRow}:E${sigNameRow}`); ws.getCell(`D${sigNameRow}`).value = approvedSignerName;
+                        ws.mergeCells(`F${sigNameRow}:H${sigNameRow}`); ws.getCell(`F${sigNameRow}`).value = custSignerName;
 
-                    // Bank Transfer Remark
-                    const bankRow1 = gtRow + 2;
-                    const bankRow2 = gtRow + 3;
-                    ws.getRow(bankRow1).height = 18;
-                    ws.getRow(bankRow2).height = 18;
-                    ws.getCell(`A${bankRow1}`).value = 'Remark :';
-                    ws.getCell(`A${bankRow1}`).font = { name: 'Calibri', size: 9.5, bold: true };
-                    ws.mergeCells(`B${bankRow1}:H${bankRow1}`);
-                    ws.getCell(`B${bankRow1}`).value = cfg.bankInfo || 'Please transfer to Krung-Sri Banking Future Park Rangsit Branch Current Account No. 062-0-04476-2';
-                    ws.getCell(`B${bankRow1}`).font = { name: 'Calibri', size: 9.5 };
-                    ws.mergeCells(`B${bankRow2}:H${bankRow2}`);
-                    ws.getCell(`B${bankRow2}`).value = 'The above offer is Ex-warehouse of Hoshizaki Thailand office (in Hankyu Hanshin Express W/H)';
-                    ws.getCell(`B${bankRow2}`).font = { name: 'Calibri', size: 9.5 };
+                        ws.mergeCells(`A${sigRoleRow}:B${sigRoleRow}`); ws.getCell(`A${sigRoleRow}`).value = `Date: ${shortDate}`;
+                        ws.getCell(`C${sigRoleRow}`).value = `Date: ${shortDate}`;
+                        ws.mergeCells(`D${sigRoleRow}:E${sigRoleRow}`); ws.getCell(`D${sigRoleRow}`).value = 'Authorized Signature';
+                        ws.mergeCells(`F${sigRoleRow}:H${sigRoleRow}`); ws.getCell(`F${sigRoleRow}`).value = 'Purchased Signature / Date';
 
-                    // Signature Blocks with REAL EMBEDDED SIGNATURE IMAGES matching PDF 100%!
-                    const sigHdrRow = bankRow2 + 2;
-                    const sigImgRow = sigHdrRow + 1;
-                    const sigNameRow = sigHdrRow + 2;
-                    const sigRoleRow = sigHdrRow + 3;
-
-                    ws.mergeCells(`A${sigHdrRow}:B${sigHdrRow}`); ws.getCell(`A${sigHdrRow}`).value = 'Issued By';
-                    ws.getCell(`C${sigHdrRow}`).value = 'Checked By';
-                    ws.mergeCells(`D${sigHdrRow}:E${sigHdrRow}`); ws.getCell(`D${sigHdrRow}`).value = 'Approved By';
-                    ws.mergeCells(`F${sigHdrRow}:H${sigHdrRow}`); ws.getCell(`F${sigHdrRow}`).value = 'Confirmed Purchase (Customer)';
-                    ['A', 'C', 'D', 'F'].forEach(col => {
-                        const c = ws.getCell(`${col}${sigHdrRow}`);
-                        c.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF002B49' } };
-                        c.alignment = { horizontal: 'center', vertical: 'middle' };
-                        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
-                    });
-
-                    ws.getRow(sigImgRow).height = 46;
-                    ws.mergeCells(`A${sigImgRow}:B${sigImgRow}`);
-                    ws.mergeCells(`D${sigImgRow}:E${sigImgRow}`);
-                    ws.mergeCells(`F${sigImgRow}:H${sigImgRow}`);
-
-                    // Helper to extract signature image from DOM box or signature canvas
-                    const extractSigBase64 = (boxId, fallbackCanvasId) => {
-                        const boxImg = document.querySelector(`#${boxId} img`);
-                        if (boxImg && boxImg.src && boxImg.src.startsWith('data:image/')) return boxImg.src;
-                        const cvs = document.getElementById(fallbackCanvasId);
-                        if (cvs && typeof cvs.toDataURL === 'function') {
-                            try { return cvs.toDataURL('image/png'); } catch (e) {}
-                        }
-                        return '';
-                    };
-
-                    const sigPlacements = [
-                        { dataUrl: extractSigBase64('recIssueSigBox', 'sigTech'), col: 0.35 },
-                        { dataUrl: extractSigBase64('recCheckedSigBox', 'sigServiceMgr'), col: 2.1 },
-                        { dataUrl: extractSigBase64('recApprovedSigBox', 'sigServiceMgr'), col: 3.45 },
-                        { dataUrl: extractSigBase64('recCustSigBox', 'sigCustomer'), col: 5.6 }
-                    ];
-                    sigPlacements.forEach(sp => {
-                        if (sp.dataUrl && sp.dataUrl.startsWith('data:image/')) {
-                            try {
-                                const imgId = wb.addImage({ base64: sp.dataUrl, extension: 'png' });
-                                ws.addImage(imgId, { tl: { col: sp.col, row: sigImgRow - 0.9 }, ext: { width: 115, height: 40 } });
-                            } catch (eSig) {}
-                        }
-                    });
-
-                    const issueSignerName = document.getElementById('recIssueSignerName')?.innerText?.trim() || 'MS.WANWIPHA';
-                    const checkedSignerName = document.getElementById('recCheckedSignerName')?.innerText?.trim() || 'MR.THANAKRIT';
-                    const approvedSignerName = document.getElementById('recApprovedSignerName')?.innerText?.trim() || 'MR.NOPARIN HOMHOUL';
-                    const custSignerName = document.getElementById('nameCustomer')?.value?.trim() || custName || 'ผู้มีอำนาจลงนามสั่งซื้อ';
-
-                    ws.mergeCells(`A${sigNameRow}:B${sigNameRow}`); ws.getCell(`A${sigNameRow}`).value = issueSignerName;
-                    ws.getCell(`C${sigNameRow}`).value = checkedSignerName;
-                    ws.mergeCells(`D${sigNameRow}:E${sigNameRow}`); ws.getCell(`D${sigNameRow}`).value = approvedSignerName;
-                    ws.mergeCells(`F${sigNameRow}:H${sigNameRow}`); ws.getCell(`F${sigNameRow}`).value = custSignerName;
-
-                    ws.mergeCells(`A${sigRoleRow}:B${sigRoleRow}`); ws.getCell(`A${sigRoleRow}`).value = `Date: ${shortDate}`;
-                    ws.getCell(`C${sigRoleRow}`).value = `Date: ${shortDate}`;
-                    ws.mergeCells(`D${sigRoleRow}:E${sigRoleRow}`); ws.getCell(`D${sigRoleRow}`).value = 'Authorized Signature';
-                    ws.mergeCells(`F${sigRoleRow}:H${sigRoleRow}`); ws.getCell(`F${sigRoleRow}`).value = 'Purchased Signature / Date';
-
-                    for (let r = sigHdrRow; r <= sigRoleRow; r++) {
-                        for (let c = 1; c <= 8; c++) {
-                            const cell = ws.getRow(r).getCell(c);
-                            cell.border = thinBorder;
-                            if (r >= sigNameRow) {
-                                cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
-                                cell.font = { name: 'Calibri', size: 9, bold: r === sigNameRow };
+                        for (let r = sigHdrRow; r <= sigRoleRow; r++) {
+                            for (let c = 1; c <= 8; c++) {
+                                const cell = ws.getRow(r).getCell(c);
+                                cell.border = thinBorder;
+                                if (r >= sigNameRow) {
+                                    cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+                                    cell.font = { name: fontBase, size: 9, bold: r === sigNameRow };
+                                }
                             }
                         }
+
+                        const buffer = await wb.xlsx.writeBuffer();
+                        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${filePrefix}_${offerNo}.xlsx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        setTimeout(() => URL.revokeObjectURL(url), 1500);
+                        if (typeof showToast === 'function') {
+                            showToast(`ส่งออกไฟล์ Excel (${filePrefix}_${offerNo}.xlsx) รองรับทุกเวอร์ชันเรียบร้อย ✓`);
+                        }
+                    } catch (excelJsErr) {
+                        console.error('ExcelJS export error:', excelJsErr);
+                        if (typeof showToast === 'function') showToast('เกิดข้อผิดพลาดในการสร้างไฟล์ Excel: ' + excelJsErr.message);
                     }
-
-                    const buffer = await wb.xlsx.writeBuffer();
-                    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${filePrefix}_${offerNo}.xlsx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    setTimeout(() => URL.revokeObjectURL(url), 1000);
-                    showToast('ส่งออกไฟล์ Excel พร้อมโลโก้บริษัทและตารางมาตรฐาน Hoshizaki เรียบร้อย ✓');
-                    return;
-                } catch (excelJsErr) {
-                    console.warn('ExcelJS fallback to SheetJS:', excelJsErr);
-                }
-            }
-
-            if (typeof XLSX === 'undefined') {
-                showToast('ไม่พบไลบรารีสำหรับส่งออก Excel');
+                })();
                 return;
             }
-            const fallbackRows = [
-                [cfg.companyName],
-                [cfg.address],
-                [docMainTitle, 'Offer No.', offerNo, 'Date', dateStr],
-                ['Customer', custName, 'Model/S/N', eqModelHeader],
-                ['ITEM', 'Part No.', 'DESCRIPTION', 'UNIT PRICE', 'DISCOUNT', 'NET PRICE', 'QTY', 'AMOUNT']
-            ];
-            parsedItems.filter(x => x.hasData).forEach(x => {
-                fallbackRows.push([x.itemNo, x.partNo, x.desc, x.uPrice, x.disc, x.netV, x.qty, x.amtV]);
-            });
-            fallbackRows.push(['', '', '', '', '', '', 'GRAND TOTAL', grandTotal]);
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(fallbackRows);
-            XLSX.utils.book_append_sheet(wb, ws, sheetModelTab);
-            XLSX.writeFile(wb, `${filePrefix}_${offerNo}.xlsx`);
-            showToast('ส่งออกไฟล์ Excel เรียบร้อยแล้ว ✓');
         }
 
-                // --- SEND JOB SERVICE PDF BY EMAIL ---
+        // --- SEND JOB SERVICE PDF BY EMAIL ---
                 async function sendJobByEmail() {
             showToast('กำลังพิมพ์เป็นไฟล์ PDF และเตรียมแนบส่งอีเมล...');
             const custStore = document.getElementById('custStore')?.value || '';
@@ -11635,8 +11710,17 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
         }
 
         function dismissWeeklyBackupBanner() {
-            localStorage.setItem('hoshizaki_backup_dismissed_at', new Date().toISOString());
-            document.getElementById('weeklyBackupReminderBanner')?.classList.add('hidden');
+            try {
+                localStorage.setItem('hoshizaki_backup_dismissed_at', new Date().toISOString());
+            } catch (e) {}
+            const banner = document.getElementById('weeklyBackupReminderBanner');
+            if (banner) {
+                banner.style.display = 'none';
+                banner.classList.add('hidden');
+            }
+            if (typeof showToast === 'function') {
+                showToast('ซ่อนแถบแจ้งเตือนสำรองข้อมูลชั่วคราว 24 ชั่วโมงแล้ว');
+            }
         }
 
         function checkWeeklyBackupReminder() {
@@ -18469,7 +18553,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             } catch (e) {}
         });
     </script>
-<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1045-PRO) -->
+<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1046-GOLIVE) -->
 <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
 <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
 <!-- Top Navy Header -->
@@ -21215,9 +21299,27 @@ function openFullScreenSpecViewerModal(presetModel) {
             };
         }
 
-        // Override exportBackupJSON to export complete enterprise snapshot + push cloud snapshot automatically
+        // Override exportBackupJSON to export complete enterprise snapshot + push cloud snapshot automatically (v1046-GOLIVE hardened)
         exportBackupJSON = async function(silentAuto = false) {
-            const snapshot = await buildFullEnterpriseSnapshotObject();
+            let snapshot = null;
+            try {
+                if (typeof buildFullEnterpriseSnapshotObject === 'function') {
+                    snapshot = await buildFullEnterpriseSnapshotObject();
+                }
+            } catch (eSnap) {
+                console.warn('Snapshot builder fallback used:', eSnap);
+            }
+            if (!snapshot) {
+                const jobsArr = typeof getJobHistorySync === 'function' ? getJobHistorySync() : JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+                const qtsArr = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
+                snapshot = {
+                    app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
+                    version: '1046-GOLIVE',
+                    exportedAt: new Date().toISOString(),
+                    recordCounts: { jobs: jobsArr.length, quotations: qtsArr.length },
+                    payload: { jobHistory: jobsArr, quotationsHistory: qtsArr }
+                };
+            }
             if (!silentAuto) {
                 const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -21349,7 +21451,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1045-PRO AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1046-GOLIVE AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -29203,7 +29305,7 @@ transition: all 0.15s ease;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1045-PRO)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1046-GOLIVE)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -29397,7 +29499,7 @@ display: none !important;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1045-PRO)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1046-GOLIVE)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -29406,7 +29508,7 @@ display: none !important;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1045-PRO)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1046-GOLIVE)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -29415,7 +29517,7 @@ display: none !important;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1045-PRO)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1046-GOLIVE)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -29497,21 +29599,21 @@ display: none !important;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1045-PRO) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1046-GOLIVE) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1045-PRO Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1046-GOLIVE Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1045-PRO）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1046-GOLIVE）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -32523,9 +32625,9 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1045-PRO',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1045-PRO)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1045-PRO)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1046-GOLIVE',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1046-GOLIVE)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1046-GOLIVE)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -32574,7 +32676,7 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1045-PRO Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1046-GOLIVE Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -32798,7 +32900,7 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
 <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
 <div>
-<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1045-PRO — Multi-Branch &amp; White-Label Ready)</h3>
+<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1046-GOLIVE — Multi-Branch &amp; White-Label Ready)</h3>
 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
 </div>
 <div class="flex items-center gap-1.5">
@@ -36824,7 +36926,7 @@ CUSTOMER CSAT & 7-DAY POST-SERVICE QUALITY RADAR MODAL (v1021-CSAT-RADAR)
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1045-PRO — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1046-GOLIVE — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -37349,7 +37451,7 @@ FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1045-PRO</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1046-GOLIVE</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -38257,7 +38359,7 @@ Accounting VAT/WHT Ledger, Invoice/Receipt & NAV ERP Export • Audit Trail)
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1045-PRO</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1046-GOLIVE</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -39807,7 +39909,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1045-PRO</span>
+<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1046-GOLIVE</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
 </div>
@@ -39851,7 +39953,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1045-PRO</span>
+<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1046-GOLIVE</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
 </div>

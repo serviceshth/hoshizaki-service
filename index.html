@@ -730,7 +730,7 @@ transform: scale(0.96);
 <button type="button" onclick="dismissFridayWeeklyReportBanner()" class="bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-1.5 rounded-lg font-medium">ปิด</button>
 </div>
 </div>
-<!-- แถบสถานะระบบสำรองข้อมูลเข้า Google Sheets อัตโนมัติ (Auto Cloud Backup Status Bar — v1046-GOLIVE) -->
+<!-- แถบสถานะระบบสำรองข้อมูลเข้า Google Sheets อัตโนมัติ (Auto Cloud Backup Status Bar — v1047-QT-PRO) -->
 <div id="weeklyBackupReminderBanner" class="hidden no-print max-w-4xl mx-auto mb-3 bg-gradient-to-r from-sky-50 via-cyan-50 to-emerald-50 border border-sky-300 text-sky-950 p-3 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
 <div class="flex items-start gap-2.5 min-w-0 flex-1">
 <span id="autoSheetsBackupIconWrap" class="w-7 h-7 rounded-lg bg-sky-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
@@ -823,7 +823,7 @@ transform: scale(0.96);
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-1.5 mt-1">
-<p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1046-GOLIVE</span></p>
+<p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1047-QT-PRO</span></p>
 </div>
 <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
 <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -887,7 +887,7 @@ transform: scale(0.96);
 สลับเป็นโหมดช่างดำเนินงาน
 </button>
 </div>
-<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1046-GOLIVE · ≤30 Core Users) -->
+<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1047-QT-PRO · ≤30 Core Users) -->
 <div id="myDailyRoleWorkspaceBar" class="mt-2 rounded-xl bg-white/10 border border-white/20 p-2 text-xs">
 <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5 px-1">
 <span id="myDailyWorkspaceTitle" class="font-extrabold text-sky-200 flex items-center gap-1.5">
@@ -1078,11 +1078,8 @@ transform: scale(0.96);
 <button type="button" data-tb-cat="DOCS" onclick="exportWeeklyMultiSheetExcel()" class="tb-action-item bg-emerald-700 hover:bg-emerald-800 text-white font-bold shadow-sm">
 <i class="fa-solid fa-file-excel"></i> <span>สรุปประจำสัปดาห์ (4 ชีต)</span>
 </button>
-<button type="button" data-tb-cat="DOCS" onclick="sharePDFToLine()" class="tb-action-item bg-[#06C755] hover:bg-[#05b34c] text-white font-semibold shadow-sm">
-<i class="fa-solid fa-file-pdf"></i> <span>แชร์ PDF เข้า LINE</span>
-</button>
-<button type="button" data-tb-cat="DOCS" onclick="sendJobByEmail()" class="tb-action-item bg-rose-700 hover:bg-rose-800 text-white font-medium shadow-sm">
-<i class="fa-solid fa-envelope"></i> <span>ส่งอีเมล PDF</span>
+<button type="button" data-tb-cat="DOCS" onclick="openUnifiedOmniShareHubModal('JOB_REPORT')" class="tb-action-item col-span-2 bg-gradient-to-r from-[#06C755] via-sky-700 to-indigo-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-emerald-300/50">
+<i class="fa-solid fa-share-nodes text-amber-200"></i> <span>ส่ง / แชร์ใบแจ้งบริการ (LINE · Email PDF · SMS · QR)</span>
 </button>
 </div>
 </section>
@@ -2465,7 +2462,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <!-- Web App UI Footer -->
 <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
 <div class="font-extrabold tracking-wide text-amber-300">
-HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1046-GOLIVE</span>
+HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1047-QT-PRO</span>
 </div>
 <div class="text-white/80 font-medium">
 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -3031,46 +3028,51 @@ HOSHIZAKI (THAILAND) LIMITED · Official Service Document · All Rights Reserved
 <button type="button" onclick="exportReceiptExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
 <i class="fa-solid fa-file-excel"></i> Excel
 </button>
-<button type="button" onclick="shareReceiptPDFToLine()" class="bg-[#06C755] hover:bg-[#05b34c] text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
-<i class="fa-solid fa-file-pdf"></i> แชร์เข้า LINE
+<button type="button" onclick="saveStandaloneQuotationFullCycle(true)" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded font-extrabold flex items-center gap-1 shadow-sm border border-emerald-300/60" title="บันทึกใบเสนอราคาเข้าระบบ + สร้างไฟล์ PDF + Auto-Sync ขึ้น Google Sheets ทันที">
+<i class="fa-solid fa-floppy-disk text-amber-300"></i> บันทึก QT + PDF &amp; Sync
 </button>
-<button type="button" onclick="sendReceiptByEmail()" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
-<i class="fa-solid fa-envelope"></i> ส่งอีเมล PDF
+<button type="button" onclick="openUnifiedOmniShareHubModal('QUOTATION')" class="bg-gradient-to-r from-[#06C755] via-sky-600 to-indigo-700 hover:opacity-95 text-white px-3 py-1.5 rounded font-extrabold flex items-center gap-1.5 shadow-sm border border-white/40" title="ส่ง/แชร์เอกสารครบทุกช่องทาง: LINE (มือถือ PDF / PC Cloud &amp; Copy / QR) · Email แนบ PDF · SMS · ดาวน์โหลด PDF">
+<i class="fa-solid fa-share-nodes text-amber-200"></i> ส่ง / แชร์เอกสาร (LINE · Email · SMS · PDF)
 </button>
 <button type="button" onclick="printCurrentDocument('RECEIPT')" class="bg-purple-600 hover:bg-purple-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
-<i class="fa-solid fa-print"></i> พิมพ์ใบเสร็จ
-</button>
-<button type="button" onclick="downloadReceiptPDF()" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1.5 rounded font-medium flex items-center gap-1 shadow-sm">
-<i class="fa-solid fa-file-pdf"></i> ดาวน์โหลด PDF
+<i class="fa-solid fa-print"></i> พิมพ์
 </button>
 <button type="button" onclick="closeReceiptModal()" class="bg-red-600 hover:bg-red-700 active:scale-95 text-white rounded-lg w-8 h-8 inline-flex items-center justify-center text-xl font-extrabold shadow-sm transition flex-shrink-0" title="ปิดหน้าต่าง">&times;</button>
 </div>
 </div>
 <!-- Receipt Printable Content Area -->
-<!-- Standalone Quotation Builder Studio (v1046-GOLIVE: Create New QT, Auto-Fill S/N & Parts, Service A/B/Travel & Custom Remark) -->
+<!-- Standalone Quotation Builder Studio (v1047-QT-PRO: Create/Edit QT, 3-Char Customer Search, Multi-Custodian S/N, Save+PDF+AutoSync) -->
 <div id="standaloneQuotationBuilderPanel" class="bg-gradient-to-r from-sky-50 via-white to-amber-50/70 border border-sky-200 rounded-xl p-2.5 sm:p-3 space-y-2 text-xs flex-shrink-0">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="font-extrabold text-[#002B49] flex items-center gap-1.5">
 <i class="fa-solid fa-file-circle-plus text-amber-600"></i>
-<span>สร้าง &amp; ปรับแต่งใบเสนอราคาใหม่อิสระ (Standalone Quotation Studio)</span>
+<span>สร้าง &amp; แก้ไขใบเสนอราคาอัจฉริยะ (Smart Quotation Studio)</span>
 <span id="qtBuilderModePill" class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-900 text-[10px] font-bold">เชื่อมข้อมูลใบงานอัตโนมัติ</span>
 </div>
 <div class="flex flex-wrap items-center gap-1.5">
 <button type="button" onclick="startFreshStandaloneQuotation()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold px-2.5 py-1 rounded-lg shadow-2xs flex items-center gap-1 transition">
 <i class="fa-solid fa-plus"></i> <span>สร้างใบเสนอราคาใหม่ (New QT)</span>
 </button>
+<div class="flex items-center gap-1 bg-white border border-amber-300 rounded-lg px-1.5 py-0.5">
+<input type="text" id="qtLoadEditOfferNoInput" list="hzkSavedQtOffersList" placeholder="ดึงเลข QT เดิมมาแก้ไข..." class="w-36 text-[11px] font-mono font-bold text-[#002B49] focus:outline-none">
+<datalist id="hzkSavedQtOffersList"></datalist>
+<button type="button" onclick="loadExistingQuotationForEdit()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2 py-0.5 rounded text-[10.5px]">ดึงแก้ไข</button>
+</div>
 <button type="button" onclick="toggleStandaloneQtEditorCollapse()" id="btnToggleQtStudioBody" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2 py-1 rounded-lg font-semibold">
-<span>ซ่อน/แสดงแผงกรอกข้อมูล</span>
+<span>ซ่อน/แสดงแผง</span>
 </button>
 </div>
 </div>
 <div id="standaloneQtEditorBody" class="space-y-2 pt-1 border-t border-sky-200/70">
 <div class="grid grid-cols-1 sm:grid-cols-6 gap-1.5">
 <div class="sm:col-span-2 flex gap-1">
-<input type="text" id="qtQuickSnInput" list="hoshizakiSerialsList" placeholder="ค้นหา S/N ในระบบเพื่อดึงข้อมูลลูกค้า/รุ่น..." class="flex-1 border border-slate-300 rounded-lg px-2 py-1 text-xs font-mono uppercase bg-white">
-<button type="button" onclick="autoFillQuotationFromSystemSn()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-2.5 py-1 rounded-lg whitespace-nowrap" title="ดึงชื่อลูกค้า ที่อยู่ รุ่นเครื่อง จากฐานข้อมูล S/N">ดึง S/N</button>
+<input type="text" id="qtQuickSnInput" list="hoshizakiSerialsList" placeholder="ค้นหา S/N เพื่อดึงข้อมูลเครื่อง/บริษัทดูแล..." class="flex-1 border border-slate-300 rounded-lg px-2 py-1 text-xs font-mono uppercase bg-white">
+<button type="button" onclick="autoFillQuotationFromSystemSn()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-2.5 py-1 rounded-lg whitespace-nowrap" title="ดึงข้อมูลลูกค้า/ตัวแทนจำหน่ายที่ดูแล S/N นี้">ดึง S/N</button>
 </div>
-<input type="text" id="qtQuickCustInput" oninput="syncStandaloneQtMetaToDoc()" placeholder="ชื่อลูกค้า / บริษัท *" class="sm:col-span-2 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold bg-white">
+<div class="sm:col-span-2 relative">
+<input type="text" id="qtQuickCustInput" oninput="onStandaloneQtCustomerTyping(this.value); syncStandaloneQtMetaToDoc();" onfocus="onStandaloneQtCustomerTyping(this.value)" placeholder="พิมพ์ชื่อลูกค้า/บริษัท (3 ตัวแรกดึงอัตโนมัติ) *" class="w-full border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold bg-white">
+<div id="qtCustomer3CharDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border-2 border-sky-400 rounded-xl shadow-2xl z-[140] max-h-48 overflow-y-auto divide-y divide-slate-100 text-xs"></div>
+</div>
 <input type="text" id="qtQuickModelInput" list="hoshizakiModelsList" oninput="syncStandaloneQtMetaToDoc()" placeholder="รุ่นเครื่อง (Model)" class="border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">
 <select id="qtQuickPriceTier" onchange="refreshStandaloneQtPartPrice()" class="border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold bg-amber-50 text-[#002B49]" title="เลือกระดับราคา 8 เกรด">
 <option value="DIRECT">ราคาขายตรง (Direct)</option>
@@ -3083,8 +3085,12 @@ HOSHIZAKI (THAILAND) LIMITED · Official Service Document · All Rights Reserved
 <option value="SPECIAL">ราคาพิเศษ (Special)</option>
 </select>
 </div>
+<div id="qtMultiCustodianOptionBar" class="hidden bg-amber-50 border border-amber-300 rounded-lg px-2.5 py-1.5 flex flex-wrap items-center gap-2 text-[11px]">
+<span class="font-extrabold text-amber-950"><i class="fa-solid fa-building-user text-amber-600 mr-1"></i>พบ S/N นี้มีหลายบริษัทดูแล/เกี่ยวข้อง กรุณาเลือกผู้รับใบเสนอราคา:</span>
+<select id="qtMultiCustodianSelect" onchange="applySelectedQtCustodianOption(this.value)" class="flex-1 min-w-[220px] border border-amber-400 rounded-lg px-2 py-1 bg-white font-bold text-[#002B49]"></select>
+</div>
 <div class="grid grid-cols-1 sm:grid-cols-6 gap-1.5">
-<input type="text" id="qtQuickContactInput" oninput="syncStandaloneQtMetaToDoc()" placeholder="ผู้ติดต่อ / เบอร์โทร" class="sm:col-span-2 border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">
+<input type="text" id="qtQuickContactInput" oninput="syncStandaloneQtMetaToDoc()" placeholder="ผู้ติดต่อ / เบอร์โทร / อีเมล" class="sm:col-span-2 border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">
 <input type="text" id="qtQuickAddressInput" oninput="syncStandaloneQtMetaToDoc()" placeholder="ที่อยู่ลูกค้า / สถานที่จัดส่ง" class="sm:col-span-4 border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">
 </div>
 <div class="bg-white p-2 rounded-lg border border-slate-200 space-y-1.5">
@@ -3277,7 +3283,7 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
 <!-- Signature Boxes Table (Exact Rows 45-54 of Reference) -->
 <table class="w-full border-collapse border border-black text-[10.5px] text-center mt-2">
 <tr>
-<td class="border border-black py-1 w-1/4">Isuue By</td>
+<td class="border border-black py-1 w-1/4">Issued By</td>
 <td class="border border-black py-1 w-1/4">Checked By</td>
 <td class="border border-black py-1 w-2/4">Approved By</td>
 </tr>
@@ -6979,6 +6985,7 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             const shortDate = formatShortDateDDMMYY(dateIso);
             if (document.getElementById('recIssueDate')) document.getElementById('recIssueDate').innerText = shortDate;
             if (document.getElementById('recCheckedDate')) document.getElementById('recCheckedDate').innerText = shortDate;
+            if (document.getElementById('recApprovedDate')) document.getElementById('recApprovedDate').innerText = 'Date: ' + shortDate;
         }
 
         async function exportReceiptExcel() {
@@ -7046,7 +7053,7 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                     try {
                         const wb = new ExcelJS.Workbook();
                         wb.creator = 'HOSHIZAKI (THAILAND) LIMITED';
-                        wb.lastModifiedBy = 'HOSHIZAKI Service Management v1046';
+                        wb.lastModifiedBy = 'HOSHIZAKI Service Management v1047';
                         wb.created = new Date();
                         wb.calcProperties = { fullCalcOnLoad: true };
 
@@ -7284,10 +7291,9 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
 
                         ws.getRow(sigHdrRow).height = 20;
                         ws.mergeCells(`A${sigHdrRow}:B${sigHdrRow}`); ws.getCell(`A${sigHdrRow}`).value = 'Issued By';
-                        ws.getCell(`C${sigHdrRow}`).value = 'Checked By';
-                        ws.mergeCells(`D${sigHdrRow}:E${sigHdrRow}`); ws.getCell(`D${sigHdrRow}`).value = 'Approved By';
-                        ws.mergeCells(`F${sigHdrRow}:H${sigHdrRow}`); ws.getCell(`F${sigHdrRow}`).value = 'Confirmed Purchase (Customer)';
-                        ['A', 'C', 'D', 'F'].forEach(col => {
+                        ws.mergeCells(`C${sigHdrRow}:D${sigHdrRow}`); ws.getCell(`C${sigHdrRow}`).value = 'Checked By';
+                        ws.mergeCells(`E${sigHdrRow}:H${sigHdrRow}`); ws.getCell(`E${sigHdrRow}`).value = 'Approved By';
+                        ['A', 'C', 'E'].forEach(col => {
                             const c = ws.getCell(`${col}${sigHdrRow}`);
                             c.font = { name: fontBase, size: 9, bold: true, color: { argb: 'FF002B49' } };
                             c.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -7296,8 +7302,8 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
 
                         ws.getRow(sigImgRow).height = 48;
                         ws.mergeCells(`A${sigImgRow}:B${sigImgRow}`);
-                        ws.mergeCells(`D${sigImgRow}:E${sigImgRow}`);
-                        ws.mergeCells(`F${sigImgRow}:H${sigImgRow}`);
+                        ws.mergeCells(`C${sigImgRow}:D${sigImgRow}`);
+                        ws.mergeCells(`E${sigImgRow}:H${sigImgRow}`);
 
                         const extractSigBase64 = (boxId, fallbackCanvasId) => {
                             const boxImg = document.querySelector(`#${boxId} img`);
@@ -7312,34 +7318,30 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                         const sigPlacements = [
                             { dataUrl: extractSigBase64('recIssueSigBox', 'sigTech'), col: 0, row: sigImgRow - 1 },
                             { dataUrl: extractSigBase64('recCheckedSigBox', 'sigServiceMgr'), col: 2, row: sigImgRow - 1 },
-                            { dataUrl: extractSigBase64('recApprovedSigBox', 'sigServiceMgr'), col: 3, row: sigImgRow - 1 },
-                            { dataUrl: extractSigBase64('recCustSigBox', 'sigCustomer'), col: 6, row: sigImgRow - 1 }
+                            { dataUrl: extractSigBase64('recApprovedSigBox', 'sigServiceMgr'), col: 5, row: sigImgRow - 1 }
                         ];
                         sigPlacements.forEach(sp => {
                             if (sp.dataUrl && sp.dataUrl.startsWith('data:image/')) {
                                 try {
                                     const imgId = wb.addImage({ base64: sp.dataUrl, extension: 'png' });
-                                    ws.addImage(imgId, { tl: { col: sp.col, row: sp.row }, ext: { width: 110, height: 42 } });
+                                    ws.addImage(imgId, { tl: { col: sp.col, row: sp.row }, ext: { width: 112, height: 42 } });
                                 } catch (eSig) {}
                             }
                         });
 
-                        const issueSignerName = document.getElementById('recIssueSignerName')?.innerText?.trim() || 'MS.WANWIPHA';
-                        const checkedSignerName = document.getElementById('recCheckedSignerName')?.innerText?.trim() || 'MR.THANAKRIT';
-                        const approvedSignerName = document.getElementById('recApprovedSignerName')?.innerText?.trim() || 'MR.NOPARIN HOMHOUL';
-                        const custSignerName = document.getElementById('nameCustomer')?.value?.trim() || custName || 'ผู้มีอำนาจลงนามสั่งซื้อ';
+                        const issueSignerName = 'MS.WANWIPHA';
+                        const checkedSignerName = 'MR.THANAKRIT';
+                        const approvedSignerName = 'MR.THANAKRIT CHANMOKONPANIT';
 
                         ws.getRow(sigNameRow).height = 19;
                         ws.getRow(sigRoleRow).height = 18;
                         ws.mergeCells(`A${sigNameRow}:B${sigNameRow}`); ws.getCell(`A${sigNameRow}`).value = issueSignerName;
-                        ws.getCell(`C${sigNameRow}`).value = checkedSignerName;
-                        ws.mergeCells(`D${sigNameRow}:E${sigNameRow}`); ws.getCell(`D${sigNameRow}`).value = approvedSignerName;
-                        ws.mergeCells(`F${sigNameRow}:H${sigNameRow}`); ws.getCell(`F${sigNameRow}`).value = custSignerName;
+                        ws.mergeCells(`C${sigNameRow}:D${sigNameRow}`); ws.getCell(`C${sigNameRow}`).value = checkedSignerName;
+                        ws.mergeCells(`E${sigNameRow}:H${sigNameRow}`); ws.getCell(`E${sigNameRow}`).value = approvedSignerName;
 
                         ws.mergeCells(`A${sigRoleRow}:B${sigRoleRow}`); ws.getCell(`A${sigRoleRow}`).value = `Date: ${shortDate}`;
-                        ws.getCell(`C${sigRoleRow}`).value = `Date: ${shortDate}`;
-                        ws.mergeCells(`D${sigRoleRow}:E${sigRoleRow}`); ws.getCell(`D${sigRoleRow}`).value = 'Authorized Signature';
-                        ws.mergeCells(`F${sigRoleRow}:H${sigRoleRow}`); ws.getCell(`F${sigRoleRow}`).value = 'Purchased Signature / Date';
+                        ws.mergeCells(`C${sigRoleRow}:D${sigRoleRow}`); ws.getCell(`C${sigRoleRow}`).value = `Date: ${shortDate}`;
+                        ws.mergeCells(`E${sigRoleRow}:H${sigRoleRow}`); ws.getCell(`E${sigRoleRow}`).value = `Date: ${shortDate} (ผู้มีอำนาจอนุมัติ / Authorized Signature)`;
 
                         for (let r = sigHdrRow; r <= sigRoleRow; r++) {
                             for (let c = 1; c <= 8; c++) {
@@ -7349,6 +7351,29 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                                     cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
                                     cell.font = { name: fontBase, size: 9, bold: r === sigNameRow };
                                 }
+                            }
+                        }
+
+                        const confHdrRow = sigRoleRow + 1;
+                        const confSignRow = sigRoleRow + 2;
+                        ws.getRow(confHdrRow).height = 20;
+                        ws.getRow(confSignRow).height = 46;
+                        ws.mergeCells(`E${confHdrRow}:H${confHdrRow}`);
+                        ws.getCell(`E${confHdrRow}`).value = 'Confirmed Purchase';
+                        ws.getCell(`E${confHdrRow}`).font = { name: fontBase, size: 9, bold: true, color: { argb: 'FF002B49' } };
+                        ws.getCell(`E${confHdrRow}`).alignment = { horizontal: 'center', vertical: 'middle' };
+                        ws.getCell(`E${confHdrRow}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
+
+                        ws.mergeCells(`E${confSignRow}:H${confSignRow}`);
+                        ws.getCell(`E${confSignRow}`).value = `......................................................
+ชื่อผู้สั่งซื้อ / Purchased Signature
+Date : ${shortDate}`;
+                        ws.getCell(`E${confSignRow}`).font = { name: fontBase, size: 8.5 };
+                        ws.getCell(`E${confSignRow}`).alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+
+                        for (let r = confHdrRow; r <= confSignRow; r++) {
+                            for (let c = 5; c <= 8; c++) {
+                                ws.getRow(r).getCell(c).border = thinBorder;
                             }
                         }
 
@@ -18553,7 +18578,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             } catch (e) {}
         });
     </script>
-<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1046-GOLIVE) -->
+<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1047-QT-PRO) -->
 <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
 <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
 <!-- Top Navy Header -->
@@ -21299,7 +21324,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             };
         }
 
-        // Override exportBackupJSON to export complete enterprise snapshot + push cloud snapshot automatically (v1046-GOLIVE hardened)
+        // Override exportBackupJSON to export complete enterprise snapshot + push cloud snapshot automatically (v1047-QT-PRO hardened)
         exportBackupJSON = async function(silentAuto = false) {
             let snapshot = null;
             try {
@@ -21314,7 +21339,7 @@ function openFullScreenSpecViewerModal(presetModel) {
                 const qtsArr = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
                 snapshot = {
                     app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
-                    version: '1046-GOLIVE',
+                    version: '1047-QT-PRO',
                     exportedAt: new Date().toISOString(),
                     recordCounts: { jobs: jobsArr.length, quotations: qtsArr.length },
                     payload: { jobHistory: jobsArr, quotationsHistory: qtsArr }
@@ -21451,7 +21476,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1046-GOLIVE AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1047-QT-PRO AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -29305,7 +29330,7 @@ transition: all 0.15s ease;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1046-GOLIVE)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1047-QT-PRO)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -29499,7 +29524,7 @@ display: none !important;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1046-GOLIVE)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1047-QT-PRO)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -29508,7 +29533,7 @@ display: none !important;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1046-GOLIVE)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1047-QT-PRO)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -29517,7 +29542,7 @@ display: none !important;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1046-GOLIVE)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1047-QT-PRO)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -29599,21 +29624,21 @@ display: none !important;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1046-GOLIVE) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1047-QT-PRO) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1046-GOLIVE Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1047-QT-PRO Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1046-GOLIVE）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1047-QT-PRO）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -32625,9 +32650,9 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1046-GOLIVE',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1046-GOLIVE)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1046-GOLIVE)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1047-QT-PRO',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1047-QT-PRO)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1047-QT-PRO)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -32676,7 +32701,7 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1046-GOLIVE Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1047-QT-PRO Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -32900,7 +32925,7 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
 <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
 <div>
-<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1046-GOLIVE — Multi-Branch &amp; White-Label Ready)</h3>
+<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1047-QT-PRO — Multi-Branch &amp; White-Label Ready)</h3>
 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
 </div>
 <div class="flex items-center gap-1.5">
@@ -36926,7 +36951,7 @@ CUSTOMER CSAT & 7-DAY POST-SERVICE QUALITY RADAR MODAL (v1021-CSAT-RADAR)
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1046-GOLIVE — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1047-QT-PRO — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -37451,7 +37476,7 @@ FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1046-GOLIVE</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1047-QT-PRO</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -38359,7 +38384,7 @@ Accounting VAT/WHT Ledger, Invoice/Receipt & NAV ERP Export • Audit Trail)
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1046-GOLIVE</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1047-QT-PRO</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -39909,7 +39934,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1046-GOLIVE</span>
+<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1047-QT-PRO</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
 </div>
@@ -39953,7 +39978,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1046-GOLIVE</span>
+<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1047-QT-PRO</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
 </div>

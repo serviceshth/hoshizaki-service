@@ -5511,7 +5511,7 @@
 
 
 // ============================================================================
-// --- Module Block #55 (Enterprise v1046-GOLIVE: Sole Super Admin Control
+// --- Module Block #55 (Enterprise v1047-QT-PRO: Sole Super Admin Control
 //     for Mr. Noparin Homhoul, SHA-256 + Salt Vault, Temp Password Generator,
 //     8-Department RBAC, Account Lock/Unlock & Immediate System_Audit_Log Sync) ---
 // ============================================================================
@@ -6435,7 +6435,7 @@
 
 
 // ============================================================================
-// --- Module Block #56 (Enterprise v1046-GOLIVE: Two-Way Cloud Credential Pull,
+// --- Module Block #56 (Enterprise v1047-QT-PRO: Two-Way Cloud Credential Pull,
 //     Live System_Audit_Log Viewer & CSV Export, Global Command Palette Ctrl+K,
 //     100-Seat Multi-Branch Roster Manager, 1-Click Predictive Quote & LINE Flex,
 //     and IndexedDB Cold-Archive & Storage Auto-Compaction Engine) ---
@@ -6443,9 +6443,9 @@
 (function() {
   const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
-  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1046';
-  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1046';
-  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1046';
+  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1047';
+  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1047';
+  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1047';
 
   const HZK_BRANCH_DIRECTORY = [
     { code: 'ALL', name: 'ทุกสาขาทั่วประเทศ (All Thailand Branches)', region: 'Nationwide' },
@@ -6533,7 +6533,7 @@
       const resp = await fetch(gasUrl + sep + 'action=getSecurityAuditLogs&limit=100&_t=' + Date.now(), { method: 'GET' });
       const data = await resp.json();
       if (data && data.status === 'ok' && Array.isArray(data.logs)) {
-        localStorage.setItem('hoshizaki_cloud_audit_cache_v1046', JSON.stringify(data.logs));
+        localStorage.setItem('hoshizaki_cloud_audit_cache_v1047', JSON.stringify(data.logs));
         if (typeof window.renderAdminSecurityRbacPanel === 'function') {
           await window.renderAdminSecurityRbacPanel();
         }
@@ -6548,7 +6548,7 @@
 
   window.exportSecurityAuditCsv = function() {
     const localLogs = JSON.parse(localStorage.getItem('hoshizaki_immutable_audit_log_v1033') || '[]');
-    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1046') || '[]');
+    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1047') || '[]');
     const rows = [['Timestamp', 'Category/Actor', 'Target', 'Detail']];
     cloudLogs.forEach(c => rows.push([c.timestamp || '', `${c.actorName || ''} (${c.actorId || ''})`, c.targetId || '', c.event || '']));
     localLogs.forEach(l => rows.push([l.timestamp || '', l.category || '', l.actor || '', l.detail || '']));
@@ -6571,16 +6571,16 @@
       await _origRenderAdminSecurityRbacPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (!panel || panel.querySelector('#v1046OmniSecurityEnhancementBar')) return;
+    if (!panel || panel.querySelector('#v1047OmniSecurityEnhancementBar')) return;
 
-    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1046') || '[]');
+    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1047') || '[]');
     const bar = document.createElement('div');
-    bar.id = 'v1046OmniSecurityEnhancementBar';
+    bar.id = 'v1047OmniSecurityEnhancementBar';
     bar.className = 'p-3 rounded-xl bg-sky-50 border border-sky-200 space-y-2.5';
     bar.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="text-xs font-extrabold text-[#002B49]">
-          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1046-GOLIVE: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
+          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1047-QT-PRO: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
         </div>
         <div class="flex flex-wrap gap-1.5">
           <button type="button" onclick="pullUserCredentialsVaultFromCloud(false).then(() => renderAdminSecurityRbacPanel())" class="px-2.5 py-1.5 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[11px]">
@@ -6737,7 +6737,7 @@
           </div>
           <div id="omniCommandResultsList" class="max-h-96 overflow-y-auto divide-y divide-slate-100 p-2 bg-slate-50/70"></div>
           <div class="bg-slate-100 px-4 py-2 text-[10.5px] text-slate-500 flex items-center justify-between">
-            <span>HOSHIZAKI Enterprise v1046-GOLIVE • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
+            <span>HOSHIZAKI Enterprise v1047-QT-PRO • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
             <span>กด <kbd class="px-1.5 py-0.5 bg-white border rounded font-mono">Ctrl+K</kbd> ได้ทุกหน้า</span>
           </div>
         </div>
@@ -7032,15 +7032,15 @@
 
 
 // ============================================================================
-// --- Module Block #57 (Enterprise v1046-GOLIVE: Tailored ≤30-Seat Org Architecture,
+// --- Module Block #57 (Enterprise v1047-QT-PRO: Tailored ≤30-Seat Org Architecture,
 //     Auto Google Sheets Cloud Backup with Live Progress Status Bar,
 //     Role-Personalized Daily Workspace, Cross-Dept SLA Handoff Queue,
 //     Revenue Leakage & 2-Way Reconciliation Audit, Technician Skill Matrix & OT,
 //     and Comprehensive Deep Self-Test & Auto-Heal across ALL 28 Modules) ---
 // ============================================================================
 (function() {
-  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1046';
-  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1046';
+  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1047';
+  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1047';
   const ACTIVE_SESSION_KEY = 'hoshizaki_active_auth_session_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
 
@@ -7064,7 +7064,7 @@
       : (localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '');
 
     // Check if already auto-backed up within last 12 hours unless forced
-    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1046') || '0');
+    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1047') || '0');
     if (!forceNow && lastCloudTs > 0 && (Date.now() - lastCloudTs) < 12 * 60 * 60 * 1000 && history.length === 0) {
       return;
     }
@@ -7102,7 +7102,7 @@
         ? await buildFullEnterpriseSnapshotObject()
         : {
             app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
-            version: '1046-GOLIVE',
+            version: '1047-QT-PRO',
             exportedAt: new Date().toISOString(),
             recordCounts: { jobs: history.length, quotations: qts.length },
             payload: { jobHistory: history, quotationsHistory: qts }
@@ -7123,7 +7123,7 @@
 
       const nowIso = new Date().toISOString();
       const timeLabel = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1046', String(Date.now()));
+      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1047', String(Date.now()));
       localStorage.setItem('hoshizaki_last_backup_at', nowIso);
       localStorage.setItem('hoshizaki_last_cloud_auto_backup_date', nowIso.split('T')[0]);
 
@@ -7662,7 +7662,7 @@
     }
 
     const passed = checks.filter(c => c.ok).length;
-    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1046-GOLIVE)</span>`;
+    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1047-QT-PRO)</span>`;
     listEl.innerHTML = checks.map(c => `
       <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/75 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
         <div>
@@ -7749,7 +7749,7 @@
 
 
 // ============================================================================
-// --- Module Block #58 (Enterprise v1046-GOLIVE: Standalone Quotation Studio,
+// --- Module Block #58 (Enterprise v1047-QT-PRO: Standalone Quotation Studio,
 //     Hardened Auto Google Sheets Backup + Dismiss Logic, 1-Click Onboarding
 //     Credential Slip, Production Go-Live Clean Reset, Offline Sync Conflict
 //     Resolver, PM Lifecycle Renewal Radar & 30-Point Deep Self-Test) ---
@@ -8172,7 +8172,7 @@
     if (typeof window.purgeAllV1040ExampleRecords === 'function') {
       window.purgeAllV1040ExampleRecords();
     }
-    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1046');
+    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1047');
     localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1045');
     if (typeof window.renderMyDailyRoleWorkspace === 'function') {
       window.renderMyDailyRoleWorkspace();
@@ -8262,13 +8262,13 @@
       await _prevRenderSecPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (panel && !document.getElementById('v1046GoLiveToolsBar')) {
+    if (panel && !document.getElementById('v1047GoLiveToolsBar')) {
       const bar = document.createElement('div');
-      bar.id = 'v1046GoLiveToolsBar';
+      bar.id = 'v1047GoLiveToolsBar';
       bar.className = 'mt-3 p-3 rounded-xl bg-emerald-50 border border-emerald-300 flex flex-wrap items-center justify-between gap-2 text-xs';
       bar.innerHTML = `
         <div>
-          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1046 Go-Live Readiness)</div>
+          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1047 Go-Live Readiness)</div>
           <div class="text-[11px] text-emerald-800">ล้างข้อมูลตัวอย่างก่อนเริ่มงานจริง หรือเปิดดูเรดาร์อายุเครื่องเพื่อต่อสัญญา PM รายปี</div>
         </div>
         <div class="flex flex-wrap gap-1.5">
@@ -8278,5 +8278,738 @@
       `;
       panel.insertBefore(bar, panel.firstChild);
     }
+  };
+})();
+
+
+// ============================================================================
+// --- Module Block #59 (Enterprise v1047-QT-PRO: 3-Char Customer Smart Search,
+//     Multi-Custodian S/N Selector, Save QT + PDF + Auto-Sync Sheets, Load & Edit
+//     Saved QT, and Unified Omni-Share Hub across ALL System Documents) ---
+// ============================================================================
+(function() {
+  let _multiCustodianCandidates = [];
+
+  function collectAllKnownCustomers_() {
+    const map = new Map();
+    function addEntry(name, contact, address, tier, source) {
+      const clean = String(name || '').trim();
+      if (!clean || clean === '-' || clean.length < 2) return;
+      const key = clean.toUpperCase();
+      const prev = map.get(key) || { name: clean, contact: '', address: '', tier: 'DIRECT', source: source };
+      if (contact && !prev.contact) prev.contact = String(contact).trim();
+      if (address && !prev.address) prev.address = String(address).trim();
+      if (tier && tier !== 'DIRECT') prev.tier = tier;
+      map.set(key, prev);
+    }
+
+    try {
+      const jobs = typeof getJobHistorySync === 'function' ? getJobHistorySync() : JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+      jobs.forEach(j => addEntry(j.store, j.contact, j.address, j.priceTier || 'DIRECT', 'ประวัติใบงาน'));
+    } catch (e) {}
+
+    try {
+      const qts = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
+      qts.forEach(q => addEntry(q.customerStore || q.customer, q.contact, q.address, q.priceTier || 'DIRECT', 'ใบเสนอราคา'));
+    } catch (e2) {}
+
+    try {
+      const dealers = JSON.parse(localStorage.getItem('hoshizaki_dealer_channel_directory_v1035') || '[]');
+      dealers.forEach(d => {
+        const t = d.channelType === 'DEALER_A' ? 'A' : (d.channelType === 'DEALER_B' ? 'B' : (d.channelType === 'DEALER_C' ? 'C' : 'DIRECT'));
+        addEntry(d.name, [d.phone, d.email].filter(Boolean).join(' / '), d.province || '', t, 'ทำเนียบดีลเลอร์');
+      });
+    } catch (e3) {}
+
+    try {
+      if (typeof BUILTIN_SERIAL_ROWS !== 'undefined' && Array.isArray(BUILTIN_SERIAL_ROWS)) {
+        for (let i = 0; i < BUILTIN_SERIAL_ROWS.length; i++) {
+          const c = String(BUILTIN_SERIAL_ROWS[i][5] || '').trim();
+          if (c && c !== '-') addEntry(c, '', '', 'DIRECT', 'ฐานข้อมูล S/N');
+        }
+      }
+    } catch (e4) {}
+
+    return Array.from(map.values());
+  }
+
+  window.onStandaloneQtCustomerTyping = function(rawText) {
+    const dd = document.getElementById('qtCustomer3CharDropdown');
+    if (!dd) return;
+    const q = String(rawText || '').trim();
+    if (q.length < 3) {
+      dd.classList.add('hidden');
+      dd.innerHTML = '';
+      return;
+    }
+    const qLow = q.toLowerCase();
+    const matches = collectAllKnownCustomers_()
+      .filter(c => c.name.toLowerCase().includes(qLow))
+      .slice(0, 12);
+
+    if (matches.length === 0) {
+      dd.classList.add('hidden');
+      return;
+    }
+
+    dd.innerHTML = matches.map((c, idx) => `
+      <button type="button" onclick="selectStandaloneQtCustomerSuggestion(${idx})" data-cust-json="${encodeURIComponent(JSON.stringify(c))}" class="qt-cust-sug-btn w-full text-left px-3 py-2 hover:bg-sky-50 transition flex items-start justify-between gap-2">
+        <div class="min-w-0 flex-1">
+          <div class="font-extrabold text-[#002B49] truncate">${escapeHtml(c.name)}</div>
+          <div class="text-[10.5px] text-slate-600 truncate">${escapeHtml(c.contact || 'ไม่มีข้อมูลผู้ติดต่อ')} · ${escapeHtml(c.address || 'ไม่ระบุที่อยู่')}</div>
+        </div>
+        <span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-900 text-[9.5px] font-bold whitespace-nowrap">${escapeHtml(c.source)}</span>
+      </button>
+    `).join('');
+    dd.classList.remove('hidden');
+  };
+
+  window.selectStandaloneQtCustomerSuggestion = function(idx) {
+    const dd = document.getElementById('qtCustomer3CharDropdown');
+    const btns = dd ? dd.querySelectorAll('.qt-cust-sug-btn') : [];
+    const btn = btns[idx];
+    if (!btn) return;
+    try {
+      const c = JSON.parse(decodeURIComponent(btn.getAttribute('data-cust-json') || '{}'));
+      window.HZK_STANDALONE_QT_STATE.isStandaloneMode = true;
+      window.HZK_STANDALONE_QT_STATE.customer = c.name || '';
+      window.HZK_STANDALONE_QT_STATE.contact = c.contact || '';
+      window.HZK_STANDALONE_QT_STATE.address = c.address || '';
+      if (document.getElementById('qtQuickCustInput')) document.getElementById('qtQuickCustInput').value = c.name || '';
+      if (document.getElementById('qtQuickContactInput')) document.getElementById('qtQuickContactInput').value = c.contact || '';
+      if (document.getElementById('qtQuickAddressInput')) document.getElementById('qtQuickAddressInput').value = c.address || '';
+      if (c.tier && document.getElementById('qtQuickPriceTier')) document.getElementById('qtQuickPriceTier').value = c.tier;
+      dd.classList.add('hidden');
+      if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+      if (typeof showToast === 'function') showToast('✅ ดึงข้อมูลลูกค้า "' + c.name + '" เข้าใบเสนอราคาเรียบร้อย');
+    } catch (e) {}
+  };
+
+  document.addEventListener('click', function(e) {
+    const dd = document.getElementById('qtCustomer3CharDropdown');
+    const inp = document.getElementById('qtQuickCustInput');
+    if (dd && inp && !dd.contains(e.target) && e.target !== inp) {
+      dd.classList.add('hidden');
+    }
+  });
+
+  // Override autoFillQuotationFromSystemSn to detect MULTIPLE companies/dealers managing the same S/N!
+  window.autoFillQuotationFromSystemSn = function() {
+    const sn = (document.getElementById('qtQuickSnInput')?.value || '').trim().toUpperCase();
+    if (!sn) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุ Serial Number (S/N) ก่อนกดดึงข้อมูลครับ');
+      return;
+    }
+
+    const candidatesMap = new Map();
+    let detectedModel = '';
+
+    function pushCandidate(companyName, roleTag, contact, address, modelVal, priceTier) {
+      const cleanName = String(companyName || '').trim();
+      if (!cleanName || cleanName === '-') return;
+      if (modelVal && !detectedModel) detectedModel = String(modelVal).trim();
+      const key = cleanName.toUpperCase() + '|' + roleTag;
+      if (!candidatesMap.has(key)) {
+        candidatesMap.set(key, {
+          name: cleanName,
+          roleTag: roleTag,
+          contact: contact || '',
+          address: address || '',
+          model: modelVal || detectedModel || '',
+          priceTier: priceTier || 'DIRECT'
+        });
+      }
+    }
+
+    // 1. Check Custom Serial Updates & Builtin Serial DB (Sales / Dealer Owner)
+    try {
+      const customUpdates = JSON.parse(localStorage.getItem('hoshizaki_serial_updates') || '[]');
+      customUpdates.filter(x => String(x.serial || '').toUpperCase() === sn && !x.deleted).forEach(u => {
+        pushCandidate(u.customer, 'เจ้าของ/ตัวแทนในฐาน S/N', '', '', u.model, 'DIRECT');
+      });
+      if (typeof BUILTIN_SERIAL_ROWS !== 'undefined' && Array.isArray(BUILTIN_SERIAL_ROWS)) {
+        BUILTIN_SERIAL_ROWS.filter(r => String(r[0] || '').trim().toUpperCase() === sn).forEach(r => {
+          pushCandidate(r[5], 'บัญชีผู้ซื้อในฐาน S/N (' + (r[3] || '-') + ')', '', '', r[2], 'DIRECT');
+        });
+      }
+    } catch (e) {}
+
+    // 2. Check Service Job History (Site / Store AND Dealer managing this machine)
+    try {
+      const jobs = typeof getJobHistorySync === 'function' ? getJobHistorySync() : JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+      jobs.filter(j => String(j.serial || '').trim().toUpperCase() === sn).forEach(j => {
+        if (j.store) pushCandidate(j.store, 'สถานที่ติดตั้ง / ร้านค้าหน้างาน', j.contact, j.address, j.model, 'DIRECT');
+        if (j.dealer && j.dealer !== '-' && j.dealer !== j.store) {
+          pushCandidate(j.dealer, 'ตัวแทนจำหน่ายที่ดูแล (Dealer)', j.contact, '', j.model, 'A');
+        }
+      });
+    } catch (e2) {}
+
+    // 3. Check Quotation History
+    try {
+      const qts = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
+      qts.filter(q => String(q.serial || '').trim().toUpperCase() === sn).forEach(q => {
+        if (q.customerStore) pushCandidate(q.customerStore, 'เคยออกใบเสนอราคา (' + (q.offerNo || 'QT') + ')', q.contact, q.address, q.model, q.priceTier || 'DIRECT');
+      });
+    } catch (e3) {}
+
+    _multiCustodianCandidates = Array.from(candidatesMap.values());
+    const multiBar = document.getElementById('qtMultiCustodianOptionBar');
+    const multiSel = document.getElementById('qtMultiCustodianSelect');
+
+    if (_multiCustodianCandidates.length === 0) {
+      if (multiBar) multiBar.classList.add('hidden');
+      if (typeof showToast === 'function') showToast('ไม่พบข้อมูล S/N: ' + sn + ' ในฐานข้อมูล (สามารถพิมพ์ชื่อลูกค้าและรุ่นเองได้ทันที)');
+      return;
+    }
+
+    if (_multiCustodianCandidates.length > 1 && multiBar && multiSel) {
+      multiSel.innerHTML = _multiCustodianCandidates.map((c, idx) =>
+        `<option value="${idx}">${idx + 1}. ${escapeHtml(c.name)} — [${escapeHtml(c.roleTag)}]</option>`
+      ).join('');
+      multiBar.classList.remove('hidden');
+    } else if (multiBar) {
+      multiBar.classList.add('hidden');
+    }
+
+    window.applySelectedQtCustodianOption(0);
+    if (typeof showToast === 'function') {
+      showToast(_multiCustodianCandidates.length > 1
+        ? `🏢 พบ S/N: ${sn} มี ${_multiCustodianCandidates.length} บริษัทที่ดูแล/เกี่ยวข้อง สามารถเลือกสลับผู้รับใบเสนอราคาได้ทันที`
+        : `✅ ดึงข้อมูลเครื่อง S/N: ${sn} (${_multiCustodianCandidates[0].name}) ลงใบเสนอราคาแล้ว`);
+    }
+  };
+
+  window.applySelectedQtCustodianOption = function(idxStr) {
+    const idx = parseInt(idxStr, 10) || 0;
+    const chosen = _multiCustodianCandidates[idx];
+    if (!chosen) return;
+    const sn = (document.getElementById('qtQuickSnInput')?.value || '').trim().toUpperCase();
+    window.HZK_STANDALONE_QT_STATE.isStandaloneMode = true;
+    window.HZK_STANDALONE_QT_STATE.serial = sn;
+    window.HZK_STANDALONE_QT_STATE.customer = chosen.name || '';
+    window.HZK_STANDALONE_QT_STATE.model = chosen.model || '';
+    window.HZK_STANDALONE_QT_STATE.contact = chosen.contact || '';
+    window.HZK_STANDALONE_QT_STATE.address = chosen.address || '';
+
+    if (document.getElementById('qtQuickCustInput')) document.getElementById('qtQuickCustInput').value = chosen.name || '';
+    if (document.getElementById('qtQuickModelInput')) document.getElementById('qtQuickModelInput').value = chosen.model || '';
+    if (document.getElementById('qtQuickContactInput')) document.getElementById('qtQuickContactInput').value = chosen.contact || '';
+    if (document.getElementById('qtQuickAddressInput')) document.getElementById('qtQuickAddressInput').value = chosen.address || '';
+    if (chosen.priceTier && document.getElementById('qtQuickPriceTier')) document.getElementById('qtQuickPriceTier').value = chosen.priceTier;
+
+    if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+  };
+
+  // Populate Saved Quotations Datalist so user can pick & edit any saved QT anytime
+  window.refreshSavedQtOffersDatalist = function() {
+    const dl = document.getElementById('hzkSavedQtOffersList');
+    if (!dl) return;
+    const qts = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
+    dl.innerHTML = qts.slice(0, 60).map(q =>
+      `<option value="${escapeHtml(q.offerNo || '')}">${escapeHtml((q.customerStore || '') + ' (' + (q.grandTotal || '0.00') + ' THB)')}</option>`
+    ).join('');
+  };
+
+  // Load Existing Saved Quotation into Studio for Editing!
+  window.loadExistingQuotationForEdit = function() {
+    const targetNo = (document.getElementById('qtLoadEditOfferNoInput')?.value || '').trim().toUpperCase();
+    if (!targetNo) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาพิมพ์หรือเลือกเลขที่ใบเสนอราคา (เช่น QT-202611-001) ก่อนกดดึงแก้ไข');
+      return;
+    }
+    const qts = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
+    const found = qts.find(q => String(q.offerNo || '').trim().toUpperCase() === targetNo);
+    if (!found) {
+      if (typeof showToast === 'function') showToast('❌ ไม่พบใบเสนอราคาเลขที่ ' + targetNo + ' ในคลังบันทึก');
+      return;
+    }
+
+    window.currentOfferNo = found.offerNo;
+    window.HZK_STANDALONE_QT_STATE = {
+      isStandaloneMode: true,
+      offerNo: found.offerNo,
+      customer: found.customerStore || '',
+      contact: found.contact || '',
+      address: found.address || '',
+      model: found.model || '',
+      serial: found.serial || '',
+      priceTier: found.priceTier || 'DIRECT',
+      customItems: Array.isArray(found.lineItems) ? JSON.parse(JSON.stringify(found.lineItems)) : [],
+      bottomRemark: found.remark || ''
+    };
+
+    if (document.getElementById('qtQuickSnInput')) document.getElementById('qtQuickSnInput').value = found.serial || '';
+    if (document.getElementById('qtQuickCustInput')) document.getElementById('qtQuickCustInput').value = found.customerStore || '';
+    if (document.getElementById('qtQuickModelInput')) document.getElementById('qtQuickModelInput').value = found.model || '';
+    if (document.getElementById('qtQuickContactInput')) document.getElementById('qtQuickContactInput').value = found.contact || '';
+    if (document.getElementById('qtQuickAddressInput')) document.getElementById('qtQuickAddressInput').value = found.address || '';
+    if (document.getElementById('qtQuickPriceTier')) document.getElementById('qtQuickPriceTier').value = found.priceTier || 'DIRECT';
+    if (document.getElementById('qtQuickBottomRemarkInput')) document.getElementById('qtQuickBottomRemarkInput').value = found.remark || '';
+    if (document.getElementById('recCustomRemarkInput')) document.getElementById('recCustomRemarkInput').value = found.remark || '';
+
+    const pill = document.getElementById('qtBuilderModePill');
+    if (pill) {
+      pill.textContent = '✏️ โหมดแก้ไขใบเสนอราคา (' + found.offerNo + ')';
+      pill.className = 'px-2 py-0.5 rounded-full bg-amber-600 text-white text-[10px] font-extrabold';
+    }
+
+    if (typeof renderReceiptDocument === 'function') renderReceiptDocument();
+    if (typeof showToast === 'function') showToast('📂 โหลดใบเสนอราคา ' + found.offerNo + ' เข้าสู่โหมดแก้ไขเรียบร้อยแล้ว');
+  };
+
+  // Full-Cycle Save: Save to Local History + Generate PDF + Auto-Sync to Google Sheets!
+  window.saveStandaloneQuotationFullCycle = async function(downloadPdfToo) {
+    const offerNo = (document.getElementById('recOfferNo')?.innerText || window.currentOfferNo || '').trim();
+    const customerStore = (document.getElementById('recCustName')?.innerText || '').trim();
+    const contact = (document.getElementById('recContactName')?.innerText || '').trim();
+    const address = (document.getElementById('recAddress')?.innerText || '').trim();
+    const model = (document.getElementById('qtQuickModelInput')?.value || document.getElementById('eqModel')?.value || '-').trim();
+    const serial = (document.getElementById('qtQuickSnInput')?.value || document.getElementById('eqSerial')?.value || '-').trim();
+    const priceTier = document.getElementById('qtQuickPriceTier')?.value || 'DIRECT';
+    const subtotal = (document.getElementById('recSubtotal')?.innerText || '0.00').trim();
+    const vat = (document.getElementById('recVat')?.innerText || '0.00').trim();
+    const wht = (document.getElementById('recWht')?.innerText || '0.00').trim();
+    const grandTotal = (document.getElementById('recTotal')?.innerText || '0.00').trim();
+    const remark = (document.getElementById('recCustomRemarkInput')?.value || '').trim();
+    const dateIso = document.getElementById('jobDate')?.value || new Date().toISOString().split('T')[0];
+
+    // Collect line items from table so they can be reloaded & edited anytime
+    const lineItems = [];
+    document.querySelectorAll('#receiptTableBody tr').forEach(tr => {
+      const tds = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
+      if (tds.length >= 8 && tds[2]) {
+        lineItems.push({
+          partNo: tds[1] || 'ITEM',
+          desc: tds[2],
+          unitPrice: parseFloat((tds[3] || '0').replace(/,/g, '')) || 0,
+          qty: parseFloat((tds[6] || '1').replace(/,/g, '')) || 1
+        });
+      }
+    });
+
+    const partsSummary = lineItems.map(x => `${x.partNo}: ${x.desc} (x${x.qty})`).join('; ');
+    const recordObj = {
+      offerNo,
+      docType: window.currentFinancialDocMode || 'QUOTATION',
+      refJobNo: (document.getElementById('recRefJobNo')?.innerText || '').trim(),
+      date: dateIso,
+      customerStore,
+      contact,
+      address,
+      model,
+      serial,
+      priceTier,
+      lineItems,
+      partsSummary,
+      subtotal,
+      vat,
+      wht,
+      grandTotal,
+      remark,
+      technician: document.getElementById('techQuickProfileName')?.innerText?.trim() || 'MS.WANWIPHA',
+      updatedAt: new Date().toISOString()
+    };
+
+    // 1. Save / Upsert into Local Storage Quotation History
+    const qts = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
+    const idx = qts.findIndex(x => String(x.offerNo || '').toUpperCase() === offerNo.toUpperCase());
+    if (idx >= 0) qts[idx] = recordObj;
+    else qts.unshift(recordObj);
+    localStorage.setItem('hoshizaki_quotations_history', JSON.stringify(qts.slice(0, 500)));
+    window.refreshSavedQtOffersDatalist();
+
+    // 2. Auto-Sync to Google Sheets ("Quotations" tab + PDF Drive Archive)
+    const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+    if (webhookUrl && navigator.onLine) {
+      fetch(webhookUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.assign({ actionType: 'SAVE_QUOTATION', autoPdfBackup: true }, recordObj))
+      }).catch(() => {});
+    }
+
+    // 3. Generate & Download Crisp A4 PDF File if requested
+    if (downloadPdfToo && typeof html2pdf !== 'undefined') {
+      const el = document.getElementById('receiptContainer');
+      if (el) {
+        try {
+          await html2pdf().set({
+            margin: 6,
+            filename: `${recordObj.docType}_${offerNo}.pdf`,
+            image: { type: 'jpeg', quality: 0.96 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(el).save();
+        } catch (ePdf) {}
+      }
+    }
+
+    if (typeof showToast === 'function') {
+      showToast(`✅ บันทึกใบเสนอราคา ${offerNo} เข้าระบบ${downloadPdfToo ? ' + สร้างไฟล์ PDF' : ''} และ Auto-Sync ขึ้น Google Sheets เรียบร้อย!`);
+    }
+    return recordObj;
+  };
+
+  // ==========================================================================
+  // UNIFIED OMNI-SHARE HUB (ACROSS ALL SYSTEM DOCUMENTS: QT/IV/RE, JOB REPORT,
+  // WARRANTY CLAIM, PM CERTIFICATE, WAREHOUSE INSPECTION & QCF)
+  // Solves Desktop Browser LINE Login issue + Supports Native Mobile PDF Share,
+  // OA Cloud Push, PC Copy-Paste, Email with PDF Attachment & Mobile SMS!
+  // ==========================================================================
+  function getOmniShareDocumentContext_(docKind) {
+    const kind = String(docKind || 'QUOTATION').toUpperCase();
+    const baseUrl = window.location.origin + window.location.pathname;
+
+    if (kind === 'QUOTATION' || kind === 'INVOICE' || kind === 'RECEIPT') {
+      const docNo = (document.getElementById('recOfferNo')?.innerText || 'QT-DRAFT').trim();
+      const cust = (document.getElementById('recCustName')?.innerText || '-').trim();
+      const contact = (document.getElementById('recContactName')?.innerText || '').trim();
+      const model = (document.getElementById('qtQuickModelInput')?.value || document.getElementById('eqModel')?.value || '-').trim();
+      const sn = (document.getElementById('qtQuickSnInput')?.value || document.getElementById('eqSerial')?.value || '-').trim();
+      const total = (document.getElementById('recTotal')?.innerText || '0.00').trim();
+      const portalUrl = `${baseUrl}?portal=customer&qt=${encodeURIComponent(docNo)}&serial=${encodeURIComponent(sn)}`;
+      return {
+        kind: 'QUOTATION',
+        badge: 'ใบเสนอราคา / บิล (QT · IV · RE)',
+        docNo,
+        customer: cust,
+        contact,
+        model,
+        serial: sn,
+        total,
+        portalUrl,
+        domContainerId: 'receiptContainer',
+        pdfFileName: `Hoshizaki_${docNo}.pdf`,
+        summaryText: `📄 [HOSHIZAKI ${window.currentFinancialDocMode || 'QUOTATION'}]\nเลขที่เอกสาร: ${docNo}\nลูกค้า: ${cust}\nรุ่น/S/N: ${model} / ${sn}\nยอดรวมสุทธิ: ${total} THB\n🔗 เปิดดูใบเสนอราคา & กดอนุมัติออนไลน์:\n${portalUrl}`
+      };
+    }
+
+    if (kind === 'WARRANTY_CLAIM') {
+      const claimNo = (document.getElementById('wcClaimNo')?.value || 'WC-DRAFT').trim();
+      const cust = (document.getElementById('wcCustomerName')?.value || document.getElementById('custStore')?.value || '-').trim();
+      const model = (document.getElementById('wcModelName')?.value || document.getElementById('eqModel')?.value || '-').trim();
+      const sn = (document.getElementById('wcSerialNo')?.value || document.getElementById('eqSerial')?.value || '-').trim();
+      return {
+        kind: 'WARRANTY_CLAIM',
+        badge: 'ใบเคลมประกัน (Warranty Claim Form)',
+        docNo: claimNo,
+        customer: cust,
+        contact: '',
+        model,
+        serial: sn,
+        total: '-',
+        portalUrl: baseUrl,
+        domContainerId: 'warrantyClaimPrintableArea',
+        pdfFileName: `Hoshizaki_Claim_${claimNo}.pdf`,
+        summaryText: `🛡️ [HOSHIZAKI WARRANTY CLAIM]\nเลขที่ใบเคลม: ${claimNo}\nลูกค้า: ${cust}\nรุ่น/S/N: ${model} / ${sn}`
+      };
+    }
+
+    if (kind === 'PM_CERTIFICATE') {
+      const jobNo = (document.getElementById('jobNo')?.value || 'PM-CERT').trim();
+      const cust = (document.getElementById('custStore')?.value || '-').trim();
+      const model = (document.getElementById('eqModel')?.value || '-').trim();
+      const sn = (document.getElementById('eqSerial')?.value || '-').trim();
+      return {
+        kind: 'PM_CERTIFICATE',
+        badge: 'ใบรับรอง PM มาตรฐานโรงงาน (PM Certificate)',
+        docNo: 'PM-' + jobNo,
+        customer: cust,
+        contact: document.getElementById('custContact')?.value || '',
+        model,
+        serial: sn,
+        total: '-',
+        portalUrl: `${baseUrl}?portal=customer&serial=${encodeURIComponent(sn)}`,
+        domContainerId: 'pmCertPrintableArea',
+        pdfFileName: `Hoshizaki_PM_Cert_${sn || jobNo}.pdf`,
+        summaryText: `🏅 [HOSHIZAKI PM CERTIFICATE]\nลูกค้า: ${cust}\nรุ่น/S/N: ${model} / ${sn}\nผ่านการบำรุงรักษาตามมาตรฐานโรงงาน HOSHIZAKI เรียบร้อยแล้ว`
+      };
+    }
+
+    if (kind === 'INSPECTION_QCF') {
+      const insId = (document.getElementById('insReportId')?.value || 'INS-QCF').trim();
+      const model = (document.getElementById('insModelInput')?.value || '-').trim();
+      const sn = (document.getElementById('insSerialInput')?.value || '-').trim();
+      return {
+        kind: 'INSPECTION_QCF',
+        badge: 'รายงานตรวจรับ PDI / QCF & Memo เคลม',
+        docNo: insId,
+        customer: 'HHE Warehouse / Factory QC',
+        contact: '',
+        model,
+        serial: sn,
+        total: '-',
+        portalUrl: baseUrl,
+        domContainerId: 'warehouseInspectionPrintableArea',
+        pdfFileName: `Hoshizaki_Inspection_${insId}.pdf`,
+        summaryText: `📦 [HOSHIZAKI INSPECTION / QCF REPORT]\nเลขที่รายงาน: ${insId}\nรุ่น/S/N: ${model} / ${sn}`
+      };
+    }
+
+    // Default: JOB_REPORT
+    const jobNo = (document.getElementById('jobNo')?.value || 'JOB-REPORT').trim();
+    const cust = (document.getElementById('custStore')?.value || '-').trim();
+    const contact = (document.getElementById('custContact')?.value || '').trim();
+    const model = (document.getElementById('eqModel')?.value || '-').trim();
+    const sn = (document.getElementById('eqSerial')?.value || '-').trim();
+    const total = (document.getElementById('grandTotalVal')?.innerText || '0.00').trim();
+    const portalUrl = `${baseUrl}?portal=customer&jobNo=${encodeURIComponent(jobNo)}&serial=${encodeURIComponent(sn)}`;
+    return {
+      kind: 'JOB_REPORT',
+      badge: 'ใบแจ้งบริการ (Service Job Report)',
+      docNo: jobNo,
+      customer: cust,
+      contact,
+      model,
+      serial: sn,
+      total,
+      portalUrl,
+      domContainerId: 'jobSheetContainer',
+      pdfFileName: `Hoshizaki_Job_${jobNo}.pdf`,
+      summaryText: `🔧 [HOSHIZAKI SERVICE REPORT]\nเลขที่ใบงาน: ${jobNo}\nลูกค้า: ${cust}\nรุ่น/S/N: ${model} / ${sn}\nยอดรวม: ${total} THB\n🔗 ติดตามสถานะ & ดาวน์โหลดรายงาน:\n${portalUrl}`
+    };
+  }
+
+  async function buildPdfBlobFromDom_(containerId, fileName) {
+    const el = document.getElementById(containerId) || document.getElementById('jobSheetContainer');
+    if (!el || typeof html2pdf === 'undefined') return null;
+    try {
+      const worker = html2pdf().set({
+        margin: 6,
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(el);
+      const blob = await worker.outputPdf('blob');
+      return new File([blob], fileName, { type: 'application/pdf' });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  window.openUnifiedOmniShareHubModal = function(docKind) {
+    const ctx = getOmniShareDocumentContext_(docKind);
+    window._activeOmniShareCtx = ctx;
+
+    let modal = document.getElementById('hzkUnifiedOmniShareModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkUnifiedOmniShareModal';
+      modal.className = 'fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    const phoneExtracted = (ctx.contact.match(/0\d{8,9}/) || [''])[0];
+    const emailExtracted = (ctx.contact.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i) || [''])[0];
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border-2 border-[#002B49] overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] via-sky-800 to-emerald-800 text-white px-4 py-3 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase tracking-wider">HOSHIZAKI OMNI-CHANNEL DOCUMENT SHARE HUB</div>
+            <div class="text-sm font-extrabold">ส่ง / แชร์เอกสาร: ${escapeHtml(ctx.badge)} · ${escapeHtml(ctx.docNo)}</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkUnifiedOmniShareModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+        </div>
+
+        <div class="p-4 space-y-3 max-h-[82vh] overflow-y-auto">
+          <!-- Switch Document Type Quickly -->
+          <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-2 rounded-xl">
+            <span class="font-bold text-slate-600 mr-1">เลือกเอกสารที่จะแชร์:</span>
+            <button type="button" onclick="openUnifiedOmniShareHubModal('QUOTATION')" class="px-2.5 py-1 rounded-lg font-bold ${ctx.kind === 'QUOTATION' ? 'bg-[#002B49] text-white' : 'bg-white text-slate-700'}">ใบเสนอราคา / บิล (QT·IV·RE)</button>
+            <button type="button" onclick="openUnifiedOmniShareHubModal('JOB_REPORT')" class="px-2.5 py-1 rounded-lg font-bold ${ctx.kind === 'JOB_REPORT' ? 'bg-[#002B49] text-white' : 'bg-white text-slate-700'}">ใบแจ้งบริการ (Job Report)</button>
+            <button type="button" onclick="openUnifiedOmniShareHubModal('WARRANTY_CLAIM')" class="px-2.5 py-1 rounded-lg font-bold ${ctx.kind === 'WARRANTY_CLAIM' ? 'bg-[#002B49] text-white' : 'bg-white text-slate-700'}">ใบเคลมประกัน</button>
+            <button type="button" onclick="openUnifiedOmniShareHubModal('PM_CERTIFICATE')" class="px-2.5 py-1 rounded-lg font-bold ${ctx.kind === 'PM_CERTIFICATE' ? 'bg-[#002B49] text-white' : 'bg-white text-slate-700'}">ใบรับรอง PM</button>
+          </div>
+
+          <!-- 1. LINE Sharing (Solves Desktop Browser Login Issue!) -->
+          <div class="p-3 rounded-xl bg-emerald-50/90 border border-emerald-300 space-y-2">
+            <div class="font-extrabold text-emerald-950 flex items-center justify-between">
+              <span><i class="fa-brands fa-line text-[#06C755] text-base mr-1"></i> 1. แชร์เข้า LINE (รองรับทั้งมือถือแชร์ไฟล์ PDF จริง และ PC ไม่ต้องล็อกอิน Browser)</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button type="button" onclick="executeOmniShareAction('LINE_MOBILE_NATIVE_PDF')" class="bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold py-2 px-2.5 rounded-xl shadow-xs flex flex-col items-center justify-center text-center gap-0.5">
+                <span>📱 มือถือ: แชร์ไฟล์ PDF จริง</span>
+                <span class="text-[9.5px] font-normal opacity-90">เปิดหน้าต่าง Share ของมือถือ</span>
+              </button>
+              <button type="button" onclick="executeOmniShareAction('LINE_OA_CLOUD_PUSH')" class="bg-[#002B49] hover:bg-sky-800 text-white font-extrabold py-2 px-2.5 rounded-xl shadow-xs flex flex-col items-center justify-center text-center gap-0.5">
+                <span>🤖 PC/มือถือ: ยิงเข้า LINE OA</span>
+                <span class="text-[9.5px] font-normal opacity-90">ไม่ต้องล็อกอิน LINE บนเว็บ</span>
+              </button>
+              <button type="button" onclick="executeOmniShareAction('LINE_PC_COPY_QR')" class="bg-white hover:bg-emerald-100 text-emerald-950 border border-emerald-400 font-extrabold py-2 px-2.5 rounded-xl flex flex-col items-center justify-center text-center gap-0.5">
+                <span>📋 LINE PC: คัดลอกวาง + QR</span>
+                <span class="text-[9.5px] font-normal text-emerald-800">กด Ctrl+V วางในแชททันที</span>
+              </button>
+            </div>
+            <div id="omniShareQrBox" class="hidden pt-2 flex items-center gap-3 bg-white p-2.5 rounded-lg border border-emerald-200">
+              <canvas id="omniShareQrCanvas" width="96" height="96" class="border rounded"></canvas>
+              <div class="text-[11px] text-slate-700">
+                <b>สแกน QR Code นี้ด้วยกล้องมือถือ</b> เพื่อเปิดลิงก์เอกสาร <b>${escapeHtml(ctx.docNo)}</b> บนมือถือและกดแชร์เข้าแอป LINE ในมือถือได้ทันทีโดยไม่ต้องล็อกอินบน PC
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Email with PDF Attachment -->
+          <div class="p-3 rounded-xl bg-rose-50/80 border border-rose-200 space-y-2">
+            <div class="font-extrabold text-rose-950"><i class="fa-solid fa-envelope text-rose-600 mr-1"></i> 2. ส่งอีเมลพร้อมไฟล์ PDF แนบ (Email + PDF Attachment)</div>
+            <div class="flex flex-wrap gap-2">
+              <input type="email" id="omniShareEmailToInput" value="${escapeHtml(emailExtracted)}" placeholder="ระบุอีเมลผู้รับ (เช่น customer@company.co.th)..." class="flex-1 min-w-[200px] border border-rose-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold">
+              <button type="button" onclick="executeOmniShareAction('EMAIL_WITH_PDF')" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-3.5 py-1.5 rounded-lg shadow-xs">
+                <i class="fa-solid fa-paper-plane mr-1"></i> โหลด PDF แนบ &amp; เปิดอีเมล
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Mobile SMS & Direct PDF Download -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 space-y-1.5">
+              <div class="font-extrabold text-amber-950"><i class="fa-solid fa-comment-sms text-amber-600 mr-1"></i> 3. ส่งเข้าเบอร์มือถือ (SMS Link)</div>
+              <div class="flex gap-1.5">
+                <input type="tel" id="omniShareSmsPhoneInput" value="${escapeHtml(phoneExtracted)}" placeholder="เบอร์มือถือ 08x-xxx-xxxx" class="flex-1 border border-amber-300 rounded-lg px-2 py-1 bg-white font-bold">
+                <button type="button" onclick="executeOmniShareAction('MOBILE_SMS')" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-3 py-1 rounded-lg">ส่ง SMS</button>
+              </div>
+            </div>
+            <div class="p-3 rounded-xl bg-sky-50 border border-sky-200 flex flex-col justify-between">
+              <div class="font-extrabold text-[#002B49]"><i class="fa-solid fa-file-pdf text-red-600 mr-1"></i> 4. บันทึกไฟล์ PDF ลงเครื่อง</div>
+              <button type="button" onclick="executeOmniShareAction('DOWNLOAD_PDF_ONLY')" class="w-full bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold py-1.5 px-3 rounded-lg mt-1">
+                <i class="fa-solid fa-download mr-1"></i> ดาวน์โหลด ${escapeHtml(ctx.pdfFileName)}
+              </button>
+            </div>
+          </div>
+
+          <!-- Editable Message Preview -->
+          <div>
+            <div class="text-[10.5px] font-bold text-slate-600 mb-1">ข้อความสรุปที่จะส่งแนบไปพร้อมลิงก์เอกสาร:</div>
+            <textarea id="omniShareMessagePreview" rows="4" class="w-full border border-slate-300 rounded-xl p-2 text-xs bg-slate-50">${escapeHtml(ctx.summaryText)}</textarea>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+  };
+
+  window.executeOmniShareAction = async function(mode) {
+    const ctx = window._activeOmniShareCtx || getOmniShareDocumentContext_('QUOTATION');
+    const customMsg = (document.getElementById('omniShareMessagePreview')?.value || ctx.summaryText).trim();
+
+    if (mode === 'DOWNLOAD_PDF_ONLY') {
+      const file = await buildPdfBlobFromDom_(ctx.domContainerId, ctx.pdfFileName);
+      if (file) {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = ctx.pdfFileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        if (typeof showToast === 'function') showToast('✅ ดาวน์โหลดไฟล์ ' + ctx.pdfFileName + ' เรียบร้อยแล้ว');
+      } else if (typeof openReceiptInNewWindow === 'function' && ctx.kind === 'QUOTATION') {
+        openReceiptInNewWindow();
+      }
+      return;
+    }
+
+    if (mode === 'LINE_MOBILE_NATIVE_PDF') {
+      if (typeof showToast === 'function') showToast('⏳ กำลังสร้างไฟล์ PDF เพื่อส่งเข้าแอป LINE...');
+      const pdfFile = await buildPdfBlobFromDom_(ctx.domContainerId, ctx.pdfFileName);
+      if (pdfFile && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        try {
+          await navigator.share({
+            title: `HOSHIZAKI ${ctx.docNo}`,
+            text: customMsg,
+            files: [pdfFile]
+          });
+          return;
+        } catch (eShare) {}
+      }
+      // Fallback if desktop browser doesn't support file sharing: copy + show QR + toast
+      if (navigator.clipboard) navigator.clipboard.writeText(customMsg).catch(() => {});
+      window.executeOmniShareAction('LINE_PC_COPY_QR');
+      if (typeof showToast === 'function') showToast('📋 คัดลอกข้อความและสร้าง QR Code แล้ว (บน PC กด Ctrl+V วางใน LINE PC ได้เลยโดยไม่ต้องล็อกอินเว็บ)');
+      return;
+    }
+
+    if (mode === 'LINE_OA_CLOUD_PUSH') {
+      const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+      if (!webhookUrl) {
+        if (typeof showToast === 'function') showToast('⚠️ ยังไม่ได้ตั้งค่า Google Apps Script URL — ระบบคัดลอกข้อความให้วางใน LINE PC แทนแล้วครับ');
+        window.executeOmniShareAction('LINE_PC_COPY_QR');
+        return;
+      }
+      fetch(webhookUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actionType: 'SEND_LINE_PUSH',
+          message: customMsg
+        })
+      }).catch(() => {});
+      if (typeof showToast === 'function') showToast('🚀 ส่งการ์ดเอกสาร ' + ctx.docNo + ' ผ่าน LINE Official Account เรียบร้อยแล้ว (ไม่ต้องล็อกอิน Browser)');
+      return;
+    }
+
+    if (mode === 'LINE_PC_COPY_QR') {
+      if (navigator.clipboard) navigator.clipboard.writeText(customMsg).catch(() => {});
+      const qrBox = document.getElementById('omniShareQrBox');
+      const qrCanvas = document.getElementById('omniShareQrCanvas');
+      if (qrBox && qrCanvas && typeof QRious !== 'undefined') {
+        qrBox.classList.remove('hidden');
+        new QRious({ element: qrCanvas, value: ctx.portalUrl, size: 96 });
+      }
+      if (typeof showToast === 'function') showToast('📋 คัดลอกข้อความ + ลิงก์เอกสารลงคลิปบอร์ดแล้ว! กด Ctrl+V วางใน LINE PC หรือสแกน QR ด้วยมือถือได้เลย');
+      return;
+    }
+
+    if (mode === 'EMAIL_WITH_PDF') {
+      const toEmail = (document.getElementById('omniShareEmailToInput')?.value || '').trim();
+      const file = await buildPdfBlobFromDom_(ctx.domContainerId, ctx.pdfFileName);
+      if (file) {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = ctx.pdfFileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      }
+      const subj = `[HOSHIZAKI (THAILAND)] ${ctx.badge} เลขที่ ${ctx.docNo} - ${ctx.customer}`;
+      const body = `${customMsg}\n\n(หมายเหตุ: ระบบได้ดาวน์โหลดไฟล์ ${ctx.pdfFileName} ลงในเครื่องของท่านแล้ว สามารถลากแนบในอีเมลฉบับนี้ได้ทันที)`;
+      window.location.href = `mailto:${encodeURIComponent(toEmail)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+      if (typeof showToast === 'function') showToast('📧 ดาวน์โหลดไฟล์ PDF และเปิดหน้าต่างเขียนอีเมลเรียบร้อยแล้ว');
+      return;
+    }
+
+    if (mode === 'MOBILE_SMS') {
+      const phone = (document.getElementById('omniShareSmsPhoneInput')?.value || '').replace(/\D/g, '');
+      if (phone.length < 9) {
+        if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุเบอร์โทรศัพท์มือถือลูกค้า (9-10 หลัก)');
+        return;
+      }
+      const sep = /iPad|iPhone|iPod/.test(navigator.userAgent) ? '&' : '?';
+      window.location.href = `sms:${phone}${sep}body=${encodeURIComponent(customMsg)}`;
+      if (typeof showToast === 'function') showToast('💬 เปิดแอปส่งข้อความ SMS ไปยังเบอร์ ' + phone + ' เรียบร้อย');
+    }
+  };
+
+  // Route legacy share functions to the Unified Omni-Share Hub automatically!
+  window.shareReceiptPDFToLine = function() { window.openUnifiedOmniShareHubModal('QUOTATION'); };
+  window.sendReceiptByEmail = function() { window.openUnifiedOmniShareHubModal('QUOTATION'); };
+  window.sharePDFToLine = function() { window.openUnifiedOmniShareHubModal('JOB_REPORT'); };
+  window.sendJobByEmail = function() { window.openUnifiedOmniShareHubModal('JOB_REPORT'); };
+
+  // Refresh saved QT datalist whenever receipt modal opens
+  const _origGenReceiptModal = window.generateReceiptModal;
+  window.generateReceiptModal = function(openNewTabDirectly) {
+    if (typeof _origGenReceiptModal === 'function') {
+      _origGenReceiptModal(openNewTabDirectly);
+    }
+    window.refreshSavedQtOffersDatalist();
   };
 })();

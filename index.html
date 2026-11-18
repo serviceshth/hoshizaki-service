@@ -40182,6 +40182,172 @@ Van Stock T01-T08, Parts Catalog, Factory GIT/ETA & NAV ERP CSV)
 </div>
 <!-- Deferred to hzk_enterprise_modules.js (Block #52) -->
 
+
+<!-- ========================================================================= -->
+<!-- WAREHOUSE INBOUND / PDI / DAMAGE INSPECTION & QCF BRIDGE MODAL (MENU 3.2) -->
+<!-- ========================================================================= -->
+<div id="warehouseInspectionModal" class="hidden fixed inset-0 z-[9995] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4" onclick="if(event.target===this) closeWarehouseInspectionModal()">
+<div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden text-xs">
+<div class="bg-gradient-to-r from-[#002B49] via-emerald-900 to-teal-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+<div>
+<div class="text-[10px] text-amber-300 font-extrabold uppercase">WAREHOUSE PDI INSPECTION · DAMAGE LIST · QCF &amp; CLAIM MEMO BRIDGE</div>
+<div class="text-sm sm:text-base font-extrabold">📦 ศูนย์ตรวจรับเครื่องเข้าคลัง (PDI) · บันทึกความเสียหาย &amp; ออก QCF เคลมโรงงาน</div>
+</div>
+<div class="flex items-center gap-1.5">
+<button type="button" id="insTabBtn_FORM" onclick="switchInspectionTab('FORM')" class="px-3 py-1.5 rounded-lg bg-hoshizaki-navy text-white font-bold shadow-2xs">1. ฟอร์มตรวจรับ PDI / Damage</button>
+<button type="button" id="insTabBtn_LIST" onclick="switchInspectionTab('LIST')" class="px-3 py-1.5 rounded-lg bg-white hover:bg-sky-50 text-hoshizaki-navy border border-slate-300 font-bold">2. ทะเบียนตรวจรับ (<span id="insTotalListCount">0</span>)</button>
+<button type="button" onclick="closeWarehouseInspectionModal()" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+</div>
+</div>
+
+<!-- Tab 1: Form -->
+<div id="insTabPanel_FORM" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-3">
+<div id="outsourceModeNoticeBanner" class="hidden p-2.5 rounded-xl bg-amber-100 border border-amber-400 text-amber-950 font-bold">
+⚠️ โหมดตรวจรับร่วมกับ Outsource / คลังเช่าภายนอก (กรุณาถ่ายรูปครบทุกด้านและระบุรอยเสียหายให้ชัดเจน)
+</div>
+<div class="bg-white rounded-xl border border-slate-200 p-3.5 space-y-2.5">
+<div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+<div class="font-extrabold text-sm text-[#002B49]">ข้อมูลเครื่อง &amp; เอกสารนำเข้า (Container / BL / PO)</div>
+<div class="flex flex-wrap gap-1.5">
+<button type="button" onclick="triggerInspectionBarcodeScan()" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold"><i class="fa-solid fa-barcode mr-1"></i>สแกนบาร์โค้ด S/N</button>
+<label class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold cursor-pointer"><i class="fa-solid fa-camera mr-1"></i>OCR เนมเพลท<input type="file" accept="image/*" capture="environment" onchange="handleInspectionNameplatePhoto(this)" class="hidden"></label>
+<button type="button" onclick="generateOutsourceInspectionShareLink()" class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold"><i class="fa-solid fa-link mr-1"></i>ส่งลิงก์ให้คลังเช่า/Outsource</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+<div><label class="font-bold text-slate-600">เลขที่ใบตรวจรับ</label><input id="insIdInput" readonly class="w-full mt-0.5 border rounded-lg px-2.5 py-1.5 bg-slate-100 font-mono font-bold"></div>
+<div><label class="font-bold text-slate-600">วันที่ตรวจรับ</label><input id="insDateInput" type="date" class="w-full mt-0.5 border rounded-lg px-2.5 py-1.5"></div>
+<div><label class="font-bold text-slate-600">ประเภทการตรวจ</label>
+<select id="insTypeSelect" class="w-full mt-0.5 border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+<option value="INBOUND_NEW">ตรวจรับเครื่องนำเข้าใหม่ (Inbound PDI)</option>
+<option value="HHE_PDI_DAMAGE">ตรวจเช็กความเสียหายคลังเช่า HHE</option>
+<option value="USED_MACHINE">ตรวจสภาพเครื่องมือสอง / เครื่องสำรอง Loaner</option>
+</select>
+</div>
+<div><label class="font-bold text-slate-600">เลขที่ตู้ / BL / PO</label><input id="insContainerRefInput" placeholder="เช่น BL-2026-11 / PO-..." class="w-full mt-0.5 border rounded-lg px-2.5 py-1.5"></div>
+<div><label class="font-bold text-slate-600">รุ่นเครื่อง (Model) *</label><input id="insModelInput" list="hoshizakiModelsList" placeholder="เช่น IM-240DNE-HC" class="w-full mt-0.5 border rounded-lg px-2.5 py-1.5 font-bold uppercase"></div>
+<div><label class="font-bold text-slate-600">Serial Number (S/N) *</label><input id="insSerialInput" oninput="autoFillInspectionFromSerial(this.value)" placeholder="เช่น H14289J" class="w-full mt-0.5 border rounded-lg px-2.5 py-1.5 font-mono font-bold uppercase"></div>
+<div><label class="font-bold text-slate-600">ผู้ตรวจเช็ก (Inspector)</label><input id="insInspectorNameInput" class="w-full mt-0.5 border rounded-lg px-2.5 py-1.5"></div>
+<div><label class="font-bold text-slate-600">หน่วยงาน / คลัง</label><input id="insInspectorOrgInput" value="Hoshizaki Warehouse QC" class="w-full mt-0.5 border rounded-lg px-2.5 py-1.5"></div>
+</div>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 p-3.5 space-y-2.5">
+<div class="font-extrabold text-sm text-[#002B49]">ผลการตรวจสอบสภาพ 4 ด้าน &amp; สรุปสถานะ QC</div>
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+<div><label class="font-bold text-slate-600">1. สภาพกล่องบรรจุภัณฑ์</label>
+<select id="insBoxCondSelect" class="w-full mt-0.5 border rounded-lg px-2 py-1.5 bg-white font-bold">
+<option value="OK">ปกติ (OK)</option><option value="DENTED">กล่องบุบ (Dented)</option><option value="TORN">กล่องฉีกขาด/เปียก (Torn/Wet)</option>
+</select>
+</div>
+<div><label class="font-bold text-slate-600">2. โครงสร้างภายนอก</label>
+<select id="insExteriorCondSelect" class="w-full mt-0.5 border rounded-lg px-2 py-1.5 bg-white font-bold">
+<option value="OK">ปกติ (OK)</option><option value="SCRATCHED">รอยขีดข่วน (Grade B)</option><option value="DAMAGED">บุบ/แตกเสียหาย (Damaged)</option>
+</select>
+</div>
+<div><label class="font-bold text-slate-600">3. ระบบภายใน &amp; คอมเพรสเซอร์</label>
+<select id="insInternalCondSelect" class="w-full mt-0.5 border rounded-lg px-2 py-1.5 bg-white font-bold">
+<option value="OK">ปกติ (OK)</option><option value="DAMAGED">ชำรุดต้องซ่อม/เคลม</option>
+</select>
+</div>
+<div><label class="font-bold text-slate-600">4. อุปกรณ์เสริม &amp; คู่มือ</label>
+<select id="insAccessoriesCondSelect" class="w-full mt-0.5 border rounded-lg px-2 py-1.5 bg-white font-bold">
+<option value="OK">ครบถ้วน (OK)</option><option value="MISSING_ITEMS">อุปกรณ์ไม่ครบ</option>
+</select>
+</div>
+<div><label class="font-bold text-rose-700">สรุปสถานะ QC *</label>
+<select id="insQcStatusSelect" class="w-full mt-0.5 border-2 border-emerald-400 rounded-lg px-2 py-1.5 bg-emerald-50 font-extrabold text-emerald-950">
+<option value="READY_TO_SELL">✅ READY_TO_SELL (Grade A พร้อมขาย)</option>
+<option value="DAMAGED_REPAIR">🔧 DAMAGED_REPAIR (ซ่อมปรับสภาพ / Grade B)</option>
+<option value="DAMAGED_CLAIM">🚨 DAMAGED_CLAIM (ออก QCF เคลมโรงงาน)</option>
+<option value="HOLD_PARTS">⏳ HOLD_PARTS (รออะไหล่)</option>
+</select>
+</div>
+</div>
+<textarea id="insDamageNotesInput" rows="2" placeholder="ระบุรายละเอียดความเสียหาย จุดที่บุบ หรืออะไหล่ที่ต้องเบิกเปลี่ยน..." class="w-full border rounded-lg p-2.5"></textarea>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 p-3.5 space-y-2">
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="font-extrabold text-sm text-[#002B49]">รูปถ่ายประกอบการตรวจรับ (<span id="insPhotoCountTab">0</span> ภาพ)</div>
+<div class="flex items-center gap-1.5">
+<select id="insDefaultPhotoZoneSelect" class="border rounded-lg px-2 py-1 bg-white font-bold">
+<option value="FRONT">ด้านหน้า (Front)</option><option value="LEFT_RIGHT">ด้านข้าง (Side)</option><option value="BACK_COMP">ด้านหลัง/คอมเพรสเซอร์</option><option value="DAMAGE_CLOSEUP">จุดเสียหาย (Close-up)</option>
+</select>
+<label class="px-3 py-1.5 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold cursor-pointer"><i class="fa-solid fa-camera mr-1"></i>ถ่ายรูป / เลือกหลายรูป<input type="file" accept="image/*" multiple onchange="handleInspectionPhotosUpload(this)" class="hidden"></label>
+</div>
+</div>
+<div id="insPhotoGalleryGrid" class="grid grid-cols-2 sm:grid-cols-5 gap-2"></div>
+</div>
+
+<div class="flex flex-wrap justify-end gap-2">
+<button type="button" onclick="resetWarehouseInspectionForm()" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold">ล้างฟอร์ม</button>
+<button type="button" onclick="saveWarehouseInspectionReport()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold shadow">💾 บันทึกรายงานตรวจรับ &amp; ส่งขึ้น Cloud</button>
+</div>
+</div>
+
+<!-- Tab 2: List -->
+<div id="insTabPanel_LIST" class="hidden p-4 overflow-y-auto flex-1 bg-slate-50 space-y-3">
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+<div class="bg-white p-2.5 rounded-xl border"><div class="text-[10px] text-slate-500">ตรวจรับทั้งหมด</div><div id="insStatTotal" class="text-lg font-extrabold text-[#002B49]">0</div></div>
+<div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-200"><div class="text-[10px] text-emerald-700">พร้อมขาย (Grade A)</div><div id="insStatReady" class="text-lg font-extrabold text-emerald-800">0</div></div>
+<div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200"><div class="text-[10px] text-amber-700">ซ่อมปรับสภาพ (Grade B)</div><div id="insStatRepair" class="text-lg font-extrabold text-amber-800">0</div></div>
+<div class="bg-rose-50 p-2.5 rounded-xl border border-rose-200"><div class="text-[10px] text-rose-700">ส่งเคลมโรงงาน (QCF)</div><div id="insStatClaim" class="text-lg font-extrabold text-rose-800">0</div></div>
+</div>
+<div class="flex flex-wrap items-center gap-2">
+<input id="insListSearchInput" oninput="renderWarehouseInspectionList()" placeholder="ค้นหา S/N, รุ่นเครื่อง, เลขตู้ BL..." class="flex-1 border rounded-lg px-3 py-1.5 bg-white">
+<button type="button" onclick="renderWarehouseInspectionList()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-white font-bold">ทั้งหมด</button>
+<button type="button" onclick="renderWarehouseInspectionList('DAMAGED')" class="px-3 py-1.5 rounded-lg bg-rose-600 text-white font-bold">เฉพาะเครื่องพบความเสียหาย / QCF</button>
+</div>
+<div id="insRegistryCardsContainer" class="space-y-2"></div>
+</div>
+</div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MULTI-MODEL SPARE PARTS & PHOTO CATALOG MANAGER MODAL (MENU 5.3.3)        -->
+<!-- ========================================================================= -->
+<div id="multiModelPartsManagerModal" class="hidden fixed inset-0 z-[9995] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4" onclick="if(event.target===this) this.classList.add('hidden')">
+<div class="bg-white w-full max-w-5xl max-h-[92vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden text-xs">
+<div class="bg-gradient-to-r from-[#002B49] via-teal-800 to-cyan-800 text-white px-4 py-3 flex items-center justify-between shrink-0">
+<div>
+<div class="text-[10px] text-amber-300 font-extrabold uppercase">MULTI-MODEL SPARE PARTS &amp; PHOTO CATALOG (EQUIVALENT PART NUMBERS)</div>
+<div class="text-sm sm:text-base font-extrabold">⚙️ ฐานข้อมูลอะไหล่ &amp; รูปภาพ (ใช้ร่วมหลายรุ่น / เทียบรหัส Part No. ทดแทน)</div>
+</div>
+<button type="button" onclick="document.getElementById('multiModelPartsManagerModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+</div>
+<div class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-3">
+<div class="bg-white rounded-xl border border-teal-200 p-3.5 space-y-2">
+<div class="font-extrabold text-sm text-[#002B49]">เพิ่ม / แก้ไขข้อมูลอะไหล่และรหัสเทียบเท่า (<span id="mmPartsCountLabel">0</span> รายการ)</div>
+<input type="hidden" id="mmPartEditId">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+<input id="mmPartNameInput" placeholder="ชื่ออะไหล่ (TH/EN) *" class="border rounded-lg px-2.5 py-1.5 font-bold">
+<input id="mmPartPrimaryNoInput" placeholder="รหัสพาร์ทหลัก (Primary Part No.) *" class="border rounded-lg px-2.5 py-1.5 font-mono uppercase">
+<input id="mmPartPriceInput" type="number" placeholder="ราคาตั้ง (THB)" class="border rounded-lg px-2.5 py-1.5 font-bold">
+<input id="mmPartAllNosInput" placeholder="รหัสพาร์ทที่ใช้แทนกันได้ (คั่นด้วยจุลภาค ,)" class="border rounded-lg px-2.5 py-1.5 font-mono uppercase">
+<input id="mmPartModelsInput" placeholder="รุ่นเครื่องที่ใช้ร่วมกัน (เช่น IM-130NE, IM-240DNE)" class="border rounded-lg px-2.5 py-1.5 uppercase">
+<input id="mmPartNotesInput" placeholder="หมายเหตุทางเทคนิค / สเปก" class="border rounded-lg px-2.5 py-1.5">
+</div>
+<div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+<div class="flex items-center gap-2">
+<input type="hidden" id="mmPartPhotoUrlInput">
+<label class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold cursor-pointer"><i class="fa-solid fa-image mr-1"></i>อัปโหลดรูปภาพอะไหล่<input type="file" accept="image/*" onchange="handleMultiModelPartPhotoUpload(this)" class="hidden"></label>
+<div id="mmPartPhotoPreviewWrap" class="hidden"><img id="mmPartPhotoPreviewImg" class="w-10 h-10 rounded border object-cover"></div>
+</div>
+<div class="flex gap-2">
+<button type="button" onclick="resetMultiModelPartForm()" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">ล้างฟอร์ม</button>
+<button type="button" onclick="saveMultiModelPartRecord()" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold">💾 บันทึกข้อมูลอะไหล่</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-slate-200 p-3.5 space-y-2">
+<input id="mmPartsSearchInput" oninput="renderMultiModelPartsList()" placeholder="ค้นหาชื่ออะไหล่, Part No. หรือรุ่นเครื่อง..." class="w-full border rounded-lg px-3 py-1.5">
+<div id="mmPartsSummaryGrid" class="grid grid-cols-1 md:grid-cols-2 gap-2.5"></div>
+</div>
+</div>
+</div>
+</div>
+
 <script src="./hzk_enterprise_modules.js" defer></script>
 <script>
 (function() {

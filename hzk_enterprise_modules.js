@@ -11591,3 +11591,20 @@
     loadSocialCampaigns_();
   }, 2000);
 })();
+
+
+// --- PR Approval Stage Stepper (SM -> GM -> MD) ---
+function advanceV1040PrApprovalStage(prNo) {
+  try {
+    const prs = JSON.parse(localStorage.getItem('hoshizaki_ims_pr_approvals_v1040') || '[]');
+    const item = prs.find(function(x) { return x.prNo === prNo; });
+    if (!item) return;
+    if (item.stage === 'PENDING_SM_REVIEW') { item.stage = 'SM_APPROVED_WAIT_GM'; item.smApprover = 'Approved'; }
+    else if (item.stage === 'SM_APPROVED_WAIT_GM') { item.stage = 'GM_APPROVED_WAIT_MD'; item.gmApprover = 'Approved'; }
+    else { item.stage = 'MD_APPROVED_PO_ISSUED'; item.mdApprover = 'Approved'; }
+    localStorage.setItem('hoshizaki_ims_pr_approvals_v1040', JSON.stringify(prs));
+    if (typeof showToast === 'function') showToast('✅ อนุมัติใบขอซื้อ ' + prNo + ' ไปยังขั้นถัดไปเรียบร้อยแล้ว');
+    if (typeof window.switchEnterpriseImsTab === 'function') window.switchEnterpriseImsTab('PSI_PR');
+  } catch (e) {}
+}
+window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;

@@ -1,7 +1,7 @@
 {
-  "name": "HOSHIZAKI Service Management (Enterprise v1047 QT-Pro & Omni-Share)",
+  "name": "HOSHIZAKI Service Management (Enterprise v1048 Bday-Care & QT-Pro)",
   "short_name": "Hoshizaki Service",
-  "description": "ระบบบริหารจัดการงานบริการ ใบเสนอราคาอัจฉริยะ (Smart 3-Char Search, Multi-Custodian S/N, Save+PDF+AutoSync, Edit QT) และระบบส่ง/แชร์เอกสารครบวงจร (Omni-Share Hub: LINE Mobile PDF / PC Cloud Push & Copy / Email PDF / SMS)",
+  "description": "ระบบบริหารจัดการงานบริการ ใบเสนอราคาอัจฉริยะ ระบบแชร์ Omni-Share Hub และระบบฐานข้อมูลวันเกิดพนักงาน การ์ดอวยพรวันเกิด 3 ภาษา (รองรับอวยพรล่วงหน้าวันหยุด) & Work Anniversary",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -22,5 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "1047-QT-PRO"
+  "version": "1048-BDAY-CARE"
 }

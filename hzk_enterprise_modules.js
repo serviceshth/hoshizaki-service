@@ -5511,7 +5511,7 @@
 
 
 // ============================================================================
-// --- Module Block #55 (Enterprise v1047-QT-PRO: Sole Super Admin Control
+// --- Module Block #55 (Enterprise v1048-BDAY-CARE: Sole Super Admin Control
 //     for Mr. Noparin Homhoul, SHA-256 + Salt Vault, Temp Password Generator,
 //     8-Department RBAC, Account Lock/Unlock & Immediate System_Audit_Log Sync) ---
 // ============================================================================
@@ -6435,7 +6435,7 @@
 
 
 // ============================================================================
-// --- Module Block #56 (Enterprise v1047-QT-PRO: Two-Way Cloud Credential Pull,
+// --- Module Block #56 (Enterprise v1048-BDAY-CARE: Two-Way Cloud Credential Pull,
 //     Live System_Audit_Log Viewer & CSV Export, Global Command Palette Ctrl+K,
 //     100-Seat Multi-Branch Roster Manager, 1-Click Predictive Quote & LINE Flex,
 //     and IndexedDB Cold-Archive & Storage Auto-Compaction Engine) ---
@@ -6443,9 +6443,9 @@
 (function() {
   const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
-  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1047';
-  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1047';
-  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1047';
+  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1048';
+  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1048';
+  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1048';
 
   const HZK_BRANCH_DIRECTORY = [
     { code: 'ALL', name: 'ทุกสาขาทั่วประเทศ (All Thailand Branches)', region: 'Nationwide' },
@@ -6533,7 +6533,7 @@
       const resp = await fetch(gasUrl + sep + 'action=getSecurityAuditLogs&limit=100&_t=' + Date.now(), { method: 'GET' });
       const data = await resp.json();
       if (data && data.status === 'ok' && Array.isArray(data.logs)) {
-        localStorage.setItem('hoshizaki_cloud_audit_cache_v1047', JSON.stringify(data.logs));
+        localStorage.setItem('hoshizaki_cloud_audit_cache_v1048', JSON.stringify(data.logs));
         if (typeof window.renderAdminSecurityRbacPanel === 'function') {
           await window.renderAdminSecurityRbacPanel();
         }
@@ -6548,7 +6548,7 @@
 
   window.exportSecurityAuditCsv = function() {
     const localLogs = JSON.parse(localStorage.getItem('hoshizaki_immutable_audit_log_v1033') || '[]');
-    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1047') || '[]');
+    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1048') || '[]');
     const rows = [['Timestamp', 'Category/Actor', 'Target', 'Detail']];
     cloudLogs.forEach(c => rows.push([c.timestamp || '', `${c.actorName || ''} (${c.actorId || ''})`, c.targetId || '', c.event || '']));
     localLogs.forEach(l => rows.push([l.timestamp || '', l.category || '', l.actor || '', l.detail || '']));
@@ -6571,16 +6571,16 @@
       await _origRenderAdminSecurityRbacPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (!panel || panel.querySelector('#v1047OmniSecurityEnhancementBar')) return;
+    if (!panel || panel.querySelector('#v1048OmniSecurityEnhancementBar')) return;
 
-    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1047') || '[]');
+    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1048') || '[]');
     const bar = document.createElement('div');
-    bar.id = 'v1047OmniSecurityEnhancementBar';
+    bar.id = 'v1048OmniSecurityEnhancementBar';
     bar.className = 'p-3 rounded-xl bg-sky-50 border border-sky-200 space-y-2.5';
     bar.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="text-xs font-extrabold text-[#002B49]">
-          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1047-QT-PRO: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
+          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1048-BDAY-CARE: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
         </div>
         <div class="flex flex-wrap gap-1.5">
           <button type="button" onclick="pullUserCredentialsVaultFromCloud(false).then(() => renderAdminSecurityRbacPanel())" class="px-2.5 py-1.5 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[11px]">
@@ -6737,7 +6737,7 @@
           </div>
           <div id="omniCommandResultsList" class="max-h-96 overflow-y-auto divide-y divide-slate-100 p-2 bg-slate-50/70"></div>
           <div class="bg-slate-100 px-4 py-2 text-[10.5px] text-slate-500 flex items-center justify-between">
-            <span>HOSHIZAKI Enterprise v1047-QT-PRO • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
+            <span>HOSHIZAKI Enterprise v1048-BDAY-CARE • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
             <span>กด <kbd class="px-1.5 py-0.5 bg-white border rounded font-mono">Ctrl+K</kbd> ได้ทุกหน้า</span>
           </div>
         </div>
@@ -7032,15 +7032,15 @@
 
 
 // ============================================================================
-// --- Module Block #57 (Enterprise v1047-QT-PRO: Tailored ≤30-Seat Org Architecture,
+// --- Module Block #57 (Enterprise v1048-BDAY-CARE: Tailored ≤30-Seat Org Architecture,
 //     Auto Google Sheets Cloud Backup with Live Progress Status Bar,
 //     Role-Personalized Daily Workspace, Cross-Dept SLA Handoff Queue,
 //     Revenue Leakage & 2-Way Reconciliation Audit, Technician Skill Matrix & OT,
 //     and Comprehensive Deep Self-Test & Auto-Heal across ALL 28 Modules) ---
 // ============================================================================
 (function() {
-  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1047';
-  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1047';
+  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1048';
+  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1048';
   const ACTIVE_SESSION_KEY = 'hoshizaki_active_auth_session_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
 
@@ -7064,7 +7064,7 @@
       : (localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '');
 
     // Check if already auto-backed up within last 12 hours unless forced
-    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1047') || '0');
+    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1048') || '0');
     if (!forceNow && lastCloudTs > 0 && (Date.now() - lastCloudTs) < 12 * 60 * 60 * 1000 && history.length === 0) {
       return;
     }
@@ -7102,7 +7102,7 @@
         ? await buildFullEnterpriseSnapshotObject()
         : {
             app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
-            version: '1047-QT-PRO',
+            version: '1048-BDAY-CARE',
             exportedAt: new Date().toISOString(),
             recordCounts: { jobs: history.length, quotations: qts.length },
             payload: { jobHistory: history, quotationsHistory: qts }
@@ -7123,7 +7123,7 @@
 
       const nowIso = new Date().toISOString();
       const timeLabel = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1047', String(Date.now()));
+      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1048', String(Date.now()));
       localStorage.setItem('hoshizaki_last_backup_at', nowIso);
       localStorage.setItem('hoshizaki_last_cloud_auto_backup_date', nowIso.split('T')[0]);
 
@@ -7662,7 +7662,7 @@
     }
 
     const passed = checks.filter(c => c.ok).length;
-    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1047-QT-PRO)</span>`;
+    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1048-BDAY-CARE)</span>`;
     listEl.innerHTML = checks.map(c => `
       <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/75 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
         <div>
@@ -7749,7 +7749,7 @@
 
 
 // ============================================================================
-// --- Module Block #58 (Enterprise v1047-QT-PRO: Standalone Quotation Studio,
+// --- Module Block #58 (Enterprise v1048-BDAY-CARE: Standalone Quotation Studio,
 //     Hardened Auto Google Sheets Backup + Dismiss Logic, 1-Click Onboarding
 //     Credential Slip, Production Go-Live Clean Reset, Offline Sync Conflict
 //     Resolver, PM Lifecycle Renewal Radar & 30-Point Deep Self-Test) ---
@@ -8172,7 +8172,7 @@
     if (typeof window.purgeAllV1040ExampleRecords === 'function') {
       window.purgeAllV1040ExampleRecords();
     }
-    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1047');
+    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1048');
     localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1045');
     if (typeof window.renderMyDailyRoleWorkspace === 'function') {
       window.renderMyDailyRoleWorkspace();
@@ -8262,13 +8262,13 @@
       await _prevRenderSecPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (panel && !document.getElementById('v1047GoLiveToolsBar')) {
+    if (panel && !document.getElementById('v1048GoLiveToolsBar')) {
       const bar = document.createElement('div');
-      bar.id = 'v1047GoLiveToolsBar';
+      bar.id = 'v1048GoLiveToolsBar';
       bar.className = 'mt-3 p-3 rounded-xl bg-emerald-50 border border-emerald-300 flex flex-wrap items-center justify-between gap-2 text-xs';
       bar.innerHTML = `
         <div>
-          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1047 Go-Live Readiness)</div>
+          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1048 Go-Live Readiness)</div>
           <div class="text-[11px] text-emerald-800">ล้างข้อมูลตัวอย่างก่อนเริ่มงานจริง หรือเปิดดูเรดาร์อายุเครื่องเพื่อต่อสัญญา PM รายปี</div>
         </div>
         <div class="flex flex-wrap gap-1.5">
@@ -8283,7 +8283,7 @@
 
 
 // ============================================================================
-// --- Module Block #59 (Enterprise v1047-QT-PRO: 3-Char Customer Smart Search,
+// --- Module Block #59 (Enterprise v1048-BDAY-CARE: 3-Char Customer Smart Search,
 //     Multi-Custodian S/N Selector, Save QT + PDF + Auto-Sync Sheets, Load & Edit
 //     Saved QT, and Unified Omni-Share Hub across ALL System Documents) ---
 // ============================================================================
@@ -9012,4 +9012,450 @@
     }
     window.refreshSavedQtOffersDatalist();
   };
+})();
+
+
+// ============================================================================
+// --- Module Block #60 (Enterprise v1048-BDAY-CARE: Employee Birthday &
+//     Personal Profile Database, Smart Working-Day Advance Birthday Wishes,
+//     Trilingual HOSHIZAKI Penguin Greeting Card & Work Anniversary Badges) ---
+// ============================================================================
+(function() {
+  const EMP_BDAY_DB_KEY = 'hoshizaki_employee_birthday_profiles_v1048';
+  const EMP_BDAY_SHOWN_KEY = 'hoshizaki_bday_card_shown_dates_v1048';
+
+  // Fixed Thai Public Holidays (MM-DD) for Smart Working-Day Pre-Greeting calculation
+  const FIXED_HOLIDAYS_MMDD = new Set([
+    '01-01', '04-06', '04-13', '04-14', '04-15', '05-01',
+    '05-04', '06-03', '07-28', '08-12', '10-13', '10-23',
+    '12-05', '12-10', '12-31'
+  ]);
+
+  function loadEmployeeProfilesDb_() {
+    try {
+      const raw = localStorage.getItem(EMP_BDAY_DB_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    // Seed initial directory profiles (editable anytime by user or HR/Admin)
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const seed = [
+      { id: 'SVC-02', name: 'Noparin Homhoul', nickname: 'Noparin', gender: 'Male', birthDate: '1986-' + todayIso.slice(5), hireDate: '2016-05-01', dept: 'Service Unit', position: 'Deputy Service Manager' },
+      { id: 'SVC-01', name: 'Thanakrit Chanmokonpanit', nickname: 'Tae', gender: 'Male', birthDate: '1984-08-18', hireDate: '2014-03-10', dept: 'Service Unit', position: 'Service Manager' },
+      { id: 'SVC-05', name: 'Wanwipha', nickname: 'Wan', gender: 'Female', birthDate: '1991-03-22', hireDate: '2018-07-01', dept: 'Service Unit', position: 'Service Supervisor / Admin' },
+      { id: 'SVC-03', name: 'Surin S.', nickname: 'Surin', gender: 'Male', birthDate: '1989-06-14', hireDate: '2017-02-15', dept: 'Service Unit', position: 'Senior Service Supervisor' },
+      { id: 'SVC-04', name: 'Nirun', nickname: 'Pui', gender: 'Male', birthDate: '1992-09-05', hireDate: '2019-04-01', dept: 'Service Unit', position: 'Field Service Technician' },
+      { id: 'SVC-06', name: 'Surin T.', nickname: 'Beer', gender: 'Male', birthDate: '1993-12-02', hireDate: '2020-01-15', dept: 'Service Unit', position: 'Field Service Technician' },
+      { id: 'SVC-07', name: 'Jeerapan Phrasawang', nickname: 'Zcar', gender: 'Male', birthDate: '1994-02-27', hireDate: '2020-08-01', dept: 'Service Unit', position: 'Field Service Technician' },
+      { id: 'CTR-01', name: 'Pawat Warongtheradet', nickname: 'Pawat', gender: 'Male', birthDate: '1990-07-11', hireDate: '2018-11-01', dept: 'Service Center & Warehouse IMS', position: 'Service Center Supervisor' },
+      { id: 'EXE-01', name: 'Daisuke Suzuki', nickname: 'Suzuki-san', gender: 'Male', birthDate: '1978-10-09', hireDate: '2015-04-01', dept: 'Executive Management', position: 'Managing Director (MD)' }
+    ];
+    localStorage.setItem(EMP_BDAY_DB_KEY, JSON.stringify(seed));
+    return seed;
+  }
+
+  function saveEmployeeProfilesDb_(list) {
+    localStorage.setItem(EMP_BDAY_DB_KEY, JSON.stringify(list || []));
+  }
+
+  function calcExactAge_(birthDateStr) {
+    if (!birthDateStr || !/^\d{4}-\d{2}-\d{2}$/.test(birthDateStr)) return '-';
+    const parts = birthDateStr.split('-').map(Number);
+    const today = new Date();
+    let age = today.getFullYear() - parts[0];
+    const m = (today.getMonth() + 1) - parts[1];
+    if (m < 0 || (m === 0 && today.getDate() < parts[2])) age--;
+    return age >= 0 && age < 120 ? age : '-';
+  }
+
+  function calcServiceYears_(hireDateStr) {
+    if (!hireDateStr || !/^\d{4}-\d{2}-\d{2}$/.test(hireDateStr)) return 0;
+    const parts = hireDateStr.split('-').map(Number);
+    const today = new Date();
+    let yrs = today.getFullYear() - parts[0];
+    const m = (today.getMonth() + 1) - parts[1];
+    if (m < 0 || (m === 0 && today.getDate() < parts[2])) yrs--;
+    return Math.max(0, yrs);
+  }
+
+  function isNonWorkingDay_(dt) {
+    const dow = dt.getDay(); // 0 = Sun, 6 = Sat
+    if (dow === 0 || dow === 6) return true;
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getDate()).padStart(2, '0');
+    return FIXED_HOLIDAYS_MMDD.has(mm + '-' + dd);
+  }
+
+  // Returns { matchType: 'TODAY' | 'ADVANCE_HOLIDAY' | null, birthdayDateObj, daysAhead }
+  function evaluateBirthdayTriggerForDate_(birthDateStr, refDateObj) {
+    if (!birthDateStr || !/^\d{4}-\d{2}-\d{2}$/.test(birthDateStr)) return { matchType: null };
+    const [, bMonthStr, bDayStr] = birthDateStr.split('-');
+    const bMonth = parseInt(bMonthStr, 10) - 1;
+    const bDay = parseInt(bDayStr, 10);
+
+    const today = new Date(refDateObj.getFullYear(), refDateObj.getMonth(), refDateObj.getDate());
+    const thisYearBday = new Date(today.getFullYear(), bMonth, bDay);
+
+    if (today.getTime() === thisYearBday.getTime()) {
+      return { matchType: 'TODAY', birthdayDateObj: thisYearBday, daysAhead: 0 };
+    }
+
+    // Check if today is a working day and upcoming 1..3 days contain the birthday on a weekend/holiday!
+    if (!isNonWorkingDay_(today)) {
+      for (let ahead = 1; ahead <= 3; ahead++) {
+        const probe = new Date(today.getFullYear(), today.getMonth(), today.getDate() + ahead);
+        if (!isNonWorkingDay_(probe)) {
+          // Stopped by an intermediate working day, so don't fire early yet
+          break;
+        }
+        if (probe.getMonth() === bMonth && probe.getDate() === bDay) {
+          return { matchType: 'ADVANCE_HOLIDAY', birthdayDateObj: probe, daysAhead: ahead };
+        }
+      }
+    }
+    return { matchType: null };
+  }
+
+  function getActiveCurrentEmployeeProfile_() {
+    const activeName = (document.getElementById('techQuickProfileName')?.innerText || '').trim();
+    const db = loadEmployeeProfilesDb_();
+    if (activeName && activeName !== 'เลือกโปรไฟล์ช่าง') {
+      const found = db.find(p =>
+        activeName.toLowerCase().includes(String(p.name || '').toLowerCase()) ||
+        String(p.name || '').toLowerCase().includes(activeName.toLowerCase()) ||
+        (p.nickname && activeName.toLowerCase().includes(String(p.nickname).toLowerCase()))
+      );
+      if (found) return found;
+    }
+    return db[0] || null;
+  }
+
+  window.openEmployeeBirthdayProfileModal = function() {
+    const db = loadEmployeeProfilesDb_();
+    const cur = getActiveCurrentEmployeeProfile_() || db[0] || {
+      id: 'EMP-' + Date.now().toString().slice(-4),
+      name: '',
+      nickname: '',
+      gender: 'Male',
+      birthDate: '',
+      hireDate: '',
+      dept: 'Service Unit',
+      position: ''
+    };
+
+    let modal = document.getElementById('hzkEmployeeBirthdayProfileModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkEmployeeBirthdayProfileModal';
+      modal.className = 'fixed inset-0 z-[9998] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    const ageVal = calcExactAge_(cur.birthDate);
+    const svcYrs = calcServiceYears_(cur.hireDate);
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border-2 border-[#002B49] overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] via-sky-800 to-pink-700 text-white px-4 py-3 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase tracking-wider">HOSHIZAKI EMPLOYEE CARE · BIRTHDAY &amp; MILESTONE HUB</div>
+            <div class="text-sm font-extrabold">🎂 ข้อมูลส่วนตัวพนักงาน &amp; ระบบการ์ดอวยพรวันเกิด 3 ภาษา (TH / EN / 日本語)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkEmployeeBirthdayProfileModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+        </div>
+
+        <div class="p-4 space-y-3 max-h-[84vh] overflow-y-auto">
+          <!-- Select or Edit Employee Profile -->
+          <div class="bg-sky-50/80 border border-sky-200 rounded-xl p-3 space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="font-extrabold text-[#002B49]"><i class="fa-solid fa-user-pen text-sky-600 mr-1"></i> บันทึก / อัปเดตข้อมูลวันเกิดและโปรไฟล์พนักงาน:</span>
+              <select id="empBdaySelectExisting" onchange="loadEmployeeBdayFormById(this.value)" class="border border-sky-300 rounded-lg px-2 py-1 bg-white font-bold text-[#002B49]">
+                ${db.map(p => `<option value="${escapeHtml(p.id)}" ${p.id === cur.id ? 'selected' : ''}>${escapeHtml(p.name)} (${escapeHtml(p.dept || '-')})</option>`).join('')}
+                <option value="__NEW__">+ เพิ่มพนักงานใหม่...</option>
+              </select>
+            </div>
+
+            <input type="hidden" id="empBdayEditId" value="${escapeHtml(cur.id)}">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">ชื่อ-นามสกุล (Full Name) *</label>
+                <input type="text" id="empBdayEditName" value="${escapeHtml(cur.name)}" placeholder="เช่น Noparin Homhoul" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-bold">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">ชื่อเล่น (Nickname)</label>
+                <input type="text" id="empBdayEditNick" value="${escapeHtml(cur.nickname || '')}" placeholder="ชื่อเล่น" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">เพศ (Gender)</label>
+                <select id="empBdayEditGender" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold">
+                  <option value="Male" ${cur.gender === 'Male' ? 'selected' : ''}>ชาย (Male)</option>
+                  <option value="Female" ${cur.gender === 'Female' ? 'selected' : ''}>หญิง (Female)</option>
+                  <option value="Other" ${cur.gender === 'Other' ? 'selected' : ''}>ไม่ระบุ / อื่นๆ</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">วันเดือนปีเกิด (Birth Date) *</label>
+                <input type="date" id="empBdayEditBirthDate" value="${escapeHtml(cur.birthDate || '')}" onchange="updateEmpBdayComputedPreview()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-bold text-[#002B49]">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">วันที่เริ่มงาน (Hire Date)</label>
+                <input type="date" id="empBdayEditHireDate" value="${escapeHtml(cur.hireDate || '')}" onchange="updateEmpBdayComputedPreview()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white">
+              </div>
+              <div class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 flex flex-col justify-center">
+                <span class="text-[10px] text-slate-500">อายุปัจจุบัน &amp; อายุงาน:</span>
+                <span id="empBdayAgeTenureBadge" class="font-extrabold text-[#002B49]">อายุ ${ageVal} ปี · อายุงาน ${svcYrs} ปี</span>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">แผนก (Department)</label>
+                <input type="text" id="empBdayEditDept" value="${escapeHtml(cur.dept || 'Service Unit')}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block font-bold text-slate-700 mb-0.5">ตำแหน่ง (Position)</label>
+                <input type="text" id="empBdayEditPos" value="${escapeHtml(cur.position || '')}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white">
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 pt-1">
+              <button type="button" onclick="saveEmployeeBdayProfileForm()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold px-4 py-1.5 rounded-lg shadow-xs">
+                <i class="fa-solid fa-floppy-disk text-amber-300 mr-1"></i> บันทึกข้อมูล &amp; ซิงค์ลง Sheets
+              </button>
+              <button type="button" onclick="previewActiveEmployeeBirthdayCard()" class="bg-gradient-to-r from-pink-600 to-amber-500 hover:opacity-95 text-white font-extrabold px-4 py-1.5 rounded-lg shadow-xs">
+                <i class="fa-solid fa-gift mr-1"></i> พรีวิวการ์ดอวยพรวันเกิด 3 ภาษาทันที
+              </button>
+            </div>
+          </div>
+
+          <!-- Upcoming Birthdays Radar -->
+          <div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2">
+            <div class="font-extrabold text-[#002B49] flex items-center justify-between">
+              <span><i class="fa-solid fa-calendar-heart text-pink-600 mr-1"></i> ปฏิทินวันเกิดพนักงานในระบบ (${db.length} ท่าน) — ส่งล่วงหน้าอัตโนมัติหากตรงวันหยุด</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-44 overflow-y-auto">
+              ${db.map(p => {
+                const age = calcExactAge_(p.birthDate);
+                const yrs = calcServiceYears_(p.hireDate);
+                return `
+                  <div class="flex items-center justify-between p-2 rounded-lg border border-slate-200 hover:bg-pink-50/40">
+                    <div>
+                      <div class="font-extrabold text-slate-900">${escapeHtml(p.name)} <span class="text-[10px] text-sky-700">(${age} ปี)</span></div>
+                      <div class="text-[10px] text-slate-500">🎂 ${escapeHtml(p.birthDate || '-')} · ${escapeHtml(p.dept || '-')} ${yrs >= 1 ? `· 🏅 ${yrs}Y` : ''}</div>
+                    </div>
+                    <button type="button" onclick="showHoshizakiBirthdayGreetingCard('${escapeHtml(p.id)}', 'TODAY')" class="px-2 py-1 rounded bg-pink-100 hover:bg-pink-600 text-pink-900 hover:text-white font-bold text-[10px]">
+                      เปิดการ์ด
+                    </button>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+  };
+
+  window.loadEmployeeBdayFormById = function(empId) {
+    const db = loadEmployeeProfilesDb_();
+    if (empId === '__NEW__') {
+      document.getElementById('empBdayEditId').value = 'EMP-' + Date.now().toString().slice(-5);
+      document.getElementById('empBdayEditName').value = '';
+      document.getElementById('empBdayEditNick').value = '';
+      document.getElementById('empBdayEditBirthDate').value = '';
+      document.getElementById('empBdayEditHireDate').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('empBdayEditDept').value = 'Service Unit';
+      document.getElementById('empBdayEditPos').value = '';
+      window.updateEmpBdayComputedPreview();
+      return;
+    }
+    const p = db.find(x => x.id === empId);
+    if (!p) return;
+    document.getElementById('empBdayEditId').value = p.id;
+    document.getElementById('empBdayEditName').value = p.name || '';
+    document.getElementById('empBdayEditNick').value = p.nickname || '';
+    document.getElementById('empBdayEditGender').value = p.gender || 'Male';
+    document.getElementById('empBdayEditBirthDate').value = p.birthDate || '';
+    document.getElementById('empBdayEditHireDate').value = p.hireDate || '';
+    document.getElementById('empBdayEditDept').value = p.dept || '';
+    document.getElementById('empBdayEditPos').value = p.position || '';
+    window.updateEmpBdayComputedPreview();
+  };
+
+  window.updateEmpBdayComputedPreview = function() {
+    const bd = document.getElementById('empBdayEditBirthDate')?.value || '';
+    const hd = document.getElementById('empBdayEditHireDate')?.value || '';
+    const el = document.getElementById('empBdayAgeTenureBadge');
+    if (el) el.textContent = `อายุ ${calcExactAge_(bd)} ปี · อายุงาน ${calcServiceYears_(hd)} ปี`;
+  };
+
+  window.saveEmployeeBdayProfileForm = function() {
+    const id = (document.getElementById('empBdayEditId')?.value || ('EMP-' + Date.now().toString().slice(-5))).trim();
+    const name = (document.getElementById('empBdayEditName')?.value || '').trim();
+    const birthDate = (document.getElementById('empBdayEditBirthDate')?.value || '').trim();
+    if (!name || !birthDate) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุชื่อพนักงานและวันเดือนปีเกิดครับ');
+      return;
+    }
+    const rec = {
+      id,
+      name,
+      nickname: (document.getElementById('empBdayEditNick')?.value || '').trim(),
+      gender: document.getElementById('empBdayEditGender')?.value || 'Male',
+      birthDate,
+      hireDate: (document.getElementById('empBdayEditHireDate')?.value || '').trim(),
+      dept: (document.getElementById('empBdayEditDept')?.value || 'Service Unit').trim(),
+      position: (document.getElementById('empBdayEditPos')?.value || '').trim()
+    };
+    const db = loadEmployeeProfilesDb_();
+    const idx = db.findIndex(x => x.id === id || x.name.toUpperCase() === name.toUpperCase());
+    if (idx >= 0) db[idx] = rec;
+    else db.unshift(rec);
+    saveEmployeeProfilesDb_(db);
+
+    const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+    if (webhookUrl && navigator.onLine) {
+      fetch(webhookUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actionType: 'SYNC_COMPANY_STAFF_DIRECTORY', staffList: db })
+      }).catch(() => {});
+    }
+
+    if (typeof showToast === 'function') showToast('✅ บันทึกข้อมูลวันเกิดของ "' + name + '" เรียบร้อยแล้ว');
+    window.openEmployeeBirthdayProfileModal();
+  };
+
+  window.previewActiveEmployeeBirthdayCard = function() {
+    const id = (document.getElementById('empBdayEditId')?.value || '').trim();
+    window.showHoshizakiBirthdayGreetingCard(id, 'TODAY');
+  };
+
+  window.showHoshizakiBirthdayGreetingCard = function(empId, triggerKind) {
+    const db = loadEmployeeProfilesDb_();
+    const p = db.find(x => x.id === empId) || getActiveCurrentEmployeeProfile_() || db[0];
+    if (!p) return;
+
+    const isAdvance = triggerKind === 'ADVANCE_HOLIDAY';
+    const yrs = calcServiceYears_(p.hireDate);
+    const penguinImg = 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=4';
+
+    let cardModal = document.getElementById('hzkBirthdayGreetingCardModal');
+    if (!cardModal) {
+      cardModal = document.createElement('div');
+      cardModal.id = 'hzkBirthdayGreetingCardModal';
+      cardModal.className = 'fixed inset-0 z-[10000] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-3';
+      cardModal.onclick = function(e) { if (e.target === cardModal) cardModal.classList.add('hidden'); };
+      document.body.appendChild(cardModal);
+    }
+
+    cardModal.innerHTML = `
+      <div id="hzkBirthdayCardPrintable" class="bg-gradient-to-b from-[#002B49] via-[#00487A] to-[#00A3E0] w-full max-w-lg rounded-3xl shadow-2xl border-4 border-amber-300 overflow-hidden text-white relative">
+        <div class="px-5 pt-4 pb-2 flex items-center justify-between">
+          <span class="px-3 py-1 rounded-full bg-amber-400 text-[#002B49] text-[10.5px] font-black tracking-wide uppercase shadow-xs">
+            ${isAdvance ? '🎉 ADVANCE BIRTHDAY WISHES (ส่งล่วงหน้าก่อนวันหยุด)' : '🎂 HAPPY BIRTHDAY · HOSHIZAKI FAMILY'}
+          </span>
+          <button type="button" onclick="document.getElementById('hzkBirthdayGreetingCardModal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/20 hover:bg-rose-600 text-white font-bold text-base">&times;</button>
+        </div>
+
+        <div class="px-6 py-4 text-center space-y-3">
+          <div class="relative inline-block">
+            <img src="${penguinImg}" alt="Hoshizaki Penguin" class="w-28 h-28 object-contain mx-auto drop-shadow-xl bg-white/95 rounded-full p-2 border-4 border-amber-300">
+            <span class="absolute -bottom-2 -right-2 text-2xl bg-white rounded-full p-1 shadow">🎂</span>
+          </div>
+
+          <div>
+            <div class="text-xs text-sky-200 font-bold">${escapeHtml(p.dept || 'HOSHIZAKI (THAILAND)')} · ${escapeHtml(p.position || '')}</div>
+            <h2 class="text-2xl font-black text-amber-300 tracking-wide mt-0.5">${escapeHtml(p.name)}</h2>
+            ${yrs >= 1 ? `<div class="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-emerald-500/30 border border-emerald-300/60 text-[10.5px] font-bold text-emerald-100">🏅 HOSHIZAKI Family Milestone: ${yrs} Years</div>` : ''}
+          </div>
+
+          <div class="bg-white/12 backdrop-blur-xs rounded-2xl p-3.5 text-left space-y-2 border border-white/20 text-xs leading-relaxed">
+            <div>
+              <span class="font-extrabold text-amber-300">🇹🇭 สุขสันต์วันเกิดครับ/ค่ะ!</span>
+              <p class="text-white/95">ขอให้คุณ <b>${escapeHtml(p.nickname || p.name)}</b> มีสุขภาพแข็งแรง เปี่ยมด้วยพลังและความสุขในทุกๆ วัน ขอบคุณที่เป็นกำลังสำคัญของครอบครัว <b>HOSHIZAKI (THAILAND)</b> เสมอมาครับ</p>
+            </div>
+            <div class="border-t border-white/15 pt-1.5">
+              <span class="font-extrabold text-sky-200">🇬🇧 Happy Birthday!</span>
+              <p class="text-white/95">Wishing you good health, happiness, and continued success. Thank you for your dedication to <b>Hoshizaki (Thailand) Limited</b>!</p>
+            </div>
+            <div class="border-t border-white/15 pt-1.5">
+              <span class="font-extrabold text-pink-200">🇯🇵 お誕生日おめでとうございます！</span>
+              <p class="text-white/95">健康と幸福、そしてさらなるご活躍を心よりお祈り申し上げます。ホシザキ・タイランド一同より。</p>
+            </div>
+          </div>
+
+          <div class="text-[10.5px] italic text-amber-200 font-semibold">
+            "Since it’s better in every respect, why wouldn’t you use it?" — HOSHIZAKI (THAILAND)
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+            <button type="button" onclick="downloadBirthdayCardAsImage('${escapeHtml(p.name)}')" class="bg-amber-400 hover:bg-amber-300 text-[#002B49] font-extrabold px-3.5 py-2 rounded-xl text-xs shadow-sm">
+              <i class="fa-solid fa-download mr-1"></i> บันทึกการ์ดอวยพร (.png)
+            </button>
+            <button type="button" onclick="shareBirthdayWishToLineGroup('${escapeHtml(p.name)}')" class="bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold px-3.5 py-2 rounded-xl text-xs shadow-sm">
+              <i class="fa-brands fa-line mr-1"></i> ส่งคำอวยพรเข้ากลุ่ม LINE
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    cardModal.classList.remove('hidden');
+  };
+
+  window.downloadBirthdayCardAsImage = async function(empName) {
+    const el = document.getElementById('hzkBirthdayCardPrintable');
+    if (!el || typeof html2canvas === 'undefined') return;
+    try {
+      const canvas = await html2canvas(el, { scale: 2, useCORS: true });
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `HOSHIZAKI_Birthday_Card_${String(empName || 'Staff').replace(/\s+/g, '_')}.png`;
+      a.click();
+      if (typeof showToast === 'function') showToast('🎂 ดาวน์โหลดการ์ดอวยพรวันเกิดเรียบร้อยแล้ว!');
+    } catch (e) {}
+  };
+
+  window.shareBirthdayWishToLineGroup = function(empName) {
+    const msg = `🎂🎉 [HAPPY BIRTHDAY · HOSHIZAKI (THAILAND)]\nขอร่วมอวยพรวันเกิดแด่คุณ ${empName} ขอให้มีสุขภาพแข็งแรง มีความสุข และประสบความสำเร็จในทุกๆ ด้านครับ! 🐧❄️`;
+    const webhookUrl = typeof getGoogleSheetsWebhookUrl === 'function' ? getGoogleSheetsWebhookUrl() : '';
+    if (webhookUrl && navigator.onLine) {
+      fetch(webhookUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actionType: 'SEND_LINE_PUSH', message: msg })
+      }).catch(() => {});
+      if (typeof showToast === 'function') showToast('🎉 ส่งคำอวยพรวันเกิดเข้ากลุ่ม LINE ทีมงานเรียบร้อยแล้ว!');
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(msg).catch(() => {});
+      if (typeof showToast === 'function') showToast('📋 คัดลอกคำอวยพรวันเกิดลงคลิปบอร์ดแล้ว สามารถวางใน LINE ได้ทันที!');
+    }
+  };
+
+  // Automatic check on login / startup (fires at most once per calendar date per employee)
+  window.checkAndTriggerAutoBirthdayGreeting = function() {
+    const emp = getActiveCurrentEmployeeProfile_();
+    if (!emp || !emp.birthDate) return;
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const shownKey = `${emp.id}_${todayIso}`;
+    const shownMap = JSON.parse(localStorage.getItem(EMP_BDAY_SHOWN_KEY) || '{}');
+    if (shownMap[shownKey]) return;
+
+    const evalRes = evaluateBirthdayTriggerForDate_(emp.birthDate, new Date());
+    if (evalRes.matchType) {
+      shownMap[shownKey] = true;
+      localStorage.setItem(EMP_BDAY_SHOWN_KEY, JSON.stringify(shownMap));
+      setTimeout(() => {
+        window.showHoshizakiBirthdayGreetingCard(emp.id, evalRes.matchType);
+      }, 1200);
+    }
+  };
+
+  setTimeout(() => {
+    loadEmployeeProfilesDb_();
+    window.checkAndTriggerAutoBirthdayGreeting();
+  }, 1800);
 })();

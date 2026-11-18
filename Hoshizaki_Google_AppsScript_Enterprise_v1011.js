@@ -237,6 +237,10 @@ function doPost(e) {
         return jsonOut(runDealerDispatchFollowUpAndEscalation_(ss, secrets));
       }
 
+      if (action === 'DEALER_REQUEST_HOSHIZAKI_SUBCONTRACT') {
+        return jsonOut(requestHoshizakiSubcontractForDealer_(ss, data, secrets));
+      }
+
       if (action === 'SYNC_V1025_GOVERNANCE_APPROVAL') {
         return jsonOut(syncV1025GovernanceApproval_(ss, data));
       }
@@ -1911,6 +1915,15 @@ function routeDualLineWebhook_(events, botMode) {
           replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{
             type: 'text',
             text: '✅ บันทึกสถานะรับเรื่องสำหรับเคส ' + caseId + ' เรียบร้อยแล้ว ขอบคุณที่ร่วมดูแลลูกค้า HOSHIZAKI ครับ'
+          }]);
+        } else if (pb.indexOf('DEALER_REQ_HZK_SUB:') === 0) {
+          var subCaseId = pb.split(':')[1] || '';
+          var subRes = requestHoshizakiSubcontractForDealer_(ss, { caseId: subCaseId, reason: 'ตัวแทนจำหน่ายกดร้องขอให้ทีม HOSHIZAKI เข้าหน้างานแทนผ่าน LINE' }, secrets);
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{
+            type: 'text',
+            text: '📩 รับคำขอให้ทีมช่าง HOSHIZAKI เข้าดำเนินการแทนสำหรับเคส ' + subCaseId + ' เรียบร้อยแล้ว\n' +
+                  '• สถานะ: เปิดใบงาน B2B Sub-Service (ออกใบเสนอราคาส่งตรงให้ตัวแทนจำหน่ายเท่านั้น เพื่อนำไปเสนอราคาลูกค้าต่อเอง)\n' +
+                  '• ศูนย์บริการ HOSHIZAKI จะส่งใบเสนอราคา B2B กลับให้ทางบริษัทตัวแทนจำหน่ายโดยเร็วที่สุดครับ'
           }]);
         } else if (pb.indexOf('SELECT_QT_TIER:') === 0) {
           var qPts = pb.split(':');
@@ -8550,11 +8563,17 @@ function routeCustomerCaseToDealerOrDirect_(ss, data, secrets) {
           ]
         },
         footer: {
-          type: 'box', layout: 'vertical', paddingAll: '10px',
-          contents: [{
-            type: 'button', style: 'primary', color: '#059669', height: 'sm',
-            action: { type: 'postback', label: '✅ ตัวแทนจำหน่ายรับเรื่องติดต่อลูกค้าแล้ว', data: 'DEALER_ACK_CASE:' + caseId, displayText: 'รับเรื่องและติดต่อลูกค้าเคส ' + caseId + ' เรียบร้อยครับ' }
-          }]
+          type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '10px',
+          contents: [
+            {
+              type: 'button', style: 'primary', color: '#059669', height: 'sm',
+              action: { type: 'postback', label: '✅ ตัวแทนจำหน่ายรับเรื่องติดต่อลูกค้าแล้ว', data: 'DEALER_ACK_CASE:' + caseId, displayText: 'รับเรื่องและติดต่อลูกค้าเคส ' + caseId + ' เรียบร้อยครับ' }
+            },
+            {
+              type: 'button', style: 'secondary', height: 'sm',
+              action: { type: 'postback', label: '🔄 คิวช่างเต็ม / ขอให้ Hoshizaki เข้าแทน (QT ดีลเลอร์)', data: 'DEALER_REQ_HZK_SUB:' + caseId, displayText: 'คิวช่างเต็ม ขอให้ทีม Hoshizaki เข้าหน้างานแทนและส่งใบเสนอราคาให้ทางตัวแทนจำหน่ายครับ' }
+            }
+          ]
         }
       }
     };
@@ -8739,4 +8758,62 @@ function runDealerDispatchFollowUpAndEscalation_(ss, secrets) {
     }
   }
   return { status: 'ok', remindedCount: reminded };
+}
+
+
+function requestHoshizakiSubcontractForDealer_(ss, data, secrets) {
+  var caseId = String(data.caseId || ('CASE-' + Date.now())).trim().toUpperCase();
+  var reason = String(data.reason || 'ตัวแทนจำหน่ายคิวช่างเต็ม ขอให้ HOSHIZAKI เข้าหน้างานแทน').trim();
+  var sheet = ensureDealerDispatchTrackerSheet_(ss);
+  var rowIdx = findRowByExactKey(sheet, 1, caseId);
+  var dealerName = String(data.dealerName || 'ตัวแทนจำหน่าย').trim();
+  var sn = String(data.serialNo || '-').trim().toUpperCase();
+  var model = String(data.model || '-').trim();
+  var custName = String(data.customerName || '-').trim();
+  var symptom = String(data.symptom || '-').trim();
+
+  if (rowIdx >= 2) {
+    var rowVals = sheet.getRange(rowIdx, 1, 1, 14).getValues()[0];
+    sn = rowVals[2] || sn;
+    model = rowVals[3] || model;
+    custName = rowVals[4] || custName;
+    dealerName = rowVals[8] || dealerName;
+    symptom = rowVals[9] || symptom;
+    sheet.getRange(rowIdx, 11).setValue('DEALER_SUBCONTRACT_QT_TO_DEALER');
+    sheet.getRange(rowIdx, 14).setValue('B2B Sub-Service: ออก QT ส่งตรงให้ ' + dealerName + ' เท่านั้น (ไม่ส่งตรงถึง End-User) | ' + reason);
+  }
+
+  // Create internal Service Job tagged for B2B Dealer Billing
+  var jobNo = 'JOB-DLR-' + Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyMMdd-HHmm');
+  upsertJobToSheet(ss, {
+    jobNo: jobNo,
+    date: Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd'),
+    jobStatus: 'Waiting Dealer QT Approval',
+    techCode: 'B2B-DEALER',
+    responsibleTech: 'Hoshizaki Service Team',
+    store: custName + ' (ผ่านดีลเลอร์: ' + dealerName + ')',
+    dealer: dealerName,
+    model: model,
+    serial: sn,
+    diagSymptom: '[B2B Sub-Service แทนดีลเลอร์] ' + symptom,
+    diagAction: 'ออกใบเสนอราคาส่งให้ตัวแทนจำหน่าย (' + dealerName + ') เท่านั้น ห้ามส่งราคาตรงถึงลูกค้าปลายทาง',
+    grandTotal: '0.00'
+  }, '', '');
+
+  if (secrets && isLineGroupConfigured() && isLineTokenConfigured()) {
+    pushLineMessage(
+      secrets.lineGroupId,
+      '🔄 [ตัวแทนจำหน่ายขอให้ HOSHIZAKI เข้าหน้างานแทน — B2B Sub-Service]\n' +
+      '━━━━━━━━━━━━━━━━━━━━\n' +
+      '🆔 เคสอ้างอิง: ' + caseId + ' -> ใบงาน: ' + jobNo + '\n' +
+      '🏢 ตัวแทนจำหน่ายผู้ว่าจ้าง: ' + dealerName + '\n' +
+      '🏪 ลูกค้าหน้างาน (End-User): ' + custName + '\n' +
+      '❄️ รุ่น / S/N: ' + model + ' / ' + sn + '\n' +
+      '💰 เงื่อนไขใบเสนอราคา (STRICT B2B RULE):\n' +
+      '   ⚠️ ออกใบเสนอราคาส่งให้ "' + dealerName + '" เท่านั้น!\n' +
+      '   ⚠️ ห้ามส่งใบเสนอราคาหรือแจ้งราคาให้ลูกค้าปลายทางโดยตรง (ดีลเลอร์นำไปบวก Margin เสนอลูกค้าเอง)'
+    );
+  }
+
+  return { status: 'ok', caseId: caseId, jobNo: jobNo, dealerName: dealerName, billingMode: 'BILL_TO_DEALER_ONLY' };
 }

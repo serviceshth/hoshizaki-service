@@ -43954,6 +43954,60 @@ ${portalUrl}`;
     if (document.getElementById('dlrEditProvince')) document.getElementById('dlrEditProvince').value = d.province || '';
   };
 
+  window.createDealerSubcontractJobAndQt = function() {
+    const dealerName = (document.getElementById('b2bSubDealerName')?.value || '').trim();
+    const custName = (document.getElementById('b2bSubCustName')?.value || '').trim() || 'ลูกค้าหน้างาน';
+    const sn = (document.getElementById('b2bSubSerial')?.value || '').trim().toUpperCase();
+    const sym = (document.getElementById('b2bSubSymptom')?.value || 'ตัวแทนจำหน่ายคิวช่างเต็ม ขอให้ทีม Hoshizaki เข้าตรวจเช็ก/ซ่อมแทน').trim();
+    if (!dealerName) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุชื่อตัวแทนจำหน่ายที่ร้องขอ');
+      return;
+    }
+
+    // Fill active Job Form fields with strict B2B Dealer Billing note (Bill to Dealer ONLY, never direct to End-User)
+    const storeEl = document.getElementById('storeName') || document.getElementById('customerStore');
+    const dealerEl = document.getElementById('dealerName');
+    const snEl = document.getElementById('serialNumber');
+    const symEl = document.getElementById('diagSymptom');
+    if (storeEl) storeEl.value = custName + ' [หน้างานแทนดีลเลอร์: ' + dealerName + ']';
+    if (dealerEl) dealerEl.value = dealerName;
+    if (snEl && sn) snEl.value = sn;
+    if (symEl) symEl.value = '[B2B Sub-Service แทนดีลเลอร์] ' + sym;
+
+    const gasUrl = localStorage.getItem('hoshizaki_gas_url') || '';
+    if (gasUrl && gasUrl.indexOf('http') === 0) {
+      fetch(gasUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actionType: 'DEALER_REQUEST_HOSHIZAKI_SUBCONTRACT',
+          dealerName,
+          customerName: custName,
+          serialNo: sn,
+          symptom: sym,
+          reason: 'ตัวแทนจำหน่ายคิวช่างเต็ม ขอให้ทีม HOSHIZAKI เข้าหน้างานแทน'
+        })
+      }).catch(() => {});
+    }
+
+    document.getElementById('aiChatbotOrchestratorModal')?.classList.add('hidden');
+    if (typeof showToast === 'function') showToast('✅ สร้างใบงานเข้าแทนดีลเลอร์ "' + dealerName + '" แล้ว — กำลังเปิดหน้าทำใบเสนอราคา (ส่งตรงถึงดีลเลอร์เท่านั้น)');
+
+    // Open Quotation Modal pre-addressed to Dealer (not End-User) so Dealer can apply their own markup
+    if (typeof generateReceiptModal === 'function') {
+      setTimeout(() => {
+        generateReceiptModal(false);
+        setTimeout(() => {
+          const qtCust = document.getElementById('rcCustomerName') || document.getElementById('receiptCustomerName');
+          const qtRemark = document.getElementById('rcRemark') || document.getElementById('receiptRemark');
+          if (qtCust) qtCust.value = dealerName + ' (หน้างานลูกค้า: ' + custName + ')';
+          if (qtRemark) qtRemark.value = 'ใบเสนอราคาสำหรับตัวแทนจำหน่าย (B2B Dealer Sub-Service) — ห้ามส่งราคาให้ลูกค้าปลายทางโดยตรง';
+        }, 250);
+      }, 200);
+    }
+  };
+
   window.triggerDealerFollowUpScanNow = function() {
     const gasUrl = localStorage.getItem('hoshizaki_gas_url') || '';
     if (!gasUrl || gasUrl.indexOf('http') !== 0) {
@@ -44085,6 +44139,28 @@ ${portalUrl}`;
             </div>
             <button type="button" onclick="triggerDealerFollowUpScanNow()" class="bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-2 rounded-lg font-bold text-xs shadow-xs">
               <i class="fa-solid fa-bell mr-1"></i> สั่งรันตรวจสอบ &amp; แจ้งเตือนซ้ำทันที
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-amber-50/90 p-4 rounded-xl border-2 border-amber-300 shadow-xs space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49] flex items-center gap-1.5">
+            <i class="fa-solid fa-handshake text-amber-600"></i>
+            <span>กรณีตัวแทนจำหน่ายคิวช่างเต็ม / ขอให้ทีม HOSHIZAKI เข้าหน้างานแทน (B2B Sub-Service · ออก QT ให้ดีลเลอร์เท่านั้น)</span>
+          </div>
+          <p class="text-[11px] text-amber-950 leading-relaxed">
+            • ตัวแทนจำหน่ายสามารถกดปุ่ม <b>"🔄 คิวช่างเต็ม / ขอให้ Hoshizaki เข้าแทน"</b> จากการ์ดใน Group LINE หรือแอดมินบันทึกคำขอจากหน้านี้<br>
+            • ระบบจะสร้างใบงาน B2B Sub-Service และตั้งค่า <b>ออกใบเสนอราคาส่งให้ตัวแทนจำหน่ายโดยตรงเท่านั้น (ไม่ส่งราคาให้ลูกค้าปลายทาง)</b> เพื่อให้ดีลเลอร์นำไปบวกค่าบริการ/มาร์คอัพเสนอราคาให้ลูกค้าเองได้อย่างอิสระ
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <input type="text" id="b2bSubDealerName" placeholder="ชื่อตัวแทนจำหน่ายที่ร้องขอ *" class="border border-amber-300 rounded-lg px-2.5 py-1.5 text-xs bg-white font-bold">
+            <input type="text" id="b2bSubCustName" placeholder="ชื่อร้านลูกค้าหน้างาน (End-User)" class="border border-amber-300 rounded-lg px-2.5 py-1.5 text-xs bg-white">
+            <input type="text" id="b2bSubSerial" placeholder="Serial No. (S/N)" class="border border-amber-300 rounded-lg px-2.5 py-1.5 text-xs bg-white font-mono">
+            <input type="text" id="b2bSubSymptom" placeholder="อาการ / งานที่ให้เข้าแทน" class="border border-amber-300 rounded-lg px-2.5 py-1.5 text-xs bg-white">
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="createDealerSubcontractJobAndQt()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white px-4 py-2 rounded-lg font-bold text-xs shadow-xs">
+              <i class="fa-solid fa-file-invoice-dollar mr-1 text-amber-300"></i> เปิดใบงานเข้าแทนดีลเลอร์ &amp; เปิดหน้าทำใบเสนอราคาส่งดีลเลอร์เท่านั้น
             </button>
           </div>
         </div>

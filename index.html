@@ -823,29 +823,27 @@ transform: scale(0.96);
 </div>
 <!-- แถวปุ่มสถานะด่วนกะทัดรัด (Flex-Wrap พอดีกรอบ 100% ไม่ล้นขอบจอทุกอุปกรณ์) -->
 <div id="topHeaderStatusPillsRow" class="flex flex-wrap items-center gap-1.5 mt-1.5 min-w-0 max-w-full">
-<button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="hzk-compact-pill text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
+<button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="hzk-compact-pill text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เลือกโปรไฟล์ผู้ใช้งาน / เข้าสู่ระบบ (Password &amp; RBAC 8 แผนก)">
 <i class="fa-solid fa-id-badge text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
 </button>
 <button type="button" id="btnEmployeeBirthdayProfile" onclick="openEmployeeBirthdayProfileModal()" class="hidden hzk-compact-pill text-[10px] bg-pink-500/25 hover:bg-pink-500/40 text-pink-100 border border-pink-300/60 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ข้อมูลส่วนตัว &amp; วันเกิดพนักงาน / การ์ดอวยพรวันเกิด 3 ภาษา (TH/EN/JP)">
 <i class="fa-solid fa-cake-candles text-amber-300"></i> <span id="empBdayTopPillLabel">วันเกิด &amp; โปรไฟล์</span>
 </button>
-<button type="button" id="btnTopContextualHelp" onclick="openContextualHelpDrawer('GLOBAL')" class="hzk-compact-pill text-[10px] bg-sky-500/25 hover:bg-sky-500/45 text-sky-100 border border-sky-300/60 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="คู่มือช่วยเหลือ & ตัวอย่างการใช้งานทุกหน้าจอ (TH / 日本語 / English)">
-<i class="fa-solid fa-circle-question text-amber-300"></i> <span>คู่มือ &amp; ตัวอย่าง (?)</span>
+<!-- Unified Live Cloud Auto-Sync Status Pill (รวมดึงข้อมูล Cloud + Auto-Sync + คิวออฟไลน์ไว้ในปุ่มเดียว) -->
+<button type="button" id="unifiedCloudSyncStatusPill" onclick="openUnifiedCloudSyncHubModal()" class="hzk-compact-pill text-[10px] bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-100 border border-emerald-400/55 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap shadow-xs" title="ซิงค์ข้อมูล Cloud อัตโนมัติทุกครั้งที่เปิดแอป (คลิกเพื่อเปิดศูนย์ควบคุม Sync &amp; Backup)">
+<i id="unifiedCloudSyncIcon" class="fa-solid fa-cloud-check text-emerald-300"></i>
+<span id="unifiedCloudSyncText">Cloud Auto-Sync พร้อม</span>
+<span id="offlineQueueStatusBadge" class="hidden bg-amber-400 text-slate-950 text-[9px] font-extrabold px-1.5 rounded-full">รอซิงค์ <span id="offlineQueueCountText">0</span></span>
+</button>
+<button type="button" id="btnTopDualLineCenter" onclick="openDualLineCommandCenterModal()" class="hzk-compact-pill text-[10px] bg-[#06C755]/25 hover:bg-[#06C755]/45 text-emerald-100 border border-emerald-300/60 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ศูนย์ควบคุม Dual LINE OA, แชทบอท 3 ภาษา และส่งลิงก์เข้าเบอร์มือถือลูกค้า (SMS)">
+<i class="fa-brands fa-line text-emerald-300"></i> <span>LINE OA &amp; Bot</span>
+<span id="topLineTicketCountBadge" class="hidden bg-rose-600 text-white text-[9px] font-extrabold px-1.5 rounded-full">0</span>
 </button>
 <button type="button" id="btnTopCommandPalette" onclick="openOmniCommandPaletteModal()" class="hzk-compact-pill text-[10px] bg-white/15 hover:bg-white/25 text-white border border-white/30 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="ค้นหาคำสั่งด่วนทั่วทั้งระบบ 3 ภาษา (Ctrl+K / ⌘K)">
 <i class="fa-solid fa-magnifying-glass text-amber-300"></i> <span>คำสั่งด่วน (Ctrl+K)</span>
 </button>
-<button type="button" onclick="pullTwoWayCloudSync(true)" class="hzk-compact-pill text-[10px] bg-indigo-500/25 hover:bg-indigo-500/40 text-indigo-100 border border-indigo-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ดึงข้อมูลใบงานและ S/N ล่าสุดจาก Google Sheets ส่วนกลางลงเครื่อง (Two-Way Sync)">
-<i class="fa-solid fa-arrows-rotate text-sky-300"></i> <span>ดึงข้อมูล Cloud</span>
-</button>
-<button type="button" id="smartAutoSyncStatusPill" onclick="toggleSmartAutoSyncSetting()" class="hzk-compact-pill text-[10px] bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-100 border border-emerald-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="สถานะ Auto-Sync เบื้องหลัง (คลิกเพื่อเปิด/ปิด Auto-Sync อัตโนมัติ)">
-<span id="smartAutoSyncStatusText"><i class="fa-solid fa-circle-check text-emerald-300"></i> Auto-Sync พร้อม</span>
-</button>
-<button type="button" onclick="openExecutiveDashboardModal()" class="hzk-compact-pill text-[10px] bg-sky-500/25 hover:bg-sky-500/40 text-sky-100 border border-sky-400/40 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เปิดศูนย์บัญชาการและวิเคราะห์ KPI แผนกบริการ (Executive Command Center)">
-<i class="fa-solid fa-gauge-high text-amber-300"></i> <span>แดชบอร์ด KPI</span>
-</button>
-<button type="button" id="offlineQueueStatusBadge" onclick="processOfflineSyncQueue(true)" class="hidden hzk-compact-pill text-[10px] bg-amber-500/25 hover:bg-amber-500/40 text-amber-200 border border-amber-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อซิงค์รายการที่ค้างอยู่ในคิวขึ้น Google Sheets/Drive ทันที">
-<i class="fa-solid fa-cloud-arrow-up"></i> <span>รอซิงค์: <span id="offlineQueueCountText">0</span></span>
+<button type="button" id="btnTopContextualHelp" onclick="openContextualHelpDrawer('GLOBAL')" class="hzk-compact-pill text-[10px] bg-sky-500/25 hover:bg-sky-500/45 text-sky-100 border border-sky-300/60 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="คู่มือช่วยเหลือ &amp; ตัวอย่างการใช้งานทุกหน้าจอ (TH / 日本語 / English)">
+<i class="fa-solid fa-circle-question text-amber-300"></i> <span>คู่มือ &amp; ตัวอย่าง (?)</span>
 </button>
 <button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="hzk-compact-pill text-[10px] bg-amber-400 hover:bg-amber-300 text-slate-950 border border-white px-2.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อสลับโหมดระหว่าง ผู้จัดการ/จ่ายงาน และ ช่างดำเนินงาน">
 <i class="fa-solid fa-user-shield"></i> <span>โหมด: ผู้จัดการ/จ่ายงาน</span>
@@ -853,12 +851,8 @@ transform: scale(0.96);
 <button type="button" id="btnPwaDirectInstall" onclick="triggerPwaInstall()" class="hzk-compact-pill text-[10px] bg-cyan-500/25 hover:bg-cyan-500/45 text-cyan-100 border border-cyan-300/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ติดตั้งแอปลงเครื่องทันที หรือดูวิธีเพิ่มลงหน้าจอหลัก (Install PWA App)">
 <i class="fa-solid fa-mobile-screen-button text-amber-300"></i> <span id="btnPwaDirectInstallLabel">Install App</span>
 </button>
-<button type="button" id="btnTopDualLineCenter" onclick="openDualLineCommandCenterModal()" class="hzk-compact-pill text-[10px] bg-[#06C755]/25 hover:bg-[#06C755]/45 text-emerald-100 border border-emerald-300/60 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ศูนย์ควบคุม Dual LINE OA, แชทบอท 3 ภาษา และส่งลิงก์เข้าเบอร์มือถือลูกค้า (SMS)">
-<i class="fa-brands fa-line text-emerald-300"></i> <span>LINE OA &amp; Bot</span>
-<span id="topLineTicketCountBadge" class="hidden bg-rose-600 text-white text-[9px] font-extrabold px-1.5 rounded-full">0</span>
-</button>
-<button type="button" onclick="forceAppCacheUpdateNow()" class="hzk-compact-pill text-[10px] bg-rose-500/25 hover:bg-rose-500/45 text-rose-100 border border-rose-300/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ล้างแคชเก่าและโหลดแอปเวอร์ชันล่าสุดทันที">
-<i class="fa-solid fa-rotate text-amber-300"></i> <span>อัปเดตแอป</span>
+<button type="button" id="btnSafeUpdateApp" onclick="safeBackupAndUpdateAppNow(false)" class="hzk-compact-pill text-[10px] bg-rose-500/25 hover:bg-rose-500/45 text-rose-100 border border-rose-300/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="สำรองข้อมูลที่กำลังทำงานอัตโนมัติก่อนอัปเดตเวอร์ชันใหม่ (Zero Data Loss Update)">
+<i class="fa-solid fa-shield-halved text-amber-300"></i> <span>อัปเดตแอป (Auto-Backup)</span>
 </button>
 </div>
 </div>

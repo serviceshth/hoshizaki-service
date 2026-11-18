@@ -4545,7 +4545,7 @@
 
   function mountV1040UiEnhancements_() {
     const topBar = document.getElementById('topHeaderStatusPillsRow') || document.getElementById('btnTopExecutiveReport')?.parentElement;
-    if (topBar && !document.getElementById('btnTopV1040ExampleSandbox')) {
+    if (false && topBar && !document.getElementById('btnTopV1040ExampleSandbox')) {
       const btn = document.createElement('button');
       btn.id = 'btnTopV1040ExampleSandbox';
       btn.type = 'button';
@@ -11608,3 +11608,426 @@ function advanceV1040PrApprovalStage(prNo) {
   } catch (e) {}
 }
 window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
+
+
+// ============================================================================
+// --- Module Block #64 (Enterprise v1051-OMNI-ENTERPRISE):
+//     1) Zero-Data-Loss Pre-Update Auto-Backup & Active-User WIP Recovery Guard
+//     2) Unified Startup Cloud Auto-Sync + Live Status Pill
+//     3) Clean Parent + Sub-Menu UX/UI Organizer (Compact / Expanded Toggle)
+// ============================================================================
+(function() {
+  const WIP_SNAPSHOT_KEY = 'hzk_active_wip_snapshot_v1051';
+  const PRE_UPDATE_FLAG_KEY = 'hzk_restore_after_update_v1051';
+  const COMPACT_MENU_PREF_KEY = 'hzk_compact_submenu_mode_v1051';
+
+  // --------------------------------------------------------------------------
+  // A. CONTINUOUS WORK-IN-PROGRESS (WIP) AUTO-SNAPSHOT ENGINE
+  // --------------------------------------------------------------------------
+  window.captureCurrentWorkInProgressSnapshot = function(reasonTag) {
+    try {
+      const container = document.getElementById('jobSheetContainer');
+      if (!container) return null;
+      const fields = {};
+      let hasUserTypedData = false;
+
+      container.querySelectorAll('input, textarea, select').forEach(function(el) {
+        if (!el.id) return;
+        if (el.type === 'checkbox' || el.type === 'radio') {
+          fields[el.id] = { type: el.type, checked: Boolean(el.checked) };
+        } else if (el.type !== 'file') {
+          fields[el.id] = { type: el.type || 'text', value: el.value || '' };
+          if (['storeName', 'customerStore', 'serialNumber', 'diagSymptom', 'diagAction', 'contactPerson'].includes(el.id) && String(el.value || '').trim().length > 0) {
+            hasUserTypedData = true;
+          }
+        }
+      });
+
+      // Capture spare parts rows
+      const partRows = [];
+      document.querySelectorAll('#partsTableBody tr').forEach(function(tr) {
+        const inputs = tr.querySelectorAll('input, select');
+        if (inputs.length >= 3) {
+          const rowVals = Array.from(inputs).map(function(inp) { return inp.value || ''; });
+          if (rowVals.some(function(v) { return String(v).trim() !== ''; })) {
+            partRows.push(rowVals);
+            hasUserTypedData = true;
+          }
+        }
+      });
+
+      // Capture signature canvases if drawn
+      const signatures = {};
+      ['sigCanvasTech', 'sigCanvasCustomer', 'sigCanvasApprover'].forEach(function(cid) {
+        const c = document.getElementById(cid);
+        if (c && typeof c.toDataURL === 'function') {
+          try { signatures[cid] = c.toDataURL('image/png'); } catch (e) {}
+        }
+      });
+
+      const snapshot = {
+        savedAt: new Date().toISOString(),
+        reason: reasonTag || 'AUTO_WIP',
+        hasUserTypedData: hasUserTypedData,
+        jobNo: (document.getElementById('jobNo')?.value || '').trim(),
+        fields: fields,
+        partRows: partRows,
+        signatures: signatures
+      };
+
+      localStorage.setItem(WIP_SNAPSHOT_KEY, JSON.stringify(snapshot));
+      return snapshot;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  window.restoreWorkInProgressSnapshotIfNeeded = function() {
+    try {
+      const shouldRestore = localStorage.getItem(PRE_UPDATE_FLAG_KEY) === '1';
+      const raw = localStorage.getItem(WIP_SNAPSHOT_KEY);
+      if (!shouldRestore || !raw) return;
+
+      const snap = JSON.parse(raw);
+      localStorage.removeItem(PRE_UPDATE_FLAG_KEY);
+      if (!snap || !snap.fields) return;
+
+      Object.keys(snap.fields).forEach(function(id) {
+        const el = document.getElementById(id);
+        const info = snap.fields[id];
+        if (!el || !info) return;
+        if (info.type === 'checkbox' || info.type === 'radio') {
+          el.checked = Boolean(info.checked);
+        } else {
+          el.value = info.value;
+        }
+      });
+
+      // Restore spare parts rows if any
+      if (Array.isArray(snap.partRows) && snap.partRows.length > 0 && typeof window.addPartRow === 'function') {
+        const tbody = document.getElementById('partsTableBody');
+        if (tbody) {
+          while (tbody.children.length < snap.partRows.length) {
+            window.addPartRow();
+          }
+          snap.partRows.forEach(function(vals, idx) {
+            const tr = tbody.children[idx];
+            if (!tr) return;
+            const inputs = tr.querySelectorAll('input, select');
+            vals.forEach(function(v, i) { if (inputs[i]) inputs[i].value = v; });
+          });
+          if (typeof window.calculateGrandTotal === 'function') window.calculateGrandTotal();
+        }
+      }
+
+      if (typeof showToast === 'function') {
+        showToast('✅ อัปเดตแอปเป็นเวอร์ชันล่าสุดเรียบร้อย และกู้คืนข้อมูลใบงานที่กำลังทำค้างไว้กลับมาครบ 100%!');
+      }
+    } catch (e) {}
+  };
+
+  // Auto-capture WIP every 15 seconds & on input changes
+  setInterval(function() {
+    window.captureCurrentWorkInProgressSnapshot('PERIODIC_15S');
+  }, 15000);
+
+  document.addEventListener('change', function(ev) {
+    if (ev.target && ev.target.closest && ev.target.closest('#jobSheetContainer')) {
+      window.captureCurrentWorkInProgressSnapshot('FIELD_EDIT');
+    }
+  }, { passive: true });
+
+  // --------------------------------------------------------------------------
+  // B. ZERO-DATA-LOSS SAFE UPDATE GUARD (`safeBackupAndUpdateAppNow`)
+  //    Runs BEFORE manual update OR automatic Service Worker version rollout!
+  // --------------------------------------------------------------------------
+  let _isSafeUpdatingNow = false;
+
+  window.safeBackupAndUpdateAppNow = async function(isAutoSwTriggered) {
+    if (_isSafeUpdatingNow) return;
+    _isSafeUpdatingNow = true;
+
+    // 1. Show full-visibility progress banner so user knows data is protected
+    let guardBanner = document.getElementById('hzkPreUpdateGuardBanner');
+    if (!guardBanner) {
+      guardBanner = document.createElement('div');
+      guardBanner.id = 'hzkPreUpdateGuardBanner';
+      guardBanner.className = 'fixed inset-0 z-[10000] bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4';
+      document.body.appendChild(guardBanner);
+    }
+    guardBanner.innerHTML = `
+      <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border-2 border-[#00A3E0] p-5 text-center space-y-3">
+        <div class="w-12 h-12 rounded-full bg-sky-100 text-[#002B49] flex items-center justify-center mx-auto text-xl">
+          <i class="fa-solid fa-shield-halved fa-beat text-[#00A3E0]"></i>
+        </div>
+        <h3 class="text-base font-extrabold text-[#002B49]">
+          ${isAutoSwTriggered ? 'ตรวจพบเวอร์ชันใหม่ — กำลังสำรองข้อมูลงานของคุณอัตโนมัติ' : 'กำลังสำรองข้อมูลทั้งหมดก่อนอัปเดตแอป...'}
+        </h3>
+        <p id="hzkPreUpdateStepText" class="text-xs text-slate-600 leading-relaxed">
+          1/3 กำลังบันทึกข้อมูลใบงานที่กำลังกรอกและฐานข้อมูลในเครื่อง...
+        </p>
+        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+          <div id="hzkPreUpdateBar" class="bg-gradient-to-r from-[#002B49] via-[#00A3E0] to-emerald-500 h-full transition-all duration-300" style="width: 35%"></div>
+        </div>
+      </div>
+    `;
+    guardBanner.classList.remove('hidden');
+
+    const stepEl = document.getElementById('hzkPreUpdateStepText');
+    const barEl = document.getElementById('hzkPreUpdateBar');
+
+    try {
+      // Step 1: Capture active form WIP & flag auto-restore after reload
+      const snap = window.captureCurrentWorkInProgressSnapshot(isAutoSwTriggered ? 'AUTO_SW_UPDATE' : 'MANUAL_UPDATE');
+      localStorage.setItem(PRE_UPDATE_FLAG_KEY, '1');
+      if (snap && snap.hasUserTypedData && typeof window.saveToHistory === 'function') {
+        try { window.saveToHistory(true); } catch (eSave) {}
+      }
+
+      // Step 2: Flush offline queue & push emergency backup to Google Sheets Cloud
+      if (stepEl) stepEl.textContent = '2/3 กำลังส่งข้อมูลสำรองขึ้น Google Sheets Cloud เพื่อป้องกันข้อมูลสูญหาย...';
+      if (barEl) barEl.style.width = '70%';
+
+      if (typeof window.processOfflineSyncQueue === 'function') {
+        await Promise.race([
+          window.processOfflineSyncQueue(false),
+          new Promise(function(r) { setTimeout(r, 2500); })
+        ]);
+      }
+      if (typeof window.triggerAutoSheetsBackupWithStatus === 'function') {
+        await Promise.race([
+          window.triggerAutoSheetsBackupWithStatus(false),
+          new Promise(function(r) { setTimeout(r, 2500); })
+        ]);
+      }
+
+      // Step 3: Clear old PWA caches & reload into latest version
+      if (stepEl) stepEl.textContent = '3/3 สำรองข้อมูลเรียบร้อย 100%! กำลังอัปเดตและกู้คืนหน้าจอทำงานของคุณ...';
+      if (barEl) barEl.style.width = '100%';
+
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(function(k) { return caches.delete(k); }));
+      }
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(function(r) { return r.update().catch(function() {}); }));
+      }
+    } catch (err) {}
+
+    setTimeout(function() {
+      const baseUrl = window.location.href.split('?')[0].split('#')[0];
+      window.location.replace(baseUrl + '?v=' + Date.now());
+    }, 650);
+  };
+
+  // Override `forceAppCacheUpdateNow` so ALL update buttons use the Safe Pre-Update Backup flow!
+  window.forceAppCacheUpdateNow = function() {
+    window.safeBackupAndUpdateAppNow(false);
+  };
+
+  // Listen for Service Worker updates when another admin deploys a new version while user is online
+  if ('serviceWorker' in navigator) {
+    let _initialController = navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (_initialController && !_isSafeUpdatingNow) {
+        window.safeBackupAndUpdateAppNow(true);
+      }
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // C. UNIFIED CLOUD AUTO-SYNC ON STARTUP + LIVE STATUS PILL
+  // --------------------------------------------------------------------------
+  window.setUnifiedCloudSyncPillState = function(state, detailMsg) {
+    const pill = document.getElementById('unifiedCloudSyncStatusPill');
+    const icon = document.getElementById('unifiedCloudSyncIcon');
+    const txt = document.getElementById('unifiedCloudSyncText');
+    if (!pill || !icon || !txt) return;
+
+    if (state === 'SYNCING') {
+      pill.className = 'hzk-compact-pill text-[10px] bg-sky-500/35 text-white border border-sky-300 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap shadow-xs';
+      icon.className = 'fa-solid fa-arrows-rotate fa-spin text-amber-300';
+      txt.textContent = detailMsg || 'กำลังซิงค์ข้อมูล Cloud...';
+    } else if (state === 'UPDATED') {
+      pill.className = 'hzk-compact-pill text-[10px] bg-emerald-500/40 text-white border border-emerald-300 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap shadow-xs';
+      icon.className = 'fa-solid fa-sparkles text-amber-300';
+      txt.textContent = detailMsg || 'อัปเดตข้อมูลล่าสุดแล้ว';
+    } else if (state === 'OFFLINE') {
+      pill.className = 'hzk-compact-pill text-[10px] bg-amber-500/30 text-amber-100 border border-amber-300/60 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap';
+      icon.className = 'fa-solid fa-wifi-slash text-amber-300';
+      txt.textContent = detailMsg || 'โหมดออฟไลน์ (บันทึกในเครื่อง)';
+    } else {
+      const hhmm = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+      pill.className = 'hzk-compact-pill text-[10px] bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-100 border border-emerald-400/55 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap';
+      icon.className = 'fa-solid fa-cloud-check text-emerald-300';
+      txt.textContent = detailMsg || ('Cloud ซิงค์ล่าสุด ' + hhmm);
+    }
+  };
+
+  window.runUnifiedAutoCloudSyncCycle = async function(isManual) {
+    if (!navigator.onLine) {
+      window.setUnifiedCloudSyncPillState('OFFLINE');
+      return;
+    }
+    window.setUnifiedCloudSyncPillState('SYNCING', 'กำลังซิงค์ข้อมูล Cloud...');
+    try {
+      if (typeof window.processOfflineSyncQueue === 'function') {
+        await window.processOfflineSyncQueue(false);
+      }
+      if (typeof window.pullTwoWayCloudSync === 'function') {
+        await window.pullTwoWayCloudSync(Boolean(isManual));
+      }
+      window.setUnifiedCloudSyncPillState('UPDATED', 'อัปเดตข้อมูลล่าสุดแล้ว ✓');
+      setTimeout(function() {
+        window.setUnifiedCloudSyncPillState('READY');
+      }, 4500);
+    } catch (e) {
+      window.setUnifiedCloudSyncPillState('READY');
+    }
+  };
+
+  // Unified Cloud Sync & Backup Control Modal (Replaces duplicate Cloud buttons)
+  window.openUnifiedCloudSyncHubModal = function() {
+    let modal = document.getElementById('hzkUnifiedCloudSyncHubModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkUnifiedCloudSyncHubModal';
+      modal.className = 'fixed inset-0 z-[9996] hidden bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border-2 border-[#002B49] overflow-hidden text-xs">
+          <div class="bg-gradient-to-r from-[#002B49] to-[#00A3E0] text-white px-4 py-3 flex items-center justify-between">
+            <div class="font-extrabold text-sm"><i class="fa-solid fa-cloud-arrow-up text-amber-300 mr-1.5"></i>ศูนย์ซิงค์ข้อมูล Cloud อัตโนมัติ &amp; สำรองข้อมูลปลอดภัย</div>
+            <button type="button" onclick="document.getElementById('hzkUnifiedCloudSyncHubModal').classList.add('hidden')" class="w-7 h-7 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+          </div>
+          <div class="p-4 space-y-3">
+            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-1">
+              <div class="font-extrabold">✅ ระบบ Auto-Sync &amp; Pre-Update Backup เปิดทำงานอัตโนมัติ</div>
+              <p class="text-[11px] leading-relaxed">• ซิงค์ข้อมูลใบงาน S/N และสต็อกกับ Google Sheets อัตโนมัติทุกครั้งที่เปิดแอป<br>• หากมีการอัปเดตเวอร์ชันใหม่ระหว่างที่คุณกำลังกรอกงาน ระบบจะสำรองข้อมูลค้างไว้ขึ้น Cloud ก่อนรีเฟรชอัตโนมัติ</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button type="button" onclick="document.getElementById('hzkUnifiedCloudSyncHubModal').classList.add('hidden'); runUnifiedAutoCloudSyncCycle(true);" class="py-2.5 px-3 rounded-xl bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-arrows-rotate"></i> <span>ซิงค์ข้อมูล Cloud ทันที</span>
+              </button>
+              <button type="button" onclick="if(typeof exportBackupJSON==='function') exportBackupJSON(false);" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-file-export"></i> <span>ดาวน์โหลดไฟล์สำรอง (.json)</span>
+              </button>
+              <button type="button" onclick="document.getElementById('hzkUnifiedCloudSyncHubModal').classList.add('hidden'); if(typeof openTeamCloudSyncModal==='function') openTeamCloudSyncModal();" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-gear text-indigo-600"></i> <span>ตั้งค่า Google Apps Script URL</span>
+              </button>
+              <button type="button" onclick="document.getElementById('hzkUnifiedCloudSyncHubModal').classList.add('hidden'); safeBackupAndUpdateAppNow(false);" class="py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-shield-halved"></i> <span>สำรอง &amp; อัปเดตเวอร์ชันใหม่</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+  };
+
+  // --------------------------------------------------------------------------
+  // D. CLEAN PARENT + SUB-MENU UX/UI ORGANIZER
+  //    Groups secondary buttons inside each category card into a clean
+  //    expandable "เมนูย่อยเพิ่มเติม (Sub-menus)" drawer so the main screen
+  //    stays uncluttered while keeping 100% of functions 1-click accessible!
+  // --------------------------------------------------------------------------
+  window.applyCleanParentSubmenuArchitecture = function() {
+    const isCompact = localStorage.getItem(COMPACT_MENU_PREF_KEY) !== '0'; // Default ON (clean UI)
+
+    // Inject Compact/Expanded Toggle button into Category Filter Bar if not present
+    const catBar = document.getElementById('tbCatBtn_ALL')?.parentElement;
+    if (catBar && !document.getElementById('btnToggleCompactSubmenuUi')) {
+      const tBtn = document.createElement('button');
+      tBtn.id = 'btnToggleCompactSubmenuUi';
+      tBtn.type = 'button';
+      tBtn.onclick = function() {
+        const next = localStorage.getItem(COMPACT_MENU_PREF_KEY) === '0' ? '1' : '0';
+        localStorage.setItem(COMPACT_MENU_PREF_KEY, next);
+        window.applyCleanParentSubmenuArchitecture();
+      };
+      catBar.appendChild(tBtn);
+    }
+
+    const toggleBtn = document.getElementById('btnToggleCompactSubmenuUi');
+    if (toggleBtn) {
+      toggleBtn.className = isCompact
+        ? 'tb-cat-btn px-2.5 py-1.5 rounded-lg bg-amber-400/25 hover:bg-amber-400/40 text-amber-200 border border-amber-300/50 font-bold transition'
+        : 'tb-cat-btn px-2.5 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-sky-200 border border-white/25 font-bold transition';
+      toggleBtn.innerHTML = isCompact
+        ? '<i class="fa-solid fa-layer-group mr-1 text-amber-300"></i>โหมดกะทัดรัด (มีเมนูย่อย)'
+        : '<i class="fa-solid fa-grip mr-1 text-sky-300"></i>แสดงปุ่มทั้งหมด';
+    }
+
+    // Organize each category card: keep top 6 primary action items visible, group remaining items into a sleek collapsible Sub-Menu Drawer
+    document.querySelectorAll('.tb-group-card').forEach(function(card) {
+      const grid = card.querySelector('.tb-btn-grid');
+      if (!grid) return;
+      const groupKey = card.getAttribute('data-tb-group') || 'GRP';
+      const drawerId = 'hzkSubDrawer_' + groupKey;
+      const triggerId = 'hzkSubTrigger_' + groupKey;
+
+      // Remove duplicate Cloud Sync button in Section 4 (now unified in Top Bar)
+      card.querySelectorAll('button').forEach(function(b) {
+        if ((b.getAttribute('onclick') || '').indexOf('openTeamCloudSyncModal') !== -1) {
+          b.setAttribute('data-hzk-secondary-sub', '1');
+        }
+      });
+
+      const directChildren = Array.from(grid.children).filter(function(el) {
+        return el.id !== drawerId && el.id !== triggerId;
+      });
+
+      if (directChildren.length <= 6) return;
+
+      let drawer = document.getElementById(drawerId);
+      let trigger = document.getElementById(triggerId);
+
+      if (!drawer) {
+        drawer = document.createElement('div');
+        drawer.id = drawerId;
+        drawer.className = 'col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1.5 border-t border-white/15';
+        grid.appendChild(drawer);
+
+        trigger = document.createElement('button');
+        trigger.id = triggerId;
+        trigger.type = 'button';
+        trigger.className = 'col-span-2 py-1.5 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-sky-200 border border-white/20 text-[11px] font-extrabold flex items-center justify-between transition';
+        trigger.onclick = function() {
+          const isHidden = drawer.classList.toggle('hidden');
+          const chev = trigger.querySelector('.hzk-sub-chev');
+          if (chev) chev.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+        };
+        grid.insertBefore(trigger, drawer);
+
+        // Move items after index 5 into the Sub-Menu Drawer
+        directChildren.slice(6).forEach(function(child) {
+          drawer.appendChild(child);
+        });
+      }
+
+      const subCount = drawer.children.length;
+      if (trigger) {
+        trigger.innerHTML = `
+          <span><i class="fa-solid fa-folder-tree text-amber-300 mr-1.5"></i>เมนูย่อยเพิ่มเติม (${subCount} รายการ — AI · IoT · ดีลเลอร์ · Outsource)</span>
+          <i class="fa-solid fa-chevron-down hzk-sub-chev transition-transform"></i>
+        `;
+      }
+
+      if (isCompact) {
+        drawer.classList.add('hidden');
+      } else {
+        drawer.classList.remove('hidden');
+      }
+    });
+  };
+
+  // Run startup sequence: restore WIP if updated, apply clean parent/sub-menu layout, and trigger Auto-Sync
+  setTimeout(function() {
+    window.restoreWorkInProgressSnapshotIfNeeded();
+    window.applyCleanParentSubmenuArchitecture();
+    window.runUnifiedAutoCloudSyncCycle(false);
+  }, 1100);
+})();

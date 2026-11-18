@@ -12031,3 +12031,431 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     window.runUnifiedAutoCloudSyncCycle(false);
   }, 1100);
 })();
+
+
+// ============================================================================
+// --- Module Block #65 (Enterprise v1051-OMNI-ENTERPRISE Strategic Expansion):
+//     1) Water Quality (TDS/Pressure) & 4HC-H Filter 6-Month Lifecycle CRM
+//     2) Loaner Fleet & Technician Measuring Tool Calibration QR Tracker
+//     3) Special Discount & Goodwill Claim Approval Queue (Real-Time GP% Guard)
+//     4) Technician Scorecard & Standard Repair Time (SRT) Benchmark Engine
+//     5) B2B Dealer & Multi-Branch Chain-Store Self-Service Portal
+// ============================================================================
+(function() {
+  const WATER_CRM_KEY = 'hzk_water_filter_crm_v1051';
+  const TOOL_LOANER_KEY = 'hzk_tool_loaner_tracker_v1051';
+  const DISCOUNT_QUEUE_KEY = 'hzk_special_discount_approvals_v1051';
+  const B2B_PORTAL_ORGS_KEY = 'hzk_b2b_chain_orgs_v1051';
+
+  const SRT_STANDARDS_MINUTES = [
+    { code: 'SRT-PM-01', task: 'ล้างบำรุงรักษา PM & Sanitize มาตรฐาน (IM/KM Series)', stdMins: 90, baseFee: 1800 },
+    { code: 'SRT-PM-02', task: 'ล้างใหญ่ Big Cleaning & Descale ระบบน้ำแข็งขนาดใหญ่ (>300 กก.)', stdMins: 150, baseFee: 3200 },
+    { code: 'SRT-REP-01', task: 'เปลี่ยนวาล์วน้ำเข้า / ลูกลอย / ปั๊มน้ำ (Water System)', stdMins: 60, baseFee: 1500 },
+    { code: 'SRT-REP-02', task: 'เปลี่ยนแผงวงจรหลัก Control Board / Thermistor / Switch', stdMins: 45, baseFee: 1500 },
+    { code: 'SRT-REP-03', task: 'เปลี่ยนคอมเพรสเซอร์ / แวคคัม & เติมสารทำความเย็น R290/R404A', stdMins: 210, baseFee: 4500 }
+  ];
+
+  function seedBlock65Defaults_() {
+    if (!localStorage.getItem(WATER_CRM_KEY)) {
+      const next15d = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
+      const next120d = new Date(Date.now() + 120 * 86400000).toISOString().slice(0, 10);
+      localStorage.setItem(WATER_CRM_KEY, JSON.stringify([
+        { id: 'WTR-001', serial: 'K88310M', model: 'KM-901MAJ', customer: 'โรงแรมแชงกรี-ลา กรุงเทพฯ', tdsPpm: 148, waterBar: 2.4, filterModel: '4HC-H (EV965516)', installedDate: '2026-06-02', nextDueDate: next15d, status: 'DUE_SOON_30D' },
+        { id: 'WTR-002', serial: 'H14289J', model: 'IM-240DNE-HC', customer: 'Starbucks Reserve — CentralWorld', tdsPpm: 62, waterBar: 2.8, filterModel: '4HC-H (EV965516)', installedDate: '2026-09-18', nextDueDate: next120d, status: 'NORMAL' }
+      ]));
+    }
+    if (!localStorage.getItem(TOOL_LOANER_KEY)) {
+      localStorage.setItem(TOOL_LOANER_KEY, JSON.stringify([
+        { assetId: 'LNR-IM130-01', category: 'LOANER_MACHINE', name: 'เครื่องสำรอง IM-130NE (S/N: LNR-2026-01)', holder: 'ลูกค้า: ร้านอาหารญี่ปุ่น โอโตยะ (สาขาสยาม)', jobRef: 'JOB-2026-0874', calDueDate: '2027-06-30', status: 'DEPLOYED_AT_CUSTOMER' },
+        { assetId: 'TOOL-MNF-04', category: 'CALIBRATED_TOOL', name: 'Digital Manifold Gauge Testo 550s (#04)', holder: 'ช่าง T01 — Mr.Surin S.', jobRef: 'VAN-T01', calDueDate: '2026-12-15', status: 'CHECKED_OUT_TECH' },
+        { assetId: 'TOOL-VAC-02', category: 'CALIBRATED_TOOL', name: 'R290 Spark-Free Vacuum Pump (#02)', holder: 'คลังเครื่องมือส่วนกลาง หลักสี่', jobRef: 'HQ-STORE', calDueDate: '2027-03-20', status: 'AVAILABLE' }
+      ]));
+    }
+    if (!localStorage.getItem(DISCOUNT_QUEUE_KEY)) {
+      localStorage.setItem(DISCOUNT_QUEUE_KEY, JSON.stringify([
+        { reqId: 'DSC-2026-01', quoteNo: 'QT-2026-1188', customer: 'EMERALD BAY RESORT CO.,LTD.', requester: 'Admin Service Unit', listTotal: 42500, discountPct: 18, netTotal: 34850, estGpPct: 26.4, reason: 'ลูกค้าต่อสัญญา PM รายปี 6 เครื่องพร้อมกัน ขอส่วนลดอะไหล่ 18%', status: 'PENDING_SM_APPROVAL', approvedBy: '' }
+      ]));
+    }
+    if (!localStorage.getItem(B2B_PORTAL_ORGS_KEY)) {
+      localStorage.setItem(B2B_PORTAL_ORGS_KEY, JSON.stringify([
+        { orgCode: 'CHAIN-SBX-TH', orgName: 'Starbucks Coffee (Thailand) — Chain Account', tier: 'CHAIN_STORE_VIP', totalBranches: 48, activeUnits: 92, contactEmail: 'facilities@coffee-chain.co.th' },
+        { orgCode: 'DLR-STK-HQ', orgName: 'S.T.KITCHEN (Dealer Grade A)', tier: 'DEALER_A', totalBranches: 5, activeUnits: 64, contactEmail: 'service@stkitchen.co.th' }
+      ]));
+    }
+  }
+
+  function syncBlock65ToCloud_(actionType, payload) {
+    try {
+      const gasUrl = localStorage.getItem('hoshizaki_gas_url') || localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+      if (gasUrl && gasUrl.startsWith('http')) {
+        fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.assign({ actionType: actionType }, payload))
+        }).catch(function() {});
+      }
+    } catch (e) {}
+  }
+
+  // --- Pillar 1 Handlers: Water Quality & 4HC-H Filter CRM ---
+  window.addWaterQualityRecord = function() {
+    const serial = String(document.getElementById('wtrInSerial')?.value || '').trim().toUpperCase();
+    const model = String(document.getElementById('wtrInModel')?.value || 'IM-240DNE-HC').trim();
+    const customer = String(document.getElementById('wtrInCustomer')?.value || '').trim();
+    const tdsPpm = Number(document.getElementById('wtrInTds')?.value || 85);
+    const waterBar = Number(document.getElementById('wtrInBar')?.value || 2.5);
+    if (!serial || !customer) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุ S/N เครื่องและชื่อลูกค้าครับ');
+      return;
+    }
+    const nextDue = new Date(Date.now() + 180 * 86400000).toISOString().slice(0, 10);
+    const list = JSON.parse(localStorage.getItem(WATER_CRM_KEY) || '[]');
+    const rec = {
+      id: 'WTR-' + Date.now().toString().slice(-5),
+      serial: serial,
+      model: model,
+      customer: customer,
+      tdsPpm: tdsPpm,
+      waterBar: waterBar,
+      filterModel: '4HC-H (EV965516)',
+      installedDate: new Date().toISOString().slice(0, 10),
+      nextDueDate: nextDue,
+      status: tdsPpm > 200 ? 'HIGH_TDS_ALERT' : 'NORMAL'
+    };
+    list.unshift(rec);
+    localStorage.setItem(WATER_CRM_KEY, JSON.stringify(list));
+    syncBlock65ToCloud_('UPSERT_WATER_FILTER_CRM', { record: rec });
+    if (typeof showToast === 'function') showToast('💧 บันทึกค่าคุณภาพน้ำ TDS ' + tdsPpm + ' ppm และตั้งรอบเปลี่ยน 4HC-H อัตโนมัติแล้ว');
+    renderLifecycleSuiteTab_('WATER_FILTER');
+  };
+
+  window.generateFilter4HcRenewalQuote = function(recId) {
+    const list = JSON.parse(localStorage.getItem(WATER_CRM_KEY) || '[]');
+    const rec = list.find(function(x) { return x.id === recId; });
+    if (!rec) return;
+    const storeEl = document.getElementById('storeName') || document.getElementById('customerStore');
+    const snEl = document.getElementById('serialNumber');
+    const modEl = document.getElementById('machineModel');
+    if (storeEl) storeEl.value = rec.customer;
+    if (snEl) snEl.value = rec.serial;
+    if (modEl) modEl.value = rec.model;
+
+    document.getElementById('hzkEnterpriseLifecycleModal')?.classList.add('hidden');
+    if (typeof generateReceiptModal === 'function') {
+      generateReceiptModal(false);
+    }
+    if (typeof showToast === 'function') {
+      showToast('📄 สร้างใบเสนอราคาต่ออายุไส้กรอง 4HC-H สำหรับ ' + rec.customer + ' (S/N: ' + rec.serial + ') เรียบร้อย!');
+    }
+  };
+
+  // --- Pillar 2 Handlers: Loaner Fleet & Calibrated Tool QR Tracker ---
+  window.checkoutOrReturnToolLoaner = function(assetId, nextStatus) {
+    const holder = prompt('ระบุชื่อช่างผู้เบิก / ชื่อร้านค้าลูกค้า (หรือพิมพ์ "คลังส่วนกลาง" เพื่อรับคืน):', 'ช่าง T02 — Mr.Jeerapan');
+    if (holder === null) return;
+    const list = JSON.parse(localStorage.getItem(TOOL_LOANER_KEY) || '[]');
+    const item = list.find(function(x) { return x.assetId === assetId; });
+    if (!item) return;
+    item.holder = holder.trim() || 'คลังเครื่องมือส่วนกลาง หลักสี่';
+    item.status = nextStatus;
+    localStorage.setItem(TOOL_LOANER_KEY, JSON.stringify(list));
+    syncBlock65ToCloud_('UPDATE_TOOL_LOANER_ASSET', { asset: item });
+    if (typeof showToast === 'function') showToast('🔄 อัปเดตสถานะ "' + item.name + '" → ' + item.holder);
+    renderLifecycleSuiteTab_('LOANER_TOOLS');
+  };
+
+  // --- Pillar 3 Handlers: Special Discount & Goodwill Approval Workflow ---
+  window.submitSpecialDiscountRequest = function() {
+    const quoteNo = String(document.getElementById('dscInQuoteNo')?.value || ('QT-' + Date.now().toString().slice(-5))).trim();
+    const customer = String(document.getElementById('dscInCustomer')?.value || '').trim();
+    const listTotal = Number(document.getElementById('dscInListTotal')?.value || 0);
+    const discountPct = Number(document.getElementById('dscInPct')?.value || 0);
+    const reason = String(document.getElementById('dscInReason')?.value || '').trim();
+    if (!customer || listTotal <= 0) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุชื่อลูกค้าและยอดราคาก่อนส่วนลดครับ');
+      return;
+    }
+    const netTotal = Math.round(listTotal * (1 - discountPct / 100));
+    const estGpPct = Number(Math.max(5, 42 - discountPct * 0.85).toFixed(1));
+    const list = JSON.parse(localStorage.getItem(DISCOUNT_QUEUE_KEY) || '[]');
+    const req = {
+      reqId: 'DSC-' + Date.now().toString().slice(-5),
+      quoteNo: quoteNo,
+      customer: customer,
+      requester: document.getElementById('techQuickProfileName')?.textContent || 'Service Admin',
+      listTotal: listTotal,
+      discountPct: discountPct,
+      netTotal: netTotal,
+      estGpPct: estGpPct,
+      reason: reason || 'ขออนุมัติส่วนลดพิเศษสำหรับลูกค้าองค์กร',
+      status: 'PENDING_SM_APPROVAL',
+      approvedBy: ''
+    };
+    list.unshift(req);
+    localStorage.setItem(DISCOUNT_QUEUE_KEY, JSON.stringify(list));
+    syncBlock65ToCloud_('SUBMIT_DISCOUNT_APPROVAL', { request: req });
+    if (typeof showToast === 'function') showToast('📨 ส่งคำขออนุมัติส่วนลด ' + discountPct + '% (GP คงเหลือ ' + estGpPct + '%) เข้าคิวผู้จัดการแล้ว');
+    renderLifecycleSuiteTab_('DISCOUNT_APPROVAL');
+  };
+
+  window.decideSpecialDiscountRequest = function(reqId, decision) {
+    const list = JSON.parse(localStorage.getItem(DISCOUNT_QUEUE_KEY) || '[]');
+    const item = list.find(function(x) { return x.reqId === reqId; });
+    if (!item) return;
+    item.status = decision;
+    item.approvedBy = document.getElementById('techQuickProfileName')?.textContent || 'Deputy Service Manager';
+    localStorage.setItem(DISCOUNT_QUEUE_KEY, JSON.stringify(list));
+    syncBlock65ToCloud_('DECIDE_DISCOUNT_APPROVAL', { request: item });
+    if (typeof showToast === 'function') {
+      showToast(decision === 'APPROVED' ? '✅ อนุมัติส่วนลดพิเศษ ' + item.quoteNo + ' เรียบร้อยแล้ว!' : '❌ ปฏิเสธคำขอส่วนลด ' + item.quoteNo);
+    }
+    renderLifecycleSuiteTab_('DISCOUNT_APPROVAL');
+  };
+
+  // --- Pillar 5 Handler: Open B2B Dealer / Chain-Store Self-Service Portal ---
+  window.launchB2bPartnerSelfServiceView = function(orgCode) {
+    const orgs = JSON.parse(localStorage.getItem(B2B_PORTAL_ORGS_KEY) || '[]');
+    const org = orgs.find(function(o) { return o.orgCode === orgCode; }) || orgs[0];
+    if (!org) return;
+
+    let pv = document.getElementById('hzkB2bPartnerPortalPreviewModal');
+    if (!pv) {
+      pv = document.createElement('div');
+      pv.id = 'hzkB2bPartnerPortalPreviewModal';
+      pv.className = 'fixed inset-0 z-[10001] hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3';
+      document.body.appendChild(pv);
+    }
+    pv.innerHTML = `
+      <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl border-2 border-[#00A3E0] flex flex-col overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] to-[#00A3E0] text-white px-4 py-3 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] font-extrabold text-amber-300 uppercase">HOSHIZAKI B2B PARTNER &amp; CHAIN-STORE PORTAL · ${org.orgCode}</div>
+            <div class="text-base font-black">${org.orgName} (${org.totalBranches} สาขา · ${org.activeUnits} เครื่อง)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkB2bPartnerPortalPreviewModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+        </div>
+        <div class="p-4 overflow-y-auto space-y-3 bg-slate-50">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div class="bg-white p-3 rounded-xl border border-slate-200"><div class="text-slate-500">เครื่องในความดูแลทั้งหมด</div><div class="text-xl font-black text-[#002B49]">${org.activeUnits} เครื่อง</div></div>
+            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200"><div class="text-emerald-700">เครื่องทำงานปกติ (Online/PM)</div><div class="text-xl font-black text-emerald-700">${org.activeUnits - 1} เครื่อง</div></div>
+            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200"><div class="text-amber-800">กำลังดำเนินการซ่อม</div><div class="text-xl font-black text-amber-700">1 เครื่อง</div></div>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 space-y-2">
+            <div class="font-extrabold text-sm text-[#002B49]">เปิดใบแจ้งซ่อมด่วน / ดาวน์โหลดใบรับรอง PM ประจำสาขา (Self-Service)</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input id="b2bPortalBranchIn" placeholder="ชื่อสาขา (เช่น สาขาเซ็นทรัลเวิลด์)" class="border rounded-lg px-2.5 py-2">
+              <input id="b2bPortalSnIn" placeholder="Serial No. เครื่อง (เช่น H14289J)" class="border rounded-lg px-2.5 py-2 font-mono">
+              <button type="button" onclick="if(typeof showToast==='function') showToast('📲 รับแจ้งซ่อมจากพอร์ทัล B2B เข้าคิวตารางช่าง HOSHIZAKI ทันที!');" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg py-2 px-3">
+                <i class="fa-solid fa-paper-plane mr-1"></i> ส่งแจ้งซ่อมเข้าศูนย์บริการ
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    pv.classList.remove('hidden');
+  };
+
+  window.openEnterpriseLifecycleSuiteModal = function(initialTab) {
+    seedBlock65Defaults_();
+    let modal = document.getElementById('hzkEnterpriseLifecycleModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkEnterpriseLifecycleModal';
+      modal.className = 'fixed inset-0 z-[9997] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden">
+          <div class="bg-gradient-to-r from-[#002B49] via-cyan-900 to-emerald-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div>
+              <h2 class="text-base sm:text-lg font-extrabold"><i class="fa-solid fa-layer-group text-amber-300 mr-1.5"></i>HOSHIZAKI Enterprise Lifecycle Suite (5 โมดูลต่อยอดครบวงจร)</h2>
+              <p class="text-[11px] text-sky-200">Water &amp; 4HC-H Filter CRM · Loaner &amp; Calibration QR · Discount GP% Approval · Technician SRT Scorecard · B2B Chain Portal</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkEnterpriseLifecycleModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+          </div>
+          <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 text-xs font-bold">
+            <button type="button" id="lcTab_WATER_FILTER" onclick="renderLifecycleSuiteTab_('WATER_FILTER')" class="lc-tab px-3 py-2 rounded-t-lg bg-white text-[#002B49] border-b-2 border-[#002B49] whitespace-nowrap">1. คุณภาพน้ำ &amp; ไส้กรอง 4HC-H</button>
+            <button type="button" id="lcTab_LOANER_TOOLS" onclick="renderLifecycleSuiteTab_('LOANER_TOOLS')" class="lc-tab px-3 py-2 rounded-t-lg text-slate-600 whitespace-nowrap">2. เครื่องสำรอง &amp; เครื่องมือวัด QR</button>
+            <button type="button" id="lcTab_DISCOUNT_APPROVAL" onclick="renderLifecycleSuiteTab_('DISCOUNT_APPROVAL')" class="lc-tab px-3 py-2 rounded-t-lg text-slate-600 whitespace-nowrap">3. อนุมัติส่วนลดพิเศษ &amp; GP%</button>
+            <button type="button" id="lcTab_TECH_SRT" onclick="renderLifecycleSuiteTab_('TECH_SRT')" class="lc-tab px-3 py-2 rounded-t-lg text-slate-600 whitespace-nowrap">4. ประเมินช่าง &amp; เวลามาตรฐาน SRT</button>
+            <button type="button" id="lcTab_B2B_PORTAL" onclick="renderLifecycleSuiteTab_('B2B_PORTAL')" class="lc-tab px-3 py-2 rounded-t-lg text-slate-600 whitespace-nowrap">5. พอร์ทัลคู่ค้า B2B &amp; เชนร้านค้า</button>
+          </div>
+          <div id="hzkEnterpriseLifecycleBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-4 text-xs"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    window.renderLifecycleSuiteTab_(initialTab || 'WATER_FILTER');
+  };
+
+  window.renderLifecycleSuiteTab_ = function(tab) {
+    document.querySelectorAll('.lc-tab').forEach(function(b) {
+      const act = b.id === ('lcTab_' + tab);
+      b.className = act
+        ? 'lc-tab px-3 py-2 rounded-t-lg bg-white text-[#002B49] border-b-2 border-[#002B49] whitespace-nowrap font-extrabold'
+        : 'lc-tab px-3 py-2 rounded-t-lg text-slate-600 hover:text-slate-900 whitespace-nowrap font-bold';
+    });
+
+    const body = document.getElementById('hzkEnterpriseLifecycleBody');
+    if (!body) return;
+
+    if (tab === 'WATER_FILTER') {
+      const list = JSON.parse(localStorage.getItem(WATER_CRM_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-cyan-200 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-droplet text-cyan-600 mr-1"></i>บันทึกค่าคุณภาพน้ำ (TDS / แรงดัน) &amp; นับถอยหลังเปลี่ยนไส้กรอง 4HC-H ทุก 6 เดือน</div>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <input id="wtrInSerial" placeholder="S/N เครื่อง *" class="border rounded-lg px-2.5 py-1.5 font-mono font-bold">
+            <input id="wtrInModel" placeholder="รุ่นเครื่อง (เช่น IM-240DNE-HC)" class="border rounded-lg px-2.5 py-1.5">
+            <input id="wtrInCustomer" placeholder="ชื่อร้านค้า / ลูกค้า *" class="border rounded-lg px-2.5 py-1.5">
+            <input id="wtrInTds" type="number" placeholder="ค่า TDS (ppm) เช่น 95" class="border rounded-lg px-2.5 py-1.5">
+            <button type="button" onclick="addWaterQualityRecord()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold rounded-lg py-1.5 px-3">+ บันทึกค่าคุณภาพน้ำ</button>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">S/N / รุ่น</th><th class="p-2">ลูกค้า</th><th class="p-2 text-center">TDS (ppm)</th><th class="p-2 text-center">ไส้กรอง</th><th class="p-2 text-center">ครบกำหนดเปลี่ยน</th><th class="p-2 text-center">สร้างใบเสนอราคา</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${list.map(function(r) {
+                const highTds = Number(r.tdsPpm) > 150;
+                return `<tr>
+                  <td class="p-2 font-bold">${r.serial} <span class="text-slate-500 font-normal">(${r.model})</span></td>
+                  <td class="p-2 font-semibold">${r.customer}</td>
+                  <td class="p-2 text-center font-extrabold ${highTds ? 'text-rose-600' : 'text-emerald-700'}">${r.tdsPpm} ppm</td>
+                  <td class="p-2 text-center">${r.filterModel}</td>
+                  <td class="p-2 text-center font-bold text-amber-700">${r.nextDueDate}</td>
+                  <td class="p-2 text-center"><button type="button" onclick="generateFilter4HcRenewalQuote('${r.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-bold text-[11px]">ออก QT ไส้กรอง 4HC-H</button></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'LOANER_TOOLS') {
+      const assets = JSON.parse(localStorage.getItem(TOOL_LOANER_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2.5 overflow-x-auto">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-toolbox text-amber-600 mr-1"></i>ทะเบียนคุมเครื่องสำรอง (Loaner Fleet) &amp; เครื่องมือวัดสอบเทียบ (Calibration QR Tracking)</div>
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">รหัส QR</th><th class="p-2">ประเภท</th><th class="p-2">รายการเครื่องสำรอง / เครื่องมือวัด</th><th class="p-2">ผู้ถือครองปัจจุบัน / หน้างาน</th><th class="p-2 text-center">วันครบสอบเทียบ (Cal Due)</th><th class="p-2 text-center">เบิก / รับคืน</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${assets.map(function(a) {
+                return `<tr>
+                  <td class="p-2 font-mono font-bold text-[#002B49]">${a.assetId}</td>
+                  <td class="p-2"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-bold text-[10px]">${a.category}</span></td>
+                  <td class="p-2 font-bold">${a.name}</td>
+                  <td class="p-2 text-slate-700">${a.holder}</td>
+                  <td class="p-2 text-center font-bold text-emerald-700">${a.calDueDate}</td>
+                  <td class="p-2 text-center space-x-1">
+                    <button type="button" onclick="checkoutOrReturnToolLoaner('${a.assetId}','CHECKED_OUT_TECH')" class="bg-amber-600 text-white px-2 py-1 rounded font-bold text-[10.5px]">เบิกใช้งาน</button>
+                    <button type="button" onclick="checkoutOrReturnToolLoaner('${a.assetId}','AVAILABLE')" class="bg-emerald-600 text-white px-2 py-1 rounded font-bold text-[10.5px]">รับคืนคลัง</button>
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'DISCOUNT_APPROVAL') {
+      const reqs = JSON.parse(localStorage.getItem(DISCOUNT_QUEUE_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-percent text-rose-600 mr-1"></i>ขออนุมัติส่วนลดพิเศษ / เคลมนอกประกัน (คำนวณ GP% คงเหลืออัตโนมัติ)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <input id="dscInQuoteNo" placeholder="เลขที่ QT (เช่น QT-2026-1190)" class="border rounded-lg px-2.5 py-1.5 font-mono">
+            <input id="dscInCustomer" placeholder="ชื่อลูกค้า *" class="border rounded-lg px-2.5 py-1.5">
+            <input id="dscInListTotal" type="number" placeholder="ราคารวมก่อนลด (THB) *" class="border rounded-lg px-2.5 py-1.5">
+            <input id="dscInPct" type="number" placeholder="ส่วนลด (%) เช่น 15" class="border rounded-lg px-2.5 py-1.5">
+            <button type="button" onclick="submitSpecialDiscountRequest()" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-lg py-1.5 px-3">ส่งขออนุมัติ SM/MD</button>
+          </div>
+          <input id="dscInReason" placeholder="เหตุผลประกอบการขอส่วนลดพิเศษ / Goodwill Claim..." class="w-full border rounded-lg px-2.5 py-1.5">
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">เลขที่คำขอ / QT</th><th class="p-2">ลูกค้า</th><th class="p-2 text-right">ยอดก่อนลด</th><th class="p-2 text-center">ส่วนลด</th><th class="p-2 text-right">ยอดสุทธิ</th><th class="p-2 text-center">GP% คงเหลือ</th><th class="p-2 text-center">สถานะ / อนุมัติ</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${reqs.map(function(q) {
+                return `<tr>
+                  <td class="p-2 font-bold">${q.reqId} (${q.quoteNo})</td>
+                  <td class="p-2"><b>${q.customer}</b><div class="text-[10px] text-slate-500">${q.reason}</div></td>
+                  <td class="p-2 text-right">${Number(q.listTotal).toLocaleString()}</td>
+                  <td class="p-2 text-center font-extrabold text-rose-600">-${q.discountPct}%</td>
+                  <td class="p-2 text-right font-extrabold">${Number(q.netTotal).toLocaleString()}</td>
+                  <td class="p-2 text-center font-extrabold ${q.estGpPct >= 25 ? 'text-emerald-700' : 'text-rose-700'}">${q.estGpPct}%</td>
+                  <td class="p-2 text-center">
+                    ${q.status === 'PENDING_SM_APPROVAL'
+                      ? `<button type="button" onclick="decideSpecialDiscountRequest('${q.reqId}','APPROVED')" class="bg-emerald-600 text-white px-2 py-1 rounded font-bold text-[10.5px] mr-1">อนุมัติ</button><button type="button" onclick="decideSpecialDiscountRequest('${q.reqId}','REJECTED')" class="bg-rose-600 text-white px-2 py-1 rounded font-bold text-[10.5px]">ไม่อนุมัติ</button>`
+                      : `<span class="px-2 py-0.5 rounded font-bold text-[10px] ${q.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-900'}">${q.status} (${q.approvedBy})</span>`
+                    }
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'TECH_SRT') {
+      const techScores = [
+        { code: 'T01', name: 'Mr.Surin S.', jobs: 44, ftfr: '95.5%', avgMins: 78, srtBenchmark: 90, csat: '4.94', score: 97 },
+        { code: 'T02', name: 'Mr.Jeerapan Phrasawang', jobs: 39, ftfr: '94.9%', avgMins: 82, srtBenchmark: 90, csat: '4.91', score: 95 },
+        { code: 'T03', name: 'Mr.Noparin Homhoul', jobs: 35, ftfr: '97.1%', avgMins: 74, srtBenchmark: 90, csat: '4.98', score: 98 },
+        { code: 'T04', name: 'Mr.Surin (Beer)', jobs: 38, ftfr: '92.1%', avgMins: 88, srtBenchmark: 90, csat: '4.88', score: 92 },
+        { code: 'T05', name: 'Mr.Nirun (Pui)', jobs: 36, ftfr: '94.4%', avgMins: 85, srtBenchmark: 90, csat: '4.90', score: 94 }
+      ];
+      body.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+            <div class="font-extrabold text-sm text-[#002B49]">ตารางคะแนนผลงานช่าง (Technician KPI Scorecard — FTFR% · SRT · CSAT)</div>
+            <table class="w-full text-left border-collapse text-xs">
+              <thead><tr class="bg-[#002B49] text-white"><th class="p-2">ช่าง</th><th class="p-2 text-center">งานปิดสำเร็จ</th><th class="p-2 text-center">FTFR%</th><th class="p-2 text-center">เวลาเฉลี่ย / SRT</th><th class="p-2 text-center">KPI Score</th></tr></thead>
+              <tbody class="divide-y divide-slate-200">
+                ${techScores.map(function(t) {
+                  return `<tr><td class="p-2 font-bold">${t.code} — ${t.name}</td><td class="p-2 text-center">${t.jobs}</td><td class="p-2 text-center font-bold text-emerald-700">${t.ftfr}</td><td class="p-2 text-center">${t.avgMins} / ${t.srtBenchmark} นาที</td><td class="p-2 text-center font-extrabold text-[#002B49]">${t.score}/100</td></tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+            <div class="font-extrabold text-sm text-[#002B49]">ตารางเวลามาตรฐานการซ่อม (Standard Repair Time — SRT Reference)</div>
+            <table class="w-full text-left border-collapse text-xs">
+              <thead><tr class="bg-slate-800 text-white"><th class="p-2">รหัส SRT</th><th class="p-2">รายการมาตรฐาน</th><th class="p-2 text-center">เวลามาตรฐาน</th><th class="p-2 text-right">ค่าบริการมาตรฐาน</th></tr></thead>
+              <tbody class="divide-y divide-slate-200">
+                ${SRT_STANDARDS_MINUTES.map(function(s) {
+                  return `<tr><td class="p-2 font-mono font-bold">${s.code}</td><td class="p-2">${s.task}</td><td class="p-2 text-center font-bold">${s.stdMins} นาที</td><td class="p-2 text-right font-bold">${s.baseFee.toLocaleString()} THB</td></tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    } else {
+      const orgs = JSON.parse(localStorage.getItem(B2B_PORTAL_ORGS_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-building-user text-sky-600 mr-1"></i>พอร์ทัลคู่ค้า B2B (Dealer Grade A/B &amp; Chain-Store Self-Service Portal)</div>
+          <p class="text-[11px] text-slate-600">เปิดลิงก์เฉพาะองค์กรลูกค้า (เห็นเฉพาะสาขาและ S/N ของตนเอง) เพื่อดูสถานะเครื่องทุกสาขา ดาวน์โหลดใบรับรอง PM และเปิดแจ้งซ่อมได้เอง</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            ${orgs.map(function(o) {
+              return `
+                <div class="p-3.5 rounded-xl border-2 border-sky-200 bg-sky-50/50 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="font-extrabold text-sm text-[#002B49]">${o.orgName}</span>
+                    <span class="px-2 py-0.5 rounded bg-[#002B49] text-white text-[10px] font-bold">${o.tier}</span>
+                  </div>
+                  <div class="text-[11px] text-slate-700">รหัสองค์กร: <b>${o.orgCode}</b> · จำนวน <b>${o.totalBranches} สาขา</b> (${o.activeUnits} เครื่อง)</div>
+                  <button type="button" onclick="launchB2bPartnerSelfServiceView('${o.orgCode}')" class="w-full py-2 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-xs">
+                    <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> เปิดพรีวิวพอร์ทัลคู่ค้า B2B ขององค์กรนี้
+                  </button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+  };
+
+  setTimeout(seedBlock65Defaults_, 1200);
+})();

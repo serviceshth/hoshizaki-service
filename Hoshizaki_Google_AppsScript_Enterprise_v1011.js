@@ -9665,3 +9665,43 @@ function log3plDispatchToSheet_(ss, data) {
     data.status || 'DISPATCHED'
   ]);
 }
+
+
+// ============================================================================
+// SECTION 30: ENTERPRISE LIFECYCLE SUITE BACKEND (v1051-OMNI-ENTERPRISE)
+// 1) Water Quality & 4HC-H Filter CRM (`Water_Filter_4HCH_CRM`)
+// 2) Loaner Fleet & Calibrated Tool Tracking (`Loaner_And_Calibrated_Tools`)
+// 3) Special Discount & Goodwill Approvals (`Special_Discount_Approvals`)
+// ============================================================================
+function handleEnterpriseLifecycleSuitePost_(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var action = String(data.actionType || '');
+  if (action === 'UPSERT_WATER_FILTER_CRM') {
+    var sh = ss.getSheetByName('Water_Filter_4HCH_CRM') || ss.insertSheet('Water_Filter_4HCH_CRM');
+    if (sh.getLastRow() === 0) {
+      sh.appendRow(['Record_ID', 'Serial_No', 'Model', 'Customer', 'TDS_ppm', 'Water_Bar', 'Filter_Model', 'Installed_Date', 'Next_Due_Date', 'Status']);
+    }
+    var r = data.record || {};
+    sh.appendRow([r.id || '', r.serial || '', r.model || '', r.customer || '', r.tdsPpm || '', r.waterBar || '', r.filterModel || '', r.installedDate || '', r.nextDueDate || '', r.status || '']);
+    return { status: 'ok', sheet: 'Water_Filter_4HCH_CRM' };
+  }
+  if (action === 'UPDATE_TOOL_LOANER_ASSET') {
+    var sh2 = ss.getSheetByName('Loaner_And_Calibrated_Tools') || ss.insertSheet('Loaner_And_Calibrated_Tools');
+    if (sh2.getLastRow() === 0) {
+      sh2.appendRow(['Updated_At', 'Asset_ID', 'Category', 'Asset_Name', 'Current_Holder', 'Job_Ref', 'Cal_Due_Date', 'Status']);
+    }
+    var a = data.asset || {};
+    sh2.appendRow([new Date(), a.assetId || '', a.category || '', a.name || '', a.holder || '', a.jobRef || '', a.calDueDate || '', a.status || '']);
+    return { status: 'ok', sheet: 'Loaner_And_Calibrated_Tools' };
+  }
+  if (action === 'SUBMIT_DISCOUNT_APPROVAL' || action === 'DECIDE_DISCOUNT_APPROVAL') {
+    var sh3 = ss.getSheetByName('Special_Discount_Approvals') || ss.insertSheet('Special_Discount_Approvals');
+    if (sh3.getLastRow() === 0) {
+      sh3.appendRow(['Updated_At', 'Request_ID', 'Quote_No', 'Customer', 'Requester', 'List_Total', 'Discount_Pct', 'Net_Total', 'Est_GP_Pct', 'Reason', 'Status', 'Approved_By']);
+    }
+    var q = data.request || {};
+    sh3.appendRow([new Date(), q.reqId || '', q.quoteNo || '', q.customer || '', q.requester || '', q.listTotal || 0, q.discountPct || 0, q.netTotal || 0, q.estGpPct || 0, q.reason || '', q.status || '', q.approvedBy || '']);
+    return { status: 'ok', sheet: 'Special_Discount_Approvals' };
+  }
+  return null;
+}

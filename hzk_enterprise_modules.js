@@ -3585,7 +3585,489 @@
   }, 1500);
 })();
 
- * HOSHIZAKI (THAILAND) Enterprise Deferred Modules Bundle (v1039-PERF)
+ * HOSHIZAKI (THAILAND) Enterprise Deferred Modules Bundle (v1040-COMPLETE)
  * Includes: IoT Telemetry, AI Co-Pilot, Governance/EHS/ERP, Dealer Router,
  * LINE Flex Studio, and Holistic Inventory Management System (IMS)
  * ========================================================================== */
+
+// --- Module Block #53 (Enterprise v1040-COMPLETE: Universal Example Sandbox + IMS PSI Rank A-D + PR SM->GM->MD + Advance Claim SLA 24h + HHE PDI) ---
+(function() {
+  const V1040_IMS_PR_KEY = 'hoshizaki_ims_pr_approvals_v1040';
+  const V1040_ADV_KEY = 'hoshizaki_advance_parts_v1040';
+
+  function safeReadJson_(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      const parsed = JSON.parse(raw);
+      return parsed !== null ? parsed : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  function safeWriteJson_(key, val) {
+    localStorage.setItem(key, JSON.stringify(val));
+  }
+
+  window.HZK_V1040_EXAMPLE_CATALOG = [
+    {
+      moduleId: 'SERVICE_JOBS',
+      menuLabel: '1.1 งานบริการ · ใบแจ้งบริการ & ประวัติ (Service Jobs)',
+      inputDesc: 'รับแจ้งซ่อม/PM ผ่าน Line@, Email, Dealer -> บันทึก S/N, อาการ, อะไหล่, ลายเซ็นลูกค้า',
+      outputDesc: 'ใบแจ้งบริการ PDF ลายน้ำอัตโนมัติ + ตัด Van Stock + แจ้งเตือน SLA ส่ง Report 24 ชม.',
+      storageKey: 'hoshizaki_job_history',
+      idField: 'jobNo',
+      openFn: "if(typeof openHistoryModal==='function') openHistoryModal();",
+      records: [
+        { isSample: true, jobNo: 'JOB-SMP-2026-001', date: '2026-11-18', jobStatus: 'Completed', store: 'MARUZEN (THAILAND) CO., LTD.', dealer: 'Direct JP', contact: 'คุณ Tanaka / 02-111-2233', address: 'นิคมอมตะซิตี้ ชลบุรี', model: 'IM-240DNE-HC', serial: 'H14289J', warranty: 'No', responsibleTech: 'Mr.Jeerapan Phrasawang', techCode: 'T02', diagSymptom: 'น้ำแข็งไม่เต็มถาด ขึ้น E1', diagDetected: 'วาล์วน้ำเข้าอุดตัน + แผ่นกรองฝุ่นตัน', diagAction: 'เปลี่ยน Water Valve P01872-01 และล้างคอยล์ร้อน', partsSummary: 'P01872-01 (1)', grandTotal: '4,280.00', parts: [{ desc: 'P01872-01 - Water valve', qty: '1', price: '2750.00' }] },
+        { isSample: true, jobNo: 'JOB-SMP-2026-002', date: '2026-11-18', jobStatus: 'Waiting Parts', store: 'S.T.KITCHEN (สำนักงานใหญ่)', dealer: 'Dealer A', contact: 'คุณสมชาย / 081-999-8877', address: 'เขตหลักสี่ กรุงเทพฯ', model: 'IM-130NE', serial: 'H20911K', warranty: 'Yes', responsibleTech: 'Mr.Surin S.', techCode: 'T01', diagSymptom: 'หน้าจอไม่ติด เครื่องไม่ทำงาน', diagDetected: 'Control Board P01873-01 ชำรุด', diagAction: 'ทำเรื่อง Advance Claim Part รออะไหล่เข้าเปลี่ยน', partsSummary: 'P01873-01 (1) [Advance Claim]', grandTotal: '0.00', parts: [{ desc: 'P01873-01 - Controller board', qty: '1', price: '0.00' }] },
+        { isSample: true, jobNo: 'JOB-SMP-2026-003', date: '2026-11-17', jobStatus: 'Completed', store: 'EMERALD BAY RESORT CO.,LTD.', dealer: 'Direct Service', contact: 'ฝ่ายช่างโรงแรม / 076-333-444', address: 'ป่าตอง ภูเก็ต', model: 'IM-100NE', serial: 'H18842M', warranty: 'No', responsibleTech: 'Mr.Noparin Homhoul', techCode: 'T03', diagSymptom: 'ถาดน้ำไม่พลิกเทน้ำแข็ง', diagDetected: 'เฟือง Actuator Motor P03755-02 รูด', diagAction: 'เปลี่ยน Actuator Motor ใหม่ ทดสอบ 3 รอบปกติ', partsSummary: 'P03755-02 (1)', grandTotal: '13,375.00', parts: [{ desc: 'P03755-02 - Actuator motor', qty: '1', price: '12500.00' }] },
+        { isSample: true, jobNo: 'JOB-SMP-2026-004', date: '2026-11-17', jobStatus: 'In Progress', store: 'THAI YAMAZAKI CO.,LTD.', dealer: 'Direct Sales', contact: 'คุณวิภา / 02-777-8899', address: 'บางนา กรุงเทพฯ', model: 'FM-300AKE', serial: 'F55201S', warranty: 'No', responsibleTech: 'Mr.Nirun (Pui)', techCode: 'T05', diagSymptom: 'มีน้ำหยดใต้เครื่องและเสียงดัง', diagDetected: 'Mechanical Seal 432491-01 สึกหรอ', diagAction: 'เบิกอะไหล่ล่วงหน้า (Advance Part) นัดเข้าซ่อมพรุ่งนี้', partsSummary: '432491-01 (1)', grandTotal: '5,136.00', parts: [{ desc: '432491-01 - Mechanical seal', qty: '1', price: '4200.00' }] },
+        { isSample: true, jobNo: 'JOB-SMP-2026-005', date: '2026-11-16', jobStatus: 'Completed', store: 'A.D.D SERVICE CO., LTD.', dealer: 'Support Dealer', contact: 'คุณเอก / 089-555-1212', address: 'นนทบุรี', model: 'JWE-680', serial: 'W90112D', warranty: 'No', responsibleTech: 'Mr.Surin (Beer)', techCode: 'T04', diagSymptom: 'ปั๊มฉีดน้ำล้างจานไม่หมุน', diagDetected: 'Washing Pump 765080190 ขดลวดไหม้', diagAction: 'ร่วมตรวจหน้างานกับ Dealer และเปลี่ยนปั๊มใหม่', partsSummary: '765080190 (1)', grandTotal: '20,865.00', parts: [{ desc: '765080190 - AFSK+MOTOR', qty: '1', price: '19500.00' }] }
+      ]
+    },
+    {
+      moduleId: 'SCHEDULE_DISPATCH',
+      menuLabel: '1.2 ตารางนัดหมาย & แจ้งเตือนล่วงหน้า 1 วัน (Schedule)',
+      inputDesc: 'แผนเข้าซ่อม/PM ประจำสัปดาห์ แยกตามช่างและวัน',
+      outputDesc: 'ตารางงานรายสัปดาห์ + ปุ่มส่งยืนยันนัดลูกค้าล่วงหน้า 1 วันเข้า LINE OA',
+      storageKey: 'hoshizaki_service_schedule',
+      idField: 'id',
+      openFn: "if(typeof openScheduleModal==='function') openScheduleModal();",
+      records: [
+        { isSample: true, id: 'SCH-SMP-001', slotType: 'ASSIGNED', date: '2026-11-19', timeStart: '09:30', timeEnd: '12:00', techs: ['Mr.Surin S.'], store: 'S.T.KITCHEN', model: 'IM-130NE', serial: 'H20911K', jobCategory: 'เคลมประกัน (Warranty)', onsiteContact: '081-999-8877 (ยืนยัน 1 วันล่วงหน้าแล้ว)' },
+        { isSample: true, id: 'SCH-SMP-002', slotType: 'ASSIGNED', date: '2026-11-19', timeStart: '13:30', timeEnd: '16:30', techs: ['Mr.Jeerapan Phrasawang'], store: 'MARUZEN (THAILAND)', model: 'HSU-400', serial: 'W77310J', jobCategory: 'PM รายปี', onsiteContact: '02-111-2233 (ลูกค้าญี่ปุ่น)' },
+        { isSample: true, id: 'SCH-SMP-003', slotType: 'ASSIGNED', date: '2026-11-20', timeStart: '10:00', timeEnd: '12:30', techs: ['Mr.Nirun (Pui)'], store: 'THAI YAMAZAKI (สาขาอโศก)', model: 'FM-300AKE', serial: 'F55201S', jobCategory: 'ซ่อมแซม (Repair)', onsiteContact: '02-777-8899' },
+        { isSample: true, id: 'SCH-SMP-004', slotType: 'ASSIGNED', date: '2026-11-20', timeStart: '14:00', timeEnd: '17:00', techs: ['Mr.Surin (Beer)'], store: 'คลังสินค้า HHE (PDI Inspection)', model: 'IM-220AA', serial: 'H30199A', jobCategory: 'ตรวจรับ PDI / HHE', onsiteContact: 'Admin Warehouse' },
+        { isSample: true, id: 'SCH-SMP-005', slotType: 'WAITING', date: '2026-11-21', timeStart: '09:00', timeEnd: '12:00', techs: ['Mr.Noparin Homhoul'], store: 'THE IVORY TECH CO.,LTD.', model: 'IM-65NE', serial: 'H11290P', jobCategory: 'PM ล้างใหญ่', onsiteContact: 'รอคอนเฟิร์มเวลาเข้าหน้างาน' }
+      ]
+    },
+    {
+      moduleId: 'QUOTATIONS_BILLING',
+      menuLabel: '2.1 ใบเสนอราคา & บิล (QT · IV · RE 8 ระดับราคา)',
+      inputDesc: 'เลือกรายการอะไหล่/ค่าบริการ + ระดับลูกค้า (Direct / Dealer A-C)',
+      outputDesc: 'เอกสาร QT / IV / RE พร้อมคำนวณ VAT 7% / WHT 3% และตัดจองสต็อก NAV',
+      storageKey: 'hoshizaki_quotations_history',
+      idField: 'offerNo',
+      openFn: "if(typeof generateReceiptModal==='function') generateReceiptModal(false);",
+      records: [
+        { isSample: true, offerNo: 'QT-SMP-2026-01', docType: 'QUOTATION', date: '2026-11-18', customerStore: 'ARCO STAINLESS (THAILAND) CO.,LTD.', model: '4HC-H', serial: 'FLT-2026-01', priceTier: 'DIRECT-SALES', grandTotal: '7,490.00', partsSummary: '4HC-H EVERPURE WATER FILTER (1 PCS)' },
+        { isSample: true, offerNo: 'QT-SMP-2026-02', docType: 'QUOTATION', date: '2026-11-17', customerStore: 'EMERALD BAY RESORT CO.,LTD.', model: 'IM-100NE', serial: 'H18842M', priceTier: 'DIRECT-SERVICE', grandTotal: '66,875.00', partsSummary: 'P03755-02 ACTUATOR MOTOR (5 PCS)' },
+        { isSample: true, offerNo: 'QT-SMP-2026-03', docType: 'INVOICE', date: '2026-11-16', customerStore: 'MARUZEN (THAILAND) CO., LTD.', model: 'DIW / HW', serial: 'MRZ-2026-88', priceTier: 'DEALER', grandTotal: '18,511.00', partsSummary: '355003A01 (2), 6262.00043.17 (1), 461494-01 (2)' },
+        { isSample: true, offerNo: 'QT-SMP-2026-04', docType: 'QUOTATION', date: '2026-11-15', customerStore: 'THE IVORY TECH CO.,LTD.', model: 'IM-65NE', serial: 'H11290P', priceTier: 'DIRECT-SERVICE', grandTotal: '9,362.50', partsSummary: 'P01771-02 CONTROLLER BOARD (1), P00805-01 WATER VALVE (1)' },
+        { isSample: true, offerNo: 'QT-SMP-2026-05', docType: 'RECEIPT', date: '2026-11-14', customerStore: 'MISS PALIN SUKKIJ', model: 'IM-130NE', serial: 'H15502P', priceTier: 'DIRECT-SERVICE', grandTotal: '24,075.00', partsSummary: '456381-01 PUMP MOTOR (1), 3X5201-01 BRACKET (1), 3H9529G01 (1)' }
+      ]
+    },
+    {
+      moduleId: 'WARRANTY_QCF',
+      menuLabel: '2.2 เอกสาร & เคลม · ใบเคลมประกัน, QCF และ Advance Claim Part',
+      inputDesc: 'ข้อมูลเครื่องในประกัน, S/N, รายการอะไหล่เคลม และผลตรวจ 21 จุด',
+      outputDesc: 'แบบฟอร์มเคลมมาตรฐาน Hoshizaki + ใบเบิกอะไหล่ล่วงหน้า + Claim Invoice ส่งโรงงาน',
+      storageKey: 'hoshizaki_warranty_claims',
+      idField: 'claimNo',
+      openFn: "if(typeof openWarrantyClaimModal==='function') openWarrantyClaimModal();",
+      records: [
+        { isSample: true, claimNo: 'WC-SMP-2026-01', jobNo: 'JOB-SMP-2026-002', dateOfClaim: '2026-11-18', model: 'IM-130NE', serial: 'H20911K', customer: 'S.T.KITCHEN', status: 'Advance Claim Part Issued', totalAmount: '8,500.00' },
+        { isSample: true, claimNo: 'WC-SMP-2026-02', jobNo: 'JOB-2026-0881', dateOfClaim: '2026-11-15', model: 'HW-600B', serial: 'W61209H', customer: 'โรงแรมแกรนด์ไฮแอท', status: 'Approved by Factory', totalAmount: '14,200.00' },
+        { isSample: true, claimNo: 'WC-SMP-2026-03', jobNo: 'JOB-2026-0874', dateOfClaim: '2026-11-12', model: 'KM-515MAH', serial: 'K99104M', customer: 'ร้านอาหารญี่ปุ่น โอโตยะ', status: 'Claim Invoice Submitted', totalAmount: '6,800.00' },
+        { isSample: true, claimNo: 'WC-SMP-2026-04', jobNo: 'JOB-2026-0860', dateOfClaim: '2026-11-10', model: 'HR-126MA-S', serial: 'R44102S', customer: 'ARCO STAINLESS (THAILAND)', status: 'Pending SM Review', totalAmount: '3,950.00' },
+        { isSample: true, claimNo: 'WC-SMP-2026-05', jobNo: 'JOB-2026-0845', dateOfClaim: '2026-11-05', model: 'DBF-25SB', serial: 'B22019D', customer: 'KISSUI (THAILAND)', status: 'QCF Sent to SEA', totalAmount: '5,400.00' }
+      ]
+    },
+    {
+      moduleId: 'PM_CONTRACTS',
+      menuLabel: '3.1 งาน PM & ตรวจรับ · สัญญา PM รายปี & แจ้งเตือนล่วงหน้า 1 เดือน',
+      inputDesc: 'ข้อมูลลูกค้าสัญญา PM, รุ่นเครื่อง, S/N, รอบเข้าบริการ 6 เดือน / 1 ปี',
+      outputDesc: 'ตารางติดตามรอบ PM 30 วันล่วงหน้า + ใบรับรอง PM Certificate A4',
+      storageKey: 'hoshizaki_pm_contracts_v1015',
+      idField: 'contractId',
+      openFn: "if(typeof openPmPricebookModal==='function') openPmPricebookModal('PM_CONTRACTS');",
+      records: [
+        { isSample: true, contractId: 'PMC-SMP-001', customer: 'Starbucks Reserve — CentralWorld', model: 'IM-240DNE-HC', serial: 'H14289J', specTier: 'Modular (240+ kg/24h)', planType: 'รายปี (4 ครั้ง/ปี ทุก 3 เดือน)', amount: 15800, startDate: '2026-03-01', nextDueDate: '2026-12-01' },
+        { isSample: true, contractId: 'PMC-SMP-002', customer: 'โรงแรมแชงกรี-ลา กรุงเทพฯ', model: 'KM-901MAJ', serial: 'K88310M', specTier: 'Modular Crescent', planType: 'รายปี (4 ครั้ง/ปี ทุก 3 เดือน)', amount: 18500, startDate: '2026-06-15', nextDueDate: '2026-12-15' },
+        { isSample: true, contractId: 'PMC-SMP-003', customer: 'MARUZEN (THAILAND) — ครัวกลาง', model: 'JWE-680', serial: 'W90112D', specTier: 'Hood Dishwasher', planType: 'ทุก 6 เดือน (2 ครั้ง/ปี)', amount: 7800, startDate: '2026-06-20', nextDueDate: '2026-12-20' },
+        { isSample: true, contractId: 'PMC-SMP-004', customer: '7-Eleven Flagship สาขาสีลม', model: 'HF-126MA-S', serial: 'F55201S', specTier: 'Upright Freezer 4D', planType: 'รายปี (4 ครั้ง/ปี ทุก 3 เดือน)', amount: 9600, startDate: '2026-09-10', nextDueDate: '2026-12-10' },
+        { isSample: true, contractId: 'PMC-SMP-005', customer: 'EMERALD BAY RESORT ภูเก็ต', model: 'IM-100NE', serial: 'H18842M', specTier: 'Standard (65-130 kg)', planType: 'รายปี (4 ครั้ง/ปี ทุก 3 เดือน)', amount: 10500, startDate: '2026-09-18', nextDueDate: '2026-12-18' }
+      ]
+    },
+    {
+      moduleId: 'WAREHOUSE_PDI',
+      menuLabel: '3.2 ตรวจรับเครื่องเข้าคลัง HHE · PDI Inspection & Damage List',
+      inputDesc: 'แจ้งความเสียหายจาก Admin Warehouse -> ช่างเข้าตรวจเช็กที่คลัง HHE + ถ่ายรูป',
+      outputDesc: 'รายงาน Inspection Report + Damage List ส่งกลับ Admin และออก QCF เคลมโรงงาน',
+      storageKey: 'hoshizaki_warehouse_inspections_v193',
+      idField: 'inspectionId',
+      openFn: "if(typeof openWarehouseInspectionModal==='function') openWarehouseInspectionModal();",
+      records: [
+        { isSample: true, inspectionId: 'PDI-SMP-2026-01', date: '2026-11-18', inspectionType: 'HHE_PDI_DAMAGE', qcStatus: 'DAMAGED_NEED_REPAIR', model: 'IM-220AA', serial: 'H30199A', containerRef: 'BL-HHE-2026-11', inspectorName: 'Surin S. / Jeeraphan', inspectorOrg: 'Service Team', boxCondition: 'DENTED', exteriorCondition: 'DAMAGED', internalCondition: 'OK', accessoriesCondition: 'OK', damageNotes: 'แผงข้างขวาบุบจากการขนส่ง + ท่อน้ำเข้า 3H9533G01 ร้าว ต้องเบิกอะไหล่ซ่อมก่อนส่งลูกค้า', photoCount: 4 },
+        { isSample: true, inspectionId: 'PDI-SMP-2026-02', date: '2026-11-16', inspectionType: 'INBOUND_NEW', qcStatus: 'READY_TO_SELL', model: 'IM-130NE', serial: 'H30245B', containerRef: 'BL-HHE-2026-11', inspectorName: 'Jeeraphan (Zcar)', inspectorOrg: 'Service Team', boxCondition: 'OK', exteriorCondition: 'OK', internalCondition: 'OK', accessoriesCondition: 'OK', damageNotes: 'ผ่านการทดสอบเดินเครื่อง 2 รอบ อุณหภูมิและก้อนน้ำแข็งสมบูรณ์ พร้อมจำหน่าย', photoCount: 3 },
+        { isSample: true, inspectionId: 'PDI-SMP-2026-03', date: '2026-11-14', inspectionType: 'HHE_PDI_DAMAGE', qcStatus: 'HOLD_FOR_QCF', model: 'HW-600B', serial: 'W61890C', containerRef: 'BL-OZTI-2026-09', inspectorName: 'Surin S.', inspectorOrg: 'Service Team', boxCondition: 'OK', exteriorCondition: 'OK', internalCondition: 'DAMAGED', accessoriesCondition: 'OK', damageNotes: 'แผง Power Box 6262.00043.17 ไม่จ่ายไฟให้หม้อต้ม ออก QCF เคลมโรงงานแล้ว', photoCount: 5 },
+        { isSample: true, inspectionId: 'PDI-SMP-2026-04', date: '2026-11-11', inspectionType: 'INBOUND_NEW', qcStatus: 'READY_TO_SELL', model: 'HR-126MA-S', serial: 'R44910D', containerRef: 'BL-HHE-2026-10', inspectorName: 'Nirun (Pui)', inspectorOrg: 'Service Team', boxCondition: 'OK', exteriorCondition: 'OK', internalCondition: 'OK', accessoriesCondition: 'OK', damageNotes: 'ทำอุณหภูมิ +2.0°C ใน 45 นาที ยางขอบประตูแนบสนิท', photoCount: 2 },
+        { isSample: true, inspectionId: 'PDI-SMP-2026-05', date: '2026-11-08', inspectionType: 'HHE_PDI_DAMAGE', qcStatus: 'DAMAGED_NEED_REPAIR', model: 'FM-300AKE', serial: 'F55912E', containerRef: 'BL-HHE-2026-10', inspectorName: 'Surin (Beer)', inspectorOrg: 'Service Team', boxCondition: 'TORN', exteriorCondition: 'SCRATCHED', internalCondition: 'OK', accessoriesCondition: 'MISSING_SCOOP', damageNotes: 'ขาดที่ตักน้ำแข็งและฝาครอบด้านหน้ามีรอยขีดข่วน', photoCount: 4 }
+      ]
+    },
+    {
+      moduleId: 'ESG_GOVERNANCE',
+      menuLabel: '4. ธรรมาภิบาล & ESG · บันทึกสารทำความเย็น (kgCO2e) & Audit Log',
+      inputDesc: 'บันทึกการเติม/กู้คืนสารทำความเย็น R290, R134a, R404A, R452A หน้างาน',
+      outputDesc: 'คำนวณคาร์บอนฟุตพริ้นท์ kgCO2e อัตโนมัติ + บันทึก Audit Trail',
+      storageKey: 'hoshizaki_esg_refrigerant_log_v1033',
+      idField: 'id',
+      openFn: "if(typeof openEnterpriseGovernanceEhsErpModal==='function') openEnterpriseGovernanceEhsErpModal('EHS_ESG');",
+      records: [
+        { isSample: true, id: 'ESG-SMP-001', date: '2026-11-18', serial: 'H14289J', gasType: 'R290', action: 'CHARGED', kg: 0.14, co2eKg: 0.42 },
+        { isSample: true, id: 'ESG-SMP-002', date: '2026-11-17', serial: 'K88310M', gasType: 'R404A', action: 'RECOVERED', kg: 1.20, co2eKg: 4706.40 },
+        { isSample: true, id: 'ESG-SMP-003', date: '2026-11-16', serial: 'H18842M', gasType: 'R134a', action: 'CHARGED', kg: 0.35, co2eKg: 500.50 },
+        { isSample: true, id: 'ESG-SMP-004', date: '2026-11-15', serial: 'F55201S', gasType: 'R452A', action: 'CHARGED', kg: 0.65, co2eKg: 1391.00 },
+        { isSample: true, id: 'ESG-SMP-005', date: '2026-11-14', serial: 'R44102S', gasType: 'R290', action: 'CHARGED', kg: 0.11, co2eKg: 0.33 }
+      ]
+    },
+    {
+      moduleId: 'IMS_CORE_PSI',
+      menuLabel: '5.1 คลังสินค้า IMS · Master Stock, PSI (Rank A-D) & NAV SB/SO',
+      inputDesc: 'รหัสอะไหล่, ยอดใช้เฉลี่ยต่อเดือน, Criticality Rank (A/B/C/D) และยอดจอง NAV (SB)',
+      outputDesc: 'คำนวณ Safety Stock (3M/2M/1pc), ROP, สต็อกพร้อมจ่ายจริง และสร้าง PR อัตโนมัติ',
+      storageKey: 'hoshizaki_ims_master_items_v1',
+      idField: 'sku',
+      openFn: "if(typeof openEnterpriseInventoryImsModal==='function') openEnterpriseInventoryImsModal('OVERVIEW');",
+      records: [
+        { isSample: true, sku: '355003A01', name: 'Cock AY/SW Lever (DIW Top Runner 2026)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-A1', bin: 'A1-01', onHandQty: 8, allocatedQty: 3, navSbReserved: 2, unitCost: 920, sellingPrice: 1850, annualDemand: 48, monthlyAvgUse: 4.0, hzkRank: 'A', mcCanOperate: false, leadTimeDays: 45, orderCost: 350, holdingRatePct: 20, jitEnabled: true },
+        { isSample: true, sku: '6262.00043.17', name: 'OZT-BYM-MK1-PWM Power Box (HW Dishwashers)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-A1', bin: 'A1-02', onHandQty: 6, allocatedQty: 2, navSbReserved: 2, unitCost: 3450, sellingPrice: 8500, annualDemand: 42, monthlyAvgUse: 3.5, hzkRank: 'A', mcCanOperate: false, leadTimeDays: 45, orderCost: 450, holdingRatePct: 20, jitEnabled: true },
+        { isSample: true, sku: '406132-08', name: 'POWER RELAY (FMCOMMON / Multi-Series)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-A2', bin: 'A2-04', onHandQty: 14, allocatedQty: 2, navSbReserved: 1, unitCost: 480, sellingPrice: 1250, annualDemand: 36, monthlyAvgUse: 3.0, hzkRank: 'A', mcCanOperate: false, leadTimeDays: 30, orderCost: 250, holdingRatePct: 18, jitEnabled: false },
+        { isSample: true, sku: '461494-01', name: 'WATER VALVE (DIW / Dishwashers)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-B1', bin: 'B1-01', onHandQty: 7, allocatedQty: 1, navSbReserved: 1, unitCost: 690, sellingPrice: 1650, annualDemand: 24, monthlyAvgUse: 2.0, hzkRank: 'B', mcCanOperate: true, leadTimeDays: 30, orderCost: 250, holdingRatePct: 18, jitEnabled: false },
+        { isSample: true, sku: 'A001-0008', name: 'Auto TRANSFORMER Ins. F Class 1.5 KVA (DBF JP)', invType: 'RM', uom: 'PCS', zone: 'WMS-RM-C1', bin: 'C1-03', onHandQty: 2, allocatedQty: 1, navSbReserved: 1, unitCost: 2150, sellingPrice: 4500, annualDemand: 12, monthlyAvgUse: 1.0, hzkRank: 'C', mcCanOperate: false, leadTimeDays: 45, orderCost: 300, holdingRatePct: 18, jitEnabled: true }
+      ]
+    },
+    {
+      moduleId: 'ADVANCE_PARTS_SLA',
+      menuLabel: '5.2 ใบเบิกอะไหล่ล่วงหน้า (Advance Repair/Claim) & SLA 24 ชม.',
+      inputDesc: 'ช่าง/Admin ขอเบิกอะไหล่จากคลังไปซ่อมหรือเคลมล่วงหน้า (อนุมัติโดย P\'Tae)',
+      outputDesc: 'ตัดยอด Available Stock + จับเวลาส่ง Service Report ภายใน 24 ชม. เพื่อออก Invoice',
+      storageKey: V1040_ADV_KEY,
+      idField: 'advNo',
+      openFn: "if(typeof openEnterpriseInventoryImsModal==='function') openEnterpriseInventoryImsModal('PSI_PR');",
+      records: [
+        { isSample: true, advNo: 'ADV-SMP-2026-01', advType: 'ADVANCE_CLAIM_PART', jobNo: 'JOB-SMP-2026-002', customer: 'S.T.KITCHEN', sku: 'P01873-01', partName: 'CONTROLLER BOARD (IM)', qty: 1, techName: 'Surin S.', approvedBy: 'Thanakrit (Tae)', slaDeadline: 'ภายใน 24 ชม. หลังเข้าหน้างาน', status: 'ISSUED_TO_TECH' },
+        { isSample: true, advNo: 'ADV-SMP-2026-02', advType: 'ADVANCE_REPAIR_PART', jobNo: 'JOB-SMP-2026-004', customer: 'THAI YAMAZAKI', sku: '432491-01', partName: 'Mechanical Seal FM', qty: 1, techName: 'Nirun (Pui)', approvedBy: 'Thanakrit (Tae)', slaDeadline: 'ภายใน 24 ชม. หลังเข้าหน้างาน', status: 'ISSUED_TO_TECH' },
+        { isSample: true, advNo: 'ADV-SMP-2026-03', advType: 'ADVANCE_CLAIM_PART', jobNo: 'JOB-2026-0895', customer: 'MARUZEN (THAILAND)', sku: '355003A01', partName: 'Cock AY/SW Lever', qty: 2, techName: 'Jeerapan (Zcar)', approvedBy: 'Thanakrit (Tae)', slaDeadline: 'ส่ง Report แล้ว (ปิดยอด)', status: 'CLEARED_INVOICED' },
+        { isSample: true, advNo: 'ADV-SMP-2026-04', advType: 'ADVANCE_REPAIR_PART', jobNo: 'JOB-2026-0901', customer: 'EMERALD BAY RESORT', sku: 'P02715-02', partName: 'PUMP MOTOR', qty: 1, techName: 'Noparin', approvedBy: 'Thanakrit (Tae)', slaDeadline: 'ครบกำหนด 24 ชม. วันนี้ 17:00', status: 'SLA_WARNING_24H' },
+        { isSample: true, advNo: 'ADV-SMP-2026-05', advType: 'DIPINJAMKAN_LOAN', jobNo: 'PDI-SMP-2026-01', customer: 'HHE Warehouse (PDI)', sku: '3H9533G01', partName: 'WATER SUPPLY PIPE', qty: 1, techName: 'Surin S.', approvedBy: 'Thanakrit (Tae)', slaDeadline: 'งานซ่อมภายใน HHE', status: 'INTERNAL_PDI_USED' }
+      ]
+    },
+    {
+      moduleId: 'IMS_PR_APPROVAL',
+      menuLabel: '5.3 คิวอนุมัติใบขอซื้อ PR (SM -> GM -> MD) & Factory GIT',
+      inputDesc: 'รายการที่สต็อกต่ำกว่า Safety Stock / ROP หรือ PO ลูกค้าไม่มีสต็อก (No Stock)',
+      outputDesc: 'เอกสาร PR ผ่านคิวอนุมัติ Service Manager -> GM -> MD และออก PO โรงงาน',
+      storageKey: V1040_IMS_PR_KEY,
+      idField: 'prNo',
+      openFn: "if(typeof openEnterpriseInventoryImsModal==='function') openEnterpriseInventoryImsModal('PSI_PR');",
+      records: [
+        { isSample: true, prNo: 'PR-SMP-2026-01', date: '2026-11-18', sku: '355003A01', partName: 'Cock AY/SW Lever', hzkRank: 'A', currentQty: 6, safetyStock3M: 12, orderQty: 15, estCostThb: 13800, stage: 'SM_APPROVED_WAIT_GM', smApprover: 'Thanakrit (Tae)', gmApprover: 'Pending', mdApprover: 'Pending', factoryCode: 'HC' },
+        { isSample: true, prNo: 'PR-SMP-2026-02', date: '2026-11-17', sku: '6262.00043.17', partName: 'OZT-BYM-MK1-PWM Power Box', hzkRank: 'A', currentQty: 4, safetyStock3M: 11, orderQty: 12, estCostThb: 41400, stage: 'GM_APPROVED_WAIT_MD', smApprover: 'Thanakrit (Tae)', gmApprover: 'GM Approved', mdApprover: 'Pending', factoryCode: 'OZTI' },
+        { isSample: true, prNo: 'PR-SMP-2026-03', date: '2026-11-15', sku: 'P03755-02', partName: 'ACTUATOR MOTOR (4Y8998G01)', hzkRank: 'A', currentQty: 3, safetyStock3M: 9, orderQty: 10, estCostThb: 24500, stage: 'MD_APPROVED_PO_ISSUED', smApprover: 'Thanakrit (Tae)', gmApprover: 'GM Approved', mdApprover: 'MD Approved', factoryCode: 'HC' },
+        { isSample: true, prNo: 'PR-SMP-2026-04', date: '2026-11-12', sku: '406132-08', partName: 'POWER RELAY (FMCOMMON)', hzkRank: 'A', currentQty: 5, safetyStock3M: 9, orderQty: 20, estCostThb: 9600, stage: 'PENDING_SM_REVIEW', smApprover: 'Pending', gmApprover: 'Pending', mdApprover: 'Pending', factoryCode: 'HC' },
+        { isSample: true, prNo: 'PR-SMP-2026-05', date: '2026-11-10', sku: 'A001-0008', partName: 'Auto TRANSFORMER 1.5 KVA', hzkRank: 'C', currentQty: 1, safetyStock3M: 1, orderQty: 6, estCostThb: 12900, stage: 'MD_APPROVED_PO_ISSUED', smApprover: 'Thanakrit (Tae)', gmApprover: 'GM Approved', mdApprover: 'MD Approved', factoryCode: 'HOSHIZAKI JP' }
+      ]
+    }
+  ];
+
+  window.loadAllV1040ExampleRecords = function(silent) {
+    let addedTotal = 0;
+    window.HZK_V1040_EXAMPLE_CATALOG.forEach(function(cat) {
+      const cur = safeReadJson_(cat.storageKey, []);
+      if (!Array.isArray(cur)) return;
+      const existingIds = new Set(cur.map(function(r) { return String(r[cat.idField] || ''); }));
+      let added = 0;
+      cat.records.forEach(function(rec) {
+        const rid = String(rec[cat.idField] || '');
+        if (rid && !existingIds.has(rid)) {
+          cur.unshift(Object.assign({}, rec));
+          added++;
+          addedTotal++;
+        }
+      });
+      if (added > 0) safeWriteJson_(cat.storageKey, cur);
+    });
+
+    const vsMap = safeReadJson_('hoshizaki_van_stock_db', {});
+    const vanSamples = {
+      'T01': { '406132-08 - POWER RELAY (FMCOMMON) [SAMPLE]': 4, 'P01872-01 - Water valve [SAMPLE]': 2 },
+      'T02': { '355003A01 - Cock AY/SW Lever [SAMPLE]': 3, '4HC-H - Water Filter [SAMPLE]': 4 },
+      'T03': { 'P03755-02 - Actuator motor [SAMPLE]': 2, 'P00007-01 - Drier [SAMPLE]': 3 },
+      'T04': { '6262.00043.17 - PWM Power Box [SAMPLE]': 1, '461494-01 - Water Valve [SAMPLE]': 2 },
+      'T05': { '432491-01 - Mechanical seal [SAMPLE]': 2, '4A3624-04 - Float Switch [SAMPLE]': 3 }
+    };
+    Object.keys(vanSamples).forEach(function(tc) {
+      if (!vsMap[tc]) vsMap[tc] = {};
+      Object.assign(vsMap[tc], vanSamples[tc]);
+    });
+    safeWriteJson_('hoshizaki_van_stock_db', vsMap);
+
+    if (typeof window.syncImsWithAllEcosystemModules === 'function') {
+      window.syncImsWithAllEcosystemModules(false);
+    }
+    if (!silent && typeof showToast === 'function') {
+      showToast('🧪 โหลดข้อมูลตัวอย่าง Input → Output ครบทุกหมวดหมู่แล้ว (+' + addedTotal + ' รายการ) สามารถแก้ไขหรือลบออกได้ตลอดเวลา');
+    }
+    renderV1040SandboxBody_();
+  };
+
+  window.deleteSingleV1040SampleRecord = function(storageKey, idField, recordId) {
+    const cur = safeReadJson_(storageKey, []);
+    if (!Array.isArray(cur)) return;
+    const next = cur.filter(function(r) { return String(r[idField] || '') !== String(recordId); });
+    safeWriteJson_(storageKey, next);
+    if (typeof showToast === 'function') showToast('🗑️ ลบรายการตัวอย่าง ' + recordId + ' ออกเรียบร้อยแล้ว');
+    renderV1040SandboxBody_();
+  };
+
+  window.purgeAllV1040ExampleRecords = function() {
+    let removedTotal = 0;
+    window.HZK_V1040_EXAMPLE_CATALOG.forEach(function(cat) {
+      const cur = safeReadJson_(cat.storageKey, []);
+      if (!Array.isArray(cur)) return;
+      const before = cur.length;
+      const kept = cur.filter(function(r) { return !r.isSample && !String(r[cat.idField] || '').includes('-SMP-'); });
+      removedTotal += (before - kept.length);
+      safeWriteJson_(cat.storageKey, kept);
+    });
+
+    const vsMap = safeReadJson_('hoshizaki_van_stock_db', {});
+    Object.keys(vsMap).forEach(function(tc) {
+      Object.keys(vsMap[tc] || {}).forEach(function(partKey) {
+        if (partKey.includes('[SAMPLE]')) {
+          delete vsMap[tc][partKey];
+          removedTotal++;
+        }
+      });
+    });
+    safeWriteJson_('hoshizaki_van_stock_db', vsMap);
+
+    if (typeof showToast === 'function') {
+      showToast('🧹 ล้างข้อมูลตัวอย่างทั้งหมดออกเรียบร้อยแล้ว (' + removedTotal + ' รายการ) ข้อมูลจริงยังคงอยู่ครบถ้วน');
+    }
+    renderV1040SandboxBody_();
+  };
+
+  window.advanceV1040PrApprovalStage = function(prNo) {
+    const list = safeReadJson_(V1040_IMS_PR_KEY, []);
+    const item = list.find(function(x) { return x.prNo === prNo; });
+    if (!item) return;
+    if (item.stage === 'PENDING_SM_REVIEW') {
+      item.stage = 'SM_APPROVED_WAIT_GM';
+      item.smApprover = 'Thanakrit (Tae)';
+    } else if (item.stage === 'SM_APPROVED_WAIT_GM') {
+      item.stage = 'GM_APPROVED_WAIT_MD';
+      item.gmApprover = 'GM Approved';
+    } else if (item.stage === 'GM_APPROVED_WAIT_MD') {
+      item.stage = 'MD_APPROVED_PO_ISSUED';
+      item.mdApprover = 'MD Approved';
+    }
+    safeWriteJson_(V1040_IMS_PR_KEY, list);
+    if (typeof showToast === 'function') showToast('✅ อัปเดตสายอนุมัติ ' + prNo + ' เป็น ' + item.stage);
+    if (typeof window.switchEnterpriseImsTab === 'function') window.switchEnterpriseImsTab('PSI_PR');
+  };
+
+  window.openV1040ExampleSandboxModal = function() {
+    let modal = document.getElementById('hzkV1040ExampleSandboxModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkV1040ExampleSandboxModal';
+      modal.className = 'fixed inset-0 z-[9996] hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4';
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-6xl max-h-[92vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+          <div class="bg-gradient-to-r from-[#002B49] via-sky-900 to-teal-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div>
+              <h2 class="text-base sm:text-lg font-extrabold"><i class="fa-solid fa-flask-vial text-amber-300 mr-1.5"></i>HOSHIZAKI v1040 · ศูนย์จัดการข้อมูลตัวอย่าง Input → Output ทุกหมวดหมู่</h2>
+              <p class="text-[11px] text-sky-200">บรรจุตัวอย่าง 5 รายการในทุกฟังก์ชัน สามารถคลิกเปิดดู แก้ไข หรือกดลบข้อมูลตัวอย่างออกได้ทันทีโดยไม่กระทบข้อมูลจริง</p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <button type="button" onclick="loadAllV1040ExampleRecords(false)" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-extrabold shadow-sm">
+                <i class="fa-solid fa-plus-circle mr-1"></i> เติมตัวอย่างครบทุกเมนู (5 รายการ/เมนู)
+              </button>
+              <button type="button" onclick="purgeAllV1040ExampleRecords()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold shadow-sm">
+                <i class="fa-solid fa-trash-can mr-1"></i> ล้างข้อมูลตัวอย่างทั้งหมด
+              </button>
+              <button type="button" onclick="document.getElementById('hzkV1040ExampleSandboxModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-rose-600 text-white flex items-center justify-center font-bold">&times;</button>
+            </div>
+          </div>
+          <div id="hzkV1040SandboxBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-4 text-xs"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    renderV1040SandboxBody_();
+  };
+
+  function renderV1040SandboxBody_() {
+    const body = document.getElementById('hzkV1040SandboxBody');
+    if (!body) return;
+    body.innerHTML = window.HZK_V1040_EXAMPLE_CATALOG.map(function(cat) {
+      const liveList = safeReadJson_(cat.storageKey, []);
+      const sampleItems = Array.isArray(liveList)
+        ? liveList.filter(function(r) { return r.isSample || String(r[cat.idField] || '').includes('-SMP-'); })
+        : [];
+      return `
+        <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+            <div>
+              <div class="font-extrabold text-sm text-[#002B49]">${cat.menuLabel} <span class="ml-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px]">มีตัวอย่างในระบบ ${sampleItems.length} รายการ</span></div>
+              <div class="text-[11px] text-slate-600 mt-0.5"><b>Input:</b> ${cat.inputDesc} &nbsp;→&nbsp; <b class="text-emerald-700">Output:</b> ${cat.outputDesc}</div>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkV1040ExampleSandboxModal').classList.add('hidden'); ${cat.openFn}" class="px-3 py-1.5 rounded-lg bg-[#002B49] hover:bg-sky-800 text-white font-bold text-[11px]">
+              <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> เปิดใช้งานเมนูนี้
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-[11px]">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700">
+                  <th class="p-1.5">รหัสอ้างอิง</th>
+                  <th class="p-1.5">รายละเอียดตัวอย่าง (Input → Output)</th>
+                  <th class="p-1.5 text-center">จัดการ</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                ${sampleItems.length === 0
+                  ? '<tr><td colspan="3" class="p-2 text-center text-slate-400">ไม่มีข้อมูลตัวอย่างในหมวดนี้ (กดปุ่ม "เติมตัวอย่างครบทุกเมนู" ด้านบนเพื่อโหลด)</td></tr>'
+                  : sampleItems.map(function(r) {
+                      const rid = String(r[cat.idField] || '-');
+                      const summary = JSON.stringify(r).replace(/[{"}]/g, ' ').slice(0, 180) + '...';
+                      return `<tr>
+                        <td class="p-1.5 font-mono font-bold text-[#002B49] whitespace-nowrap">${rid}</td>
+                        <td class="p-1.5 text-slate-700">${summary}</td>
+                        <td class="p-1.5 text-center whitespace-nowrap">
+                          <button type="button" onclick="deleteSingleV1040SampleRecord('${cat.storageKey}','${cat.idField}','${rid}')" class="px-2 py-0.5 rounded bg-rose-100 hover:bg-rose-600 text-rose-800 hover:text-white font-bold">ลบรายการนี้</button>
+                        </td>
+                      </tr>`;
+                    }).join('')
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function mountV1040UiEnhancements_() {
+    const topBar = document.getElementById('btnTopExecutiveReport')?.parentElement;
+    if (topBar && !document.getElementById('btnTopV1040ExampleSandbox')) {
+      const btn = document.createElement('button');
+      btn.id = 'btnTopV1040ExampleSandbox';
+      btn.type = 'button';
+      btn.onclick = function() { window.openV1040ExampleSandboxModal(); };
+      btn.className = 'hzk-compact-pill text-[10px] bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-100 border border-emerald-300/60 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1';
+      btn.innerHTML = '<i class="fa-solid fa-flask-vial text-amber-300"></i> <span>ตัวอย่าง Input/Output (v1040)</span>';
+      topBar.insertBefore(btn, topBar.firstChild);
+    }
+
+    const imsTabStrip = document.querySelector('#enterpriseImsModal .ims-tab-btn')?.parentElement;
+    if (imsTabStrip && !document.getElementById('imsTabBtnPsiPr')) {
+      const tabBtn = document.createElement('button');
+      tabBtn.id = 'imsTabBtnPsiPr';
+      tabBtn.type = 'button';
+      tabBtn.setAttribute('data-ims-tab', 'PSI_PR');
+      tabBtn.onclick = function() { window.switchEnterpriseImsTab('PSI_PR'); };
+      tabBtn.className = 'ims-tab-btn px-3 py-2 rounded-t-lg border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap font-bold';
+      tabBtn.innerHTML = '<i class="fa-solid fa-diagram-next mr-1 text-purple-600"></i>6. PSI (Rank A-D) · PR (SM→GM→MD) · Advance Claim';
+      imsTabStrip.appendChild(tabBtn);
+    }
+  }
+
+  const origSwitchIms = window.switchEnterpriseImsTab;
+  window.switchEnterpriseImsTab = function(tabName) {
+    if (typeof origSwitchIms === 'function') origSwitchIms(tabName);
+    if (tabName === 'PSI_PR') {
+      const body = document.getElementById('enterpriseImsBody');
+      if (!body) return;
+      const prs = safeReadJson_(V1040_IMS_PR_KEY, []);
+      const advs = safeReadJson_(V1040_ADV_KEY, []);
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-purple-200 p-4 shadow-sm space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-sm font-extrabold text-[#002B49]"><i class="fa-solid fa-stamp text-purple-600 mr-1.5"></i>สายอนุมัติใบขอซื้อ PR (Service Manager → GM → MD) ตามสูตร Hoshizaki PSI</h3>
+              <p class="text-[11px] text-slate-600">Rank A (เครื่องรันไม่ได้/เสียบ่อย) = Safety Stock 3 เดือน | Rank B = 2 เดือน | Rank C = 1 ชิ้น | Rank D = สั่งตาม PO</p>
+            </div>
+            <button type="button" onclick="openV1040ExampleSandboxModal()" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs">จัดการข้อมูลตัวอย่าง (5 รายการ)</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="bg-[#002B49] text-white">
+                  <th class="p-2">PR No.</th>
+                  <th class="p-2">SKU / อะไหล่</th>
+                  <th class="p-2 text-center">Rank</th>
+                  <th class="p-2 text-right">คงเหลือ / SS (3M)</th>
+                  <th class="p-2 text-right">จำนวนสั่ง</th>
+                  <th class="p-2">สายอนุมัติ (SM → GM → MD)</th>
+                  <th class="p-2 text-center">อนุมัติขั้นถัดไป</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                ${prs.map(function(p) {
+                  return `<tr>
+                    <td class="p-2 font-bold text-[#002B49]">${p.prNo}</td>
+                    <td class="p-2"><b>${p.sku}</b> — ${p.partName}</td>
+                    <td class="p-2 text-center"><span class="px-2 py-0.5 rounded bg-rose-600 text-white font-extrabold">Rank ${p.hzkRank}</span></td>
+                    <td class="p-2 text-right">${p.currentQty} / <b>${p.safetyStock3M}</b></td>
+                    <td class="p-2 text-right font-extrabold text-indigo-700">${p.orderQty} PCS</td>
+                    <td class="p-2 font-semibold">${p.stage}</td>
+                    <td class="p-2 text-center">
+                      ${p.stage !== 'MD_APPROVED_PO_ISSUED'
+                        ? `<button type="button" onclick="advanceV1040PrApprovalStage('${p.prNo}')" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px]">อนุมัติขั้นถัดไป</button>`
+                        : '<span class="text-emerald-700 font-extrabold">✅ ออก PO โรงงานแล้ว</span>'
+                      }
+                    </td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-amber-200 p-4 shadow-sm space-y-2">
+          <h3 class="text-sm font-extrabold text-amber-900"><i class="fa-solid fa-clock mr-1.5"></i>รายการเบิกอะไหล่ล่วงหน้า (Advance Repair / Advance Claim Part) &amp; ติดตาม SLA 24 ชม.</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="bg-amber-800 text-white">
+                  <th class="p-2">เลขที่ใบเบิก</th>
+                  <th class="p-2">ประเภท</th>
+                  <th class="p-2">ใบงาน / ลูกค้า</th>
+                  <th class="p-2">SKU / อะไหล่</th>
+                  <th class="p-2">ช่างผู้เบิก / ผู้อนุมัติ</th>
+                  <th class="p-2">SLA 24 ชม. / สถานะ</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                ${advs.map(function(a) {
+                  return `<tr>
+                    <td class="p-2 font-bold">${a.advNo}</td>
+                    <td class="p-2 font-bold text-indigo-700">${a.advType}</td>
+                    <td class="p-2">${a.jobNo} · <b>${a.customer}</b></td>
+                    <td class="p-2">${a.sku} — ${a.partName} (${a.qty})</td>
+                    <td class="p-2">${a.techName} (อนุมัติ: ${a.approvedBy})</td>
+                    <td class="p-2 font-bold text-rose-700">${a.slaDeadline} [${a.status}]</td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+  };
+
+  setTimeout(function() {
+    mountV1040UiEnhancements_();
+    if (!localStorage.getItem('hzk_v1040_initial_examples_seeded')) {
+      window.loadAllV1040ExampleRecords(true);
+      localStorage.setItem('hzk_v1040_initial_examples_seeded', '1');
+    }
+  }, 1800);
+})();

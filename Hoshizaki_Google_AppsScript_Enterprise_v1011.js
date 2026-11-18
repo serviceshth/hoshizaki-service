@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1034-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1035-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -223,6 +223,18 @@ function doPost(e) {
 
       if (action === 'SEND_OUTSOURCE_FLEX_CARD') {
         return jsonOut(sendOutsourceFlexCardViaOa_(ss, data, secrets));
+      }
+
+      if (action === 'SYNC_DEALER_CHANNEL_DIRECTORY') {
+        return jsonOut(syncDealerChannelDirectoryToSheet_(ss, data));
+      }
+
+      if (action === 'ROUTE_CUSTOMER_CASE_TO_DEALER_OR_DIRECT') {
+        return jsonOut(routeCustomerCaseToDealerOrDirect_(ss, data, secrets));
+      }
+
+      if (action === 'RUN_DEALER_FOLLOWUP_SCAN_NOW') {
+        return jsonOut(runDealerDispatchFollowUpAndEscalation_(ss, secrets));
       }
 
       if (action === 'SYNC_V1025_GOVERNANCE_APPROVAL') {
@@ -865,6 +877,14 @@ function doGet(e) {
     return jsonOut(getOutsourceVaultRecordFromSheet_(ss, osCode));
   }
 
+  if (action === 'getDealerChannelDirectory') {
+    return jsonOut(getDealerChannelDirectoryFromSheet_(ss));
+  }
+
+  if (action === 'getDealerDispatchTracker') {
+    return jsonOut(getDealerDispatchTrackerFromSheet_(ss));
+  }
+
   if (action === 'getLiveTechGpsRadar') {
     return jsonOut(getLiveTechGpsRadar_(ss));
   }
@@ -1095,7 +1115,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1034-FINAL',
+    version: 'Enterprise-v1035-FINAL',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1128,7 +1148,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1034-FINAL',
+    version: 'Enterprise-v1035-FINAL',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -1852,6 +1872,9 @@ function routeDualLineWebhook_(events, botMode) {
   if (botMode === 'customer') {
     events.forEach(function(ev) {
       var userId = (ev.source && ev.source.userId) || '';
+      var lang = 'TH';
+
+      // A. Postback Actions (Self-Check Resolved, Request Dealer/Tech Dispatch, Dealer Ack)
       if (ev.type === 'postback' && ev.postback && ev.postback.data) {
         var pb = String(ev.postback.data);
         if (pb.indexOf('CSAT_RATE:') === 0) {
@@ -1861,6 +1884,34 @@ function routeDualLineWebhook_(events, botMode) {
             pushLineMessage(secrets.mgmtGroupId, '🚨 [LOW CSAT ALERT] ใบงาน ' + pts[1] + ' ได้คะแนน ' + pts[2] + '/5 ดาว กรุณาตรวจสอบด่วน!');
           }
           replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{ type: 'text', text: rep }]);
+        } else if (pb.indexOf('SELF_CHECK_RESOLVED:') === 0) {
+          var resRef = pb.split(':')[1] || '';
+          updateDealerDispatchCaseStatus_(ss, resRef, 'RESOLVED_BY_SELF_CHECK', 'ลูกค้าแก้ไขเบื้องต้นตามคำแนะนำแล้วใช้งานได้ปกติ');
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{
+            type: 'text',
+            text: '✅ ยินดีด้วยครับ! ระบบบันทึกปิดเคส (' + resRef + ') เรียบร้อยแล้ว หากต้องการความช่วยเหลือเพิ่มเติมสามารถทักแชทได้ตลอดเวลาครับ 🐧'
+          }]);
+        } else if (pb.indexOf('ESCALATE_TO_DEALER:') === 0) {
+          var escParts = pb.split(':');
+          var escSn = escParts[1] || '';
+          var escIssue = decodeURIComponent(escParts[2] || 'ขอช่างเข้าตรวจเช็กอาการเสีย');
+          var routeRes = routeCustomerCaseToDealerOrDirect_(ss, {
+            serialNo: escSn,
+            symptom: escIssue,
+            customerLineUserId: userId,
+            customerName: getLineUserDisplayName_(userId)
+          }, secrets);
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [routeRes.customerFlexMessage]);
+        } else if (pb.indexOf('DEALER_ACK_CASE:') === 0) {
+          var caseId = pb.split(':')[1] || '';
+          updateDealerDispatchCaseStatus_(ss, caseId, 'DEALER_CONTACTED', 'ตัวแทนจำหน่ายกดยืนยันรับเรื่องและติดต่อลูกค้าแล้ว');
+          if (isLineGroupConfigured() && isLineTokenConfigured()) {
+            pushLineMessage(secrets.lineGroupId, '✅ [ยืนยันจากตัวแทนจำหน่าย] เคส ' + caseId + ' ตัวแทนจำหน่ายรับเรื่องและดำเนินการติดต่อลูกค้าเรียบร้อยแล้วครับ');
+          }
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{
+            type: 'text',
+            text: '✅ บันทึกสถานะรับเรื่องสำหรับเคส ' + caseId + ' เรียบร้อยแล้ว ขอบคุณที่ร่วมดูแลลูกค้า HOSHIZAKI ครับ'
+          }]);
         } else if (pb.indexOf('SELECT_QT_TIER:') === 0) {
           var qPts = pb.split(':');
           pushLineMessage(secrets.lineGroupId, '💎 [ลูกค้าเลือกแพ็กเกจใบเสนอราคา] Offer: ' + (qPts[1] || '-') + ' -> แพ็กเกจ: ' + (qPts[2] || '-'));
@@ -1879,9 +1930,17 @@ function routeDualLineWebhook_(events, botMode) {
         return;
       }
 
+      // B. Image Message from Customer -> Gemini Multimodal Vision Triage (Error LED / Nameplate S/N)
+      if (ev.type === 'message' && ev.message && ev.message.type === 'image') {
+        var imgFlex = handleCustomerOaImageWithGemini_(ss, ev, secrets);
+        replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [imgFlex]);
+        return;
+      }
+
+      // C. Text Message from Customer -> Self-Check First -> S/N Lookup -> Dealer vs Direct Routing
       if (ev.type === 'message' && ev.message && ev.message.type === 'text') {
         var txt = String(ev.message.text || '').trim();
-        var lang = detectTextLanguage_(txt);
+        lang = detectTextLanguage_(txt);
         var pwaBase = (secrets.pwaWebAppUrl && secrets.pwaWebAppUrl.indexOf('http') === 0)
           ? secrets.pwaWebAppUrl
           : 'https://serviceshth.github.io/hoshizaki-service/';
@@ -1904,7 +1963,7 @@ function routeDualLineWebhook_(events, botMode) {
           return;
         }
 
-        // 2) Customer Self-Service Status Lookup (STATUS / เช็กสถานะ / ステータス + Phone/SN/JobNo)
+        // 2) Customer Self-Service Status Lookup
         if (/^(STATUS|TRACK|เช็กสถานะ|เช็คสถานะ|สถานะ|ติดตามช่าง|ステータス|進捗)/i.test(txt)) {
           var qKey = txt.replace(/^(STATUS|TRACK|เช็กสถานะ|เช็คสถานะ|สถานะ|ติดตามช่าง|ステータス|進捗)\s*/i, '').trim();
           var custFlex = buildCustomerSelfStatusFlex_(ss, qKey, userId, pwaBase, lang);
@@ -1912,63 +1971,72 @@ function routeDualLineWebhook_(events, botMode) {
           return;
         }
 
-        // 3) Customer Service / Repair Request (แจ้งซ่อม / REPAIR / SERVICE / 修理)
-        if (/^(แจ้งซ่อม|ขอซ่อม|นัดช่าง|REPAIR|SERVICE\s*CALL|BOOK|修理|点検依頼)/i.test(txt)) {
-          var modelsReq = extractHoshizakiModelsFromText_(txt);
-          var tkReq = createTechnicianSupportTicket_(ss, userId, txt, modelsReq.join(', ') || 'CUSTOMER_REPAIR_REQ', 'CUSTOMER_REPAIR_REQ');
-          var portalUrl = pwaBase + (pwaBase.indexOf('?') > -1 ? '&' : '?') + 'portal=customer&jobNo=' + encodeURIComponent(tkReq.ticketId);
-          var ackTitle = lang === 'JP' ? '🛠️ 修理・点検のご依頼を受け付けました' : (lang === 'EN' ? '🛠️ Service Request Received' : '🛠️ รับเรื่องแจ้งซ่อมเรียบร้อยแล้ว');
-          var ackBody = lang === 'JP'
-            ? '受付番号: ' + tkReq.ticketId + '\nサービス担当およびエンジニアより速やかにご連絡いたします。'
-            : (lang === 'EN'
-              ? 'Reference ID: ' + tkReq.ticketId + '\nOur Service Unit dispatcher & engineer will contact you shortly.'
-              : 'รหัสอ้างอิง: ' + tkReq.ticketId + '\nศูนย์บริการ HOSHIZAKI ได้รับข้อมูลแล้ว ทีมช่างจะติดต่อกลับโดยเร็วที่สุดครับ');
-          var btnLabel = lang === 'JP' ? '📱 ライブ進捗ポータルを開く' : (lang === 'EN' ? '📱 Open Customer Live Portal' : '📱 เปิดพอร์ทัลติดตามงานสด');
-          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{
-            type: 'flex',
-            altText: ackTitle + ' (' + tkReq.ticketId + ')',
-            contents: {
-              type: 'bubble',
-              size: 'mega',
-              header: {
-                type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
-                contents: [{ type: 'text', text: ackTitle, color: '#FFFFFF', weight: 'bold', size: 'sm', wrap: true }]
-              },
-              body: {
-                type: 'box', layout: 'vertical', paddingAll: '12px',
-                contents: [{ type: 'text', text: ackBody, size: 'xs', color: '#1E293B', wrap: true }]
-              },
-              footer: {
-                type: 'box', layout: 'vertical', paddingAll: '10px',
-                contents: [{
-                  type: 'button', style: 'primary', color: '#00A3E0', height: 'sm',
-                  action: { type: 'uri', label: btnLabel, uri: portalUrl }
-                }]
-              }
+        // 3) Detect Serial Number (e.g. H14289J, 51967170400060) or Explicit Service Request
+        var snMatch = txt.match(/\b([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})\b/i);
+        var wantsTechNow = /^(แจ้งซ่อม|ขอซ่อม|นัดช่าง|ขอช่าง|REPAIR|SERVICE\s*CALL|BOOK|修理|点検依頼)/i.test(txt);
+
+        if (snMatch && (wantsTechNow || /^([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})$/i.test(txt) || /(S\/N|SN|SERIAL|ตัวแทน|ดีลเลอร์|ซ่อม|ไม่เย็น|ไม่ทำน้ำแข็ง)/i.test(txt))) {
+          var detectedSn = snMatch[1].toUpperCase();
+          var routeOutcome = routeCustomerCaseToDealerOrDirect_(ss, {
+            serialNo: detectedSn,
+            symptom: txt,
+            customerLineUserId: userId,
+            customerName: getLineUserDisplayName_(userId)
+          }, secrets);
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [routeOutcome.customerFlexMessage]);
+          return;
+        }
+
+        // 4) Symptom Triage + Self-Check First + Button to Escalate with S/N
+        var guide = diagnoseSymptomGuide_(txt);
+        var aiAdvice = callGeminiLineTextAssistant_(
+          'คุณคือผู้ช่วยศูนย์บริการ HOSHIZAKI (THAILAND) ตอบคำถามลูกค้าอย่างสุภาพ กระชับ ชัดเจน ' +
+          'หากลูกค้าแจ้งอาการเสีย ให้แนะนำวิธีตรวจเช็กเบื้องต้นที่ปลอดภัย 3-4 ข้อ และขอให้ลูกค้าพิมพ์ Serial Number (S/N) หน้าเครื่อง (เช่น H14289J) เพื่อตรวจสอบตัวแทนจำหน่ายที่ดูแลหรือส่งช่างเข้าตรวจเช็ก\n' +
+          'ข้อความลูกค้า: ' + txt
+        );
+
+        var adviceText = aiAdvice || (guide ? (guide.title + '\n' + guide.steps.join('\n')) :
+          '🐧 ศูนย์บริการ HOSHIZAKI (THAILAND) ยินดีให้บริการครับ\n' +
+          '1) เบื้องต้นกรุณาตรวจสอบเบรกเกอร์ไฟ วาล์วน้ำเข้า และล้างแผ่นกรองฝุ่นหน้าเครื่อง\n' +
+          '2) หากต้องการให้ช่างเข้าตรวจเช็ก กรุณาพิมพ์ **Serial Number (S/N)** 7 หลักบนสติกเกอร์ข้างเครื่อง (เช่น H14289J) หรือถ่ายรูปป้ายรุ่นส่งเข้ามาในแชทนี้ได้เลยครับ');
+
+        var triageFlex = {
+          type: 'flex',
+          altText: '🐧 คำแนะนำเบื้องต้นจากศูนย์บริการ HOSHIZAKI',
+          contents: {
+            type: 'bubble',
+            size: 'mega',
+            header: {
+              type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+              contents: [
+                { type: 'text', text: '🐧 HOSHIZAKI SMART SERVICE CARE', color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+                { type: 'text', text: 'คำแนะนำตรวจเช็กเบื้องต้น & ค้นหาผู้ดูแล', color: '#FFFFFF', size: 'sm', weight: 'bold', margin: 'xs', wrap: true }
+              ]
+            },
+            body: {
+              type: 'box', layout: 'vertical', spacing: 'sm', paddingAll: '12px',
+              contents: [
+                { type: 'text', text: adviceText.substring(0, 1500), size: 'xs', color: '#1E293B', wrap: true },
+                { type: 'separator', margin: 'sm' },
+                { type: 'text', text: '📌 หากลองตรวจเช็กเบื้องต้นแล้วยังไม่หาย กรุณาพิมพ์ Serial Number (S/N) ของเครื่องส่งกลับมา หรือกดปุ่มด้านล่างครับ', size: 'xxs', color: '#0369A1', weight: 'bold', wrap: true }
+              ]
+            },
+            footer: {
+              type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '10px',
+              contents: [
+                {
+                  type: 'button', style: 'primary', color: '#059669', height: 'sm',
+                  action: { type: 'postback', label: '✅ แก้ไขเบื้องต้นแล้ว ใช้งานได้ปกติ (จบเคส)', data: 'SELF_CHECK_RESOLVED:SELF-' + Date.now().toString().slice(-6), displayText: 'แก้ไขเบื้องต้นแล้ว เครื่องใช้งานได้ปกติครับ' }
+                },
+                {
+                  type: 'button', style: 'primary', color: '#DC2626', height: 'sm',
+                  action: { type: 'postback', label: '🔧 ยังไม่หาย / ขอส่งเรื่องให้ตัวแทนฯ หรือช่างเข้าเช็ก', data: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent(txt.substring(0, 120)), displayText: 'ยังไม่หาย ขอส่งเรื่องให้ตัวแทนจำหน่ายหรือช่างเข้าตรวจเช็กครับ' }
+                }
+              ]
             }
-          }]);
-          return;
-        }
-
-        // 4) Trilingual Help Menu on Customer OA
-        if (/^(HELP|MENU|เมนู|ช่วยเหลือ|ヘルプ)/i.test(txt)) {
-          var helpCust = lang === 'JP'
-            ? '🐧 HOSHIZAKI カスタマーサポート\n• 修理依頼 <機種名・症状> : 修理・点検を依頼\n• ステータス <電話番号 または S/N> : 作業状況・エンジニア位置確認\n• 登録 <08x...> : 携帯番号連携'
-            : (lang === 'EN'
-              ? '🐧 HOSHIZAKI Customer Self-Service\n• REPAIR <Model / Issue> : Request service\n• STATUS <Phone or S/N> : Check live job & technician ETA\n• REGISTER <08x...> : Link phone for auto-alerts'
-              : '🐧 ศูนย์บริการลูกค้า HOSHIZAKI (THAILAND)\n• พิมพ์: แจ้งซ่อม <รุ่นเครื่อง/อาการ> เพื่อเปิดใบแจ้งซ่อม\n• พิมพ์: เช็กสถานะ <เบอร์โทร หรือ S/N> เพื่อดูสถานะช่าง\n• พิมพ์: ลงทะเบียน <เบอร์มือถือ 08x...> เพื่อรับแจ้งเตือนอัตโนมัติ');
-          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{ type: 'text', text: helpCust }]);
-          return;
-        }
-
-        // 5) General Inquiry -> Escalate to Service Unit Ticket Queue + Trilingual Ack
-        var tkCust = createTechnicianSupportTicket_(ss, userId, txt, 'CUSTOMER_OA', 'CUSTOMER_INQUIRY');
-        var genAck = lang === 'JP'
-          ? '🐧 ホシザキ・タイランド サービス部にてお問い合わせを受け付けました（受付番号: ' + tkCust.ticketId + '）。担当者より順次ご返信いたします。'
-          : (lang === 'EN'
-            ? '🐧 HOSHIZAKI (THAILAND) Service Unit has received your message (Ref: ' + tkCust.ticketId + '). Our coordinator/engineer will reply shortly.'
-            : '🐧 ศูนย์บริการ HOSHIZAKI (THAILAND) ได้รับข้อความของคุณแล้ว (รหัสอ้างอิง: ' + tkCust.ticketId + ')\nเจ้าหน้าที่ประสานงานและทีมช่างจะตอบกลับโดยเร็วที่สุดครับ');
-        replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [{ type: 'text', text: genAck }]);
+          }
+        };
+        replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [triageFlex]);
       }
     });
     return;
@@ -8235,4 +8303,440 @@ function sendOutsourceFlexCardViaOa_(ss, data, secrets) {
   };
   var sent = pushLineMessages_(targetId, [flexCard]);
   return { status: sent ? 'ok' : 'failed', shortCode: v.shortCode || '' };
+}
+
+
+// =========================================================================
+// SECTION 26: ENTERPRISE v1035 GEMINI MULTIMODAL CHATBOT, DEALER-FIRST
+//             CHANNEL ROUTING & 2-HOUR SLA FOLLOW-UP ENGINE
+// =========================================================================
+function callGeminiLineTextAssistant_(promptText, base64Image, mimeType) {
+  try {
+    var apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY') || '';
+    if (!apiKey) return '';
+    var parts = [{ text: String(promptText || '') }];
+    if (base64Image) {
+      parts.push({
+        inline_data: {
+          mime_type: mimeType || 'image/jpeg',
+          data: base64Image
+        }
+      });
+    }
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(apiKey);
+    var res = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify({ contents: [{ parts: parts }] }),
+      muteHttpExceptions: true
+    });
+    if (res.getResponseCode() === 200) {
+      var json = JSON.parse(res.getContentText());
+      return (json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts && json.candidates[0].content.parts[0].text) || '';
+    }
+  } catch (e) {}
+  return '';
+}
+
+function handleCustomerOaImageWithGemini_(ss, ev, secrets) {
+  var msgId = ev.message && ev.message.id;
+  var userId = (ev.source && ev.source.userId) || '';
+  var token = secrets.customerLineToken || secrets.lineToken;
+  var analysis = '';
+  var detectedSn = '';
+
+  if (msgId && token) {
+    try {
+      var res = UrlFetchApp.fetch('https://api-data.line.me/v2/bot/message/' + encodeURIComponent(msgId) + '/content', {
+        method: 'get',
+        headers: { Authorization: 'Bearer ' + token },
+        muteHttpExceptions: true
+      });
+      if (res.getResponseCode() === 200) {
+        var b64 = Utilities.base64Encode(res.getBlob().getBytes());
+        analysis = callGeminiLineTextAssistant_(
+          'คุณคือวิศวกรบริการ HOSHIZAKI (THAILAND) วิเคราะห์รูปภาพที่ลูกค้าส่งเข้ามา (อาจเป็นหน้าจอ Error, ไฟ LED กะพริบ, ป้ายเนมเพลต Serial Number หรืออาการเสียของเครื่องทำน้ำแข็ง/ตู้แช่) ' +
+          '1) หากเห็น Serial Number ให้ระบุบรรทัดแรกว่า SN: <รหัส> ' +
+          '2) สรุปอาการ/รหัส Error ที่พบและวิธีตรวจเช็กเบื้องต้น 3 ข้อสั้นๆ ภาษาไทยที่เข้าใจง่าย',
+          b64,
+          'image/jpeg'
+        );
+        var snM = analysis.match(/SN:\s*([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})/i);
+        if (snM) detectedSn = snM[1].toUpperCase();
+      }
+    } catch (e) {}
+  }
+
+  if (!analysis) {
+    analysis = '📸 ได้รับรูปภาพจากคุณลูกค้าเรียบร้อยแล้วครับ\nเบื้องต้นแนะนำตรวจสอบวาล์วน้ำเข้า แผ่นกรองฝุ่น และสวิตช์ไฟหลัก หากต้องการส่งเรื่องให้ตัวแทนจำหน่ายหรือช่างเข้าตรวจเช็ก กดปุ่มด้านล่างได้เลยครับ';
+  }
+
+  return {
+    type: 'flex',
+    altText: '📸 ผลการวิเคราะห์รูปภาพจากศูนย์บริการ HOSHIZAKI',
+    contents: {
+      type: 'bubble',
+      size: 'mega',
+      header: {
+        type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+        contents: [
+          { type: 'text', text: '📸 AI VISUAL SERVICE TRIAGE', color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+          { type: 'text', text: detectedSn ? ('ตรวจพบ S/N: ' + detectedSn) : 'ผลการวิเคราะห์ภาพถ่ายเบื้องต้น', color: '#FFFFFF', size: 'sm', weight: 'bold', margin: 'xs' }
+        ]
+      },
+      body: {
+        type: 'box', layout: 'vertical', paddingAll: '12px',
+        contents: [{ type: 'text', text: analysis.substring(0, 1500), size: 'xs', color: '#1E293B', wrap: true }]
+      },
+      footer: {
+        type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '10px',
+        contents: [
+          {
+            type: 'button', style: 'primary', color: '#059669', height: 'sm',
+            action: { type: 'postback', label: '✅ ตรวจเช็กแล้วใช้งานได้ปกติ (จบเคส)', data: 'SELF_CHECK_RESOLVED:IMG-' + Date.now().toString().slice(-6), displayText: 'ตรวจเช็กตามคำแนะนำแล้วใช้งานได้ปกติครับ' }
+          },
+          {
+            type: 'button', style: 'primary', color: '#DC2626', height: 'sm',
+            action: { type: 'postback', label: '🔧 ส่งเรื่องให้ตัวแทนจำหน่าย / ช่างเข้าตรวจเช็ก', data: 'ESCALATE_TO_DEALER:' + (detectedSn || 'NO_SN') + ':' + encodeURIComponent('ส่งรูปภาพขอให้ช่างเข้าตรวจเช็ก'), displayText: 'ขอส่งเรื่องให้ตัวแทนจำหน่ายหรือช่างเข้าตรวจเช็กครับ' }
+          }
+        ]
+      }
+    }
+  };
+}
+
+function syncDealerChannelDirectoryToSheet_(ss, data) {
+  var sheetName = 'Dealer_Channel_Directory';
+  var headers = [
+    'Dealer_ID', 'Dealer_Name', 'Channel_Type', 'Zone_Tier',
+    'Service_Phone', 'Service_Email', 'LINE_Group_ID', 'LINE_OA_Link',
+    'SMS_Mobile', 'Province_Coverage', 'Updated_At'
+  ];
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var list = Array.isArray(data.dealers) ? data.dealers : [];
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  if (sheet.getLastRow() > 1) {
+    sheet.getRange(2, 1, sheet.getLastRow() - 1, headers.length).clearContent();
+  }
+  if (list.length > 0) {
+    var rows = list.map(function(d, idx) {
+      return [
+        String(d.id || ('DLR-' + (idx + 1))),
+        String(d.name || ''),
+        String(d.channelType || 'DEALER_ABC'),
+        String(d.zoneTier || 'DEALER_A'),
+        String(d.phone || ''),
+        String(d.email || ''),
+        String(d.lineGroupId || ''),
+        String(d.lineOaLink || ''),
+        String(d.smsMobile || ''),
+        String(d.province || 'ทั่วประเทศ'),
+        nowStr
+      ];
+    });
+    sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
+  }
+  return { status: 'ok', count: list.length };
+}
+
+function getDealerChannelDirectoryFromSheet_(ss) {
+  var sheet = ss.getSheetByName('Dealer_Channel_Directory');
+  if (!sheet || sheet.getLastRow() < 2) return { status: 'ok', dealers: [] };
+  var vals = sheet.getRange(2, 1, sheet.getLastRow() - 1, 11).getValues();
+  var dealers = vals.map(function(r) {
+    return {
+      id: r[0], name: r[1], channelType: r[2], zoneTier: r[3],
+      phone: r[4], email: r[5], lineGroupId: r[6], lineOaLink: r[7],
+      smsMobile: r[8], province: r[9], updatedAt: r[10]
+    };
+  });
+  return { status: 'ok', dealers: dealers };
+}
+
+function findDealerProfileByName_(ss, dealerName) {
+  var q = String(dealerName || '').trim().toUpperCase();
+  if (!q || q === '-') return null;
+  var dir = getDealerChannelDirectoryFromSheet_(ss).dealers || [];
+  for (var i = 0; i < dir.length; i++) {
+    var dName = String(dir[i].name || '').trim().toUpperCase();
+    if (dName && (dName === q || dName.indexOf(q) > -1 || q.indexOf(dName) > -1)) {
+      return dir[i];
+    }
+  }
+  return null;
+}
+
+function ensureDealerDispatchTrackerSheet_(ss) {
+  var sheetName = 'Dealer_Service_Dispatch_Tracker';
+  var headers = [
+    'Case_ID', 'Created_At', 'Serial_No', 'Model', 'Customer_Name',
+    'Customer_Phone', 'Customer_LINE_ID', 'Channel_Type', 'Assigned_Dealer_Or_Team',
+    'Symptom', 'Status', 'Last_Reminded_At', 'Reminder_Count', 'Notes'
+  ];
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  return sheet;
+}
+
+function routeCustomerCaseToDealerOrDirect_(ss, data, secrets) {
+  var sn = String(data.serialNo || '').trim().toUpperCase();
+  var symptom = String(data.symptom || 'ขอช่างเข้าตรวจเช็กอาการ').trim();
+  var custName = String(data.customerName || 'ลูกค้า LINE').trim();
+  var custPhone = String(data.customerPhone || '').trim();
+  var custLineId = String(data.customerLineUserId || '').trim();
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var caseId = 'CASE-' + Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyMMdd-HHmmss');
+
+  // 1. Lookup S/N in Serial Master / Updates to identify selling Dealer or Direct Channel
+  var salesInfo = (sn && sn !== 'NO_SN') ? searchSerialInfoFromSheet_(ss, sn) : null;
+  var rawOwner = salesInfo ? String(salesInfo.customer || '').trim() : '';
+  var modelName = salesInfo ? String(salesInfo.model || '-').trim() : '-';
+  var dealerProfile = findDealerProfileByName_(ss, rawOwner);
+
+  var channelType = String(data.overrideChannelType || (dealerProfile ? dealerProfile.channelType : (rawOwner ? 'DEALER_ABC' : 'DIRECT_SALE'))).toUpperCase();
+  var assignedTarget = dealerProfile ? dealerProfile.name : (rawOwner || 'HOSHIZAKI Direct Service Team');
+  var isDirect = (channelType === 'DIRECT_SALE' || channelType === 'JAPANESE_CORPORATE');
+
+  // 2. Log into Dealer_Service_Dispatch_Tracker
+  var tracker = ensureDealerDispatchTrackerSheet_(ss);
+  tracker.appendRow([
+    caseId, nowStr, sn || '-', modelName, custName,
+    custPhone, custLineId, channelType, assignedTarget,
+    symptom, isDirect ? 'DISPATCHED_DIRECT_TEAM' : 'WAITING_DEALER_ACK',
+    nowStr, 0, 'Auto-routed via LINE Chatbot'
+  ]);
+
+  var customerFlexMessage;
+
+  if (!isDirect && assignedTarget) {
+    // --- CASE A: DEALER CHANNEL (Main Workflow) ---
+    var dPhone = (dealerProfile && dealerProfile.phone) ? dealerProfile.phone : '02-005-9980-83 (ศูนย์ประสานงาน Hoshizaki)';
+    var dLineUrl = (dealerProfile && dealerProfile.lineOaLink && dealerProfile.lineOaLink.indexOf('http') === 0)
+      ? dealerProfile.lineOaLink
+      : 'https://serviceshth.github.io/hoshizaki-service/?portal=customer&jobNo=' + encodeURIComponent(caseId);
+
+    // A1) Push Dispatch Flex Card to Dealer's Group LINE (if configured) + Email + SMS log
+    var dealerCard = {
+      type: 'flex',
+      altText: '🔔 [HOSHIZAKI แจ้งเคสบริการลูกค้า] ' + caseId + ' - ' + assignedTarget,
+      contents: {
+        type: 'bubble',
+        size: 'mega',
+        header: {
+          type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+          contents: [
+            { type: 'text', text: '🔔 HOSHIZAKI DEALER SERVICE HANDOFF', color: '#FDE047', size: 'xxs', weight: 'bold' },
+            { type: 'text', text: caseId + ' → ' + assignedTarget, color: '#FFFFFF', size: 'sm', weight: 'bold', margin: 'xs', wrap: true }
+          ]
+        },
+        body: {
+          type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '12px',
+          contents: [
+            { type: 'text', text: '❄️ รุ่น / S/N: ' + modelName + ' / ' + (sn || '-'), size: 'xs', weight: 'bold', color: '#0369A1', wrap: true },
+            { type: 'text', text: '🏪 ลูกค้าที่แจ้ง: ' + custName + (custPhone ? ' (' + custPhone + ')' : ''), size: 'xs', wrap: true },
+            { type: 'text', text: '🔍 อาการที่แจ้ง: ' + symptom, size: 'xs', color: '#334155', wrap: true },
+            { type: 'text', text: '⏰ กรุณากดปุ่มด้านล่างเมื่อติดต่อลูกค้าแล้ว (ระบบจะติดตามผลอัตโนมัติทุก 2 ชม.)', size: 'xxs', color: '#B45309', wrap: true, margin: 'sm' }
+          ]
+        },
+        footer: {
+          type: 'box', layout: 'vertical', paddingAll: '10px',
+          contents: [{
+            type: 'button', style: 'primary', color: '#059669', height: 'sm',
+            action: { type: 'postback', label: '✅ ตัวแทนจำหน่ายรับเรื่องติดต่อลูกค้าแล้ว', data: 'DEALER_ACK_CASE:' + caseId, displayText: 'รับเรื่องและติดต่อลูกค้าเคส ' + caseId + ' เรียบร้อยครับ' }
+          }]
+        }
+      }
+    };
+
+    var sentDealerLine = false;
+    if (dealerProfile && dealerProfile.lineGroupId && isLineTokenConfigured()) {
+      sentDealerLine = pushLineMessages_(dealerProfile.lineGroupId, [dealerCard]);
+    }
+    if (dealerProfile && dealerProfile.email && checkAndNotifyEmailQuota_(secrets)) {
+      try {
+        MailApp.sendEmail({
+          to: dealerProfile.email,
+          subject: '[HOSHIZAKI SERVICE HANDOFF] เคส ' + caseId + ' (S/N: ' + (sn || '-') + ') - ' + assignedTarget,
+          body: 'เรียน ' + assignedTarget + '\n\nศูนย์บริการ HOSHIZAKI ขอส่งต่อข้อมูลลูกค้าที่ติดต่อขอรับบริการ:\n• รหัสเคส: ' + caseId + '\n• รุ่น / S/N: ' + modelName + ' / ' + (sn || '-') + '\n• ลูกค้า: ' + custName + '\n• อาการ: ' + symptom + '\n\nกรุณาติดต่อกลับลูกค้าและแจ้งยืนยันกลับมายังศูนย์บริการ Hoshizaki ครับ'
+        });
+      } catch (eMail) {}
+    }
+
+    // A2) Notify Hoshizaki Service Team Group LINE that Dealer handoff is completed!
+    if (isLineGroupConfigured() && isLineTokenConfigured()) {
+      pushLineMessage(
+        secrets.lineGroupId,
+        '📣 [ประสานงานส่งเรื่องให้ตัวแทนจำหน่ายเรียบร้อยแล้ว]\n' +
+        '━━━━━━━━━━━━━━━━━━━━\n' +
+        '🆔 รหัสเคส: ' + caseId + '\n' +
+        '🏢 ตัวแทนจำหน่ายผู้ดูแล: ' + assignedTarget + ' (' + channelType + ')\n' +
+        '❄️ รุ่น / S/N: ' + modelName + ' / ' + (sn || '-') + '\n' +
+        '👤 ลูกค้า: ' + custName + '\n' +
+        '🔍 อาการ: ' + symptom + '\n' +
+        '📡 ช่องทางที่ส่งแจ้ง: ' + (sentDealerLine ? 'Group LINE ตัวแทนจำหน่าย + ' : '') + 'Flex Card ให้ลูกค้าติดต่อโดยตรง\n' +
+        '⏱️ สถานะ: รอตัวแทนจำหน่ายยืนยันติดต่อกลับ (ติดตามซ้ำอัตโนมัติทุก 2 ชม.)'
+      );
+    }
+
+    // A3) Build Flex Card for Customer to contact Dealer directly
+    customerFlexMessage = {
+      type: 'flex',
+      altText: '🏢 ข้อมูลตัวแทนจำหน่ายที่ดูแลเครื่องของคุณ (' + assignedTarget + ')',
+      contents: {
+        type: 'bubble',
+        size: 'mega',
+        header: {
+          type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+          contents: [
+            { type: 'text', text: '🏢 HOSHIZAKI AUTHORIZED DEALER CARE', color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+            { type: 'text', text: 'ตัวแทนจำหน่ายที่ดูแลเครื่องของคุณ', color: '#FFFFFF', size: 'sm', weight: 'bold', margin: 'xs' }
+          ]
+        },
+        body: {
+          type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '12px',
+          contents: [
+            { type: 'text', text: '❄️ รุ่น / S/N: ' + modelName + ' / ' + (sn || '-'), size: 'xs', weight: 'bold', color: '#0369A1', wrap: true },
+            { type: 'text', text: '🏪 ตัวแทนจำหน่าย: ' + assignedTarget, size: 'xs', weight: 'bold', color: '#0F172A', wrap: true },
+            { type: 'text', text: '📞 เบอร์ติดต่อบริการ: ' + dPhone, size: 'xs', color: '#334155', wrap: true },
+            { type: 'separator', margin: 'sm' },
+            { type: 'text', text: '✅ ศูนย์บริการ HOSHIZAKI ได้ประสานงานส่งเรื่องไปยังตัวแทนจำหน่ายเรียบร้อยแล้ว (รหัส ' + caseId + ') หรือคุณลูกค้าสามารถกดปุ่มด้านล่างเพื่อติดต่อตัวแทนจำหน่ายได้โดยตรงครับ', size: 'xxs', color: '#065F46', wrap: true, margin: 'sm' }
+          ]
+        },
+        footer: {
+          type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '10px',
+          contents: [
+            {
+              type: 'button', style: 'primary', color: '#059669', height: 'sm',
+              action: { type: 'uri', label: '💬 ติดต่อตัวแทนจำหน่าย / ติดตามงาน', uri: dLineUrl }
+            }
+          ]
+        }
+      }
+    };
+  } else {
+    // --- CASE B: DIRECT SALE / JAPANESE CORPORATE (Hoshizaki Direct Service Team) ---
+    var tkDirect = createTechnicianSupportTicket_(ss, custLineId, '[' + channelType + '] S/N: ' + (sn || '-') + ' | ' + symptom, modelName + ' / ' + (sn || '-'), channelType);
+    customerFlexMessage = {
+      type: 'flex',
+      altText: '🛠️ รับเรื่องแจ้งซ่อมลูกค้าขายตรง HOSHIZAKI (' + caseId + ')',
+      contents: {
+        type: 'bubble',
+        size: 'mega',
+        header: {
+          type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+          contents: [
+            { type: 'text', text: '🛠️ HOSHIZAKI DIRECT SERVICE UNIT', color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+            { type: 'text', text: 'รับเรื่องแจ้งซ่อมเข้าศูนย์บริการตรงแล้ว', color: '#FFFFFF', size: 'sm', weight: 'bold', margin: 'xs' }
+          ]
+        },
+        body: {
+          type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '12px',
+          contents: [
+            { type: 'text', text: '🆔 รหัสอ้างอิง: ' + caseId + ' (' + tkDirect.ticketId + ')', size: 'xs', weight: 'bold', color: '#0369A1' },
+            { type: 'text', text: '❄️ รุ่น / S/N: ' + modelName + ' / ' + (sn || '-'), size: 'xs', wrap: true },
+            { type: 'text', text: '👨‍🔧 ทีมวิศวกรบริการ HOSHIZAKI ได้รับข้อมูลแล้ว และจะติดต่อกลับเพื่อนัดหมายเข้าตรวจเช็กโดยเร็วที่สุดครับ', size: 'xs', color: '#334155', wrap: true, margin: 'xs' }
+          ]
+        }
+      }
+    };
+  }
+
+  return {
+    status: 'ok',
+    caseId: caseId,
+    channelType: channelType,
+    assignedTarget: assignedTarget,
+    customerFlexMessage: customerFlexMessage
+  };
+}
+
+function updateDealerDispatchCaseStatus_(ss, caseId, newStatus, noteText) {
+  var sheet = ensureDealerDispatchTrackerSheet_(ss);
+  var rowIdx = findRowByExactKey(sheet, 1, String(caseId || '').trim().toUpperCase());
+  if (rowIdx >= 2) {
+    sheet.getRange(rowIdx, 11).setValue(newStatus);
+    if (noteText) sheet.getRange(rowIdx, 14).setValue(noteText);
+  }
+}
+
+function getDealerDispatchTrackerFromSheet_(ss) {
+  var sheet = ensureDealerDispatchTrackerSheet_(ss);
+  if (sheet.getLastRow() < 2) return { status: 'ok', cases: [] };
+  var vals = sheet.getRange(2, 1, sheet.getLastRow() - 1, 14).getValues();
+  var cases = vals.reverse().map(function(r) {
+    return {
+      caseId: r[0], createdAt: r[1], serialNo: r[2], model: r[3],
+      customerName: r[4], customerPhone: r[5], channelType: r[7],
+      assignedTarget: r[8], symptom: r[9], status: r[10],
+      lastRemindedAt: r[11], reminderCount: Number(r[12] || 0), notes: r[13]
+    };
+  });
+  return { status: 'ok', cases: cases };
+}
+
+function runDealerDispatchFollowUpAndEscalation_(ss, secrets) {
+  ss = ss || SpreadsheetApp.getActiveSpreadsheet();
+  secrets = secrets || getAppSecrets_();
+  var sheet = ensureDealerDispatchTrackerSheet_(ss);
+  if (sheet.getLastRow() < 2) return { status: 'ok', remindedCount: 0 };
+
+  var vals = sheet.getRange(2, 1, sheet.getLastRow() - 1, 14).getValues();
+  var nowMs = Date.now();
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var reminded = 0;
+
+  for (var i = 0; i < vals.length; i++) {
+    var st = String(vals[i][10] || '');
+    if (st === 'WAITING_DEALER_ACK') {
+      var lastStr = String(vals[i][11] || vals[i][1] || '');
+      var lastDt = new Date(lastStr.replace(' ', 'T') + '+07:00');
+      var diffHrs = isNaN(lastDt.getTime()) ? 2.5 : ((nowMs - lastDt.getTime()) / (1000 * 3600));
+      var remCount = Number(vals[i][12] || 0);
+
+      if (diffHrs >= 2) {
+        var caseId = String(vals[i][0] || '');
+        var sn = String(vals[i][2] || '-');
+        var model = String(vals[i][3] || '-');
+        var custName = String(vals[i][4] || '-');
+        var dealerName = String(vals[i][8] || '-');
+        var dProf = findDealerProfileByName_(ss, dealerName);
+
+        // 1. Re-notify Dealer Group LINE & Email
+        if (dProf && dProf.lineGroupId && isLineTokenConfigured()) {
+          pushLineMessage(dProf.lineGroupId, '⏰ [ติดตามเคสซ้ำครั้งที่ ' + (remCount + 1) + '] เคส ' + caseId + ' (S/N: ' + sn + ' / ' + model + ') ลูกค้า: ' + custName + ' ยังรอการติดต่อกลับจาก ' + dealerName + ' ครับ');
+        }
+        if (dProf && dProf.email && checkAndNotifyEmailQuota_(secrets)) {
+          try {
+            MailApp.sendEmail({
+              to: dProf.email,
+              subject: '[REMINDER #' + (remCount + 1) + '] ติดตามการติดต่อกลับลูกค้า HOSHIZAKI เคส ' + caseId,
+              body: 'เรียน ' + dealerName + '\n\nระบบติดตามอัตโนมัติขอแจ้งเตือนซ้ำสำหรับเคส ' + caseId + ' (S/N: ' + sn + ', ลูกค้า: ' + custName + ') กรุณาติดต่อลูกค้าและกดยืนยันรับเรื่องในกลุ่ม LINE ครับ'
+            });
+          } catch (eM) {}
+        }
+
+        // 2. Notify Hoshizaki Service Group LINE (and escalate if >= 4 hrs / remCount >= 1)
+        if (isLineGroupConfigured() && isLineTokenConfigured()) {
+          var escPrefix = (remCount >= 1) ? '🚨 [SLA ESCALATION > 4 ชม.] ' : '⏱️ [ติดตามรอบ 2 ชม.] ';
+          pushLineMessage(secrets.lineGroupId, escPrefix + 'เคส ' + caseId + ' (' + dealerName + ') ส่งแจ้งเตือนซ้ำครั้งที่ ' + (remCount + 1) + ' เรียบร้อยแล้ว');
+        }
+
+        sheet.getRange(i + 2, 12).setValue(nowStr);
+        sheet.getRange(i + 2, 13).setValue(remCount + 1);
+        reminded++;
+      }
+    }
+  }
+  return { status: 'ok', remindedCount: reminded };
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1034-complete';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1035-complete';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',

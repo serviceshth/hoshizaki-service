@@ -904,6 +904,15 @@ function doGet(e) {
     return jsonOut(getCompanyStaffDirectory_(ss));
   }
 
+  if (action === 'getUserCredentialsVault') {
+    return jsonOut(getUserCredentialsVaultFromSheet_(ss));
+  }
+
+  if (action === 'getSecurityAuditLogs') {
+    var limitLogs = Number((e.parameter && e.parameter.limit) || 100);
+    return jsonOut(getSecurityAuditLogsFromSheet_(ss, limitLogs));
+  }
+
   if (action === 'getOutsourceRateCard') {
     return jsonOut(getOutsourceRateCardFromSheet_(ss));
   }
@@ -1155,7 +1164,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1043-SUPERADMIN',
+    version: 'Enterprise-v1044-OMNI',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1194,7 +1203,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1043-SUPERADMIN',
+    version: 'Enterprise-v1044-OMNI',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -9376,7 +9385,7 @@ function getEnterpriseImsDataFromSheets_(ss) {
 
 
 // ============================================================================
-// 26. ENTERPRISE v1043-SUPERADMIN: MULTI-USER SHA-256 CREDENTIAL VAULT,
+// 26. ENTERPRISE v1044-OMNI: MULTI-USER SHA-256 CREDENTIAL VAULT,
 //     SOLE SUPER ADMIN (MR. NOPARIN) & IMMEDIATE SYSTEM_AUDIT_LOG SYNC
 // ============================================================================
 
@@ -9433,4 +9442,63 @@ function logSecurityAuditEventToSheet_(ss, data) {
     String(data.event || 'SECURITY_EVENT')
   ]);
   return { status: 'ok', timestamp: nowStr };
+}
+
+
+// ============================================================================
+// SECTION 28: ENTERPRISE v1044-OMNI TWO-WAY CREDENTIAL VAULT & AUDIT LOG READERS
+// ============================================================================
+function getUserCredentialsVaultFromSheet_(ss) {
+  var sheet = ss.getSheetByName('System_User_Credentials');
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { status: 'ok', users: [] };
+  }
+  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 12).getValues();
+  var users = [];
+  for (var i = 0; i < values.length; i++) {
+    var r = values[i];
+    if (!r[0]) continue;
+    var uid = String(r[0]).trim();
+    var role = (uid === 'SVC-02') ? 'SUPER_ADMIN' : (String(r[5] || '') === 'SUPER_ADMIN' ? 'SERVICE_MANAGER' : String(r[5] || 'TECHNICIAN'));
+    users.push({
+      id: uid,
+      code: String(r[1] || uid),
+      name: String(r[2] || ''),
+      department: String(r[3] || ''),
+      position: String(r[4] || ''),
+      rbacRole: role,
+      salt: String(r[6] || ''),
+      passwordHash: String(r[7] || ''),
+      isTempPassword: String(r[8]).toUpperCase() === 'TRUE',
+      suspended: String(r[9]).toUpperCase() === 'TRUE',
+      active: String(r[10]).toUpperCase() !== 'FALSE',
+      updatedAt: String(r[11] || '')
+    });
+  }
+  return { status: 'ok', users: users, count: users.length };
+}
+
+function getSecurityAuditLogsFromSheet_(ss, limit) {
+  var sheet = ss.getSheetByName('System_Audit_Log');
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { status: 'ok', logs: [] };
+  }
+  var lastRow = sheet.getLastRow();
+  var maxRows = Math.min(lastRow - 1, Math.max(1, limit || 100));
+  var startRow = Math.max(2, lastRow - maxRows + 1);
+  var values = sheet.getRange(startRow, 1, lastRow - startRow + 1, 7).getValues();
+  var logs = [];
+  for (var i = values.length - 1; i >= 0; i--) {
+    var r = values[i];
+    logs.push({
+      timestamp: String(r[0] || ''),
+      actorId: String(r[1] || ''),
+      actorName: String(r[2] || ''),
+      department: String(r[3] || ''),
+      rbacRole: String(r[4] || ''),
+      targetId: String(r[5] || ''),
+      event: String(r[6] || '')
+    });
+  }
+  return { status: 'ok', logs: logs, count: logs.length };
 }

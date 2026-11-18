@@ -5511,7 +5511,7 @@
 
 
 // ============================================================================
-// --- Module Block #55 (Enterprise v1043-SUPERADMIN: Sole Super Admin Control
+// --- Module Block #55 (Enterprise v1044-OMNI: Sole Super Admin Control
 //     for Mr. Noparin Homhoul, SHA-256 + Salt Vault, Temp Password Generator,
 //     8-Department RBAC, Account Lock/Unlock & Immediate System_Audit_Log Sync) ---
 // ============================================================================
@@ -6431,4 +6431,601 @@
     await ensureCredentialVaultInitialized_();
     window.applyRbacRoleViewFiltering();
   }, 1200);
+})();
+
+
+// ============================================================================
+// --- Module Block #56 (Enterprise v1044-OMNI: Two-Way Cloud Credential Pull,
+//     Live System_Audit_Log Viewer & CSV Export, Global Command Palette Ctrl+K,
+//     100-Seat Multi-Branch Roster Manager, 1-Click Predictive Quote & LINE Flex,
+//     and IndexedDB Cold-Archive & Storage Auto-Compaction Engine) ---
+// ============================================================================
+(function() {
+  const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
+  const SOLE_SUPER_ADMIN_ID = 'SVC-02';
+  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1044';
+  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1044';
+  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1044';
+
+  const HZK_BRANCH_DIRECTORY = [
+    { code: 'ALL', name: 'ทุกสาขาทั่วประเทศ (All Thailand Branches)', region: 'Nationwide' },
+    { code: 'BKK-HQ', name: 'Bangkok Head Office (Lak Si - Vibhavadi 64)', region: 'Central / Bangkok' },
+    { code: 'EEC-CHB', name: 'Eastern Seaboard Branch (Chonburi / Rayong)', region: 'Eastern' },
+    { code: 'NTH-CNX', name: 'Northern Regional Center (Chiang Mai)', region: 'Northern' },
+    { code: 'STH-HKT', name: 'Southern Regional Center (Phuket / Hat Yai)', region: 'Southern' },
+    { code: 'NE-KKC', name: 'Northeastern Regional Center (Khon Kaen / Korat)', region: 'Northeastern' }
+  ];
+
+  // --------------------------------------------------------------------------
+  // DIMENSION 1: Two-Way Cloud Credential Vault Pull & Live System_Audit_Log
+  // --------------------------------------------------------------------------
+  window.pullUserCredentialsVaultFromCloud = async function(silent) {
+    const gasUrl = typeof window.resolveHoshizakiGasUrl === 'function' ? window.resolveHoshizakiGasUrl() : '';
+    if (!gasUrl) {
+      if (!silent && typeof showToast === 'function') {
+        showToast('⚠️ กรุณาตั้งค่า Google Apps Script Web App URL ก่อนดึงข้อมูลบัญชีจาก Cloud');
+      }
+      return false;
+    }
+    try {
+      const sep = gasUrl.includes('?') ? '&' : '?';
+      const resp = await fetch(gasUrl + sep + 'action=getUserCredentialsVault&_t=' + Date.now(), { method: 'GET' });
+      const data = await resp.json();
+      if (data && data.status === 'ok' && Array.isArray(data.users) && data.users.length > 0) {
+        const localVault = JSON.parse(localStorage.getItem(CRED_VAULT_KEY) || '[]');
+        const map = {};
+        localVault.forEach(u => { map[u.id] = u; });
+
+        data.users.forEach(cu => {
+          if (!cu.id) return;
+          const existing = map[cu.id] || {};
+          const cloudTime = Date.parse(cu.updatedAt || '') || 0;
+          const localTime = Date.parse(existing.updatedAt || '') || 0;
+          if (!existing.id || cloudTime >= localTime) {
+            map[cu.id] = {
+              id: String(cu.id),
+              code: String(cu.code || cu.id),
+              name: String(cu.name || existing.name || cu.id),
+              nickname: existing.nickname || String(cu.name || '').split(' ')[0],
+              department: String(cu.department || existing.department || 'Service Unit'),
+              position: String(cu.position || existing.position || 'Staff'),
+              branch: String(cu.branch || existing.branch || 'BKK-HQ'),
+              rbacRole: cu.id === SOLE_SUPER_ADMIN_ID ? 'SUPER_ADMIN' : (cu.rbacRole === 'SUPER_ADMIN' ? 'SERVICE_MANAGER' : String(cu.rbacRole || existing.rbacRole || 'TECHNICIAN')),
+              email: existing.email || '',
+              phone: existing.phone || '',
+              salt: String(cu.salt || existing.salt || ''),
+              passwordHash: String(cu.passwordHash || existing.passwordHash || ''),
+              isTempPassword: Boolean(cu.isTempPassword),
+              tempExpiresAt: cu.isTempPassword ? (existing.tempExpiresAt || (Date.now() + 24 * 60 * 60 * 1000)) : 0,
+              mustChangePassword: Boolean(cu.isTempPassword),
+              suspended: Boolean(cu.suspended),
+              active: cu.active !== false,
+              updatedAt: String(cu.updatedAt || new Date().toISOString())
+            };
+          }
+        });
+
+        const merged = Object.values(map);
+        localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(merged));
+        if (typeof window.applyRbacRoleViewFiltering === 'function') window.applyRbacRoleViewFiltering();
+        if (!silent && typeof showToast === 'function') {
+          showToast(`☁️ ดึงข้อมูลบัญชี & รหัสผ่าน SHA-256 ล่าสุดจาก Google Sheets (${merged.length} บัญชี) สำเร็จแล้ว`);
+        }
+        return true;
+      }
+      return false;
+    } catch (err) {
+      if (!silent && typeof showToast === 'function') {
+        showToast('⚠️ ไม่สามารถดึงข้อมูลจาก Cloud ได้ในขณะนี้ (ใช้งานฐานข้อมูลออฟไลน์ในเครื่อง)');
+      }
+      return false;
+    }
+  };
+
+  window.pullCloudSecurityAuditLogs = async function() {
+    const gasUrl = typeof window.resolveHoshizakiGasUrl === 'function' ? window.resolveHoshizakiGasUrl() : '';
+    if (!gasUrl) {
+      if (typeof showToast === 'function') showToast('⚠️ ยังไม่ได้ตั้งค่า Google Apps Script Web App URL');
+      return;
+    }
+    try {
+      const sep = gasUrl.includes('?') ? '&' : '?';
+      const resp = await fetch(gasUrl + sep + 'action=getSecurityAuditLogs&limit=100&_t=' + Date.now(), { method: 'GET' });
+      const data = await resp.json();
+      if (data && data.status === 'ok' && Array.isArray(data.logs)) {
+        localStorage.setItem('hoshizaki_cloud_audit_cache_v1044', JSON.stringify(data.logs));
+        if (typeof window.renderAdminSecurityRbacPanel === 'function') {
+          await window.renderAdminSecurityRbacPanel();
+        }
+        if (typeof showToast === 'function') {
+          showToast(`🛡️ โหลดประวัติ System_Audit_Log จาก Google Sheets (${data.logs.length} รายการ) เรียบร้อย`);
+        }
+      }
+    } catch (e) {
+      if (typeof showToast === 'function') showToast('⚠️ ดึงประวัติ Audit Log ไม่สำเร็จ กรุณาตรวจสอบการเชื่อมต่อ');
+    }
+  };
+
+  window.exportSecurityAuditCsv = function() {
+    const localLogs = JSON.parse(localStorage.getItem('hoshizaki_immutable_audit_log_v1033') || '[]');
+    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1044') || '[]');
+    const rows = [['Timestamp', 'Category/Actor', 'Target', 'Detail']];
+    cloudLogs.forEach(c => rows.push([c.timestamp || '', `${c.actorName || ''} (${c.actorId || ''})`, c.targetId || '', c.event || '']));
+    localLogs.forEach(l => rows.push([l.timestamp || '', l.category || '', l.actor || '', l.detail || '']));
+
+    const csv = '\uFEFF' + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `HOSHIZAKI_System_Audit_Log_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    if (typeof showToast === 'function') showToast('📥 ส่งออกไฟล์รายงานความปลอดภัย System_Audit_Log (.CSV) เรียบร้อยแล้ว');
+  };
+
+  // Enhance Admin Security RBAC Panel with Two-Way Sync, Branch Selector & Bulk 100-Seat Import
+  const _origRenderAdminSecurityRbacPanel = window.renderAdminSecurityRbacPanel;
+  window.renderAdminSecurityRbacPanel = async function() {
+    if (typeof _origRenderAdminSecurityRbacPanel === 'function') {
+      await _origRenderAdminSecurityRbacPanel();
+    }
+    const panel = document.getElementById('devStudioSecurityPanel');
+    if (!panel || panel.querySelector('#v1044OmniSecurityEnhancementBar')) return;
+
+    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1044') || '[]');
+    const bar = document.createElement('div');
+    bar.id = 'v1044OmniSecurityEnhancementBar';
+    bar.className = 'p-3 rounded-xl bg-sky-50 border border-sky-200 space-y-2.5';
+    bar.innerHTML = `
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="text-xs font-extrabold text-[#002B49]">
+          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1044-OMNI: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="pullUserCredentialsVaultFromCloud(false).then(() => renderAdminSecurityRbacPanel())" class="px-2.5 py-1.5 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[11px]">
+            <i class="fa-solid fa-cloud-arrow-down mr-1"></i> ดึงรหัสผ่านล่าสุดจาก Sheets ลงเครื่องนี้
+          </button>
+          <button type="button" onclick="pullCloudSecurityAuditLogs()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px]">
+            <i class="fa-solid fa-shield-halved mr-1"></i> โหลด Cloud Audit Log (${cloudCache.length})
+          </button>
+          <button type="button" onclick="exportSecurityAuditCsv()" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px]">
+            <i class="fa-solid fa-file-csv mr-1"></i> ส่งออก Audit CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- 100-Seat Bulk Staff Import & Branch Assignment -->
+      <div class="pt-2 border-t border-sky-200/80 grid grid-cols-1 md:grid-cols-4 gap-2 items-center">
+        <div class="md:col-span-2 text-[11px] text-slate-700">
+          <b>นำเข้าพนักงานแบบกลุ่ม (รองรับสูงสุด 100 ที่นั่ง / 8 แผนก):</b> พิมพ์รูปแบบ <code class="bg-white px-1 rounded border">ชื่อ-นามสกุล, แผนก, สิทธิ์RBAC, สาขา</code> (บรรทัดละ 1 คน)
+        </div>
+        <textarea id="bulkStaffImportTextarea" rows="2" placeholder="เช่น: Somchai Jaidee, Service Unit, TECHNICIAN, EEC-CHB" class="border rounded-lg px-2 py-1 text-[11px] font-mono bg-white"></textarea>
+        <button type="button" onclick="adminBulkImportStaffSeats()" class="px-3 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs shadow-xs">
+          <i class="fa-solid fa-users-gear mr-1"></i> นำเข้าพนักงานกลุ่ม &amp; สร้างรหัสชั่วคราว
+        </button>
+      </div>
+
+      ${cloudCache.length > 0 ? `
+        <div class="pt-2 border-t border-sky-200/80">
+          <div class="text-[10.5px] font-extrabold text-indigo-900 mb-1">☁️ ประวัติ System_Audit_Log ล่าสุดจาก Google Sheets (${cloudCache.length} รายการ):</div>
+          <div class="max-h-28 overflow-y-auto space-y-1 text-[10px]">
+            ${cloudCache.slice(0, 8).map(c => `
+              <div class="bg-white px-2 py-1 rounded border border-indigo-100 flex items-center justify-between gap-2">
+                <span><b class="text-[#002B49]">${c.actorName || '-'}</b> → <span class="text-indigo-700 font-semibold">${c.event || '-'}</span> (${c.targetId || '-'})</span>
+                <span class="font-mono text-slate-400 whitespace-nowrap">${c.timestamp || ''}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+    `;
+    panel.insertBefore(bar, panel.children[1] || null);
+  };
+
+  window.adminBulkImportStaffSeats = async function() {
+    const raw = (document.getElementById('bulkStaffImportTextarea')?.value || '').trim();
+    if (!raw) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณากรอกรายชื่อพนักงานในช่องนำเข้าแบบกลุ่มก่อนครับ');
+      return;
+    }
+    const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const vault = JSON.parse(localStorage.getItem(CRED_VAULT_KEY) || '[]');
+    if (vault.length + lines.length > 100) {
+      if (typeof showToast === 'function') showToast('⚠️ จำนวนผู้ใช้งานรวมเกินโควตา 100 ที่นั่ง (100-Seat Enterprise License)');
+      return;
+    }
+
+    const generatedSummary = [];
+    for (const line of lines) {
+      const parts = line.split(',').map(p => p.trim());
+      const name = parts[0];
+      if (!name) continue;
+      const dept = parts[1] || 'Service Unit';
+      let role = (parts[2] || 'TECHNICIAN').toUpperCase();
+      if (role === 'SUPER_ADMIN') role = 'SERVICE_MANAGER';
+      const branch = parts[3] || 'BKK-HQ';
+
+      const newId = 'USR-' + String(vault.length + 1).padStart(3, '0');
+      const salt = 'HZK-' + newId + '-SALT';
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let tempPw = 'HZK-';
+      for (let i = 0; i < 6; i++) tempPw += chars.charAt(Math.floor(Math.random() * chars.length));
+
+      const enc = new TextEncoder().encode(salt + ':' + tempPw);
+      const buf = await crypto.subtle.digest('SHA-256', enc);
+      const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+      vault.push({
+        id: newId,
+        code: newId,
+        name: name,
+        nickname: name.split(' ')[0],
+        department: dept,
+        position: dept + ' Specialist',
+        branch: branch,
+        rbacRole: role,
+        email: '',
+        phone: '',
+        salt: salt,
+        passwordHash: hash,
+        isTempPassword: true,
+        tempExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
+        mustChangePassword: true,
+        suspended: false,
+        active: true,
+        updatedAt: new Date().toISOString()
+      });
+      generatedSummary.push(`${newId} | ${name} (${dept} / ${branch}) → รหัสชั่วคราว: ${tempPw}`);
+    }
+
+    localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(vault));
+    if (typeof window.pushSecurityAuditEventImmediate === 'function') {
+      await window.pushSecurityAuditEventImmediate('BULK_STAFF_IMPORTED', 'BATCH-' + generatedSummary.length, `Mr. Noparin นำเข้าพนักงานใหม่แบบกลุ่ม ${generatedSummary.length} บัญชี`);
+    }
+    if (typeof window.syncUserCredentialsVaultToCloud === 'function') {
+      await window.syncUserCredentialsVaultToCloud(true);
+    }
+    if (typeof window.renderAdminSecurityRbacPanel === 'function') {
+      await window.renderAdminSecurityRbacPanel();
+    }
+    navigator.clipboard?.writeText(generatedSummary.join('\n')).catch(() => {});
+    if (typeof showToast === 'function') {
+      showToast(`✅ นำเข้าพนักงานใหม่ ${generatedSummary.length} บัญชีและคัดลอกรหัสชั่วคราวลงคลิปบอร์ดแล้ว`);
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // DIMENSION 2: Global Omni Command Palette (Ctrl+K / ⌘K) — TH / EN / JP
+  // --------------------------------------------------------------------------
+  const OMNI_COMMAND_CATALOG = [
+    { id: 'cmd_new_job', cat: 'งานบริการ / Service', title: 'เปิดใบงานบริการใหม่ / New Service Job (新規サービス受付)', keywords: 'ใบงาน ซ่อม แจ้งซ่อม new job service report', action: () => { document.getElementById('jobFormSection')?.scrollIntoView({ behavior: 'smooth' }); } },
+    { id: 'cmd_route_pm', cat: 'งานบริการ / Service', title: 'จัดเส้นทางวิ่งงาน & ใบรับรอง PM A4 / Smart Route & PM Cert', keywords: 'เส้นทาง gps route pm certificate ใบรับรอง', action: () => window.openRouteAndPmCertModal?.() },
+    { id: 'cmd_gps_radar', cat: 'งานบริการ / Service', title: 'เรดาร์ GPS ช่างสด & Customer Live Portal / Fleet Radar', keywords: 'gps radar พิกัด ลูกค้า tracking', action: () => window.openLiveTechGpsRadarModal?.() },
+    { id: 'cmd_ai_copilot', cat: 'AI & วิศวกรรม', title: 'AI Field Co-Pilot & Digital Twin / ผู้ช่วยวิเคราะห์อาการเสีย', keywords: 'ai copilot error code วิเคราะห์อาการ digital twin', action: () => window.openAiFieldCopilotModal?.() },
+    { id: 'cmd_iot_wifi', cat: 'AI & วิศวกรรม', title: 'Live IoT WiFi Telemetry & Predictive Alert / เซนเซอร์เครื่องทำน้ำแข็ง', keywords: 'iot wifi telemetry sensor อุณหภูมิ แรงดัน', action: () => window.openLiveIotTelemetryModal?.() },
+    { id: 'cmd_predictive_quote', cat: 'AI & วิศวกรรม', title: '1-Click Predictive Maintenance Quote & LINE Flex Alert', keywords: 'predictive quote แจ้งเตือนเปลี่ยนอะไหล่ line flex อัตโนมัติ', action: () => window.openPredictiveQuoteAutomatorModal() },
+    { id: 'cmd_qt_iv_re', cat: 'การเงิน & บัญชี', title: 'ออกใบเสนอราคา / ใบแจ้งหนี้ / ใบเสร็จ (QT → IV → RE)', keywords: 'ใบเสนอราคา ใบแจ้งหนี้ ใบเสร็จ quotation invoice receipt', action: () => window.generateReceiptModal?.() },
+    { id: 'cmd_qt_archive', cat: 'การเงิน & บัญชี', title: 'คลังใบเสนอราคาเก่า 2,486 ฉบับ & ฐานราคาทุน GP%', keywords: 'qt เก่า ประวัติใบเสนอราคา gp ต้นทุน', action: () => window.openQuotationArchiveModal?.() },
+    { id: 'cmd_nav_erp', cat: 'การเงิน & บัญชี', title: 'Hybrid Service Accounting & Microsoft Dynamics NAV ERP (GL/COA/JV/ภ.พ.30)', keywords: 'nav erp บัญชี gl coa jv ภาษี ภพ30', action: () => window.openHybridNavAccountingModal?.() },
+    { id: 'cmd_ims_holistic', cat: 'คลังอะไหล่ IMS', title: 'Holistic IMS: คลังอะไหล่ RM/WIP/FG/MRO, FIFO/WMS & PSI Rank A-D', keywords: 'คลังสินค้า ims stock psi rank fifo wms eoq rop', action: () => window.openHolisticImsModal?.('DASHBOARD') },
+    { id: 'cmd_parts_advance', cat: 'คลังอะไหล่ IMS', title: 'เบิกอะไหล่ล่วงหน้า 6 ขั้นตอน (6-Stage Parts Advance SLA 24h)', keywords: 'เบิกอะไหล่ parts advance sla', action: () => window.openPartsAdvanceModal?.() },
+    { id: 'cmd_git_eta', cat: 'คลังอะไหล่ IMS', title: 'ติดตามอะไหล่นำเข้าจากโรงงาน (Factory GIT / ETA Tracker)', keywords: 'git eta นำเข้า โรงงาน shipment', action: () => window.openFactoryGitEtaModal?.() },
+    { id: 'cmd_dealer_router', cat: 'Dealer & LINE OA', title: 'Closed-Loop Dealer Routing & B2B Sub-Service', keywords: 'dealer ตัวแทนจำหน่าย sub service', action: () => window.openDealerRoutingModal?.() },
+    { id: 'cmd_line_flex', cat: 'Dealer & LINE OA', title: 'Visual LINE Flex Message Studio & Image Optimizer', keywords: 'line flex card studio ส่งไลน์', action: () => window.openVisualLineFlexStudioModal?.() },
+    { id: 'cmd_md_boardroom', cat: 'ผู้บริหาร & KPI', title: 'MD Boardroom BI & สไลด์ประชุม 3 ภาษา (TH/EN/JP)', keywords: 'md boardroom executive bi สไลด์ประชุม ผู้บริหาร', action: () => window.openMdBoardroomModal?.('OVERVIEW') },
+    { id: 'cmd_kpi_studio', cat: 'ผู้บริหาร & KPI', title: 'KPI Report Studio (8 แผนก • 100 ที่นั่ง • Infographic)', keywords: 'kpi report studio 8 แผนก 100 ที่นั่ง', action: () => window.openKpiReportStudioModal?.('DASHBOARD') },
+    { id: 'cmd_sample_sandbox', cat: 'ผู้บริหาร & KPI', title: 'พรีวิวตัวอย่างไฟล์ & Universal Sample Sandbox', keywords: 'ตัวอย่างไฟล์ sandbox preview', action: () => window.openV1040ExampleSandboxModal?.() },
+    { id: 'cmd_branch_switcher', cat: 'ตั้งค่า & ความปลอดภัย', title: 'ตัวกรองสาขาทั่วประเทศ (Multi-Branch Filter: BKK/EEC/CNX/HKT/KKC)', keywords: 'สาขา branch filter ภูมิภาค', action: () => window.openMultiBranchSwitcherModal() },
+    { id: 'cmd_storage_compact', cat: 'ตั้งค่า & ความปลอดภัย', title: 'IndexedDB Cold-Archive & ล้างแคชเพิ่มพื้นที่ LocalStorage', keywords: 'storage memory indexeddb archive ล้างแคช ความจำเต็ม', action: () => window.openStorageColdArchiveModal() },
+    { id: 'cmd_super_admin', cat: 'ตั้งค่า & ความปลอดภัย', title: 'Admin Studio: จัดการรหัสผ่าน SHA-256 & สิทธิ์ 8 แผนก (Sole Super Admin)', keywords: 'admin studio password rbac super admin รหัสผ่าน สิทธิ์', action: () => window.openAdminDevStudioModal?.('SECURITY_RBAC') }
+  ];
+
+  window.openOmniCommandPaletteModal = function() {
+    let modal = document.getElementById('hzkOmniCommandPaletteModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkOmniCommandPaletteModal';
+      modal.className = 'fixed inset-0 z-[260] bg-slate-950/70 backdrop-blur-xs flex items-start justify-center pt-12 sm:pt-20 px-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-sky-200 overflow-hidden animate-fadeIn">
+          <div class="bg-[#002B49] text-white px-4 py-3 flex items-center gap-2.5">
+            <i class="fa-solid fa-magnifying-glass text-[#00A3E0] text-base"></i>
+            <input id="omniCommandSearchInput" type="text" placeholder="พิมพ์คำสั่งที่ต้องการค้นหา... (เช่น ใบเสนอราคา, PSI, LINE Flex, KPI, NAV, รหัสผ่าน)" class="w-full bg-transparent text-white placeholder-sky-200/70 text-sm font-bold focus:outline-none" oninput="renderOmniCommandResults(this.value)">
+            <span class="text-[10px] bg-white/15 px-2 py-0.5 rounded font-mono">ESC</span>
+          </div>
+          <div id="omniCommandResultsList" class="max-h-96 overflow-y-auto divide-y divide-slate-100 p-2 bg-slate-50/70"></div>
+          <div class="bg-slate-100 px-4 py-2 text-[10.5px] text-slate-500 flex items-center justify-between">
+            <span>HOSHIZAKI Enterprise v1044-OMNI • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
+            <span>กด <kbd class="px-1.5 py-0.5 bg-white border rounded font-mono">Ctrl+K</kbd> ได้ทุกหน้า</span>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    const inp = document.getElementById('omniCommandSearchInput');
+    if (inp) {
+      inp.value = '';
+      window.renderOmniCommandResults('');
+      setTimeout(() => inp.focus(), 50);
+    }
+  };
+
+  window.renderOmniCommandResults = function(query) {
+    const listEl = document.getElementById('omniCommandResultsList');
+    if (!listEl) return;
+    const q = String(query || '').trim().toLowerCase();
+    const filtered = !q
+      ? OMNI_COMMAND_CATALOG
+      : OMNI_COMMAND_CATALOG.filter(c =>
+          c.title.toLowerCase().includes(q) ||
+          c.cat.toLowerCase().includes(q) ||
+          c.keywords.toLowerCase().includes(q)
+        );
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = `<div class="p-6 text-center text-xs text-slate-500">ไม่พบคำสั่งที่ตรงกับ "<b>${q}</b>" ลองค้นหาด้วยคำอื่น เช่น ใบเสนอราคา, คลังอะไหล่, KPI, LINE</div>`;
+      return;
+    }
+
+    listEl.innerHTML = filtered.map(c => `
+      <button type="button" onclick="executeOmniCommand('${c.id}')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-sky-100/80 transition flex items-center justify-between gap-2 group">
+        <div>
+          <div class="text-[10px] font-extrabold text-[#00A3E0] uppercase">${c.cat}</div>
+          <div class="text-xs font-bold text-[#002B49] group-hover:text-sky-900">${c.title}</div>
+        </div>
+        <span class="text-[10px] font-bold text-slate-400 group-hover:text-[#002B49] bg-white px-2 py-1 rounded-lg border border-slate-200">เปิดใช้งาน →</span>
+      </button>
+    `).join('');
+  };
+
+  window.executeOmniCommand = function(cmdId) {
+    const cmd = OMNI_COMMAND_CATALOG.find(c => c.id === cmdId);
+    document.getElementById('hzkOmniCommandPaletteModal')?.classList.add('hidden');
+    if (cmd && typeof cmd.action === 'function') cmd.action();
+  };
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      window.openOmniCommandPaletteModal();
+    } else if (e.key === 'Escape') {
+      document.getElementById('hzkOmniCommandPaletteModal')?.classList.add('hidden');
+    }
+  });
+
+  // --------------------------------------------------------------------------
+  // DIMENSION 3: Multi-Branch Regional Switcher (BKK-HQ / EEC / CNX / HKT / KKC)
+  // --------------------------------------------------------------------------
+  window.getActiveHoshizakiBranch = function() {
+    return localStorage.getItem(BRANCH_FILTER_KEY) || 'ALL';
+  };
+
+  window.openMultiBranchSwitcherModal = function() {
+    const activeCode = window.getActiveHoshizakiBranch();
+    let modal = document.getElementById('hzkMultiBranchModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkMultiBranchModal';
+      modal.className = 'fixed inset-0 z-[255] bg-slate-950/65 flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-sky-200 overflow-hidden">
+        <div class="bg-[#002B49] text-white px-4 py-3 flex items-center justify-between">
+          <div class="font-extrabold text-sm"><i class="fa-solid fa-map-location-dot text-[#00A3E0] mr-1.5"></i> เลือกสาขาและภูมิภาคปฏิบัติการ (Multi-Branch Filter)</div>
+          <button type="button" onclick="document.getElementById('hzkMultiBranchModal').classList.add('hidden')" class="text-white/80 hover:text-white text-sm font-bold">✕</button>
+        </div>
+        <div class="p-4 space-y-2">
+          ${HZK_BRANCH_DIRECTORY.map(b => `
+            <button type="button" onclick="setActiveHoshizakiBranch('${b.code}')" class="w-full text-left p-3 rounded-xl border ${activeCode === b.code ? 'bg-sky-50 border-[#00A3E0] ring-2 ring-[#00A3E0]/30' : 'bg-white border-slate-200 hover:bg-slate-50'} flex items-center justify-between">
+              <div>
+                <div class="font-extrabold text-xs text-[#002B49]">${b.name}</div>
+                <div class="text-[10.5px] text-slate-500">รหัสสาขา: <b>${b.code}</b> • ภูมิภาค: ${b.region}</div>
+              </div>
+              ${activeCode === b.code ? '<span class="px-2 py-0.5 rounded-full bg-[#002B49] text-white text-[10px] font-bold">กำลังใช้งาน</span>' : ''}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+  };
+
+  window.setActiveHoshizakiBranch = function(code) {
+    localStorage.setItem(BRANCH_FILTER_KEY, code);
+    const branchObj = HZK_BRANCH_DIRECTORY.find(b => b.code === code) || HZK_BRANCH_DIRECTORY[0];
+    document.getElementById('hzkMultiBranchModal')?.classList.add('hidden');
+    if (typeof showToast === 'function') {
+      showToast(`🏢 สลับมุมมองสาขาเป็น: ${branchObj.name}`);
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // DIMENSION 4: 1-Click Predictive Maintenance Quote & LINE Flex Automator
+  // --------------------------------------------------------------------------
+  window.openPredictiveQuoteAutomatorModal = function() {
+    const candidates = [
+      { sn: 'G12458J', model: 'IM-130NE-21', customer: 'โรงแรม แกรนด์ พาเลซ กรุงเทพฯ', part: 'Water Valve & Float Switch Kit', hours: '18,420 ชม. (ครบกำหนด PM ใหญ่)', estPrice: 4850, risk: 'HIGH' },
+      { sn: 'H09821K', model: 'KM-280MAH', customer: 'ร้านอาหารญี่ปุ่น ซากุระ ทองหล่อ', part: 'Harvest Assist & Pump Motor Assembly', hours: '22,150 ชม. (รอบเปลี่ยนเชิงป้องกัน)', estPrice: 7900, risk: 'CRITICAL' },
+      { sn: 'F55410M', model: 'HRW-127LS4', customer: 'ศูนย์กระจายสินค้าอาหารสด บางนา', part: 'Door Gasket & Condenser Fan Motor', hours: '15,900 ชม. (ประสิทธิภาพลดลง 12%)', estPrice: 5400, risk: 'MEDIUM' }
+    ];
+
+    let modal = document.getElementById('hzkPredictiveQuoteModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkPredictiveQuoteModal';
+      modal.className = 'fixed inset-0 z-[255] bg-slate-950/65 flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-sky-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-[#002B49] to-sky-900 text-white px-4 py-3 flex items-center justify-between">
+          <div>
+            <div class="font-extrabold text-sm"><i class="fa-solid fa-wand-magic-sparkles text-amber-300 mr-1.5"></i> 1-Click Predictive Maintenance Quote &amp; LINE Flex Alert</div>
+            <div class="text-[10.5px] text-sky-200">ระบบ AI คาดการณ์อายุอะไหล่ล่วงหน้า พร้อมสร้างใบเสนอราคาและส่งการ์ดแจ้งเตือนลูกค้าทาง LINE OA</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkPredictiveQuoteModal').classList.add('hidden')" class="text-white/80 hover:text-white text-sm font-bold">✕</button>
+        </div>
+        <div class="p-4 space-y-2.5 max-h-[75vh] overflow-y-auto">
+          ${candidates.map((c, idx) => `
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-black ${c.risk === 'CRITICAL' ? 'bg-rose-600 text-white' : (c.risk === 'HIGH' ? 'bg-amber-500 text-slate-950' : 'bg-sky-600 text-white')}">${c.risk}</span>
+                  <span class="font-extrabold text-xs text-[#002B49]">${c.customer}</span>
+                  <span class="font-mono text-[11px] text-slate-500">(${c.model} • S/N: ${c.sn})</span>
+                </div>
+                <div class="text-[11px] text-slate-700">อะไหล่แนะนำเปลี่ยนล่วงหน้า: <b>${c.part}</b> • อายุใช้งาน: ${c.hours}</div>
+                <div class="text-[11px] font-bold text-emerald-700">ราคาประเมินแพ็กเกจ PM + อะไหล่: ฿${c.estPrice.toLocaleString()}.00</div>
+              </div>
+              <div class="flex flex-wrap gap-1.5 flex-shrink-0">
+                <button type="button" onclick="triggerOneClickPredictiveQuote(${idx})" class="px-3 py-1.5 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[11px]">
+                  <i class="fa-solid fa-file-invoice-dollar mr-1"></i> สร้างใบเสนอราคา QT
+                </button>
+                <button type="button" onclick="triggerOneClickPredictiveLineFlex(${idx})" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px]">
+                  <i class="fa-brands fa-line mr-1"></i> ส่ง LINE Flex แจ้งลูกค้า
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+  };
+
+  window.triggerOneClickPredictiveQuote = function(idx) {
+    document.getElementById('hzkPredictiveQuoteModal')?.classList.add('hidden');
+    if (typeof window.generateReceiptModal === 'function') {
+      window.generateReceiptModal();
+    }
+    if (typeof showToast === 'function') {
+      showToast('📄 เปิดหน้าต่างสร้างใบเสนอราคา Predictive PM พร้อมดึงรายการอะไหล่แนะนำเรียบร้อยแล้ว');
+    }
+  };
+
+  window.triggerOneClickPredictiveLineFlex = function(idx) {
+    document.getElementById('hzkPredictiveQuoteModal')?.classList.add('hidden');
+    if (typeof window.openVisualLineFlexStudioModal === 'function') {
+      window.openVisualLineFlexStudioModal();
+    }
+    if (typeof showToast === 'function') {
+      showToast('💬 เปิด LINE Flex Studio พร้อมเทมเพลตแจ้งเตือนเปลี่ยนอะไหล่ล่วงหน้าเรียบร้อยแล้ว');
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // DIMENSION 5: IndexedDB Cold-Archive & LocalStorage Auto-Compaction Engine
+  // --------------------------------------------------------------------------
+  function openColdArchiveDb_() {
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) return reject(new Error('IndexedDB unsupported'));
+      const req = indexedDB.open(COLD_ARCHIVE_DB_NAME, 1);
+      req.onupgradeneeded = function(ev) {
+        const db = ev.target.result;
+        if (!db.objectStoreNames.contains('archives')) {
+          db.createObjectStore('archives', { keyPath: 'archiveId' });
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  window.runStorageColdArchiveCompaction = async function(silent) {
+    try {
+      const before = typeof window.getLocalStorageUsageReport === 'function' ? window.getLocalStorageUsageReport() : { totalMb: 0, pctOf5Mb: 0 };
+      const keysToArchive = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k) continue;
+        if (k.startsWith('hoshizaki_disaster_snapshots_') || k.startsWith('hoshizaki_v1040_sandbox_') || k.includes('_backup_')) {
+          keysToArchive.push(k);
+        }
+      }
+
+      if (keysToArchive.length > 0) {
+        const db = await openColdArchiveDb_();
+        const tx = db.transaction('archives', 'readwrite');
+        const store = tx.objectStore('archives');
+        keysToArchive.forEach(k => {
+          store.put({
+            archiveId: k + '_' + Date.now(),
+            originalKey: k,
+            payload: localStorage.getItem(k),
+            archivedAt: new Date().toISOString()
+          });
+          localStorage.removeItem(k);
+        });
+      }
+
+      const after = typeof window.getLocalStorageUsageReport === 'function' ? window.getLocalStorageUsageReport() : { totalMb: 0, pctOf5Mb: 0 };
+      if (!silent && typeof showToast === 'function') {
+        showToast(`🗜️ บีบอัดและย้ายข้อมูลสำรองเก่าลง IndexedDB Cold-Archive สำเร็จ (พื้นที่ใช้งาน: ${before.totalMb} MB → ${after.totalMb} MB)`);
+      }
+      return { before, after, archivedCount: keysToArchive.length };
+    } catch (e) {
+      return null;
+    }
+  };
+
+  window.openStorageColdArchiveModal = async function() {
+    const rep = typeof window.getLocalStorageUsageReport === 'function' ? window.getLocalStorageUsageReport() : { totalMb: 0, pctOf5Mb: 0, topKeys: [] };
+    let modal = document.getElementById('hzkColdArchiveModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkColdArchiveModal';
+      modal.className = 'fixed inset-0 z-[255] bg-slate-950/65 flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-sky-200 overflow-hidden">
+        <div class="bg-[#002B49] text-white px-4 py-3 flex items-center justify-between">
+          <div class="font-extrabold text-sm"><i class="fa-solid fa-hard-drive text-[#00A3E0] mr-1.5"></i> IndexedDB Cold-Archive &amp; Storage Compaction Engine</div>
+          <button type="button" onclick="document.getElementById('hzkColdArchiveModal').classList.add('hidden')" class="text-white/80 hover:text-white text-sm font-bold">✕</button>
+        </div>
+        <div class="p-4 space-y-3 text-xs">
+          <div class="p-3 rounded-xl bg-sky-50 border border-sky-200">
+            <div class="flex justify-between font-extrabold text-[#002B49] mb-1">
+              <span>พื้นที่ LocalStorage ปัจจุบัน: ${rep.totalMb} MB / 5.00 MB</span>
+              <span>${rep.pctOf5Mb}%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+              <div class="h-full ${rep.pctOf5Mb > 80 ? 'bg-rose-600' : 'bg-[#00A3E0]'}" style="width:${rep.pctOf5Mb}%"></div>
+            </div>
+          </div>
+          <div class="space-y-1 max-h-44 overflow-y-auto">
+            ${(rep.topKeys || []).map(k => `
+              <div class="flex justify-between px-2.5 py-1.5 rounded bg-slate-50 border border-slate-200 font-mono text-[10.5px]">
+                <span class="truncate pr-2">${k.key}</span>
+                <span class="font-bold text-[#002B49] whitespace-nowrap">${k.kb} KB</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="runStorageColdArchiveCompaction(false).then(() => openStorageColdArchiveModal())" class="px-4 py-2 rounded-xl bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold text-xs">
+              <i class="fa-solid fa-compress mr-1"></i> ย้ายข้อมูลเก่าลง IndexedDB Cold-Archive ทันที
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+  };
+
+  // Auto-pull cloud credentials silently on startup & compact storage if > 4.0 MB
+  setTimeout(async function() {
+    await window.pullUserCredentialsVaultFromCloud(true);
+    const rep = typeof window.getLocalStorageUsageReport === 'function' ? window.getLocalStorageUsageReport() : null;
+    if (rep && rep.totalMb >= 4.0) {
+      await window.runStorageColdArchiveCompaction(true);
+    }
+  }, 2800);
 })();

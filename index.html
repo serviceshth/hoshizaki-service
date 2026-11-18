@@ -806,7 +806,7 @@ transform: scale(0.96);
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-1.5 mt-1">
-<p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1041-FINAL</span></p>
+<p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1043-SUPERADMIN</span></p>
 </div>
 <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
 <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -2427,7 +2427,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <!-- Web App UI Footer -->
 <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
 <div class="font-extrabold tracking-wide text-amber-300">
-HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1041-FINAL</span>
+HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1043-SUPERADMIN</span>
 </div>
 <div class="text-white/80 font-medium">
 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -18445,7 +18445,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             } catch (e) {}
         });
     </script>
-<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1041-FINAL) -->
+<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1043-SUPERADMIN) -->
 <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
 <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
 <!-- Top Navy Header -->
@@ -21325,7 +21325,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1041-FINAL AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1043-SUPERADMIN AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -28341,7 +28341,7 @@ transition: all 0.15s ease;
 <i class="fa-solid fa-sitemap text-amber-300"></i>
 <span>ทำเนียบบุคลากร &amp; แผนเปิดใช้งานแบ่งเฟส (Company Directory &amp; Phased Go-Live)</span>
 </h3>
-<p class="text-[11px] text-sky-200">Phase 1 Active: Service Unit &amp; Service Center Only (แยกการแจ้งเตือนอัตโนมัติออกจากแผนกอื่น 100%)</p>
+<p class="text-[11px] text-sky-200">Phase 2 Org-Wide Active: ปลดล็อคใช้งานร่วมกันครบทั้ง 8 แผนก (Service • Admin • Accounting • Sales • Marketing • Japanese Corp • Executive)</p>
 </div>
 <button type="button" onclick="document.getElementById('hzkCompanyDirectoryModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
 </div>
@@ -28349,7 +28349,7 @@ transition: all 0.15s ease;
 <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 space-y-2">
 <div class="font-extrabold text-amber-950 flex items-center justify-between">
 <span><i class="fa-solid fa-layer-group text-amber-600 mr-1"></i> การควบคุมเฟสเปิดใช้งาน (Phased Departmental Routing):</span>
-<span class="bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[10px]">Phase 1 Active</span>
+<span class="bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[10px]">Phase 2 All-Dept Active</span>
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
 <label class="flex items-center gap-2 bg-white p-2 rounded-lg border border-emerald-300 font-bold text-emerald-900">
@@ -28597,10 +28597,11 @@ transition: all 0.15s ease;
     const HZK_PHASE_STORAGE_KEY = 'hoshizaki_phased_rollout_flags_v1013';
     window.HZK_PHASED_ROLLOUT_FLAGS = Object.assign({
         phase1ServiceUnitAndCenter: true,
-        phase2AdminUnit: false,
-        phase2AccountingUnit: false,
-        phase3SalesAndJapaneseCorp: false,
-        phase3MarketingAndExec: false
+        phase2AdminUnit: true,
+        phase2AccountingUnit: true,
+        phase3SalesAndJapaneseCorp: true,
+        phase3MarketingAndExec: true,
+        allDepartmentsUnlocked: true
     }, JSON.parse(localStorage.getItem(HZK_PHASE_STORAGE_KEY) || '{}'));
 
     window.togglePhasedRolloutFlag = function(key, val) {
@@ -28621,20 +28622,20 @@ transition: all 0.15s ease;
         { id: 'SVC-06', name: 'Mr. Surin Tharapai', nickname: 'Beer', department: 'Service Unit', position: 'Services Staff', roleTag: 'Primary Field Tech', email: 'surin.t@hoshizaki.co.th', phone: '063-865-5442', phase1Active: true },
         { id: 'SVC-07', name: 'Mr. Jeerapan Phrasawang', nickname: 'Ceasar / ซีซ่า', department: 'Service Unit', position: 'Services Staff', roleTag: 'Dual Role: Dispatcher & Primary Field Tech', email: 'jeerapan@hoshizaki.co.th', phone: '091-767-2079', phase1Active: true },
         { id: 'CTR-01', name: 'Mr. Pawat Warongtheradet', nickname: 'Prince', department: 'Service Center', position: 'Service Center Staff', roleTag: 'Service Center', email: 'pawat@hoshizaki.co.th', phone: '099-508-1908', phase1Active: true },
-        { id: 'EXE-01', name: 'Mr. Daisuke Suzuki', nickname: 'Suzuki', department: 'Executive Management', position: 'Managing Director / GM Accounting & Admin', roleTag: 'Executive', email: 'suzuki@hoshizaki.co.th', phone: '088-985-5979', phase1Active: false },
-        { id: 'ADM-01', name: 'Ms. Kanokwan Treesukol', nickname: 'Kanokwan', department: 'Admin Unit', position: 'Admin Staff', roleTag: 'Admin Unit', email: 'kanokwan@hoshizaki.co.th', phone: '097-135-6304 / ext. 03', phase1Active: false },
-        { id: 'ADM-02', name: 'Mr. Nattapong Chataram', nickname: 'Nattapong', department: 'Admin Unit', position: 'Admin Staff', roleTag: 'Admin Unit', email: 'nattapong@hoshizaki.co.th', phone: '091-772-7423 / ext. 01', phase1Active: false },
-        { id: 'ADM-03', name: 'Mr. Chayanin Kuptrakul', nickname: 'Chayanin', department: 'Admin Unit', position: 'Admin Staff', roleTag: 'Admin Unit', email: 'chayanin@hoshizaki.co.th', phone: '-', phase1Active: false },
-        { id: 'ACC-01', name: 'Ms. Waraporn Kianthong', nickname: 'Waraporn', department: 'Accounting Unit', position: 'Accounting Staff', roleTag: 'Accounting', email: 'waraporn@hoshizaki.co.th', phone: '093-645-5623 / ext. 10', phase1Active: false },
-        { id: 'ACC-02', name: 'Ms. Duangkamon Tantayanon', nickname: 'Duangkamon', department: 'Accounting Unit', position: 'Accounting Staff', roleTag: 'Accounting', email: 'duangkamon@hoshizaki.co.th', phone: '081-372-8190 / ext. 12', phase1Active: false },
-        { id: 'ACC-03', name: 'Ms. Witharat Riangpha', nickname: 'Witharat', department: 'Accounting Unit', position: 'Accounting Staff', roleTag: 'Accounting', email: 'witharat@hoshizaki.co.th', phone: '095-959-4734 / ext. 11', phase1Active: false },
-        { id: 'SLS-01', name: 'Ms. Kulathida Charoenying', nickname: 'Kulathida', department: 'Sales Unit', position: 'Sales Staff', roleTag: 'Sales', email: 'kulathida@hoshizaki.co.th', phone: '096-898-3388', phase1Active: false },
-        { id: 'SLS-02', name: 'Ms. Janyaluck Paithaisong', nickname: 'Janyaluck', department: 'Sales Unit', position: 'Sales Staff', roleTag: 'Sales', email: 'janyaluck@hoshizaki.co.th', phone: '090-972-0947', phase1Active: false },
-        { id: 'SLS-03', name: 'Ms. Ketsaraporn Porjai', nickname: 'Ketsaraporn', department: 'Sales Unit', position: 'Sales Staff', roleTag: 'Sales', email: 'ketsaraporn@hoshizaki.co.th', phone: '096-804-3988', phase1Active: false },
-        { id: 'MKT-01', name: 'Ms. Taksaon Tipsrisombat', nickname: 'Taksaon', department: 'Marketing Unit', position: 'Marketing Staff', roleTag: 'Marketing', email: 'taksaon@hoshizaki.co.th', phone: '091-767-2092 / ext. 21', phase1Active: false },
-        { id: 'MKT-02', name: 'Mr. Khajornyot Jewkrang', nickname: 'Khajornyot', department: 'Marketing Unit', position: 'Marketing Staff', roleTag: 'Marketing', email: 'khajornyot@hoshizaki.co.th', phone: '063-821-1294', phase1Active: false },
-        { id: 'JPC-01', name: 'Ms. Suleewan Siripirom', nickname: 'Suleewan', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Staff', roleTag: 'Japanese Corp', email: 'suleewan@hoshizaki.co.th', phone: '063-810-8586', phase1Active: false },
-        { id: 'JPC-02', name: 'Mr. Naoki Furujo', nickname: 'Furujo', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Manager (Effective 1/7/2025)', roleTag: 'Japanese Corp', email: 'furujo@hoshizaki.co.th', phone: '064-148-4245', phase1Active: false }
+        { id: 'EXE-01', name: 'Mr. Daisuke Suzuki', nickname: 'Suzuki', department: 'Executive Management', position: 'Managing Director / GM Accounting & Admin', roleTag: 'Executive', email: 'suzuki@hoshizaki.co.th', phone: '088-985-5979', phase1Active: true },
+        { id: 'ADM-01', name: 'Ms. Kanokwan Treesukol', nickname: 'Kanokwan', department: 'Admin Unit', position: 'Admin Staff', roleTag: 'Admin Unit', email: 'kanokwan@hoshizaki.co.th', phone: '097-135-6304 / ext. 03', phase1Active: true },
+        { id: 'ADM-02', name: 'Mr. Nattapong Chataram', nickname: 'Nattapong', department: 'Admin Unit', position: 'Admin Staff', roleTag: 'Admin Unit', email: 'nattapong@hoshizaki.co.th', phone: '091-772-7423 / ext. 01', phase1Active: true },
+        { id: 'ADM-03', name: 'Mr. Chayanin Kuptrakul', nickname: 'Chayanin', department: 'Admin Unit', position: 'Admin Staff', roleTag: 'Admin Unit', email: 'chayanin@hoshizaki.co.th', phone: '-', phase1Active: true },
+        { id: 'ACC-01', name: 'Ms. Waraporn Kianthong', nickname: 'Waraporn', department: 'Accounting Unit', position: 'Accounting Staff', roleTag: 'Accounting', email: 'waraporn@hoshizaki.co.th', phone: '093-645-5623 / ext. 10', phase1Active: true },
+        { id: 'ACC-02', name: 'Ms. Duangkamon Tantayanon', nickname: 'Duangkamon', department: 'Accounting Unit', position: 'Accounting Staff', roleTag: 'Accounting', email: 'duangkamon@hoshizaki.co.th', phone: '081-372-8190 / ext. 12', phase1Active: true },
+        { id: 'ACC-03', name: 'Ms. Witharat Riangpha', nickname: 'Witharat', department: 'Accounting Unit', position: 'Accounting Staff', roleTag: 'Accounting', email: 'witharat@hoshizaki.co.th', phone: '095-959-4734 / ext. 11', phase1Active: true },
+        { id: 'SLS-01', name: 'Ms. Kulathida Charoenying', nickname: 'Kulathida', department: 'Sales Unit', position: 'Sales Staff', roleTag: 'Sales', email: 'kulathida@hoshizaki.co.th', phone: '096-898-3388', phase1Active: true },
+        { id: 'SLS-02', name: 'Ms. Janyaluck Paithaisong', nickname: 'Janyaluck', department: 'Sales Unit', position: 'Sales Staff', roleTag: 'Sales', email: 'janyaluck@hoshizaki.co.th', phone: '090-972-0947', phase1Active: true },
+        { id: 'SLS-03', name: 'Ms. Ketsaraporn Porjai', nickname: 'Ketsaraporn', department: 'Sales Unit', position: 'Sales Staff', roleTag: 'Sales', email: 'ketsaraporn@hoshizaki.co.th', phone: '096-804-3988', phase1Active: true },
+        { id: 'MKT-01', name: 'Ms. Taksaon Tipsrisombat', nickname: 'Taksaon', department: 'Marketing Unit', position: 'Marketing Staff', roleTag: 'Marketing', email: 'taksaon@hoshizaki.co.th', phone: '091-767-2092 / ext. 21', phase1Active: true },
+        { id: 'MKT-02', name: 'Mr. Khajornyot Jewkrang', nickname: 'Khajornyot', department: 'Marketing Unit', position: 'Marketing Staff', roleTag: 'Marketing', email: 'khajornyot@hoshizaki.co.th', phone: '063-821-1294', phase1Active: true },
+        { id: 'JPC-01', name: 'Ms. Suleewan Siripirom', nickname: 'Suleewan', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Staff', roleTag: 'Japanese Corp', email: 'suleewan@hoshizaki.co.th', phone: '063-810-8586', phase1Active: true },
+        { id: 'JPC-02', name: 'Mr. Naoki Furujo', nickname: 'Furujo', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Manager (Effective 1/7/2025)', roleTag: 'Japanese Corp', email: 'furujo@hoshizaki.co.th', phone: '064-148-4245', phase1Active: true }
     ];
 
     window.getCompanyDirectoryList = function() {
@@ -29178,7 +29179,7 @@ transition: all 0.15s ease;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1041-FINAL)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1043-SUPERADMIN)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -29372,7 +29373,7 @@ display: none !important;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1041-FINAL)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1043-SUPERADMIN)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -29381,7 +29382,7 @@ display: none !important;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1041-FINAL)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1043-SUPERADMIN)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -29390,7 +29391,7 @@ display: none !important;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1041-FINAL)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1043-SUPERADMIN)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -29472,21 +29473,21 @@ display: none !important;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1041-FINAL) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1043-SUPERADMIN) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1041-FINAL Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1043-SUPERADMIN Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1041-FINAL）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1043-SUPERADMIN）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -32498,9 +32499,9 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1041-FINAL',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1041-FINAL)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1041-FINAL)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1043-SUPERADMIN',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1043-SUPERADMIN)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1043-SUPERADMIN)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -32549,7 +32550,7 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1041-FINAL Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1043-SUPERADMIN Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -32773,7 +32774,7 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
 <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
 <div>
-<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1041-FINAL — Multi-Branch &amp; White-Label Ready)</h3>
+<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1043-SUPERADMIN — Multi-Branch &amp; White-Label Ready)</h3>
 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
 </div>
 <div class="flex items-center gap-1.5">
@@ -32796,6 +32797,9 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <button type="button" onclick="switchDevStudioTab('BACKUP_MIGRATE')" id="tabBtnDevBackup" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
 <i class="fa-solid fa-database mr-1 text-rose-600"></i> 4. สำรองข้อมูลป้องกันความเสียหาย &amp; ย้ายที่เก็บข้อมูล
 </button>
+<button type="button" onclick="switchDevStudioTab('SECURITY_RBAC')" id="tabBtnDevSecurity" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold">
+<i class="fa-solid fa-user-lock mr-1 text-emerald-600"></i> 5. จัดการรหัสผ่าน &amp; สิทธิ์ 8 แผนก (Password &amp; RBAC)
+</button>
 </div>
 <!-- TAB 1: Feature Flags & Business Rules -->
 <div id="devStudioModulesPanel" class="space-y-3"></div>
@@ -32805,6 +32809,8 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <div id="devStudioClonePanel" class="hidden space-y-3"></div>
 <!-- TAB 4: Disaster Recovery Backup & Storage Migration -->
 <div id="devStudioBackupPanel" class="hidden space-y-3"></div>
+<!-- TAB 5: Multi-User Password Vault & 8-Department RBAC Security -->
+<div id="devStudioSecurityPanel" class="hidden space-y-3"></div>
 </div>
 </div>
 </div>
@@ -32998,13 +33004,15 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
             MODULES: document.getElementById('devStudioModulesPanel'),
             STAGING: document.getElementById('devStudioStagingPanel'),
             CLONE_BRANCH: document.getElementById('devStudioClonePanel'),
-            BACKUP_MIGRATE: document.getElementById('devStudioBackupPanel')
+            BACKUP_MIGRATE: document.getElementById('devStudioBackupPanel'),
+            SECURITY_RBAC: document.getElementById('devStudioSecurityPanel')
         };
         const btns = {
             MODULES: document.getElementById('tabBtnDevModules'),
             STAGING: document.getElementById('tabBtnDevStaging'),
             CLONE_BRANCH: document.getElementById('tabBtnDevClone'),
-            BACKUP_MIGRATE: document.getElementById('tabBtnDevBackup')
+            BACKUP_MIGRATE: document.getElementById('tabBtnDevBackup'),
+            SECURITY_RBAC: document.getElementById('tabBtnDevSecurity')
         };
         Object.values(panels).forEach(p => p?.classList.add('hidden'));
         Object.values(btns).forEach(b => { if (b) b.className = 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 font-bold'; });
@@ -33016,6 +33024,7 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
         else if (tab === 'STAGING') renderStagingSandboxPanel_();
         else if (tab === 'CLONE_BRANCH') renderWhiteLabelClonerPanel_();
         else if (tab === 'BACKUP_MIGRATE') renderBackupAndMigrationPanel_();
+        else if (tab === 'SECURITY_RBAC' && typeof window.renderAdminSecurityRbacPanel === 'function') window.renderAdminSecurityRbacPanel();
     };
 
     function renderModulesAndRulesPanel_() {
@@ -36791,7 +36800,7 @@ CUSTOMER CSAT & 7-DAY POST-SERVICE QUALITY RADAR MODAL (v1021-CSAT-RADAR)
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1041-FINAL — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1043-SUPERADMIN — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -37316,7 +37325,7 @@ FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1041-FINAL</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1043-SUPERADMIN</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -38224,7 +38233,7 @@ Accounting VAT/WHT Ledger, Invoice/Receipt & NAV ERP Export • Audit Trail)
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1041-FINAL</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1043-SUPERADMIN</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -39774,7 +39783,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1041-FINAL</span>
+<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1043-SUPERADMIN</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
 </div>
@@ -39818,7 +39827,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1041-FINAL</span>
+<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1043-SUPERADMIN</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
 </div>

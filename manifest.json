@@ -1,7 +1,7 @@
 {
-  "name": "HOSHIZAKI Service Management (Enterprise v1041-FINAL)",
+  "name": "HOSHIZAKI Service Management (Enterprise v1043 SuperAdmin)",
   "short_name": "Hoshizaki Service",
-  "description": "ระบบบริหารจัดการงานบริการ ใบแจ้งบริการ ใบเสนอราคา และคลังสินค้า IMS ครบวงจร HOSHIZAKI (THAILAND) Enterprise v1040-COMPLETE",
+  "description": "ระบบบริหารจัดการงานบริการ ใบเสนอราคา คลังสินค้า IMS และการทำงานร่วมกันทั้ง 8 แผนก พร้อมศูนย์ควบคุม Super Admin (Mr. Noparin Homhoul) Enterprise v1043",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -22,5 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "1041-FINAL"
+  "version": "1043-SUPERADMIN"
 }

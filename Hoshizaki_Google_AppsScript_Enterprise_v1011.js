@@ -180,6 +180,14 @@ function doPost(e) {
 
       // --- v1013 New Endpoints ---
       // --- v1024 Holistic Expansion & Outsource Parts Tracking Endpoints ---
+      if (action === 'SYNC_USER_CREDENTIALS_VAULT') {
+        return jsonOut(syncUserCredentialsVaultToSheet_(ss, data));
+      }
+
+      if (action === 'LOG_SECURITY_AUDIT_EVENT') {
+        return jsonOut(logSecurityAuditEventToSheet_(ss, data));
+      }
+
       if (action === 'SYNC_ENTERPRISE_IMS_BATCH') {
         return jsonOut(syncEnterpriseImsBatchToSheets_(ss, data, secrets));
       }
@@ -1147,7 +1155,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1041-FINAL',
+    version: 'Enterprise-v1043-SUPERADMIN',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1186,7 +1194,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1041-FINAL',
+    version: 'Enterprise-v1043-SUPERADMIN',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -7372,6 +7380,14 @@ function rebuildAllEnterpriseSheetsAndTriggers_(ss, secrets) {
       ]
     },
     {
+      name: 'System_User_Credentials',
+      headers: ['Staff ID', 'Code', 'Full Name', 'Department (8 Depts)', 'Position', 'RBAC Role', 'Salt', 'SHA-256 Password Hash', 'Temp Password', 'Suspended', 'Active', 'Updated At']
+    },
+    {
+      name: 'System_Audit_Log',
+      headers: ['Timestamp', 'Actor Staff ID', 'Actor Name', 'Department', 'RBAC Role', 'Target Account ID', 'Security Audit Event']
+    },
+    {
       name: 'Factory_GIT_ETA_Tracker',
       headers: ['Item Code', 'Description', 'Model', 'Serial No.', 'Origin', 'PO / Ref', 'Qty', 'ETD', 'ETA Port', 'ETA Warehouse', 'Status']
     },
@@ -9356,4 +9372,65 @@ function getEnterpriseImsDataFromSheets_(ss) {
     });
   }
   return { status: 'ok', items: items };
+}
+
+
+// ============================================================================
+// 26. ENTERPRISE v1043-SUPERADMIN: MULTI-USER SHA-256 CREDENTIAL VAULT,
+//     SOLE SUPER ADMIN (MR. NOPARIN) & IMMEDIATE SYSTEM_AUDIT_LOG SYNC
+// ============================================================================
+
+function syncUserCredentialsVaultToSheet_(ss, data) {
+  var sheet = ss.getSheetByName('System_User_Credentials');
+  if (!sheet) {
+    sheet = ss.insertSheet('System_User_Credentials');
+    sheet.getRange(1, 1, 1, 12).setValues([[
+      'Staff ID', 'Code', 'Full Name', 'Department (8 Depts)', 'Position',
+      'RBAC Role', 'Salt', 'SHA-256 Password Hash', 'Temp Password', 'Suspended', 'Active', 'Updated At'
+    ]]).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+  var users = Array.isArray(data.users) ? data.users : [];
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  if (sheet.getLastRow() > 1) {
+    sheet.getRange(2, 1, sheet.getLastRow() - 1, 12).clearContent();
+  }
+  if (users.length > 0) {
+    var rows = users.map(function(u) {
+      var roleVal = (String(u.id || '') === 'SVC-02') ? 'SUPER_ADMIN' : (String(u.rbacRole || '') === 'SUPER_ADMIN' ? 'SERVICE_MANAGER' : String(u.rbacRole || 'TECHNICIAN'));
+      return [
+        String(u.id || ''), String(u.code || ''), String(u.name || ''),
+        String(u.department || ''), String(u.position || ''), roleVal,
+        String(u.salt || ''), String(u.passwordHash || ''),
+        u.isTempPassword ? 'TRUE' : 'FALSE',
+        u.suspended ? 'TRUE' : 'FALSE',
+        u.active !== false ? 'TRUE' : 'FALSE',
+        String(u.updatedAt || nowStr)
+      ];
+    });
+    sheet.getRange(2, 1, rows.length, 12).setValues(rows);
+  }
+  return { status: 'ok', syncedUsers: users.length, updatedAt: nowStr };
+}
+
+function logSecurityAuditEventToSheet_(ss, data) {
+  var sheet = ss.getSheetByName('System_Audit_Log');
+  if (!sheet) {
+    sheet = ss.insertSheet('System_Audit_Log');
+    sheet.getRange(1, 1, 1, 7).setValues([[
+      'Timestamp', 'Actor Staff ID', 'Actor Name', 'Department', 'RBAC Role', 'Target Account ID', 'Security Audit Event'
+    ]]).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  sheet.appendRow([
+    nowStr,
+    String(data.staffId || '-'),
+    String(data.staffName || '-'),
+    String(data.department || '-'),
+    String(data.rbacRole || '-'),
+    String(data.targetId || '-'),
+    String(data.event || 'SECURITY_EVENT')
+  ]);
+  return { status: 'ok', timestamp: nowStr };
 }

@@ -5508,3 +5508,927 @@
     }
   }, 1600);
 })();
+
+
+// ============================================================================
+// --- Module Block #55 (Enterprise v1043-SUPERADMIN: Sole Super Admin Control
+//     for Mr. Noparin Homhoul, SHA-256 + Salt Vault, Temp Password Generator,
+//     8-Department RBAC, Account Lock/Unlock & Immediate System_Audit_Log Sync) ---
+// ============================================================================
+(function() {
+  const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
+  const ACTIVE_SESSION_KEY = 'hoshizaki_active_auth_session_v1042';
+  const KNOWN_DEVICE_USERS_KEY = 'hoshizaki_known_device_users_v1042';
+  const LOCKOUT_MAP_KEY = 'hoshizaki_login_lockout_map_v1042';
+
+  // Sole SUPER_ADMIN is Mr. Noparin Homhoul (SVC-02) exclusively
+  const SOLE_SUPER_ADMIN_ID = 'SVC-02';
+
+  const DEFAULT_STAFF_ROSTER_V1043 = [
+    { id: 'SVC-02', code: 'T02', name: 'Mr. Noparin Homhoul', nickname: 'Rinny', department: 'Service Unit', position: 'Deputy Services Unit Manager (Sole Super Admin)', rbacRole: 'SUPER_ADMIN', defaultPin: '1002', email: 'noparin@hoshizaki.co.th', phone: '097-230-5941' },
+    { id: 'SVC-01', code: 'T01', name: 'Mr. Thanakrit Chanmokonpanit', nickname: 'Tae', department: 'Service Unit', position: 'Services Unit Manager', rbacRole: 'SERVICE_MANAGER', defaultPin: '1001', email: 'thanakrit@hoshizaki.co.th', phone: '096-804-3989' },
+    { id: 'SVC-03', code: 'T03', name: 'Mr. Surin Sarawong', nickname: 'Rin', department: 'Service Unit', position: 'Senior Services Staff', rbacRole: 'SUPERVISOR', defaultPin: '1003', email: 'surin@hoshizaki.co.th', phone: '091-767-2018' },
+    { id: 'SVC-04', code: 'T05', name: 'Mr. Nirun Sornrat', nickname: 'Pui', department: 'Service Unit', position: 'Services Staff', rbacRole: 'TECHNICIAN', defaultPin: '1004', email: 'nirun@hoshizaki.co.th', phone: '091-767-2038' },
+    { id: 'SVC-05', code: 'T08', name: 'Ms. Wanwipha Nakamrod', nickname: 'Oh', department: 'Service Unit', position: 'Services Admin Staff', rbacRole: 'SUPERVISOR', defaultPin: '1005', email: 'wanwipha@hoshizaki.co.th', phone: '093-827-8132' },
+    { id: 'SVC-06', code: 'T06', name: 'Mr. Surin Tharapai', nickname: 'Beer', department: 'Service Unit', position: 'Services Staff', rbacRole: 'TECHNICIAN', defaultPin: '1006', email: 'surin.t@hoshizaki.co.th', phone: '063-865-5442' },
+    { id: 'SVC-07', code: 'T04', name: 'Mr. Jeerapan Phrasawang', nickname: 'Ceasar', department: 'Service Unit', position: 'Services Staff', rbacRole: 'TECHNICIAN', defaultPin: '1007', email: 'jeerapan@hoshizaki.co.th', phone: '091-767-2079' },
+    { id: 'CTR-01', code: 'T07', name: 'Mr. Pawat Warongtheradet', nickname: 'Prince', department: 'Service Center', position: 'Service Center & Warehouse IMS', rbacRole: 'SERVICE_CENTER_IMS', defaultPin: '1008', email: 'pawat@hoshizaki.co.th', phone: '099-508-1908' },
+    { id: 'EXE-01', code: 'EXE', name: 'Mr. Daisuke Suzuki', nickname: 'Suzuki', department: 'Executive Management', position: 'Managing Director / GM Accounting & Admin', rbacRole: 'EXECUTIVE', defaultPin: '8888', email: 'suzuki@hoshizaki.co.th', phone: '088-985-5979' },
+    { id: 'ADM-01', code: 'ADM1', name: 'Ms. Kanokwan Treesukol', nickname: 'Kanokwan', department: 'Admin Unit', position: 'Admin Unit (Parts & Logistics)', rbacRole: 'ADMIN_UNIT', defaultPin: '2001', email: 'kanokwan@hoshizaki.co.th', phone: '097-135-6304' },
+    { id: 'ADM-02', code: 'ADM2', name: 'Mr. Nattapong Chataram', nickname: 'Nattapong', department: 'Admin Unit', position: 'Admin Unit', rbacRole: 'ADMIN_UNIT', defaultPin: '2002', email: 'nattapong@hoshizaki.co.th', phone: '091-772-7423' },
+    { id: 'ADM-03', code: 'ADM3', name: 'Mr. Chayanin Kuptrakul', nickname: 'Chayanin', department: 'Admin Unit', position: 'Admin Unit', rbacRole: 'ADMIN_UNIT', defaultPin: '2003', email: 'chayanin@hoshizaki.co.th', phone: '-' },
+    { id: 'ACC-01', code: 'ACC1', name: 'Ms. Waraporn Kianthong', nickname: 'Waraporn', department: 'Accounting Unit', position: 'Accounting Unit (QT/IV/RE/NAV)', rbacRole: 'ACCOUNTING_UNIT', defaultPin: '3001', email: 'waraporn@hoshizaki.co.th', phone: '093-645-5623' },
+    { id: 'ACC-02', code: 'ACC2', name: 'Ms. Duangkamon Tantayanon', nickname: 'Duangkamon', department: 'Accounting Unit', position: 'Accounting Unit', rbacRole: 'ACCOUNTING_UNIT', defaultPin: '3002', email: 'duangkamon@hoshizaki.co.th', phone: '081-372-8190' },
+    { id: 'ACC-03', code: 'ACC3', name: 'Ms. Witharat Riangpha', nickname: 'Witharat', department: 'Accounting Unit', position: 'Accounting Unit', rbacRole: 'ACCOUNTING_UNIT', defaultPin: '3003', email: 'witharat@hoshizaki.co.th', phone: '095-959-4734' },
+    { id: 'SLS-01', code: 'SLS1', name: 'Ms. Kulathida Charoenying', nickname: 'Kulathida', department: 'Sales Unit', position: 'Sales Unit (PM & Replacement)', rbacRole: 'SALES_UNIT', defaultPin: '4001', email: 'kulathida@hoshizaki.co.th', phone: '096-898-3388' },
+    { id: 'SLS-02', code: 'SLS2', name: 'Ms. Janyaluck Paithaisong', nickname: 'Janyaluck', department: 'Sales Unit', position: 'Sales Unit', rbacRole: 'SALES_UNIT', defaultPin: '4002', email: 'janyaluck@hoshizaki.co.th', phone: '090-972-0947' },
+    { id: 'SLS-03', code: 'SLS3', name: 'Ms. Ketsaraporn Porjai', nickname: 'Ketsaraporn', department: 'Sales Unit', position: 'Sales Unit', rbacRole: 'SALES_UNIT', defaultPin: '4003', email: 'ketsaraporn@hoshizaki.co.th', phone: '096-804-3988' },
+    { id: 'MKT-01', code: 'MKT1', name: 'Ms. Taksaon Tipsrisombat', nickname: 'Taksaon', department: 'Marketing Unit', position: 'Marketing Unit (CSAT & Brand)', rbacRole: 'MARKETING_UNIT', defaultPin: '5001', email: 'taksaon@hoshizaki.co.th', phone: '091-767-2092' },
+    { id: 'MKT-02', code: 'MKT2', name: 'Mr. Khajornyot Jewkrang', nickname: 'Khajornyot', department: 'Marketing Unit', position: 'Marketing Unit', rbacRole: 'MARKETING_UNIT', defaultPin: '5002', email: 'khajornyot@hoshizaki.co.th', phone: '063-821-1294' },
+    { id: 'JPC-01', code: 'JPC1', name: 'Ms. Suleewan Siripirom', nickname: 'Suleewan', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Unit', rbacRole: 'JAPANESE_CORP', defaultPin: '6001', email: 'suleewan@hoshizaki.co.th', phone: '063-810-8586' },
+    { id: 'JPC-02', code: 'JPC2', name: 'Mr. Naoki Furujo', nickname: 'Furujo', department: 'Japanese Corporate Unit', position: 'Japanese Corporate Manager', rbacRole: 'JAPANESE_CORP', defaultPin: '6002', email: 'furujo@hoshizaki.co.th', phone: '064-148-4245' }
+  ];
+
+  const RBAC_ROLE_LABELS = {
+    SUPER_ADMIN: 'SUPER_ADMIN (Mr. Noparin คนเดียว • ผู้ดูแลระบบสูงสุด)',
+    EXECUTIVE: 'EXECUTIVE (ผู้บริหาร MD/GM • BI & สรุปผู้บริหาร 3 ภาษา)',
+    SERVICE_MANAGER: 'SERVICE_MANAGER (ผู้จัดการแผนกบริการ • อนุมัติใบงาน/GP%/ทีมช่าง)',
+    SUPERVISOR: 'SUPERVISOR (หัวหน้าทีม/จ่ายงาน • จัดคิวงานและตรวจรับรายงาน)',
+    TECHNICIAN: 'TECHNICIAN (ช่างภาคสนาม • ใบงานซ่อม/PM และรถช่างตนเอง)',
+    SERVICE_CENTER_IMS: 'SERVICE_CENTER_IMS (ศูนย์บริการ & คลังอะไหล่ IMS)',
+    ADMIN_UNIT: 'ADMIN_UNIT (ธุรการกลาง • เบิกอะไหล่ 6 ขั้นตอน & ประสานงาน)',
+    ACCOUNTING_UNIT: 'ACCOUNTING_UNIT (บัญชีและการเงิน • QT → IV → RE & NAV ERP)',
+    SALES_UNIT: 'SALES_UNIT (ฝ่ายขาย • สัญญา PM & เทิร์นเครื่องใหม่)',
+    MARKETING_UNIT: 'MARKETING_UNIT (การตลาด • CSAT & แคมเปญ)',
+    JAPANESE_CORP: 'JAPANESE_CORP (ลูกค้าญี่ปุ่น • VIP SLA & รายงาน JP)'
+  };
+
+  // Unified Cloud GAS URL Resolver (checks all legacy & current storage keys)
+  window.resolveHoshizakiGasUrl = function() {
+    const candidates = [
+      localStorage.getItem('hoshizaki_gas_webapp_url'),
+      localStorage.getItem('hoshizaki_gas_url'),
+      localStorage.getItem('hoshizaki_gas_url_v1'),
+      localStorage.getItem('hoshizaki_sheets_webhook_url')
+    ];
+    for (let i = 0; i < candidates.length; i++) {
+      const u = String(candidates[i] || '').trim();
+      if (u && u.indexOf('http') === 0) return u;
+    }
+    return '';
+  };
+
+  async function sha256Hex_(message) {
+    const str = String(message || '');
+    if (window.crypto && window.crypto.subtle && window.TextEncoder) {
+      const msgUint8 = new TextEncoder().encode(str);
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).padStart(16, '0');
+  }
+
+  function isSoleSuperAdmin_(userOrSession) {
+    if (!userOrSession) return false;
+    return userOrSession.id === SOLE_SUPER_ADMIN_ID ||
+           (userOrSession.rbacRole === 'SUPER_ADMIN' && String(userOrSession.name || '').toLowerCase().indexOf('noparin') > -1);
+  }
+
+  async function ensureCredentialVaultInitialized_() {
+    let vault = [];
+    try { vault = JSON.parse(localStorage.getItem(CRED_VAULT_KEY) || '[]'); } catch (e) {}
+
+    const existingMap = {};
+    if (Array.isArray(vault)) {
+      vault.forEach(u => {
+        // Enforce Mr. Noparin Homhoul (SVC-02) as the ONLY SUPER_ADMIN
+        if (u.id === SOLE_SUPER_ADMIN_ID) {
+          u.rbacRole = 'SUPER_ADMIN';
+        } else if (u.rbacRole === 'SUPER_ADMIN') {
+          u.rbacRole = (u.id === 'SVC-01') ? 'SERVICE_MANAGER' : 'SUPERVISOR';
+        }
+        existingMap[u.id] = u;
+      });
+    }
+
+    const built = [];
+    const seenIds = new Set();
+    for (const s of DEFAULT_STAFF_ROSTER_V1043) {
+      seenIds.add(s.id);
+      if (existingMap[s.id]) {
+        built.push(existingMap[s.id]);
+      } else {
+        const salt = 'HZK-' + s.id + '-SALT';
+        const hash = await sha256Hex_(salt + ':' + s.defaultPin);
+        built.push({
+          id: s.id,
+          code: s.code,
+          name: s.name,
+          nickname: s.nickname,
+          department: s.department,
+          position: s.position,
+          rbacRole: s.rbacRole,
+          email: s.email,
+          phone: s.phone,
+          salt: salt,
+          passwordHash: hash,
+          isTempPassword: false,
+          tempExpiresAt: 0,
+          mustChangePassword: false,
+          suspended: false,
+          active: true,
+          updatedAt: new Date().toISOString()
+        });
+      }
+    }
+    // Preserve custom accounts created by Mr. Noparin
+    Object.keys(existingMap).forEach(k => {
+      if (!seenIds.has(k)) {
+        built.push(existingMap[k]);
+      }
+    });
+
+    localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(built));
+    return built;
+  }
+
+  function getActiveAuthSession_() {
+    try { return JSON.parse(localStorage.getItem(ACTIVE_SESSION_KEY) || 'null'); } catch (e) { return null; }
+  }
+
+  function getKnownDeviceUserIds_() {
+    try {
+      const arr = JSON.parse(localStorage.getItem(KNOWN_DEVICE_USERS_KEY) || '[]');
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  }
+
+  function recordKnownDeviceUser_(staffId) {
+    const ids = getKnownDeviceUserIds_().filter(x => x !== staffId);
+    ids.unshift(staffId);
+    localStorage.setItem(KNOWN_DEVICE_USERS_KEY, JSON.stringify(ids.slice(0, 12)));
+  }
+
+  function getLockoutState_(staffId) {
+    try {
+      const map = JSON.parse(localStorage.getItem(LOCKOUT_MAP_KEY) || '{}');
+      const entry = map[staffId] || { attempts: 0, lockedUntil: 0 };
+      if (entry.lockedUntil && Date.now() < entry.lockedUntil) {
+        return { locked: true, remainingSec: Math.ceil((entry.lockedUntil - Date.now()) / 1000), attempts: entry.attempts };
+      }
+      return { locked: false, remainingSec: 0, attempts: entry.attempts || 0 };
+    } catch (e) { return { locked: false, remainingSec: 0, attempts: 0 }; }
+  }
+
+  function recordFailedLoginAttempt_(staffId) {
+    try {
+      const map = JSON.parse(localStorage.getItem(LOCKOUT_MAP_KEY) || '{}');
+      const cur = map[staffId] || { attempts: 0, lockedUntil: 0 };
+      cur.attempts = (cur.attempts || 0) + 1;
+      if (cur.attempts >= 5) {
+        cur.lockedUntil = Date.now() + 5 * 60 * 1000;
+      }
+      map[staffId] = cur;
+      localStorage.setItem(LOCKOUT_MAP_KEY, JSON.stringify(map));
+      return cur;
+    } catch (e) { return { attempts: 1, lockedUntil: 0 }; }
+  }
+
+  function clearFailedLoginAttempts_(staffId) {
+    try {
+      const map = JSON.parse(localStorage.getItem(LOCKOUT_MAP_KEY) || '{}');
+      delete map[staffId];
+      localStorage.setItem(LOCKOUT_MAP_KEY, JSON.stringify(map));
+    } catch (e) {}
+  }
+
+  // Immediate Cloud Audit & Credentials Sync Helper
+  window.pushSecurityAuditEventImmediate = async function(eventCode, targetId, detailMessage) {
+    const sess = getActiveAuthSession_();
+    const actorId = sess ? sess.id : 'SYSTEM';
+    const actorName = sess ? sess.name : 'System / Unauthenticated';
+    const dept = sess ? sess.department : 'System';
+    const role = sess ? sess.rbacRole : 'GUEST';
+
+    if (typeof window.appendSystemAuditLog === 'function') {
+      window.appendSystemAuditLog(eventCode, targetId, detailMessage);
+    }
+
+    const gasUrl = window.resolveHoshizakiGasUrl();
+    if (!gasUrl) return { synced: false, reason: 'NO_GAS_URL' };
+
+    try {
+      await fetch(gasUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          actionType: 'LOG_SECURITY_AUDIT_EVENT',
+          staffId: actorId,
+          staffName: actorName,
+          department: dept,
+          rbacRole: role,
+          targetId: targetId || '-',
+          event: eventCode + ' | ' + detailMessage
+        })
+      });
+      return { synced: true };
+    } catch (e) {
+      return { synced: false, reason: String(e) };
+    }
+  };
+
+  // Apply RBAC UI Filtering across Header, Toolbar Categories & Active User Badge
+  window.applyRbacRoleViewFiltering = function() {
+    const sess = getActiveAuthSession_();
+    const badgeEl = document.getElementById('techQuickProfileName');
+    const roleBanner = document.getElementById('activeRoleModeStatusText');
+    const adminBtn = document.querySelector('button[onclick*="openAdminDevStudioModal"]');
+    const execWrap = document.getElementById('topExecReportDropdownWrap');
+    const confCostBtn = document.getElementById('btnToolbarConfidentialCost');
+
+    if (!sess) {
+      if (badgeEl) badgeEl.textContent = 'เข้าสู่ระบบ / สลับ User (Password)';
+      // Only Mr. Noparin (SUPER_ADMIN) sees Admin Studio once authenticated
+      if (adminBtn) adminBtn.classList.add('hidden');
+      return;
+    }
+
+    if (badgeEl) {
+      badgeEl.innerHTML = `${sess.nickname || sess.name} <span class="opacity-80">(${sess.department})</span>`;
+    }
+
+    const role = sess.rbacRole || 'TECHNICIAN';
+    const isSoleSuperAdmin = isSoleSuperAdmin_(sess);
+
+    // Strictly visible ONLY to Mr. Noparin Homhoul (SOLE_SUPER_ADMIN)
+    if (adminBtn) {
+      adminBtn.classList.toggle('hidden', !isSoleSuperAdmin);
+    }
+    if (execWrap) {
+      const allowExec = ['SUPER_ADMIN', 'EXECUTIVE', 'SERVICE_MANAGER', 'SUPERVISOR', 'ACCOUNTING_UNIT', 'JAPANESE_CORP'].includes(role);
+      execWrap.classList.toggle('hidden', !allowExec);
+    }
+    if (confCostBtn) {
+      const allowCost = ['SUPER_ADMIN', 'EXECUTIVE', 'SERVICE_MANAGER', 'ACCOUNTING_UNIT'].includes(role);
+      confCostBtn.classList.toggle('hidden', !allowCost);
+    }
+
+    if (typeof window.switchToolbarCategory === 'function') {
+      if (role === 'ACCOUNTING_UNIT') window.switchToolbarCategory('DOCS');
+      else if (role === 'SERVICE_CENTER_IMS' || role === 'ADMIN_UNIT') window.switchToolbarCategory('IMS_INVENTORY');
+      else if (role === 'SALES_UNIT') window.switchToolbarCategory('STOCK_PM');
+      else if (role === 'TECHNICIAN') window.switchToolbarCategory('SERVICE');
+      else window.switchToolbarCategory('ALL');
+    }
+
+    const respTechInput = document.getElementById('responsibleTech');
+    if (respTechInput && ['TECHNICIAN', 'SUPERVISOR', 'SERVICE_MANAGER', 'SUPER_ADMIN'].includes(role)) {
+      respTechInput.value = sess.name;
+    }
+
+    if (roleBanner) {
+      const superTag = isSoleSuperAdmin ? ' · 👑 ผู้ดูแลระบบสูงสุด (Sole Super Admin)' : '';
+      roleBanner.innerHTML = `<i class="fa-solid fa-user-lock text-emerald-300 mr-1"></i> ผู้ใช้งานปัจจุบัน: <b>${sess.name}</b> | แผนก: <b>${sess.department}</b> | สิทธิ์: <span class="bg-white/20 px-1.5 py-0.5 rounded">${role}${superTag}</span>`;
+    }
+  };
+
+  // Multi-User Password Login & Shared-Device Switcher Modal
+  window.openTechQuickLoginModal = async function() {
+    const vault = await ensureCredentialVaultInitialized_();
+    const sess = getActiveAuthSession_();
+    const knownIds = getKnownDeviceUserIds_();
+    const container = document.getElementById('techQuickLoginCards');
+    const modal = document.getElementById('techQuickLoginModal');
+    if (!container || !modal) return;
+
+    const depts = ['ALL', ...Array.from(new Set(vault.map(u => u.department)))];
+    const knownUsers = knownIds.map(id => vault.find(u => u.id === id)).filter(Boolean);
+
+    container.innerHTML = `
+      <div class="space-y-3">
+        ${sess ? `
+          <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="text-[11px] font-extrabold text-emerald-950">🟢 กำลังใช้งาน: ${sess.name} ${isSoleSuperAdmin_(sess) ? '<span class="bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded text-[9.5px]">👑 SOLE SUPER ADMIN</span>' : ''}</div>
+              <div class="text-[10px] text-emerald-800">${sess.department} · ${sess.position} (${sess.rbacRole})</div>
+            </div>
+            <div class="flex gap-1.5">
+              ${isSoleSuperAdmin_(sess) ? `<button type="button" onclick="document.getElementById('techQuickLoginModal').classList.add('hidden'); openAdminDevStudioModal('SECURITY_RBAC');" class="px-2.5 py-1 rounded-lg bg-[#002B49] text-amber-300 font-extrabold text-[10.5px]">👑 จัดการผู้ใช้/รหัสผ่าน</button>` : ''}
+              <button type="button" onclick="openChangeOwnPasswordBox()" class="px-2.5 py-1 rounded-lg bg-emerald-700 text-white font-bold text-[10.5px]">เปลี่ยนรหัสผ่านของฉัน</button>
+            </div>
+          </div>
+          <div id="changeOwnPasswordWrap" class="hidden p-2.5 rounded-xl bg-slate-100 border border-slate-300 space-y-2">
+            <div class="font-bold text-slate-800 text-[11px]">ตั้งรหัสผ่านถาวรใหม่สำหรับ ${sess.name} (อย่างน้อย 4 ตัวอักษร):</div>
+            <div class="flex gap-1.5">
+              <input type="password" id="ownNewPassInput" placeholder="รหัสผ่านใหม่..." class="flex-1 border rounded-lg px-2.5 py-1.5 text-xs bg-white">
+              <button type="button" onclick="submitChangeOwnPassword()" class="px-3 py-1.5 rounded-lg bg-[#002B49] text-white font-bold text-xs">บันทึก</button>
+            </div>
+          </div>
+        ` : ''}
+
+        ${knownUsers.length > 0 ? `
+          <div class="space-y-1">
+            <div class="text-[10.5px] font-extrabold text-sky-900"><i class="fa-solid fa-mobile-screen mr-1"></i>ผู้ใช้ที่เคยล็อกอินบนเครื่องนี้ (แตะเพื่อสลับ User ทันที):</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${knownUsers.map(ku => `
+                <button type="button" onclick="selectUserForPasswordGate('${ku.id}')" class="px-2.5 py-1 rounded-full text-[11px] font-bold border ${sess && sess.id === ku.id ? 'bg-[#002B49] text-white border-[#002B49]' : 'bg-sky-50 text-sky-950 border-sky-300 hover:bg-sky-100'}">
+                  ${ku.nickname || ku.name} (${ku.code})
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="grid grid-cols-2 gap-1.5">
+          <select id="loginDeptFilterSel" onchange="filterLoginStaffDirectoryList()" class="border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-bold bg-white">
+            ${depts.map(d => `<option value="${d}">${d === 'ALL' ? 'ทุกแผนก (ทั้ง 8 แผนก • ' + vault.length + ' บัญชี)' : d}</option>`).join('')}
+          </select>
+          <input type="text" id="loginStaffSearchInput" oninput="filterLoginStaffDirectoryList()" placeholder="ค้นหาชื่อ / รหัส..." class="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white">
+        </div>
+
+        <div id="loginStaffRosterList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+
+        <div id="passwordGatePromptBox" class="hidden p-3 rounded-xl bg-amber-50 border-2 border-amber-400 space-y-2">
+          <div class="flex items-center justify-between">
+            <span id="pwGateTargetLabel" class="font-extrabold text-[#002B49] text-xs">กรอกรหัสผ่านเพื่อเข้าใช้งาน</span>
+            <span id="pwGateDefaultHint" class="text-[10px] text-amber-800 font-semibold"></span>
+          </div>
+          <input type="hidden" id="pwGateStaffId">
+          <div class="flex gap-1.5">
+            <input type="password" id="pwGateInput" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyAndUnlockStaffSession();}" placeholder="กรอกรหัส PIN / Password / รหัสชั่วคราว..." class="flex-1 border-2 border-[#002B49] rounded-lg px-3 py-2 text-sm font-bold bg-white">
+            <button type="button" onclick="verifyAndUnlockStaffSession()" class="px-4 py-2 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold text-xs">ปลดล็อกเข้าใช้งาน</button>
+          </div>
+          <div id="pwGateErrorMsg" class="hidden text-[11px] font-bold text-rose-700"></div>
+        </div>
+      </div>
+    `;
+
+    modal.classList.remove('hidden');
+    window.filterLoginStaffDirectoryList();
+  };
+
+  window.filterLoginStaffDirectoryList = async function() {
+    const vault = await ensureCredentialVaultInitialized_();
+    const sess = getActiveAuthSession_();
+    const dept = document.getElementById('loginDeptFilterSel')?.value || 'ALL';
+    const q = (document.getElementById('loginStaffSearchInput')?.value || '').trim().toLowerCase();
+    const listEl = document.getElementById('loginStaffRosterList');
+    if (!listEl) return;
+
+    const filtered = vault.filter(u => {
+      if (u.active === false) return false;
+      if (dept !== 'ALL' && u.department !== dept) return false;
+      if (!q) return true;
+      return [u.name, u.nickname, u.code, u.department, u.position].join(' ').toLowerCase().includes(q);
+    });
+
+    listEl.innerHTML = filtered.map(u => {
+      const isCur = sess && sess.id === u.id;
+      const isSuspended = Boolean(u.suspended);
+      return `
+        <button type="button" onclick="selectUserForPasswordGate('${u.id}')" class="w-full text-left p-2 rounded-xl border ${isSuspended ? 'border-rose-300 bg-rose-50/70' : (isCur ? 'border-emerald-600 bg-emerald-50' : 'border-slate-200 hover:bg-sky-50')} flex items-center justify-between gap-2 transition">
+          <div>
+            <div class="font-extrabold text-[#002B49] text-xs">[${u.code}] ${u.name} ${u.id === SOLE_SUPER_ADMIN_ID ? '<span class="text-[9.5px] bg-amber-300 text-slate-950 px-1.5 rounded font-black">SUPER_ADMIN</span>' : ''}</div>
+            <div class="text-[10.5px] text-slate-600">${u.department} · ${u.position}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isSuspended ? 'bg-rose-600 text-white' : (isCur ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-800')}">${isSuspended ? 'ถูกระงับ 🔒' : (isCur ? 'ใช้งานอยู่ ✓' : 'ใส่รหัส →')}</span>
+        </button>
+      `;
+    }).join('');
+  };
+
+  window.selectUserForPasswordGate = async function(staffId) {
+    const vault = await ensureCredentialVaultInitialized_();
+    const user = vault.find(u => u.id === staffId);
+    if (!user) return;
+    const defRef = DEFAULT_STAFF_ROSTER_V1043.find(x => x.id === staffId);
+    const box = document.getElementById('passwordGatePromptBox');
+    const lbl = document.getElementById('pwGateTargetLabel');
+    const hint = document.getElementById('pwGateDefaultHint');
+    const idInp = document.getElementById('pwGateStaffId');
+    const pwInp = document.getElementById('pwGateInput');
+    const errEl = document.getElementById('pwGateErrorMsg');
+    if (!box) return;
+
+    box.classList.remove('hidden');
+    if (errEl) errEl.classList.add('hidden');
+    if (idInp) idInp.value = user.id;
+    if (lbl) lbl.textContent = `🔐 ยืนยันรหัสผ่าน: ${user.name} (${user.department})`;
+    if (hint) {
+      if (user.isTempPassword) hint.textContent = '(ใช้รหัสผ่านชั่วคราวที่ได้รับจาก Mr. Noparin)';
+      else hint.textContent = defRef ? `(รหัสเริ่มต้น: ${defRef.defaultPin})` : '';
+    }
+    if (pwInp) { pwInp.value = ''; pwInp.focus(); }
+  };
+
+  window.verifyAndUnlockStaffSession = async function() {
+    const staffId = document.getElementById('pwGateStaffId')?.value || '';
+    const rawPw = (document.getElementById('pwGateInput')?.value || '').trim();
+    const errEl = document.getElementById('pwGateErrorMsg');
+    const vault = await ensureCredentialVaultInitialized_();
+    const user = vault.find(u => u.id === staffId);
+    if (!user) return;
+
+    if (user.suspended) {
+      if (errEl) {
+        errEl.classList.remove('hidden');
+        errEl.textContent = '⛔ บัญชีนี้ถูกระงับการใช้งานชั่วคราว กรุณาติดต่อ Mr. Noparin Homhoul (Super Admin) เพื่อปลดล็อก';
+      }
+      return;
+    }
+
+    const lockSt = getLockoutState_(staffId);
+    if (lockSt.locked) {
+      if (errEl) {
+        errEl.classList.remove('hidden');
+        errEl.textContent = `⛔ บัญชีถูกล็อกชั่วคราวเนื่องจากกรอกรหัสผิดเกิน 5 ครั้ง กรุณารอ ${lockSt.remainingSec} วินาที หรือแจ้ง Mr. Noparin ปลดล็อก`;
+      }
+      return;
+    }
+
+    if (user.isTempPassword && user.tempExpiresAt && Date.now() > Number(user.tempExpiresAt)) {
+      if (errEl) {
+        errEl.classList.remove('hidden');
+        errEl.textContent = '⌛ รหัสผ่านชั่วคราวหมดอายุแล้ว (เกิน 24 ชั่วโมง) กรุณาขอรหัสชั่วคราวใหม่จาก Mr. Noparin';
+      }
+      return;
+    }
+
+    const candidateHash = await sha256Hex_(user.salt + ':' + rawPw);
+    if (candidateHash !== user.passwordHash) {
+      const failState = recordFailedLoginAttempt_(staffId);
+      await window.pushSecurityAuditEventImmediate('AUTH_LOGIN_FAILED', staffId, `กรอกรหัสผ่านไม่ถูกต้อง (${failState.attempts}/5) สำหรับ ${user.name}`);
+      if (errEl) {
+        errEl.classList.remove('hidden');
+        errEl.textContent = failState.attempts >= 5
+          ? '⛔ กรอกรหัสผิดครบ 5 ครั้ง บัญชีถูกล็อกชั่วคราว 5 นาที!'
+          : `❌ รหัสผ่านไม่ถูกต้อง (ผิดครั้งที่ ${failState.attempts}/5)`;
+      }
+      return;
+    }
+
+    clearFailedLoginAttempts_(staffId);
+    const sessionObj = {
+      id: user.id,
+      code: user.code,
+      name: user.name,
+      nickname: user.nickname,
+      department: user.department,
+      position: user.position,
+      rbacRole: user.id === SOLE_SUPER_ADMIN_ID ? 'SUPER_ADMIN' : user.rbacRole,
+      mustChangePassword: Boolean(user.mustChangePassword || user.isTempPassword),
+      loginAt: new Date().toISOString()
+    };
+    localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(sessionObj));
+    localStorage.setItem('hoshizaki_active_tech_profile_v16', user.name);
+    recordKnownDeviceUser_(user.id);
+
+    await window.pushSecurityAuditEventImmediate('AUTH_LOGIN_SUCCESS', user.id, `เข้าสู่ระบบ/สลับ User สำเร็จ: ${user.name} (${user.department} · ${sessionObj.rbacRole})`);
+
+    if (sessionObj.mustChangePassword) {
+      window.applyRbacRoleViewFiltering();
+      await window.openTechQuickLoginModal();
+      window.openChangeOwnPasswordBox();
+      if (typeof showToast === 'function') {
+        showToast('🔑 คุณเข้าสู่ระบบด้วยรหัสผ่านชั่วคราว กรุณาตั้งรหัสผ่านถาวรใหม่ของคุณทันที');
+      }
+      return;
+    }
+
+    document.getElementById('techQuickLoginModal')?.classList.add('hidden');
+    window.applyRbacRoleViewFiltering();
+    if (typeof showToast === 'function') {
+      showToast(`✅ ยินดีต้อนรับ ${user.name} (${user.department} · ${sessionObj.rbacRole})`);
+    }
+  };
+
+  window.openChangeOwnPasswordBox = function() {
+    document.getElementById('changeOwnPasswordWrap')?.classList.toggle('hidden');
+  };
+
+  window.submitChangeOwnPassword = async function() {
+    const sess = getActiveAuthSession_();
+    const newPw = (document.getElementById('ownNewPassInput')?.value || '').trim();
+    if (!sess || newPw.length < 4) {
+      if (typeof showToast === 'function') showToast('⚠️ รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษรครับ');
+      return;
+    }
+    const vault = await ensureCredentialVaultInitialized_();
+    const user = vault.find(u => u.id === sess.id);
+    if (!user) return;
+    user.passwordHash = await sha256Hex_(user.salt + ':' + newPw);
+    user.isTempPassword = false;
+    user.tempExpiresAt = 0;
+    user.mustChangePassword = false;
+    user.updatedAt = new Date().toISOString();
+    localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(vault));
+
+    sess.mustChangePassword = false;
+    localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(sess));
+
+    await window.pushSecurityAuditEventImmediate('PASSWORD_SELF_CHANGED', user.id, `พนักงาน ${user.name} เปลี่ยนรหัสผ่านส่วนตัวเรียบร้อย`);
+    await window.syncUserCredentialsVaultToCloud(true);
+
+    document.getElementById('changeOwnPasswordWrap')?.classList.add('hidden');
+    document.getElementById('techQuickLoginModal')?.classList.add('hidden');
+    if (typeof showToast === 'function') showToast('✅ บันทึกรหัสผ่านถาวรใหม่ของคุณและซิงค์ขึ้น Cloud เรียบร้อยแล้ว');
+  };
+
+  // =========================================================================
+  // SOLE SUPER ADMIN PANEL (MR. NOPARIN HOMHOUL ONLY) — TAB 5 IN ADMIN STUDIO
+  // =========================================================================
+  window.renderAdminSecurityRbacPanel = async function() {
+    const panel = document.getElementById('devStudioSecurityPanel');
+    if (!panel) return;
+    const vault = await ensureCredentialVaultInitialized_();
+    const sess = getActiveAuthSession_();
+
+    if (!isSoleSuperAdmin_(sess)) {
+      panel.innerHTML = `
+        <div class="p-6 rounded-2xl bg-rose-50 border-2 border-rose-300 text-rose-950 space-y-2 text-center">
+          <div class="text-lg font-black">⛔ สงวนสิทธิ์เฉพาะผู้ดูแลระบบสูงสุด (Sole Super Admin)</div>
+          <div class="text-xs">สิทธิ์การสร้างบัญชีพนักงานใหม่ รีเซ็ตรหัสผ่าน สร้างรหัสผ่านชั่วคราว ปรับระดับสิทธิ์ RBAC และปลดล็อกบัญชี สงวนไว้เฉพาะ <b>Mr. Noparin Homhoul (SVC-02)</b> คนเดียวเท่านั้น</div>
+          <button type="button" onclick="openTechQuickLoginModal()" class="mt-2 px-4 py-2 rounded-xl bg-[#002B49] text-white font-bold text-xs">เข้าสู่ระบบในชื่อ Mr. Noparin Homhoul</button>
+        </div>
+      `;
+      return;
+    }
+
+    const auditLogs = JSON.parse(localStorage.getItem('hoshizaki_immutable_audit_log_v1033') || '[]');
+
+    panel.innerHTML = `
+      <div class="bg-gradient-to-r from-[#002B49] via-indigo-950 to-slate-900 text-white p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div class="font-extrabold text-sm flex items-center gap-1.5">
+            <span class="bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-black">👑 SOLE SUPER ADMIN</span>
+            <span>ศูนย์ควบคุมรหัสผ่าน &amp; สิทธิ์ทั้ง 8 แผนก โดย Mr. Noparin Homhoul</span>
+          </div>
+          <div class="text-[11px] text-sky-200 mt-0.5">สร้างบัญชีใหม่ • รีเซ็ตรหัสผ่าน • สร้างรหัสชั่วคราว (24 ชม.) • ปรับสิทธิ์ RBAC • ปลดล็อกบัญชี • ส่งบันทึกเข้า Google Sheets (System_Audit_Log) ทันที</div>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="syncUserCredentialsVaultToCloud(false)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-xs">
+            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> ซิงค์รหัสผ่าน &amp; Audit Log ขึ้น Google Sheets ทันที
+          </button>
+        </div>
+      </div>
+
+      <div id="superAdminTempPassBanner" class="hidden p-3 rounded-xl bg-amber-50 border-2 border-amber-400 text-amber-950 flex flex-wrap items-center justify-between gap-2">
+        <div id="superAdminTempPassText" class="text-xs font-extrabold"></div>
+        <button type="button" onclick="copyLastGeneratedTempPassword()" class="px-3 py-1.5 rounded-lg bg-[#002B49] text-white font-bold text-xs">
+          <i class="fa-solid fa-copy mr-1"></i> คัดลอกรหัสชั่วคราวส่งให้พนักงาน
+        </button>
+      </div>
+
+      <!-- Create New Employee Account -->
+      <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+        <div class="font-extrabold text-xs text-[#002B49]"><i class="fa-solid fa-user-plus text-emerald-600 mr-1"></i> สร้างบัญชีพนักงานใหม่ (Create New Staff Account)</div>
+        <div class="grid grid-cols-1 sm:grid-cols-6 gap-2">
+          <input id="admNewUserName" placeholder="ชื่อ-นามสกุลพนักงานใหม่ *" class="sm:col-span-2 border rounded-lg px-2.5 py-1.5 text-xs font-bold">
+          <select id="admNewUserDept" class="border rounded-lg px-2 py-1.5 text-xs bg-white font-bold">
+            <option value="Service Unit">Service Unit</option>
+            <option value="Service Center">Service Center</option>
+            <option value="Admin Unit">Admin Unit</option>
+            <option value="Accounting Unit">Accounting Unit</option>
+            <option value="Sales Unit">Sales Unit</option>
+            <option value="Marketing Unit">Marketing Unit</option>
+            <option value="Japanese Corporate Unit">Japanese Corporate Unit</option>
+            <option value="Executive Management">Executive Management</option>
+          </select>
+          <select id="admNewUserRole" class="border rounded-lg px-2 py-1.5 text-xs bg-white font-bold">
+            ${Object.keys(RBAC_ROLE_LABELS).filter(r => r !== 'SUPER_ADMIN').map(r => `<option value="${r}">${r}</option>`).join('')}
+          </select>
+          <input id="admNewUserPin" placeholder="รหัสเริ่มต้น (ว่าง=สุ่มรหัสชั่วคราว)" class="border rounded-lg px-2.5 py-1.5 text-xs font-mono">
+          <button type="button" onclick="adminCreateNewStaffCredential()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold rounded-lg px-3 py-1.5 text-xs">+ สร้างบัญชี &amp; บันทึก</button>
+        </div>
+      </div>
+
+      <!-- Staff Password & RBAC Table -->
+      <div class="bg-white rounded-xl border border-slate-200 overflow-x-auto max-h-72">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-800 text-white">
+              <th class="p-2">รหัส</th>
+              <th class="p-2">ชื่อพนักงาน</th>
+              <th class="p-2">แผนก (8 แผนก)</th>
+              <th class="p-2">ระดับสิทธิ์ RBAC</th>
+              <th class="p-2">สถานะบัญชี</th>
+              <th class="p-2 text-center">จัดการรหัสผ่าน &amp; ปลดล็อก</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            ${vault.map(u => {
+              const lockSt = getLockoutState_(u.id);
+              const isNoparin = (u.id === SOLE_SUPER_ADMIN_ID);
+              const isLockedOrSusp = lockSt.locked || Boolean(u.suspended);
+              return `
+                <tr class="${isNoparin ? 'bg-amber-50/70' : ''}">
+                  <td class="p-2 font-mono font-bold">${u.id}</td>
+                  <td class="p-2 font-bold text-[#002B49]">
+                    ${u.name}
+                    ${isNoparin ? '<span class="ml-1 px-1.5 py-0.2 rounded bg-amber-400 text-slate-950 text-[9.5px] font-black">SOLE SUPER ADMIN</span>' : ''}
+                    ${u.isTempPassword ? '<span class="ml-1 px-1.5 py-0.2 rounded bg-sky-100 text-sky-900 text-[9.5px] font-bold">Temp PW</span>' : ''}
+                  </td>
+                  <td class="p-2">${u.department}</td>
+                  <td class="p-2">
+                    ${isNoparin
+                      ? '<span class="font-extrabold text-amber-900">SUPER_ADMIN (Locked to Mr. Noparin)</span>'
+                      : `<select onchange="adminUpdateStaffRbacRole('${u.id}', this.value)" class="border rounded px-1.5 py-1 text-[11px] font-bold bg-sky-50">
+                          ${Object.keys(RBAC_ROLE_LABELS).filter(r => r !== 'SUPER_ADMIN').map(r => `<option value="${r}" ${u.rbacRole === r ? 'selected' : ''}>${r}</option>`).join('')}
+                        </select>`
+                    }
+                  </td>
+                  <td class="p-2">
+                    ${u.suspended
+                      ? '<span class="px-2 py-0.5 rounded bg-rose-600 text-white font-bold text-[10px]">⛔ ถูกระงับ (Suspended)</span>'
+                      : (lockSt.locked
+                        ? `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">🔒 Locked (${lockSt.remainingSec}s)</span>`
+                        : '<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">🛡️ SHA-256 Active</span>')
+                    }
+                  </td>
+                  <td class="p-2 text-center whitespace-nowrap space-x-1">
+                    <button type="button" onclick="adminResetStaffPassword('${u.id}')" class="px-2 py-1 rounded bg-amber-500 hover:bg-amber-600 text-white font-bold text-[10.5px]" title="ตั้งรหัสผ่านใหม่">รีเซ็ตรหัส</button>
+                    <button type="button" onclick="adminGenerateTempPassword('${u.id}')" class="px-2 py-1 rounded bg-sky-600 hover:bg-sky-700 text-white font-bold text-[10.5px]" title="สุ่มรหัสชั่วคราว 24 ชม. และบังคับเปลี่ยนเมื่อเข้าระบบ">สร้างรหัสชั่วคราว</button>
+                    ${isLockedOrSusp
+                      ? `<button type="button" onclick="adminUnlockStaffAccount('${u.id}')" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10.5px]">ปลดล็อกบัญชี</button>`
+                      : (!isNoparin ? `<button type="button" onclick="adminSuspendStaffAccount('${u.id}')" class="px-2 py-1 rounded bg-slate-200 hover:bg-rose-600 text-slate-700 hover:text-white font-bold text-[10.5px]">ระงับสิทธิ์</button>` : '')
+                    }
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Recent System Audit Log Preview -->
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+        <div class="font-extrabold text-[11px] text-[#002B49] flex items-center justify-between">
+          <span><i class="fa-solid fa-clock-rotate-left text-indigo-600 mr-1"></i> บันทึกประวัติความปลอดภัยล่าสุด (ซิงค์เข้า Google Sheets แท็บ System_Audit_Log อัตโนมัติ)</span>
+          <span class="text-slate-500">${auditLogs.length} รายการ</span>
+        </div>
+        <div class="max-h-28 overflow-y-auto space-y-1 text-[10.5px]">
+          ${auditLogs.slice(0, 6).map(a => `
+            <div class="bg-white px-2.5 py-1 rounded border border-slate-200 flex items-center justify-between gap-2">
+              <span><b>[${a.category}]</b> ${a.detail}</span>
+              <span class="text-slate-400 font-mono whitespace-nowrap">${a.timestamp}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  };
+
+  let _lastGeneratedTempPwInfo = '';
+  window.copyLastGeneratedTempPassword = function() {
+    if (!_lastGeneratedTempPwInfo) return;
+    navigator.clipboard?.writeText(_lastGeneratedTempPwInfo).catch(() => {});
+    if (typeof showToast === 'function') showToast('📋 คัดลอกรหัสผ่านชั่วคราวลงคลิปบอร์ดเรียบร้อยแล้ว');
+  };
+
+  window.adminGenerateTempPassword = async function(staffId) {
+    const sess = getActiveAuthSession_();
+    if (!isSoleSuperAdmin_(sess)) return;
+    const vault = await ensureCredentialVaultInitialized_();
+    const user = vault.find(u => u.id === staffId);
+    if (!user) return;
+
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let tempPw = 'HZK-';
+    for (let i = 0; i < 6; i++) tempPw += chars.charAt(Math.floor(Math.random() * chars.length));
+
+    user.passwordHash = await sha256Hex_(user.salt + ':' + tempPw);
+    user.isTempPassword = true;
+    user.tempExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
+    user.mustChangePassword = true;
+    user.suspended = false;
+    user.updatedAt = new Date().toISOString();
+    localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(vault));
+    clearFailedLoginAttempts_(staffId);
+
+    _lastGeneratedTempPwInfo = `รหัสผ่านชั่วคราว HOSHIZAKI Service PWA สำหรับ ${user.name} (${user.id}): ${tempPw} (ใช้งานได้ภายใน 24 ชม. และระบบจะให้ตั้งรหัสใหม่ทันทีเมื่อเข้าสู่ระบบ)`;
+
+    await window.pushSecurityAuditEventImmediate('TEMP_PASSWORD_GENERATED', staffId, `Mr. Noparin สร้างรหัสผ่านชั่วคราว (24 ชม.) ให้ ${user.name}`);
+    await window.syncUserCredentialsVaultToCloud(true);
+    await window.renderAdminSecurityRbacPanel();
+
+    const banner = document.getElementById('superAdminTempPassBanner');
+    const txtEl = document.getElementById('superAdminTempPassText');
+    if (banner && txtEl) {
+      banner.classList.remove('hidden');
+      txtEl.textContent = `🔑 รหัสผ่านชั่วคราวสำหรับ ${user.name}: ${tempPw} (หมดอายุใน 24 ชม. • บังคับเปลี่ยนรหัสเมื่อล็อกอิน)`;
+    }
+    if (typeof showToast === 'function') showToast(`🔑 สร้างรหัสชั่วคราว ${tempPw} ให้ ${user.name} และส่งบันทึกเข้า System_Audit_Log แล้ว`);
+  };
+
+  window.adminUpdateStaffRbacRole = async function(staffId, newRole) {
+    const sess = getActiveAuthSession_();
+    if (!isSoleSuperAdmin_(sess) || staffId === SOLE_SUPER_ADMIN_ID || newRole === 'SUPER_ADMIN') return;
+    const vault = await ensureCredentialVaultInitialized_();
+    const user = vault.find(u => u.id === staffId);
+    if (!user) return;
+    const oldRole = user.rbacRole;
+    user.rbacRole = newRole;
+    user.updatedAt = new Date().toISOString();
+    localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(vault));
+
+    await window.pushSecurityAuditEventImmediate('RBAC_ROLE_UPDATED', staffId, `Mr. Noparin ปรับสิทธิ์ ${user.name} จาก ${oldRole} → ${newRole}`);
+    await window.syncUserCredentialsVaultToCloud(true);
+    if (typeof showToast === 'function') showToast(`✅ ปรับสิทธิ์ของ ${user.name} เป็น ${newRole} และบันทึกเข้า System_Audit_Log แล้ว`);
+  };
+
+  window.adminResetStaffPassword = async function(staffId) {
+    const sess = getActiveAuthSession_();
+    if (!isSoleSuperAdmin_(sess)) return;
+    const vault = await ensureCredentialVaultInitialized_();
+    const user = vault.find(u => u.id === staffId);
+    if (!user) return;
+    const newPin = prompt(`ตั้งรหัสผ่าน/PIN ใหม่สำหรับ ${user.name} (อย่างน้อย 4 ตัวอักษร):`, '1234');
+    if (!newPin || newPin.trim().length < 4) return;
+
+    user.passwordHash = await sha256Hex_(user.salt + ':' + newPin.trim());
+    user.isTempPassword = false;
+    user.tempExpiresAt = 0;
+    user.mustChangePassword = false;
+    user.suspended = false;
+    user.updatedAt = new Date().toISOString();
+    localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(vault));
+    clearFailedLoginAttempts_(staffId);
+
+    await window.pushSecurityAuditEventImmediate('ADMIN_PASSWORD_RESET', staffId, `Mr. Noparin รีเซ็ตรหัสผ่านใหม่ให้ ${user.name}`);
+    await window.syncUserCredentialsVaultToCloud(true);
+    await window.renderAdminSecurityRbacPanel();
+    if (typeof showToast === 'function') showToast(`✅ รีเซ็ตรหัสผ่านของ ${user.name} และส่งบันทึกเข้า System_Audit_Log แล้ว`);
+  };
+
+  window.adminUnlockStaffAccount = async function(staffId) {
+    const sess = getActiveAuthSession_();
+    if (!isSoleSuperAdmin_(sess)) return;
+    const vault = await ensureCredentialVaultInitialized_();
+    const user = vault.find(u => u.id === staffId);
+    if (user) {
+      user.suspended = false;
+      user.updatedAt = new Date().toISOString();
+      localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(vault));
+    }
+    clearFailedLoginAttempts_(staffId);
+
+    await window.pushSecurityAuditEventImmediate('ACCOUNT_UNLOCKED', staffId, `Mr. Noparin ปลดล็อกบัญชีผู้ใช้งาน ${user ? user.name : staffId}`);
+    await window.syncUserCredentialsVaultToCloud(true);
+    await window.renderAdminSecurityRbacPanel();
+    if (typeof showToast === 'function') showToast('🔓 ปลดล็อกบัญชีและส่งบันทึกเข้า System_Audit_Log เรียบร้อยแล้ว');
+  };
+
+  window.adminSuspendStaffAccount = async function(staffId) {
+    const sess = getActiveAuthSession_();
+    if (!isSoleSuperAdmin_(sess) || staffId === SOLE_SUPER_ADMIN_ID) return;
+    const vault = await ensureCredentialVaultInitialized_();
+    const user = vault.find(u => u.id === staffId);
+    if (!user) return;
+    user.suspended = true;
+    user.updatedAt = new Date().toISOString();
+    localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(vault));
+
+    await window.pushSecurityAuditEventImmediate('ACCOUNT_SUSPENDED', staffId, `Mr. Noparin ระงับการใช้งานบัญชี ${user.name} ชั่วคราว`);
+    await window.syncUserCredentialsVaultToCloud(true);
+    await window.renderAdminSecurityRbacPanel();
+    if (typeof showToast === 'function') showToast(`⛔ ระงับบัญชี ${user.name} และบันทึกเข้า System_Audit_Log เรียบร้อยแล้ว`);
+  };
+
+  window.adminCreateNewStaffCredential = async function() {
+    const sess = getActiveAuthSession_();
+    if (!isSoleSuperAdmin_(sess)) return;
+    const name = (document.getElementById('admNewUserName')?.value || '').trim();
+    const dept = document.getElementById('admNewUserDept')?.value || 'Service Unit';
+    let role = document.getElementById('admNewUserRole')?.value || 'TECHNICIAN';
+    if (role === 'SUPER_ADMIN') role = 'SERVICE_MANAGER';
+    let pin = (document.getElementById('admNewUserPin')?.value || '').trim();
+
+    if (!name) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุชื่อ-นามสกุลพนักงานใหม่');
+      return;
+    }
+
+    let isTemp = false;
+    if (!pin) {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      pin = 'HZK-';
+      for (let i = 0; i < 6; i++) pin += chars.charAt(Math.floor(Math.random() * chars.length));
+      isTemp = true;
+    } else if (pin.length < 4) {
+      if (typeof showToast === 'function') showToast('⚠️ รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร');
+      return;
+    }
+
+    const vault = await ensureCredentialVaultInitialized_();
+    const newId = 'USR-' + String(vault.length + 1).padStart(3, '0');
+    const salt = 'HZK-' + newId + '-SALT';
+    const hash = await sha256Hex_(salt + ':' + pin);
+    vault.push({
+      id: newId,
+      code: newId,
+      name: name,
+      nickname: name.split(' ')[0],
+      department: dept,
+      position: dept + ' Staff',
+      rbacRole: role,
+      email: '',
+      phone: '',
+      salt: salt,
+      passwordHash: hash,
+      isTempPassword: isTemp,
+      tempExpiresAt: isTemp ? (Date.now() + 24 * 60 * 60 * 1000) : 0,
+      mustChangePassword: isTemp,
+      suspended: false,
+      active: true,
+      updatedAt: new Date().toISOString()
+    });
+    localStorage.setItem(CRED_VAULT_KEY, JSON.stringify(vault));
+
+    await window.pushSecurityAuditEventImmediate('ADMIN_USER_CREATED', newId, `Mr. Noparin สร้างบัญชีพนักงานใหม่: ${name} (${dept} · ${role})`);
+    await window.syncUserCredentialsVaultToCloud(true);
+    await window.renderAdminSecurityRbacPanel();
+
+    if (isTemp) {
+      _lastGeneratedTempPwInfo = `บัญชีใหม่ HOSHIZAKI Service PWA: ${name} (${newId}) | รหัสชั่วคราว: ${pin}`;
+      const banner = document.getElementById('superAdminTempPassBanner');
+      const txtEl = document.getElementById('superAdminTempPassText');
+      if (banner && txtEl) {
+        banner.classList.remove('hidden');
+        txtEl.textContent = `✅ สร้างบัญชี ${name} (${newId}) สำเร็จ | รหัสผ่านชั่วคราว: ${pin}`;
+      }
+    }
+    if (typeof showToast === 'function') showToast(`✅ สร้างบัญชีพนักงานใหม่ ${name} (${newId}) และซิงค์เข้า Google Sheets เรียบร้อยแล้ว`);
+  };
+
+  window.syncUserCredentialsVaultToCloud = async function(silent) {
+    const vault = await ensureCredentialVaultInitialized_();
+    const gasUrl = window.resolveHoshizakiGasUrl();
+    if (!gasUrl) {
+      if (!silent && typeof showToast === 'function') {
+        showToast('⚠️ กรุณาตั้งค่า Google Apps Script Web App URL ในเมนู ซิงค์ & สำรองข้อมูล ก่อนซิงค์ขึ้น Cloud');
+      }
+      return false;
+    }
+    try {
+      await fetch(gasUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          actionType: 'SYNC_USER_CREDENTIALS_VAULT',
+          users: vault.map(u => ({
+            id: u.id, code: u.code, name: u.name, department: u.department,
+            position: u.position, rbacRole: u.id === SOLE_SUPER_ADMIN_ID ? 'SUPER_ADMIN' : u.rbacRole,
+            salt: u.salt, passwordHash: u.passwordHash,
+            isTempPassword: Boolean(u.isTempPassword),
+            suspended: Boolean(u.suspended),
+            active: u.active !== false, updatedAt: u.updatedAt
+          }))
+        })
+      });
+      if (!silent && typeof showToast === 'function') {
+        showToast('☁️ ซิงค์รหัสผ่าน SHA-256 และบันทึก System_Audit_Log ขึ้น Google Sheets เรียบร้อยแล้ว');
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  // Role-Based Idle Auto-Lock (15 mins for Super Admin / Service Manager / Supervisor / Exec / Accounting; 30 mins for Field Tech)
+  let _lastUserActivityV1042 = Date.now();
+  ['click', 'keydown', 'touchstart'].forEach(ev => {
+    document.addEventListener(ev, () => { _lastUserActivityV1042 = Date.now(); }, { passive: true });
+  });
+
+  setInterval(() => {
+    const sess = getActiveAuthSession_();
+    if (!sess) return;
+    const isPrivileged = ['SUPER_ADMIN', 'EXECUTIVE', 'SERVICE_MANAGER', 'SUPERVISOR', 'ACCOUNTING_UNIT'].includes(sess.rbacRole);
+    const timeoutMins = isPrivileged ? 15 : 30;
+    if ((Date.now() - _lastUserActivityV1042) > timeoutMins * 60 * 1000) {
+      localStorage.removeItem(ACTIVE_SESSION_KEY);
+      window.applyRbacRoleViewFiltering();
+      if (typeof showToast === 'function') {
+        showToast(`🔒 ล็อกเซสชันอัตโนมัติเนื่องจากไม่มีการใช้งานเกิน ${timeoutMins} นาที กรุณาเลือกชื่อและกรอกรหัสผ่านเพื่อใช้งานต่อ`);
+      }
+      window.openTechQuickLoginModal();
+    }
+  }, 30000);
+
+  // Initialize Credential Vault & Apply RBAC Filtering on load
+  setTimeout(async function() {
+    await ensureCredentialVaultInitialized_();
+    window.applyRbacRoleViewFiltering();
+  }, 1200);
+})();

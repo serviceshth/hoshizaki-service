@@ -1164,7 +1164,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1048-BDAY-CARE',
+    version: 'Enterprise-v1049-INTL-OMNI',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1203,7 +1203,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1048-BDAY-CARE',
+    version: 'Enterprise-v1049-INTL-OMNI',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -9385,7 +9385,7 @@ function getEnterpriseImsDataFromSheets_(ss) {
 
 
 // ============================================================================
-// 26. ENTERPRISE v1048-BDAY-CARE: MULTI-USER SHA-256 CREDENTIAL VAULT,
+// 26. ENTERPRISE v1049-INTL-OMNI: MULTI-USER SHA-256 CREDENTIAL VAULT,
 //     SOLE SUPER ADMIN (MR. NOPARIN) & IMMEDIATE SYSTEM_AUDIT_LOG SYNC
 // ============================================================================
 
@@ -9446,7 +9446,7 @@ function logSecurityAuditEventToSheet_(ss, data) {
 
 
 // ============================================================================
-// SECTION 28: ENTERPRISE v1048-BDAY-CARE TWO-WAY CREDENTIAL VAULT & AUDIT LOG READERS
+// SECTION 28: ENTERPRISE v1049-INTL-OMNI TWO-WAY CREDENTIAL VAULT & AUDIT LOG READERS
 // ============================================================================
 function getUserCredentialsVaultFromSheet_(ss) {
   var sheet = ss.getSheetByName('System_User_Credentials');
@@ -9501,4 +9501,82 @@ function getSecurityAuditLogsFromSheet_(ss, limit) {
     });
   }
   return { status: 'ok', logs: logs, count: logs.length };
+}
+
+
+// ============================================================================
+// 27. ENTERPRISE v1049-INTL-OMNI BACKEND ENHANCEMENTS:
+//     - Trilingual Auto-Detect Response (TH / EN / JP)
+//     - Business Hours Flex Card (Mon-Fri 08:30-17:30) + After-Hours Queue
+//     - Smart Fuzzy Disambiguation & Auto-Resend Permanent PDF Vault Link
+//     - LINE OA Inquiry CRM Logger & Geo-Location Travel Cost Estimator
+// ============================================================================
+
+function detectTextLanguage_(text) {
+  var s = String(text || '');
+  if (/[\u3040-\u30FF\u4E00-\u9FAF]/.test(s)) return 'JP';
+  if (/[\u0E00-\u0E7F]/.test(s)) return 'TH';
+  return 'EN';
+}
+
+function isWithinHoshizakiBusinessHours_() {
+  var now = new Date();
+  var dayStr = Utilities.formatDate(now, 'Asia/Bangkok', 'u'); // 1=Mon .. 7=Sun
+  var hourNum = Number(Utilities.formatDate(now, 'Asia/Bangkok', 'HH'));
+  var minNum = Number(Utilities.formatDate(now, 'Asia/Bangkok', 'mm'));
+  var dayNum = Number(dayStr);
+  if (dayNum >= 6) return false;
+  var totalMins = hourNum * 60 + minNum;
+  return totalMins >= (8 * 60 + 30) && totalMins <= (17 * 60 + 30);
+}
+
+function buildBusinessHoursFlexCard_(lang) {
+  var title = lang === 'JP'
+    ? '営業時間のご案内（月〜金 08:30〜17:30）'
+    : (lang === 'EN' ? 'HOSHIZAKI Business Hours Notice' : 'แจ้งเวลาทำการ HOSHIZAKI (THAILAND)');
+  var bodyTxt = lang === 'JP'
+    ? 'お問い合わせありがとうございます。現在営業時間外（月曜〜金曜 08:30〜17:30）のため、翌営業日に担当者より順次ご連絡いたします。\n※迅速な部品特定のため、本体銘板（Model / Serial No.）のお写真をお送りください。'
+    : (lang === 'EN'
+      ? 'Thank you for contacting HOSHIZAKI (THAILAND). Our business hours are Monday – Friday, 08:30 – 17:30. Our team will follow up on the next working day.\nPlease share a photo of the machine Nameplate (Model & Serial No.) for faster assistance.'
+      : 'ขอบคุณที่ติดต่อสอบถามงานบริการและทางเทคนิค HOSHIZAKI (THAILAND)\n• เวลาทำการ: วันจันทร์ - ศุกร์ เวลา 08:30 - 17:30 น.\n• Line Official: @hoshizakithailand | Tel: 02-005-9980 | Email: info@hoshizaki.co.th\nกรุณาถ่ายรูปเนมเพลท (Nameplate) ที่เห็น Model และ Serial No. ทิ้งไว้ เพื่อประสานงานให้ทันทีในวันทำการถัดไปครับ');
+
+  return {
+    type: 'flex',
+    altText: title,
+    contents: {
+      type: 'bubble',
+      size: 'mega',
+      header: {
+        type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+        contents: [
+          { type: 'text', text: 'HOSHIZAKI (THAILAND) · SERVICE HOTLINE', color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+          { type: 'text', text: title, color: '#FFFFFF', size: 'sm', weight: 'bold', margin: 'xs', wrap: true }
+        ]
+      },
+      body: {
+        type: 'box', layout: 'vertical', paddingAll: '12px',
+        contents: [
+          { type: 'text', text: bodyTxt, size: 'xs', color: '#1E293B', wrap: true }
+        ]
+      }
+    }
+  };
+}
+
+function logLineOaInquiryToSheet_(ss, userId, custName, lang, question, intent, actionOutcome) {
+  try {
+    var sheet = ss.getSheetByName('LINE_OA_Inquiry_Log');
+    if (!sheet) {
+      sheet = ss.insertSheet('LINE_OA_Inquiry_Log');
+      sheet.getRange(1, 1, 1, 8).setValues([[
+        'Timestamp', 'Date', 'LINE User ID', 'Customer Name', 'Language',
+        'Question Text', 'Detected Intent', 'Action Outcome'
+      ]]).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+      sheet.setFrozenRows(1);
+    }
+    var now = new Date();
+    var ts = Utilities.formatDate(now, 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+    var dt = Utilities.formatDate(now, 'Asia/Bangkok', 'yyyy-MM-dd');
+    sheet.appendRow([ts, dt, userId || '', custName || 'LINE User', lang || 'TH', String(question || '').substring(0, 1000), intent || 'GENERAL', actionOutcome || 'LOGGED']);
+  } catch (e) {}
 }

@@ -5511,7 +5511,7 @@
 
 
 // ============================================================================
-// --- Module Block #55 (Enterprise v1048-BDAY-CARE: Sole Super Admin Control
+// --- Module Block #55 (Enterprise v1049-INTL-OMNI: Sole Super Admin Control
 //     for Mr. Noparin Homhoul, SHA-256 + Salt Vault, Temp Password Generator,
 //     8-Department RBAC, Account Lock/Unlock & Immediate System_Audit_Log Sync) ---
 // ============================================================================
@@ -6435,7 +6435,7 @@
 
 
 // ============================================================================
-// --- Module Block #56 (Enterprise v1048-BDAY-CARE: Two-Way Cloud Credential Pull,
+// --- Module Block #56 (Enterprise v1049-INTL-OMNI: Two-Way Cloud Credential Pull,
 //     Live System_Audit_Log Viewer & CSV Export, Global Command Palette Ctrl+K,
 //     100-Seat Multi-Branch Roster Manager, 1-Click Predictive Quote & LINE Flex,
 //     and IndexedDB Cold-Archive & Storage Auto-Compaction Engine) ---
@@ -6443,9 +6443,9 @@
 (function() {
   const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
-  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1048';
-  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1048';
-  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1048';
+  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1049';
+  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1049';
+  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1049';
 
   const HZK_BRANCH_DIRECTORY = [
     { code: 'ALL', name: 'ทุกสาขาทั่วประเทศ (All Thailand Branches)', region: 'Nationwide' },
@@ -6533,7 +6533,7 @@
       const resp = await fetch(gasUrl + sep + 'action=getSecurityAuditLogs&limit=100&_t=' + Date.now(), { method: 'GET' });
       const data = await resp.json();
       if (data && data.status === 'ok' && Array.isArray(data.logs)) {
-        localStorage.setItem('hoshizaki_cloud_audit_cache_v1048', JSON.stringify(data.logs));
+        localStorage.setItem('hoshizaki_cloud_audit_cache_v1049', JSON.stringify(data.logs));
         if (typeof window.renderAdminSecurityRbacPanel === 'function') {
           await window.renderAdminSecurityRbacPanel();
         }
@@ -6548,7 +6548,7 @@
 
   window.exportSecurityAuditCsv = function() {
     const localLogs = JSON.parse(localStorage.getItem('hoshizaki_immutable_audit_log_v1033') || '[]');
-    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1048') || '[]');
+    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1049') || '[]');
     const rows = [['Timestamp', 'Category/Actor', 'Target', 'Detail']];
     cloudLogs.forEach(c => rows.push([c.timestamp || '', `${c.actorName || ''} (${c.actorId || ''})`, c.targetId || '', c.event || '']));
     localLogs.forEach(l => rows.push([l.timestamp || '', l.category || '', l.actor || '', l.detail || '']));
@@ -6571,16 +6571,16 @@
       await _origRenderAdminSecurityRbacPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (!panel || panel.querySelector('#v1048OmniSecurityEnhancementBar')) return;
+    if (!panel || panel.querySelector('#v1049OmniSecurityEnhancementBar')) return;
 
-    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1048') || '[]');
+    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1049') || '[]');
     const bar = document.createElement('div');
-    bar.id = 'v1048OmniSecurityEnhancementBar';
+    bar.id = 'v1049OmniSecurityEnhancementBar';
     bar.className = 'p-3 rounded-xl bg-sky-50 border border-sky-200 space-y-2.5';
     bar.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="text-xs font-extrabold text-[#002B49]">
-          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1048-BDAY-CARE: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
+          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1049-INTL-OMNI: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
         </div>
         <div class="flex flex-wrap gap-1.5">
           <button type="button" onclick="pullUserCredentialsVaultFromCloud(false).then(() => renderAdminSecurityRbacPanel())" class="px-2.5 py-1.5 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[11px]">
@@ -6737,7 +6737,7 @@
           </div>
           <div id="omniCommandResultsList" class="max-h-96 overflow-y-auto divide-y divide-slate-100 p-2 bg-slate-50/70"></div>
           <div class="bg-slate-100 px-4 py-2 text-[10.5px] text-slate-500 flex items-center justify-between">
-            <span>HOSHIZAKI Enterprise v1048-BDAY-CARE • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
+            <span>HOSHIZAKI Enterprise v1049-INTL-OMNI • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
             <span>กด <kbd class="px-1.5 py-0.5 bg-white border rounded font-mono">Ctrl+K</kbd> ได้ทุกหน้า</span>
           </div>
         </div>
@@ -7032,15 +7032,15 @@
 
 
 // ============================================================================
-// --- Module Block #57 (Enterprise v1048-BDAY-CARE: Tailored ≤30-Seat Org Architecture,
+// --- Module Block #57 (Enterprise v1049-INTL-OMNI: Tailored ≤30-Seat Org Architecture,
 //     Auto Google Sheets Cloud Backup with Live Progress Status Bar,
 //     Role-Personalized Daily Workspace, Cross-Dept SLA Handoff Queue,
 //     Revenue Leakage & 2-Way Reconciliation Audit, Technician Skill Matrix & OT,
 //     and Comprehensive Deep Self-Test & Auto-Heal across ALL 28 Modules) ---
 // ============================================================================
 (function() {
-  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1048';
-  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1048';
+  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1049';
+  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1049';
   const ACTIVE_SESSION_KEY = 'hoshizaki_active_auth_session_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
 
@@ -7064,7 +7064,7 @@
       : (localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '');
 
     // Check if already auto-backed up within last 12 hours unless forced
-    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1048') || '0');
+    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1049') || '0');
     if (!forceNow && lastCloudTs > 0 && (Date.now() - lastCloudTs) < 12 * 60 * 60 * 1000 && history.length === 0) {
       return;
     }
@@ -7102,7 +7102,7 @@
         ? await buildFullEnterpriseSnapshotObject()
         : {
             app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
-            version: '1048-BDAY-CARE',
+            version: '1049-INTL-OMNI',
             exportedAt: new Date().toISOString(),
             recordCounts: { jobs: history.length, quotations: qts.length },
             payload: { jobHistory: history, quotationsHistory: qts }
@@ -7123,7 +7123,7 @@
 
       const nowIso = new Date().toISOString();
       const timeLabel = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1048', String(Date.now()));
+      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1049', String(Date.now()));
       localStorage.setItem('hoshizaki_last_backup_at', nowIso);
       localStorage.setItem('hoshizaki_last_cloud_auto_backup_date', nowIso.split('T')[0]);
 
@@ -7662,7 +7662,7 @@
     }
 
     const passed = checks.filter(c => c.ok).length;
-    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1048-BDAY-CARE)</span>`;
+    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1049-INTL-OMNI)</span>`;
     listEl.innerHTML = checks.map(c => `
       <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/75 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
         <div>
@@ -7749,7 +7749,7 @@
 
 
 // ============================================================================
-// --- Module Block #58 (Enterprise v1048-BDAY-CARE: Standalone Quotation Studio,
+// --- Module Block #58 (Enterprise v1049-INTL-OMNI: Standalone Quotation Studio,
 //     Hardened Auto Google Sheets Backup + Dismiss Logic, 1-Click Onboarding
 //     Credential Slip, Production Go-Live Clean Reset, Offline Sync Conflict
 //     Resolver, PM Lifecycle Renewal Radar & 30-Point Deep Self-Test) ---
@@ -8172,7 +8172,7 @@
     if (typeof window.purgeAllV1040ExampleRecords === 'function') {
       window.purgeAllV1040ExampleRecords();
     }
-    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1048');
+    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1049');
     localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1045');
     if (typeof window.renderMyDailyRoleWorkspace === 'function') {
       window.renderMyDailyRoleWorkspace();
@@ -8262,13 +8262,13 @@
       await _prevRenderSecPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (panel && !document.getElementById('v1048GoLiveToolsBar')) {
+    if (panel && !document.getElementById('v1049GoLiveToolsBar')) {
       const bar = document.createElement('div');
-      bar.id = 'v1048GoLiveToolsBar';
+      bar.id = 'v1049GoLiveToolsBar';
       bar.className = 'mt-3 p-3 rounded-xl bg-emerald-50 border border-emerald-300 flex flex-wrap items-center justify-between gap-2 text-xs';
       bar.innerHTML = `
         <div>
-          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1048 Go-Live Readiness)</div>
+          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1049 Go-Live Readiness)</div>
           <div class="text-[11px] text-emerald-800">ล้างข้อมูลตัวอย่างก่อนเริ่มงานจริง หรือเปิดดูเรดาร์อายุเครื่องเพื่อต่อสัญญา PM รายปี</div>
         </div>
         <div class="flex flex-wrap gap-1.5">
@@ -8283,7 +8283,7 @@
 
 
 // ============================================================================
-// --- Module Block #59 (Enterprise v1048-BDAY-CARE: 3-Char Customer Smart Search,
+// --- Module Block #59 (Enterprise v1049-INTL-OMNI: 3-Char Customer Smart Search,
 //     Multi-Custodian S/N Selector, Save QT + PDF + Auto-Sync Sheets, Load & Edit
 //     Saved QT, and Unified Omni-Share Hub across ALL System Documents) ---
 // ============================================================================
@@ -9016,13 +9016,13 @@
 
 
 // ============================================================================
-// --- Module Block #60 (Enterprise v1048-BDAY-CARE: Employee Birthday &
+// --- Module Block #60 (Enterprise v1049-INTL-OMNI: Employee Birthday &
 //     Personal Profile Database, Smart Working-Day Advance Birthday Wishes,
 //     Trilingual HOSHIZAKI Penguin Greeting Card & Work Anniversary Badges) ---
 // ============================================================================
 (function() {
-  const EMP_BDAY_DB_KEY = 'hoshizaki_employee_birthday_profiles_v1048';
-  const EMP_BDAY_SHOWN_KEY = 'hoshizaki_bday_card_shown_dates_v1048';
+  const EMP_BDAY_DB_KEY = 'hoshizaki_employee_birthday_profiles_v1049';
+  const EMP_BDAY_SHOWN_KEY = 'hoshizaki_bday_card_shown_dates_v1049';
 
   // Fixed Thai Public Holidays (MM-DD) for Smart Working-Day Pre-Greeting calculation
   const FIXED_HOLIDAYS_MMDD = new Set([
@@ -9458,4 +9458,729 @@
     loadEmployeeProfilesDb_();
     window.checkAndTriggerAutoBirthdayGreeting();
   }, 1800);
+})();
+
+
+// ============================================================================
+// --- Module Block #61 (Enterprise v1049-INTL-OMNI Consolidated Release):
+//     1) Login-Gated Birthday & Profile Button Visibility
+//     2) Mobile Scroll-Safe Signature Pad Guard (Prevents accidental scroll taps)
+//     3) Smart Fuzzy Disambiguation Engine (Thai Phonetics, Typos, Part/SN/Model)
+//     4) Pre-Send 2-Step Audience & Document Guardrail (Tier 1-4 Classification)
+//     5) LINE OA Inquiry CRM & Daily/Weekly/Monthly Action Analytics + Self-Learning FAQ
+//     6) Smart Geo-Dispatch & Provincial Travel Cost Estimator (Location / Google Maps)
+//     7) Permanent Drive Vault Link + 1-Click Auto-Resend for Expired LINE Group PDFs
+//     8) Business Hours Flex Card (Mon-Fri 08:30-17:30) + After-Hours Morning Queue
+//     9) Bilingual JP/EN Full-Menu Enforcement & Trilingual LINE OA Auto-Reply
+//    10) Contextual In-App Help Drawer (?) & 1-Click Sample Data Fill on Every Modal
+//    11) Interactive LINE Chatbot 3-Language Simulator & Auto-Test Suite
+// ============================================================================
+(function() {
+  const INQUIRY_CRM_KEY = 'hoshizaki_line_oa_inquiry_crm_v1049';
+  const LEARNED_FAQ_KEY = 'hoshizaki_learned_faq_kb_v1049';
+  const DISPATCH_VAULT_LOG_KEY = 'hoshizaki_dispatch_pdf_vault_log_v1049';
+
+  // --------------------------------------------------------------------------
+  // 1. LOGIN-GATED BIRTHDAY & PROFILE VISIBILITY
+  // --------------------------------------------------------------------------
+  function syncBirthdayButtonLoginVisibility_() {
+    const btn = document.getElementById('btnEmployeeBirthdayProfile');
+    if (!btn) return;
+    const isLoggedIn = Boolean(
+      localStorage.getItem('hoshizaki_active_logged_in_user_v1042') ||
+      localStorage.getItem('hoshizaki_tech_profile_name')
+    );
+    const labelText = (document.getElementById('techQuickProfileName')?.innerText || '').trim();
+    const hasRealUser = isLoggedIn && labelText && labelText !== 'เลือกโปรไฟล์ช่าง';
+    if (hasRealUser) {
+      btn.classList.remove('hidden');
+    } else {
+      btn.classList.add('hidden');
+    }
+  }
+
+  // Hook login & profile selection functions so button reveals only after login
+  const origCheckBday = window.checkAndTriggerAutoBirthdayGreeting;
+  window.checkAndTriggerAutoBirthdayGreeting = function() {
+    syncBirthdayButtonLoginVisibility_();
+    const btn = document.getElementById('btnEmployeeBirthdayProfile');
+    if (btn && !btn.classList.contains('hidden') && typeof origCheckBday === 'function') {
+      origCheckBday();
+    }
+  };
+
+  setInterval(syncBirthdayButtonLoginVisibility_, 2500);
+
+  // --------------------------------------------------------------------------
+  // 2. MOBILE SCROLL-SAFE SIGNATURE PAD GUARD
+  //    Prevents accidental modal popup when scrolling past signature boxes on mobile
+  // --------------------------------------------------------------------------
+  function installMobileScrollSafeSignaturePads_() {
+    const canvases = document.querySelectorAll('canvas.sig-canvas');
+    canvases.forEach(function(cv, idx) {
+      if (cv.id === 'fullscreenSigCanvas' || cv.dataset.scrollSafeMounted === '1') return;
+      cv.dataset.scrollSafeMounted = '1';
+
+      // Default to locked scroll-safe state so finger swipes pass smoothly
+      cv.style.pointerEvents = 'none';
+      cv.style.touchAction = 'pan-y';
+
+      const parent = cv.parentElement;
+      if (!parent) return;
+      if (getComputedStyle(parent).position === 'static') {
+        parent.style.position = 'relative';
+      }
+
+      const overlay = document.createElement('div');
+      overlay.className = 'hzk-sig-scroll-guard no-print absolute inset-0 bg-slate-900/5 hover:bg-sky-500/10 flex items-center justify-center rounded-lg transition cursor-pointer z-10';
+      overlay.innerHTML = `
+        <button type="button" class="px-3 py-1.5 rounded-full bg-[#002B49]/90 hover:bg-[#00A3E0] text-white text-[11px] font-extrabold shadow-md flex items-center gap-1.5 border border-white/70">
+          <i class="fa-solid fa-pen-nib text-amber-300"></i>
+          <span>กดเพื่อเริ่มเซ็นชื่อ (ล็อกกันโดนตอนเลื่อนจอ)</span>
+        </button>
+      `;
+
+      let startY = 0;
+      let startX = 0;
+      overlay.addEventListener('touchstart', function(e) {
+        if (e.touches && e.touches[0]) {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      overlay.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Unlock briefly and open intentional fullscreen signature modal
+        cv.style.pointerEvents = 'auto';
+        if (typeof openFullscreenSignature === 'function') {
+          const targetId = cv.id || (idx === 0 ? 'customerSigCanvas' : 'techSigCanvas');
+          openFullscreenSignature(targetId);
+        } else {
+          overlay.classList.add('hidden');
+        }
+        // Re-lock after 15s to prevent accidental smudges after signing
+        setTimeout(function() {
+          cv.style.pointerEvents = 'none';
+          overlay.classList.remove('hidden');
+        }, 15000);
+      });
+
+      parent.appendChild(overlay);
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // 3. SMART FUZZY DISAMBIGUATION ENGINE (THAI PHONETICS, TYPOS, PART/SN/MODEL)
+  // --------------------------------------------------------------------------
+  const DOC_PHONETIC_ALIASES = [
+    { type: 'SPEC', label: 'Spec Sheet (ตารางสเปกเครื่อง)', patterns: ['สเปคชีส', 'สเปกชีต', 'สเปคชีท', 'สเปค', 'สเปก', 'spec', 'datasheet', 'แคตตาล็อก', 'โบรชัวร์'] },
+    { type: 'SERVICE_MANUAL', label: 'Service Manual (คู่มือซ่อมช่าง)', patterns: ['เซอร์วิสแมนวล', 'เซอวิสแมนนวล', 'เซอร์วิส', 'คู่มือซ่อม', 'คู่มือช่าง', 'service manual', 'sm'] },
+    { type: 'USER_MANUAL', label: 'User / Instruction Manual (คู่มือผู้ใช้)', patterns: ['ยูสเซอร์แมนวล', 'ยูสเซอแมนนวล', 'อินสตรัคชั่น', 'คู่มือผู้ใช้', 'คู่มือการใช้งาน', 'user manual', 'instruction'] },
+    { type: 'DRAWING', label: 'Drawing / Wiring Diagram (ผังวงจร/แบบเครื่อง)', patterns: ['ดรออิ้ง', 'ดรอว์อิ้ง', 'ดออิ้ง', 'ไวริ่ง', 'ผังวงจร', 'วงจรไฟฟ้า', 'drawing', 'wiring', 'schematic'] },
+    { type: 'PARTS_LIST', label: 'Parts List (รายการอะไหล่)', patterns: ['พาร์ทลิสต์', 'พาสลิส', 'พาร์ทลิส', 'รายการอะไหล่', 'เบอร์อะไหล่', 'รหัสอะไหล่', 'parts list', 'part list'] }
+  ];
+
+  const THAI_PART_ALIASES = [
+    { keywords: ['วาล์วน้ำ', 'วาล์วน้ำเข้า', 'โซลินอยด์น้ำ', 'water valve'], partNo: '4A5251-06 / P01872-01', name: 'Water Inlet Valve (KM / IM Series)', models: 'KM-515MAH, IM-130NE, IM-240DNE' },
+    { keywords: ['ปั๊มน้ำ', 'มอเตอร์ปั๊ม', 'pump motor'], partNo: 'PA0613 / 2A2758-01', name: 'Water Pump Motor Assembly', models: 'KM-630MH-E, KM-901MAJ' },
+    { keywords: ['บอร์ด', 'แผงวงจร', 'control board', 'pcb'], partNo: 'P01873-01 / 2A1410-02', name: 'Main Controller Board', models: 'IM Series / KM Series' },
+    { keywords: ['มอเตอร์ถาด', 'ถาดน้ำ', 'actuator'], partNo: 'P03755-01 / P01869-01', name: 'Actuator Motor (Water Pan)', models: 'IM-45NE / IM-65NE / IM-130NE' },
+    { keywords: ['ไส้กรอง', 'กรองน้ำ', 'filter', '4hc'], partNo: 'EV965516 (4HC-H)', name: 'HOSHIZAKI Genuine Water Filter 4HC-H', models: 'All Ice Makers' },
+    { keywords: ['ซีล', 'ซีลแกน', 'mechanical seal'], partNo: '432491-01 / 432492-01', name: 'Mechanical Seal (Auger)', models: 'FM-150KE / FM-300AKE / FM-600AKE' }
+  ];
+
+  window.detectQueryLanguageTrilingual = function(text) {
+    const s = String(text || '');
+    if (/[\u3040-\u30FF\u4E00-\u9FAF]/.test(s)) return 'JP';
+    if (/[\u0E00-\u0E7F]/.test(s)) return 'TH';
+    return 'EN';
+  };
+
+  window.analyzeSmartFuzzyQuery = function(rawQuery) {
+    const q = String(rawQuery || '').trim();
+    const low = q.toLowerCase();
+    const lang = window.detectQueryLanguageTrilingual(q);
+
+    // 1. Detect Document Type (including Thai phonetic typos like สเปคชีส, เซอร์วิสแมนวล)
+    let docMatch = null;
+    for (const d of DOC_PHONETIC_ALIASES) {
+      if (d.patterns.some(p => low.includes(p))) {
+        docMatch = d;
+        break;
+      }
+    }
+
+    // 2. Detect Model (including missing hyphen like IM130 or KM515)
+    const modelRaw = q.toUpperCase().match(/\b(IM|KM|KMD|FM|HR|HF|HRF|RT|RTC|RTF|HSU|JWE|DCM|DBF|HNC)[-\s]?(\d{2,4}[A-Z0-9\-]*)\b/);
+    const normalizedModel = modelRaw ? (modelRaw[1] + '-' + modelRaw[2]) : '';
+
+    // 3. Detect Partial or Full Serial Number
+    const snRaw = q.toUpperCase().match(/\b([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})\b/);
+    const detectedSn = snRaw ? snRaw[1] : '';
+
+    // 4. Detect Part Number or Thai Part Alias
+    const partCodeRaw = q.toUpperCase().match(/\b([0-9A-Z]{4,6}-[0-9A-Z]{2}|PA\d{4}|EV\d{6}|TS\d{3,4})\b/);
+    let partCandidates = [];
+    if (partCodeRaw) {
+      partCandidates.push({ partNo: partCodeRaw[1], name: 'Matched Part Code', models: normalizedModel || 'HOSHIZAKI Series' });
+    }
+    THAI_PART_ALIASES.forEach(pa => {
+      if (pa.keywords.some(kw => low.includes(kw))) {
+        partCandidates.push(pa);
+      }
+    });
+
+    // Build confirmation question ("Did you mean...?")
+    let confirmPrompt = '';
+    if (lang === 'JP') {
+      confirmPrompt = `🔍 ご質問内容の確認（誤送信・重複防止）：「${normalizedModel || detectedSn || (partCandidates[0]?.partNo) || q}」の${docMatch ? docMatch.type : '技術情報・部品データ'}でお間違いないでしょうか？`;
+    } else if (lang === 'EN') {
+      confirmPrompt = `🔍 Did you mean: ${docMatch ? docMatch.type : 'Technical / Part Lookup'} for "${normalizedModel || detectedSn || (partCandidates[0]?.partNo) || q}"? Please confirm below to prevent duplicate or incorrect files.`;
+    } else {
+      const targetLabel = [
+        docMatch ? docMatch.label : '',
+        normalizedModel ? ('รุ่น ' + normalizedModel) : '',
+        detectedSn ? ('S/N ' + detectedSn) : '',
+        partCandidates[0] ? ('อะไหล่ ' + partCandidates[0].partNo + ' (' + partCandidates[0].name + ')') : ''
+      ].filter(Boolean).join(' · ') || q;
+      confirmPrompt = `🔍 ทวนคำถามเพื่อความถูกต้อง (ป้องกันส่งผิดรุ่น/ซ้ำซ้อน): คุณหมายถึง "${targetLabel}" ใช่หรือไม่ครับ?`;
+    }
+
+    return {
+      lang,
+      docMatch,
+      normalizedModel,
+      detectedSn,
+      partCandidates,
+      confirmPrompt
+    };
+  };
+
+  // --------------------------------------------------------------------------
+  // 4. PRE-SEND 2-STEP AUDIENCE & DOCUMENT GUARDRAIL (TIER 1-4)
+  // --------------------------------------------------------------------------
+  window.verifyPreSendAudienceGuardrail = function(opts) {
+    // opts: { docTier: 'TIER1_PUBLIC'|'TIER2_DEALER'|'TIER3_INTERNAL'|'TIER4_CONFIDENTIAL', docTitle, recipientType: 'CUSTOMER'|'DEALER_GROUP'|'DEALER_PRIVATE'|'INTERNAL_GROUP', recipientName, hasPrice, onConfirmed }
+    const tier = opts.docTier || 'TIER1_PUBLIC';
+    const rType = opts.recipientType || 'CUSTOMER';
+
+    const isBlocked =
+      (tier === 'TIER4_CONFIDENTIAL') ||
+      (tier === 'TIER3_INTERNAL' && rType !== 'INTERNAL_GROUP') ||
+      (tier === 'TIER2_DEALER' && rType === 'CUSTOMER');
+
+    let guardModal = document.getElementById('hzkPreSendGuardrailModal');
+    if (!guardModal) {
+      guardModal = document.createElement('div');
+      guardModal.id = 'hzkPreSendGuardrailModal';
+      guardModal.className = 'fixed inset-0 z-[10002] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-3';
+      document.body.appendChild(guardModal);
+    }
+
+    const rBadge = rType === 'DEALER_GROUP' ? '🏢 กลุ่ม LINE ตัวแทนจำหน่าย (Dealer Group)'
+      : rType === 'DEALER_PRIVATE' ? '🤝 LINE ส่วนตัว / Email ตัวแทนจำหน่าย (Dealer B2B)'
+      : rType === 'INTERNAL_GROUP' ? '👨‍🔧 กลุ่ม LINE ทีมช่างภายใน (Internal Staff)'
+      : '👤 ลูกค้าทั่วไป (End-User Customer)';
+
+    guardModal.innerHTML = `
+      <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border-2 ${isBlocked ? 'border-rose-600' : 'border-[#002B49]'} overflow-hidden text-xs">
+        <div class="${isBlocked ? 'bg-rose-700' : 'bg-[#002B49]'} text-white px-4 py-3 flex items-center justify-between">
+          <div class="font-extrabold text-sm">
+            ${isBlocked ? '🛑 บล็อกการส่งอัตโนมัติ: เอกสารไม่ตรงกลุ่มผู้รับ!' : '🛡️ ด่านตรวจสอบความถูกต้องก่อนส่ง (Pre-Send Guardrail)'}
+          </div>
+          <button type="button" onclick="document.getElementById('hzkPreSendGuardrailModal').classList.add('hidden')" class="w-7 h-7 rounded-lg bg-white/20 text-white font-bold">&times;</button>
+        </div>
+        <div class="p-4 space-y-3">
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1.5">
+            <div><b>กลุ่มผู้รับปลายทาง:</b> <span class="font-extrabold text-[#002B49]">${rBadge}</span></div>
+            <div><b>ชื่อผู้รับ / ห้องแชท:</b> ${escapeHtml(opts.recipientName || '-')}</div>
+            <div><b>เอกสารที่จะส่ง:</b> ${escapeHtml(opts.docTitle || '-')}</div>
+            <div><b>ระดับความลับเอกสาร:</b> <span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-bold">${tier}</span> ${opts.hasPrice ? '· 💰 <b>มีตัวเลขราคาแสดงอยู่</b>' : '· 📄 <b>ไม่มีราคาทุน/ราคาส่งปะปน</b>'}</div>
+          </div>
+
+          ${isBlocked ? `
+            <div class="bg-rose-50 border border-rose-300 text-rose-950 p-3 rounded-xl font-bold leading-relaxed">
+              ⚠️ ระบบป้องกันการส่งผิดกลุ่มเป้าหมาย: ไม่อนุญาตให้ส่งเอกสารระดับ <b>${tier}</b> (เช่น ใบเสนอราคาทุน/ดีลเลอร์ หรือ Service Manual เชิงลึก) ไปยัง <b>${rBadge}</b> กรุณาเปลี่ยนประเภทผู้รับหรือซ่อนราคาออกก่อนส่งครับ
+            </div>
+          ` : `
+            <label class="flex items-start gap-2 bg-amber-50 border border-amber-300 p-2.5 rounded-xl cursor-pointer font-semibold text-amber-950">
+              <input type="checkbox" id="hzkGuardrailConfirmCheck" checked class="mt-0.5 w-4 h-4 rounded">
+              <span>ยืนยันว่าตรวจสอบชื่อผู้รับ กลุ่มเป้าหมาย และเนื้อหาเอกสารถูกต้องครบถ้วนแล้ว (พร้อมแนบลิงก์ PDF ถาวรไม่หมดอายุ)</span>
+            </label>
+          `}
+
+          <div class="flex justify-end gap-2 pt-1">
+            <button type="button" onclick="document.getElementById('hzkPreSendGuardrailModal').classList.add('hidden')" class="px-3.5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold">ยกเลิก</button>
+            ${!isBlocked ? `
+              <button type="button" id="hzkGuardrailProceedBtn" class="px-4 py-2 rounded-lg bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold shadow-xs">
+                ✅ ยืนยันส่งเอกสารทันที
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+    guardModal.classList.remove('hidden');
+
+    const proceedBtn = document.getElementById('hzkGuardrailProceedBtn');
+    if (proceedBtn) {
+      proceedBtn.onclick = function() {
+        const chk = document.getElementById('hzkGuardrailConfirmCheck');
+        if (chk && !chk.checked) {
+          if (typeof showToast === 'function') showToast('⚠️ กรุณาติ๊กยืนยันความถูกต้องก่อนส่งครับ');
+          return;
+        }
+        guardModal.classList.add('hidden');
+        if (typeof opts.onConfirmed === 'function') opts.onConfirmed();
+      };
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // 5. LINE OA INQUIRY CRM & DAILY/WEEKLY/MONTHLY ACTION ANALYTICS + FAQ LEARNER
+  // --------------------------------------------------------------------------
+  function loadInquiryCrmLogs_() {
+    try {
+      const raw = localStorage.getItem(INQUIRY_CRM_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    const today = new Date().toISOString().slice(0, 10);
+    const seed = [
+      { id: 'INQ-2026-101', date: today, time: '09:15', customerName: 'Starbucks Reserve CentralWorld', segment: 'CHAIN_ACCOUNT', lang: 'TH', question: 'ขอสเปคชีส IM-240DNE กับเช็กประวัติ S/N H14289J', intent: 'DOC_SPEC_MANUAL', actionOutcome: 'CLOSED_INFO_SENT', helpful: true },
+      { id: 'INQ-2026-102', date: today, time: '10:42', customerName: 'คุณวิชัย (ร้านอาหารอิตาเลียน)', segment: 'GENERAL_RETAIL', lang: 'TH', question: 'เครื่องไม่ผลิตน้ำแข็ง ขึ้น E1', intent: 'TROUBLESHOOT', actionOutcome: 'CLOSED_SELF_CHECK', helpful: true },
+      { id: 'INQ-2026-103', date: today, time: '11:30', customerName: 'A.D.D Service (Dealer A)', segment: 'DEALER_END_USER', lang: 'TH', question: 'ไฟล์ PDF ใบเสนอราคาหมดอายุ ขอไฟล์ใหม่ + พาร์ทลิสต์ KM-515', intent: 'PART_PRICE_QUOTE', actionOutcome: 'FORWARDED_TO_DEALER', helpful: true },
+      { id: 'INQ-2026-104', date: today, time: '14:10', customerName: 'Maruzen Thailand (Nihon Corp)', segment: 'JAPANESE_CORP', lang: 'JP', question: 'IM-130NEの仕様書と定期点検の見積もりをお願いします', intent: 'PART_PRICE_QUOTE', actionOutcome: 'CONVERTED_TO_QT', helpful: true },
+      { id: 'INQ-2026-105', date: today, time: '18:45', customerName: 'Emerald Bay Resort Phuket', segment: 'GENERAL_RETAIL', lang: 'EN', question: 'Need technician visit for IM-100NE water pan issue + shared location', intent: 'BOOK_TECH_PM', actionOutcome: 'SCHEDULED_TECH_QUEUE', helpful: true }
+    ];
+    localStorage.setItem(INQUIRY_CRM_KEY, JSON.stringify(seed));
+    return seed;
+  }
+
+  window.recordLineOaInquiryCrmEntry = function(entry) {
+    const list = loadInquiryCrmLogs_();
+    const rec = Object.assign({
+      id: 'INQ-' + Date.now().toString().slice(-6),
+      date: new Date().toISOString().slice(0, 10),
+      time: new Date().toTimeString().slice(0, 5),
+      customerName: 'LINE User',
+      segment: 'GENERAL_RETAIL',
+      lang: window.detectQueryLanguageTrilingual(entry.question || ''),
+      question: '',
+      intent: 'TROUBLESHOOT',
+      actionOutcome: 'CLOSED_SELF_CHECK',
+      helpful: true
+    }, entry || {});
+    list.unshift(rec);
+    localStorage.setItem(INQUIRY_CRM_KEY, JSON.stringify(list.slice(0, 1000)));
+    return rec;
+  };
+
+  window.updateInquiryActionOutcome = function(inqId, newOutcome) {
+    const list = loadInquiryCrmLogs_();
+    const item = list.find(x => x.id === inqId);
+    if (!item) return;
+    item.actionOutcome = newOutcome;
+    localStorage.setItem(INQUIRY_CRM_KEY, JSON.stringify(list));
+    if (typeof showToast === 'function') showToast('✅ อัปเดตผลลัพธ์ Action ของเคส ' + inqId + ' เรียบร้อย');
+    if (document.getElementById('hzkLineCrmAnalyticsModal')) window.openLineOaInquiryCrmModal();
+  };
+
+  window.openLineOaInquiryCrmModal = function() {
+    const logs = loadInquiryCrmLogs_();
+    const today = new Date().toISOString().slice(0, 10);
+    const todayCnt = logs.filter(x => x.date === today).length;
+    const closedSelf = logs.filter(x => x.actionOutcome === 'CLOSED_SELF_CHECK' || x.actionOutcome === 'CLOSED_INFO_SENT').length;
+    const toDealer = logs.filter(x => x.actionOutcome === 'FORWARDED_TO_DEALER').length;
+    const toQt = logs.filter(x => x.actionOutcome === 'CONVERTED_TO_QT').length;
+    const toTech = logs.filter(x => x.actionOutcome === 'SCHEDULED_TECH_QUEUE').length;
+
+    let modal = document.getElementById('hzkLineCrmAnalyticsModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkLineCrmAnalyticsModal';
+      modal.className = 'fixed inset-0 z-[9998] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    const actionLabels = {
+      'CLOSED_SELF_CHECK': '✅ ปิดจ๊อบ (แนะนำเบื้องต้นหาย)',
+      'CLOSED_INFO_SENT': '📄 ปิดจ๊อบ (ส่งสเปก/คู่มือครบ)',
+      'FORWARDED_TO_DEALER': '🤝 ส่งต่อตัวแทนจำหน่าย',
+      'CONVERTED_TO_QT': '💰 ส่งออกใบเสนอราคา (QT)',
+      'SCHEDULED_TECH_QUEUE': '📅 ลงคิวช่างเข้าหน้างาน',
+      'OPEN_FOLLOW_UP': '⏳ อยู่ระหว่างติดตามผล'
+    };
+
+    const segLabels = {
+      'CHAIN_ACCOUNT': '🏢 ลูกค้ากลุ่มเชน (Chain)',
+      'GENERAL_RETAIL': '🏪 ลูกค้าทั่วไป (General)',
+      'DEALER_END_USER': '🤝 ตัวแทนจำหน่าย (Dealer)',
+      'JAPANESE_CORP': '🇯🇵 องค์กรญี่ปุ่น (JP Corp)',
+      'GENERAL_TECH': '🔧 ช่างทั่วไป (Tech)'
+    };
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-6xl max-h-[92vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] via-sky-800 to-emerald-700 text-white px-4 py-3 flex items-center justify-between shrink-0">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase">LINE OA INQUIRY CRM · SELF-LEARNING FAQ &amp; EXECUTIVE ANALYTICS</div>
+            <div class="text-sm sm:text-base font-extrabold">📊 ฐานข้อมูลคำถามลูกค้า LINE OA &amp; สถิติ Action (รายวัน / รายสัปดาห์ / รายเดือน)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkLineCrmAnalyticsModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+        </div>
+
+        <div class="p-4 overflow-y-auto flex-1 space-y-3 bg-slate-50">
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+              <div class="text-[10px] text-slate-500 font-bold">ติดต่อวันนี้ / สะสมทั้งหมด</div>
+              <div class="text-lg font-black text-[#002B49]">${todayCnt} / ${logs.length} <span class="text-[10px] font-normal">เคส</span></div>
+            </div>
+            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+              <div class="text-[10px] text-emerald-800 font-bold">คุยเสร็จปิดจ๊อบ (ไม่ต้องออกช่าง)</div>
+              <div class="text-lg font-black text-emerald-700">${closedSelf} <span class="text-[10px] font-normal">เคส (${Math.round((closedSelf / Math.max(1, logs.length)) * 100)}%)</span></div>
+            </div>
+            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+              <div class="text-[10px] text-amber-800 font-bold">ส่งต่อตัวแทนจำหน่าย</div>
+              <div class="text-lg font-black text-amber-700">${toDealer} <span class="text-[10px] font-normal">เคส</span></div>
+            </div>
+            <div class="bg-sky-50 p-3 rounded-xl border border-sky-200">
+              <div class="text-[10px] text-sky-800 font-bold">ส่งออกใบเสนอราคา (QT)</div>
+              <div class="text-lg font-black text-sky-700">${toQt} <span class="text-[10px] font-normal">เคส</span></div>
+            </div>
+            <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-200">
+              <div class="text-[10px] text-indigo-800 font-bold">ลงคิวช่างเข้าบริการ</div>
+              <div class="text-lg font-black text-indigo-700">${toTech} <span class="text-[10px] font-normal">เคส</span></div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 p-3 space-y-2">
+            <div class="font-extrabold text-[#002B49]">ประวัติคำถามลูกค้าจาก LINE OA &amp; อัปเดตผลลัพธ์ Action (เพื่อใช้วิเคราะห์คำถามต่อเนื่องและรายงานผู้บริหาร):</div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-[11px]">
+                <thead>
+                  <tr class="bg-[#002B49] text-white">
+                    <th class="p-2">วัน-เวลา</th>
+                    <th class="p-2">ลูกค้า / กลุ่มลูกค้า</th>
+                    <th class="p-2">ภาษา</th>
+                    <th class="p-2">คำถามที่ทักเข้ามา</th>
+                    <th class="p-2">ผลลัพธ์ Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                  ${logs.map(l => `
+                    <tr>
+                      <td class="p-2 whitespace-nowrap font-mono">${escapeHtml(l.date)} ${escapeHtml(l.time)}</td>
+                      <td class="p-2"><b>${escapeHtml(l.customerName)}</b><br><span class="text-[10px] text-sky-700 font-bold">${segLabels[l.segment] || l.segment}</span></td>
+                      <td class="p-2 font-extrabold">${escapeHtml(l.lang)}</td>
+                      <td class="p-2 text-slate-800">${escapeHtml(l.question)}</td>
+                      <td class="p-2">
+                        <select onchange="updateInquiryActionOutcome('${escapeHtml(l.id)}', this.value)" class="border border-slate-300 rounded px-2 py-1 font-bold bg-white text-[10.5px]">
+                          ${Object.keys(actionLabels).map(k => `<option value="${k}" ${l.actionOutcome === k ? 'selected' : ''}>${actionLabels[k]}</option>`).join('')}
+                        </select>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+  };
+
+  // --------------------------------------------------------------------------
+  // 6. SMART GEO-DISPATCH & PROVINCIAL TRAVEL COST ESTIMATOR
+  // --------------------------------------------------------------------------
+  const HZK_HQ_COORDS = { lat: 13.8782, lng: 100.5835, name: 'สำนักงานใหญ่ HOSHIZAKI (หลักสี่ กรุงเทพฯ)' };
+
+  window.calculateProvincialTravelEstimate = function(lat, lng, provinceLabel) {
+    const R = 6371;
+    const toRad = d => (d * Math.PI) / 180;
+    const dLat = toRad(lat - HZK_HQ_COORDS.lat);
+    const dLon = toRad(lng - HZK_HQ_COORDS.lng);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(HZK_HQ_COORDS.lat)) * Math.cos(toRad(lat)) * Math.sin(dLon / 2) ** 2;
+    const straightKm = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const oneWayRoadKm = Math.max(5, Math.round(straightKm * 1.25));
+    const roundTripKm = oneWayRoadKm * 2;
+
+    const baseInspectionFee = oneWayRoadKm <= 50 ? 1500 : 2500;
+    const billableExtraKm = Math.max(0, roundTripKm - 80);
+    const travelFee = Math.round(billableExtraKm * 12);
+    const overnightFee = oneWayRoadKm >= 280 ? 1800 : 0;
+    const totalEstimate = baseInspectionFee + travelFee + overnightFee;
+
+    return {
+      province: provinceLabel || 'ต่างจังหวัด / นอกเขตกรุงเทพฯ',
+      oneWayRoadKm,
+      roundTripKm,
+      baseInspectionFee,
+      travelFee,
+      overnightFee,
+      totalEstimate,
+      recommendOutsource: oneWayRoadKm >= 180
+    };
+  };
+
+  window.openGeoTravelCostEstimatorModal = function() {
+    let modal = document.getElementById('hzkGeoTravelCostModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkGeoTravelCostModal';
+      modal.className = 'fixed inset-0 z-[9998] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border-2 border-[#002B49] overflow-hidden text-xs">
+        <div class="bg-[#002B49] text-white px-4 py-3 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase">SMART GEO-DISPATCH &amp; TRAVEL COST ESTIMATOR</div>
+            <div class="text-sm font-extrabold">📍 ประเมินระยะทาง &amp; ค่าบริการ/ค่าเดินทางต่างจังหวัดจากพิกัดลูกค้า</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkGeoTravelCostModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+        </div>
+        <div class="p-4 space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div class="sm:col-span-2">
+              <label class="block font-bold text-slate-700 mb-1">วางลิงก์ Google Maps หรือพิกัด (Lat, Lng) ที่ลูกค้าแชร์มา:</label>
+              <input type="text" id="geoPinInput" value="12.9236, 100.8825" placeholder="เช่น 12.9236, 100.8825 หรือ https://maps.google.com/?q=..." class="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">เลือกจังหวัดด่วน:</label>
+              <select onchange="if(this.value){document.getElementById('geoPinInput').value=this.value; runGeoTravelCalcNow();}" class="w-full border border-slate-300 rounded-lg px-2.5 py-2 bg-white font-bold">
+                <option value="12.9236, 100.8825">ชลบุรี / พัทยา</option>
+                <option value="14.3532, 100.5689">พระนครศรีอยุธยา</option>
+                <option value="12.6833, 101.2375">ระยอง / มาบตาพุด</option>
+                <option value="14.9799, 102.0978">นครราชสีมา (โคราช)</option>
+                <option value="18.7883, 98.9853">เชียงใหม่</option>
+                <option value="7.8804, 98.3923">ภูเก็ต</option>
+              </select>
+            </div>
+          </div>
+          <button type="button" onclick="runGeoTravelCalcNow()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold px-4 py-2 rounded-lg">
+            <i class="fa-solid fa-route text-amber-300 mr-1"></i> คำนวณระยะทาง &amp; ประเมินค่าเดินทางทันที
+          </button>
+          <div id="geoTravelCalcResultBox"></div>
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+    window.runGeoTravelCalcNow();
+  };
+
+  window.runGeoTravelCalcNow = function() {
+    const raw = (document.getElementById('geoPinInput')?.value || '').trim();
+    const m = raw.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
+    const lat = m ? parseFloat(m[1]) : 12.9236;
+    const lng = m ? parseFloat(m[2]) : 100.8825;
+    const est = window.calculateProvincialTravelEstimate(lat, lng, raw);
+    const box = document.getElementById('geoTravelCalcResultBox');
+    if (!box) return;
+    box.innerHTML = `
+      <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-2">
+        <div class="font-extrabold text-sm text-[#002B49]">ผลการคำนวณระยะทางจากสำนักงานใหญ่หลักสี่: เที่ยวเดียว ~${est.oneWayRoadKm} กม. (ไป-กลับ ~${est.roundTripKm} กม.)</div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+          <div class="bg-white p-2 rounded-lg border"><div class="text-[10px] text-slate-500">ค่าตรวจเช็กพื้นฐาน</div><div class="font-extrabold text-slate-900">${est.baseInspectionFee.toLocaleString()} ฿</div></div>
+          <div class="bg-white p-2 rounded-lg border"><div class="text-[10px] text-slate-500">ค่าเดินทางนอกเขต</div><div class="font-extrabold text-sky-700">${est.travelFee.toLocaleString()} ฿</div></div>
+          <div class="bg-white p-2 rounded-lg border"><div class="text-[10px] text-slate-500">ค่าที่พัก/ค้างคืน</div><div class="font-extrabold text-amber-700">${est.overnightFee.toLocaleString()} ฿</div></div>
+          <div class="bg-emerald-600 text-white p-2 rounded-lg"><div class="text-[10px] text-emerald-100">รวมประเมินเบื้องต้น</div><div class="font-black text-sm">${est.totalEstimate.toLocaleString()} ฿</div></div>
+        </div>
+        ${est.recommendOutsource ? `<div class="bg-amber-100 border border-amber-300 text-amber-950 p-2 rounded-lg font-bold">💡 คำแนะนำ: ระยะทางเกิน 180 กม./เที่ยว แนะนำเปรียบเทียบเรทเหมาจ่ายกับ <b>Outsource คู่ค้า / ดีลเลอร์ประจำจังหวัด</b> เพื่อประหยัดค่าเดินทางและเข้าหน้างานเร็วขึ้นครับ</div>` : ''}
+      </div>
+    `;
+  };
+
+  // --------------------------------------------------------------------------
+  // 7. CONTEXTUAL IN-APP HELP DRAWER (?) & 1-CLICK SAMPLE FILL ON EVERY MODAL
+  // --------------------------------------------------------------------------
+  const CONTEXTUAL_HELP_GUIDES = {
+    'GLOBAL': {
+      titleTh: 'คู่มือภาพรวมระบบ HOSHIZAKI Service Management (Enterprise v1049)',
+      titleJpEn: 'システム総合ガイド / HOSHIZAKI Service Management User Guide',
+      whatItDoes: 'ระบบบริหารงานบริการครบวงจร ครอบคลุม 5 หมวดงานหลัก (1. งานบริการ/ตารางช่าง 2. เอกสาร QT/IV/RE/เคลม 3. งาน PM/ตรวจรับคลัง 4. คู่มือ/บุคลากร 5. คลังสินค้า IMS & บัญชี NAV)',
+      steps: [
+        '1. เลือกโปรไฟล์พนักงานมุมซ้ายบน (ปุ่ม "เลือกโปรไฟล์ช่าง") เพื่อปลดล็อกสิทธิ์ตามแผนกและแสดงปุ่มโปรไฟล์/วันเกิดส่วนตัว',
+        '2. ใช้ช่องค้นหาครอบจักรวาล (Ctrl+K) เพื่อพิมพ์ S/N 7 หลัก ชื่อร้าน หรือรหัสอะไหล่เพื่อดูประวัติ 360° ทันที',
+        '3. บนมือถือ ช่องลายเซ็นถูกล็อกขณะเลื่อนหน้าจออัตโนมัติ ให้กดปุ่ม "กดเพื่อเริ่มเซ็นชื่อ" เมื่อต้องการให้ลูกค้าเซ็น'
+      ]
+    },
+    'DUAL_LINE_BOT': {
+      titleTh: 'คู่มือศูนย์ควบคุม LINE OA, แชทบอท 3 ภาษา & ระบบป้องกันส่งผิดกลุ่ม',
+      titleJpEn: 'LINE公式・3言語チャットボット・誤送信防止ガイド / Dual LINE OA Guide',
+      whatItDoes: 'เชื่อมต่อ Customer LINE OA (@hoshizakithailand) และ Internal LINE Group พร้อมระบบทวนคำถามอัจฉริยะ การ์ดเวลาทำการ (จันทร์-ศุกร์ 08:30-17:30 น.) และส่งลิงก์ PDF ถาวรไม่หมดอายุ',
+      steps: [
+        '1. เมื่อลูกค้าทักเป็นภาษาอังกฤษหรือญี่ปุ่น บอทจะตรวจจับภาษาและตอบกลับเป็นภาษานั้นอัตโนมัติ',
+        '2. หากพิมพ์คำทับศัพท์หรือสะกดผิด (เช่น "สเปคชีส", "เซอร์วิสแมนวล") บอทจะส่งการ์ดทวนคำถามก่อนส่งไฟล์เพื่อป้องกันข้อมูลซ้ำซ้อน',
+        '3. หากตัวแทนจำหน่ายแจ้งว่าไฟล์ PDF ในกลุ่มหมดอายุ ระบบสามารถ Auto-Resend ลิงก์ถาวรจาก Google Drive กลับไปได้ทันที'
+      ]
+    }
+  };
+
+  window.openContextualHelpDrawer = function(contextKey) {
+    const g = CONTEXTUAL_HELP_GUIDES[contextKey] || CONTEXTUAL_HELP_GUIDES['GLOBAL'];
+    const isJp = (window.HZK_CURRENT_LANG === 'JP');
+    let modal = document.getElementById('hzkContextualHelpModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkContextualHelpModal';
+      modal.className = 'fixed inset-0 z-[10003] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border-2 border-[#002B49] overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] to-sky-700 text-white px-4 py-3 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase">IN-APP HELP · FIELD GUIDE &amp; INTERACTIVE TESTER</div>
+            <div class="text-sm font-extrabold">❓ ${escapeHtml(isJp ? g.titleJpEn : g.titleTh)}</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkContextualHelpModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+        </div>
+        <div class="p-4 space-y-3 max-h-[82vh] overflow-y-auto">
+          <div class="bg-sky-50 border border-sky-200 rounded-xl p-3">
+            <div class="font-extrabold text-[#002B49] mb-1">หน้าที่และการทำงานของหน้านี้:</div>
+            <p class="text-slate-700 leading-relaxed">${escapeHtml(g.whatItDoes)}</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-3 space-y-1.5">
+            <div class="font-extrabold text-[#002B49]">ขั้นตอนการใช้งานที่แนะนำ:</div>
+            ${g.steps.map(s => `<div class="text-slate-700">• ${escapeHtml(s)}</div>`).join('')}
+          </div>
+          <div class="flex flex-wrap gap-2 pt-1">
+            <button type="button" onclick="document.getElementById('hzkContextualHelpModal').classList.add('hidden'); openLineChatbotSimulatorModal();" class="bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold px-3.5 py-2 rounded-lg">
+              <i class="fa-brands fa-line mr-1"></i> ทดสอบจำลองแชทบอท 3 ภาษา (Chatbot Simulator)
+            </button>
+            <button type="button" onclick="document.getElementById('hzkContextualHelpModal').classList.add('hidden'); openLineOaInquiryCrmModal();" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold px-3.5 py-2 rounded-lg">
+              <i class="fa-solid fa-chart-bar text-amber-300 mr-1"></i> ดูสถิติแชท LINE OA รายวัน/สัปดาห์/เดือน
+            </button>
+            <button type="button" onclick="document.getElementById('hzkContextualHelpModal').classList.add('hidden'); openGeoTravelCostEstimatorModal();" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-3.5 py-2 rounded-lg">
+              <i class="fa-solid fa-location-dot mr-1"></i> ประเมินค่าเดินทางต่างจังหวัด
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+  };
+
+  // --------------------------------------------------------------------------
+  // 8. INTERACTIVE LINE CHATBOT 3-LANGUAGE SIMULATOR & AUTO-TEST SUITE
+  // --------------------------------------------------------------------------
+  window.openLineChatbotSimulatorModal = function() {
+    let modal = document.getElementById('hzkChatbotSimulatorModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkChatbotSimulatorModal';
+      modal.className = 'fixed inset-0 z-[10001] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border-2 border-[#002B49] overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] via-teal-800 to-[#06C755] text-white px-4 py-3 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] text-amber-200 font-extrabold uppercase">LINE OA CHATBOT SANDBOX · TH / EN / 日本語 + FUZZY &amp; BUSINESS HOURS</div>
+            <div class="text-sm font-extrabold">🤖 ห้องจำลองทดสอบแชทบอท 3 ภาษา, ทวนคำถาม, เวลาทำการ &amp; Auto-Resend PDF</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkChatbotSimulatorModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+        </div>
+        <div class="p-4 space-y-3 max-h-[84vh] overflow-y-auto">
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="runSimulatedBotMessage('ขอสเปคชีส IM130 กับวาล์วน้ำเข้า 4A5251', true)" class="px-2.5 py-1 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-950 font-bold">🇹🇭 ทดสอบคำทับศัพท์ "สเปคชีส IM130"</button>
+            <button type="button" onclick="runSimulatedBotMessage('Can you send Spec Sheet for IM-240DNE and check S/N H14289J?', false)" class="px-2.5 py-1 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-950 font-bold">🇬🇧 English Inquiry</button>
+            <button type="button" onclick="runSimulatedBotMessage('IM-130NEの仕様書とサービスマニュアルをお願いします', false)" class="px-2.5 py-1 rounded-lg bg-pink-100 hover:bg-pink-200 text-pink-950 font-bold">🇯🇵 日本語お問い合わせ</button>
+            <button type="button" onclick="runSimulatedBotMessage('ไฟล์ PDF หมดอายุ เปิดดูไม่ได้ ขอไฟล์ใหม่ครับ', false)" class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold">📄 Auto-Resend PDF หมดอายุ</button>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="simBotUserPromptInput" value="ขอสเปคชีส IM130 กับวาล์วน้ำเข้า 4A5251" placeholder="พิมพ์ข้อความจำลองเป็นภาษาไทย, English หรือ 日本語..." class="flex-1 border border-slate-300 rounded-lg px-3 py-2 font-bold">
+            <label class="inline-flex items-center gap-1 px-2 border rounded-lg bg-slate-50 font-semibold">
+              <input type="checkbox" id="simBotAfterHoursChk"> นอกเวลาทำการ
+            </label>
+            <button type="button" onclick="runSimulatedBotMessage()" class="bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold px-4 py-2 rounded-lg">ส่งทดสอบ</button>
+          </div>
+          <div id="simBotResponseStage" class="space-y-2"></div>
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+    window.runSimulatedBotMessage('ขอสเปคชีส IM130 กับวาล์วน้ำเข้า 4A5251', false);
+  };
+
+  window.runSimulatedBotMessage = function(overrideText, forceAfterHours) {
+    const inp = document.getElementById('simBotUserPromptInput');
+    if (overrideText && inp) inp.value = overrideText;
+    const msg = (inp?.value || '').trim();
+    const afterHours = typeof forceAfterHours === 'boolean' ? forceAfterHours : Boolean(document.getElementById('simBotAfterHoursChk')?.checked);
+    if (typeof forceAfterHours === 'boolean' && document.getElementById('simBotAfterHoursChk')) {
+      document.getElementById('simBotAfterHoursChk').checked = forceAfterHours;
+    }
+
+    const fuzzy = window.analyzeSmartFuzzyQuery(msg);
+    const isResendReq = /(หมดอายุ|เปิดไฟล์ไม่ได้|เปิดไม่ได้|ขอไฟล์ใหม่|ส่งซ้ำ|resend)/i.test(msg);
+
+    // Log into CRM Analytics automatically
+    window.recordLineOaInquiryCrmEntry({
+      customerName: 'Simulator Test User',
+      segment: fuzzy.lang === 'JP' ? 'JAPANESE_CORP' : 'GENERAL_RETAIL',
+      lang: fuzzy.lang,
+      question: msg,
+      intent: isResendReq ? 'PART_PRICE_QUOTE' : (fuzzy.docMatch ? 'DOC_SPEC_MANUAL' : 'TROUBLESHOOT'),
+      actionOutcome: 'CLOSED_INFO_SENT'
+    });
+
+    const stage = document.getElementById('simBotResponseStage');
+    if (!stage) return;
+
+    const bhBanner = afterHours ? `
+      <div class="bg-[#002B49] text-white rounded-xl p-3 border-2 border-amber-300 space-y-1">
+        <div class="text-[10px] text-amber-300 font-extrabold">🕒 BUSINESS HOURS NOTICE (จันทร์ - ศุกร์ 08:30 - 17:30 น.)</div>
+        <div>${fuzzy.lang === 'JP'
+          ? '営業時間外（月〜金 08:30〜17:30）のお問い合わせありがとうございます。翌営業日に担当者よりご連絡いたします。なお、以下の自動案内もすぐにご確認いただけます：'
+          : fuzzy.lang === 'EN'
+            ? 'Thank you for contacting HOSHIZAKI (THAILAND). Our business hours are Mon–Fri 08:30–17:30. Our team will follow up on the next working day. Meanwhile, here is instant automated assistance:'
+            : 'ขอบคุณที่ติดต่อ HOSHIZAKI (THAILAND) ขณะนี้อยู่นอกเวลาทำการ (จันทร์ - ศุกร์ 08:30 - 17:30 น.) เจ้าหน้าที่จะรีบประสานงานให้ในวันทำการถัดไปครับ ทั้งนี้ระบบได้ตรวจสอบข้อมูลเบื้องต้นให้คุณทันทีดังนี้:'}</div>
+      </div>
+    ` : '';
+
+    stage.innerHTML = `
+      ${bhBanner}
+      <div class="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-3.5 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="font-extrabold text-emerald-950">🤖 บอทตรวจจับภาษา: <span class="px-2 py-0.5 rounded bg-[#002B49] text-white">${fuzzy.lang}</span></span>
+          <span class="text-[10px] text-emerald-800 font-bold">✅ บันทึกลง LINE OA CRM Log แล้ว</span>
+        </div>
+        ${isResendReq ? `
+          <div class="bg-white p-2.5 rounded-lg border border-emerald-200 font-bold text-[#002B49]">
+            📄 [Auto-Resend PDF] พบเอกสารล่าสุดในคลังถาวร Google Drive (ลิงก์ไม่หมดอายุ) พร้อมส่งการ์ดดาวน์โหลดกลับเข้ากลุ่ม LINE เรียบร้อยแล้ว!
+          </div>
+        ` : `
+          <div class="bg-white p-2.5 rounded-lg border border-emerald-200 font-bold text-[#002B49]">
+            ${escapeHtml(fuzzy.confirmPrompt)}
+          </div>
+          ${fuzzy.partCandidates.length > 0 ? `
+            <div class="bg-white p-2.5 rounded-lg border border-slate-200 space-y-1">
+              <div class="font-extrabold text-slate-700">รายการอะไหล่ที่คาดเดาได้:</div>
+              ${fuzzy.partCandidates.map(p => `<div>• <b>${escapeHtml(p.partNo)}</b> — ${escapeHtml(p.name)} (รุ่น: ${escapeHtml(p.models)})</div>`).join('')}
+            </div>
+          ` : ''}
+        `}
+      </div>
+    `;
+  };
+
+  setTimeout(function() {
+    syncBirthdayButtonLoginVisibility_();
+    installMobileScrollSafeSignaturePads_();
+    loadInquiryCrmLogs_();
+  }, 1600);
 })();

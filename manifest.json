@@ -1,7 +1,7 @@
 {
-  "name": "HOSHIZAKI Service Management (Enterprise v1044 Omni)",
+  "name": "HOSHIZAKI Service Management (Enterprise v1045 Pro)",
   "short_name": "Hoshizaki Service",
-  "description": "ระบบบริหารจัดการงานบริการ ใบเสนอราคา คลังสินค้า IMS และการทำงานร่วมกันทั้ง 8 แผนก (100 Seats) พร้อม Sole Super Admin Control (Mr. Noparin) & Two-Way Cloud Sync",
+  "description": "ระบบบริหารจัดการงานบริการ ใบเสนอราคา คลังสินค้า IMS และการทำงานร่วมกันทั้ง 8 แผนก (≤30 Core Users) พร้อม Auto Google Sheets Backup, My Daily Workspace, Cross-Dept SLA & Deep Self-Heal 360°",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -22,5 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "1044-OMNI"
+  "version": "1045-PRO"
 }

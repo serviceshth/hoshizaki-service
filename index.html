@@ -932,7 +932,7 @@ transform: scale(0.96);
 <span id="hrPendingApprovalsBadge" class="ml-1 bg-amber-300 text-slate-950 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">HR</span>
 </button>
 <button type="button" onclick="switchToolbarCategory('SALE_MARKETING')" id="tbCatBtn_SALE_MARKETING" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/90 to-rose-600/90 hover:opacity-95 text-white font-extrabold border border-amber-200/60 transition shadow-xs">
-<i class="fa-solid fa-bullhorn mr-1 text-amber-200"></i>7. B2B Dealer &amp; Chain/JP
+<i class="fa-solid fa-bullhorn mr-1 text-amber-200"></i>7. Sale &amp; Marketing (B2B)
 </button>
 <button type="button" onclick="switchToolbarCategory('IMS_INVENTORY')" id="tbCatBtn_IMS_INVENTORY" class="tb-cat-btn px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600/80 to-teal-600/80 hover:opacity-95 text-white font-extrabold border border-cyan-300/50 transition shadow-xs">
 <i class="fa-solid fa-warehouse mr-1 text-amber-300"></i>5. ระบบคลังสินค้า IMS
@@ -1255,14 +1255,14 @@ transform: scale(0.96);
 <span class="text-[10px] bg-white/20 px-1.5 py-0.2 rounded font-extrabold">e-POD</span>
 </button>
 </div>
-<!-- Sub-menu 5.7: AI Social Ad Generator (TikTok/FB/YT) & Email Stock-on-Hand Auto-Importer (v1051) -->
+<!-- Sub-menu 5.7: Email Stock-on-Hand Auto-Importer (v1051) -->
 <div class="relative col-span-2 sm:col-span-1" id="imsMarketingEmailWrap" data-tb-cat="IMS_INVENTORY">
-<button type="button" id="btnImsSub57" onclick="openMarketingAndEmailSyncModal('SOCIAL_ADS')" class="tb-action-item w-full bg-gradient-to-r from-fuchsia-700 via-purple-700 to-indigo-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-pink-200/60 justify-between">
+<button type="button" id="btnImsSub57" onclick="openMarketingAndEmailSyncModal('EMAIL_STOCK')" class="tb-action-item w-full bg-gradient-to-r from-cyan-700 via-sky-700 to-indigo-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-cyan-200/60 justify-between">
 <span class="inline-flex items-center gap-1.5 text-left">
-<i class="fa-solid fa-bullhorn text-amber-300"></i>
-<span>5.7 AI ยิงแอด TikTok/FB/YT &amp; ดูดไฟล์ Email Stock</span>
+<i class="fa-solid fa-envelope-open-text text-amber-300"></i>
+<span>5.7 ดูดไฟล์ Email Stock-on-Hand อัตโนมัติ (Navision)</span>
 </span>
-<span class="text-[10px] bg-amber-300 text-slate-950 px-1.5 py-0.2 rounded font-extrabold">AI+Sync</span>
+<span class="text-[10px] bg-amber-300 text-slate-950 px-1.5 py-0.2 rounded font-extrabold">Auto-Sync</span>
 </button>
 </div></div>
 </div>
@@ -1297,7 +1297,7 @@ transform: scale(0.96);
 <!-- หมวด 7 (เมนูหลัก B2B & Channel Policy): B2B Dealer PRM, Chain-Store & Japanese Corporate Foodservice (7.1–7.6) -->
 <section class="tb-group-card col-span-1 md:col-span-2 border-amber-300/60 bg-gradient-to-br from-[#2C1608]/95 via-[#002B49]/95 to-rose-950/90" data-tb-group="SALE_MARKETING">
 <div class="tb-group-header border-amber-300/35">
-<span class="text-amber-200 font-extrabold"><i class="fa-solid fa-handshake text-amber-300 mr-1.5"></i>7. ระบบบริหารคู่ค้า B2B Dealer PRM · เชนร้านอาหาร &amp; ลูกค้าองค์กรญี่ปุ่น (B2B Channel Suite)</span>
+<span class="text-amber-200 font-extrabold"><i class="fa-solid fa-handshake text-amber-300 mr-1.5"></i>7. Sale &amp; Marketing · B2B Dealer PRM · เชนร้านอาหาร &amp; ลูกค้าญี่ปุ่น (B2B Growth Suite)</span>
 <span class="text-[10px] text-amber-200/90 font-bold">Dealer PRM · Deal Registration · Chain-Store · Japanese Foodservice · B2B Rental/PM</span>
 </div>
 <div class="tb-btn-grid">
@@ -1314,7 +1314,7 @@ transform: scale(0.96);
 <i class="fa-solid fa-file-contract text-amber-200"></i> <span>7.4 สัญญาเช่า B2B Fleet &amp; สัญญา PM เชนสาขา / บริษัทญี่ปุ่น</span>
 </button>
 <button type="button" data-tb-cat="SALE_MARKETING" onclick="openMarketingAndEmailSyncModal('SOCIAL_ADS')" class="tb-action-item bg-fuchsia-700 hover:bg-fuchsia-800 text-white font-bold shadow-sm border border-fuchsia-300/40">
-<i class="fa-solid fa-bullhorn text-amber-200"></i> <span>7.5 Co-Brand Marketing Kit &amp; AI แอดส่งต่อลีดให้ดีลเลอร์</span>
+<i class="fa-solid fa-bullhorn text-amber-200"></i> <span>7.5 AI Auto-Gen แอดโฆษณา (TikTok / FB / YouTube Shorts) &amp; ส่งต่อลีดดีลเลอร์</span>
 </button>
 <button type="button" data-tb-cat="SALE_MARKETING" onclick="openSaleMarketingGrowthModal('EVENTS_SHOWROOM')" class="tb-action-item bg-indigo-700 hover:bg-indigo-800 text-white font-bold shadow-sm border border-indigo-300/40">
 <i class="fa-solid fa-store text-amber-200"></i> <span>7.6 ออกบูธ THAIFEX / Showroom &amp; จ่ายลีดเข้าเครือข่ายดีลเลอร์</span>

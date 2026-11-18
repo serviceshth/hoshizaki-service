@@ -1,8 +1,10 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1038-complete';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1039-complete';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './hzk_enterprise_modules.js',
+  './parts_catalog.json'
 ];
 const DATA_ASSETS = [
   './serial_db.json',

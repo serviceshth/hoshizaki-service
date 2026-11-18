@@ -730,7 +730,7 @@ transform: scale(0.96);
 <button type="button" onclick="dismissFridayWeeklyReportBanner()" class="bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-1.5 rounded-lg font-medium">ปิด</button>
 </div>
 </div>
-<!-- แถบสถานะระบบสำรองข้อมูลเข้า Google Sheets อัตโนมัติ (Auto Cloud Backup Status Bar — v1050-HR-WORKFLOW) -->
+<!-- แถบสถานะระบบสำรองข้อมูลเข้า Google Sheets อัตโนมัติ (Auto Cloud Backup Status Bar — v1051-OMNI-ENTERPRISE) -->
 <div id="weeklyBackupReminderBanner" class="hidden no-print max-w-4xl mx-auto mb-3 bg-gradient-to-r from-sky-50 via-cyan-50 to-emerald-50 border border-sky-300 text-sky-950 p-3 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
 <div class="flex items-start gap-2.5 min-w-0 flex-1">
 <span id="autoSheetsBackupIconWrap" class="w-7 h-7 rounded-lg bg-sky-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
@@ -824,7 +824,7 @@ transform: scale(0.96);
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-1.5 mt-1">
-<p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1050-HR-WORKFLOW</span></p>
+<p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1051-OMNI-ENTERPRISE</span></p>
 </div>
 <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
 <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -891,7 +891,7 @@ transform: scale(0.96);
 สลับเป็นโหมดช่างดำเนินงาน
 </button>
 </div>
-<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1050-HR-WORKFLOW · ≤30 Core Users) -->
+<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1051-OMNI-ENTERPRISE · ≤30 Core Users) -->
 <div id="myDailyRoleWorkspaceBar" class="mt-2 rounded-xl bg-white/10 border border-white/20 p-2 text-xs">
 <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5 px-1">
 <span id="myDailyWorkspaceTitle" class="font-extrabold text-sky-200 flex items-center gap-1.5">
@@ -1240,10 +1240,30 @@ transform: scale(0.96);
 <i class="fa-solid fa-chevron-down text-[10px] opacity-90"></i>
 </span>
 </button>
+
+<!-- Sub-menu 5.6: คลังสินค้าเช่า 3PL · พนักงานขับรถ & Lalamove/Grab/LINE MAN + QR e-POD + สต็อก >6 เดือน & เกรด A/B/C/L (v1051) -->
+<div class="relative col-span-2 sm:col-span-1" id="ims3plLogisticsWrap" data-tb-cat="IMS_INVENTORY">
+<button type="button" id="btnImsSub56" onclick="open3plLogisticsAndAgingModal('3PL_GATEPASS')" class="tb-action-item w-full bg-gradient-to-r from-amber-600 via-orange-600 to-rose-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-amber-200/60 justify-between">
+<span class="inline-flex items-center gap-1.5 text-left">
+<i class="fa-solid fa-truck-fast text-amber-200"></i>
+<span>5.6 คลังเช่า 3PL · ขนส่ง &amp; สต็อก &gt;6 เดือน / เกรด B</span>
+</span>
+<span class="text-[10px] bg-white/20 px-1.5 py-0.2 rounded font-extrabold">e-POD</span>
+</button>
 </div>
+<!-- Sub-menu 5.7: AI Social Ad Generator (TikTok/FB/YT) & Email Stock-on-Hand Auto-Importer (v1051) -->
+<div class="relative col-span-2 sm:col-span-1" id="imsMarketingEmailWrap" data-tb-cat="IMS_INVENTORY">
+<button type="button" id="btnImsSub57" onclick="openMarketingAndEmailSyncModal('SOCIAL_ADS')" class="tb-action-item w-full bg-gradient-to-r from-fuchsia-700 via-purple-700 to-indigo-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-pink-200/60 justify-between">
+<span class="inline-flex items-center gap-1.5 text-left">
+<i class="fa-solid fa-bullhorn text-amber-300"></i>
+<span>5.7 AI ยิงแอด TikTok/FB/YT &amp; ดูดไฟล์ Email Stock</span>
+</span>
+<span class="text-[10px] bg-amber-300 text-slate-950 px-1.5 py-0.2 rounded font-extrabold">AI+Sync</span>
+</button>
+</div></div>
 </div>
 </section>
-<!-- หมวด 6 (เมนูหลักใหม่ v1050): ระบบตอกบัตร Mobile Auto-Stamp · WFH Selfie · ใบลา · รอบตัดยอดเบิกจ่ายรายสัปดาห์ & 5 แบบฟอร์มมาตรฐานบริษัท -->
+<!-- หมวด 6 (เมนูหลักใหม่ v1051): ระบบตอกบัตร Mobile Auto-Stamp · WFH Selfie · ใบลา · รอบตัดยอดเบิกจ่ายรายสัปดาห์ & 5 แบบฟอร์มมาตรฐานบริษัท -->
 <section class="tb-group-card col-span-1 md:col-span-2 border-pink-300/55 bg-gradient-to-br from-[#2B0924]/90 via-[#002B49]/95 to-amber-950/90" data-tb-group="HR_WORKFLOW">
 <div class="tb-group-header border-pink-300/30">
 <span class="text-pink-200 font-extrabold"><i class="fa-solid fa-user-clock text-amber-300 mr-1.5"></i>6. ระบบบริหารบุคคล ตอกบัตร Auto-Stamp · WFH Selfie · ใบลา &amp; เบิกจ่ายรายสัปดาห์ (HR &amp; E-Workflow)</span>
@@ -1261,6 +1281,12 @@ transform: scale(0.96);
 </button>
 <button type="button" data-tb-cat="HR_WORKFLOW" onclick="openHrWorkflowSuiteModal('APPROVAL_PAYOUT')" class="tb-action-item bg-indigo-700 hover:bg-indigo-800 text-white font-bold shadow-sm border border-indigo-300/40">
 <i class="fa-solid fa-money-check-dollar text-amber-300"></i> <span>6.4 ศูนย์อนุมัติ &amp; รอบโอนจ่าย พฤ.–ศ. / ส่งออก NAV</span>
+</button>
+<button type="button" data-tb-cat="HR_WORKFLOW" onclick="openVoiceTeamsAndJobcanHqModal('VOICE_TEAMS')" class="tb-action-item bg-gradient-to-r from-violet-700 to-indigo-800 hover:opacity-95 text-white font-extrabold shadow-sm border border-violet-300/50">
+<i class="fa-solid fa-microphone-lines text-amber-300"></i> <span>6.5 นัดประชุม Teams ด้วยเสียง &amp; ปฏิทิน Outlook</span>
+</button>
+<button type="button" data-tb-cat="HR_WORKFLOW" onclick="openVoiceTeamsAndJobcanHqModal('JOBCAN_HQ')" class="tb-action-item bg-gradient-to-r from-cyan-700 to-sky-800 hover:opacity-95 text-white font-bold shadow-sm border border-cyan-300/50">
+<i class="fa-solid fa-globe text-amber-300"></i> <span>6.6 คลังไฟล์ My Files · Viewer &amp; เชื่อม Jobcan ญี่ปุ่น</span>
 </button>
 </div>
 </section>
@@ -2491,7 +2517,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <!-- Web App UI Footer -->
 <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
 <div class="font-extrabold tracking-wide text-amber-300">
-HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1050-HR-WORKFLOW</span>
+HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1051-OMNI-ENTERPRISE</span>
 </div>
 <div class="text-white/80 font-medium">
 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -3070,7 +3096,7 @@ HOSHIZAKI (THAILAND) LIMITED · Official Service Document · All Rights Reserved
 </div>
 </div>
 <!-- Receipt Printable Content Area -->
-<!-- Standalone Quotation Builder Studio (v1050-HR-WORKFLOW: Create/Edit QT, 3-Char Customer Search, Multi-Custodian S/N, Save+PDF+AutoSync) -->
+<!-- Standalone Quotation Builder Studio (v1051-OMNI-ENTERPRISE: Create/Edit QT, 3-Char Customer Search, Multi-Custodian S/N, Save+PDF+AutoSync) -->
 <div id="standaloneQuotationBuilderPanel" class="bg-gradient-to-r from-sky-50 via-white to-amber-50/70 border border-sky-200 rounded-xl p-2.5 sm:p-3 space-y-2 text-xs flex-shrink-0">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <div class="font-extrabold text-[#002B49] flex items-center gap-1.5">
@@ -7082,7 +7108,7 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                     try {
                         const wb = new ExcelJS.Workbook();
                         wb.creator = 'HOSHIZAKI (THAILAND) LIMITED';
-                        wb.lastModifiedBy = 'HOSHIZAKI Service Management v1050';
+                        wb.lastModifiedBy = 'HOSHIZAKI Service Management v1051';
                         wb.created = new Date();
                         wb.calcProperties = { fullCalcOnLoad: true };
 
@@ -18607,7 +18633,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             } catch (e) {}
         });
     </script>
-<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1050-HR-WORKFLOW) -->
+<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1051-OMNI-ENTERPRISE) -->
 <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
 <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
 <!-- Top Navy Header -->
@@ -21353,7 +21379,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             };
         }
 
-        // Override exportBackupJSON to export complete enterprise snapshot + push cloud snapshot automatically (v1050-HR-WORKFLOW hardened)
+        // Override exportBackupJSON to export complete enterprise snapshot + push cloud snapshot automatically (v1051-OMNI-ENTERPRISE hardened)
         exportBackupJSON = async function(silentAuto = false) {
             let snapshot = null;
             try {
@@ -21368,7 +21394,7 @@ function openFullScreenSpecViewerModal(presetModel) {
                 const qtsArr = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
                 snapshot = {
                     app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
-                    version: '1050-HR-WORKFLOW',
+                    version: '1051-OMNI-ENTERPRISE',
                     exportedAt: new Date().toISOString(),
                     recordCounts: { jobs: jobsArr.length, quotations: qtsArr.length },
                     payload: { jobHistory: jobsArr, quotationsHistory: qtsArr }
@@ -21505,7 +21531,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1050-HR-WORKFLOW AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1051-OMNI-ENTERPRISE AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -29359,7 +29385,7 @@ transition: all 0.15s ease;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1050-HR-WORKFLOW)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1051-OMNI-ENTERPRISE)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -29553,7 +29579,7 @@ display: none !important;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1050-HR-WORKFLOW)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1051-OMNI-ENTERPRISE)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -29562,7 +29588,7 @@ display: none !important;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1050-HR-WORKFLOW)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1051-OMNI-ENTERPRISE)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -29571,7 +29597,7 @@ display: none !important;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1050-HR-WORKFLOW)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1051-OMNI-ENTERPRISE)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -29653,21 +29679,21 @@ display: none !important;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1050-HR-WORKFLOW) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1051-OMNI-ENTERPRISE) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1050-HR-WORKFLOW Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1051-OMNI-ENTERPRISE Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1050-HR-WORKFLOW）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1051-OMNI-ENTERPRISE）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -32679,9 +32705,9 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1050-HR-WORKFLOW',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1050-HR-WORKFLOW)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1050-HR-WORKFLOW)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1051-OMNI-ENTERPRISE',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1051-OMNI-ENTERPRISE)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1051-OMNI-ENTERPRISE)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -32730,7 +32756,7 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1050-HR-WORKFLOW Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1051-OMNI-ENTERPRISE Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -32954,7 +32980,7 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
 <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
 <div>
-<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1050-HR-WORKFLOW — Multi-Branch &amp; White-Label Ready)</h3>
+<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1051-OMNI-ENTERPRISE — Multi-Branch &amp; White-Label Ready)</h3>
 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
 </div>
 <div class="flex items-center gap-1.5">
@@ -36980,7 +37006,7 @@ CUSTOMER CSAT & 7-DAY POST-SERVICE QUALITY RADAR MODAL (v1021-CSAT-RADAR)
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1050-HR-WORKFLOW — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1051-OMNI-ENTERPRISE — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -37505,7 +37531,7 @@ FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1050-HR-WORKFLOW</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1051-OMNI-ENTERPRISE</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -38413,7 +38439,7 @@ Accounting VAT/WHT Ledger, Invoice/Receipt & NAV ERP Export • Audit Trail)
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1050-HR-WORKFLOW</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1051-OMNI-ENTERPRISE</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -39963,7 +39989,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1050-HR-WORKFLOW</span>
+<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1051-OMNI-ENTERPRISE</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
 </div>
@@ -40007,7 +40033,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1050-HR-WORKFLOW</span>
+<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1051-OMNI-ENTERPRISE</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
 </div>

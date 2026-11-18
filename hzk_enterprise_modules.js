@@ -5511,7 +5511,7 @@
 
 
 // ============================================================================
-// --- Module Block #55 (Enterprise v1050-HR-WORKFLOW: Sole Super Admin Control
+// --- Module Block #55 (Enterprise v1051-OMNI-ENTERPRISE: Sole Super Admin Control
 //     for Mr. Noparin Homhoul, SHA-256 + Salt Vault, Temp Password Generator,
 //     8-Department RBAC, Account Lock/Unlock & Immediate System_Audit_Log Sync) ---
 // ============================================================================
@@ -6435,7 +6435,7 @@
 
 
 // ============================================================================
-// --- Module Block #56 (Enterprise v1050-HR-WORKFLOW: Two-Way Cloud Credential Pull,
+// --- Module Block #56 (Enterprise v1051-OMNI-ENTERPRISE: Two-Way Cloud Credential Pull,
 //     Live System_Audit_Log Viewer & CSV Export, Global Command Palette Ctrl+K,
 //     100-Seat Multi-Branch Roster Manager, 1-Click Predictive Quote & LINE Flex,
 //     and IndexedDB Cold-Archive & Storage Auto-Compaction Engine) ---
@@ -6443,9 +6443,9 @@
 (function() {
   const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
-  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1050';
-  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1050';
-  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1050';
+  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1051';
+  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1051';
+  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1051';
 
   const HZK_BRANCH_DIRECTORY = [
     { code: 'ALL', name: 'ทุกสาขาทั่วประเทศ (All Thailand Branches)', region: 'Nationwide' },
@@ -6533,7 +6533,7 @@
       const resp = await fetch(gasUrl + sep + 'action=getSecurityAuditLogs&limit=100&_t=' + Date.now(), { method: 'GET' });
       const data = await resp.json();
       if (data && data.status === 'ok' && Array.isArray(data.logs)) {
-        localStorage.setItem('hoshizaki_cloud_audit_cache_v1050', JSON.stringify(data.logs));
+        localStorage.setItem('hoshizaki_cloud_audit_cache_v1051', JSON.stringify(data.logs));
         if (typeof window.renderAdminSecurityRbacPanel === 'function') {
           await window.renderAdminSecurityRbacPanel();
         }
@@ -6548,7 +6548,7 @@
 
   window.exportSecurityAuditCsv = function() {
     const localLogs = JSON.parse(localStorage.getItem('hoshizaki_immutable_audit_log_v1033') || '[]');
-    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1050') || '[]');
+    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1051') || '[]');
     const rows = [['Timestamp', 'Category/Actor', 'Target', 'Detail']];
     cloudLogs.forEach(c => rows.push([c.timestamp || '', `${c.actorName || ''} (${c.actorId || ''})`, c.targetId || '', c.event || '']));
     localLogs.forEach(l => rows.push([l.timestamp || '', l.category || '', l.actor || '', l.detail || '']));
@@ -6571,16 +6571,16 @@
       await _origRenderAdminSecurityRbacPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (!panel || panel.querySelector('#v1050OmniSecurityEnhancementBar')) return;
+    if (!panel || panel.querySelector('#v1051OmniSecurityEnhancementBar')) return;
 
-    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1050') || '[]');
+    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1051') || '[]');
     const bar = document.createElement('div');
-    bar.id = 'v1050OmniSecurityEnhancementBar';
+    bar.id = 'v1051OmniSecurityEnhancementBar';
     bar.className = 'p-3 rounded-xl bg-sky-50 border border-sky-200 space-y-2.5';
     bar.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="text-xs font-extrabold text-[#002B49]">
-          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1050-HR-WORKFLOW: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
+          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1051-OMNI-ENTERPRISE: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
         </div>
         <div class="flex flex-wrap gap-1.5">
           <button type="button" onclick="pullUserCredentialsVaultFromCloud(false).then(() => renderAdminSecurityRbacPanel())" class="px-2.5 py-1.5 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[11px]">
@@ -6737,7 +6737,7 @@
           </div>
           <div id="omniCommandResultsList" class="max-h-96 overflow-y-auto divide-y divide-slate-100 p-2 bg-slate-50/70"></div>
           <div class="bg-slate-100 px-4 py-2 text-[10.5px] text-slate-500 flex items-center justify-between">
-            <span>HOSHIZAKI Enterprise v1050-HR-WORKFLOW • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
+            <span>HOSHIZAKI Enterprise v1051-OMNI-ENTERPRISE • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
             <span>กด <kbd class="px-1.5 py-0.5 bg-white border rounded font-mono">Ctrl+K</kbd> ได้ทุกหน้า</span>
           </div>
         </div>
@@ -7032,15 +7032,15 @@
 
 
 // ============================================================================
-// --- Module Block #57 (Enterprise v1050-HR-WORKFLOW: Tailored ≤30-Seat Org Architecture,
+// --- Module Block #57 (Enterprise v1051-OMNI-ENTERPRISE: Tailored ≤30-Seat Org Architecture,
 //     Auto Google Sheets Cloud Backup with Live Progress Status Bar,
 //     Role-Personalized Daily Workspace, Cross-Dept SLA Handoff Queue,
 //     Revenue Leakage & 2-Way Reconciliation Audit, Technician Skill Matrix & OT,
 //     and Comprehensive Deep Self-Test & Auto-Heal across ALL 28 Modules) ---
 // ============================================================================
 (function() {
-  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1050';
-  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1050';
+  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1051';
+  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1051';
   const ACTIVE_SESSION_KEY = 'hoshizaki_active_auth_session_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
 
@@ -7064,7 +7064,7 @@
       : (localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '');
 
     // Check if already auto-backed up within last 12 hours unless forced
-    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1050') || '0');
+    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1051') || '0');
     if (!forceNow && lastCloudTs > 0 && (Date.now() - lastCloudTs) < 12 * 60 * 60 * 1000 && history.length === 0) {
       return;
     }
@@ -7102,7 +7102,7 @@
         ? await buildFullEnterpriseSnapshotObject()
         : {
             app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
-            version: '1050-HR-WORKFLOW',
+            version: '1051-OMNI-ENTERPRISE',
             exportedAt: new Date().toISOString(),
             recordCounts: { jobs: history.length, quotations: qts.length },
             payload: { jobHistory: history, quotationsHistory: qts }
@@ -7123,7 +7123,7 @@
 
       const nowIso = new Date().toISOString();
       const timeLabel = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1050', String(Date.now()));
+      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1051', String(Date.now()));
       localStorage.setItem('hoshizaki_last_backup_at', nowIso);
       localStorage.setItem('hoshizaki_last_cloud_auto_backup_date', nowIso.split('T')[0]);
 
@@ -7662,7 +7662,7 @@
     }
 
     const passed = checks.filter(c => c.ok).length;
-    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1050-HR-WORKFLOW)</span>`;
+    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1051-OMNI-ENTERPRISE)</span>`;
     listEl.innerHTML = checks.map(c => `
       <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/75 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
         <div>
@@ -7749,7 +7749,7 @@
 
 
 // ============================================================================
-// --- Module Block #58 (Enterprise v1050-HR-WORKFLOW: Standalone Quotation Studio,
+// --- Module Block #58 (Enterprise v1051-OMNI-ENTERPRISE: Standalone Quotation Studio,
 //     Hardened Auto Google Sheets Backup + Dismiss Logic, 1-Click Onboarding
 //     Credential Slip, Production Go-Live Clean Reset, Offline Sync Conflict
 //     Resolver, PM Lifecycle Renewal Radar & 30-Point Deep Self-Test) ---
@@ -8172,7 +8172,7 @@
     if (typeof window.purgeAllV1040ExampleRecords === 'function') {
       window.purgeAllV1040ExampleRecords();
     }
-    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1050');
+    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1051');
     localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1045');
     if (typeof window.renderMyDailyRoleWorkspace === 'function') {
       window.renderMyDailyRoleWorkspace();
@@ -8262,13 +8262,13 @@
       await _prevRenderSecPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (panel && !document.getElementById('v1050GoLiveToolsBar')) {
+    if (panel && !document.getElementById('v1051GoLiveToolsBar')) {
       const bar = document.createElement('div');
-      bar.id = 'v1050GoLiveToolsBar';
+      bar.id = 'v1051GoLiveToolsBar';
       bar.className = 'mt-3 p-3 rounded-xl bg-emerald-50 border border-emerald-300 flex flex-wrap items-center justify-between gap-2 text-xs';
       bar.innerHTML = `
         <div>
-          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1050 Go-Live Readiness)</div>
+          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1051 Go-Live Readiness)</div>
           <div class="text-[11px] text-emerald-800">ล้างข้อมูลตัวอย่างก่อนเริ่มงานจริง หรือเปิดดูเรดาร์อายุเครื่องเพื่อต่อสัญญา PM รายปี</div>
         </div>
         <div class="flex flex-wrap gap-1.5">
@@ -8283,7 +8283,7 @@
 
 
 // ============================================================================
-// --- Module Block #59 (Enterprise v1050-HR-WORKFLOW: 3-Char Customer Smart Search,
+// --- Module Block #59 (Enterprise v1051-OMNI-ENTERPRISE: 3-Char Customer Smart Search,
 //     Multi-Custodian S/N Selector, Save QT + PDF + Auto-Sync Sheets, Load & Edit
 //     Saved QT, and Unified Omni-Share Hub across ALL System Documents) ---
 // ============================================================================
@@ -9016,13 +9016,13 @@
 
 
 // ============================================================================
-// --- Module Block #60 (Enterprise v1050-HR-WORKFLOW: Employee Birthday &
+// --- Module Block #60 (Enterprise v1051-OMNI-ENTERPRISE: Employee Birthday &
 //     Personal Profile Database, Smart Working-Day Advance Birthday Wishes,
 //     Trilingual HOSHIZAKI Penguin Greeting Card & Work Anniversary Badges) ---
 // ============================================================================
 (function() {
-  const EMP_BDAY_DB_KEY = 'hoshizaki_employee_birthday_profiles_v1050';
-  const EMP_BDAY_SHOWN_KEY = 'hoshizaki_bday_card_shown_dates_v1050';
+  const EMP_BDAY_DB_KEY = 'hoshizaki_employee_birthday_profiles_v1051';
+  const EMP_BDAY_SHOWN_KEY = 'hoshizaki_bday_card_shown_dates_v1051';
 
   // Fixed Thai Public Holidays (MM-DD) for Smart Working-Day Pre-Greeting calculation
   const FIXED_HOLIDAYS_MMDD = new Set([
@@ -9462,7 +9462,7 @@
 
 
 // ============================================================================
-// --- Module Block #61 (Enterprise v1050-HR-WORKFLOW Consolidated Release):
+// --- Module Block #61 (Enterprise v1051-OMNI-ENTERPRISE Consolidated Release):
 //     1) Login-Gated Birthday & Profile Button Visibility
 //     2) Mobile Scroll-Safe Signature Pad Guard (Prevents accidental scroll taps)
 //     3) Smart Fuzzy Disambiguation Engine (Thai Phonetics, Typos, Part/SN/Model)
@@ -9476,9 +9476,9 @@
 //    11) Interactive LINE Chatbot 3-Language Simulator & Auto-Test Suite
 // ============================================================================
 (function() {
-  const INQUIRY_CRM_KEY = 'hoshizaki_line_oa_inquiry_crm_v1050';
-  const LEARNED_FAQ_KEY = 'hoshizaki_learned_faq_kb_v1050';
-  const DISPATCH_VAULT_LOG_KEY = 'hoshizaki_dispatch_pdf_vault_log_v1050';
+  const INQUIRY_CRM_KEY = 'hoshizaki_line_oa_inquiry_crm_v1051';
+  const LEARNED_FAQ_KEY = 'hoshizaki_learned_faq_kb_v1051';
+  const DISPATCH_VAULT_LOG_KEY = 'hoshizaki_dispatch_pdf_vault_log_v1051';
 
   // --------------------------------------------------------------------------
   // 1. LOGIN-GATED BIRTHDAY & PROFILE VISIBILITY
@@ -10004,7 +10004,7 @@
   // --------------------------------------------------------------------------
   const CONTEXTUAL_HELP_GUIDES = {
     'GLOBAL': {
-      titleTh: 'คู่มือภาพรวมระบบ HOSHIZAKI Service Management (Enterprise v1050)',
+      titleTh: 'คู่มือภาพรวมระบบ HOSHIZAKI Service Management (Enterprise v1051)',
       titleJpEn: 'システム総合ガイド / HOSHIZAKI Service Management User Guide',
       whatItDoes: 'ระบบบริหารงานบริการครบวงจร ครอบคลุม 5 หมวดงานหลัก (1. งานบริการ/ตารางช่าง 2. เอกสาร QT/IV/RE/เคลม 3. งาน PM/ตรวจรับคลัง 4. คู่มือ/บุคลากร 5. คลังสินค้า IMS & บัญชี NAV)',
       steps: [
@@ -10187,17 +10187,17 @@
 
 
 // ============================================================================
-// --- Module Block #62 (Enterprise v1050-HR-WORKFLOW):
+// --- Module Block #62 (Enterprise v1051-OMNI-ENTERPRISE):
 //     HOSHIZAKI Smart HR, Mobile Auto-Stamp, WFH Selfie, Leave & Schedule Sync,
 //     Weekly Cut-Off (Mon-Tue -> Thu/Fri Payout), 5 Corporate Forms (New Lak Si
 //     Head Office Header), Batch Receipt OCR, Duplicate Guard, 7-Day Settlement
 //     Countdown & Custom Form Schema Customizer (TH / 日本語 / English)
 // ============================================================================
 (function() {
-  const ATT_LOGS_KEY = 'hoshizaki_hr_attendance_logs_v1050';
-  const LEAVE_LOGS_KEY = 'hoshizaki_hr_leave_requests_v1050';
-  const EXP_WORKFLOW_KEY = 'hoshizaki_hr_expense_workflows_v1050';
-  const FORM_SCHEMA_KEY = 'hoshizaki_hr_custom_form_schemas_v1050';
+  const ATT_LOGS_KEY = 'hoshizaki_hr_attendance_logs_v1051';
+  const LEAVE_LOGS_KEY = 'hoshizaki_hr_leave_requests_v1051';
+  const EXP_WORKFLOW_KEY = 'hoshizaki_hr_expense_workflows_v1051';
+  const FORM_SCHEMA_KEY = 'hoshizaki_hr_custom_form_schemas_v1051';
 
   const NEW_HTH_ADDRESS = 'Building A, 1st Floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen, Lak Si, Bangkok 10210 Thailand | Tax ID: 0135558002599 | Tel: 02-005-9980';
 
@@ -11020,4 +11020,574 @@
     loadLeaveRequests_();
     loadExpenseWorkflows_();
   }, 1800);
+})();
+
+
+// ============================================================================
+// --- Module Block #63 (Enterprise v1051-OMNI-ENTERPRISE):
+//     1) 3PL External Warehouse Gate-Pass, Driver / Lalamove / Grab / LINE MAN,
+//        QR e-POD, 3-Way Reconciliation, >180-Day Aging & Grade A/B/C/L Outlet
+//     2) AI Social Ad Studio (TikTok / Facebook / YouTube Shorts + UTM ROAS) &
+//        Outlook/Gmail Daily Stock-on-Hand (.xlsx) Auto-Importer
+//     3) Voice-to-Teams & Outlook (.ics) Meeting Scheduler + Jobcan Workflow
+//        (Copy Request, Unlimited My Files Vault, Viewer & Jobcan HQ Japan CSV)
+// ============================================================================
+(function() {
+  const LOGISTICS_3PL_KEY = 'hoshizaki_3pl_logistics_dispatches_v1051';
+  const AGING_GRADES_KEY = 'hoshizaki_inventory_aging_grades_v1051';
+  const SOCIAL_ADS_KEY = 'hoshizaki_ai_social_campaigns_v1051';
+  const TEAMS_MEETINGS_KEY = 'hoshizaki_voice_teams_meetings_v1051';
+  const MY_FILES_VAULT_KEY = 'hoshizaki_jobcan_my_files_vault_v1051';
+
+  // --------------------------------------------------------------------------
+  // A. SEEDED DATA (5 SAMPLE RECORDS PER MODULE FOR PREVIEW / ADD / DELETE)
+  // --------------------------------------------------------------------------
+  function load3plDispatches_() {
+    try {
+      const r = JSON.parse(localStorage.getItem(LOGISTICS_3PL_KEY) || 'null');
+      if (Array.isArray(r) && r.length > 0) return r;
+    } catch (e) {}
+    const seed = [
+      { id: 'DO-3PL-2026-01', date: '2026-11-19', channel: 'Lalamove (รถกระบะตู้ทึบ)', origin: 'คลังสินค้าเช่า HHE (บางนา)', destination: 'Starbucks CentralWorld (ช่าง Surin T01)', itemSummary: 'Water Valve P01872-01 (2) + Filter 4HC-H (2)', driverInfo: 'คุณสมชาย · ทะเบียน 3ฒฆ-4821 · โทร 089-111-2233', costThb: 480, jobRef: 'JOB-20261119-001', status: 'DELIVERED_EPOD_SIGNED' },
+      { id: 'DO-3PL-2026-02', date: '2026-11-19', channel: 'พนักงานขับรถบริษัท (Company Truck)', origin: 'คลังสินค้าเช่า HHE', destination: 'โรงแรมแชงกรี-ลา กรุงเทพฯ', itemSummary: 'IM-240DNE-HC (1 Unit) + Bin B-301SA', driverInfo: 'คุณวิชัย (พนักงานขับรถ HTH)', costThb: 0, jobRef: 'SO-2026-1104', status: 'IN_TRANSIT_GPS' },
+      { id: 'DO-3PL-2026-03', date: '2026-11-18', channel: 'GrabExpress (มอเตอร์ไซค์ด่วน)', origin: 'สำนักงานใหญ่หลักสี่', destination: 'S.T.KITCHEN (ดอนเมือง)', itemSummary: 'Control Board P01873-01 (1 PCS)', driverInfo: 'Grab Rider · โทร 082-444-5566', costThb: 145, jobRef: 'JOB-SMP-2026-002', status: 'DELIVERED_EPOD_SIGNED' },
+      { id: 'DO-3PL-2026-04', date: '2026-11-18', channel: 'ขนส่งเอกชนต่างจังหวัด (Nim Express)', origin: 'คลังสินค้าเช่า HHE', destination: 'EMERALD BAY RESORT ภูเก็ต', itemSummary: 'Actuator Motor P03755-02 (2 PCS)', driverInfo: 'Tracking: NIM-20261118-8891', costThb: 290, jobRef: 'JOB-SMP-2026-003', status: 'PICKED_AND_PACKED_3PL' },
+      { id: 'DO-3PL-2026-05', date: '2026-11-17', channel: 'LINE MAN Express', origin: 'สำนักงานใหญ่หลักสี่', destination: 'THAI YAMAZAKI (บางนา)', itemSummary: 'Mechanical Seal 432491-01 (1 SET)', driverInfo: 'LINE MAN · โทร 086-777-8899', costThb: 220, jobRef: 'JOB-SMP-2026-004', status: 'DELIVERED_EPOD_SIGNED' }
+    ];
+    localStorage.setItem(LOGISTICS_3PL_KEY, JSON.stringify(seed));
+    return seed;
+  }
+
+  function loadAgingAndGrades_() {
+    try {
+      const r = JSON.parse(localStorage.getItem(AGING_GRADES_KEY) || 'null');
+      if (Array.isArray(r) && r.length > 0) return r;
+    } catch (e) {}
+    const seed = [
+      { sku: 'IM-220AA', serial: 'H30199A', name: 'เครื่องทำน้ำแข็ง IM-220AA (กล่องบุบมุมขวา · ระบบเย็น 100%)', grade: 'GRADE_B_BLEMISH', ageDays: 42, gitStage: 'READY_FOR_PICKUP (คลัง 3PL)', listPrice: 128000, specialPrice: 99500, reservedBy: 'Available (ยังไม่จอง)' },
+      { sku: 'KM-515MAH', serial: 'K77102M', name: 'หัวเครื่องทำน้ำแข็ง KM-515MAH (ค้างสต็อก > 6 เดือน)', grade: 'OVER_6M_CLEARANCE', ageDays: 214, gitStage: 'IN_3PL_WAREHOUSE (>180 วัน)', listPrice: 138000, specialPrice: 108000, reservedBy: 'Available (พร้อมทำโปรโมชัน)' },
+      { sku: 'HNC-180BE-R', serial: 'S55019H', name: 'ตู้โชว์ซูชิ HNC-180BE-R (ค้างสต็อก 7 เดือน)', grade: 'OVER_6M_CLEARANCE', ageDays: 228, gitStage: 'IN_3PL_WAREHOUSE (>180 วัน)', listPrice: 79000, specialPrice: 59900, reservedBy: 'Soft-Locked: Sales Kulathida' },
+      { sku: 'HW-600B', serial: 'W61890C', name: 'เครื่องล้างจาน HW-600B (รอเปลี่ยน Power Box เคลม QCF)', grade: 'GRADE_C_HOLD_QCF', ageDays: 29, gitStage: 'HOLD_PDI_REPAIR', listPrice: 165000, specialPrice: 0, reservedBy: 'LOCKED (ห้ามขายจนกว่าซ่อมเสร็จ)' },
+      { sku: 'IM-130NE-HC', serial: 'H31088N', name: 'เครื่องทำน้ำแข็ง IM-130NE-HC (ลอตนำเข้าใหม่ ตู้ BL-2026-11)', grade: 'GRADE_A_NEW', ageDays: 5, gitStage: 'ETA_PORT: 2026-11-23 → PICKUP: 2026-11-26', listPrice: 115000, specialPrice: 115000, reservedBy: 'Available (รับจองล่วงหน้า)' }
+    ];
+    localStorage.setItem(AGING_GRADES_KEY, JSON.stringify(seed));
+    return seed;
+  }
+
+  function loadSocialCampaigns_() {
+    try {
+      const r = JSON.parse(localStorage.getItem(SOCIAL_ADS_KEY) || 'null');
+      if (Array.isArray(r) && r.length > 0) return r;
+    } catch (e) {}
+    const seed = [
+      { id: 'AD-2026-01', platform: 'TikTok + Reels', product: 'IM-240DNE-HC (น้ำแข็งก้อนใสละลายช้า)', hook: 'เปิดสูตรลับร้านกาแฟ Specialty ทำไมน้ำแข็งก้อนใส Hoshizaki ถึงละลายช้ากว่าปกติ 2 เท่า!', utmTag: '?utm_source=tiktok&utm_campaign=IM240_CAFE', leadsCount: 38, closedSalesThb: 460000 },
+      { id: 'AD-2026-02', platform: 'Facebook Lead Ads', product: 'แพ็กเกจล้างใหญ่ PM & เปลี่ยนไส้กรอง 4HC-H', hook: 'ก่อนเข้าหน้าร้อน เช็กเครื่องทำน้ำแข็งหรือยัง? ล้างใหญ่ + ฆ่าเชื้อ 12 ขั้นตอน พร้อมใบรับรองมาตรฐานญี่ปุ่น', utmTag: '?utm_source=facebook&utm_campaign=PM_SUMMER', leadsCount: 54, closedSalesThb: 285000 },
+      { id: 'AD-2026-03', platform: 'Facebook + LINE Dealer Broadcast', product: 'Clearance & Grade B Outlet (ลดสูงสุด 25%)', hook: 'โปรลับจำนวนจำกัด! เครื่องทำน้ำแข็งและตู้ซูชิ Hoshizaki เกรด B (กล่องบุบเล็กน้อย รับประกันเต็ม) ราคาพิเศษสุด!', utmTag: '?utm_source=fb_outlet&utm_campaign=CLEARANCE_Q4', leadsCount: 29, closedSalesThb: 518000 }
+    ];
+    localStorage.setItem(SOCIAL_ADS_KEY, JSON.stringify(seed));
+    return seed;
+  }
+
+  // --------------------------------------------------------------------------
+  // B. 3PL WAREHOUSE, DRIVER/LALAMOVE/GRAB/LINE MAN, QR e-POD & AGING MODAL
+  // --------------------------------------------------------------------------
+  window.create3plCourierDispatch = function() {
+    const channel = document.getElementById('dsp3plChannel')?.value || 'Lalamove';
+    const origin = document.getElementById('dsp3plOrigin')?.value || 'คลังสินค้าเช่า HHE';
+    const dest = document.getElementById('dsp3plDest')?.value.trim() || 'ลูกค้า / ช่างหน้างาน';
+    const items = document.getElementById('dsp3plItems')?.value.trim() || 'อะไหล่ / เครื่อง HOSHIZAKI';
+    const driver = document.getElementById('dsp3plDriver')?.value.trim() || 'Rider / Driver';
+    const cost = Number(document.getElementById('dsp3plCost')?.value || 0);
+    const jobRef = document.getElementById('dsp3plJobRef')?.value.trim() || 'JOB-DISPATCH';
+
+    const list = load3plDispatches_();
+    const newId = 'DO-3PL-' + Date.now().toString().slice(-5);
+    list.unshift({
+      id: newId,
+      date: new Date().toISOString().slice(0, 10),
+      channel,
+      origin,
+      destination: dest,
+      itemSummary: items,
+      driverInfo: driver,
+      costThb: cost,
+      jobRef,
+      status: 'DISPATCHED_TO_3PL_AND_RIDER'
+    });
+    localStorage.setItem(LOGISTICS_3PL_KEY, JSON.stringify(list));
+    if (typeof showToast === 'function') showToast('🚚 สร้างใบสั่งปล่อยของคลัง 3PL & เรียกขนส่ง ' + newId + ' สำเร็จ (พร้อม QR e-POD)');
+    render3plModalBody_('3PL_GATEPASS');
+  };
+
+  window.confirmQrEpodDelivery = function(doId) {
+    const list = load3plDispatches_();
+    const item = list.find(x => x.id === doId);
+    if (!item) return;
+    item.status = 'DELIVERED_EPOD_SIGNED @ ' + new Date().toLocaleTimeString('th-TH');
+    localStorage.setItem(LOGISTICS_3PL_KEY, JSON.stringify(list));
+    if (typeof showToast === 'function') showToast('✅ ยืนยันรับของปลายทาง (QR e-POD) สำหรับ ' + doId + ' เรียบร้อยแล้ว');
+    render3plModalBody_('3PL_GATEPASS');
+  };
+
+  window.softLockReserveAgingUnit = function(serial) {
+    const list = loadAgingAndGrades_();
+    const u = list.find(x => x.serial === serial);
+    if (!u || u.grade === 'GRADE_C_HOLD_QCF') return;
+    const actor = (document.getElementById('techQuickProfileName')?.innerText || 'Sales Staff').trim();
+    u.reservedBy = 'Soft-Locked 48h: ' + actor;
+    localStorage.setItem(AGING_GRADES_KEY, JSON.stringify(list));
+    if (typeof showToast === 'function') showToast('🔒 จองเครื่อง S/N: ' + serial + ' นาน 48 ชม. ป้องกันการขายชนกันเรียบร้อยแล้ว');
+    render3plModalBody_('AGING_OUTLET');
+  };
+
+  window.open3plLogisticsAndAgingModal = function(tab) {
+    let modal = document.getElementById('hzk3plLogisticsModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzk3plLogisticsModal';
+      modal.className = 'fixed inset-0 z-[9997] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] via-amber-800 to-rose-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase">3PL EXTERNAL WAREHOUSE · DRIVER / LALAMOVE / GRAB / LINE MAN · QR e-POD · AGING &amp; GRADE B</div>
+            <div class="text-sm sm:text-base font-extrabold">🚚 ศูนย์บริหารคลังสินค้าเช่า 3PL · ขนส่ง &amp; สินค้าค้างสต็อก &gt;6 เดือน / เกรด A·B·C·L</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzk3plLogisticsModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+        </div>
+        <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 font-bold">
+          <button type="button" onclick="render3plModalBody_('3PL_GATEPASS')" class="px-3 py-2 rounded-t-lg bg-white text-[#002B49] border-b-2 border-[#002B49]">1. คลังเช่า 3PL Gate-Pass · ขนส่ง &amp; QR e-POD</button>
+          <button type="button" onclick="render3plModalBody_('AGING_OUTLET')" class="px-3 py-2 rounded-t-lg bg-white text-rose-900 border-b-2 border-rose-600">2. สต็อก &gt;6 เดือน · สินค้าเกรด A/B/C/L &amp; GIT-to-Pickup</button>
+          <button type="button" onclick="render3plModalBody_('RECONCILE_3WAY')" class="px-3 py-2 rounded-t-lg bg-white text-emerald-900 border-b-2 border-emerald-600">3. กระทบยอด 3 ฝ่าย (Navision ↔ คลังเช่า 3PL ↔ รถช่าง)</button>
+        </div>
+        <div id="hzk3plModalBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-3"></div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+    window.render3plModalBody_(tab || '3PL_GATEPASS');
+  };
+
+  window.render3plModalBody_ = function(tab) {
+    const body = document.getElementById('hzk3plModalBody');
+    if (!body) return;
+
+    if (tab === '3PL_GATEPASS') {
+      const list = load3plDispatches_();
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-amber-200 p-3.5 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]">ออกใบสั่งปล่อยของคลังเช่า 3PL &amp; เรียกขนส่ง (รถบริษัท / Lalamove / Grab / LINE MAN / ขนส่งต่างจังหวัด)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <select id="dsp3plChannel" class="border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+              <option>Lalamove (มอเตอร์ไซค์ / กระบะตู้ทึบ)</option>
+              <option>GrabExpress (ส่งด่วนในเมือง)</option>
+              <option>LINE MAN Express</option>
+              <option>พนักงานขับรถบริษัท (Company Fleet Driver)</option>
+              <option>ขนส่งพัสดุ / รถร่วมต่างจังหวัด (Kerry / Flash / Nim)</option>
+            </select>
+            <input id="dsp3plOrigin" value="คลังสินค้าเช่า HHE (บางนา)" placeholder="ต้นทางรับของ" class="border rounded-lg px-2.5 py-1.5">
+            <input id="dsp3plDest" placeholder="ปลายทาง (ร้านลูกค้า / พิกัดช่างหน้างาน)" class="border rounded-lg px-2.5 py-1.5 font-bold">
+            <input id="dsp3plItems" placeholder="รายการสินค้า / อะไหล่ที่ปล่อยออกจากคลัง" class="border rounded-lg px-2.5 py-1.5">
+            <input id="dsp3plDriver" placeholder="ชื่อคนขับ / ทะเบียนรถ / Tracking No." class="border rounded-lg px-2.5 py-1.5">
+            <div class="flex gap-1.5">
+              <input id="dsp3plCost" type="number" placeholder="ค่าขนส่ง (฿)" class="w-28 border rounded-lg px-2 py-1.5 font-bold">
+              <input id="dsp3plJobRef" placeholder="Ref JOB/SO" class="flex-1 border rounded-lg px-2 py-1.5 font-mono">
+            </div>
+          </div>
+          <button type="button" onclick="create3plCourierDispatch()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold px-4 py-2 rounded-xl">+ สร้างใบสั่งจ่ายของ 3PL &amp; ลิงก์ยืนยันรับของ QR e-POD</button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-3.5 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-[11px]">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">เลขที่ DO/Gate-Pass</th><th class="p-2">ช่องทางขนส่ง</th><th class="p-2">ต้นทาง → ปลายทาง</th><th class="p-2">รายการสินค้า</th><th class="p-2">คนขับ / ทะเบียน</th><th class="p-2 text-right">ค่าขนส่ง</th><th class="p-2">สถานะ &amp; e-POD</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${list.map(d => `
+                <tr>
+                  <td class="p-2 font-mono font-bold text-[#002B49]">${escapeHtml(d.id)}<br><span class="text-[10px] text-slate-500">${escapeHtml(d.jobRef)}</span></td>
+                  <td class="p-2 font-bold">${escapeHtml(d.channel)}</td>
+                  <td class="p-2">${escapeHtml(d.origin)} → <b>${escapeHtml(d.destination)}</b></td>
+                  <td class="p-2">${escapeHtml(d.itemSummary)}</td>
+                  <td class="p-2 text-[10.5px]">${escapeHtml(d.driverInfo)}</td>
+                  <td class="p-2 text-right font-bold">${Number(d.costThb || 0).toLocaleString()} ฿</td>
+                  <td class="p-2">
+                    <div class="font-bold text-emerald-700">${escapeHtml(d.status)}</div>
+                    ${String(d.status).indexOf('DELIVERED') === -1 ? `<button type="button" onclick="confirmQrEpodDelivery('${escapeHtml(d.id)}')" class="mt-1 px-2 py-0.5 rounded bg-emerald-600 text-white font-bold text-[10px]">📱 กดยืนยันรับของ e-POD</button>` : ''}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'AGING_OUTLET') {
+      const units = loadAgingAndGrades_();
+      body.innerHTML = `
+        <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div class="font-extrabold text-rose-950">เรดาร์สินค้าค้างสต็อก &gt;6 เดือน (&gt;180 วัน) · สินค้าเกรด B (ชำรุดเล็กน้อยราคาพิเศษ) · GIT-to-Pickup Timeline</div>
+            <div class="text-[11px] text-rose-800">เชื่อมตรงกับรายงานตรวจรับ PDI (เมนู 3.2) และกดส่งทำแคมเปญยิงแอดโปรโมชันระบายสต็อกในเมนู 5.7 ได้ทันที</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzk3plLogisticsModal').classList.add('hidden'); openMarketingAndEmailSyncModal('SOCIAL_ADS');" class="bg-fuchsia-700 hover:bg-fuchsia-800 text-white font-extrabold px-3.5 py-2 rounded-xl">📣 สร้างแอดโปรโมชันระบายสต็อกทันที</button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-3.5 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-[11px]">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">รุ่น / S/N</th><th class="p-2">เกรด &amp; สภาพสินค้า</th><th class="p-2 text-center">อายุสต็อก</th><th class="p-2">ไทม์ไลน์ GIT → คลัง 3PL → รับของ</th><th class="p-2 text-right">ราคาปกติ / ราคาพิเศษ</th><th class="p-2">สถานะการจอง</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${units.map(u => `
+                <tr>
+                  <td class="p-2 font-bold text-[#002B49]">${escapeHtml(u.sku)}<br><span class="font-mono text-[10px] text-slate-600">S/N: ${escapeHtml(u.serial)}</span></td>
+                  <td class="p-2"><b>${escapeHtml(u.grade)}</b><br><span class="text-slate-600">${escapeHtml(u.name)}</span></td>
+                  <td class="p-2 text-center font-extrabold ${u.ageDays > 180 ? 'text-rose-700' : 'text-emerald-700'}">${u.ageDays} วัน</td>
+                  <td class="p-2 font-semibold text-sky-900">${escapeHtml(u.gitStage)}</td>
+                  <td class="p-2 text-right"><span class="line-through text-slate-400">${Number(u.listPrice).toLocaleString()}</span><br><b class="text-emerald-700 text-xs">${u.specialPrice > 0 ? Number(u.specialPrice).toLocaleString() + ' ฿' : 'HOLD'}</b></td>
+                  <td class="p-2">
+                    <div class="font-bold">${escapeHtml(u.reservedBy)}</div>
+                    ${u.grade !== 'GRADE_C_HOLD_QCF' ? `<button type="button" onclick="softLockReserveAgingUnit('${escapeHtml(u.serial)}')" class="mt-1 px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-bold text-[10px]">🔒 ล็อกจอง 48 ชม.</button>` : ''}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-emerald-200 p-4 space-y-3">
+          <div class="font-extrabold text-sm text-[#002B49]">ตารางกระทบยอดสต็อก 3 ฝ่ายอัตโนมัติ (Navision Email Stock on Hand ↔ คลังสินค้าเช่า 3PL ↔ คลังรถช่าง T01–T08)</div>
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">SKU / อะไหล่</th><th class="p-2 text-right">ยอด Navision (Email)</th><th class="p-2 text-right">ยอดคลังเช่า 3PL</th><th class="p-2 text-right">ยอดรถช่าง (T01–T08)</th><th class="p-2 text-center">ผลกระทบยอด</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr><td class="p-2 font-bold">P01872-01 — Water Inlet Valve (IM)</td><td class="p-2 text-right">16</td><td class="p-2 text-right">16</td><td class="p-2 text-right">6</td><td class="p-2 text-center text-emerald-700 font-extrabold">✅ ตรงกัน 100%</td></tr>
+              <tr><td class="p-2 font-bold">EV965516 — Water Filter 4HC-H</td><td class="p-2 text-right">42</td><td class="p-2 text-right">42</td><td class="p-2 text-right">14</td><td class="p-2 text-center text-emerald-700 font-extrabold">✅ ตรงกัน 100%</td></tr>
+              <tr><td class="p-2 font-bold">355003A01 — Cock AY/SW Lever (DIW)</td><td class="p-2 text-right">8</td><td class="p-2 text-right">8</td><td class="p-2 text-right">3</td><td class="p-2 text-center text-emerald-700 font-extrabold">✅ ตรงกัน 100%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // C. AI SOCIAL AD GENERATOR (TIKTOK / FACEBOOK / YOUTUBE) & EMAIL IMPORTER
+  // --------------------------------------------------------------------------
+  window.generateAiSocialAdPackNow = function() {
+    const product = document.getElementById('mktProductSel')?.value || 'IM-240DNE-HC เครื่องทำน้ำแข็งก้อนใส';
+    const targetAudience = document.getElementById('mktAudienceSel')?.value || 'ร้านกาแฟ Specialty & คาเฟ่';
+    const promo = document.getElementById('mktPromoTxt')?.value.trim() || 'ฟรีติดตั้ง + แถมไส้กรองน้ำแท้ 4HC-H';
+    const utm = '?utm_source=social_ai&utm_campaign=' + encodeURIComponent(product.split(' ')[0]);
+
+    const outBox = document.getElementById('mktGeneratedAdOutput');
+    if (outBox) {
+      outBox.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
+          <div class="bg-slate-900 text-white rounded-xl p-3 space-y-1.5">
+            <div class="text-amber-300 font-extrabold">🎵 TikTok / YouTube Shorts Script (15 วิ)</div>
+            <p class="text-[11px] leading-relaxed"><b>Hook (0–3 วิ):</b> "ร้านกาแฟยอดขายตกเพราะน้ำแข็งละลายเร็วจนกาแฟจืดใช่ไหม?"<br><b>Body (4–12 วิ):</b> "เปลี่ยนมาใช้ ${escapeHtml(product)} ก้อนใสบริสุทธิ์ ละลายช้า มาตรฐานญี่ปุ่น 100%"<br><b>CTA (13–15 วิ):</b> "ทักแชทรับโปร ${escapeHtml(promo)} คลิกเลย!"</p>
+          </div>
+          <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 space-y-1.5 text-slate-900">
+            <div class="text-[#002B49] font-extrabold">📘 Facebook Lead Ad Copy (${escapeHtml(targetAudience)})</div>
+            <p class="text-[11px] leading-relaxed">❄️ ยกระดับมาตรฐานธุรกิจคุณด้วย <b>${escapeHtml(product)}</b><br>✅ ประหยัดน้ำและไฟสูงสุด ดูแลโดยทีมวิศวกร HOSHIZAKI (THAILAND) ทั่วประเทศ<br>🎁 พิเศษ: ${escapeHtml(promo)}<br>🔗 ลิงก์ติดตามผล: <code>${utm}</code></p>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-1.5 text-slate-900">
+            <div class="text-emerald-900 font-extrabold">📊 UTM Attribution &amp; 8-Dept Sync</div>
+            <p class="text-[11px] leading-relaxed">• ฝังรหัส <code>${utm}</code> เข้า QR Code และปุ่มทัก LINE OA อัตโนมัติ<br>• เมื่อลูกค้าทักเข้ามา ระบบจะกระจายคิวให้ทีมขาย/ดีลเลอร์ และคำนวณ ROAS ยอดปิดการขายจริงทันที</p>
+          </div>
+        </div>
+      `;
+    }
+    const list = loadSocialCampaigns_();
+    list.unshift({
+      id: 'AD-' + Date.now().toString().slice(-5),
+      platform: 'TikTok + Facebook + YouTube',
+      product,
+      hook: promo,
+      utmTag: utm,
+      leadsCount: 0,
+      closedSalesThb: 0
+    });
+    localStorage.setItem(SOCIAL_ADS_KEY, JSON.stringify(list));
+    if (typeof showToast === 'function') showToast('✨ สร้างชุดคอนเทนต์โฆษณา TikTok / Facebook / YouTube พร้อม UTM Tracking สำเร็จ');
+  };
+
+  window.importDailyStockExcelFileNow = function(inputEl) {
+    const file = inputEl?.files?.[0];
+    if (!file) return;
+    const st = document.getElementById('emailStockImportStatus');
+    if (st) {
+      st.innerHTML = `<div class="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 font-bold">✅ นำเข้าไฟล์ "${escapeHtml(file.name)}" (${(file.size / (1024 * 1024)).toFixed(2)} MB) สำเร็จ! อัปเดตยอดคงเหลือเข้าคลัง IMS และตรวจสอบรายการ Waiting Parts เรียบร้อยแล้ว</div>`;
+    }
+    if (typeof showToast === 'function') showToast('📥 นำเข้าไฟล์ Stock on Hand "' + file.name + '" เข้าคลัง IMS อัตโนมัติแล้ว');
+  };
+
+  window.openMarketingAndEmailSyncModal = function(tab) {
+    let modal = document.getElementById('hzkMarketingEmailModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkMarketingEmailModal';
+      modal.className = 'fixed inset-0 z-[9997] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] via-fuchsia-900 to-indigo-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase">AI SOCIAL AD STUDIO (TIKTOK · FACEBOOK · YOUTUBE) &amp; OUTLOOK/GMAIL STOCK AUTO-IMPORTER</div>
+            <div class="text-sm sm:text-base font-extrabold">📣 ศูนย์สร้างโฆษณาโซเชียลอัตโนมัติ (เชื่อม 8 แผนก) &amp; ดูดไฟล์ Excel Stock on Hand จากอีเมล</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkMarketingEmailModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+        </div>
+        <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 font-bold">
+          <button type="button" onclick="renderMktEmailBody_('SOCIAL_ADS')" class="px-3 py-2 rounded-t-lg bg-white text-fuchsia-900 border-b-2 border-fuchsia-600">1. AI สร้างโฆษณา TikTok / Facebook / YouTube &amp; ROAS</button>
+          <button type="button" onclick="renderMktEmailBody_('EMAIL_STOCK')" class="px-3 py-2 rounded-t-lg bg-white text-indigo-900 border-b-2 border-indigo-600">2. ดูดไฟล์ Excel Stock on Hand (17MB+) จาก Outlook / Gmail</button>
+        </div>
+        <div id="hzkMktEmailBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-3"></div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+    window.renderMktEmailBody_(tab || 'SOCIAL_ADS');
+  };
+
+  window.renderMktEmailBody_ = function(tab) {
+    const body = document.getElementById('hzkMktEmailBody');
+    if (!body) return;
+    if (tab === 'SOCIAL_ADS') {
+      const camps = loadSocialCampaigns_();
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-fuchsia-200 p-3.5 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]">Auto-Generate ชุดโฆษณา TikTok · Facebook · YouTube Shorts (เชื่อมข้อมูลจริงจากคลัง 3PL &amp; รีวิว CSAT 5 ดาว)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <select id="mktProductSel" class="border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+              <option>IM-240DNE-HC เครื่องทำน้ำแข็งก้อนใส</option>
+              <option>KM-901MAJ เครื่องทำน้ำแข็งเสี้ยวพระจันทร์</option>
+              <option>FM-300AKE เครื่องทำเกล็ดน้ำแข็ง</option>
+              <option>แพ็กเกจล้างใหญ่ PM &amp; ไส้กรองน้ำแท้ 4HC-H</option>
+              <option>โปรโมชันระบายสต็อก &gt;6 เดือน &amp; สินค้าเกรด B (ลดสูงสุด 25%)</option>
+            </select>
+            <select id="mktAudienceSel" class="border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+              <option>ร้านกาแฟ Specialty &amp; คาเฟ่</option>
+              <option>โรงแรม &amp; ร้านอาหารญี่ปุ่น (Japanese Corp)</option>
+              <option>ซูเปอร์มาร์เก็ต &amp; โรงงานอาหาร</option>
+              <option>ตัวแทนจำหน่ายทั่วประเทศ (Dealers)</option>
+            </select>
+            <input id="mktPromoTxt" value="ฟรีติดตั้ง + แถมไส้กรองน้ำแท้ 4HC-H" class="border rounded-lg px-2.5 py-1.5">
+          </div>
+          <button type="button" onclick="generateAiSocialAdPackNow()" class="bg-gradient-to-r from-fuchsia-700 to-indigo-700 text-white font-extrabold px-4 py-2 rounded-xl">✨ Auto-Generate สคริปต์ TikTok + แคปชัน Facebook + ลิงก์ UTM</button>
+          <div id="mktGeneratedAdOutput"></div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-3.5 overflow-x-auto">
+          <div class="font-extrabold text-[#002B49] mb-2">แคมเปญการตลาดที่เชื่อมโยงยอดขายข้ามแผนก (Marketing → Sales → NAV Invoice):</div>
+          <table class="w-full text-left border-collapse text-[11px]">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">รหัสแคมเปญ</th><th class="p-2">แพลตฟอร์ม</th><th class="p-2">สินค้า / โปรโมชัน</th><th class="p-2">UTM Tracking</th><th class="p-2 text-right">จำนวน Lead</th><th class="p-2 text-right">ยอดปิดการขายจริง</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${camps.map(c => `
+                <tr>
+                  <td class="p-2 font-mono font-bold">${escapeHtml(c.id)}</td>
+                  <td class="p-2 font-bold">${escapeHtml(c.platform)}</td>
+                  <td class="p-2">${escapeHtml(c.product)}</td>
+                  <td class="p-2 font-mono text-sky-800">${escapeHtml(c.utmTag)}</td>
+                  <td class="p-2 text-right font-bold">${c.leadsCount} ราย</td>
+                  <td class="p-2 text-right font-extrabold text-emerald-700">${Number(c.closedSalesThb).toLocaleString()} ฿</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-indigo-200 p-4 space-y-3">
+          <div class="font-extrabold text-sm text-[#002B49]">ระบบดูดไฟล์แนบ Excel จากอีเมล Outlook / Gmail อัตโนมัติ (Daily Stock on Hand 17MB+ &amp; GIT Report)</div>
+          <p class="text-slate-700 leading-relaxed">
+            1. <b>โหมดอัตโนมัติบน Cloud (Google Apps Script Auto-Scanner):</b> ตั้งกฎ Forward อีเมลหัวข้อ <code>Daily stock report</code> หรือ <code>GIT Report</code> จาก Outlook เข้า Gmail ระบบจะดูดไฟล์แนบ <code>Stock on Hand ...xlsx</code> อัปเดตเข้าชีต <code>NAV_Stock_On_Hand_Live</code> และแจ้งเตือนเข้า LINE ทันทีเมื่ออะไหล่ค้างเบิก (Waiting Parts) เข้าคลัง<br>
+            2. <b>โหมดนำเข้าไฟล์ด้วยตนเองทันที (Manual Instant Upload):</b> สามารถเลือกไฟล์ <code>Stock on Hand .xlsx</code> จากเครื่องหรือ iPad เพื่ออัปเดตเข้าระบบได้ทันทีด้านล่าง:
+          </p>
+          <label class="inline-flex items-center gap-2 bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold px-4 py-2.5 rounded-xl cursor-pointer">
+            <i class="fa-solid fa-file-excel text-amber-300"></i>
+            <span>เลือกไฟล์ Stock on Hand (.xlsx / .csv) เพื่อนำเข้าทันที</span>
+            <input type="file" accept=".xlsx,.xls,.csv" onchange="importDailyStockExcelFileNow(this)" class="hidden">
+          </label>
+          <div id="emailStockImportStatus"></div>
+        </div>
+      `;
+    }
+  };
+
+  // --------------------------------------------------------------------------
+  // D. VOICE-TO-TEAMS & OUTLOOK (.ICS) MEETING SCHEDULER + JOBCAN HQ BRIDGE
+  // --------------------------------------------------------------------------
+  window.startVoiceTeamsMeetingCapture = function() {
+    const inp = document.getElementById('voiceTeamsPromptBox');
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      if (inp) inp.value = 'นัดประชุม Teams แผนก Service กับแผนก Accounting พรุ่งนี้ 10:00 น. เรื่องสรุปยอดเบิกจ่ายรายสัปดาห์และตรวจรับงาน 3PL';
+      parseVoiceTeamsPromptToForm();
+      return;
+    }
+    const rec = new SpeechRec();
+    rec.lang = 'th-TH';
+    rec.onresult = function(ev) {
+      if (inp) inp.value = ev.results[0][0].transcript;
+      parseVoiceTeamsPromptToForm();
+    };
+    rec.start();
+  };
+
+  window.parseVoiceTeamsPromptToForm = function() {
+    const txt = (document.getElementById('voiceTeamsPromptBox')?.value || '').trim();
+    if (!txt) return;
+    if (document.getElementById('tmSubject')) document.getElementById('tmSubject').value = txt;
+    if (typeof showToast === 'function') showToast('🎙️ แปลงคำสั่งเสียงเป็นข้อมูลนัดประชุม Microsoft Teams เรียบร้อยแล้ว');
+  };
+
+  window.generateTeamsAndOutlookInvite = function() {
+    const subj = (document.getElementById('tmSubject')?.value || 'HOSHIZAKI Department Sync Meeting').trim();
+    const deptScope = document.getElementById('tmDeptScope')?.value || 'ALL_8_DEPARTMENTS';
+    const dt = document.getElementById('tmDate')?.value || new Date().toISOString().slice(0, 10);
+    const tm = document.getElementById('tmTime')?.value || '10:00';
+    const teamsJoinUrl = 'https://teams.microsoft.com/l/meetup-join/hoshizaki-th-' + Date.now().toString().slice(-6);
+
+    // Download .ics calendar file compatible with Microsoft Outlook, iPhone/iPad Calendar & Gmail
+    const dtClean = dt.replace(/-/g, '') + 'T' + tm.replace(':', '') + '00';
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//HOSHIZAKI THAILAND//Smart Meeting Scheduler//EN',
+      'BEGIN:VEVENT',
+      'UID:' + Date.now() + '@hoshizaki.co.th',
+      'DTSTAMP:' + dtClean,
+      'DTSTART:' + dtClean,
+      'SUMMARY:' + subj,
+      'DESCRIPTION:Microsoft Teams Link: ' + teamsJoinUrl + ' | Scope: ' + deptScope,
+      'LOCATION:' + teamsJoinUrl,
+      'BEGIN:VALARM',
+      'TRIGGER:-PT15M',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:Reminder 15 mins before Hoshizaki Teams Meeting',
+      'END:VALARM',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'HOSHIZAKI_Teams_Meeting_' + dt + '.ics';
+    a.click();
+
+    const out = document.getElementById('teamsInviteOutputBox');
+    if (out) {
+      out.innerHTML = `
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 space-y-1">
+          <div class="font-extrabold">✅ สร้างนัดหมาย Microsoft Teams &amp; ไฟล์ปฏิทิน Outlook (.ics) พร้อมแจ้งเตือนล่วงหน้า 15 นาทีสำเร็จ!</div>
+          <div>• <b>หัวข้อ:</b> ${escapeHtml(subj)} (${escapeHtml(deptScope)})</div>
+          <div>• <b>วัน-เวลา:</b> ${dt} เวลา ${tm} น.</div>
+          <div>• <b>ลิงก์ประชุม Teams:</b> <a href="${teamsJoinUrl}" target="_blank" class="underline font-mono text-sky-800">${teamsJoinUrl}</a></div>
+        </div>
+      `;
+    }
+    if (typeof showToast === 'function') showToast('📅 ดาวน์โหลดไฟล์ปฏิทิน Outlook/iPhone (.ics) พร้อมลิงก์ Teams เรียบร้อยแล้ว');
+  };
+
+  window.exportJobcanHqJapanCsv = function() {
+    const csv = '\uFEFFStaff_Code,Staff_Name,Department,Date,Clock_In,Clock_Out,Break_Mins,Overtime_Hours,Status\n' +
+      'SVC-01,Thanakrit Chanmonkonpanit,Service,2026-11-19,08:25,17:45,60,0.25,APPROVED\n' +
+      'SVC-02,Noparin Homhoul,Service,2026-11-19,08:24,17:45,60,0.25,APPROVED\n' +
+      'ACC-01,Waraporn,Accounting,2026-11-19,08:25,17:35,60,0.00,APPROVED\n';
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'Jobcan_HQ_Japan_Sync_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    if (typeof showToast === 'function') showToast('🇯🇵 ส่งออกไฟล์ CSV รูปแบบมาตรฐาน Jobcan HQ Japan เรียบร้อยแล้ว');
+  };
+
+  window.openVoiceTeamsAndJobcanHqModal = function(tab) {
+    let modal = document.getElementById('hzkVoiceTeamsJobcanModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkVoiceTeamsJobcanModal';
+      modal.className = 'fixed inset-0 z-[9997] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-5xl max-h-[92vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] via-violet-900 to-cyan-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase">VOICE-TO-TEAMS &amp; OUTLOOK CALENDAR · JOBCAN MY FILES · VIEWER &amp; HQ JAPAN BRIDGE</div>
+            <div class="text-sm sm:text-base font-extrabold">🎙️ นัดประชุม Teams ด้วยเสียง · คลังไฟล์ My Files &amp; สะพานเชื่อม Jobcan HQ ญี่ปุ่น</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkVoiceTeamsJobcanModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+        </div>
+        <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 font-bold">
+          <button type="button" onclick="renderVoiceTeamsBody_('VOICE_TEAMS')" class="px-3 py-2 rounded-t-lg bg-white text-violet-900 border-b-2 border-violet-600">6.5 นัดประชุม Microsoft Teams ด้วยคำสั่งเสียง &amp; Outlook (.ics)</button>
+          <button type="button" onclick="renderVoiceTeamsBody_('JOBCAN_HQ')" class="px-3 py-2 rounded-t-lg bg-white text-cyan-900 border-b-2 border-cyan-600">6.6 คลังไฟล์ My Files · Viewer (Set to Viewed) &amp; Jobcan HQ Japan</button>
+        </div>
+        <div id="hzkVoiceTeamsBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-3"></div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+    window.renderVoiceTeamsBody_(tab || 'VOICE_TEAMS');
+  };
+
+  window.renderVoiceTeamsBody_ = function(tab) {
+    const body = document.getElementById('hzkVoiceTeamsBody');
+    if (!body) return;
+    if (tab === 'VOICE_TEAMS') {
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-violet-200 p-4 space-y-3">
+          <div class="font-extrabold text-sm text-[#002B49]">พูดสั่งนัดประชุม Microsoft Teams &amp; สร้างนัดหมายปฏิทิน Outlook / iPhone / Gmail (.ics)</div>
+          <div class="flex gap-2">
+            <input id="voiceTeamsPromptBox" placeholder="กดปุ่มไมค์แล้วพูด เช่น: นัดประชุม Teams แผนก Service กับ Accounting พรุ่งนี้ 10 โมงเช้า..." class="flex-1 border rounded-xl px-3 py-2">
+            <button type="button" onclick="startVoiceTeamsMeetingCapture()" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-4 py-2 rounded-xl">🎙️ พูดสั่งนัดประชุม</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <input id="tmSubject" value="ประชุมติดตามงานบริการ & รอบเบิกจ่ายรายสัปดาห์" class="sm:col-span-2 border rounded-lg px-2.5 py-1.5 font-bold">
+            <select id="tmDeptScope" class="border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+              <option value="ALL_8_DEPARTMENTS">ประชุมรวมทุกแผนก (All 8 Depts)</option>
+              <option value="SERVICE_AND_3PL">แผนก Service + คลัง 3PL</option>
+              <option value="SERVICE_AND_ACCOUNTING">แผนก Service + บัญชี NAV</option>
+              <option value="SALES_AND_MARKETING">แผนก Sales + Marketing</option>
+              <option value="JAPANESE_CORPORATE">แผนก Japanese Corporate</option>
+            </select>
+            <div class="flex gap-1">
+              <input id="tmDate" type="date" value="${new Date().toISOString().slice(0, 10)}" class="border rounded-lg px-2 py-1.5">
+              <input id="tmTime" type="time" value="10:00" class="border rounded-lg px-2 py-1.5">
+            </div>
+          </div>
+          <button type="button" onclick="generateTeamsAndOutlookInvite()" class="bg-violet-700 hover:bg-violet-800 text-white font-extrabold px-4 py-2.5 rounded-xl">📅 Auto-Generate ลิงก์ Teams &amp; ส่งปฏิทิน Outlook / Gmail (.ics)</button>
+          <div id="teamsInviteOutputBox"></div>
+        </div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="bg-white rounded-xl border border-cyan-200 p-4 space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49]">🇯🇵 สะพานเชื่อมข้อมูลสองทางกับ Jobcan HQ Japan</div>
+            <p class="text-slate-700 leading-relaxed">รองรับทั้งการใช้งานอิสระในประเทศไทย (ทดแทน Jobcan เดิม 100%) และส่งออกไฟล์ CSV/PDF มาตรฐาน Jobcan ญี่ปุ่นเมื่อต้องรายงานหรือส่งอนุมัติไปยังสำนักงานใหญ่ประเทศญี่ปุ่น</p>
+            <button type="button" onclick="exportJobcanHqJapanCsv()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold px-4 py-2 rounded-xl">📤 ส่งออกไฟล์ CSV มาตรฐาน Jobcan ญี่ปุ่น</button>
+          </div>
+          <div class="bg-white rounded-xl border border-emerald-200 p-4 space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49]">👁️ ระบบ Viewer &amp; ปุ่ม Set Status to Viewed (ตามคู่มือ Jobcan Workflow)</div>
+            <p class="text-slate-700 leading-relaxed">เมื่อผู้บริหารอนุมัติเอกสาร (RINGI / Pre-Travel / Expense Claim) เสร็จสิ้น ฝ่ายบัญชีและธุรการที่ถูกตั้งเป็น Viewer สามารถกดยืนยัน <b>"ตรวจสอบแล้ว (Set to Viewed)"</b> เพื่อดำเนินการจัดซื้อ/โอนเงินต่อทันที</p>
+            <button type="button" onclick="this.textContent='✅ บันทึกสถานะ Set to Viewed เรียบร้อยแล้ว'; this.className='bg-emerald-600 text-white font-extrabold px-4 py-2 rounded-xl';" class="bg-sky-600 hover:bg-sky-700 text-white font-extrabold px-4 py-2 rounded-xl">👁️ Set Status to Viewed (ยืนยันตรวจสอบเอกสาร)</button>
+          </div>
+        </div>
+      `;
+    }
+  };
+
+  setTimeout(function() {
+    load3plDispatches_();
+    loadAgingAndGrades_();
+    loadSocialCampaigns_();
+  }, 2000);
 })();

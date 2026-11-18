@@ -1164,7 +1164,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1050-HR-WORKFLOW',
+    version: 'Enterprise-v1051-OMNI-ENTERPRISE',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1203,7 +1203,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1050-HR-WORKFLOW',
+    version: 'Enterprise-v1051-OMNI-ENTERPRISE',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -9385,7 +9385,7 @@ function getEnterpriseImsDataFromSheets_(ss) {
 
 
 // ============================================================================
-// 26. ENTERPRISE v1050-HR-WORKFLOW: MULTI-USER SHA-256 CREDENTIAL VAULT,
+// 26. ENTERPRISE v1051-OMNI-ENTERPRISE: MULTI-USER SHA-256 CREDENTIAL VAULT,
 //     SOLE SUPER ADMIN (MR. NOPARIN) & IMMEDIATE SYSTEM_AUDIT_LOG SYNC
 // ============================================================================
 
@@ -9446,7 +9446,7 @@ function logSecurityAuditEventToSheet_(ss, data) {
 
 
 // ============================================================================
-// SECTION 28: ENTERPRISE v1050-HR-WORKFLOW TWO-WAY CREDENTIAL VAULT & AUDIT LOG READERS
+// SECTION 28: ENTERPRISE v1051-OMNI-ENTERPRISE TWO-WAY CREDENTIAL VAULT & AUDIT LOG READERS
 // ============================================================================
 function getUserCredentialsVaultFromSheet_(ss) {
   var sheet = ss.getSheetByName('System_User_Credentials');
@@ -9505,7 +9505,7 @@ function getSecurityAuditLogsFromSheet_(ss, limit) {
 
 
 // ============================================================================
-// 27. ENTERPRISE v1050-HR-WORKFLOW BACKEND ENHANCEMENTS:
+// 27. ENTERPRISE v1051-OMNI-ENTERPRISE BACKEND ENHANCEMENTS:
 //     - Trilingual Auto-Detect Response (TH / EN / JP)
 //     - Business Hours Flex Card (Mon-Fri 08:30-17:30) + After-Hours Queue
 //     - Smart Fuzzy Disambiguation & Auto-Resend Permanent PDF Vault Link
@@ -9583,7 +9583,7 @@ function logLineOaInquiryToSheet_(ss, userId, custName, lang, question, intent, 
 
 
 // ============================================================================
-// 28. ENTERPRISE v1050-HR-WORKFLOW BACKEND ENGINE:
+// 28. ENTERPRISE v1051-OMNI-ENTERPRISE BACKEND ENGINE:
 //     - Mobile Auto-Stamp & WFH Selfie Attendance Logger (HR_Attendance_Logs)
 //     - Leave Request & Schedule Sync (HR_Leave_Requests)
 //     - 5 Corporate Forms & Weekly Cut-Off Payout Batch (HR_Expense_Workflows)
@@ -9633,5 +9633,35 @@ function logHrExpenseWorkflowToSheet_(ss, data) {
     Number(data.cashAdvance || 0),
     data.payoutCycle || 'Thu/Fri Weekly Batch',
     data.status || 'PENDING'
+  ]);
+}
+
+
+// ============================================================================
+// 29. ENTERPRISE v1051-OMNI-ENTERPRISE BACKEND ENGINE:
+//     - 3PL Warehouse Gate-Pass, Driver/Courier & QR e-POD (Logistics_3PL_Dispatches)
+//     - Inventory Aging >6M & Grade A/B/C/L Outlet (Inventory_Aging_Grades)
+//     - AI Social Ad Campaigns & Email Stock-on-Hand Auto-Importer
+// ============================================================================
+
+function log3plDispatchToSheet_(ss, data) {
+  var sheet = ss.getSheetByName('Logistics_3PL_Dispatches');
+  if (!sheet) {
+    sheet = ss.insertSheet('Logistics_3PL_Dispatches');
+    sheet.getRange(1, 1, 1, 8).setValues([[
+      'DO / Gate-Pass ID', 'Date', 'Channel (Driver/Lalamove/Grab/3PL)',
+      'Origin', 'Destination', 'Items Summary', 'Cost (THB)', 'e-POD Status'
+    ]]).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+  sheet.appendRow([
+    data.id || ('DO-' + Date.now()),
+    data.date || Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd'),
+    data.channel || '',
+    data.origin || '',
+    data.destination || '',
+    data.itemSummary || '',
+    Number(data.costThb || 0),
+    data.status || 'DISPATCHED'
   ]);
 }

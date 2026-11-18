@@ -1164,7 +1164,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1051-OMNI-ENTERPRISE',
+    version: 'Enterprise-v1054-OMNI-PHASE3-COMPLETE',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1203,7 +1203,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1051-OMNI-ENTERPRISE',
+    version: 'Enterprise-v1054-OMNI-PHASE3-COMPLETE',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -9756,4 +9756,47 @@ function syncV1052UnifiedAiAndB2bLoop_(ss, actionType, payload) {
   var recId = rec.caseId || rec.unitId || rec.id || ('V1052-' + Date.now());
   sh.appendRow([new Date(), actionType, recId, JSON.stringify(rec)]);
   return { status: 'ok', sheet: sheetName, recordId: recId };
+}
+
+
+// ============================================================================
+// SECTION 32: ENTERPRISE v1053-OMNI-PHASE3 — CROSS-MODULE EVENT BUS LOGGER
+// ============================================================================
+function logCrossModuleEventBus_(ss, payload) {
+  var sh = ss.getSheetByName('Cross_Module_Event_Bus_Log');
+  if (!sh) {
+    sh = ss.insertSheet('Cross_Module_Event_Bus_Log');
+    sh.appendRow(['Timestamp', 'Event_ID', 'Event_Type', 'Chained_Actions', 'Payload_JSON']);
+    sh.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+  }
+  var ev = payload.event || payload;
+  sh.appendRow([
+    new Date(),
+    ev.eventId || ('EVT-' + Date.now()),
+    ev.eventType || 'SYSTEM_EVENT',
+    Array.isArray(ev.chainedActions) ? ev.chainedActions.join(' | ') : '',
+    JSON.stringify(ev.payload || {})
+  ]);
+  return { status: 'ok', sheet: 'Cross_Module_Event_Bus_Log' };
+}
+
+
+// ============================================================================
+// SECTION 33: ENTERPRISE v1054-OMNI-PHASE3-COMPLETE — LIFECYCLE STAGE & PUSH SYNC
+// ============================================================================
+function syncJobLifecycleStageAndPush_(ss, payload) {
+  var sh = ss.getSheetByName('Job_Lifecycle_Progress');
+  if (!sh) {
+    sh = ss.insertSheet('Job_Lifecycle_Progress');
+    sh.appendRow(['Timestamp', 'Job_No', 'Stage_Num', 'Stage_Label', 'Updated_By']);
+    sh.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+  }
+  sh.appendRow([
+    new Date(),
+    payload.jobNo || 'ACTIVE-JOB',
+    payload.stage || 1,
+    payload.stageLabel || '',
+    payload.updatedBy || 'System'
+  ]);
+  return { status: 'ok', sheet: 'Job_Lifecycle_Progress' };
 }

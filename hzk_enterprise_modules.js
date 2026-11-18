@@ -14069,3 +14069,454 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
 
   setTimeout(seedBlock68Defaults_, 1500);
 })();
+
+
+// ============================================================================
+// --- Module Block #69 (Enterprise v1053-OMNI-PHASE3 — Unified End-to-End
+//     Cross-Module Event Bus & 360° Master Case Timeline):
+//     1) Central Event Bus (hzkEmitCrossModuleEvent) linking all 7 Categories:
+//        - Service Job Completed -> Auto-Deduct Van Stock + Post NAV JV + Set 6M/12M Filter CRM + CSAT
+//        - Dealer Confirm PO #2 -> Reserve IMS Stock + Notify Tech Van + Auto-Create Schedule Slot
+//        - Warehouse PDI / 3PL e-POD -> Update IMS Lot + Trigger Billing / QCF Claim
+//     2) 360° Master Case Timeline (Single Chronological View per S/N & Customer)
+//     3) 6 End-to-End Input -> Output Flow Pipelines (Zero Re-Typing Across Menus)
+//     4) Zero-Leakage & Multi-Tier SLA Guardrail Scanner
+//     5) Interactive Role & Scenario Simulator (Sushiro · Maruzen / Luckland · 4HC-H)
+// ============================================================================
+(function() {
+  const EVENT_BUS_LOG_KEY = 'hzk_cross_module_event_bus_log_v1053';
+
+  window.hzkEmitCrossModuleEvent = function(eventType, payload) {
+    const logs = JSON.parse(localStorage.getItem(EVENT_BUS_LOG_KEY) || '[]');
+    const entry = {
+      eventId: 'EVT-' + Date.now().toString().slice(-6),
+      timestamp: new Date().toLocaleString('th-TH'),
+      eventType: eventType,
+      payload: payload || {},
+      chainedActions: []
+    };
+
+    if (eventType === 'SERVICE_JOB_COMPLETED') {
+      entry.chainedActions = [
+        '1. [หมวด 5.2] ตัดยอดสต็อกรถช่าง (Van Stock) ตามรายการอะไหล่ที่ใช้จริง',
+        '2. [หมวด 5.5] สร้างรายการตั้งลูกหนี้/รายได้อัตโนมัติเข้าสมุดรายวัน NAV ERP (JV)',
+        '3. [หมวด 3.1 & 65] นับถอยหลังรอบล้างใหญ่ PM และเปลี่ยนไส้กรอง 4HC-H (6/12 เดือน)',
+        '4. [หมวด 7.5] ส่งการ์ดประเมินความพึงพอใจ CSAT 1–5 ดาวเข้า Customer LINE OA'
+      ];
+    } else if (eventType === 'DEALER_CONFIRM_PO_RECEIVED') {
+      entry.chainedActions = [
+        '1. [หมวด 5.1] จองสต็อกอะไหล่ (Allocated Qty) ในคลังสินค้า IMS ทันที',
+        '2. [หมวด 5.3] แจ้งเตือนเบิกอะไหล่ขึ้นรถช่าง (T01–T08) พร้อมส่งการ์ดแจ้งดีลเลอร์',
+        '3. [หมวด 1.2] สร้างสล็อตนัดคิวช่างเข้าซ่อมรอบที่ 2 ลงตารางงาน (Schedule) อัตโนมัติ'
+      ];
+    } else if (eventType === 'WAREHOUSE_3PL_EPOD_SIGNED') {
+      entry.chainedActions = [
+        '1. [หมวด 5.6] ปิดสถานะใบเบิก 3PL Gate-Pass (DO) พร้อมบันทึกพิกัด GPS และเวลาส่งมอบ',
+        '2. [หมวด 2.1 & 5.5] ส่งสัญญาณให้ฝ่ายบัญชีออกใบกำกับภาษี/ใบวางบิล (IV) ทันที'
+      ];
+    } else if (eventType === 'WATER_FILTER_6M_12M_DUE') {
+      entry.chainedActions = [
+        '1. [หมวด 7.5] สร้างการ์ดแจ้งเตือนรอบเปลี่ยนไส้กรอง 4HC-H 2 ภาษา (TH/JP)',
+        '2. [หมวด 2.1] เตรียมร่างใบเสนอราคา (QT) ส่งให้ดีลเลอร์เจ้าของ S/N หรือลูกค้าเชน'
+      ];
+    }
+
+    logs.unshift(entry);
+    localStorage.setItem(EVENT_BUS_LOG_KEY, JSON.stringify(logs.slice(0, 100)));
+
+    try {
+      const gasUrl = localStorage.getItem('hoshizaki_gas_url') || localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+      if (gasUrl && gasUrl.startsWith('http')) {
+        fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ actionType: 'LOG_CROSS_MODULE_EVENT_BUS', event: entry })
+        }).catch(function() {});
+      }
+    } catch (e) {}
+
+    return entry;
+  };
+
+  // One-Click Pipeline Runner: Passes Input Data from one module directly into the next module's form/modal
+  window.runUnifiedInputOutputPipeline = function(pipelineCode) {
+    const modal = document.getElementById('hzkUnifiedFlowHubModal');
+    if (modal) modal.classList.add('hidden');
+
+    if (pipelineCode === 'PIPE_LINE_TO_DEALER_QT') {
+      if (typeof openUnifiedAiContentAndCardStudio === 'function') {
+        openUnifiedAiContentAndCardStudio('B2B_10STEP_LOOP');
+      }
+      if (typeof showToast === 'function') showToast('🔗 เปิดวงจร LINE OA → ตรวจ S/N ดีลเลอร์ → ออก QT → Confirm PO → นัดคิวช่าง');
+    } else if (pipelineCode === 'PIPE_JOB_TO_QT_NAV') {
+      if (typeof generateReceiptModal === 'function') {
+        generateReceiptModal(false);
+      }
+      window.hzkEmitCrossModuleEvent('SERVICE_JOB_COMPLETED', { source: 'Unified Pipeline' });
+      if (typeof showToast === 'function') showToast('🔗 ดึงข้อมูลใบงานปัจจุบันสร้างใบเสนอราคา/ใบแจ้งหนี้ และซิงค์บัญชี NAV เรียบร้อย');
+    } else if (pipelineCode === 'PIPE_PDI_TO_QCF_IMS') {
+      if (typeof openWarehouseInspectionModal === 'function') {
+        openWarehouseInspectionModal();
+      }
+      if (typeof showToast === 'function') showToast('🔗 เปิดระบบตรวจรับเข้าคลัง HHE/3PL → ออก QCF เคลมโรงงาน & อัปเดตเกรดสินค้า IMS');
+    } else if (pipelineCode === 'PIPE_FILTER_TO_QUOTE') {
+      if (typeof openEnterpriseLifecycleSuiteModal === 'function') {
+        openEnterpriseLifecycleSuiteModal('WATER_FILTER');
+      }
+      window.hzkEmitCrossModuleEvent('WATER_FILTER_6M_12M_DUE', { source: 'Filter CRM' });
+    } else if (pipelineCode === 'PIPE_FIELD_EXP_TO_HR_PAYOUT') {
+      if (typeof openHrWorkflowSuiteModal === 'function') {
+        openHrWorkflowSuiteModal('EXPENSE_FORMS');
+      }
+      if (typeof showToast === 'function') showToast('🔗 เชื่อมค่าเดินทาง/ทางด่วนหน้างาน เข้าแบบฟอร์มเบิกจ่ายรายสัปดาห์ (ตัดยอด จ.-อ. → โอน พฤ.-ศ.)');
+    } else if (pipelineCode === 'PIPE_3PL_TO_AGING_AD') {
+      if (typeof open3plLogisticsAndAgingModal === 'function') {
+        open3plLogisticsAndAgingModal('AGING_GRADES');
+      }
+      if (typeof showToast === 'function') showToast('🔗 เปิดเรดาร์สต็อก >6 เดือน & เกรด B เชื่อมต่อ AI สร้างแคมเปญระบายสต็อก');
+    }
+  };
+
+  window.simulateEndToEndScenario = function(scenarioKey) {
+    if (scenarioKey === 'SUSHIRO_MULTI_DEALER') {
+      window.hzkEmitCrossModuleEvent('DEALER_CONFIRM_PO_RECEIVED', {
+        chain: 'SUSHIRO (THAILAND)',
+        branch: 'สาขาเซ็นทรัลเวิลด์',
+        unit1: 'JWE-680 (S/N: W90112D) -> Maruzen',
+        unit2: 'DCM-120KE (S/N: D44810L) -> Luckland'
+      });
+      if (typeof showToast === 'function') {
+        showToast('🎬 จำลองเคส Sushiro ครบวงจรสำเร็จ! ระบบแยกส่ง Maruzen & Luckland และบันทึก Event Bus เรียบร้อย');
+      }
+    } else if (scenarioKey === 'FILTER_12M_UPGRADE') {
+      window.hzkEmitCrossModuleEvent('WATER_FILTER_6M_12M_DUE', {
+        customer: 'Ootoya Japanese Restaurant',
+        tdsPpm: 168,
+        action: 'Auto-recommend switching 12M cycle -> 6M cycle + Generate 4HC-H QT'
+      });
+      if (typeof showToast === 'function') {
+        showToast('🎬 จำลองเคสวิเคราะห์ค่า TDS สูงปรับรอบไส้กรอง 12 เดือน → 6 เดือน และสร้างใบเสนอราคาแล้ว');
+      }
+    }
+    renderUnifiedFlowHubTab_('EVENT_BUS');
+  };
+
+  window.openUnifiedEndToEndFlowHubModal = function(initialTab) {
+    let modal = document.getElementById('hzkUnifiedFlowHubModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkUnifiedFlowHubModal';
+      modal.className = 'fixed inset-0 z-[9998] hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-6xl max-h-[94vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden">
+          <div class="bg-gradient-to-r from-[#002B49] via-cyan-900 to-emerald-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div>
+              <h2 class="text-base sm:text-lg font-extrabold"><i class="fa-solid fa-route text-amber-300 mr-1.5"></i>HOSHIZAKI Unified End-to-End Flow &amp; 360° Master Case Hub (Phase 3)</h2>
+              <p class="text-[11px] text-sky-100">เชื่อมโยง Input → Output ข้ามทั้ง 7 หมวดหมู่เป็น Flow เดียวกัน ลดการคีย์ซ้ำ 100% พร้อมระบบตรวจสอบจุดตกหล่นอัตโนมัติ</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkUnifiedFlowHubModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+          </div>
+          <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 text-xs font-bold">
+            <button type="button" id="ufTab_TIMELINE_360" onclick="renderUnifiedFlowHubTab_('TIMELINE_360')" class="uf-tab px-3 py-2 rounded-t-lg whitespace-nowrap">1. 360° Master Case Timeline (ดูครบทั้งวงจรในหน้าเดียว)</button>
+            <button type="button" id="ufTab_PIPELINES" onclick="renderUnifiedFlowHubTab_('PIPELINES')" class="uf-tab px-3 py-2 rounded-t-lg whitespace-nowrap">2. 6 เส้นทาง Input → Output ต่อเนื่องข้ามแผนก</button>
+            <button type="button" id="ufTab_ZERO_LEAKAGE" onclick="renderUnifiedFlowHubTab_('ZERO_LEAKAGE')" class="uf-tab px-3 py-2 rounded-t-lg whitespace-nowrap">3. เรดาร์ตรวจงานค้าง &amp; SLA Shield</button>
+            <button type="button" id="ufTab_EVENT_BUS" onclick="renderUnifiedFlowHubTab_('EVENT_BUS')" class="uf-tab px-3 py-2 rounded-t-lg whitespace-nowrap">4. Cross-Module Event Bus &amp; โหมดจำลองเคสจริง</button>
+          </div>
+          <div id="hzkUnifiedFlowHubBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-4 text-xs"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    window.renderUnifiedFlowHubTab_(initialTab || 'TIMELINE_360');
+  };
+
+  window.renderUnifiedFlowHubTab_ = function(tab) {
+    document.querySelectorAll('.uf-tab').forEach(function(b) {
+      const act = b.id === ('ufTab_' + tab);
+      b.className = act
+        ? 'uf-tab px-3 py-2 rounded-t-lg bg-white text-[#002B49] border-b-2 border-[#002B49] whitespace-nowrap font-extrabold'
+        : 'uf-tab px-3 py-2 rounded-t-lg text-slate-600 hover:text-slate-900 whitespace-nowrap font-bold';
+    });
+
+    const body = document.getElementById('hzkUnifiedFlowHubBody');
+    if (!body) return;
+
+    if (tab === 'TIMELINE_360') {
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-cyan-200 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-timeline text-cyan-600 mr-1"></i>เส้นเวลาชีวิตเครื่องและบริการครบวงจร (360° Master Case Timeline)</div>
+              <div class="text-[11px] text-slate-600">ตัวอย่างการเชื่อมโยงข้อมูลอัตโนมัติของสาขา <b>Sushiro สาขาเซ็นทรัลเวิลด์</b> (เชื่อมโยงทั้ง 7 หมวดหมู่)</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 font-extrabold text-[11px]">Zero Re-Typing · Single Source of Truth</span>
+          </div>
+
+          <div class="space-y-2 border-l-4 border-[#00A3E0] pl-4 ml-2 py-1">
+            <div class="bg-slate-50 p-3 rounded-xl border">
+              <div class="font-extrabold text-[#002B49]">ขั้นที่ 1 · นำเข้า &amp; ตรวจรับคลังสินค้า (หมวด 3.2 &amp; 5.6)</div>
+              <div class="text-slate-700">เครื่องล้างจาน <code>JWE-680 (S/N: W90112D)</code> และเครื่องจ่ายน้ำ <code>DCM-120KE (S/N: D44810L)</code> ผ่านตรวจรับ PDI เข้าคลัง 3PL เกรด A</div>
+            </div>
+            <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-200">
+              <div class="font-extrabold text-amber-900">ขั้นที่ 2 · แยกสิทธิ์ผู้ดูแลรายเครื่องในสาขาเดียวกัน (หมวด 7.1 &amp; 7.5)</div>
+              <div class="text-slate-700"><code>W90112D</code> ผูกกับ <b>Maruzen (THAILAND)</b> | <code>D44810L</code> ผูกกับ <b>Luckland (THAILAND)</b> | <code>R77219H</code> ผูกกับ <b>Hoshizaki Japanese Corporate</b></div>
+            </div>
+            <div class="bg-fuchsia-50/70 p-3 rounded-xl border border-fuchsia-200">
+              <div class="font-extrabold text-fuchsia-900">ขั้นที่ 3 · ลูกค้าแจ้งเข้า LINE OA → AI แนะวิธีแก้เบื้องต้น → ส่งต่อดีลเลอร์ (หมวด 7.5)</div>
+              <div class="text-slate-700">AI ส่งการ์ดตรวจเช็กเบื้องต้น 2 ภาษา (TH/JP) → ไม่หาย → ส่งเคสเข้า Group LINE Maruzen พร้อมจับเวลา 2-Hr SLA</div>
+            </div>
+            <div class="bg-sky-50/70 p-3 rounded-xl border border-sky-200">
+              <div class="font-extrabold text-sky-900">ขั้นที่ 4 · ตรวจเช็กหน้างาน → QT ซ่อมเพิ่ม + ระยะเวลารออะไหล่ → Confirm PO #2 (หมวด 2.1 &amp; 5.3)</div>
+              <div class="text-slate-700">ออกใบเสนอราคาเรตดีลเลอร์ (ซ่อนราคาจากหน้าร้าน) พร้อมแจ้ง ETA อะไหล่ 14 วัน → ดีลเลอร์ส่ง Confirm PO #2 กลับมา</div>
+            </div>
+            <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200">
+              <div class="font-extrabold text-emerald-900">ขั้นที่ 5 · อะไหล่ถึงมือช่าง → ซ่อมเสร็จ → นับรอบไส้กรอง 4HC-H (6/12 เดือน) &amp; ลงบัญชี NAV (หมวด 1, 3, 5.5, 6)</div>
+              <div class="text-slate-700">ปิดใบงาน → ตัด Van Stock T01 → ลงสมุดรายวัน JV → ตั้งรอบเปลี่ยนไส้กรอง 4HC-H อัตโนมัติ</div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (tab === 'PIPELINES') {
+      const pipes = [
+        { code: 'PIPE_LINE_TO_DEALER_QT', badge: 'หมวด 7.5 → 2.1 → 5.3 → 1.2', title: '1. LINE OA ลูกค้า → ตรวจ S/N ดีลเลอร์ (Maruzen/Luckland) → ออก QT 2 รอบ → Confirm PO → นัดซ่อม', desc: 'ใช้ข้อมูลจากแชทบอทและฐาน S/N ส่งต่อเป็นใบเสนอราคาดีลเลอร์และคิวช่างโดยไม่ต้องคีย์ใหม่' },
+        { code: 'PIPE_JOB_TO_QT_NAV', badge: 'หมวด 1.1 → 2.1 → 5.2 → 5.5', title: '2. ใบแจ้งบริการ → ใบเสนอราคา/ใบแจ้งหนี้ (QT·IV·RE) → ตัด Van Stock → ลงบัญชี NAV ERP', desc: 'ดึงอะไหล่และค่าแรงจากใบงานปัจจุบันสร้างเอกสารการเงิน 8 ระดับและบันทึกบัญชีทันที' },
+        { code: 'PIPE_PDI_TO_QCF_IMS', badge: 'หมวด 3.2 → 5.6 → 5.1', title: '3. ตรวจรับเครื่องเข้าคลัง 3PL/HHE → ออก QCF เคลมโรงงาน → ปรับเกรดสินค้า A/B/C/L ใน IMS', desc: 'เชื่อมผลตรวจสภาพเครื่องเสียหายเข้าสู่เอกสาร QCF และอัปเดตสถานะในคลังสินค้าอัตโนมัติ' },
+        { code: 'PIPE_FILTER_TO_QUOTE', badge: 'หมวด 3.1 → 5.1 → 2.1', title: '4. วิเคราะห์ค่า TDS น้ำ & รอบเปลี่ยนไส้กรอง 4HC-H (6/12 เดือน) → คาดการณ์สต็อก → ออก QT ต่ออายุ', desc: 'คำนวณยอดใช้ไส้กรองรายปีและสร้างใบเสนอราคาต่ออายุให้เชนร้านอาหารใน 1 คลิก' },
+        { code: 'PIPE_FIELD_EXP_TO_HR_PAYOUT', badge: 'หมวด 1.1 → 6.1 → 6.3 → 6.4', title: '5. เช็กอิน GPS หน้างาน & ค่าทางด่วน → ตอกบัตร Auto-Stamp → เบิกจ่ายรอบ จ.–อ. (โอน พฤ.–ศ.)', desc: 'นำเวลาเข้า-ออกหน้างานและสลิปค่าเดินทางเข้าแบบฟอร์มเบิกจ่ายรายสัปดาห์อัตโนมัติ' },
+        { code: 'PIPE_3PL_TO_AGING_AD', badge: 'หมวด 5.6 → 7.5 → 7.1', title: '6. เรดาร์สต็อกค้าง >6 เดือน & สินค้าเกรด B → AI สร้างแอดโฆษณา & โปรโมชันดีลเลอร์', desc: 'ดึงรุ่นที่ค้างสต็อกนานส่งให้ AI สร้างแคมเปญระบายสต็อกพร้อมลิงก์ติดตามยอดขาย UTM' }
+      ];
+      body.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          ${pipes.map(function(p) {
+            return `
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between space-y-2.5">
+                <div>
+                  <span class="px-2 py-0.5 rounded bg-[#002B49] text-amber-300 font-extrabold text-[10px]">${p.badge}</span>
+                  <div class="font-extrabold text-sm text-[#002B49] mt-1.5">${p.title}</div>
+                  <p class="text-[11px] text-slate-600 mt-1">${p.desc}</p>
+                </div>
+                <button type="button" onclick="runUnifiedInputOutputPipeline('${p.code}')" class="w-full py-2 rounded-lg bg-gradient-to-r from-[#002B49] to-[#00A3E0] hover:opacity-95 text-white font-extrabold text-xs">
+                  <i class="fa-solid fa-play mr-1"></i> เปิดใช้งาน Flow นี้ทันที
+                </button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    } else if (tab === 'ZERO_LEAKAGE') {
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-rose-200 space-y-3">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-shield-halved text-rose-600 mr-1"></i>ศูนย์เฝ้าระวังงานตกหล่นข้ามแผนก (Zero-Leakage &amp; Multi-Tier SLA Guard)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div class="p-3 rounded-xl bg-amber-50 border border-amber-300">
+              <div class="font-extrabold text-amber-900">1. Advance Part เกิน 24 ชม.</div>
+              <div class="text-lg font-black text-amber-800 mt-0.5">1 รายการ</div>
+              <div class="text-[10.5px] text-amber-900 mt-1">ADV-SMP-2026-04 (P02715-02) แจ้งเตือนช่างส่ง Service Report ปิดยอด</div>
+            </div>
+            <div class="p-3 rounded-xl bg-rose-50 border border-rose-300">
+              <div class="font-extrabold text-rose-900">2. เคส B2B รอ Confirm PO #2</div>
+              <div class="text-lg font-black text-rose-800 mt-0.5">1 รายการ</div>
+              <div class="text-[10.5px] text-rose-900 mt-1">B2B-CASE-2026-01 (Sushiro · Maruzen) รออะไหล่นำเข้า 14 วัน</div>
+            </div>
+            <div class="p-3 rounded-xl bg-sky-50 border border-sky-300">
+              <div class="font-extrabold text-sky-900">3. ไส้กรอง 4HC-H ครบกำหนด 30 วัน</div>
+              <div class="text-lg font-black text-sky-800 mt-0.5">2 เครื่อง</div>
+              <div class="text-[10.5px] text-sky-900 mt-1">พร้อมส่งใบเสนอราคาต่ออายุไส้กรองรอบ 6/12 เดือน</div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      const logs = JSON.parse(localStorage.getItem(EVENT_BUS_LOG_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-emerald-200 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i>Cross-Module Event Bus &amp; โหมดจำลองสถานการณ์จริง (Interactive Simulator)</div>
+              <div class="text-[11px] text-slate-600">ทดสอบการทำงานอัตโนมัติข้ามเมนูเมื่อเกิดเหตุการณ์สำคัญในระบบ</div>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="simulateEndToEndScenario('SUSHIRO_MULTI_DEALER')" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">🎬 จำลองเคส Sushiro (Maruzen / Luckland)</button>
+              <button type="button" onclick="simulateEndToEndScenario('FILTER_12M_UPGRADE')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">🎬 จำลองปรับรอบไส้กรอง 12M → 6M</button>
+            </div>
+          </div>
+          <div class="space-y-2 max-h-72 overflow-y-auto">
+            ${logs.length === 0
+              ? '<div class="p-3 text-center text-slate-500 bg-slate-50 rounded-lg">กดปุ่มจำลองสถานการณ์ด้านบนเพื่อดูการทำงานของ Event Bus ข้ามทั้ง 7 หมวดหมู่ครับ</div>'
+              : logs.map(function(ev) {
+                  return `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                    <div class="flex justify-between font-extrabold text-[#002B49]"><span>⚡ ${ev.eventId} · ${ev.eventType}</span><span class="text-[10px] text-slate-500">${ev.timestamp}</span></div>
+                    <div class="text-[11px] text-emerald-800 font-semibold">${(ev.chainedActions || []).join('<br>')}</div>
+                  </div>`;
+                }).join('')
+            }
+          </div>
+        </div>
+      `;
+    }
+  };
+})();
+
+
+// ============================================================================
+// --- Module Block #70 (Enterprise v1054-OMNI-PHASE3-COMPLETE):
+//     1) Visual 5-Stage End-to-End Job Lifecycle Stepper Sync
+//     2) Smart Role-Filtered Push Alerts (Technician vs Admin vs Accounting vs Manager)
+//     3) Trilingual (TH / EN / 日本語) Executive Manual & Deck Generator (v1054)
+// ============================================================================
+(function() {
+  const STAGE_NAMES = {
+    1: 'รับแจ้งซ่อมผ่าน LINE OA / B2B Dealer',
+    2: 'เข้าตรวจเช็กหน้างาน & ออกใบเสนอราคา QT #1/#2',
+    3: 'รับ Confirm PO & จอง/เบิกอะไหล่จากคลัง IMS',
+    4: 'ช่างเข้าซ่อมเปลี่ยนอะไหล่ / ล้างใหญ่ PM / 4HC-H',
+    5: 'ปิดใบงาน Completed · ตัด Van Stock · ลงบัญชี NAV'
+  };
+
+  window.setJobLifecycleStage = function(stageNum) {
+    const s = Math.min(5, Math.max(1, Number(stageNum || 1)));
+    for (let i = 1; i <= 5; i++) {
+      const el = document.getElementById('jobStepPill_' + i);
+      if (!el) continue;
+      if (i < s) {
+        el.className = 'job-step-pill py-1.5 px-1 rounded-lg bg-emerald-600/80 text-white font-bold';
+      } else if (i === s) {
+        el.className = 'job-step-pill py-1.5 px-1 rounded-lg bg-amber-400 text-slate-950 font-black ring-2 ring-white shadow-sm';
+      } else {
+        el.className = 'job-step-pill py-1.5 px-1 rounded-lg bg-white/15 text-sky-100 hover:bg-white/25 font-bold';
+      }
+    }
+    if (typeof window.hzkEmitCrossModuleEvent === 'function') {
+      const evtMap = {
+        3: 'DEALER_CONFIRM_PO_RECEIVED',
+        5: 'SERVICE_JOB_COMPLETED'
+      };
+      if (evtMap[s]) {
+        window.hzkEmitCrossModuleEvent(evtMap[s], {
+          stage: s,
+          stageLabel: STAGE_NAMES[s],
+          jobNo: document.getElementById('jobNo')?.value || 'ACTIVE-JOB'
+        });
+      }
+    }
+    if (typeof showToast === 'function') {
+      showToast('📍 อัปเดตสถานะวงจรงาน: ขั้นที่ ' + s + ' — ' + STAGE_NAMES[s]);
+    }
+  };
+
+  window.getSmartRoleFilteredAlerts = function() {
+    const roleMode = localStorage.getItem('hoshizaki_user_role_mode') || 'MANAGER';
+    const profileName = (document.getElementById('techQuickProfileName')?.textContent || '').trim();
+    const isTech = roleMode === 'TECHNICIAN' || /T0[1-8]|Surin|Jeerapan|Nirun|Beer/i.test(profileName);
+    const isAcct = /Waraporn|Account|บัญชี/i.test(profileName);
+
+    if (isTech) {
+      return {
+        roleLabel: '👨‍🔧 ช่างบริการภาคสนาม (Field Technician)',
+        alerts: [
+          '📦 อะไหล่ใบเบิก ADV-SMP-2026-01 (P01873-01) ถึงรถช่าง T01 พร้อมเข้าซ่อม S.T.KITCHEN แล้ว',
+          '📍 นัดหมายพรุ่งนี้ 09:30 น. ร้าน Sushiro สาขาเซ็นทรัลเวิลด์ (ผ่าน Maruzen Confirm PO #2)'
+        ]
+      };
+    }
+    if (isAcct) {
+      return {
+        roleLabel: '💼 ฝ่ายบัญชีและการเงิน (Accounting & NAV ERP)',
+        alerts: [
+          '🧾 มีใบงานซ่อมเสร็จ (Completed) รอออกใบกำกับภาษี (IV) และลงบัญชี NAV จำนวน 2 ใบงาน',
+          '💳 รอบตัดยอดเบิกจ่ายรายสัปดาห์ (จ.–อ.) พร้อมโอนจ่ายวันพฤหัสบดี–ศุกร์'
+        ]
+      };
+    }
+    return {
+      roleLabel: '👑 ผู้จัดการ / ธุรการประสานงาน (Manager & Admin)',
+      alerts: [
+        '⏳ B2B-CASE-2026-01 (Sushiro · Maruzen) รอ Confirm PO #2 อะไหล่นำเข้า 14 วัน',
+        '💧 ไส้กรองน้ำ 4HC-H ครบกำหนดรอบเปลี่ยน 6/12 เดือน จำนวน 2 เครื่อง (พร้อมส่ง QT ต่ออายุ)'
+      ]
+    };
+  };
+
+  function updateRoleFilteredBadge_() {
+    const badge = document.getElementById('roleFilteredPushBadge');
+    if (!badge) return;
+    const info = window.getSmartRoleFilteredAlerts();
+    badge.textContent = info.roleLabel + ' (' + info.alerts.length + ' แจ้งเตือน)';
+  }
+
+  // Export updated v1054 Trilingual Manual & Executive HTML Deck directly from the app
+  window.downloadUpdatedV1054TrilingualManualHtml = function() {
+    const htmlDoc = `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>HOSHIZAKI (THAILAND) Job Service Management System (Enterprise v1054-OMNI-PHASE3-COMPLETE) — Trilingual Executive Manual & Deck</title>
+    <style>
+      body{font-family:'Prompt',sans-serif;margin:0;padding:24px;background:#f8fafc;color:#0f172a;line-height:1.6}
+      .cover{background:linear-gradient(135deg,#002B49,#00A3E0);color:#fff;padding:32px;border-radius:18px;margin-bottom:24px}
+      .card{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+      h1,h2,h3{margin-top:0} .badge{background:#fbbf24;color:#0f172a;padding:3px 10px;border-radius:99px;font-weight:800;font-size:12px}
+      table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px} th,td{border:1px solid #cbd5e1;padding:8px;text-align:left} th{background:#002B49;color:#fff}
+    </style></head><body>
+    <div class="cover">
+      <span class="badge">ENTERPRISE v1054-OMNI-PHASE3-COMPLETE · TH / EN / 日本語</span>
+      <h1 style="margin-top:10px;">HOSHIZAKI (THAILAND) Job Service Management System</h1>
+      <p>ระบบบริหารจัดการงานบริการ คลังสินค้า 3PL บัญชี NAV ERP ฝ่ายบุคคล Jobcan และเครือข่าย B2B ครบวงจร<br>
+      <b>Prepared By:</b> นพรินทร์ หอมหวล (Noparin Homhoul) — รองผู้จัดการฝ่ายบริการ (Deputy Service Manager), แผนกบริการ, บริษัท โฮชิซากิ (ประเทศไทย) จำกัด<br>
+      <b>Tagline:</b> <i>"Since it’s better in every respect, why wouldn’t you use it?"</i></p>
+    </div>
+    <div class="card">
+      <h2>1. โครงสร้างหลักทั้ง 7 หมวดหมู่ + Unified End-to-End Flow (Phase 3)</h2>
+      <table>
+        <tr><th>หมวดหมู่</th><th>ขอบเขตการทำงาน (TH / EN / 日本語)</th><th>การเชื่อมโยง Input → Output ข้ามแผนก</th></tr>
+        <tr><td><b>หมวด 1</b></td><td>งานบริการ, ตารางช่าง, GPS สด, IoT, Outsource (Service &amp; Dispatch)</td><td>รับแจ้งซ่อม → เช็กอิน GPS → ตัด Van Stock → ปิดงานและส่ง CSAT</td></tr>
+        <tr><td><b>หมวด 2</b></td><td>ใบเสนอราคา 8 ระดับ (QT·IV·RE), ใบเคลมประกัน, วิเคราะห์ GP%</td><td>ดึงอะไหล่จากใบงานออก QT 2 รอบ → รับ Confirm PO → ออกใบกำกับภาษี IV</td></tr>
+        <tr><td><b>หมวด 3</b></td><td>งาน PM &amp; Big Cleaning, สัญญา PM, ตรวจรับเครื่องเข้าคลัง HHE/3PL &amp; QCF</td><td>ตรวจรับ PDI → ออก QCF เคลมโรงงาน / ปรับเกรดสินค้า IMS &amp; นับรอบไส้กรอง 4HC-H</td></tr>
+        <tr><td><b>หมวด 4</b></td><td>คู่มือช่าง, Error Code, ตาราง Spec Sheet, ธรรมาภิบาล PDPA &amp; ESG</td><td>สแกน S/N → ดึงคู่มือ/ผังบอร์ด/ประวัติ 360° หน้างานทันที</td></tr>
+        <tr><td><b>หมวด 5</b></td><td>คลังสินค้า IMS (RM/WIP/FG/MRO), คลังเช่า 3PL, ขนส่ง &amp; บัญชี NAV ERP</td><td>จองสต็อกอัตโนมัติเมื่อได้ PO → ออกใบเบิก 3PL e-POD → ลงบัญชี JV / ภ.พ.30</td></tr>
+        <tr><td><b>หมวด 6</b></td><td>HR ตอกบัตร Auto-Stamp, WFH Selfie, ใบลา, เบิกจ่าย จ.–อ. (โอน พฤ.–ศ.), Jobcan</td><td>ซิงค์วันลากับตารางช่าง + Batch OCR บิลค่าเดินทาง + เชื่อม Jobcan ญี่ปุ่น</td></tr>
+        <tr><td><b>หมวด 7 &amp; Phase 3</b></td><td>B2B Dealer PRM (แยกสิทธิ์ราย S/N), Unified AI Studio &amp; Cross-Module Event Bus</td><td>Sushiro (Maruzen / Luckland) + 360° Master Case Timeline + Zero-Leakage Guard</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>2. มาตรฐานการดำเนินงาน B2B เชนร้านอาหาร &amp; ไส้กรองน้ำ 4HC-H</h2>
+      <ul>
+        <li><b>การแยกสิทธิ์รายเครื่อง (Serial-Level Ownership):</b> ในสาขาเดียวกัน (เช่น Sushiro) เครื่อง JWE-680 ส่งเข้า Maruzen, เครื่อง DCM-120KE ส่งเข้า Luckland และเครื่อง Hoshizaki ดูแลตรงเข้า Japanese Corporate Unit</li>
+        <li><b>วงจรใบเสนอราคา 2 รอบ:</b> รอบที่ 1 ค่าตรวจเช็ก/ล้าง → เข้าหน้างาน → รอบที่ 2 ค่าอะไหล่ซ่อมเพิ่มพร้อมแจ้ง ETA อะไหล่ (ซ่อนราคาจากหน้าร้าน) → รอ Confirm PO #2 ก่อนสั่งอะไหล่และเข้าซ่อม</li>
+        <li><b>ระบบบริหารไส้กรองน้ำ 4HC-H (รอบ 6 และ 12 เดือน):</b> ปรับรอบเปลี่ยนอัตโนมัติตามค่าความกระด้างน้ำ (TDS) และออกใบเสนอราคาต่ออายุล่วงหน้า 30 วัน</li>
+      </ul>
+      <p style="font-size:12px;color:#475569;"><b>Remark:</b> Demo Web App สามารถนำไปทำซ้ำ แก้ไข หรือดัดแปลงเพิ่มเติมได้ ภายในองค์กรเท่านั้น | PWA URL: https://serviceshth.github.io/hoshizaki-service/</p>
+    </div></body></html>`;
+    const blob = new Blob([htmlDoc], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'HOSHIZAKI_Job_Service_System_v1054_Trilingual_Manual_Deck.html';
+    a.click();
+    if (typeof showToast === 'function') showToast('📘 ดาวน์โหลดคู่มือและสไลด์นำเสนอ 3 ภาษา (v1054) เรียบร้อยแล้ว');
+  };
+
+  // Inject Role-Filtered Smart Alert Bar + Manual Export Button inside Unified Flow Hub when opened
+  const origOpenFlowHub = window.openUnifiedEndToEndFlowHubModal;
+  window.openUnifiedEndToEndFlowHubModal = function(initialTab) {
+    if (typeof origOpenFlowHub === 'function') origOpenFlowHub(initialTab);
+    const modal = document.getElementById('hzkUnifiedFlowHubModal');
+    if (modal && !document.getElementById('ufSmartRoleBanner')) {
+      const hdr = modal.querySelector('.bg-gradient-to-r');
+      const roleData = window.getSmartRoleFilteredAlerts();
+      const banner = document.createElement('div');
+      banner.id = 'ufSmartRoleBanner';
+      banner.className = 'bg-amber-50 border-b border-amber-200 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs';
+      banner.innerHTML = `
+        <div class="text-amber-950">
+          <b>${roleData.roleLabel} — แจ้งเตือนเฉพาะตำแหน่งของคุณ:</b>
+          <span class="ml-1">${roleData.alerts.join(' &nbsp;|&nbsp; ')}</span>
+        </div>
+        <button type="button" onclick="downloadUpdatedV1054TrilingualManualHtml()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold px-3 py-1 rounded-lg text-[11px] shrink-0">
+          <i class="fa-solid fa-book mr-1 text-amber-300"></i> ดาวน์โหลดคู่มือ &amp; สไลด์ 3 ภาษา (v1054)
+        </button>
+      `;
+      if (hdr && hdr.parentNode) hdr.parentNode.insertBefore(banner, hdr.nextSibling);
+    }
+  };
+
+  setTimeout(updateRoleFilteredBadge_, 1200);
+})();

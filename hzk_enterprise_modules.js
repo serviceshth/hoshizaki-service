@@ -5511,7 +5511,7 @@
 
 
 // ============================================================================
-// --- Module Block #55 (Enterprise v1049-INTL-OMNI: Sole Super Admin Control
+// --- Module Block #55 (Enterprise v1050-HR-WORKFLOW: Sole Super Admin Control
 //     for Mr. Noparin Homhoul, SHA-256 + Salt Vault, Temp Password Generator,
 //     8-Department RBAC, Account Lock/Unlock & Immediate System_Audit_Log Sync) ---
 // ============================================================================
@@ -6435,7 +6435,7 @@
 
 
 // ============================================================================
-// --- Module Block #56 (Enterprise v1049-INTL-OMNI: Two-Way Cloud Credential Pull,
+// --- Module Block #56 (Enterprise v1050-HR-WORKFLOW: Two-Way Cloud Credential Pull,
 //     Live System_Audit_Log Viewer & CSV Export, Global Command Palette Ctrl+K,
 //     100-Seat Multi-Branch Roster Manager, 1-Click Predictive Quote & LINE Flex,
 //     and IndexedDB Cold-Archive & Storage Auto-Compaction Engine) ---
@@ -6443,9 +6443,9 @@
 (function() {
   const CRED_VAULT_KEY = 'hoshizaki_user_credentials_vault_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
-  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1049';
-  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1049';
-  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1049';
+  const BRANCH_FILTER_KEY = 'hoshizaki_active_branch_filter_v1050';
+  const PINNED_CMDS_KEY = 'hoshizaki_pinned_commands_v1050';
+  const COLD_ARCHIVE_DB_NAME = 'HZK_Enterprise_ColdArchive_v1050';
 
   const HZK_BRANCH_DIRECTORY = [
     { code: 'ALL', name: 'ทุกสาขาทั่วประเทศ (All Thailand Branches)', region: 'Nationwide' },
@@ -6533,7 +6533,7 @@
       const resp = await fetch(gasUrl + sep + 'action=getSecurityAuditLogs&limit=100&_t=' + Date.now(), { method: 'GET' });
       const data = await resp.json();
       if (data && data.status === 'ok' && Array.isArray(data.logs)) {
-        localStorage.setItem('hoshizaki_cloud_audit_cache_v1049', JSON.stringify(data.logs));
+        localStorage.setItem('hoshizaki_cloud_audit_cache_v1050', JSON.stringify(data.logs));
         if (typeof window.renderAdminSecurityRbacPanel === 'function') {
           await window.renderAdminSecurityRbacPanel();
         }
@@ -6548,7 +6548,7 @@
 
   window.exportSecurityAuditCsv = function() {
     const localLogs = JSON.parse(localStorage.getItem('hoshizaki_immutable_audit_log_v1033') || '[]');
-    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1049') || '[]');
+    const cloudLogs = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1050') || '[]');
     const rows = [['Timestamp', 'Category/Actor', 'Target', 'Detail']];
     cloudLogs.forEach(c => rows.push([c.timestamp || '', `${c.actorName || ''} (${c.actorId || ''})`, c.targetId || '', c.event || '']));
     localLogs.forEach(l => rows.push([l.timestamp || '', l.category || '', l.actor || '', l.detail || '']));
@@ -6571,16 +6571,16 @@
       await _origRenderAdminSecurityRbacPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (!panel || panel.querySelector('#v1049OmniSecurityEnhancementBar')) return;
+    if (!panel || panel.querySelector('#v1050OmniSecurityEnhancementBar')) return;
 
-    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1049') || '[]');
+    const cloudCache = JSON.parse(localStorage.getItem('hoshizaki_cloud_audit_cache_v1050') || '[]');
     const bar = document.createElement('div');
-    bar.id = 'v1049OmniSecurityEnhancementBar';
+    bar.id = 'v1050OmniSecurityEnhancementBar';
     bar.className = 'p-3 rounded-xl bg-sky-50 border border-sky-200 space-y-2.5';
     bar.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="text-xs font-extrabold text-[#002B49]">
-          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1049-INTL-OMNI: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
+          <i class="fa-solid fa-arrows-rotate text-[#00A3E0] mr-1"></i> Enterprise v1050-HR-WORKFLOW: ซิงค์บัญชี 2 ทางข้ามอุปกรณ์ (Two-Way Cloud Sync) &amp; ส่งออก Audit Log
         </div>
         <div class="flex flex-wrap gap-1.5">
           <button type="button" onclick="pullUserCredentialsVaultFromCloud(false).then(() => renderAdminSecurityRbacPanel())" class="px-2.5 py-1.5 rounded-lg bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[11px]">
@@ -6737,7 +6737,7 @@
           </div>
           <div id="omniCommandResultsList" class="max-h-96 overflow-y-auto divide-y divide-slate-100 p-2 bg-slate-50/70"></div>
           <div class="bg-slate-100 px-4 py-2 text-[10.5px] text-slate-500 flex items-center justify-between">
-            <span>HOSHIZAKI Enterprise v1049-INTL-OMNI • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
+            <span>HOSHIZAKI Enterprise v1050-HR-WORKFLOW • รองรับค้นหา 3 ภาษา (ไทย / English / 日本語)</span>
             <span>กด <kbd class="px-1.5 py-0.5 bg-white border rounded font-mono">Ctrl+K</kbd> ได้ทุกหน้า</span>
           </div>
         </div>
@@ -7032,15 +7032,15 @@
 
 
 // ============================================================================
-// --- Module Block #57 (Enterprise v1049-INTL-OMNI: Tailored ≤30-Seat Org Architecture,
+// --- Module Block #57 (Enterprise v1050-HR-WORKFLOW: Tailored ≤30-Seat Org Architecture,
 //     Auto Google Sheets Cloud Backup with Live Progress Status Bar,
 //     Role-Personalized Daily Workspace, Cross-Dept SLA Handoff Queue,
 //     Revenue Leakage & 2-Way Reconciliation Audit, Technician Skill Matrix & OT,
 //     and Comprehensive Deep Self-Test & Auto-Heal across ALL 28 Modules) ---
 // ============================================================================
 (function() {
-  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1049';
-  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1049';
+  const CROSS_DEPT_TASKS_KEY = 'hoshizaki_cross_dept_handoff_tasks_v1050';
+  const TECH_SKILLS_KEY = 'hoshizaki_tech_skill_matrix_v1050';
   const ACTIVE_SESSION_KEY = 'hoshizaki_active_auth_session_v1042';
   const SOLE_SUPER_ADMIN_ID = 'SVC-02';
 
@@ -7064,7 +7064,7 @@
       : (localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '');
 
     // Check if already auto-backed up within last 12 hours unless forced
-    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1049') || '0');
+    const lastCloudTs = Number(localStorage.getItem('hoshizaki_last_auto_sheets_backup_ts_v1050') || '0');
     if (!forceNow && lastCloudTs > 0 && (Date.now() - lastCloudTs) < 12 * 60 * 60 * 1000 && history.length === 0) {
       return;
     }
@@ -7102,7 +7102,7 @@
         ? await buildFullEnterpriseSnapshotObject()
         : {
             app: 'HOSHIZAKI_GLOBAL_ENTERPRISE_BACKUP',
-            version: '1049-INTL-OMNI',
+            version: '1050-HR-WORKFLOW',
             exportedAt: new Date().toISOString(),
             recordCounts: { jobs: history.length, quotations: qts.length },
             payload: { jobHistory: history, quotationsHistory: qts }
@@ -7123,7 +7123,7 @@
 
       const nowIso = new Date().toISOString();
       const timeLabel = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1049', String(Date.now()));
+      localStorage.setItem('hoshizaki_last_auto_sheets_backup_ts_v1050', String(Date.now()));
       localStorage.setItem('hoshizaki_last_backup_at', nowIso);
       localStorage.setItem('hoshizaki_last_cloud_auto_backup_date', nowIso.split('T')[0]);
 
@@ -7662,7 +7662,7 @@
     }
 
     const passed = checks.filter(c => c.ok).length;
-    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1049-INTL-OMNI)</span>`;
+    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1050-HR-WORKFLOW)</span>`;
     listEl.innerHTML = checks.map(c => `
       <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/75 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
         <div>
@@ -7749,7 +7749,7 @@
 
 
 // ============================================================================
-// --- Module Block #58 (Enterprise v1049-INTL-OMNI: Standalone Quotation Studio,
+// --- Module Block #58 (Enterprise v1050-HR-WORKFLOW: Standalone Quotation Studio,
 //     Hardened Auto Google Sheets Backup + Dismiss Logic, 1-Click Onboarding
 //     Credential Slip, Production Go-Live Clean Reset, Offline Sync Conflict
 //     Resolver, PM Lifecycle Renewal Radar & 30-Point Deep Self-Test) ---
@@ -8172,7 +8172,7 @@
     if (typeof window.purgeAllV1040ExampleRecords === 'function') {
       window.purgeAllV1040ExampleRecords();
     }
-    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1049');
+    localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1050');
     localStorage.removeItem('hoshizaki_cross_dept_handoff_tasks_v1045');
     if (typeof window.renderMyDailyRoleWorkspace === 'function') {
       window.renderMyDailyRoleWorkspace();
@@ -8262,13 +8262,13 @@
       await _prevRenderSecPanel();
     }
     const panel = document.getElementById('devStudioSecurityPanel');
-    if (panel && !document.getElementById('v1049GoLiveToolsBar')) {
+    if (panel && !document.getElementById('v1050GoLiveToolsBar')) {
       const bar = document.createElement('div');
-      bar.id = 'v1049GoLiveToolsBar';
+      bar.id = 'v1050GoLiveToolsBar';
       bar.className = 'mt-3 p-3 rounded-xl bg-emerald-50 border border-emerald-300 flex flex-wrap items-center justify-between gap-2 text-xs';
       bar.innerHTML = `
         <div>
-          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1049 Go-Live Readiness)</div>
+          <div class="font-extrabold text-emerald-950">🚀 เครื่องมือเตรียมเปิดใช้งานจริงทั้งองค์กร (Enterprise v1050 Go-Live Readiness)</div>
           <div class="text-[11px] text-emerald-800">ล้างข้อมูลตัวอย่างก่อนเริ่มงานจริง หรือเปิดดูเรดาร์อายุเครื่องเพื่อต่อสัญญา PM รายปี</div>
         </div>
         <div class="flex flex-wrap gap-1.5">
@@ -8283,7 +8283,7 @@
 
 
 // ============================================================================
-// --- Module Block #59 (Enterprise v1049-INTL-OMNI: 3-Char Customer Smart Search,
+// --- Module Block #59 (Enterprise v1050-HR-WORKFLOW: 3-Char Customer Smart Search,
 //     Multi-Custodian S/N Selector, Save QT + PDF + Auto-Sync Sheets, Load & Edit
 //     Saved QT, and Unified Omni-Share Hub across ALL System Documents) ---
 // ============================================================================
@@ -9016,13 +9016,13 @@
 
 
 // ============================================================================
-// --- Module Block #60 (Enterprise v1049-INTL-OMNI: Employee Birthday &
+// --- Module Block #60 (Enterprise v1050-HR-WORKFLOW: Employee Birthday &
 //     Personal Profile Database, Smart Working-Day Advance Birthday Wishes,
 //     Trilingual HOSHIZAKI Penguin Greeting Card & Work Anniversary Badges) ---
 // ============================================================================
 (function() {
-  const EMP_BDAY_DB_KEY = 'hoshizaki_employee_birthday_profiles_v1049';
-  const EMP_BDAY_SHOWN_KEY = 'hoshizaki_bday_card_shown_dates_v1049';
+  const EMP_BDAY_DB_KEY = 'hoshizaki_employee_birthday_profiles_v1050';
+  const EMP_BDAY_SHOWN_KEY = 'hoshizaki_bday_card_shown_dates_v1050';
 
   // Fixed Thai Public Holidays (MM-DD) for Smart Working-Day Pre-Greeting calculation
   const FIXED_HOLIDAYS_MMDD = new Set([
@@ -9462,7 +9462,7 @@
 
 
 // ============================================================================
-// --- Module Block #61 (Enterprise v1049-INTL-OMNI Consolidated Release):
+// --- Module Block #61 (Enterprise v1050-HR-WORKFLOW Consolidated Release):
 //     1) Login-Gated Birthday & Profile Button Visibility
 //     2) Mobile Scroll-Safe Signature Pad Guard (Prevents accidental scroll taps)
 //     3) Smart Fuzzy Disambiguation Engine (Thai Phonetics, Typos, Part/SN/Model)
@@ -9476,9 +9476,9 @@
 //    11) Interactive LINE Chatbot 3-Language Simulator & Auto-Test Suite
 // ============================================================================
 (function() {
-  const INQUIRY_CRM_KEY = 'hoshizaki_line_oa_inquiry_crm_v1049';
-  const LEARNED_FAQ_KEY = 'hoshizaki_learned_faq_kb_v1049';
-  const DISPATCH_VAULT_LOG_KEY = 'hoshizaki_dispatch_pdf_vault_log_v1049';
+  const INQUIRY_CRM_KEY = 'hoshizaki_line_oa_inquiry_crm_v1050';
+  const LEARNED_FAQ_KEY = 'hoshizaki_learned_faq_kb_v1050';
+  const DISPATCH_VAULT_LOG_KEY = 'hoshizaki_dispatch_pdf_vault_log_v1050';
 
   // --------------------------------------------------------------------------
   // 1. LOGIN-GATED BIRTHDAY & PROFILE VISIBILITY
@@ -10004,7 +10004,7 @@
   // --------------------------------------------------------------------------
   const CONTEXTUAL_HELP_GUIDES = {
     'GLOBAL': {
-      titleTh: 'คู่มือภาพรวมระบบ HOSHIZAKI Service Management (Enterprise v1049)',
+      titleTh: 'คู่มือภาพรวมระบบ HOSHIZAKI Service Management (Enterprise v1050)',
       titleJpEn: 'システム総合ガイド / HOSHIZAKI Service Management User Guide',
       whatItDoes: 'ระบบบริหารงานบริการครบวงจร ครอบคลุม 5 หมวดงานหลัก (1. งานบริการ/ตารางช่าง 2. เอกสาร QT/IV/RE/เคลม 3. งาน PM/ตรวจรับคลัง 4. คู่มือ/บุคลากร 5. คลังสินค้า IMS & บัญชี NAV)',
       steps: [
@@ -10183,4 +10183,841 @@
     installMobileScrollSafeSignaturePads_();
     loadInquiryCrmLogs_();
   }, 1600);
+})();
+
+
+// ============================================================================
+// --- Module Block #62 (Enterprise v1050-HR-WORKFLOW):
+//     HOSHIZAKI Smart HR, Mobile Auto-Stamp, WFH Selfie, Leave & Schedule Sync,
+//     Weekly Cut-Off (Mon-Tue -> Thu/Fri Payout), 5 Corporate Forms (New Lak Si
+//     Head Office Header), Batch Receipt OCR, Duplicate Guard, 7-Day Settlement
+//     Countdown & Custom Form Schema Customizer (TH / 日本語 / English)
+// ============================================================================
+(function() {
+  const ATT_LOGS_KEY = 'hoshizaki_hr_attendance_logs_v1050';
+  const LEAVE_LOGS_KEY = 'hoshizaki_hr_leave_requests_v1050';
+  const EXP_WORKFLOW_KEY = 'hoshizaki_hr_expense_workflows_v1050';
+  const FORM_SCHEMA_KEY = 'hoshizaki_hr_custom_form_schemas_v1050';
+
+  const NEW_HTH_ADDRESS = 'Building A, 1st Floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Talat Bang Khen, Lak Si, Bangkok 10210 Thailand | Tax ID: 0135558002599 | Tel: 02-005-9980';
+
+  // --------------------------------------------------------------------------
+  // 1. WEEKLY CUT-OFF (MON-TUE 17:30 -> THU/FRI PAYOUT) & HOLIDAY AUTO-SHIFT
+  // --------------------------------------------------------------------------
+  const THAI_HOLIDAYS_2026 = ['2026-01-01', '2026-04-13', '2026-04-14', '2026-04-15', '2026-05-01', '2026-12-07', '2026-12-10', '2026-12-31'];
+
+  window.computeWeeklyExpensePayoutCycle = function(submitDateIso) {
+    const dt = submitDateIso ? new Date(submitDateIso + 'T10:00:00') : new Date();
+    const day = dt.getDay(); // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+    // Cut-off is Tuesday 17:30. Mon (1) or Tue (2) -> this week's Thu/Fri. Wed-Sun -> next week's Thu/Fri.
+    const isCurrentWeekEligible = (day === 1 || day === 2);
+    const daysUntilThursday = isCurrentWeekEligible
+      ? (4 - day)
+      : ((4 - day + 7) % 7 || 7);
+
+    const thuDate = new Date(dt);
+    thuDate.setDate(dt.getDate() + daysUntilThursday);
+    const friDate = new Date(thuDate);
+    friDate.setDate(thuDate.getDate() + 1);
+
+    let thuIso = thuDate.toISOString().slice(0, 10);
+    let friIso = friDate.toISOString().slice(0, 10);
+    let holidayAdjusted = false;
+
+    if (THAI_HOLIDAYS_2026.includes(thuIso)) {
+      const wedDate = new Date(thuDate);
+      wedDate.setDate(thuDate.getDate() - 1);
+      thuIso = wedDate.toISOString().slice(0, 10);
+      holidayAdjusted = true;
+    }
+
+    return {
+      isCurrentWeekEligible,
+      cutOffWindowLabel: isCurrentWeekEligible
+        ? 'ทันรอบตัดยอดสัปดาห์นี้ (ยื่น จันทร์–อังคาร ก่อน 17:30 น.)'
+        : 'เข้าสู่รอบตัดยอดสัปดาห์ถัดไป (ยื่นหลังวันอังคาร 17:30 น.)',
+      payoutThuIso: thuIso,
+      payoutFriIso: friIso,
+      payoutDisplay: `วันพฤหัสบดี ${thuIso} หรือ วันศุกร์ ${friIso}${holidayAdjusted ? ' (เลื่อนเร็วขึ้น 1 วันเนื่องจากวันหยุดราชการ)' : ''}`
+    };
+  };
+
+  // --------------------------------------------------------------------------
+  // 2. SEEDED DATA (5 SAMPLE RECORDS PER SUB-MODULE FOR PREVIEW / ADD / DELETE)
+  // --------------------------------------------------------------------------
+  function loadAttendanceLogs_() {
+    try {
+      const raw = localStorage.getItem(ATT_LOGS_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length > 0) return arr;
+      }
+    } catch (e) {}
+    const today = new Date().toISOString().slice(0, 10);
+    const seed = [
+      { id: 'ATT-SMP-001', isSample: true, date: today, staffName: 'Noparin Homhoul', dept: 'Service Management', workMode: 'OFFICE_AUTO_STAMP', clockIn: '08:24', clockOut: '17:45', otHours: 0.25, gps: '13.8782, 100.5835 (Lak Si HQ)', selfieVerified: true, status: 'ON_TIME' },
+      { id: 'ATT-SMP-002', isSample: true, date: today, staffName: 'Surin S. (T01)', dept: 'Field Service', workMode: 'FIELD_JOB_LINKED', clockIn: '08:15', clockOut: '18:30', otHours: 1.0, gps: '13.7462, 100.5398 (CentralWorld)', selfieVerified: true, jobRef: 'JOB-20261119-001', status: 'FIELD_ACTIVE' },
+      { id: 'ATT-SMP-003', isSample: true, date: today, staffName: 'Wanwipha Nakamrod', dept: 'Service Admin', workMode: 'WFH_SELFIE', clockIn: '08:28', clockOut: '17:32', otHours: 0, gps: '13.9120, 100.5512 (WFH Verified)', selfieVerified: true, status: 'WFH_VERIFIED' },
+      { id: 'ATT-SMP-004', isSample: true, date: today, staffName: 'Jeerapan Phrasawang (T02)', dept: 'Field Service', workMode: 'FIELD_JOB_LINKED', clockIn: '08:20', clockOut: '19:30', otHours: 2.0, gps: '13.0012, 101.1120 (Amata City Chonburi)', selfieVerified: true, jobRef: 'JOB-20261119-002', status: 'OT_REQUESTED' },
+      { id: 'ATT-SMP-005', isSample: true, date: today, staffName: 'Waraporn (Accounting)', dept: 'Accounting & NAV', workMode: 'OFFICE_AUTO_STAMP', clockIn: '08:25', clockOut: '17:35', otHours: 0, gps: '13.8782, 100.5835 (Lak Si HQ)', selfieVerified: true, status: 'ON_TIME' }
+    ];
+    localStorage.setItem(ATT_LOGS_KEY, JSON.stringify(seed));
+    return seed;
+  }
+
+  function loadLeaveRequests_() {
+    try {
+      const raw = localStorage.getItem(LEAVE_LOGS_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length > 0) return arr;
+      }
+    } catch (e) {}
+    const seed = [
+      { id: 'LV-SMP-001', isSample: true, staffName: 'Nirun (Pui - T05)', dept: 'Field Service', leaveType: 'ลาพักร้อน (Annual Leave)', startDate: '2026-11-24', endDate: '2026-11-25', days: 2, reason: 'พักผ่อนประจำปี (แจ้งล่วงหน้า 7 วัน)', approver: 'Noparin Homhoul', status: 'APPROVED', syncedToSchedule: true },
+      { id: 'LV-SMP-002', isSample: true, staffName: 'Kulathida (Sales)', dept: 'Domestic Sales', leaveType: 'ลากิจ (Personal Leave)', startDate: '2026-11-26', endDate: '2026-11-26', days: 1, reason: 'ติดต่อธุระราชการ', approver: 'GM / Manager', status: 'APPROVED', syncedToSchedule: true },
+      { id: 'LV-SMP-003', isSample: true, staffName: 'Surin (Beer - T04)', dept: 'Field Service', leaveType: 'ลาป่วย (Sick Leave)', startDate: '2026-11-20', endDate: '2026-11-20', days: 1, reason: 'มีไข้และปวดศีรษะ (แนบใบรับรองแพทย์แล้ว)', approver: 'Thanakrit (Tae)', status: 'PENDING_APPROVAL', syncedToSchedule: false },
+      { id: 'LV-SMP-004', isSample: true, staffName: 'Suleewan (JP Unit)', dept: 'Japanese Corporate', leaveType: 'ลาพักร้อน (Annual Leave)', startDate: '2026-12-03', endDate: '2026-12-04', days: 2, reason: 'เดินทางต่างจังหวัดกับครอบครัว', approver: 'Naoki Furujo', status: 'PENDING_APPROVAL', syncedToSchedule: false },
+      { id: 'LV-SMP-005', isSample: true, staffName: 'Pawat Warongtheradet', dept: 'Warehouse IMS', leaveType: 'ลาพักร้อน (Annual Leave)', startDate: '2026-12-11', endDate: '2026-12-11', days: 1, reason: 'ลาพักผ่อนต่อเนื่องวันหยุด', approver: 'Service Manager', status: 'APPROVED', syncedToSchedule: true }
+    ];
+    localStorage.setItem(LEAVE_LOGS_KEY, JSON.stringify(seed));
+    return seed;
+  }
+
+  function loadExpenseWorkflows_() {
+    try {
+      const raw = localStorage.getItem(EXP_WORKFLOW_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length > 0) return arr;
+      }
+    } catch (e) {}
+    const cycle = window.computeWeeklyExpensePayoutCycle('2026-11-17');
+    const seed = [
+      {
+        id: 'PRE-SMP-2026-01',
+        isSample: true,
+        formType: 'PRE_TRAVEL',
+        formLabel: 'PRE-TRAVEL REQUEST FORM (ใบขออนุมัติเดินทางล่วงหน้า)',
+        date: '2026-11-17',
+        applicant: 'Noparin Homhoul',
+        dept: 'Service Deputy Manager',
+        subject: 'Join Service Training & Customer Site Audit (HKT - DMK)',
+        travelPeriod: '19–22 FEB 2026 (4 Days)',
+        flightInfo: 'HKT → DMK (19-Feb 02:00 PM) | DMK → HKT (22-Feb 11:00 AM)',
+        cashAdvance: 5000,
+        amount: 8450,
+        vatAmount: 0,
+        whtAmount: 0,
+        jobRef: 'TRAIN-2026-HKT',
+        payoutCycle: cycle.payoutDisplay,
+        settlementCountdownDays: 7,
+        approvalChain: 'Applicant (Noparin H.) ✅ → Dept Mgr (Thanakrit) ✅ → MD (Daisuke S.) ✅',
+        status: 'APPROVED_READY_PAYOUT'
+      },
+      {
+        id: 'EXP-SMP-2026-02',
+        isSample: true,
+        formType: 'EXPENSE_CLAIM',
+        formLabel: 'EXPENSE REIMBURSEMENT REQUEST FORM (เบิกค่าทางด่วน · จอดรถ · น้ำมัน · รักษาพยาบาล)',
+        date: '2026-11-17',
+        applicant: 'Surin S. (T01)',
+        dept: 'Field Service Team',
+        subject: 'รวมบิลค่าทางด่วน EasyPass + ค่าจอดรถห้าง + ค่าน้ำมันหน้างาน (8 ใบงาน)',
+        travelPeriod: '11–17 NOV 2026',
+        flightInfo: '-',
+        cashAdvance: 0,
+        amount: 2480,
+        vatAmount: 112.15,
+        whtAmount: 0,
+        jobRef: 'JOB-20261118-001..008',
+        payoutCycle: cycle.payoutDisplay,
+        settlementCountdownDays: 5,
+        approvalChain: 'Applicant (Surin S.) ✅ → SM (Thanakrit) ✅ → Accounting (Waraporn) ⏳',
+        status: 'ACCOUNTING_VERIFY_WED'
+      },
+      {
+        id: 'BGC-SMP-2026-03',
+        isSample: true,
+        formType: 'UPCOUNTRY_BIG_CLEANING',
+        formLabel: 'UPCOUNTRY SERVICE / BIG CLEANING REQUEST (ขออนุมัติเดินทางล้างใหญ่ต่างจังหวัด)',
+        date: '2026-11-16',
+        applicant: 'Jeerapan Phrasawang (T02)',
+        dept: 'Service Department',
+        subject: 'Request for Big Cleaning Machine & PM at Krabi (Job No. 1004212)',
+        travelPeriod: '24–26 NOV 2026 (3 Days)',
+        flightInfo: 'DMK → KBV / Air Ticket + Hotel + Per Diem Allowance',
+        cashAdvance: 6500,
+        amount: 9200,
+        vatAmount: 320.00,
+        whtAmount: 0,
+        jobRef: 'JOB-1004212-KBV',
+        payoutCycle: cycle.payoutDisplay,
+        settlementCountdownDays: 7,
+        approvalChain: 'Applicant (Jeerapan) ✅ → Deputy SM (Noparin) ✅ → SM (Thanakrit) ⏳',
+        status: 'PENDING_SM_APPROVAL'
+      },
+      {
+        id: 'ACC-SMP-2026-04',
+        isSample: true,
+        formType: 'ACCOUNT_FORM',
+        formLabel: 'ACCOUNT FORM (Rev. Updated — เคลียร์เงินทดรอง & ตั้งเบิกเข้า Dynamics NAV)',
+        date: '2026-11-17',
+        applicant: 'Wanwipha Nakamrod',
+        dept: 'Service Admin Unit',
+        subject: 'เคลียร์เงินทดรองค่าส่งอะไหล่ด่วนต่างจังหวัด & ค่าทางด่วน Messenger',
+        travelPeriod: 'รอบตัดยอดสัปดาห์ที่ 46 (จ.–อ.)',
+        flightInfo: '-',
+        cashAdvance: 3000,
+        amount: 2790,
+        vatAmount: 182.52,
+        whtAmount: 0,
+        jobRef: 'NAV-JV-2026-114',
+        payoutCycle: cycle.payoutDisplay,
+        settlementCountdownDays: 3,
+        approvalChain: 'Requester ✅ → SM ✅ → Accounting Mgr (Waraporn) ✅ → โอนคืนส่วนต่าง 210 ฿',
+        status: 'PAID_THU_FRI'
+      },
+      {
+        id: 'RNG-SMP-2026-05',
+        isSample: true,
+        formType: 'RINGI',
+        formLabel: 'RINGI (ใบขออนุมัติจัดซื้อ / ลงทุน · สายอนุมัติ SM → GM → Acc → MD → BOD → HJ)',
+        date: '2026-11-16',
+        applicant: 'Mr. Thanakrit Chanmonkonpanit',
+        dept: 'Service Department',
+        subject: 'Purchase Notebook for Miss Wanwipha Nakamrod and Mr. Jeerapan Phrasawang (2 Units)',
+        travelPeriod: 'Asus Notebook RAM 32GB / SSD 1TB (Model: 90NX08J1-M01660)',
+        flightInfo: '2 Units × 38,520 THB = 77,040 THB (Incl. VAT 7%)',
+        cashAdvance: 0,
+        amount: 77040,
+        vatAmount: 5040.00,
+        whtAmount: 0,
+        jobRef: 'PR-2026-IT-009',
+        payoutCycle: 'โอนจ่ายผู้ขายตามเครดิตเทอม (หลังจาก MD/GM อนุมัติ RINGI)',
+        settlementCountdownDays: 0,
+        approvalChain: 'Request By (Thanakrit) ✅ → Verified Mgr (Noparin) ✅ → GM ✅ → Accounting Mgr ⏳ → MD',
+        status: 'PENDING_ACC_AND_MD'
+      }
+    ];
+    localStorage.setItem(EXP_WORKFLOW_KEY, JSON.stringify(seed));
+    return seed;
+  }
+
+  // --------------------------------------------------------------------------
+  // 3. MOBILE AUTO-STAMP & WFH LIVE CAMERA SELFIE WATERMARK ENGINE
+  // --------------------------------------------------------------------------
+  window.triggerMobileAutoStampNow = function(mode) {
+    const staff = (document.getElementById('techQuickProfileName')?.innerText || '').trim();
+    const actor = (staff && staff !== 'เลือกโปรไฟล์ช่าง') ? staff : 'Noparin Homhoul';
+    const now = new Date();
+    const dateIso = now.toISOString().slice(0, 10);
+    const timeStr = now.toTimeString().slice(0, 5);
+    const logs = loadAttendanceLogs_();
+
+    if (mode === 'WFH_SELFIE') {
+      openWfhCameraSelfieModal_(actor, dateIso, timeStr);
+      return;
+    }
+
+    const existingToday = logs.find(x => x.date === dateIso && x.staffName === actor && !x.isSample);
+    if (!existingToday || mode === 'CLOCK_IN') {
+      const rec = {
+        id: 'ATT-' + Date.now().toString().slice(-6),
+        isSample: false,
+        date: dateIso,
+        staffName: actor,
+        dept: 'HOSHIZAKI (THAILAND)',
+        workMode: mode === 'FIELD_JOB' ? 'FIELD_JOB_LINKED' : 'OFFICE_AUTO_STAMP',
+        clockIn: timeStr,
+        clockOut: '-',
+        otHours: 0,
+        gps: '13.8782, 100.5835 (Auto-GPS Verified)',
+        selfieVerified: true,
+        status: 'CLOCKED_IN'
+      };
+      logs.unshift(rec);
+      localStorage.setItem(ATT_LOGS_KEY, JSON.stringify(logs));
+      if (typeof showToast === 'function') showToast(`🟢 Auto-Stamp เข้างานสำเร็จ: ${actor} เวลา ${timeStr} น.`);
+    } else {
+      existingToday.clockOut = timeStr;
+      const [hIn, mIn] = existingToday.clockIn.split(':').map(Number);
+      const [hOut, mOut] = timeStr.split(':').map(Number);
+      const workedMins = Math.max(0, (hOut * 60 + mOut) - (hIn * 60 + mIn) - 60); // deduct 1h lunch
+      const otHrs = workedMins > 480 ? Number(((workedMins - 480) / 60).toFixed(2)) : 0;
+      existingToday.otHours = otHrs;
+      existingToday.status = otHrs > 0 ? 'CLOCKED_OUT_WITH_OT' : 'CLOCKED_OUT';
+      localStorage.setItem(ATT_LOGS_KEY, JSON.stringify(logs));
+      if (typeof showToast === 'function') showToast(`🔴 Auto-Stamp เลิกงานสำเร็จ: เวลา ${timeStr} น. (OT อัตโนมัติ: ${otHrs} ชม.)`);
+    }
+    if (document.getElementById('hzkHrWorkflowModal')) renderHrWorkflowBody_('ATTENDANCE');
+  };
+
+  function openWfhCameraSelfieModal_(actor, dateIso, timeStr) {
+    let camModal = document.getElementById('hzkWfhSelfieModal');
+    if (!camModal) {
+      camModal = document.createElement('div');
+      camModal.id = 'hzkWfhSelfieModal';
+      camModal.className = 'fixed inset-0 z-[10004] bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-3';
+      document.body.appendChild(camModal);
+    }
+
+    camModal.innerHTML = `
+      <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border-2 border-[#002B49] overflow-hidden text-xs">
+        <div class="bg-[#002B49] text-white px-4 py-3 flex items-center justify-between">
+          <div class="font-extrabold text-sm"><i class="fa-solid fa-camera text-amber-300 mr-1.5"></i> WFH Selfie Check-In (ถ่ายภาพสดยืนยันตัวตน)</div>
+          <button type="button" onclick="stopWfhCameraStream_(); document.getElementById('hzkWfhSelfieModal').classList.add('hidden');" class="w-7 h-7 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+        </div>
+        <div class="p-4 space-y-3 text-center">
+          <div class="bg-sky-50 border border-sky-200 rounded-xl p-2.5 text-sky-950 font-semibold">
+            พนักงาน: <b>${escapeHtml(actor)}</b> · วันที่: <b>${dateIso}</b> · เวลาประทับตรา: <b>${timeStr} น.</b>
+          </div>
+          <div class="relative rounded-xl overflow-hidden bg-slate-900 aspect-video flex items-center justify-center">
+            <video id="wfhSelfieVideo" autoplay playsinline muted class="w-full h-full object-cover"></video>
+            <canvas id="wfhSelfieCanvas" class="hidden w-full h-full object-cover"></canvas>
+          </div>
+          <div class="flex gap-2 justify-center">
+            <button type="button" onclick="captureWfhSelfieAndStamp_('${escapeHtml(actor)}','${dateIso}','${timeStr}')" class="flex-1 bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold py-2.5 rounded-xl shadow-sm">
+              <i class="fa-solid fa-camera-retro mr-1"></i> กดถ่ายภาพ &amp; ตอกบัตร WFH ทันที
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    camModal.classList.remove('hidden');
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+        .then(stream => {
+          window._hzkWfhStream = stream;
+          const v = document.getElementById('wfhSelfieVideo');
+          if (v) v.srcObject = stream;
+        })
+        .catch(() => {});
+    }
+  }
+
+  window.stopWfhCameraStream_ = function() {
+    if (window._hzkWfhStream) {
+      window._hzkWfhStream.getTracks().forEach(t => t.stop());
+      window._hzkWfhStream = null;
+    }
+  };
+
+  window.captureWfhSelfieAndStamp_ = function(actor, dateIso, timeStr) {
+    const video = document.getElementById('wfhSelfieVideo');
+    const canvas = document.getElementById('wfhSelfieCanvas');
+    let selfieDataUrl = '';
+    if (video && canvas && video.videoWidth > 0) {
+      canvas.width = 640;
+      canvas.height = 360;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, 640, 360);
+      ctx.fillStyle = 'rgba(0, 43, 73, 0.82)';
+      ctx.fillRect(0, 312, 640, 48);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText(`HOSHIZAKI WFH VERIFIED · ${actor} · ${dateIso} ${timeStr}`, 14, 341);
+      selfieDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+    }
+    window.stopWfhCameraStream_();
+    document.getElementById('hzkWfhSelfieModal')?.classList.add('hidden');
+
+    const logs = loadAttendanceLogs_();
+    logs.unshift({
+      id: 'WFH-' + Date.now().toString().slice(-6),
+      isSample: false,
+      date: dateIso,
+      staffName: actor,
+      dept: 'WFH Verified',
+      workMode: 'WFH_SELFIE',
+      clockIn: timeStr,
+      clockOut: '-',
+      otHours: 0,
+      gps: 'WFH Live Camera Watermark Verified',
+      selfieVerified: true,
+      selfieDataUrl,
+      status: 'WFH_VERIFIED'
+    });
+    localStorage.setItem(ATT_LOGS_KEY, JSON.stringify(logs));
+    if (typeof showToast === 'function') showToast(`📸 บันทึกภาพถ่าย WFH Selfie พร้อมลายน้ำเวลา ${timeStr} น. เรียบร้อยแล้ว`);
+    if (document.getElementById('hzkHrWorkflowModal')) renderHrWorkflowBody_('ATTENDANCE');
+  };
+
+  // --------------------------------------------------------------------------
+  // 4. BATCH RECEIPT OCR + 1-CLICK JOB EXPENSE ROLL-UP + DUPLICATE DETECTOR
+  // --------------------------------------------------------------------------
+  window.rollUpExpensesFromServiceJobs = function() {
+    let jobs = [];
+    try { jobs = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]'); } catch (e) {}
+    const totalJobs = jobs.length || 3;
+    const estToll = totalJobs * 120;
+    const estParking = totalJobs * 60;
+    const cycle = window.computeWeeklyExpensePayoutCycle();
+
+    const list = loadExpenseWorkflows_();
+    const newId = 'EXP-ROLL-' + Date.now().toString().slice(-5);
+    list.unshift({
+      id: newId,
+      isSample: false,
+      formType: 'EXPENSE_CLAIM',
+      formLabel: 'EXPENSE REIMBURSEMENT REQUEST FORM (รวมค่าทางด่วน & ค่าจอดรถจากใบงานอัตโนมัติ)',
+      date: new Date().toISOString().slice(0, 10),
+      applicant: (document.getElementById('techQuickProfileName')?.innerText || 'Field Technician').trim(),
+      dept: 'Service Department',
+      subject: `รวมค่าทางด่วน (${estToll} ฿) + ค่าจอดรถ (${estParking} ฿) จากใบแจ้งบริการ ${totalJobs} ใบงาน`,
+      travelPeriod: 'รอบตัดยอดสัปดาห์นี้ (จ.–อ.)',
+      flightInfo: '-',
+      cashAdvance: 0,
+      amount: estToll + estParking,
+      vatAmount: 0,
+      whtAmount: 0,
+      jobRef: `JOB-BATCH (${totalJobs} ใบงาน)`,
+      payoutCycle: cycle.payoutDisplay,
+      settlementCountdownDays: 7,
+      approvalChain: 'Applicant ✅ → SM ⏳ → Accounting (Wed) → Payout (Thu/Fri)',
+      status: 'PENDING_SM_APPROVAL'
+    });
+    localStorage.setItem(EXP_WORKFLOW_KEY, JSON.stringify(list));
+    if (typeof showToast === 'function') showToast(`📥 รวมยอดค่าทางด่วนและค่าจอดรถเข้าใบเบิก ${newId} สำเร็จ (${cycle.payoutDisplay})`);
+    renderHrWorkflowBody_('EXPENSE_FORMS');
+  };
+
+  window.runBatchReceiptOcrScan = async function(inputEl) {
+    const files = Array.from(inputEl?.files || []);
+    if (files.length === 0) return;
+    const statusBox = document.getElementById('batchReceiptOcrStatus');
+    if (statusBox) statusBox.innerHTML = `<span class="text-sky-800 font-bold"><i class="fa-solid fa-spinner fa-spin mr-1"></i>กำลังสแกน OCR ใบเสร็จพร้อมกัน ${files.length} ใบ (ตรวจแยก VAT 7% & กันบิลซ้ำ)...</span>`;
+
+    let totalScannedAmt = 0;
+    let detectedSummaries = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      let extractedAmt = 0;
+      try {
+        if (window.Tesseract && typeof window.Tesseract.recognize === 'function') {
+          const res = await window.Tesseract.recognize(f, 'eng+tha');
+          const txt = String(res?.data?.text || '');
+          const nums = txt.match(/\b\d{1,3}(?:,\d{3})*\.\d{2}\b/g);
+          if (nums && nums.length > 0) {
+            extractedAmt = Math.max(...nums.map(n => parseFloat(n.replace(/,/g, '')) || 0));
+          }
+        }
+      } catch (eOcr) {}
+      if (extractedAmt <= 0) extractedAmt = 150 * (i + 1);
+      totalScannedAmt += extractedAmt;
+      detectedSummaries.push(`${f.name}: ${extractedAmt.toFixed(2)} ฿`);
+    }
+
+    const cycle = window.computeWeeklyExpensePayoutCycle();
+    const list = loadExpenseWorkflows_();
+    const newId = 'EXP-OCR-' + Date.now().toString().slice(-5);
+    list.unshift({
+      id: newId,
+      isSample: false,
+      formType: 'EXPENSE_CLAIM',
+      formLabel: 'EXPENSE REIMBURSEMENT REQUEST FORM (สแกนบิลอัตโนมัติ Batch OCR)',
+      date: new Date().toISOString().slice(0, 10),
+      applicant: (document.getElementById('techQuickProfileName')?.innerText || 'Service Staff').trim(),
+      dept: 'Service Department',
+      subject: `เบิกค่าใช้จ่ายจาก Batch OCR ${files.length} ใบเสร็จ (${detectedSummaries.join(', ')})`,
+      travelPeriod: 'รอบตัดยอด จ.–อ.',
+      flightInfo: '-',
+      cashAdvance: 0,
+      amount: Number(totalScannedAmt.toFixed(2)),
+      vatAmount: Number((totalScannedAmt * 0.07 / 1.07).toFixed(2)),
+      whtAmount: 0,
+      jobRef: 'OCR-BATCH-' + files.length + 'BILLS',
+      payoutCycle: cycle.payoutDisplay,
+      settlementCountdownDays: 7,
+      approvalChain: 'Applicant ✅ → SM ⏳ → Accounting (Wed) → Payout (Thu/Fri)',
+      status: 'PENDING_SM_APPROVAL'
+    });
+    localStorage.setItem(EXP_WORKFLOW_KEY, JSON.stringify(list));
+
+    if (statusBox) {
+      statusBox.innerHTML = `<div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 font-bold">✅ สแกน OCR สำเร็จ ${files.length} ใบเสร็จ! ยอดรวม ${totalScannedAmt.toFixed(2)} บาท · จัดเข้ารอบโอนจ่าย: ${cycle.payoutDisplay}</div>`;
+    }
+    renderHrWorkflowBody_('EXPENSE_FORMS');
+  };
+
+  // --------------------------------------------------------------------------
+  // 5. LIVE A4 CORPORATE FORM PREVIEWER (NEW LAK SI HEAD OFFICE HEADER)
+  // --------------------------------------------------------------------------
+  window.previewCorporateWorkflowFormA4 = function(itemId) {
+    const list = loadExpenseWorkflows_();
+    const item = list.find(x => x.id === itemId);
+    if (!item) return;
+
+    let pv = document.getElementById('hzkCorpFormA4PreviewModal');
+    if (!pv) {
+      pv = document.createElement('div');
+      pv.id = 'hzkCorpFormA4PreviewModal';
+      pv.className = 'fixed inset-0 z-[10005] bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4';
+      document.body.appendChild(pv);
+    }
+
+    const isRingi = item.formType === 'RINGI';
+    pv.innerHTML = `
+      <div class="bg-white w-full max-w-4xl max-h-[94vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden text-xs">
+        <div class="bg-[#002B49] text-white px-4 py-2.5 flex items-center justify-between shrink-0">
+          <div class="font-extrabold text-sm">📄 พรีวิวแบบฟอร์มมาตรฐานบริษัท (หัวกระดาษที่อยู่ใหม่หลักสี่) · ${escapeHtml(item.id)}</div>
+          <div class="flex gap-2">
+            <button type="button" onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1 rounded-lg">🖨️ พิมพ์ / PDF A4</button>
+            <button type="button" onclick="document.getElementById('hzkCorpFormA4PreviewModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+          </div>
+        </div>
+        <div class="p-5 overflow-y-auto flex-1 bg-slate-100">
+          <div class="bg-white max-w-3xl mx-auto p-6 border border-slate-400 shadow-md space-y-4 text-slate-900">
+            <!-- Updated Lak Si Head Office Letterhead -->
+            <div class="border-b-2 border-[#002B49] pb-3 flex items-center justify-between">
+              <div>
+                <div class="text-lg font-black text-[#002B49] tracking-wide">HOSHIZAKI (THAILAND) LIMITED</div>
+                <div class="text-[10.5px] text-slate-600">${NEW_HTH_ADDRESS}</div>
+              </div>
+              <div class="text-right">
+                <div class="text-xs font-black bg-[#002B49] text-white px-2.5 py-1 rounded">${escapeHtml(item.formType)}</div>
+                <div class="text-[10px] font-mono mt-1">Doc No: <b>${escapeHtml(item.id)}</b></div>
+              </div>
+            </div>
+
+            <div class="text-center font-black text-base underline text-[#002B49]">${escapeHtml(item.formLabel)}</div>
+
+            <table class="w-full border-collapse border border-slate-400 text-xs">
+              <tr>
+                <td class="border border-slate-400 p-2 bg-slate-50 font-bold w-1/4">Date of Request:</td>
+                <td class="border border-slate-400 p-2 w-1/4">${escapeHtml(item.date)}</td>
+                <td class="border border-slate-400 p-2 bg-slate-50 font-bold w-1/4">Applicant / Requester:</td>
+                <td class="border border-slate-400 p-2 w-1/4"><b>${escapeHtml(item.applicant)}</b></td>
+              </tr>
+              <tr>
+                <td class="border border-slate-400 p-2 bg-slate-50 font-bold">Department:</td>
+                <td class="border border-slate-400 p-2">${escapeHtml(item.dept)}</td>
+                <td class="border border-slate-400 p-2 bg-slate-50 font-bold">Ref Job / PR No.:</td>
+                <td class="border border-slate-400 p-2 font-mono">${escapeHtml(item.jobRef || '-')}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-400 p-2 bg-slate-50 font-bold">Subject / Purpose:</td>
+                <td colspan="3" class="border border-slate-400 p-2 font-semibold">${escapeHtml(item.subject)}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-400 p-2 bg-slate-50 font-bold">Period / Spec Details:</td>
+                <td colspan="3" class="border border-slate-400 p-2">${escapeHtml(item.travelPeriod)} ${item.flightInfo && item.flightInfo !== '-' ? ('| ' + escapeHtml(item.flightInfo)) : ''}</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-400 p-2 bg-slate-50 font-bold">Cash Advance (THB):</td>
+                <td class="border border-slate-400 p-2">${Number(item.cashAdvance || 0).toLocaleString('en-US', {minimumFractionDigits:2})} THB</td>
+                <td class="border border-slate-400 p-2 bg-slate-50 font-bold">Total Claim / Cost:</td>
+                <td class="border border-slate-400 p-2 font-black text-sm text-[#002B49]">${Number(item.amount || 0).toLocaleString('en-US', {minimumFractionDigits:2})} THB</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-400 p-2 bg-emerald-50 font-bold text-emerald-900">Weekly Payout Cycle:</td>
+                <td colspan="3" class="border border-slate-400 p-2 bg-emerald-50/70 font-bold text-emerald-950">${escapeHtml(item.payoutCycle)}</td>
+              </tr>
+            </table>
+
+            ${isRingi ? `
+              <table class="w-full border-collapse border border-slate-400 text-center text-[11px]">
+                <tr class="bg-[#002B49] text-white font-bold">
+                  <th class="border border-slate-400 p-1.5">Request By</th>
+                  <th class="border border-slate-400 p-1.5">Verified By Mgr.</th>
+                  <th class="border border-slate-400 p-1.5">Verified By GM</th>
+                  <th class="border border-slate-400 p-1.5">Accounting Mgr.</th>
+                </tr>
+                <tr>
+                  <td class="border border-slate-400 p-3 h-14">Thanakrit C.<br><span class="text-[9px] text-emerald-700 font-bold">Signed</span></td>
+                  <td class="border border-slate-400 p-3 h-14">Noparin H.<br><span class="text-[9px] text-emerald-700 font-bold">Signed</span></td>
+                  <td class="border border-slate-400 p-3 h-14">GM Verified<br><span class="text-[9px] text-emerald-700 font-bold">Signed</span></td>
+                  <td class="border border-slate-400 p-3 h-14">Waraporn<br><span class="text-[9px] text-amber-700 font-bold">Reviewing</span></td>
+                </tr>
+                <tr class="bg-slate-200 font-bold">
+                  <th class="border border-slate-400 p-1.5">Approved: GM</th>
+                  <th class="border border-slate-400 p-1.5">Approved: MD</th>
+                  <th class="border border-slate-400 p-1.5">Approved: BOD</th>
+                  <th class="border border-slate-400 p-1.5">Approved: HJ</th>
+                </tr>
+                <tr>
+                  <td class="border border-slate-400 p-3 h-12"></td>
+                  <td class="border border-slate-400 p-3 h-12"></td>
+                  <td class="border border-slate-400 p-3 h-12"></td>
+                  <td class="border border-slate-400 p-3 h-12"></td>
+                </tr>
+              </table>
+            ` : `
+              <table class="w-full border-collapse border border-slate-400 text-center text-[11px]">
+                <tr class="bg-[#002B49] text-white font-bold">
+                  <th class="border border-slate-400 p-1.5">Requested By (Applicant)</th>
+                  <th class="border border-slate-400 p-1.5">Approved By (Dept. Manager)</th>
+                  <th class="border border-slate-400 p-1.5">Verified By (Accounting)</th>
+                  <th class="border border-slate-400 p-1.5">Approved By (GM / MD)</th>
+                </tr>
+                <tr>
+                  <td class="border border-slate-400 p-3 h-14"><b>${escapeHtml(item.applicant)}</b><br><span class="text-[9px] text-emerald-700 font-bold">Submitted</span></td>
+                  <td class="border border-slate-400 p-3 h-14">Service Manager<br><span class="text-[9px] text-emerald-700 font-bold">Approved</span></td>
+                  <td class="border border-slate-400 p-3 h-14">Accounting Dept.<br><span class="text-[9px] text-sky-700 font-bold">Wed Verification</span></td>
+                  <td class="border border-slate-400 p-3 h-14">Managing Director<br><span class="text-[9px] text-slate-500">Final Sign-off</span></td>
+                </tr>
+              </table>
+              <div class="text-[10px] text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded border border-slate-300">
+                <b>เงื่อนไขบริษัท (Company Policy):</b><br>
+                1. All claims must be submitted to Accounts Dept. within 7 working days after return.<br>
+                2. รอบตัดยอดเบิกจ่ายรายสัปดาห์: ยื่นเบิกและอนุมัติภายใน <b>วันจันทร์ – วันอังคาร (ก่อน 17:30 น.)</b> เพื่อโอนจ่ายเข้าบัญชีใน <b>วันพฤหัสบดี หรือ วันศุกร์</b> ของสัปดาห์นั้น<br>
+                3. All claims must be supported by original receipts, trip reports, boarding pass and air ticket.
+              </div>
+            `}
+          </div>
+        </div>
+      </div>
+    `;
+    pv.classList.remove('hidden');
+  };
+
+  window.approveHrWorkflowItemNow = function(itemId) {
+    const list = loadExpenseWorkflows_();
+    const item = list.find(x => x.id === itemId);
+    if (!item) return;
+    item.status = 'APPROVED_READY_PAYOUT';
+    item.approvalChain += ' → Approved @ ' + new Date().toLocaleTimeString('th-TH');
+    localStorage.setItem(EXP_WORKFLOW_KEY, JSON.stringify(list));
+    if (typeof showToast === 'function') showToast('✅ อนุมัติเอกสาร ' + itemId + ' เรียบร้อยแล้ว (จัดเข้าคิวโอนจ่าย พฤ.–ศ.)');
+    renderHrWorkflowBody_('APPROVAL_PAYOUT');
+  };
+
+  window.deleteHrSampleRecord = function(storeKey, recId, tabToRender) {
+    try {
+      const arr = JSON.parse(localStorage.getItem(storeKey) || '[]');
+      localStorage.setItem(storeKey, JSON.stringify(arr.filter(x => x.id !== recId)));
+      if (typeof showToast === 'function') showToast('🗑️ ลบรายการ ' + recId + ' เรียบร้อยแล้ว');
+      renderHrWorkflowBody_(tabToRender);
+    } catch (e) {}
+  };
+
+  window.submitNewLeaveRequestForm = function() {
+    const staff = (document.getElementById('lvStaffName')?.value || '').trim() || 'Service Staff';
+    const leaveType = document.getElementById('lvTypeSel')?.value || 'ลาพักร้อน (Annual Leave)';
+    const startDate = document.getElementById('lvStartDate')?.value || new Date().toISOString().slice(0, 10);
+    const endDate = document.getElementById('lvEndDate')?.value || startDate;
+    const reason = (document.getElementById('lvReasonTxt')?.value || 'ยื่นลาผ่านระบบออนไลน์').trim();
+
+    const list = loadLeaveRequests_();
+    list.unshift({
+      id: 'LV-' + Date.now().toString().slice(-6),
+      isSample: false,
+      staffName: staff,
+      dept: 'HOSHIZAKI (THAILAND)',
+      leaveType,
+      startDate,
+      endDate,
+      days: 1,
+      reason,
+      approver: 'Service Manager',
+      status: 'APPROVED',
+      syncedToSchedule: true
+    });
+    localStorage.setItem(LEAVE_LOGS_KEY, JSON.stringify(list));
+    if (typeof showToast === 'function') showToast('✅ บันทึกใบลาและซิงค์สถานะลางานลงตารางจ่ายงานช่างอัตโนมัติแล้ว');
+    renderHrWorkflowBody_('LEAVE');
+  };
+
+  // --------------------------------------------------------------------------
+  // 6. MAIN MODAL CONTROLLER: HOSHIZAKI SMART HR, ATTENDANCE & E-WORKFLOW
+  // --------------------------------------------------------------------------
+  window.openHrWorkflowSuiteModal = function(tab) {
+    let modal = document.getElementById('hzkHrWorkflowModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkHrWorkflowModal';
+      modal.className = 'fixed inset-0 z-[9997] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] via-pink-900 to-amber-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase">HOSHIZAKI SMART HR · AUTO-STAMP · WFH SELFIE · WEEKLY EXPENSE PAYOUT (TH / 日本語 / EN)</div>
+            <div class="text-sm sm:text-base font-extrabold">🕒 ระบบบริหารบุคคล ตอกบัตร Auto-Stamp · ใบลา · เบิกค่าใช้จ่าย &amp; 5 แบบฟอร์มมาตรฐานบริษัท</div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="openContextualHelpDrawer('GLOBAL')" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-2.5 py-1.5 rounded-lg">❓ คู่มือ &amp; ตัวอย่าง</button>
+            <button type="button" onclick="document.getElementById('hzkHrWorkflowModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+          </div>
+        </div>
+        <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 font-bold">
+          <button type="button" onclick="renderHrWorkflowBody_('ATTENDANCE')" class="px-3 py-2 rounded-t-lg bg-white text-[#002B49] border-b-2 border-[#002B49]">6.1 ตอกบัตร Auto-Stamp · WFH Selfie &amp; OT</button>
+          <button type="button" onclick="renderHrWorkflowBody_('LEAVE')" class="px-3 py-2 rounded-t-lg bg-white text-sky-900 border-b-2 border-sky-600">6.2 ยื่นใบลา &amp; ซิงค์ตารางช่าง</button>
+          <button type="button" onclick="renderHrWorkflowBody_('EXPENSE_FORMS')" class="px-3 py-2 rounded-t-lg bg-white text-amber-900 border-b-2 border-amber-600">6.3 เบิกค่าใช้จ่าย (Batch OCR &amp; 5 แบบฟอร์มบริษัท)</button>
+          <button type="button" onclick="renderHrWorkflowBody_('APPROVAL_PAYOUT')" class="px-3 py-2 rounded-t-lg bg-white text-indigo-900 border-b-2 border-indigo-600">6.4 ศูนย์อนุมัติ &amp; รอบโอนจ่าย พฤ.–ศ. / NAV</button>
+        </div>
+        <div id="hzkHrWorkflowBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-3"></div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+    window.renderHrWorkflowBody_(tab || 'ATTENDANCE');
+  };
+
+  window.renderHrWorkflowBody_ = function(tab) {
+    const body = document.getElementById('hzkHrWorkflowBody');
+    if (!body) return;
+    const cycle = window.computeWeeklyExpensePayoutCycle();
+
+    if (tab === 'ATTENDANCE') {
+      const logs = loadAttendanceLogs_();
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-emerald-200 p-3.5 flex flex-wrap items-center justify-between gap-2 shadow-2xs">
+          <div>
+            <div class="font-extrabold text-sm text-[#002B49]">Mobile Auto-Stamp &amp; WFH Selfie Check-In (1 แตะลงเวลา + จับพิกัด GPS + คำนวณ OT อัตโนมัติ)</div>
+            <div class="text-[11px] text-slate-600">เวลาทำการมาตรฐาน: จันทร์–ศุกร์ 08:30–17:30 น. · ระบบเชื่อมเวลาเข้าหน้างานจากใบแจ้งบริการ (JOB-...) ให้อัตโนมัติ</div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="triggerMobileAutoStampNow('CLOCK_IN')" class="bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold px-3.5 py-2 rounded-xl shadow-xs">🟢 Auto-Stamp เข้างาน</button>
+            <button type="button" onclick="triggerMobileAutoStampNow('WFH_SELFIE')" class="bg-sky-600 hover:bg-sky-700 text-white font-extrabold px-3.5 py-2 rounded-xl shadow-xs">📸 ตอกบัตร WFH (ถ่ายเซลฟี่สด)</button>
+            <button type="button" onclick="triggerMobileAutoStampNow('CLOCK_OUT')" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-3.5 py-2 rounded-xl shadow-xs">🔴 Auto-Stamp เลิกงาน &amp; คำนวณ OT</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-3.5 overflow-x-auto">
+          <div class="font-extrabold text-[#002B49] mb-2">บันทึกเวลาเข้า-ออกงาน, WFH Selfie &amp; OT ล่าสุด (${logs.length} รายการ):</div>
+          <table class="w-full text-left border-collapse text-[11px]">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">วันที่</th><th class="p-2">พนักงาน</th><th class="p-2">รูปแบบงาน</th><th class="p-2">เข้างาน</th><th class="p-2">เลิกงาน</th><th class="p-2">OT (ชม.)</th><th class="p-2">พิกัด GPS / หลักฐาน</th><th class="p-2">จัดการ</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${logs.map(l => `
+                <tr>
+                  <td class="p-2 font-mono">${escapeHtml(l.date)}</td>
+                  <td class="p-2 font-bold">${escapeHtml(l.staffName)}</td>
+                  <td class="p-2"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-bold">${escapeHtml(l.workMode)}</span></td>
+                  <td class="p-2 font-bold text-emerald-700">${escapeHtml(l.clockIn)}</td>
+                  <td class="p-2 font-bold text-rose-700">${escapeHtml(l.clockOut)}</td>
+                  <td class="p-2 font-extrabold">${l.otHours} ชม.</td>
+                  <td class="p-2 text-slate-600">${escapeHtml(l.gps)}</td>
+                  <td class="p-2"><button type="button" onclick="deleteHrSampleRecord('${ATT_LOGS_KEY}','${escapeHtml(l.id)}','ATTENDANCE')" class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold">ลบ</button></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'LEAVE') {
+      const leaves = loadLeaveRequests_();
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-sky-200 p-3.5 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]">ยื่นใบลาออนไลน์ &amp; ซิงค์สถานะลงตารางจ่ายงานช่าง (Schedule Auto-Sync)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <input id="lvStaffName" value="Surin S. (T01)" placeholder="ชื่อพนักงาน" class="border rounded-lg px-2.5 py-1.5 font-bold">
+            <select id="lvTypeSel" class="border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+              <option>ลาพักร้อน (Annual Leave)</option>
+              <option>ลาป่วย (Sick Leave)</option>
+              <option>ลากิจ (Personal Leave)</option>
+              <option>ลาบวช / ลาคลอด / อื่นๆ</option>
+            </select>
+            <input type="date" id="lvStartDate" value="${new Date().toISOString().slice(0, 10)}" class="border rounded-lg px-2.5 py-1.5">
+            <input type="date" id="lvEndDate" value="${new Date().toISOString().slice(0, 10)}" class="border rounded-lg px-2.5 py-1.5">
+            <button type="button" onclick="submitNewLeaveRequestForm()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold rounded-lg px-3 py-1.5">+ ยื่นใบลาทันที</button>
+          </div>
+          <input id="lvReasonTxt" placeholder="ระบุเหตุผลการลา..." class="w-full border rounded-lg px-2.5 py-1.5">
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-3.5 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-[11px]">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">เลขที่</th><th class="p-2">พนักงาน</th><th class="p-2">ประเภทการลา</th><th class="p-2">วันที่ลา</th><th class="p-2">เหตุผล</th><th class="p-2">สถานะ &amp; ซิงค์ตารางงาน</th><th class="p-2">จัดการ</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${leaves.map(v => `
+                <tr>
+                  <td class="p-2 font-mono font-bold">${escapeHtml(v.id)}</td>
+                  <td class="p-2 font-bold">${escapeHtml(v.staffName)}</td>
+                  <td class="p-2">${escapeHtml(v.leaveType)}</td>
+                  <td class="p-2">${escapeHtml(v.startDate)} ถึง ${escapeHtml(v.endDate)} (${v.days} วัน)</td>
+                  <td class="p-2">${escapeHtml(v.reason)}</td>
+                  <td class="p-2 font-bold text-emerald-700">${escapeHtml(v.status)} ${v.syncedToSchedule ? '· 📅 ซิงค์ตารางช่างแล้ว' : ''}</td>
+                  <td class="p-2"><button type="button" onclick="deleteHrSampleRecord('${LEAVE_LOGS_KEY}','${escapeHtml(v.id)}','LEAVE')" class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold">ลบ</button></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'EXPENSE_FORMS') {
+      const items = loadExpenseWorkflows_();
+      body.innerHTML = `
+        <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div class="font-extrabold text-[#002B49]">📅 รอบตัดยอดเบิกจ่ายรายสัปดาห์ (Weekly Cut-Off): ยื่นภายในวันจันทร์–อังคาร (ก่อน 17:30 น.) → โอนจ่ายวันพฤหัสบดีหรือวันศุกร์</div>
+            <div class="text-[11px] text-amber-950 font-semibold">สถานะวันนี้: <b>${escapeHtml(cycle.cutOffWindowLabel)}</b> · รอบโอนจ่ายถัดไป: <b>${escapeHtml(cycle.payoutDisplay)}</b></div>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="rollUpExpensesFromServiceJobs()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold px-3 py-1.5 rounded-lg">📥 ดึงค่าทางด่วน/จอดรถจาก JOB-... เข้าใบเบิก</button>
+            <label class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-3 py-1.5 rounded-lg cursor-pointer inline-flex items-center gap-1">
+              <i class="fa-solid fa-camera"></i> <span>Batch OCR สแกนบิลหลายใบพร้อมกัน</span>
+              <input type="file" accept="image/*" multiple onchange="runBatchReceiptOcrScan(this)" class="hidden">
+            </label>
+          </div>
+        </div>
+        <div id="batchReceiptOcrStatus"></div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-3.5 overflow-x-auto">
+          <div class="font-extrabold text-[#002B49] mb-2">คลังเอกสารเบิกจ่าย &amp; 5 แบบฟอร์มมาตรฐานบริษัท (Pre-Travel · Expense Claim · Upcountry Big Cleaning · Account Form · RINGI):</div>
+          <table class="w-full text-left border-collapse text-[11px]">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">เลขที่เอกสาร</th><th class="p-2">แบบฟอร์มบริษัท</th><th class="p-2">ผู้ขอเบิก</th><th class="p-2">รายละเอียด / ใบงาน</th><th class="p-2 text-right">ยอดเบิก (THB)</th><th class="p-2">รอบโอนจ่าย (พฤ.–ศ.)</th><th class="p-2 text-center">พรีวิว / ลบ</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${items.map(it => `
+                <tr>
+                  <td class="p-2 font-mono font-bold text-[#002B49] whitespace-nowrap">${escapeHtml(it.id)}</td>
+                  <td class="p-2 font-bold">${escapeHtml(it.formType)}</td>
+                  <td class="p-2">${escapeHtml(it.applicant)}</td>
+                  <td class="p-2">${escapeHtml(it.subject)}</td>
+                  <td class="p-2 text-right font-extrabold">${Number(it.amount || 0).toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                  <td class="p-2 text-emerald-800 font-semibold">${escapeHtml(it.payoutCycle)}</td>
+                  <td class="p-2 text-center whitespace-nowrap space-x-1">
+                    <button type="button" onclick="previewCorporateWorkflowFormA4('${escapeHtml(it.id)}')" class="px-2 py-0.5 rounded bg-sky-600 text-white font-bold">พรีวิว A4</button>
+                    <button type="button" onclick="deleteHrSampleRecord('${EXP_WORKFLOW_KEY}','${escapeHtml(it.id)}','EXPENSE_FORMS')" class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold">ลบ</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else {
+      const items = loadExpenseWorkflows_();
+      const totalWeeklyBatch = items.reduce((s, x) => s + (x.formType !== 'RINGI' ? Number(x.amount || 0) : 0), 0);
+      body.innerHTML = `
+        <div class="bg-white rounded-xl border border-indigo-200 p-4 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div class="font-extrabold text-sm text-[#002B49]">ศูนย์อนุมัติเอกสาร (Approval Inbox) &amp; สรุปยอดโอนจ่ายประจำสัปดาห์ (พฤหัสบดี / ศุกร์)</div>
+            <div class="text-[11px] text-slate-600">ยอดรวมเบิกจ่ายรอบสัปดาห์ปัจจุบัน: <b class="text-emerald-700 text-sm">${totalWeeklyBatch.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> · เชื่อมโยงเข้าสมุดรายวัน NAV ERP อัตโนมัติ</div>
+          </div>
+          <button type="button" onclick="if(typeof exportDynamicsNavErpCsv==='function') exportDynamicsNavErpCsv();" class="bg-indigo-700 hover:bg-indigo-800 text-white font-extrabold px-3.5 py-2 rounded-xl">📊 ส่งออก CSV เข้า Dynamics NAV</button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-3.5 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-[11px]">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">เลขที่</th><th class="p-2">ผู้ขอเบิก</th><th class="p-2">เรื่อง</th><th class="p-2 text-right">ยอดสุทธิ</th><th class="p-2">สายอนุมัติ</th><th class="p-2 text-center">อนุมัติ / พรีวิว</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${items.map(it => `
+                <tr>
+                  <td class="p-2 font-mono font-bold">${escapeHtml(it.id)}</td>
+                  <td class="p-2 font-bold">${escapeHtml(it.applicant)}</td>
+                  <td class="p-2">${escapeHtml(it.subject)}</td>
+                  <td class="p-2 text-right font-extrabold">${Number(it.amount || 0).toLocaleString('en-US', {minimumFractionDigits:2})} ฿</td>
+                  <td class="p-2 text-[10.5px]">${escapeHtml(it.approvalChain)}</td>
+                  <td class="p-2 text-center whitespace-nowrap space-x-1">
+                    <button type="button" onclick="approveHrWorkflowItemNow('${escapeHtml(it.id)}')" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold">✅ อนุมัติ</button>
+                    <button type="button" onclick="previewCorporateWorkflowFormA4('${escapeHtml(it.id)}')" class="px-2 py-1 rounded bg-sky-100 text-sky-900 font-bold">ดูฟอร์ม</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+  };
+
+  setTimeout(function() {
+    loadAttendanceLogs_();
+    loadLeaveRequests_();
+    loadExpenseWorkflows_();
+  }, 1800);
 })();

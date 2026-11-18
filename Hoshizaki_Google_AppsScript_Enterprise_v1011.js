@@ -1164,7 +1164,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1049-INTL-OMNI',
+    version: 'Enterprise-v1050-HR-WORKFLOW',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1203,7 +1203,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1049-INTL-OMNI',
+    version: 'Enterprise-v1050-HR-WORKFLOW',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -9385,7 +9385,7 @@ function getEnterpriseImsDataFromSheets_(ss) {
 
 
 // ============================================================================
-// 26. ENTERPRISE v1049-INTL-OMNI: MULTI-USER SHA-256 CREDENTIAL VAULT,
+// 26. ENTERPRISE v1050-HR-WORKFLOW: MULTI-USER SHA-256 CREDENTIAL VAULT,
 //     SOLE SUPER ADMIN (MR. NOPARIN) & IMMEDIATE SYSTEM_AUDIT_LOG SYNC
 // ============================================================================
 
@@ -9446,7 +9446,7 @@ function logSecurityAuditEventToSheet_(ss, data) {
 
 
 // ============================================================================
-// SECTION 28: ENTERPRISE v1049-INTL-OMNI TWO-WAY CREDENTIAL VAULT & AUDIT LOG READERS
+// SECTION 28: ENTERPRISE v1050-HR-WORKFLOW TWO-WAY CREDENTIAL VAULT & AUDIT LOG READERS
 // ============================================================================
 function getUserCredentialsVaultFromSheet_(ss) {
   var sheet = ss.getSheetByName('System_User_Credentials');
@@ -9505,7 +9505,7 @@ function getSecurityAuditLogsFromSheet_(ss, limit) {
 
 
 // ============================================================================
-// 27. ENTERPRISE v1049-INTL-OMNI BACKEND ENHANCEMENTS:
+// 27. ENTERPRISE v1050-HR-WORKFLOW BACKEND ENHANCEMENTS:
 //     - Trilingual Auto-Detect Response (TH / EN / JP)
 //     - Business Hours Flex Card (Mon-Fri 08:30-17:30) + After-Hours Queue
 //     - Smart Fuzzy Disambiguation & Auto-Resend Permanent PDF Vault Link
@@ -9579,4 +9579,59 @@ function logLineOaInquiryToSheet_(ss, userId, custName, lang, question, intent, 
     var dt = Utilities.formatDate(now, 'Asia/Bangkok', 'yyyy-MM-dd');
     sheet.appendRow([ts, dt, userId || '', custName || 'LINE User', lang || 'TH', String(question || '').substring(0, 1000), intent || 'GENERAL', actionOutcome || 'LOGGED']);
   } catch (e) {}
+}
+
+
+// ============================================================================
+// 28. ENTERPRISE v1050-HR-WORKFLOW BACKEND ENGINE:
+//     - Mobile Auto-Stamp & WFH Selfie Attendance Logger (HR_Attendance_Logs)
+//     - Leave Request & Schedule Sync (HR_Leave_Requests)
+//     - 5 Corporate Forms & Weekly Cut-Off Payout Batch (HR_Expense_Workflows)
+// ============================================================================
+
+function logHrAttendanceToSheet_(ss, data) {
+  var sheet = ss.getSheetByName('HR_Attendance_Logs');
+  if (!sheet) {
+    sheet = ss.insertSheet('HR_Attendance_Logs');
+    sheet.getRange(1, 1, 1, 9).setValues([[
+      'Attendance ID', 'Date', 'Staff Name', 'Department', 'Work Mode',
+      'Clock In', 'Clock Out', 'OT Hours', 'GPS / WFH Selfie Verified'
+    ]]).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+  sheet.appendRow([
+    data.id || ('ATT-' + Date.now()),
+    data.date || Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd'),
+    data.staffName || '',
+    data.dept || '',
+    data.workMode || 'OFFICE_AUTO_STAMP',
+    data.clockIn || '',
+    data.clockOut || '',
+    Number(data.otHours || 0),
+    data.gps || 'Verified'
+  ]);
+}
+
+function logHrExpenseWorkflowToSheet_(ss, data) {
+  var sheet = ss.getSheetByName('HR_Expense_Workflows');
+  if (!sheet) {
+    sheet = ss.insertSheet('HR_Expense_Workflows');
+    sheet.getRange(1, 1, 1, 10).setValues([[
+      'Doc ID', 'Form Type', 'Date', 'Applicant', 'Department',
+      'Subject', 'Amount (THB)', 'Cash Advance (THB)', 'Weekly Payout Cycle', 'Approval Status'
+    ]]).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+  sheet.appendRow([
+    data.id || ('EXP-' + Date.now()),
+    data.formType || 'EXPENSE_CLAIM',
+    data.date || Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd'),
+    data.applicant || '',
+    data.dept || '',
+    data.subject || '',
+    Number(data.amount || 0),
+    Number(data.cashAdvance || 0),
+    data.payoutCycle || 'Thu/Fri Weekly Batch',
+    data.status || 'PENDING'
+  ]);
 }

@@ -13171,13 +13171,13 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
         <div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border-2 border-amber-500 flex flex-col overflow-hidden">
           <div class="bg-gradient-to-r from-[#002B49] via-amber-800 to-rose-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
             <div>
-              <h2 class="text-base sm:text-lg font-extrabold"><i class="fa-solid fa-chart-line text-amber-300 mr-1.5"></i>HOSHIZAKI Sale &amp; Marketing Growth Suite (7.1–7.6)</h2>
-              <p class="text-[11px] text-amber-100">Sales CRM Pipeline · &gt;5-Year Trade-In Radar · Commercial ROI Calculator · Event/Showroom &amp; Trilingual Brochure Kit</p>
+              <h2 class="text-base sm:text-lg font-extrabold"><i class="fa-solid fa-chart-line text-amber-300 mr-1.5"></i>HOSHIZAKI B2B Dealer PRM, Chain-Store &amp; Japanese Corporate Suite (7.1–7.6)</h2>
+              <p class="text-[11px] text-amber-100">B2B Deal Registration (ป้องกันดีลชนกัน) · Dealer A/B/C · Multi-Branch Chain Stores · Japanese Foodservice · B2B Rental/PM</p>
             </div>
             <button type="button" onclick="document.getElementById('hzkSaleMarketingModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
           </div>
           <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 text-xs font-bold">
-            <button type="button" id="smTab_CRM_PIPELINE" onclick="renderSaleMarketingTab_('CRM_PIPELINE')" class="sm-tab px-3 py-2 rounded-t-lg whitespace-nowrap">7.1 Sales CRM Pipeline &amp; เสนอราคา</button>
+            <button type="button" id="smTab_CRM_PIPELINE" onclick="renderSaleMarketingTab_('CRM_PIPELINE')" class="sm-tab px-3 py-2 rounded-t-lg whitespace-nowrap">7.1 B2B Deal Registration &amp; Pipeline</button>
             <button type="button" id="smTab_TRADE_IN_RADAR" onclick="renderSaleMarketingTab_('TRADE_IN_RADAR')" class="sm-tab px-3 py-2 rounded-t-lg whitespace-nowrap">7.2 เรดาร์เครื่องเก่า >5 ปี &amp; เทิร์นเครื่องใหม่</button>
             <button type="button" id="smTab_ROI_CALC" onclick="renderSaleMarketingTab_('ROI_CALC')" class="sm-tab px-3 py-2 rounded-t-lg whitespace-nowrap">7.3 คำนวณจุดคุ้มทุน (ROI Calculator)</button>
             <button type="button" id="smTab_EVENTS_SHOWROOM" onclick="renderSaleMarketingTab_('EVENTS_SHOWROOM')" class="sm-tab px-3 py-2 rounded-t-lg whitespace-nowrap">7.6 ออกบูธ THAIFEX &amp; โบรชัวร์ 3 ภาษา</button>
@@ -13208,15 +13208,16 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
       body.innerHTML = `
         <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-funnel-dollar text-amber-600 mr-1"></i>B2B Sales Pipeline (มูลค่าโครงการรวม: <span class="text-emerald-700">${totalPipe.toLocaleString()} THB</span>)</div>
+            <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-funnel-dollar text-amber-600 mr-1"></i>B2B Channel &amp; Deal Registration Pipeline — นโยบายขายผ่านดีลเลอร์เป็นหลัก + Direct / เชนหลายสาขา / บริษัทอาหารญี่ปุ่น (มูลค่ารวม: <span class="text-emerald-700">${totalPipe.toLocaleString()} THB</span>)</div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
             <input id="crmInCompany" placeholder="ชื่อลูกค้า / เชนร้านค้า / ดีลเลอร์ *" class="sm:col-span-2 border rounded-lg px-2.5 py-1.5">
             <select id="crmInChannel" class="border rounded-lg px-2.5 py-1.5 bg-white font-bold">
-              <option value="DIRECT_SALE">Direct Sale</option>
-              <option value="DEALER_A">Dealer Grade A</option>
-              <option value="JAPANESE_CORPORATE">Japanese Corporate</option>
-              <option value="CHAIN_STORE">Chain-Store VIP</option>
+              <option value="DEALER_A">Authorized Dealer Grade A (หลัก)</option>
+              <option value="DEALER_B">Authorized Dealer Grade B</option>
+              <option value="JAPANESE_CORPORATE">Japanese Foodservice / Corporate (บริษัทอาหารญี่ปุ่น)</option>
+              <option value="CHAIN_STORE">Multi-Branch Chain Store (เชนร้านอาหารหลายสาขา)</option>
+              <option value="DIRECT_SALE">Direct Key Account (งานขายตรงเฉพาะโครงการ)</option>
             </select>
             <input id="crmInValue" type="number" placeholder="มูลค่าประมาณการ (THB) *" class="border rounded-lg px-2.5 py-1.5">
             <button type="button" onclick="addSalesCrmDeal()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold rounded-lg py-1.5 px-3">+ เพิ่มดีลขาย</button>

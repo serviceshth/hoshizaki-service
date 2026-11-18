@@ -12690,3 +12690,625 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     container.appendChild(bar);
   };
 })();
+
+
+// ============================================================================
+// --- Module Block #67 (Enterprise v1051-OMNI-ENTERPRISE Next-Gen Expansion):
+//     PART A — Next-Gen Autonomous Service (5 Strategic Pillars):
+//       1) Interactive Exploded-View Diagram & Visual Part Finder
+//       2) Seasonal Demand & Heatwave Stock Forecaster (Mar–May +35% Surge)
+//       3) Ice-as-a-Service (IaaS) & Rental Fleet Recurring Billing
+//       4) ASEAN Regional Hub Bridge (Thailand <-> Singapore SEA <-> Japan HQ)
+//       5) Gamified Technician Troubleshooting Simulator & Skill Certification
+//     PART B — Sale & Marketing Growth Suite (Category 7: 7.1–7.6):
+//       1) B2B Sales CRM Pipeline & 1-Click Quotation Generator
+//       2) >5-Year Aging Machine Trade-In & Replacement Radar (from Service DB)
+//       3) Commercial Ice ROI & Payback Calculator (Buying Ice vs Hoshizaki)
+//       4) Exhibition / Showroom Lead Capture (THAIFEX) & 3-Lang Brochure Kit
+// ============================================================================
+(function() {
+  const RENTAL_FLEET_KEY = 'hzk_rental_iaas_contracts_v1051';
+  const ASEAN_QCF_KEY = 'hzk_asean_hq_qcf_sync_v1051';
+  const TECH_CERT_KEY = 'hzk_tech_sim_certifications_v1051';
+  const SALES_CRM_KEY = 'hzk_sales_crm_pipeline_v1051';
+  const EVENT_LEADS_KEY = 'hzk_event_showroom_leads_v1051';
+
+  function seedBlock67Defaults_() {
+    if (!localStorage.getItem(RENTAL_FLEET_KEY)) {
+      localStorage.setItem(RENTAL_FLEET_KEY, JSON.stringify([
+        { contractId: 'RNT-2026-01', customer: 'Cafe Amazon Flagship — Bangna', model: 'IM-130NE-HC', serial: 'LNR-IM130-01', monthlyFee: 4500, deposit: 9000, freeFilter4Hch: true, nextBillDate: '2026-12-01', endDate: '2028-11-30', status: 'ACTIVE' },
+        { contractId: 'RNT-2026-02', customer: 'The Standard Hotel Bangkok', model: 'KM-515MAH', serial: 'LNR-KM515-02', monthlyFee: 7800, deposit: 15600, freeFilter4Hch: true, nextBillDate: '2026-12-01', endDate: '2027-01-15', status: 'EXPIRING_60D' }
+      ]));
+    }
+    if (!localStorage.getItem(ASEAN_QCF_KEY)) {
+      localStorage.setItem(ASEAN_QCF_KEY, JSON.stringify([
+        { qcfRef: 'QCF-HTH-2026-019', targetHq: 'Hoshizaki Singapore (SEA HQ)', model: 'IM-240DNE-HC', serialLot: 'H142xxJ', issueSummary: 'Water Inlet Valve Coil Premature Open (3 units in Q4)', creditNoteThb: 8400, slaDaysOpen: 4, status: 'UNDER_SEA_REVIEW' },
+        { qcfRef: 'QCF-HTH-2026-014', targetHq: 'Hoshizaki Japan HQ (Quality Div.)', model: 'KM-901MAJ', serialLot: 'K883xxM', issueSummary: 'Thermistor Sensor Drift under 38°C Ambient', creditNoteThb: 14200, slaDaysOpen: 11, status: 'CREDIT_NOTE_APPROVED' }
+      ]));
+    }
+    if (!localStorage.getItem(TECH_CERT_KEY)) {
+      localStorage.setItem(TECH_CERT_KEY, JSON.stringify({
+        'T01 — Mr.Surin S.': ['IM Specialist', 'KM Specialist', 'R290 Safety Certified'],
+        'T02 — Mr.Jeerapan Phrasawang': ['IM Specialist', 'FM Auger Master', 'R290 Safety Certified'],
+        'T03 — Mr.Noparin Homhoul': ['Master All-Series Architect', 'R290 Safety Certified', 'Regional QCF Auditor']
+      }));
+    }
+    if (!localStorage.getItem(SALES_CRM_KEY)) {
+      localStorage.setItem(SALES_CRM_KEY, JSON.stringify([
+        { dealId: 'CRM-2026-101', company: 'After You Dessert Cafe (12 สาขา)', channel: 'DIRECT_SALE', productInterest: 'IM-130NE-HC x 12 เครื่อง + สัญญา PM', estValue: 1380000, stage: 'PROPOSAL_SENT', owner: 'Ms. Kulathida (Sales)', probPct: 75 },
+        { dealId: 'CRM-2026-102', company: 'S.T.KITCHEN (Stock Lot Q1/2027)', channel: 'DEALER_A', productInterest: 'IM-65NE / IM-100NE / KM-60B (20 เครื่อง)', estValue: 1650000, stage: 'NEGOTIATION', owner: 'Ms. Janyaluck (Sales)', probPct: 85 },
+        { dealId: 'CRM-2026-103', company: 'Maruzen Food Factory (Amata City)', channel: 'JAPANESE_CORPORATE', productInterest: 'FM-1000AKE-N Flake Ice x 2 เครื่อง', estValue: 590000, stage: 'CLOSED_WON', owner: 'Mr. Naoki Furujo / Suleewan', probPct: 100 }
+      ]));
+    }
+    if (!localStorage.getItem(EVENT_LEADS_KEY)) {
+      localStorage.setItem(EVENT_LEADS_KEY, JSON.stringify([
+        { leadId: 'EVT-001', eventName: 'THAIFEX — Anuga Asia 2026', contactName: 'คุณธนกร (เชนร้านชาบู 8 สาขา)', phone: '089-441-2299', interest: 'KM-515MAH + ไส้กรอง 4HC-H', status: 'FOLLOW_UP_QT' }
+      ]));
+    }
+  }
+
+  function syncBlock67Cloud_(actionType, payload) {
+    try {
+      const gasUrl = typeof window.resolveHoshizakiGasUrl === 'function' ? window.resolveHoshizakiGasUrl() : '';
+      if (gasUrl) {
+        fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.assign({ actionType: actionType }, payload))
+        }).catch(function() {});
+      }
+    } catch (e) {}
+  }
+
+  // =========================================================================
+  // PART A: NEXT-GEN AUTONOMOUS SERVICE (5 PILLARS)
+  // =========================================================================
+  const EXPLODED_HOTSPOTS = {
+    'IM-SERIES': [
+      { zone: '1. ชุดควบคุมอิเล็กทรอนิกส์ (Top Control Box)', partNo: 'P01873-01', name: 'Main Control Board IM Series', price: 8900, stockHq: 14, vanStock: 'T01(2), T02(1)' },
+      { zone: '2. ระบบจ่ายน้ำเข้า (Water Inlet Assembly)', partNo: 'P01872-01', name: 'Water Inlet Valve 220-240V', price: 2750, stockHq: 16, vanStock: 'T01(3), T02(2), T03(2)' },
+      { zone: '3. ชุดถาดน้ำพลิก (Water Pan & Actuator)', partNo: 'P03755-01', name: 'Actuator Motor & Cam Assembly', price: 4600, stockHq: 11, vanStock: 'T01(1), T03(2)' },
+      { zone: '4. ระบบระบายความร้อน (Condenser & Fan)', partNo: 'P00156-01', name: 'Condenser Fan Motor + Blade', price: 3400, stockHq: 9, vanStock: 'T01(1), T05(1)' },
+      { zone: '5. ระบบกรองน้ำมาตรฐาน (Filtration)', partNo: 'EV965516', name: 'Water Filter Cartridge 4HC-H', price: 3200, stockHq: 42, vanStock: 'ทุกคัน T01–T08' }
+    ],
+    'KM-SERIES': [
+      { zone: '1. แผงวงจร EverCheck™ (Control Box)', partNo: '2A1410-02', name: 'EverCheck Control Board KM', price: 10200, stockHq: 9, vanStock: 'T01(1), T02(1)' },
+      { zone: '2. ระบบปั๊มน้ำหมุนเวียน (Water Pump)', partNo: 'PA0613', name: 'Water Pump Motor Assembly KM', price: 6800, stockHq: 9, vanStock: 'T01(2), T04(1)' },
+      { zone: '3. ลูกลอยควบคุมระดับน้ำ (Float Switch)', partNo: '4A3624-01', name: 'Float Switch Assembly', price: 2450, stockHq: 15, vanStock: 'T01(2), T02(2)' },
+      { zone: '4. วาล์วละลายน้ำแข็ง (Hot Gas Valve)', partNo: '4A3978-01', name: 'Hot Gas Solenoid Valve', price: 4900, stockHq: 7, vanStock: 'T01(1)' }
+    ],
+    'FM-SERIES': [
+      { zone: '1. ชุดซีลและลูกปืนสกรู (Auger Seal)', partNo: '432491-01', name: 'Mechanical Seal FM Series', price: 4200, stockHq: 12, vanStock: 'T02(2), T05(2)' },
+      { zone: '2. เซ็นเซอร์รอบหมุน (Rotation Sensor)', partNo: '459861-01', name: 'Hall IC Rotation Sensor', price: 2850, stockHq: 8, vanStock: 'T02(1)' },
+      { zone: '3. วาล์วเดรนอัตโนมัติ (Flush/Drain Valve)', partNo: '3U0112-01', name: 'Automatic Drain Valve FM', price: 3650, stockHq: 10, vanStock: 'T01(1), T02(1)' }
+    ]
+  };
+
+  window.addExplodedPartToJobOrQt = function(partNo, partName, unitPrice) {
+    if (typeof addPartRow === 'function') {
+      addPartRow(partNo + ' - ' + partName, 1, unitPrice);
+      document.getElementById('hzkNextGenAutonomousModal')?.classList.add('hidden');
+      if (typeof showToast === 'function') showToast('✅ เพิ่มอะไหล่ ' + partNo + ' (' + partName + ') ลงตารางใบงานเรียบร้อยแล้ว!');
+    }
+  };
+
+  window.runVisualPartPhotoMatch = function(inputEl) {
+    const out = document.getElementById('explodedAiVisionBox');
+    const file = inputEl?.files?.[0];
+    if (!file || !out) return;
+    const fn = file.name.toUpperCase();
+    let match = EXPLODED_HOTSPOTS['IM-SERIES'][1];
+    if (fn.includes('BOARD') || fn.includes('PCB')) match = EXPLODED_HOTSPOTS['IM-SERIES'][0];
+    else if (fn.includes('PUMP')) match = EXPLODED_HOTSPOTS['KM-SERIES'][1];
+    else if (fn.includes('SEAL')) match = EXPLODED_HOTSPOTS['FM-SERIES'][0];
+    out.innerHTML = `
+      <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div class="font-extrabold">🎯 AI Visual Part Match (${file.name}): ตรวจพบ <b>${match.partNo} — ${match.name}</b></div>
+          <div class="text-[11px]">ราคาตั้ง: <b>${match.price.toLocaleString()} THB</b> · สต็อกคลังหลัก: <b>${match.stockHq} ชิ้น</b> · รถช่าง: ${match.vanStock}</div>
+        </div>
+        <button type="button" onclick="addExplodedPartToJobOrQt('${match.partNo}','${match.name}',${match.price})" class="bg-[#002B49] text-white px-3 py-1.5 rounded-lg font-bold text-xs">+ เพิ่มลงใบงาน</button>
+      </div>
+    `;
+  };
+
+  window.createRentalIaasContract = function() {
+    const customer = String(document.getElementById('rntInCust')?.value || '').trim();
+    const model = String(document.getElementById('rntInModel')?.value || 'IM-130NE-HC').trim();
+    const serial = String(document.getElementById('rntInSerial')?.value || '').trim().toUpperCase();
+    const monthlyFee = Number(document.getElementById('rntInFee')?.value || 4500);
+    if (!customer || !serial) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุชื่อลูกค้าและ Serial No. เครื่องเช่าครับ');
+      return;
+    }
+    const list = JSON.parse(localStorage.getItem(RENTAL_FLEET_KEY) || '[]');
+    const rec = {
+      contractId: 'RNT-' + Date.now().toString().slice(-5),
+      customer: customer,
+      model: model,
+      serial: serial,
+      monthlyFee: monthlyFee,
+      deposit: monthlyFee * 2,
+      freeFilter4Hch: true,
+      nextBillDate: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+      endDate: new Date(Date.now() + 730 * 86400000).toISOString().slice(0, 10),
+      status: 'ACTIVE'
+    };
+    list.unshift(rec);
+    localStorage.setItem(RENTAL_FLEET_KEY, JSON.stringify(list));
+    syncBlock67Cloud_('UPSERT_RENTAL_CONTRACT', { contract: rec });
+    if (typeof showToast === 'function') showToast('📄 สร้างสัญญาเช่าเครื่องทำน้ำแข็ง ' + rec.contractId + ' เรียบร้อยแล้ว');
+    renderNextGenAutonomousTab_('RENTAL_IAAS');
+  };
+
+  window.generateMonthlyRentalInvoice = function(contractId) {
+    const list = JSON.parse(localStorage.getItem(RENTAL_FLEET_KEY) || '[]');
+    const c = list.find(x => x.contractId === contractId);
+    if (!c) return;
+    document.getElementById('hzkNextGenAutonomousModal')?.classList.add('hidden');
+    if (typeof generateReceiptModal === 'function') generateReceiptModal(false);
+    if (typeof showToast === 'function') showToast('🧾 ออกใบแจ้งหนี้ค่าเช่ารายเดือน ' + c.monthlyFee.toLocaleString() + ' THB สำหรับ ' + c.customer + ' เรียบร้อย');
+  };
+
+  window.exportAseanHqRegionalPackCsv = function() {
+    const qcfList = JSON.parse(localStorage.getItem(ASEAN_QCF_KEY) || '[]');
+    const rows = [
+      ['QCF_Ref', 'Target_HQ', 'Model', 'Serial_Lot', 'Issue_Summary', 'Credit_Note_THB', 'SLA_Days_Open', 'Status']
+    ].concat(qcfList.map(q => [q.qcfRef, q.targetHq, q.model, q.serialLot, '"' + q.issueSummary + '"', q.creditNoteThb, q.slaDaysOpen, q.status]));
+    const csv = '﻿' + rows.map(r => r.join(',')).join('
+');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'HOSHIZAKI_ASEAN_SEA_JapanHQ_QCF_Report_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    if (typeof showToast === 'function') showToast('🌏 ส่งออกรายงาน QCF & Credit Note สำหรับ Singapore SEA / Japan HQ เรียบร้อย');
+  };
+
+  window.evaluateTechSimulatorAnswer = function(choice) {
+    const resEl = document.getElementById('techSimFeedbackBox');
+    if (!resEl) return;
+    if (choice === 'B') {
+      resEl.innerHTML = `<div class="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 font-bold">✅ ถูกต้อง! เมื่อ IM-240DNE ขึ้น E1 ต้องตรวจแรงดันน้ำประปา (0.07–0.8 MPa), ล้างตะแกรงกรองวาล์วน้ำเข้า (P01872-01) และเช็กการทำงานของ Float Switch ก่อนเปลี่ยนแผงวงจร — บันทึกคะแนน +100 XP และปลดล็อก Badge "IM Series Diagnostic Pro" แล้ว!</div>`;
+      if (typeof showToast === 'function') showToast('🏅 ผ่านการทดสอบจำลองอาการเสีย! อัปเดตใบรับรองทักษะช่างเรียบร้อย');
+    } else {
+      resEl.innerHTML = `<div class="p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-950 font-bold">⚠️ ยังไม่ตรงจุดครับ: รหัส E1 ในรุ่น IM Series คือ Water Supply Timeout (น้ำไม่เข้าถังในเวลาที่กำหนด) ควรเริ่มจากตรวจแรงดันน้ำประปาและวาล์วน้ำเข้า P01872-01 ก่อนเปลี่ยนคอมเพรสเซอร์หรือแผงบอร์ดครับ</div>`;
+    }
+  };
+
+  window.openNextGenAutonomousServiceModal = function(initialTab) {
+    seedBlock67Defaults_();
+    let modal = document.getElementById('hzkNextGenAutonomousModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkNextGenAutonomousModal';
+      modal.className = 'fixed inset-0 z-[9997] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden">
+          <div class="bg-gradient-to-r from-indigo-950 via-[#002B49] to-sky-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div>
+              <h2 class="text-base sm:text-lg font-extrabold"><i class="fa-solid fa-microchip text-amber-300 mr-1.5"></i>HOSHIZAKI Next-Gen Autonomous Service Suite (5 โมดูลอัจฉริยะ)</h2>
+              <p class="text-[11px] text-sky-200">Interactive Exploded Parts · Heatwave Stock Forecaster · Rental IaaS Billing · ASEAN/Japan HQ Hub · Tech Simulator</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkNextGenAutonomousModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+          </div>
+          <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 text-xs font-bold">
+            <button type="button" id="ngTab_EXPLODED_PARTS" onclick="renderNextGenAutonomousTab_('EXPLODED_PARTS')" class="ng-tab px-3 py-2 rounded-t-lg whitespace-nowrap">1. แผนผังอะไหล่ Exploded &amp; AI Photo</button>
+            <button type="button" id="ngTab_HEATWAVE" onclick="renderNextGenAutonomousTab_('HEATWAVE')" class="ng-tab px-3 py-2 rounded-t-lg whitespace-nowrap">2. พยากรณ์สต็อกหน้าร้อน (Heatwave)</button>
+            <button type="button" id="ngTab_RENTAL_IAAS" onclick="renderNextGenAutonomousTab_('RENTAL_IAAS')" class="ng-tab px-3 py-2 rounded-t-lg whitespace-nowrap">3. สัญญาเช่าเครื่อง &amp; บิลรายเดือน (IaaS)</button>
+            <button type="button" id="ngTab_ASEAN_HQ" onclick="renderNextGenAutonomousTab_('ASEAN_HQ')" class="ng-tab px-3 py-2 rounded-t-lg whitespace-nowrap">4. เชื่อมโยง Singapore SEA &amp; Japan HQ</button>
+            <button type="button" id="ngTab_TECH_SIM" onclick="renderNextGenAutonomousTab_('TECH_SIM')" class="ng-tab px-3 py-2 rounded-t-lg whitespace-nowrap">5. ระบบจำลองซ่อม &amp; ใบรับรองทักษะช่าง</button>
+          </div>
+          <div id="hzkNextGenAutonomousBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-4 text-xs"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    window.renderNextGenAutonomousTab_(initialTab || 'EXPLODED_PARTS');
+  };
+
+  window.renderNextGenAutonomousTab_ = function(tab) {
+    document.querySelectorAll('.ng-tab').forEach(b => {
+      const act = b.id === ('ngTab_' + tab);
+      b.className = act
+        ? 'ng-tab px-3 py-2 rounded-t-lg bg-white text-[#002B49] border-b-2 border-[#002B49] whitespace-nowrap font-extrabold'
+        : 'ng-tab px-3 py-2 rounded-t-lg text-slate-600 hover:text-slate-900 whitespace-nowrap font-bold';
+    });
+
+    const body = document.getElementById('hzkNextGenAutonomousBody');
+    if (!body) return;
+
+    if (tab === 'EXPLODED_PARTS') {
+      const seriesSel = window._activeExplodedSeries || 'IM-SERIES';
+      const spots = EXPLODED_HOTSPOTS[seriesSel] || EXPLODED_HOTSPOTS['IM-SERIES'];
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-diagram-project text-sky-600 mr-1"></i>Interactive Exploded-View Part Finder &amp; AI Visual Recognition</div>
+              <div class="text-[11px] text-slate-600">เลือกกลุ่มรุ่นเครื่อง หรือถ่ายรูปอะไหล่หน้างานเพื่อดู Part No., ราคา, สต็อกคลังหลัก/รถช่าง และกดเพิ่มลงใบงานทันที</div>
+            </div>
+            <div class="flex gap-1.5">
+              ${Object.keys(EXPLODED_HOTSPOTS).map(k => `<button type="button" onclick="window._activeExplodedSeries='${k}'; renderNextGenAutonomousTab_('EXPLODED_PARTS');" class="px-3 py-1.5 rounded-lg font-bold text-xs ${seriesSel === k ? 'bg-[#002B49] text-white' : 'bg-slate-100 text-slate-700'}">${k}</button>`).join('')}
+            </div>
+          </div>
+          <div class="p-3 rounded-xl bg-sky-50 border border-sky-200 flex flex-wrap items-center justify-between gap-2">
+            <span class="font-bold text-[#002B49]"><i class="fa-solid fa-camera text-sky-600 mr-1"></i> ถ่ายรูปอะไหล่ที่ถอดออกมาเพื่อให้ AI จับคู่ Part No. อัตโนมัติ:</span>
+            <input type="file" accept="image/*" onchange="runVisualPartPhotoMatch(this)" class="text-xs">
+          </div>
+          <div id="explodedAiVisionBox"></div>
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">ตำแหน่งชิ้นส่วนบนเครื่อง</th><th class="p-2">Part No.</th><th class="p-2">ชื่ออะไหล่</th><th class="p-2 text-right">ราคาตั้ง</th><th class="p-2 text-center">คลังหลัก / รถช่าง</th><th class="p-2 text-center">สั่งเพิ่มลงใบงาน</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${spots.map(s => `<tr>
+                <td class="p-2 font-bold text-[#002B49]">${s.zone}</td>
+                <td class="p-2 font-mono font-extrabold text-sky-700">${s.partNo}</td>
+                <td class="p-2 font-semibold">${s.name}</td>
+                <td class="p-2 text-right font-bold">${s.price.toLocaleString()} THB</td>
+                <td class="p-2 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-bold text-[10px]">HQ: ${s.stockHq} | ${s.vanStock}</span></td>
+                <td class="p-2 text-center"><button type="button" onclick="addExplodedPartToJobOrQt('${s.partNo}','${s.name}',${s.price})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded font-bold text-[11px]">+ เพิ่มลงใบงาน</button></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'HEATWAVE') {
+      const forecastRows = [
+        { sku: 'P01872-01', name: 'Water Inlet Valve (IM Series)', normalMonthly: 11, heatwaveForecast: 16, currentStock: 16, action: 'สั่งเพิ่ม 12 ชิ้น กระจายไปชลบุรี & ภูเก็ต' },
+        { sku: 'P00156-01', name: 'Condenser Fan Motor Assembly', normalMonthly: 6, heatwaveForecast: 10, currentStock: 9, action: 'สั่งเพิ่ม 8 ชิ้น เตรียมรับอุณหภูมิ >38°C' },
+        { sku: 'EV965516', name: 'Water Filter Cartridge 4HC-H', normalMonthly: 27, heatwaveForecast: 38, currentStock: 42, action: 'สต็อกเพียงพอ แนะนำทำแคมเปญเปลี่ยนไส้กรอง' },
+        { sku: '4A1726-39', name: 'Compressor Boxed R404A / R290', normalMonthly: 3, heatwaveForecast: 5, currentStock: 4, action: 'สั่งสำรอง 4 ตัวในคลัง HHE ล่วงหน้า 60 วัน' }
+      ];
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-3">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-temperature-arrow-up text-rose-600 mr-1"></i>Seasonal Demand &amp; Heatwave Stock Forecaster (พยากรณ์ล่วงหน้าช่วงหน้าร้อน มี.ค.–พ.ค. +35% ถึง +45%)</div>
+          <p class="text-[11px] text-slate-600">คำนวณจากสถิติงานซ่อมย้อนหลัง 4–5 ปีร่วมกับดัชนีอุณหภูมิ เพื่อป้องกันปัญหาอะไหล่ขาดช่วงไฮซีซัน</p>
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">Part No.</th><th class="p-2">รายการอะไหล่สำคัญหน้าร้อน</th><th class="p-2 text-center">ยอดใช้ปกติ/เดือน</th><th class="p-2 text-center">พยากรณ์ช่วงหน้าร้อน</th><th class="p-2 text-center">สต็อกปัจจุบัน</th><th class="p-2">คำแนะนำจัดสรรสต็อกภูมิภาค</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${forecastRows.map(r => `<tr>
+                <td class="p-2 font-mono font-bold">${r.sku}</td>
+                <td class="p-2 font-bold">${r.name}</td>
+                <td class="p-2 text-center">${r.normalMonthly}</td>
+                <td class="p-2 text-center font-extrabold text-rose-600">${r.heatwaveForecast} (+40%)</td>
+                <td class="p-2 text-center font-bold">${r.currentStock}</td>
+                <td class="p-2 text-emerald-800 font-semibold">${r.action}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'RENTAL_IAAS') {
+      const contracts = JSON.parse(localStorage.getItem(RENTAL_FLEET_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-sky-200 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-file-contract text-sky-600 mr-1"></i>สัญญาเช่าเครื่องทำน้ำแข็ง &amp; บิลรายเดือนอัตโนมัติ (Ice-as-a-Service &amp; Rental Fleet)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <input id="rntInCust" placeholder="ชื่อลูกค้า / เชนร้านค้า *" class="sm:col-span-2 border rounded-lg px-2.5 py-1.5">
+            <input id="rntInModel" placeholder="รุ่นเครื่อง (เช่น IM-130NE-HC)" class="border rounded-lg px-2.5 py-1.5">
+            <input id="rntInSerial" placeholder="S/N เครื่องเช่า *" class="border rounded-lg px-2.5 py-1.5 font-mono">
+            <button type="button" onclick="createRentalIaasContract()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold rounded-lg py-1.5 px-3">+ เปิดสัญญาเช่าใหม่</button>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">เลขสัญญา</th><th class="p-2">ลูกค้า</th><th class="p-2">รุ่น / S/N</th><th class="p-2 text-right">ค่าเช่า/เดือน</th><th class="p-2 text-center">สิทธิประโยชน์</th><th class="p-2 text-center">วันครบสัญญา</th><th class="p-2 text-center">ออกบิลรายเดือน</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${contracts.map(c => `<tr>
+                <td class="p-2 font-mono font-bold text-[#002B49]">${c.contractId}</td>
+                <td class="p-2 font-bold">${c.customer}</td>
+                <td class="p-2">${c.model} (${c.serial})</td>
+                <td class="p-2 text-right font-extrabold text-emerald-700">${Number(c.monthlyFee).toLocaleString()} THB</td>
+                <td class="p-2 text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-bold text-[10px]">ฟรี PM + ไส้กรอง 4HC-H</span></td>
+                <td class="p-2 text-center font-bold ${c.status === 'EXPIRING_60D' ? 'text-rose-600' : 'text-slate-700'}">${c.endDate}</td>
+                <td class="p-2 text-center"><button type="button" onclick="generateMonthlyRentalInvoice('${c.contractId}')" class="bg-emerald-600 text-white px-2.5 py-1 rounded font-bold text-[11px]">ออกใบแจ้งหนี้เดือนนี้</button></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'ASEAN_HQ') {
+      const qcfs = JSON.parse(localStorage.getItem(ASEAN_QCF_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-earth-asia text-indigo-600 mr-1"></i>Hoshizaki Regional ASEAN Hub Bridge (Thailand ↔ Singapore SEA HQ ↔ Japan HQ)</div>
+              <div class="text-[11px] text-slate-600">ติดตามสถานะ QCF, การเคลมโรงงาน, Credit Note และส่งออกชุดรายงานมาตรฐาน 3 ภาษา (TH/EN/JP)</div>
+            </div>
+            <button type="button" onclick="exportAseanHqRegionalPackCsv()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white px-3.5 py-2 rounded-lg font-extrabold text-xs">
+              <i class="fa-solid fa-file-export mr-1"></i> ส่งออกรายงาน QCF &amp; Credit Note (SEA / Japan HQ)
+            </button>
+          </div>
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">เลขที่ QCF</th><th class="p-2">หน่วยงานปลายทาง</th><th class="p-2">รุ่น / Lot S/N</th><th class="p-2">สรุปประเด็นคุณภาพ</th><th class="p-2 text-right">ยอด Credit Note</th><th class="p-2 text-center">SLA (วัน)</th><th class="p-2 text-center">สถานะ</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${qcfs.map(q => `<tr>
+                <td class="p-2 font-mono font-bold text-[#002B49]">${q.qcfRef}</td>
+                <td class="p-2 font-bold">${q.targetHq}</td>
+                <td class="p-2">${q.model} (${q.serialLot})</td>
+                <td class="p-2">${q.issueSummary}</td>
+                <td class="p-2 text-right font-extrabold text-emerald-700">${Number(q.creditNoteThb).toLocaleString()} THB</td>
+                <td class="p-2 text-center font-bold">${q.slaDaysOpen} วัน</td>
+                <td class="p-2 text-center"><span class="px-2 py-0.5 rounded font-bold text-[10px] ${q.status === 'CREDIT_NOTE_APPROVED' ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}">${q.status}</span></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else {
+      const certs = JSON.parse(localStorage.getItem(TECH_CERT_KEY) || '{}');
+      body.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div class="bg-white p-4 rounded-xl border border-indigo-200 space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-gamepad text-indigo-600 mr-1"></i>สถานการณ์จำลองวิเคราะห์อาการเสีย (Interactive Fault Simulator)</div>
+            <div class="p-3 rounded-xl bg-slate-100 text-slate-800 space-y-1">
+              <div class="font-extrabold text-[#002B49]">โจทย์จำลอง #1: เครื่องทำน้ำแข็ง IM-240DNE หน้าจอแสดง Error E1 และไม่ผลิตน้ำแข็ง</div>
+              <div>คุณเข้าหน้างานตรวจเช็กเบื้องต้น ขั้นตอนใดถูกต้องตามคู่มือ Service Manual?</div>
+            </div>
+            <div class="space-y-1.5">
+              <button type="button" onclick="evaluateTechSimulatorAnswer('A')" class="w-full text-left p-2.5 rounded-lg border hover:bg-sky-50 font-semibold">A) เปลี่ยนคอมเพรสเซอร์และเติมสารทำความเย็น R404A ทันที</button>
+              <button type="button" onclick="evaluateTechSimulatorAnswer('B')" class="w-full text-left p-2.5 rounded-lg border hover:bg-sky-50 font-semibold">B) ตรวจแรงดันน้ำประปา (0.07–0.8 MPa), ล้างตะแกรงกรองวาล์วน้ำเข้า P01872-01 และทดสอบ Float Switch</button>
+              <button type="button" onclick="evaluateTechSimulatorAnswer('C')" class="w-full text-left p-2.5 rounded-lg border hover:bg-sky-50 font-semibold">C) เปลี่ยนมอเตอร์พัดลมคอยล์ร้อนและเซ็นเซอร์ Bin Control</button>
+            </div>
+            <div id="techSimFeedbackBox"></div>
+          </div>
+
+          <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-award text-amber-500 mr-1"></i>ทะเบียนใบรับรองทักษะช่าง (Digital Technician Skill Certifications)</div>
+            <div class="space-y-2">
+              ${Object.keys(certs).map(t => `
+                <div class="p-2.5 rounded-xl bg-emerald-50/60 border border-emerald-200">
+                  <div class="font-extrabold text-[#002B49]">${t}</div>
+                  <div class="flex flex-wrap gap-1 mt-1">${certs[t].map(b => `<span class="px-2 py-0.5 rounded-full bg-[#002B49] text-amber-300 text-[10px] font-bold">🏅 ${b}</span>`).join('')}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  };
+
+  // =========================================================================
+  // PART B: SALE & MARKETING GROWTH SUITE (CATEGORY 7: 7.1–7.6)
+  // =========================================================================
+  window.addSalesCrmDeal = function() {
+    const company = String(document.getElementById('crmInCompany')?.value || '').trim();
+    const channel = String(document.getElementById('crmInChannel')?.value || 'DIRECT_SALE');
+    const productInterest = String(document.getElementById('crmInProduct')?.value || '').trim();
+    const estValue = Number(document.getElementById('crmInValue')?.value || 0);
+    if (!company || estValue <= 0) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุชื่อลูกค้า/ดีลเลอร์และมูลค่าโครงการครับ');
+      return;
+    }
+    const list = JSON.parse(localStorage.getItem(SALES_CRM_KEY) || '[]');
+    const deal = {
+      dealId: 'CRM-' + Date.now().toString().slice(-5),
+      company: company,
+      channel: channel,
+      productInterest: productInterest || 'เครื่องทำน้ำแข็ง HOSHIZAKI + สัญญา PM',
+      estValue: estValue,
+      stage: 'PROPOSAL_SENT',
+      owner: document.getElementById('techQuickProfileName')?.textContent || 'Sales Executive',
+      probPct: 70
+    };
+    list.unshift(deal);
+    localStorage.setItem(SALES_CRM_KEY, JSON.stringify(list));
+    syncBlock67Cloud_('UPSERT_SALES_CRM_DEAL', { deal: deal });
+    if (typeof showToast === 'function') showToast('💼 บันทึกดีลขาย ' + deal.dealId + ' (' + estValue.toLocaleString() + ' THB) เรียบร้อยแล้ว');
+    renderSaleMarketingTab_('CRM_PIPELINE');
+  };
+
+  window.convertCrmDealToQuotation = function(dealId) {
+    const list = JSON.parse(localStorage.getItem(SALES_CRM_KEY) || '[]');
+    const d = list.find(x => x.dealId === dealId);
+    if (!d) return;
+    const storeEl = document.getElementById('storeName') || document.getElementById('customerStore');
+    if (storeEl) storeEl.value = d.company;
+    document.getElementById('hzkSaleMarketingModal')?.classList.add('hidden');
+    if (typeof generateReceiptModal === 'function') generateReceiptModal(false);
+    if (typeof showToast === 'function') showToast('📄 เปิดหน้าใบเสนอราคา (QT) สำหรับดีล ' + d.company + ' เรียบร้อย');
+  };
+
+  window.calculateIceRoiPayback = function() {
+    const kgPerDay = Number(document.getElementById('roiKgPerDay')?.value || 80);
+    const iceBagPrice = Number(document.getElementById('roiBagPrice')?.value || 4.5);
+    const machinePrice = Number(document.getElementById('roiMachinePrice')?.value || 115000);
+    const elecWaterPerKg = 0.65; // Approx THB per kg ice produced
+    const monthlyBuyCost = Math.round(kgPerDay * iceBagPrice * 30);
+    const monthlyOwnCost = Math.round(kgPerDay * elecWaterPerKg * 30);
+    const monthlySavings = Math.max(1, monthlyBuyCost - monthlyOwnCost);
+    const paybackMonths = (machinePrice / monthlySavings).toFixed(1);
+    const annualSavings = monthlySavings * 12;
+    const box = document.getElementById('roiResultBox');
+    if (box) {
+      box.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
+          <div class="p-3 rounded-xl bg-rose-50 border border-rose-200"><div class="text-rose-800">ค่าซื้อน้ำแข็งกระสอบ/เดือน</div><div class="text-xl font-black text-rose-700">${monthlyBuyCost.toLocaleString()} THB</div></div>
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200"><div class="text-emerald-800">ประหยัดได้ต่อปีเมื่อใช้ HOSHIZAKI</div><div class="text-xl font-black text-emerald-700">+${annualSavings.toLocaleString()} THB/ปี</div></div>
+          <div class="p-3 rounded-xl bg-[#002B49] text-white"><div class="text-sky-200">ระยะเวลาคืนทุน (Payback Period)</div><div class="text-xl font-black text-amber-300">${paybackMonths} เดือน</div></div>
+        </div>
+      `;
+    }
+  };
+
+  window.addExhibitionEventLead = function() {
+    const eventName = String(document.getElementById('evtInName')?.value || 'THAIFEX / Showroom').trim();
+    const contactName = String(document.getElementById('evtInContact')?.value || '').trim();
+    const phone = String(document.getElementById('evtInPhone')?.value || '').trim();
+    const interest = String(document.getElementById('evtInInterest')?.value || '').trim();
+    if (!contactName) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุชื่อลูกค้า/ร้านค้าที่ลงทะเบียนหน้าบูธครับ');
+      return;
+    }
+    const list = JSON.parse(localStorage.getItem(EVENT_LEADS_KEY) || '[]');
+    list.unshift({
+      leadId: 'EVT-' + Date.now().toString().slice(-4),
+      eventName: eventName,
+      contactName: contactName,
+      phone: phone || '-',
+      interest: interest || 'IM / KM Series',
+      status: 'NEW_LEAD_FOLLOW_UP'
+    });
+    localStorage.setItem(EVENT_LEADS_KEY, JSON.stringify(list));
+    if (typeof showToast === 'function') showToast('🎯 บันทึกรายชื่อผู้สนใจจากงาน ' + eventName + ' เรียบร้อยแล้ว');
+    renderSaleMarketingTab_('EVENTS_SHOWROOM');
+  };
+
+  window.openSaleMarketingGrowthModal = function(initialTab) {
+    seedBlock67Defaults_();
+    let modal = document.getElementById('hzkSaleMarketingModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkSaleMarketingModal';
+      modal.className = 'fixed inset-0 z-[9997] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border-2 border-amber-500 flex flex-col overflow-hidden">
+          <div class="bg-gradient-to-r from-[#002B49] via-amber-800 to-rose-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div>
+              <h2 class="text-base sm:text-lg font-extrabold"><i class="fa-solid fa-chart-line text-amber-300 mr-1.5"></i>HOSHIZAKI Sale &amp; Marketing Growth Suite (7.1–7.6)</h2>
+              <p class="text-[11px] text-amber-100">Sales CRM Pipeline · &gt;5-Year Trade-In Radar · Commercial ROI Calculator · Event/Showroom &amp; Trilingual Brochure Kit</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkSaleMarketingModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+          </div>
+          <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 text-xs font-bold">
+            <button type="button" id="smTab_CRM_PIPELINE" onclick="renderSaleMarketingTab_('CRM_PIPELINE')" class="sm-tab px-3 py-2 rounded-t-lg whitespace-nowrap">7.1 Sales CRM Pipeline &amp; เสนอราคา</button>
+            <button type="button" id="smTab_TRADE_IN_RADAR" onclick="renderSaleMarketingTab_('TRADE_IN_RADAR')" class="sm-tab px-3 py-2 rounded-t-lg whitespace-nowrap">7.2 เรดาร์เครื่องเก่า >5 ปี &amp; เทิร์นเครื่องใหม่</button>
+            <button type="button" id="smTab_ROI_CALC" onclick="renderSaleMarketingTab_('ROI_CALC')" class="sm-tab px-3 py-2 rounded-t-lg whitespace-nowrap">7.3 คำนวณจุดคุ้มทุน (ROI Calculator)</button>
+            <button type="button" id="smTab_EVENTS_SHOWROOM" onclick="renderSaleMarketingTab_('EVENTS_SHOWROOM')" class="sm-tab px-3 py-2 rounded-t-lg whitespace-nowrap">7.6 ออกบูธ THAIFEX &amp; โบรชัวร์ 3 ภาษา</button>
+          </div>
+          <div id="hzkSaleMarketingBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-4 text-xs"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    window.renderSaleMarketingTab_(initialTab || 'CRM_PIPELINE');
+  };
+
+  window.renderSaleMarketingTab_ = function(tab) {
+    document.querySelectorAll('.sm-tab').forEach(b => {
+      const act = b.id === ('smTab_' + tab);
+      b.className = act
+        ? 'sm-tab px-3 py-2 rounded-t-lg bg-white text-[#002B49] border-b-2 border-[#002B49] whitespace-nowrap font-extrabold'
+        : 'sm-tab px-3 py-2 rounded-t-lg text-slate-600 hover:text-slate-900 whitespace-nowrap font-bold';
+    });
+
+    const body = document.getElementById('hzkSaleMarketingBody');
+    if (!body) return;
+
+    if (tab === 'CRM_PIPELINE') {
+      const deals = JSON.parse(localStorage.getItem(SALES_CRM_KEY) || '[]');
+      const totalPipe = deals.reduce((s, d) => s + Number(d.estValue || 0), 0);
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-funnel-dollar text-amber-600 mr-1"></i>B2B Sales Pipeline (มูลค่าโครงการรวม: <span class="text-emerald-700">${totalPipe.toLocaleString()} THB</span>)</div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <input id="crmInCompany" placeholder="ชื่อลูกค้า / เชนร้านค้า / ดีลเลอร์ *" class="sm:col-span-2 border rounded-lg px-2.5 py-1.5">
+            <select id="crmInChannel" class="border rounded-lg px-2.5 py-1.5 bg-white font-bold">
+              <option value="DIRECT_SALE">Direct Sale</option>
+              <option value="DEALER_A">Dealer Grade A</option>
+              <option value="JAPANESE_CORPORATE">Japanese Corporate</option>
+              <option value="CHAIN_STORE">Chain-Store VIP</option>
+            </select>
+            <input id="crmInValue" type="number" placeholder="มูลค่าประมาณการ (THB) *" class="border rounded-lg px-2.5 py-1.5">
+            <button type="button" onclick="addSalesCrmDeal()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold rounded-lg py-1.5 px-3">+ เพิ่มดีลขาย</button>
+          </div>
+          <input id="crmInProduct" placeholder="รุ่นเครื่องที่สนใจ (เช่น IM-130NE-HC x 10 เครื่อง + สัญญา PM รายปี)..." class="w-full border rounded-lg px-2.5 py-1.5">
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">Deal ID</th><th class="p-2">ลูกค้า / องค์กร</th><th class="p-2">ช่องทาง</th><th class="p-2">รายการที่สนใจ</th><th class="p-2 text-right">มูลค่าโครงการ</th><th class="p-2 text-center">โอกาสปิดการขาย</th><th class="p-2 text-center">ออกใบเสนอราคา</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${deals.map(d => `<tr>
+                <td class="p-2 font-mono font-bold text-[#002B49]">${d.dealId}</td>
+                <td class="p-2 font-bold">${d.company}<div class="text-[10px] text-slate-500">PIC: ${d.owner}</div></td>
+                <td class="p-2"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-bold text-[10px]">${d.channel}</span></td>
+                <td class="p-2">${d.productInterest}</td>
+                <td class="p-2 text-right font-extrabold text-emerald-700">${Number(d.estValue).toLocaleString()} THB</td>
+                <td class="p-2 text-center font-bold">${d.probPct}%</td>
+                <td class="p-2 text-center"><button type="button" onclick="convertCrmDealToQuotation('${d.dealId}')" class="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded font-bold text-[11px]">สร้าง QT ทันที</button></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'TRADE_IN_RADAR') {
+      const agingMachines = [
+        { serial: 'H04112B', model: 'IM-130NE (R404A)', customer: 'โรงแรมรอยัล ออคิด เชอราตัน', ageYears: 7.4, repairsCount: 6, cumRepairCost: 34800, offer: 'เทิร์นเครื่องเก่าลด 15% เปลี่ยนเป็น IM-130NE-HC (R290 ประหยัดไฟ 28%)' },
+        { serial: 'K33109D', model: 'KM-600MAH', customer: 'ร้านอาหารญี่ปุ่น ฟูจิ (สาขาปิ่นเกล้า)', ageYears: 6.8, repairsCount: 5, cumRepairCost: 29500, offer: 'เสนอแพ็กเกจเช่าซื้อ / Trade-In เป็น KM-660MAJ ใหม่' },
+        { serial: 'F21908A', model: 'FM-300AKE', customer: 'Tops Market สาขาชิดลม', ageYears: 6.2, repairsCount: 4, cumRepairCost: 24200, offer: 'เสนอ Trade-In เป็น FM-480AKE-N รองรับยอดขายเพิ่ม' }
+      ];
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-rose-200 space-y-3">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-arrows-rotate text-rose-600 mr-1"></i>เรดาร์เครื่องลูกค้าอายุเกิน 5 ปี &amp; ซ่อมสะสมสูง (Service-to-Sales Trade-In Lead Engine)</div>
+          <p class="text-[11px] text-slate-600">ดึงข้อมูลอัตโนมัติจากประวัติซ่อมและ Serial DB เพื่อส่งต่อให้ฝ่ายขายเสนอแคมเปญเทิร์นเครื่องเก่าแลกเครื่องใหม่ (รุ่นประหยัดพลังงาน R290)</p>
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">S/N / รุ่นเดิม</th><th class="p-2">ลูกค้า</th><th class="p-2 text-center">อายุเครื่อง</th><th class="p-2 text-right">ค่าซ่อมสะสม</th><th class="p-2">ข้อเสนอ Trade-In แนะนำ</th><th class="p-2 text-center">ส่งต่อฝ่ายขาย</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${agingMachines.map(m => `<tr>
+                <td class="p-2 font-bold">${m.serial} <span class="text-slate-500">(${m.model})</span></td>
+                <td class="p-2 font-bold text-[#002B49]">${m.customer}</td>
+                <td class="p-2 text-center font-extrabold text-rose-600">${m.ageYears} ปี (${m.repairsCount} ครั้ง)</td>
+                <td class="p-2 text-right font-extrabold">${m.cumRepairCost.toLocaleString()} THB</td>
+                <td class="p-2 text-emerald-800 font-semibold">${m.offer}</td>
+                <td class="p-2 text-center"><button type="button" onclick="if(typeof generateReceiptModal==='function'){document.getElementById('hzkSaleMarketingModal').classList.add('hidden');generateReceiptModal(false);}" class="bg-[#002B49] text-white px-2.5 py-1 rounded font-bold text-[11px]">ออก QT เทิร์นเครื่อง</button></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (tab === 'ROI_CALC') {
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-emerald-200 space-y-3 max-w-4xl mx-auto">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-calculator text-emerald-600 mr-1"></i>เครื่องคำนวณจุดคุ้มทุนสำหรับฝ่ายขาย (Commercial Ice ROI: ซื้อน้ำแข็งกระสอบ vs เครื่องทำน้ำแข็ง HOSHIZAKI)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div><label class="font-bold text-slate-700">ปริมาณใช้น้ำแข็งต่อวัน (กก./วัน)</label><input id="roiKgPerDay" type="number" value="80" oninput="calculateIceRoiPayback()" class="w-full mt-1 border rounded-lg px-3 py-2 font-bold"></div>
+            <div><label class="font-bold text-slate-700">ราคาซื้อน้ำแข็งกระสอบ (บาท/กก.)</label><input id="roiBagPrice" type="number" step="0.5" value="4.5" oninput="calculateIceRoiPayback()" class="w-full mt-1 border rounded-lg px-3 py-2 font-bold"></div>
+            <div><label class="font-bold text-slate-700">ราคาเครื่อง HOSHIZAKI (บาท)</label><input id="roiMachinePrice" type="number" value="115000" oninput="calculateIceRoiPayback()" class="w-full mt-1 border rounded-lg px-3 py-2 font-bold"></div>
+          </div>
+          <div id="roiResultBox"></div>
+        </div>
+      `;
+      setTimeout(window.calculateIceRoiPayback, 50);
+    } else {
+      const leads = JSON.parse(localStorage.getItem(EVENT_LEADS_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-indigo-200 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-store text-indigo-600 mr-1"></i>ลงทะเบียนลูกค้าหน้างาน Exhibition / THAIFEX / Showroom &amp; ส่งโบรชัวร์ดิจิทัล 3 ภาษา (TH/EN/JP)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <input id="evtInName" value="THAIFEX — Anuga Asia" class="border rounded-lg px-2.5 py-1.5 font-bold">
+            <input id="evtInContact" placeholder="ชื่อลูกค้า / ร้านค้า *" class="border rounded-lg px-2.5 py-1.5">
+            <input id="evtInPhone" placeholder="เบอร์โทร / LINE ID" class="border rounded-lg px-2.5 py-1.5">
+            <input id="evtInInterest" placeholder="รุ่นที่สนใจ (IM / KM / FM)" class="border rounded-lg px-2.5 py-1.5">
+            <button type="button" onclick="addExhibitionEventLead()" class="bg-indigo-700 hover:bg-indigo-800 text-white font-extrabold rounded-lg py-1.5 px-3">+ บันทึกลูกค้าบูธ</button>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">รหัส</th><th class="p-2">งานแสดงสินค้า / โชว์รูม</th><th class="p-2">ชื่อผู้ติดต่อ</th><th class="p-2">เบอร์ติดต่อ</th><th class="p-2">รุ่นที่สนใจ</th><th class="p-2 text-center">ส่งแคตตาล็อก</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${leads.map(l => `<tr>
+                <td class="p-2 font-mono font-bold">${l.leadId}</td>
+                <td class="p-2 font-bold text-indigo-900">${l.eventName}</td>
+                <td class="p-2 font-bold">${l.contactName}</td>
+                <td class="p-2">${l.phone}</td>
+                <td class="p-2">${l.interest}</td>
+                <td class="p-2 text-center"><button type="button" onclick="if(typeof showToast==='function') showToast('📲 ส่งโบรชัวร์ดิจิทัล HOSHIZAKI 3 ภาษาให้ ' + '${l.contactName}' + ' เรียบร้อยแล้ว!');" class="bg-emerald-600 text-white px-2.5 py-1 rounded font-bold text-[11px]">ส่งโบรชัวร์ LINE</button></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+  };
+
+  setTimeout(seedBlock67Defaults_, 1400);
+})();

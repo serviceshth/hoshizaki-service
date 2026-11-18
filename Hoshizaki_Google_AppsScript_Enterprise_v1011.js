@@ -9705,3 +9705,33 @@ function handleEnterpriseLifecycleSuitePost_(data) {
   }
   return null;
 }
+
+
+// ============================================================================
+// SECTION 31: NEXT-GEN AUTONOMOUS SERVICE & SALE/MARKETING GROWTH SUITE (v1051)
+// 1) Ice-as-a-Service & Rental Fleet Contracts (`Rental_IaaS_Contracts`)
+// 2) B2B Sales CRM Pipeline (`Sales_CRM_Pipeline`)
+// ============================================================================
+function handleNextGenAndSaleMarketingPost_(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var action = String(data.actionType || '');
+  if (action === 'UPSERT_RENTAL_CONTRACT') {
+    var sh = ss.getSheetByName('Rental_IaaS_Contracts') || ss.insertSheet('Rental_IaaS_Contracts');
+    if (sh.getLastRow() === 0) {
+      sh.appendRow(['Contract_ID', 'Customer', 'Model', 'Serial_No', 'Monthly_Fee_THB', 'Deposit_THB', 'Next_Bill_Date', 'End_Date', 'Status']);
+    }
+    var c = data.contract || {};
+    sh.appendRow([c.contractId || '', c.customer || '', c.model || '', c.serial || '', c.monthlyFee || 0, c.deposit || 0, c.nextBillDate || '', c.endDate || '', c.status || 'ACTIVE']);
+    return { status: 'ok', sheet: 'Rental_IaaS_Contracts' };
+  }
+  if (action === 'UPSERT_SALES_CRM_DEAL') {
+    var sh2 = ss.getSheetByName('Sales_CRM_Pipeline') || ss.insertSheet('Sales_CRM_Pipeline');
+    if (sh2.getLastRow() === 0) {
+      sh2.appendRow(['Deal_ID', 'Company', 'Channel', 'Product_Interest', 'Est_Value_THB', 'Stage', 'Owner', 'Win_Prob_Pct']);
+    }
+    var d = data.deal || {};
+    sh2.appendRow([d.dealId || '', d.company || '', d.channel || '', d.productInterest || '', d.estValue || 0, d.stage || '', d.owner || '', d.probPct || 0]);
+    return { status: 'ok', sheet: 'Sales_CRM_Pipeline' };
+  }
+  return null;
+}

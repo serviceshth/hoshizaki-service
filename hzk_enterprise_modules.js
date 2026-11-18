@@ -4544,7 +4544,7 @@
   };
 
   function mountV1040UiEnhancements_() {
-    const topBar = document.getElementById('btnTopExecutiveReport')?.parentElement;
+    const topBar = document.getElementById('topHeaderStatusPillsRow') || document.getElementById('btnTopExecutiveReport')?.parentElement;
     if (topBar && !document.getElementById('btnTopV1040ExampleSandbox')) {
       const btn = document.createElement('button');
       btn.id = 'btnTopV1040ExampleSandbox';

@@ -769,14 +769,9 @@ transform: scale(0.96);
 <svg id="topHeaderDefaultLogoSvg" viewBox="0 0 300 300" class="hidden w-full h-full"></svg>
 </div>
 <div class="min-w-0 flex-1">
-<div class="flex flex-wrap items-center justify-between gap-1.5">
-<h1 id="topHeaderCompanyTitle" class="font-bold text-base sm:text-xl leading-none tracking-wide truncate pt-0">HOSHIZAKI (THAILAND)</h1>
-<div class="flex flex-wrap items-center gap-1.5 flex-shrink-0">
-<!-- 0. Global Command Palette (Ctrl+K) -->
-<button type="button" id="btnTopContextualHelp" onclick="openContextualHelpDrawer('GLOBAL')" class="hzk-compact-pill text-[10px] bg-sky-500/25 hover:bg-sky-500/45 text-sky-100 border border-sky-300/60 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="คู่มือช่วยเหลือ & ตัวอย่างการใช้งานทุกหน้าจอ (TH / 日本語 / English)"><i class="fa-solid fa-circle-question text-amber-300"></i> <span>คู่มือ &amp; ตัวอย่าง (?)</span></button>
-<button type="button" id="btnTopCommandPalette" onclick="openOmniCommandPaletteModal()" class="hzk-compact-pill text-[10px] bg-white/15 hover:bg-white/25 text-white border border-white/30 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="ค้นหาคำสั่งด่วนทั่วทั้งระบบ 3 ภาษา (Ctrl+K / ⌘K)">
-<i class="fa-solid fa-magnifying-glass text-amber-300"></i> <span>ค้นหาคำสั่ง (Ctrl+K)</span>
-</button>
+<div class="flex flex-wrap items-center justify-between gap-2 min-w-0">
+<h1 id="topHeaderCompanyTitle" class="font-bold text-base sm:text-xl leading-tight tracking-wide truncate max-w-full">HOSHIZAKI (THAILAND)</h1>
+<div id="topHeaderRightPillsWrap" class="flex flex-wrap items-center justify-start sm:justify-end gap-1.5 min-w-0 max-w-full">
 <!-- 1. Executive Report Dropdown Menu -->
 <div class="relative" id="topExecReportDropdownWrap">
 <button type="button" id="btnTopExecutiveReport" onclick="toggleTopExecutiveReportDropdown(event)" class="hzk-compact-pill text-[10px] bg-gradient-to-r from-amber-500/35 to-rose-600/35 hover:from-amber-500/50 hover:to-rose-600/50 text-amber-100 border border-amber-300/50 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="เมนูรายงานผู้บริหาร (Executive Report 3 ภาษา TH/EN/JP)">
@@ -809,44 +804,50 @@ transform: scale(0.96);
 </button>
 </div>
 </div>
-<!-- 1.5 KPI Report Studio (8 Departments · Weekly/Monthly/Quarterly/Yearly · 100-Seat RBAC) -->
+<!-- 2. KPI Report Studio -->
 <button type="button" id="btnTopKpiReportStudio" onclick="openKpiReportStudioModal('DASHBOARD')" class="hzk-compact-pill text-[10px] bg-gradient-to-r from-cyan-500/35 to-emerald-600/35 hover:from-cyan-500/50 hover:to-emerald-600/50 text-cyan-100 border border-cyan-300/60 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="KPI Report Studio (สร้างรายงานและสไลด์ KPI ทุกแผนก รายสัปดาห์/เดือน/ไตรมาส/ปี)">
 <i class="fa-solid fa-chart-column text-amber-300"></i> <span>KPI Report Studio</span>
 </button>
-<!-- 2. ตั้งค่าสาขา โลโก้ -->
+<!-- 3. ตั้งค่าสาขา โลโก้ -->
 <button type="button" onclick="openGlobalEnterpriseConfigModal()" class="hzk-compact-pill text-[10px] bg-amber-400/20 hover:bg-amber-400/35 text-amber-200 border border-amber-300/40 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1" title="ตั้งค่าสาขา/ประเทศ โลโก้บริษัท รหัส PIN และ API Secret Key">
 <i class="fa-solid fa-building-shield text-amber-300"></i> <span>ตั้งค่าสาขา โลโก้</span>
 </button>
-<!-- 3. Admin Studio (ย้ายมาจาก Developer & Admin Studio) -->
+<!-- 4. Admin Studio -->
 <button type="button" onclick="openAdminDevStudioModal('MODULES')" class="hzk-compact-pill text-[10px] bg-sky-500/25 hover:bg-indigo-500/40 text-sky-100 border border-sky-300/45 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1" title="Admin Studio (เปิด/ปิดฟังก์ชัน • Staging • โคลนสาขา • Backup)">
 <i class="fa-solid fa-sliders text-amber-300"></i> <span>Admin Studio</span>
 </button>
 </div>
 </div>
-<div class="flex flex-wrap items-center gap-1.5 mt-1">
-<p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1051-OMNI-ENTERPRISE</span></p>
+<div class="flex flex-wrap items-center gap-1.5 mt-1 min-w-0">
+<p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1051-OMNI-ENTERPRISE</span></p>
 </div>
-<!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
-<div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-<button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="hzk-compact-pill text-[10.5px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
+<!-- แถวปุ่มสถานะด่วนกะทัดรัด (Flex-Wrap พอดีกรอบ 100% ไม่ล้นขอบจอทุกอุปกรณ์) -->
+<div id="topHeaderStatusPillsRow" class="flex flex-wrap items-center gap-1.5 mt-1.5 min-w-0 max-w-full">
+<button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="hzk-compact-pill text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เลือกโปรไฟล์ช่างประจำเครื่อง (จำชื่อ ลายเซ็น และสต็อกรถช่างอัตโนมัติ)">
 <i class="fa-solid fa-id-badge text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
 </button>
 <button type="button" id="btnEmployeeBirthdayProfile" onclick="openEmployeeBirthdayProfileModal()" class="hidden hzk-compact-pill text-[10px] bg-pink-500/25 hover:bg-pink-500/40 text-pink-100 border border-pink-300/60 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ข้อมูลส่วนตัว &amp; วันเกิดพนักงาน / การ์ดอวยพรวันเกิด 3 ภาษา (TH/EN/JP)">
 <i class="fa-solid fa-cake-candles text-amber-300"></i> <span id="empBdayTopPillLabel">วันเกิด &amp; โปรไฟล์</span>
 </button>
-<button type="button" onclick="pullTwoWayCloudSync(true)" class="hzk-compact-pill text-[10.5px] bg-indigo-500/25 hover:bg-indigo-500/40 text-indigo-100 border border-indigo-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ดึงข้อมูลใบงานและ S/N ล่าสุดจาก Google Sheets ส่วนกลางลงเครื่อง (Two-Way Sync)">
+<button type="button" id="btnTopContextualHelp" onclick="openContextualHelpDrawer('GLOBAL')" class="hzk-compact-pill text-[10px] bg-sky-500/25 hover:bg-sky-500/45 text-sky-100 border border-sky-300/60 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="คู่มือช่วยเหลือ & ตัวอย่างการใช้งานทุกหน้าจอ (TH / 日本語 / English)">
+<i class="fa-solid fa-circle-question text-amber-300"></i> <span>คู่มือ &amp; ตัวอย่าง (?)</span>
+</button>
+<button type="button" id="btnTopCommandPalette" onclick="openOmniCommandPaletteModal()" class="hzk-compact-pill text-[10px] bg-white/15 hover:bg-white/25 text-white border border-white/30 px-2.5 rounded-full font-bold transition whitespace-nowrap inline-flex items-center gap-1 shadow-xs" title="ค้นหาคำสั่งด่วนทั่วทั้งระบบ 3 ภาษา (Ctrl+K / ⌘K)">
+<i class="fa-solid fa-magnifying-glass text-amber-300"></i> <span>คำสั่งด่วน (Ctrl+K)</span>
+</button>
+<button type="button" onclick="pullTwoWayCloudSync(true)" class="hzk-compact-pill text-[10px] bg-indigo-500/25 hover:bg-indigo-500/40 text-indigo-100 border border-indigo-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ดึงข้อมูลใบงานและ S/N ล่าสุดจาก Google Sheets ส่วนกลางลงเครื่อง (Two-Way Sync)">
 <i class="fa-solid fa-arrows-rotate text-sky-300"></i> <span>ดึงข้อมูล Cloud</span>
 </button>
 <button type="button" id="smartAutoSyncStatusPill" onclick="toggleSmartAutoSyncSetting()" class="hzk-compact-pill text-[10px] bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-100 border border-emerald-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="สถานะ Auto-Sync เบื้องหลัง (คลิกเพื่อเปิด/ปิด Auto-Sync อัตโนมัติ)">
 <span id="smartAutoSyncStatusText"><i class="fa-solid fa-circle-check text-emerald-300"></i> Auto-Sync พร้อม</span>
 </button>
-<button type="button" onclick="openExecutiveDashboardModal()" class="hzk-compact-pill text-[10.5px] bg-sky-500/25 hover:bg-sky-500/40 text-sky-100 border border-sky-400/40 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เปิดศูนย์บัญชาการและวิเคราะห์ KPI แผนกบริการ (Executive Command Center)">
+<button type="button" onclick="openExecutiveDashboardModal()" class="hzk-compact-pill text-[10px] bg-sky-500/25 hover:bg-sky-500/40 text-sky-100 border border-sky-400/40 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เปิดศูนย์บัญชาการและวิเคราะห์ KPI แผนกบริการ (Executive Command Center)">
 <i class="fa-solid fa-gauge-high text-amber-300"></i> <span>แดชบอร์ด KPI</span>
 </button>
-<button type="button" id="offlineQueueStatusBadge" onclick="processOfflineSyncQueue(true)" class="hidden hzk-compact-pill text-[10.5px] bg-amber-500/25 hover:bg-amber-500/40 text-amber-200 border border-amber-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อซิงค์รายการที่ค้างอยู่ในคิวขึ้น Google Sheets/Drive ทันที">
+<button type="button" id="offlineQueueStatusBadge" onclick="processOfflineSyncQueue(true)" class="hidden hzk-compact-pill text-[10px] bg-amber-500/25 hover:bg-amber-500/40 text-amber-200 border border-amber-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อซิงค์รายการที่ค้างอยู่ในคิวขึ้น Google Sheets/Drive ทันที">
 <i class="fa-solid fa-cloud-arrow-up"></i> <span>รอซิงค์: <span id="offlineQueueCountText">0</span></span>
 </button>
-<button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="hzk-compact-pill text-[10.5px] bg-amber-400 hover:bg-amber-300 text-slate-950 border border-white px-2.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อสลับโหมดระหว่าง ผู้จัดการ/จ่ายงาน และ ช่างดำเนินงาน">
+<button type="button" id="roleModeToggleBtn" onclick="toggleUserRoleMode()" class="hzk-compact-pill text-[10px] bg-amber-400 hover:bg-amber-300 text-slate-950 border border-white px-2.5 rounded-full font-extrabold shadow-xs transition inline-flex items-center gap-1 whitespace-nowrap" title="คลิกเพื่อสลับโหมดระหว่าง ผู้จัดการ/จ่ายงาน และ ช่างดำเนินงาน">
 <i class="fa-solid fa-user-shield"></i> <span>โหมด: ผู้จัดการ/จ่ายงาน</span>
 </button>
 <button type="button" id="btnPwaDirectInstall" onclick="triggerPwaInstall()" class="hzk-compact-pill text-[10px] bg-cyan-500/25 hover:bg-cyan-500/45 text-cyan-100 border border-cyan-300/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ติดตั้งแอปลงเครื่องทันที หรือดูวิธีเพิ่มลงหน้าจอหลัก (Install PWA App)">
@@ -32729,6 +32730,19 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
   th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
   th { background: #002B49; color: #fff; }
   .ftr { border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 10px; color: #475569; display: flex; justify-content: space-between; }
+
+#topHeaderRightPillsWrap,
+#topHeaderStatusPillsRow {
+  max-width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+#topHeaderRightPillsWrap > button,
+#topHeaderRightPillsWrap > div,
+#topHeaderStatusPillsRow > button,
+#topHeaderStatusPillsRow > div {
+  max-width: 100%;
+}
 </style>
 </head>
 <body>

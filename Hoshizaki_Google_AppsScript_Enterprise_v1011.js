@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1035-FINAL)
+ * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1036-FINAL)
  * ============================================================================
  * รองรับระบบปฏิบัติการหลังบ้านครบวงจร (Phase 1 Service Unit & Service Center Go-Live):
  * 1. ScriptProperties Security & LockService Concurrency Protection (withScriptLock_)
@@ -153,6 +153,10 @@ function isLineGroupConfigured() {
 // ============================================================================
 
 function doPost(e) {
+  var rawCheck = (e && e.postData && e.postData.contents) ? e.postData.contents : '{}';
+  if (rawCheck.indexOf('"events":[]') > -1 || rawCheck === '{}') {
+    return ContentService.createTextOutput('{"status":"ok"}').setMimeType(ContentService.MimeType.JSON);
+  }
   return withScriptLock_(function() {
     try {
       var raw = (e && e.postData && e.postData.contents) ? e.postData.contents : '{}';
@@ -239,6 +243,18 @@ function doPost(e) {
 
       if (action === 'DEALER_REQUEST_HOSHIZAKI_SUBCONTRACT') {
         return jsonOut(requestHoshizakiSubcontractForDealer_(ss, data, secrets));
+      }
+
+      if (action === 'UPLOAD_FLEX_IMAGE_TO_DRIVE') {
+        return jsonOut(uploadFlexStudioImageToDrive_(ss, data));
+      }
+
+      if (action === 'SAVE_CUSTOM_FLEX_TEMPLATE') {
+        return jsonOut(saveCustomFlexTemplateToSheet_(ss, data));
+      }
+
+      if (action === 'SEND_CUSTOM_FLEX_BROADCAST') {
+        return jsonOut(sendCustomFlexBroadcast_(ss, data, secrets));
       }
 
       if (action === 'SYNC_V1025_GOVERNANCE_APPROVAL') {
@@ -889,6 +905,10 @@ function doGet(e) {
     return jsonOut(getDealerDispatchTrackerFromSheet_(ss));
   }
 
+  if (action === 'getCustomFlexTemplates') {
+    return jsonOut(getCustomFlexTemplatesFromSheet_(ss));
+  }
+
   if (action === 'getLiveTechGpsRadar') {
     return jsonOut(getLiveTechGpsRadar_(ss));
   }
@@ -1119,7 +1139,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1035-FINAL',
+    version: 'Enterprise-v1036-FINAL',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1147,12 +1167,18 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   addCheck('Daily MailApp Quota', quota > 10, 'Remaining: ' + quota + ' emails');
   var triggers = ScriptApp.getProjectTriggers();
   addCheck('Time-Driven Triggers', triggers.length >= 1, triggers.length + ' active triggers');
+  var hasDealerTrigger = triggers.some(function(t) { return t.getHandlerFunction() === 'runDealerDispatchFollowUpTrigger' || t.getHandlerFunction() === 'runDealerDispatchFollowUpAndEscalation_'; });
+  addCheck('Dealer 2-Hr SLA Follow-Up Trigger', hasDealerTrigger, hasDealerTrigger ? 'Active (30-min scan)' : 'Not scheduled yet');
   addCheck('Spec Sheet Drive Folder', Boolean(SPEC_SHEET_FOLDER_ID), SPEC_SHEET_FOLDER_ID);
+  var coreSheets = ['Service_Jobs', 'Quotations', 'Van_Stock', 'Service_Schedule', 'Dealer_Channel_Directory', 'Dealer_Service_Dispatch_Tracker', 'LINE_Flex_Templates'];
+  var existingNames = ss.getSheets().map(function(s) { return s.getName(); });
+  var missingCore = coreSheets.filter(function(n) { return existingNames.indexOf(n) === -1; });
+  addCheck('Enterprise Core Sheets Schema', missingCore.length === 0, missingCore.length === 0 ? ('All ' + coreSheets.length + ' core tabs verified') : ('Missing: ' + missingCore.join(', ')));
 
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1035-FINAL',
+    version: 'Enterprise-v1036-FINAL',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -2027,11 +2053,26 @@ function routeDualLineWebhook_(events, botMode) {
               ]
             },
             body: {
-              type: 'box', layout: 'vertical', spacing: 'sm', paddingAll: '12px',
+              type: 'box', layout: 'vertical', paddingAll: '12px',
               contents: [
-                { type: 'text', text: adviceText.substring(0, 1500), size: 'xs', color: '#1E293B', wrap: true },
-                { type: 'separator', margin: 'sm' },
-                { type: 'text', text: '📌 หากลองตรวจเช็กเบื้องต้นแล้วยังไม่หาย กรุณาพิมพ์ Serial Number (S/N) ของเครื่องส่งกลับมา หรือกดปุ่มด้านล่างครับ', size: 'xxs', color: '#0369A1', weight: 'bold', wrap: true }
+                {
+                  type: 'image',
+                  url: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=2',
+                  position: 'absolute',
+                  align: 'center',
+                  gravity: 'center',
+                  size: 'xxl',
+                  aspectRatio: '1:1',
+                  aspectMode: 'fit'
+                },
+                {
+                  type: 'box', layout: 'vertical', spacing: 'sm',
+                  contents: [
+                    { type: 'text', text: adviceText.substring(0, 1500), size: 'xs', color: '#1E293B', wrap: true },
+                    { type: 'separator', margin: 'sm' },
+                    { type: 'text', text: '📌 หากลองตรวจเช็กเบื้องต้นแล้วยังไม่หาย กรุณาพิมพ์ Serial Number (S/N) ของเครื่องส่งกลับมา หรือกดปุ่มด้านล่างครับ', size: 'xxs', color: '#0369A1', weight: 'bold', wrap: true }
+                  ]
+                }
               ]
             },
             footer: {
@@ -2039,11 +2080,11 @@ function routeDualLineWebhook_(events, botMode) {
               contents: [
                 {
                   type: 'button', style: 'primary', color: '#059669', height: 'sm',
-                  action: { type: 'postback', label: '✅ แก้ไขเบื้องต้นแล้ว ใช้งานได้ปกติ (จบเคส)', data: 'SELF_CHECK_RESOLVED:SELF-' + Date.now().toString().slice(-6), displayText: 'แก้ไขเบื้องต้นแล้ว เครื่องใช้งานได้ปกติครับ' }
+                  action: { type: 'postback', label: '✅ แก้ไขแล้ว ใช้งานได้ปกติ (จบเคส)', data: 'SELF_CHECK_RESOLVED:SELF-' + Date.now().toString().slice(-6), displayText: 'แก้ไขเบื้องต้นแล้ว เครื่องใช้งานได้ปกติครับ' }
                 },
                 {
                   type: 'button', style: 'primary', color: '#DC2626', height: 'sm',
-                  action: { type: 'postback', label: '🔧 ยังไม่หาย / ขอส่งเรื่องให้ตัวแทนฯ หรือช่างเข้าเช็ก', data: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent(txt.substring(0, 120)), displayText: 'ยังไม่หาย ขอส่งเรื่องให้ตัวแทนจำหน่ายหรือช่างเข้าตรวจเช็กครับ' }
+                  action: { type: 'postback', label: '🔧 ยังไม่หาย / ขอช่างหรือตัวแทนดูแล', data: 'ESCALATE_TO_DEALER:NO_SN:' + encodeURIComponent(txt.substring(0, 120)), displayText: 'ยังไม่หาย ขอส่งเรื่องให้ตัวแทนจำหน่ายหรือช่างเข้าตรวจเช็กครับ' }
                 }
               ]
             }
@@ -8399,18 +8440,30 @@ function handleCustomerOaImageWithGemini_(ss, ev, secrets) {
       },
       body: {
         type: 'box', layout: 'vertical', paddingAll: '12px',
-        contents: [{ type: 'text', text: analysis.substring(0, 1500), size: 'xs', color: '#1E293B', wrap: true }]
+        contents: [
+          {
+            type: 'image',
+            url: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=2',
+            position: 'absolute',
+            align: 'center',
+            gravity: 'center',
+            size: 'xxl',
+            aspectRatio: '1:1',
+            aspectMode: 'fit'
+          },
+          { type: 'text', text: analysis.substring(0, 1500), size: 'xs', color: '#1E293B', wrap: true }
+        ]
       },
       footer: {
         type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '10px',
         contents: [
           {
             type: 'button', style: 'primary', color: '#059669', height: 'sm',
-            action: { type: 'postback', label: '✅ ตรวจเช็กแล้วใช้งานได้ปกติ (จบเคส)', data: 'SELF_CHECK_RESOLVED:IMG-' + Date.now().toString().slice(-6), displayText: 'ตรวจเช็กตามคำแนะนำแล้วใช้งานได้ปกติครับ' }
+            action: { type: 'postback', label: '✅ ตรวจเช็กแล้ว ใช้งานได้ปกติ', data: 'SELF_CHECK_RESOLVED:IMG-' + Date.now().toString().slice(-6), displayText: 'ตรวจเช็กตามคำแนะนำแล้วใช้งานได้ปกติครับ' }
           },
           {
             type: 'button', style: 'primary', color: '#DC2626', height: 'sm',
-            action: { type: 'postback', label: '🔧 ส่งเรื่องให้ตัวแทนจำหน่าย / ช่างเข้าตรวจเช็ก', data: 'ESCALATE_TO_DEALER:' + (detectedSn || 'NO_SN') + ':' + encodeURIComponent('ส่งรูปภาพขอให้ช่างเข้าตรวจเช็ก'), displayText: 'ขอส่งเรื่องให้ตัวแทนจำหน่ายหรือช่างเข้าตรวจเช็กครับ' }
+            action: { type: 'postback', label: '🔧 ส่งเรื่องให้ตัวแทนฯ / ช่างเข้าเช็ก', data: 'ESCALATE_TO_DEALER:' + (detectedSn || 'NO_SN') + ':' + encodeURIComponent('ส่งรูปภาพขอให้ช่างเข้าตรวจเช็ก'), displayText: 'ขอส่งเรื่องให้ตัวแทนจำหน่ายหรือช่างเข้าตรวจเช็กครับ' }
           }
         ]
       }
@@ -8571,7 +8624,7 @@ function routeCustomerCaseToDealerOrDirect_(ss, data, secrets) {
             },
             {
               type: 'button', style: 'secondary', height: 'sm',
-              action: { type: 'postback', label: '🔄 คิวช่างเต็ม / ขอให้ Hoshizaki เข้าแทน (QT ดีลเลอร์)', data: 'DEALER_REQ_HZK_SUB:' + caseId, displayText: 'คิวช่างเต็ม ขอให้ทีม Hoshizaki เข้าหน้างานแทนและส่งใบเสนอราคาให้ทางตัวแทนจำหน่ายครับ' }
+              action: { type: 'postback', label: '🔄 คิวเต็ม / ขอ Hoshizaki เข้าแทน', data: 'DEALER_REQ_HZK_SUB:' + caseId, displayText: 'คิวช่างเต็ม ขอให้ทีม Hoshizaki เข้าหน้างานแทนและส่งใบเสนอราคาให้ทางตัวแทนจำหน่ายครับ' }
             }
           ]
         }
@@ -8816,4 +8869,134 @@ function requestHoshizakiSubcontractForDealer_(ss, data, secrets) {
   }
 
   return { status: 'ok', caseId: caseId, jobNo: jobNo, dealerName: dealerName, billingMode: 'BILL_TO_DEALER_ONLY' };
+}
+
+function runDealerDispatchFollowUpTrigger() {
+  return runDealerDispatchFollowUpAndEscalation_();
+}
+
+// =========================================================================
+// SECTION 27: ENTERPRISE v1036 VISUAL LINE FLEX STUDIO & DEEP DIAGNOSTICS
+// =========================================================================
+function uploadFlexStudioImageToDrive_(ss, data) {
+  var dataUrl = String(data.imageDataUrl || '');
+  var fileName = String(data.fileName || ('FLEX_IMG_' + Date.now() + '.jpg')).replace(/[^a-zA-Z0-9._-]/g, '_');
+  if (!dataUrl || dataUrl.indexOf('base64,') === -1) {
+    return { status: 'error', message: 'Invalid imageDataUrl' };
+  }
+  var mimeMatch = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,/);
+  var mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+  var b64 = dataUrl.split('base64,')[1];
+  var rootIter = DriveApp.getFoldersByName(ROOT_DRIVE_FOLDER_NAME);
+  var root = rootIter.hasNext() ? rootIter.next() : DriveApp.createFolder(ROOT_DRIVE_FOLDER_NAME);
+  var flexIter = root.getFoldersByName('_LINE_FLEX_STUDIO_ASSETS');
+  var flexFolder = flexIter.hasNext() ? flexIter.next() : root.createFolder('_LINE_FLEX_STUDIO_ASSETS');
+
+  var blob = Utilities.newBlob(Utilities.base64Decode(b64), mimeType, fileName);
+  var file = flexFolder.createFile(blob);
+  try {
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (eShare) {}
+
+  var fileId = file.getId();
+  var publicUrl = 'https://lh3.googleusercontent.com/d/' + encodeURIComponent(fileId) + '=w1024';
+  return {
+    status: 'ok',
+    fileId: fileId,
+    fileName: file.getName(),
+    driveUrl: file.getUrl(),
+    publicImageUrl: publicUrl
+  };
+}
+
+function saveCustomFlexTemplateToSheet_(ss, data) {
+  var tpl = data.template || data || {};
+  var sheetName = 'LINE_Flex_Templates';
+  var headers = [
+    'Template_ID', 'Template_Name', 'Target_Channel', 'Header_Bg_Color',
+    'Header_Badge', 'Header_Title', 'Hero_Image_URL', 'Hero_Aspect_Ratio',
+    'Body_Rows_JSON', 'Footer_Buttons_JSON', 'Full_Flex_JSON', 'Updated_At'
+  ];
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setBackground('#002B49').setFontColor('#FFFFFF').setFontWeight('bold');
+  }
+  var tplId = String(tpl.id || ('FLEX-' + Date.now().toString().slice(-6))).toUpperCase();
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var rowVals = [
+    tplId,
+    String(tpl.name || 'HOSHIZAKI Flex Card'),
+    String(tpl.targetChannel || 'DEALER_GROUP'),
+    String(tpl.headerBg || '#002B49'),
+    String(tpl.headerBadge || 'HOSHIZAKI SERVICE UPDATE'),
+    String(tpl.headerTitle || ''),
+    String(tpl.heroImageUrl || ''),
+    String(tpl.heroAspectRatio || '16:9'),
+    JSON.stringify(tpl.bodyRows || []),
+    JSON.stringify(tpl.buttons || []),
+    JSON.stringify(tpl.flexPayload || {}),
+    nowStr
+  ];
+  var rowIdx = findRowByExactKey(sheet, 1, tplId);
+  if (rowIdx >= 2) sheet.getRange(rowIdx, 1, 1, headers.length).setValues([rowVals]);
+  else sheet.appendRow(rowVals);
+
+  return { status: 'ok', templateId: tplId, updatedAt: nowStr };
+}
+
+function getCustomFlexTemplatesFromSheet_(ss) {
+  var sheet = ss.getSheetByName('LINE_Flex_Templates');
+  if (!sheet || sheet.getLastRow() < 2) return { status: 'ok', templates: [] };
+  var vals = sheet.getRange(2, 1, sheet.getLastRow() - 1, 12).getValues();
+  var list = vals.reverse().map(function(r) {
+    var bodyRows = [], buttons = [], flexPayload = {};
+    try { bodyRows = JSON.parse(String(r[8] || '[]')); } catch (e1) {}
+    try { buttons = JSON.parse(String(r[9] || '[]')); } catch (e2) {}
+    try { flexPayload = JSON.parse(String(r[10] || '{}')); } catch (e3) {}
+    return {
+      id: r[0], name: r[1], targetChannel: r[2], headerBg: r[3],
+      headerBadge: r[4], headerTitle: r[5], heroImageUrl: r[6], heroAspectRatio: r[7],
+      bodyRows: bodyRows, buttons: buttons, flexPayload: flexPayload, updatedAt: r[11]
+    };
+  });
+  return { status: 'ok', templates: list };
+}
+
+function sendCustomFlexBroadcast_(ss, data, secrets) {
+  var flexMsg = data.flexMessage;
+  var targetMode = String(data.targetMode || 'TECH_GROUP').toUpperCase();
+  var customTargetId = String(data.targetId || '').trim();
+  if (!flexMsg || !flexMsg.contents) {
+    return { status: 'error', message: 'Missing Flex Message payload' };
+  }
+  var sentCount = 0;
+  var failedCount = 0;
+
+  if (targetMode === 'TECH_GROUP') {
+    if (pushLineMessagesWithToken_(secrets.internalLineToken || secrets.lineToken, secrets.lineGroupId, [flexMsg])) sentCount++;
+    else failedCount++;
+  } else if (targetMode === 'SPECIFIC_ID' && customTargetId) {
+    var tok = (data.botAccount === 'customer') ? (secrets.customerLineToken || secrets.lineToken) : (secrets.internalLineToken || secrets.lineToken);
+    if (pushLineMessagesWithToken_(tok, customTargetId, [flexMsg])) sentCount++;
+    else failedCount++;
+  } else if (targetMode === 'ALL_DEALER_GROUPS') {
+    var dir = getDealerChannelDirectoryFromSheet_(ss).dealers || [];
+    var seenGroups = {};
+    dir.forEach(function(d) {
+      var gid = String(d.lineGroupId || '').trim();
+      if (gid && !seenGroups[gid]) {
+        seenGroups[gid] = true;
+        if (pushLineMessagesWithToken_(secrets.internalLineToken || secrets.lineToken, gid, [flexMsg])) sentCount++;
+        else failedCount++;
+      }
+    });
+  } else if (targetMode === 'CUSTOMER_OA_USER' && customTargetId) {
+    if (pushLineMessagesWithToken_(secrets.customerLineToken || secrets.lineToken, customTargetId, [flexMsg])) sentCount++;
+    else failedCount++;
+  }
+
+  return { status: sentCount > 0 ? 'ok' : 'warning', sentCount: sentCount, failedCount: failedCount };
 }

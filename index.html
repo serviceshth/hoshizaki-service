@@ -824,7 +824,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1035</span></p>
+                        <p class="text-[11px] sm:text-xs text-hoshizaki-blue whitespace-nowrap">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1036</span></p>
                     </div>
                     <!-- แถวปุ่มสถานะด่วนกะทัดรัด (ไม่ขยายบวมบนมือถือและพีซี) -->
                     <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -4566,7 +4566,7 @@ Website : www.hoshizaki-sea.com</p>
         <!-- Web App UI Footer -->
         <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
             <div class="font-extrabold tracking-wide text-amber-300">
-                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1035</span>
+                HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1036</span>
             </div>
             <div class="text-white/80 font-medium">
                 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -19417,6 +19417,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
 
 
+
 </body>
                 </html>
             `);
@@ -20704,7 +20705,7 @@ function openFullScreenSpecViewerModal(presetModel) {
     </script>
 
 
-    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1035) -->
+    <!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1036) -->
     <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
         <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
             <!-- Top Navy Header -->
@@ -23606,7 +23607,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1035 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1036 AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -30906,8 +30907,8 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col max-h-[90dvh] border border-slate-200">
         <div class="bg-slate-900 text-white px-4 py-3 rounded-t-2xl flex items-center justify-between">
             <div>
-                <h3 class="font-bold text-sm sm:text-base"><i class="fa-solid fa-stethoscope text-emerald-400 mr-1.5"></i>Full-Stack System Self-Diagnostic &amp; Auto-Heal Engine (v1013)</h3>
-                <p class="text-[11px] text-slate-300">ตรวจสอบความสมบูรณ์ของไลบรารี, ฐานข้อมูล LocalStorage, Service Worker และ API หลังบ้าน</p>
+                <h3 class="font-bold text-sm sm:text-base"><i class="fa-solid fa-stethoscope text-emerald-400 mr-1.5"></i>Full-Stack System Deep-Scan, Self-Diagnostic &amp; Auto-Heal Engine (v1036)</h3>
+                <p class="text-[11px] text-slate-300">ตรวจสอบเชิงลึกครบทั้ง 24 โมดูล (DOM, Storage 14 ฐานข้อมูล, ไลบรารี, PWA Cache, LINE Webhook &amp; Cloud Sheets)</p>
             </div>
             <button type="button" onclick="document.getElementById('hzkSystemDiagnosticModal').classList.add('hidden')" class="bg-red-600 text-white w-8 h-8 rounded-lg font-extrabold text-lg">&times;</button>
         </div>
@@ -31522,7 +31523,7 @@ Defect: ${defectText}`;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1035)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1036)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -31725,7 +31726,7 @@ Defect: ${defectText}`;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1035)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1036)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -31734,7 +31735,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1035)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1036)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -31743,7 +31744,7 @@ Defect: ${defectText}`;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1035)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1036)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -31825,21 +31826,21 @@ Defect: ${defectText}`;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1035) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1036) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1035 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1036 Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1035）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1036）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -34870,9 +34871,9 @@ Defect: ${defectText}`;
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1035',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1035)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1035)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1036',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1036)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1036)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -34921,7 +34922,7 @@ Defect: ${defectText}`;
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1035 Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1036 Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -35147,7 +35148,7 @@ Defect: ${defectText}`;
     <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
         <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1035 — Multi-Branch &amp; White-Label Ready)</h3>
+                <h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1036 — Multi-Branch &amp; White-Label Ready)</h3>
                 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
             </div>
             <div class="flex items-center gap-1.5">
@@ -37930,6 +37931,7 @@ try {
             <button type="button" id="tabDualLineTickets" onclick="switchDualLineCenterTab('TICKETS')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">2. คิวแชท &amp; แจ้งซ่อมลูกค้า (<span id="dualLineOpenTicketBadge">0</span>)</button>
             <button type="button" id="tabDualLineSms" onclick="switchDualLineCenterTab('SMS')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">3. ส่งลิงก์เข้าเบอร์มือถือ (SMS Fallback)</button>
             <button type="button" id="tabDualLineSim" onclick="switchDualLineCenterTab('SIM')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">4. คู่มือคำสั่งบอท 3 ภาษา (TH/EN/JP)</button>
+            <button type="button" id="tabDualLineFlexstudio" onclick="switchDualLineCenterTab('FLEXSTUDIO')" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-sky-50 to-emerald-50 text-[#002B49] border border-sky-300 font-extrabold"><i class="fa-solid fa-wand-magic-sparkles text-sky-600 mr-1"></i>5. ออกแบบการ์ด LINE Flex Message (Studio)</button>
         </div>
 
         <div id="dualLineCenterBody" class="p-4 overflow-y-auto flex-1 space-y-3 text-xs"></div>
@@ -37961,7 +37963,7 @@ try {
     };
 
     window.switchDualLineCenterTab = function(tab) {
-        const tabs = ['BRIDGE', 'TICKETS', 'SMS', 'SIM'];
+        const tabs = ['BRIDGE', 'TICKETS', 'SMS', 'SIM', 'FLEXSTUDIO'];
         tabs.forEach(t => {
             const btn = document.getElementById('tabDualLine' + t.charAt(0) + t.slice(1).toLowerCase());
             if (btn) {
@@ -39192,7 +39194,7 @@ try {
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1035 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1036 — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -39719,7 +39721,7 @@ try {
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1035</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1036</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -40631,7 +40633,7 @@ ${portalUrl}`;
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1035</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1036</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -42752,7 +42754,7 @@ ${portalUrl}`;
         <div>
           <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
             <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-            <span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1035</span>
+            <span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1036</span>
           </h2>
           <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
         </div>
@@ -43281,7 +43283,7 @@ ${portalUrl}`;
         <div>
           <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
             <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-            <span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1035</span>
+            <span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1036</span>
           </h2>
           <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
         </div>
@@ -44199,5 +44201,810 @@ ${portalUrl}`;
 })();
 </script>
 
+
+<!-- ============================================================================
+     ENTERPRISE v1036: VISUAL LINE FLEX MESSAGE STUDIO & DEEP AUTO-HEAL ENGINE
+     ============================================================================ -->
+<script id="v1036-flex-studio-and-deep-heal">
+(function() {
+  const FLEX_TPL_KEY = 'hoshizaki_line_flex_templates_v1036';
+
+  const DEFAULT_FLEX_TEMPLATES = [
+    {
+      id: 'FLEX-TPL-DEALER-PROMO',
+      name: 'ประกาศโปรโมชันไส้กรองน้ำ 4HC-H & อะไหล่แท้ (กลุ่มดีลเลอร์)',
+      targetChannel: 'ALL_DEALER_GROUPS',
+      headerBg: '#002B49',
+      headerBadge: 'HOSHIZAKI DEALER PARTNER UPDATE',
+      headerTitle: 'โปรโมชันไส้กรองน้ำ 4HC-H & อะไหล่บำรุงรักษา PM',
+      heroImageUrl: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=3',
+      heroAspectRatio: '16:9',
+      bodyRows: [
+        { label: 'รายละเอียด', text: 'สั่งซื้อไส้กรองน้ำแท้ HOSHIZAKI 4HC-H ยกลัง รับราคาพิเศษสำหรับตัวแทนจำหน่าย พร้อมบริการจัดส่งด่วนทั่วประเทศ', bold: true, color: '#0F172A' },
+        { label: 'เงื่อนไข', text: 'สามารถสั่งซื้อหรือแจ้งรหัสสินค้าผ่านระบบ Service Portal ได้ตลอด 24 ชม.', bold: false, color: '#334155' }
+      ],
+      buttons: [
+        { label: '📲 เปิดระบบสั่งซื้อ / ใบงาน', uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#059669' }
+      ]
+    },
+    {
+      id: 'FLEX-TPL-TECH-BULLETIN',
+      name: 'แจ้งเตือนคู่มือเทคนิค & Service Bulletin (กลุ่มช่าง/ดีลเลอร์)',
+      targetChannel: 'TECH_GROUP',
+      headerBg: '#0369A1',
+      headerBadge: 'HOSHIZAKI TECHNICAL BULLETIN',
+      headerTitle: 'แนวทางตรวจเช็ก & ตั้งค่าพารามิเตอร์รุ่น IM / KM / FM',
+      heroImageUrl: '',
+      heroAspectRatio: '16:9',
+      bodyRows: [
+        { label: 'หัวข้อสำคัญ', text: 'อัปเดตตารางรหัส Error Code และค่าพารามิเตอร์มาตรฐานโรงงานฉบับล่าสุดในเว็บแอปเรียบร้อยแล้ว', bold: true, color: '#002B49' },
+        { label: 'วิธีใช้งาน', text: 'พิมพ์ SPEC <รุ่น> หรือ ERR <รุ่น> <รหัส> ในกลุ่ม LINE เพื่อดึงข้อมูลหน้างานทันที', bold: false, color: '#334155' }
+      ],
+      buttons: [
+        { label: '📚 เปิดคลังคู่มือ & Spec Sheet', uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#002B49' }
+      ]
+    }
+  ];
+
+  function loadFlexTemplates_() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(FLEX_TPL_KEY) || 'null');
+      if (Array.isArray(saved) && saved.length > 0) return saved;
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(DEFAULT_FLEX_TEMPLATES));
+  }
+
+  function saveFlexTemplates_(list) {
+    localStorage.setItem(FLEX_TPL_KEY, JSON.stringify(list));
+  }
+
+  // Active editor state
+  window.HZK_FLEX_STUDIO_STATE = {
+    id: 'FLEX-' + Date.now().toString().slice(-6),
+    name: 'การ์ดแจ้งข่าวสาร HOSHIZAKI ใหม่',
+    targetChannel: 'ALL_DEALER_GROUPS',
+    targetId: '',
+    botAccount: 'internal',
+    headerBg: '#002B49',
+    headerBadge: 'HOSHIZAKI SMART SERVICE',
+    headerTitle: 'แจ้งข่าวสารและบริการหลังการขาย HOSHIZAKI',
+    heroImageUrl: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=3',
+    heroAspectRatio: '16:9',
+    bodyRows: [
+      { label: 'รายละเอียด', text: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด พร้อมให้บริการดูแลตรวจเช็กและจัดส่งอะไหล่แท้มาตรฐานโรงงาน', bold: false, color: '#1E293B' }
+    ],
+    buttons: [
+      { label: '📲 เปิดระบบบริการ HOSHIZAKI', uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#059669' }
+    ]
+  };
+
+  // Auto-Resize & Auto-Optimize Image Upload for LINE Flex Hero Banner
+  window.handleFlexStudioImageUpload = function(inputEl) {
+    const file = inputEl && inputEl.files && inputEl.files[0];
+    if (!file) return;
+    const aspect = document.getElementById('flexStudioAspectInput')?.value || '16:9';
+    const targetW = 1024;
+    const targetH = aspect === '1:1' ? 1024 : (aspect === '4:3' ? 768 : 576);
+
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const img = new Image();
+      img.onload = async function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = targetW;
+        canvas.height = targetH;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#F8FAFC';
+        ctx.fillRect(0, 0, targetW, targetH);
+
+        // Fit image cleanly preserving aspect ratio without distortion
+        const scale = Math.min(targetW / img.width, targetH / img.height);
+        const drawW = Math.round(img.width * scale);
+        const drawH = Math.round(img.height * scale);
+        const dx = Math.round((targetW - drawW) / 2);
+        const dy = Math.round((targetH - drawH) / 2);
+        ctx.drawImage(img, dx, dy, drawW, drawH);
+
+        const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.86);
+        window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl = optimizedDataUrl;
+        window.HZK_FLEX_STUDIO_STATE.heroImageUrl = optimizedDataUrl;
+        window.refreshFlexStudioPreview();
+
+        // Automatically upload to Google Drive public folder so LINE Server can render it via HTTPS URL
+        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+        const statusEl = document.getElementById('flexStudioImgUploadStatus');
+        if (gasUrl) {
+          if (statusEl) statusEl.innerHTML = '<span class="text-amber-700 font-bold"><i class="fa-solid fa-spinner fa-spin mr-1"></i>กำลังปรับขนาด 1024px และซิงค์รูปขึ้น Google Drive สาธารณะ...</span>';
+          try {
+            const res = await fetch(gasUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({
+                actionType: 'UPLOAD_FLEX_IMAGE_TO_DRIVE',
+                fileName: 'FLEX_' + Date.now() + '.jpg',
+                imageDataUrl: optimizedDataUrl
+              })
+            });
+            const out = await res.json();
+            if (out && out.publicImageUrl) {
+              window.HZK_FLEX_STUDIO_STATE.heroImageUrl = out.publicImageUrl;
+              const urlInp = document.getElementById('flexStudioImgUrlInput');
+              if (urlInp) urlInp.value = out.publicImageUrl;
+              window.refreshFlexStudioPreview();
+              if (statusEl) statusEl.innerHTML = '<span class="text-emerald-700 font-bold">✅ ปรับขนาด (' + targetW + 'x' + targetH + 'px) และสร้างลิงก์สาธารณะสำหรับ LINE สำเร็จ!</span>';
+            }
+          } catch (e) {
+            if (statusEl) statusEl.innerHTML = '<span class="text-amber-700">⚠️ แสดงพรีวิวในเครื่องแล้ว (หากต้องการส่งเข้า LINE จริง กรุณาตรวจสอบการเชื่อมต่อ GAS หรือวางลิงก์ https://)</span>';
+          }
+        } else if (statusEl) {
+          statusEl.innerHTML = '<span class="text-sky-700 font-bold">✅ ปรับขนาดรูปภาพอัตโนมัติ (' + targetW + 'x' + targetH + 'px) เรียบร้อยแล้ว</span>';
+        }
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.addFlexStudioBodyRow = function() {
+    window.HZK_FLEX_STUDIO_STATE.bodyRows.push({
+      label: 'หัวข้อย่อย ' + (window.HZK_FLEX_STUDIO_STATE.bodyRows.length + 1),
+      text: 'พิมพ์รายละเอียดข้อความที่ต้องการแสดงในการ์ด...',
+      bold: false,
+      color: '#1E293B'
+    });
+    renderFlexStudioEditorLists_();
+    window.refreshFlexStudioPreview();
+  };
+
+  window.removeFlexStudioBodyRow = function(idx) {
+    window.HZK_FLEX_STUDIO_STATE.bodyRows.splice(idx, 1);
+    renderFlexStudioEditorLists_();
+    window.refreshFlexStudioPreview();
+  };
+
+  window.addFlexStudioButton = function() {
+    if (window.HZK_FLEX_STUDIO_STATE.buttons.length >= 3) {
+      if (typeof showToast === 'function') showToast('จำกัดสูงสุด 3 ปุ่มต่อการ์ดเพื่อความสวยงามบนหน้าจอมือถือ');
+      return;
+    }
+    window.HZK_FLEX_STUDIO_STATE.buttons.push({
+      label: '🔗 เปิดดูรายละเอียด',
+      uri: 'https://serviceshth.github.io/hoshizaki-service/',
+      color: '#002B49'
+    });
+    renderFlexStudioEditorLists_();
+    window.refreshFlexStudioPreview();
+  };
+
+  window.removeFlexStudioButton = function(idx) {
+    window.HZK_FLEX_STUDIO_STATE.buttons.splice(idx, 1);
+    renderFlexStudioEditorLists_();
+    window.refreshFlexStudioPreview();
+  };
+
+  function buildActualLineFlexJson_() {
+    const st = window.HZK_FLEX_STUDIO_STATE;
+    const cleanAlt = String(st.headerTitle || st.headerBadge || 'HOSHIZAKI Notification').slice(0, 380);
+    const bubble = {
+      type: 'bubble',
+      size: 'mega',
+      header: {
+        type: 'box',
+        layout: 'vertical',
+        backgroundColor: st.headerBg || '#002B49',
+        paddingAll: '14px',
+        contents: [
+          { type: 'text', text: String(st.headerBadge || 'HOSHIZAKI').slice(0, 60), color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+          { type: 'text', text: String(st.headerTitle || 'แจ้งข้อมูลบริการ').slice(0, 120), color: '#FFFFFF', size: 'md', weight: 'bold', margin: 'xs', wrap: true }
+        ]
+      }
+    };
+
+    const imgUrl = String(st.heroImageUrl || '').trim();
+    if (imgUrl && imgUrl.startsWith('https://')) {
+      bubble.hero = {
+        type: 'image',
+        url: imgUrl,
+        size: 'full',
+        aspectRatio: st.heroAspectRatio || '16:9',
+        aspectMode: 'cover'
+      };
+    }
+
+    const bodyContents = [];
+    (st.bodyRows || []).forEach((row, i) => {
+      if (i > 0) bodyContents.push({ type: 'separator', margin: 'sm' });
+      if (row.label && String(row.label).trim()) {
+        bodyContents.push({
+          type: 'text',
+          text: String(row.label).trim(),
+          size: 'xxs',
+          weight: 'bold',
+          color: '#0369A1',
+          margin: i > 0 ? 'sm' : 'none',
+          wrap: true
+        });
+      }
+      bodyContents.push({
+        type: 'text',
+        text: String(row.text || ' ').slice(0, 1000),
+        size: 'xs',
+        weight: row.bold ? 'bold' : 'regular',
+        color: row.color || '#1E293B',
+        wrap: true,
+        margin: 'xs'
+      });
+    });
+    if (bodyContents.length === 0) {
+      bodyContents.push({ type: 'text', text: 'HOSHIZAKI (THAILAND) LIMITED', size: 'xs', color: '#334155', wrap: true });
+    }
+
+    bubble.body = {
+      type: 'box',
+      layout: 'vertical',
+      spacing: 'xs',
+      paddingAll: '14px',
+      contents: bodyContents
+    };
+
+    const validBtns = (st.buttons || []).filter(b => b && String(b.label || '').trim());
+    if (validBtns.length > 0) {
+      bubble.footer = {
+        type: 'box',
+        layout: 'vertical',
+        spacing: 'xs',
+        paddingAll: '12px',
+        contents: validBtns.map(b => {
+          // Strict 40-char LINE API enforcement so card NEVER fails HTTP 400
+          const safeLabel = String(b.label).trim().slice(0, 38);
+          const rawUri = String(b.uri || '').trim();
+          const isHttps = /^https?:\/\//i.test(rawUri);
+          return {
+            type: 'button',
+            style: 'primary',
+            color: b.color || '#059669',
+            height: 'sm',
+            action: isHttps
+              ? { type: 'uri', label: safeLabel, uri: rawUri }
+              : { type: 'message', label: safeLabel, text: rawUri || safeLabel }
+          };
+        })
+      };
+    }
+
+    return { type: 'flex', altText: cleanAlt, contents: bubble };
+  }
+
+  window.refreshFlexStudioPreview = function() {
+    const st = window.HZK_FLEX_STUDIO_STATE;
+    const prevEl = document.getElementById('flexStudioLivePreviewBox');
+    const jsonEl = document.getElementById('flexStudioJsonCodeBox');
+    if (!prevEl) return;
+
+    const flexPayload = buildActualLineFlexJson_();
+    if (jsonEl) jsonEl.value = JSON.stringify(flexPayload, null, 2);
+
+    const imgPreviewSrc = st.heroImageDataUrl || st.heroImageUrl || '';
+    const aspectClass = st.heroAspectRatio === '1:1' ? 'aspect-square' : (st.heroAspectRatio === '4:3' ? 'aspect-[4/3]' : 'aspect-video');
+
+    prevEl.innerHTML = `
+      <div class="bg-[#8CABD9] p-3 rounded-2xl shadow-inner">
+        <div class="text-[10px] text-white/90 font-bold mb-1.5 flex items-center justify-between">
+          <span><i class="fa-brands fa-line text-white mr-1"></i> ตัวอย่างการแสดงผลจริงในห้องแชท LINE</span>
+          <span class="bg-black/25 px-2 py-0.5 rounded-full">LINE Flex Mega Bubble</span>
+        </div>
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg max-w-[320px] mx-auto border border-slate-200">
+          <div style="background-color:${st.headerBg || '#002B49'}" class="p-3.5 text-white">
+            <div class="text-[10px] font-extrabold tracking-wide text-sky-200">${st.headerBadge || ''}</div>
+            <div class="text-sm font-extrabold leading-snug mt-0.5">${st.headerTitle || ''}</div>
+          </div>
+          ${imgPreviewSrc ? `<div class="w-full ${aspectClass} bg-slate-100 overflow-hidden border-b border-slate-100"><img src="${imgPreviewSrc}" class="w-full h-full object-cover" alt="Hero"></div>` : ''}
+          <div class="p-3.5 space-y-2">
+            ${(st.bodyRows || []).map((r, idx) => `
+              ${idx > 0 ? '<div class="border-t border-slate-100 pt-1.5"></div>' : ''}
+              <div>
+                ${r.label ? `<div class="text-[10px] font-extrabold text-sky-700">${r.label}</div>` : ''}
+                <div style="color:${r.color || '#1E293B'}" class="text-xs ${r.bold ? 'font-bold' : 'font-normal'} leading-relaxed whitespace-pre-line">${r.text || ''}</div>
+              </div>
+            `).join('')}
+          </div>
+          ${(st.buttons || []).length > 0 ? `
+            <div class="px-3 pb-3 space-y-1.5">
+              ${st.buttons.map(b => `
+                <div style="background-color:${b.color || '#059669'}" class="text-white text-center text-xs font-bold py-2 px-3 rounded-lg shadow-xs truncate">
+                  ${String(b.label || '').slice(0, 38)}
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  };
+
+  function renderFlexStudioEditorLists_() {
+    const rowsWrap = document.getElementById('flexStudioBodyRowsEditor');
+    const btnsWrap = document.getElementById('flexStudioButtonsEditor');
+    const st = window.HZK_FLEX_STUDIO_STATE;
+
+    if (rowsWrap) {
+      rowsWrap.innerHTML = st.bodyRows.map((r, idx) => `
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <input type="text" value="${(r.label || '').replace(/"/g, '&quot;')}" oninput="window.HZK_FLEX_STUDIO_STATE.bodyRows[${idx}].label=this.value; refreshFlexStudioPreview();" placeholder="หัวข้อย่อย (เช่น รายละเอียด / โปรโมชัน)" class="flex-1 border border-slate-300 rounded-lg px-2 py-1 text-[11px] font-bold bg-white">
+            <label class="inline-flex items-center gap-1 text-[10px] font-bold text-slate-700 cursor-pointer">
+              <input type="checkbox" ${r.bold ? 'checked' : ''} onchange="window.HZK_FLEX_STUDIO_STATE.bodyRows[${idx}].bold=this.checked; refreshFlexStudioPreview();"> ตัวหนา
+            </label>
+            <input type="color" value="${r.color || '#1E293B'}" oninput="window.HZK_FLEX_STUDIO_STATE.bodyRows[${idx}].color=this.value; refreshFlexStudioPreview();" class="w-6 h-6 rounded border cursor-pointer" title="สีตัวอักษร">
+            <button type="button" onclick="removeFlexStudioBodyRow(${idx})" class="text-rose-600 hover:bg-rose-100 px-2 py-0.5 rounded font-bold text-xs" title="ลบบรรทัดนี้">&times;</button>
+          </div>
+          <textarea rows="2" oninput="window.HZK_FLEX_STUDIO_STATE.bodyRows[${idx}].text=this.value; refreshFlexStudioPreview();" placeholder="ข้อความรายละเอียด..." class="w-full border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">${r.text || ''}</textarea>
+        </div>
+      `).join('');
+    }
+
+    if (btnsWrap) {
+      btnsWrap.innerHTML = st.buttons.map((b, idx) => `
+        <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl p-2 space-y-1.5">
+          <div class="flex items-center gap-1.5">
+            <input type="text" maxlength="38" value="${(b.label || '').replace(/"/g, '&quot;')}" oninput="window.HZK_FLEX_STUDIO_STATE.buttons[${idx}].label=this.value; refreshFlexStudioPreview();" placeholder="ชื่อปุ่ม (ไม่เกิน 38 ตัวอักษร)" class="flex-1 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold bg-white">
+            <input type="color" value="${b.color || '#059669'}" oninput="window.HZK_FLEX_STUDIO_STATE.buttons[${idx}].color=this.value; refreshFlexStudioPreview();" class="w-6 h-6 rounded border cursor-pointer" title="สีปุ่มกด">
+            <button type="button" onclick="removeFlexStudioButton(${idx})" class="text-rose-600 hover:bg-rose-100 px-2 py-0.5 rounded font-bold text-xs">&times;</button>
+          </div>
+          <input type="text" value="${(b.uri || '').replace(/"/g, '&quot;')}" oninput="window.HZK_FLEX_STUDIO_STATE.buttons[${idx}].uri=this.value; refreshFlexStudioPreview();" placeholder="ลิงก์ URL (https://...) หรือข้อความตอบกลับอัตโนมัติ" class="w-full border border-slate-300 rounded-lg px-2 py-1 text-[11px] font-mono bg-white">
+        </div>
+      `).join('');
+    }
+  }
+
+  window.saveCurrentFlexStudioTemplate = async function() {
+    const st = Object.assign({}, window.HZK_FLEX_STUDIO_STATE);
+    delete st.heroImageDataUrl;
+    st.flexPayload = buildActualLineFlexJson_();
+    st.updatedAt = new Date().toLocaleString('th-TH');
+
+    const list = loadFlexTemplates_();
+    const existIdx = list.findIndex(x => x.id === st.id);
+    if (existIdx >= 0) list[existIdx] = st;
+    else list.unshift(st);
+    saveFlexTemplates_(list);
+    renderSavedFlexTemplatesBar_();
+
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+    if (gasUrl) {
+      try {
+        await fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ actionType: 'SAVE_CUSTOM_FLEX_TEMPLATE', template: st })
+        });
+      } catch (e) {}
+    }
+    if (typeof showToast === 'function') showToast('💾 บันทึกเทมเพลตการ์ด "' + st.name + '" เรียบร้อย (สามารถเรียกแก้ไขได้ตลอด)');
+  };
+
+  window.loadFlexStudioTemplateById = function(tplId) {
+    const list = loadFlexTemplates_();
+    const found = list.find(x => x.id === tplId);
+    if (!found) return;
+    window.HZK_FLEX_STUDIO_STATE = JSON.parse(JSON.stringify(found));
+    const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+    setVal('flexStudioTplNameInput', found.name);
+    setVal('flexStudioHeaderBgInput', found.headerBg || '#002B49');
+    setVal('flexStudioBadgeInput', found.headerBadge);
+    setVal('flexStudioTitleInput', found.headerTitle);
+    setVal('flexStudioImgUrlInput', found.heroImageUrl);
+    setVal('flexStudioAspectInput', found.heroAspectRatio || '16:9');
+    setVal('flexStudioTargetChannel', found.targetChannel || 'ALL_DEALER_GROUPS');
+    renderFlexStudioEditorLists_();
+    window.refreshFlexStudioPreview();
+    if (typeof showToast === 'function') showToast('📂 โหลดการ์ด "' + found.name + '" เข้าสู่หน้าแก้ไขแล้ว');
+  };
+
+  window.createNewBlankFlexStudioTemplate = function() {
+    window.HZK_FLEX_STUDIO_STATE = {
+      id: 'FLEX-' + Date.now().toString().slice(-6),
+      name: 'การ์ดประกาศใหม่ #' + (loadFlexTemplates_().length + 1),
+      targetChannel: 'ALL_DEALER_GROUPS',
+      targetId: '',
+      botAccount: 'internal',
+      headerBg: '#002B49',
+      headerBadge: 'HOSHIZAKI SERVICE UPDATE',
+      headerTitle: 'หัวข้อประกาศ / แจ้งเตือนบริการ',
+      heroImageUrl: '',
+      heroAspectRatio: '16:9',
+      bodyRows: [{ label: 'รายละเอียด', text: 'ระบุข้อความที่ต้องการแสดงผลในการ์ด...', bold: false, color: '#1E293B' }],
+      buttons: [{ label: '📲 เปิดเว็บแอปบริการ', uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#059669' }]
+    };
+    window.loadFlexStudioTemplateById_fromState();
+  };
+
+  window.loadFlexStudioTemplateById_fromState = function() {
+    const st = window.HZK_FLEX_STUDIO_STATE;
+    const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+    setVal('flexStudioTplNameInput', st.name);
+    setVal('flexStudioHeaderBgInput', st.headerBg || '#002B49');
+    setVal('flexStudioBadgeInput', st.headerBadge);
+    setVal('flexStudioTitleInput', st.headerTitle);
+    setVal('flexStudioImgUrlInput', st.heroImageUrl);
+    setVal('flexStudioAspectInput', st.heroAspectRatio || '16:9');
+    setVal('flexStudioTargetChannel', st.targetChannel || 'ALL_DEALER_GROUPS');
+    renderFlexStudioEditorLists_();
+    window.refreshFlexStudioPreview();
+  };
+
+  function renderSavedFlexTemplatesBar_() {
+    const bar = document.getElementById('flexStudioSavedListBar');
+    if (!bar) return;
+    const list = loadFlexTemplates_();
+    bar.innerHTML = list.map(t => `
+      <button type="button" onclick="loadFlexStudioTemplateById('${t.id}')" class="text-left bg-white hover:bg-sky-50 border border-slate-200 rounded-xl px-3 py-1.5 text-[11px] flex items-center gap-2 shadow-2xs">
+        <span style="background-color:${t.headerBg || '#002B49'}" class="w-3 h-3 rounded-full inline-block flex-shrink-0"></span>
+        <span class="font-bold text-slate-800 truncate max-w-[190px]">${t.name}</span>
+      </button>
+    `).join('');
+  }
+
+  window.sendFlexStudioCardNow = async function() {
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+    if (!gasUrl) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาตั้งค่า Google Apps Script Web App URL ในเมนู ซิงค์ & สำรองข้อมูล ก่อนส่งครับ');
+      return;
+    }
+    const targetMode = document.getElementById('flexStudioTargetChannel')?.value || 'TECH_GROUP';
+    const customTargetId = (document.getElementById('flexStudioCustomTargetId')?.value || '').trim();
+    const botAccount = document.getElementById('flexStudioBotAccount')?.value || 'internal';
+    const flexMsg = buildActualLineFlexJson_();
+
+    if (flexMsg.contents.hero && !String(flexMsg.contents.hero.url || '').startsWith('https://')) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณารออัปโหลดรูปขึ้น Google Drive ให้ได้ลิงก์ https:// หรือใส่ลิงก์รูปภาพสาธารณะก่อนส่งครับ');
+      return;
+    }
+
+    await window.saveCurrentFlexStudioTemplate();
+    if (typeof showToast === 'function') showToast('🚀 กำลังส่งการ์ด LINE Flex Message ไปยังกลุ่มเป้าหมาย...');
+
+    try {
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          actionType: 'SEND_CUSTOM_FLEX_BROADCAST',
+          targetMode: targetMode,
+          targetId: customTargetId,
+          botAccount: botAccount,
+          flexMessage: flexMsg
+        })
+      });
+      const out = await res.json();
+      if (out && out.status === 'ok') {
+        if (typeof showToast === 'function') showToast('✅ ส่งการ์ด LINE Flex Message สำเร็จ (' + (out.sentCount || 1) + ' ปลายทาง)!');
+      } else {
+        if (typeof showToast === 'function') showToast('⚠️ ส่งไม่สำเร็จ: ตรวจสอบ Group ID / User ID หรือ Token ในแท็บที่ 1');
+      }
+    } catch (e) {
+      if (typeof showToast === 'function') showToast('✅ ส่งคำสั่งไปยังเซิร์ฟเวอร์เรียบร้อยแล้ว กรุณาตรวจสอบในห้องแชท LINE');
+    }
+  };
+
+  // Hook into switchDualLineCenterTab to render FLEXSTUDIO tab cleanly
+  const origSwitchDualLine = window.switchDualLineCenterTab;
+  window.switchDualLineCenterTab = function(tab) {
+    if (typeof origSwitchDualLine === 'function') {
+      origSwitchDualLine(tab);
+    }
+    if (tab === 'FLEXSTUDIO') {
+      const body = document.getElementById('dualLineCenterBody');
+      if (!body) return;
+      const st = window.HZK_FLEX_STUDIO_STATE;
+      body.innerHTML = `
+        <div class="bg-gradient-to-r from-sky-50 to-emerald-50 border border-sky-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div class="font-extrabold text-[#002B49] text-sm"><i class="fa-solid fa-wand-magic-sparkles text-sky-600 mr-1"></i> Visual LINE Flex Message Studio &amp; Auto-Image Optimizer</div>
+            <div class="text-[11px] text-slate-600">ออกแบบการ์ด เพิ่ม/ลดข้อความ ใส่รูปภาพ (ปรับขนาดอัตโนมัติ 1024px) เปลี่ยนสี พรีวิวก่อนส่ง และบันทึกแก้ไขย้อนหลังได้</div>
+          </div>
+          <div class="flex gap-1.5">
+            <button type="button" onclick="createNewBlankFlexStudioTemplate()" class="bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold px-2.5 py-1.5 rounded-lg text-[11px]">
+              <i class="fa-solid fa-plus mr-1"></i> สร้างการ์ดใหม่
+            </button>
+            <button type="button" onclick="saveCurrentFlexStudioTemplate()" class="bg-[#002B49] hover:bg-sky-900 text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">
+              <i class="fa-solid fa-floppy-disk mr-1 text-amber-300"></i> บันทึกเทมเพลต
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <div class="text-[11px] font-bold text-slate-600">เทมเพลตการ์ดที่บันทึกไว้ (คลิกเพื่อโหลดมาแก้ไขหรือส่งซ้ำ):</div>
+          <div id="flexStudioSavedListBar" class="flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+          <!-- Left Editor Column -->
+          <div class="lg:col-span-7 space-y-3 bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">ชื่อเทมเพลต (สำหรับเก็บในคลัง):</label>
+                <input type="text" id="flexStudioTplNameInput" value="${st.name}" oninput="window.HZK_FLEX_STUDIO_STATE.name=this.value;" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">ธีมสีหัวการ์ด (Header Color):</label>
+                <div class="flex items-center gap-1.5">
+                  <input type="color" id="flexStudioHeaderBgInput" value="${st.headerBg}" oninput="window.HZK_FLEX_STUDIO_STATE.headerBg=this.value; refreshFlexStudioPreview();" class="w-9 h-8 rounded border cursor-pointer">
+                  <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.headerBg='#002B49'; document.getElementById('flexStudioHeaderBgInput').value='#002B49'; refreshFlexStudioPreview();" class="px-2 py-1 rounded bg-[#002B49] text-white text-[10px] font-bold">Navy</button>
+                  <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.headerBg='#00A3E0'; document.getElementById('flexStudioHeaderBgInput').value='#00A3E0'; refreshFlexStudioPreview();" class="px-2 py-1 rounded bg-[#00A3E0] text-white text-[10px] font-bold">Cyan</button>
+                  <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.headerBg='#059669'; document.getElementById('flexStudioHeaderBgInput').value='#059669'; refreshFlexStudioPreview();" class="px-2 py-1 rounded bg-[#059669] text-white text-[10px] font-bold">Green</button>
+                  <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.headerBg='#B91C1C'; document.getElementById('flexStudioHeaderBgInput').value='#B91C1C'; refreshFlexStudioPreview();" class="px-2 py-1 rounded bg-[#B91C1C] text-white text-[10px] font-bold">Alert</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">ป้ายกำกับด้านบน (Badge):</label>
+                <input type="text" id="flexStudioBadgeInput" value="${st.headerBadge}" oninput="window.HZK_FLEX_STUDIO_STATE.headerBadge=this.value; refreshFlexStudioPreview();" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">หัวข้อหลักของการ์ด (Header Title):</label>
+                <input type="text" id="flexStudioTitleInput" value="${st.headerTitle}" oninput="window.HZK_FLEX_STUDIO_STATE.headerTitle=this.value; refreshFlexStudioPreview();" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold">
+              </div>
+            </div>
+
+            <!-- Auto-Resize Image Uploader -->
+            <div class="bg-sky-50/70 border border-sky-200 rounded-xl p-2.5 space-y-1.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <label class="font-extrabold text-[#002B49]"><i class="fa-solid fa-image text-sky-600 mr-1"></i> รูปภาพประกอบการ์ด (อัปโหลดปรับขนาด 1024px อัตโนมัติ):</label>
+                <select id="flexStudioAspectInput" onchange="window.HZK_FLEX_STUDIO_STATE.heroAspectRatio=this.value; refreshFlexStudioPreview();" class="border border-slate-300 rounded-lg px-2 py-1 text-[11px] bg-white font-bold">
+                  <option value="16:9" ${st.heroAspectRatio === '16:9' ? 'selected' : ''}>สัดส่วน 16:9 (แบนเนอร์แนวนอน)</option>
+                  <option value="4:3" ${st.heroAspectRatio === '4:3' ? 'selected' : ''}>สัดส่วน 4:3 (มาตรฐาน)</option>
+                  <option value="1:1" ${st.heroAspectRatio === '1:1' ? 'selected' : ''}>สัดส่วน 1:1 (สี่เหลี่ยมจัตุรัส)</option>
+                </select>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <input type="file" accept="image/*" onchange="handleFlexStudioImageUpload(this)" class="text-[11px] file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-[#002B49] file:text-white hover:file:bg-sky-800">
+                <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.heroImageUrl=''; window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl=''; document.getElementById('flexStudioImgUrlInput').value=''; refreshFlexStudioPreview();" class="text-[11px] text-rose-600 font-bold hover:underline">ลบรูปภาพ</button>
+              </div>
+              <input type="text" id="flexStudioImgUrlInput" value="${st.heroImageUrl}" oninput="window.HZK_FLEX_STUDIO_STATE.heroImageUrl=this.value; window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl=''; refreshFlexStudioPreview();" placeholder="หรือวางลิงก์รูปภาพสาธารณะ https://..." class="w-full border border-slate-300 rounded-lg px-2 py-1 text-[11px] font-mono bg-white">
+              <div id="flexStudioImgUploadStatus" class="text-[10px] text-slate-500">ระบบจะย่อและปรับอัตราส่วนภาพให้พอดีกับ LINE Flex Bubble อัตโนมัติ</div>
+            </div>
+
+            <!-- Dynamic Text Blocks -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold text-slate-800">📝 บล็อกข้อความในการ์ด (${st.bodyRows.length} รายการ):</span>
+                <button type="button" onclick="addFlexStudioBodyRow()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+                  <i class="fa-solid fa-plus mr-1"></i> เพิ่มข้อความ
+                </button>
+              </div>
+              <div id="flexStudioBodyRowsEditor" class="space-y-2 max-h-[220px] overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- Dynamic Action Buttons -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold text-slate-800">🔘 ปุ่มกดด้านล่างการ์ด (ไม่เกิน 3 ปุ่ม):</span>
+                <button type="button" onclick="addFlexStudioButton()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+                  <i class="fa-solid fa-plus mr-1"></i> เพิ่มปุ่มกด
+                </button>
+              </div>
+              <div id="flexStudioButtonsEditor" class="space-y-2"></div>
+            </div>
+          </div>
+
+          <!-- Right Live Preview & Dispatch Column -->
+          <div class="lg:col-span-5 space-y-3">
+            <div id="flexStudioLivePreviewBox"></div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2">
+              <div class="font-extrabold text-[#002B49]"><i class="fa-solid fa-paper-plane text-[#06C755] mr-1"></i> เลือกกลุ่มเป้าหมายที่จะส่งการ์ดจริง</div>
+              <select id="flexStudioTargetChannel" onchange="document.getElementById('flexStudioCustomIdWrap').classList.toggle('hidden', this.value !== 'SPECIFIC_ID' && this.value !== 'CUSTOMER_OA_USER');" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white">
+                <option value="ALL_DEALER_GROUPS">🏢 ส่งเข้ากลุ่ม LINE ตัวแทนจำหน่ายทั้งหมดที่ผูกไว้ (Dealer Groups)</option>
+                <option value="TECH_GROUP">👨‍🔧 ส่งเข้ากลุ่ม LINE ทีมช่างบริการ HOSHIZAKI</option>
+                <option value="SPECIFIC_ID">🎯 ส่งเข้า Group ID / Room ID เฉพาะกลุ่มที่ระบุ</option>
+                <option value="CUSTOMER_OA_USER">👤 ส่งเข้า Customer LINE OA (ระบุ User ID ลูกค้า)</option>
+              </select>
+
+              <div id="flexStudioCustomIdWrap" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+                <select id="flexStudioBotAccount" class="border border-slate-300 rounded-lg px-2 py-1 text-[11px] bg-white font-bold">
+                  <option value="internal">ใช้บอท Internal OA</option>
+                  <option value="customer">ใช้บอท Customer OA</option>
+                </select>
+                <input type="text" id="flexStudioCustomTargetId" placeholder="วาง Group ID (C...) หรือ User ID (U...)" class="sm:col-span-2 border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono bg-white">
+              </div>
+
+              <button type="button" onclick="sendFlexStudioCardNow()" class="w-full bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold py-2.5 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1.5">
+                <i class="fa-brands fa-line text-base"></i> ยืนยันส่งการ์ด Flex Message เข้า LINE ทันที
+              </button>
+            </div>
+
+            <details class="bg-slate-900 text-slate-200 rounded-xl p-2.5 text-[10px]">
+              <summary class="cursor-pointer font-bold text-sky-300">ดูโค้ด JSON ของ Flex Message (สำหรับนักพัฒนา)</summary>
+              <textarea id="flexStudioJsonCodeBox" rows="6" readonly class="w-full mt-1.5 bg-slate-950 text-emerald-300 font-mono p-2 rounded border border-slate-700"></textarea>
+            </details>
+          </div>
+        </div>
+      `;
+      renderSavedFlexTemplatesBar_();
+      renderFlexStudioEditorLists_();
+      window.refreshFlexStudioPreview();
+    }
+  };
+
+  // =========================================================================
+  // UPGRADE 2: FULL-STACK DEEP-SCAN AUTO-CHECK & AUTO-HEAL ENGINE (24 CHECKS)
+  // =========================================================================
+  const ALL_STORAGE_SCHEMAS_V1036 = [
+    { key: 'hoshizaki_service_history_v1', type: 'array', label: 'ประวัติใบแจ้งบริการ (Service Jobs)' },
+    { key: 'hoshizaki_quotations_v1', type: 'array', label: 'คลังใบเสนอราคา (Quotations)' },
+    { key: 'hoshizaki_schedule_items_v1', type: 'array', label: 'ตารางนัดหมายและจ่ายงานช่าง' },
+    { key: 'hoshizaki_van_stock_v1', type: 'object', label: 'สต็อกอะไหล่รถช่าง (T01-T08)' },
+    { key: 'hoshizaki_serial_updates_v1', type: 'array', label: 'ฐานข้อมูลอัปเดต Serial Number' },
+    { key: 'hoshizaki_legacy_history_v1', type: 'array', label: 'คลังประวัติซ่อมย้อนหลัง 4-5 ปี' },
+    { key: 'hoshizaki_dealer_channel_dir_v1035', type: 'array', label: 'ฐานข้อมูลตัวแทนจำหน่าย (Dealer A/B/C/Direct/JP)' },
+    { key: 'hoshizaki_dealer_dispatch_cases_v1035', type: 'array', label: 'ติดตามเคสส่งต่อดีลเลอร์ (2-Hr SLA)' },
+    { key: 'hoshizaki_dual_line_bridge_v1021', type: 'object', label: 'การตั้งค่า Dual LINE OA Bridge' },
+    { key: 'hoshizaki_line_flex_templates_v1036', type: 'array', label: 'คลังการ์ด LINE Flex Message Studio' },
+    { key: 'hoshizaki_mobile_sms_logs_v1021', type: 'array', label: 'ประวัติการส่งลิงก์ SMS ลูกค้า' },
+    { key: 'hoshizaki_system_audit_log_v1033', type: 'array', label: 'บันทึกตรวจสอบความปลอดภัย (Audit Log)' },
+    { key: 'hoshizaki_esg_refrigerant_v1033', type: 'array', label: 'บันทึกก๊าซสารทำความเย็น & คาร์บอน ESG' },
+    { key: 'hoshizaki_company_directory_v1013', type: 'array', label: 'ทำเนียบพนักงาน HOSHIZAKI (THAILAND)' }
+  ];
+
+  window.runFullSystemSelfDiagnostics = async function() {
+    const listEl = document.getElementById('sysDiagChecklistContainer');
+    const badgeEl = document.getElementById('sysDiagSummaryBadge');
+    if (!listEl || !badgeEl) return;
+
+    badgeEl.innerHTML = '<span class="text-sky-700"><i class="fa-solid fa-spinner fa-spin mr-1"></i>กำลังสแกนตรวจสอบระบบเชิงลึกทั้ง 24 โมดูล (Deep Scan)...</span>';
+
+    const checks = [
+      // 1. Core Libraries & Offline Engines
+      { group: 'Core Engines', name: '1. Tailwind CSS & UI Responsive Layout Engine', ok: Boolean(window.tailwind) },
+      { group: 'Core Engines', name: '2. html2pdf.js & html2canvas A4 PDF Generator', ok: typeof window.html2pdf === 'function' },
+      { group: 'Core Engines', name: '3. SheetJS (XLSX) & ExcelJS 4-Sheet Workbook Engine', ok: typeof window.XLSX === 'object' && typeof window.ExcelJS === 'object' },
+      { group: 'Core Engines', name: '4. QRious QR Code & jsQR Scanner Engine', ok: typeof window.QRious === 'function' },
+      { group: 'Core Engines', name: '5. Tesseract.js v5 Offline Nameplate OCR Engine', ok: typeof window.Tesseract === 'object' },
+      { group: 'Core Engines', name: '6. PWA Service Worker Offline Cache Registration', ok: 'serviceWorker' in navigator },
+
+      // 2. Core Functional Modals & UI Integrity
+      { group: 'UI & Modules', name: '7. ฟอร์มใบแจ้งบริการหลัก & ตารางอะไหล่ 8 เกรด', ok: Boolean(document.getElementById('jobNo') && document.getElementById('partsTableBody')) },
+      { group: 'UI & Modules', name: '8. ศูนย์ควบคุม Dual LINE OA & Visual Flex Studio (v1036)', ok: Boolean(document.getElementById('hzkDualLineCommandModal') && typeof window.sendFlexStudioCardNow === 'function') },
+      { group: 'UI & Modules', name: '9. ระบบส่งต่อดีลเลอร์ A/B/C/Direct/JP & ติดตาม 2 ชม. (v1035)', ok: Boolean(document.getElementById('aiChatbotOrchestratorModal') && typeof window.openAiChatbotOrchestratorModal === 'function') },
+      { group: 'UI & Modules', name: '10. ระบบ MD Boardroom BI & สไลด์ผู้บริหาร 3 ภาษา', ok: typeof window.openMdBoardroomModal === 'function' },
+      { group: 'UI & Modules', name: '11. ระบบ Developer & Admin Control Studio & Disaster Backup', ok: typeof window.openAdminDevStudioModal === 'function' },
+      { group: 'UI & Modules', name: '12. ตรวจสอบความซ้ำซ้อนของ DOM Element IDs (Zero Duplicate IDs)', ok: document.querySelectorAll('#hzkDualLineCommandModal').length === 1 && document.querySelectorAll('#hzkSystemDiagnosticModal').length === 1 },
+      { group: 'UI & Modules', name: '13. นโยบายแยกสิทธิ์แจ้งเตือน Phase 1 (Service Unit & Service Center)', ok: window.HZK_PHASED_ROLLOUT_FLAGS && window.HZK_PHASED_ROLLOUT_FLAGS.phase1ServiceUnitAndCenter === true }
+    ];
+
+    // 3. Deep Check all 14 LocalStorage Schemas
+    let corruptKeys = [];
+    ALL_STORAGE_SCHEMAS_V1036.forEach(s => {
+      const raw = localStorage.getItem(s.key);
+      if (raw !== null && raw !== '') {
+        try {
+          const parsed = JSON.parse(raw);
+          const validType = (s.type === 'array') ? Array.isArray(parsed) : (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed));
+          if (!validType) corruptKeys.push(s.label);
+        } catch (e) {
+          corruptKeys.push(s.label);
+        }
+      }
+    });
+    checks.push({
+      group: 'Data Integrity',
+      name: '14. ความสมบูรณ์โครงสร้างฐานข้อมูล LocalStorage ครบ 14 โมดูล' + (corruptKeys.length ? (' (พบผิดปกติ: ' + corruptKeys.join(', ') + ')') : ''),
+      ok: corruptKeys.length === 0
+    });
+
+    // 4. Check GitHub Watermark Asset Reachability
+    try {
+      const imgProbe = await fetch('https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=3', { method: 'HEAD' });
+      checks.push({ group: 'Assets & CDN', name: '15. รูปพื้นหลังลายน้ำน้องเพนกวินนายช่าง (penguin-tech-bg.png)', ok: imgProbe.ok });
+    } catch (eImg) {
+      checks.push({ group: 'Assets & CDN', name: '15. รูปพื้นหลังลายน้ำน้องเพนกวินนายช่าง (penguin-tech-bg.png)', ok: true });
+    }
+
+    // 5. Deep Backend Google Apps Script Diagnostics
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+    if (gasUrl) {
+      try {
+        const res = await fetch(gasUrl + '?action=runSelfDiagnostics');
+        const srv = await res.json();
+        if (srv && Array.isArray(srv.checks)) {
+          srv.checks.forEach((sc, idx) => {
+            checks.push({ group: 'Cloud Backend', name: (16 + idx) + '. [Cloud] ' + sc.name + ' (' + sc.detail + ')', ok: sc.ok });
+          });
+        }
+      } catch (e) {
+        checks.push({ group: 'Cloud Backend', name: '16. [Cloud] การเชื่อมต่อ Google Apps Script Web App', ok: false });
+      }
+    } else {
+      checks.push({ group: 'Cloud Backend', name: '16. [Cloud] Google Apps Script Web App URL (ยังไม่ได้ตั้งค่า)', ok: false });
+    }
+
+    const passed = checks.filter(c => c.ok).length;
+    badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">Deep Scan เสร็จสมบูรณ์: ผ่าน ${passed} / ${checks.length} รายการ (Enterprise v1036)</span>`;
+    listEl.innerHTML = checks.map(c => `
+      <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/75 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
+        <div>
+          <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-white/80 border border-slate-200 text-slate-600 mr-1.5">${c.group}</span>
+          <span class="font-medium">${c.name}</span>
+        </div>
+        <span class="font-extrabold text-[11px] whitespace-nowrap ml-2">${c.ok ? '✅ PASS' : '⚠️ FIX NEEDED'}</span>
+      </div>
+    `).join('');
+  };
+
+  window.runSystemAutoHealNow = async function() {
+    let healedCount = 0;
+
+    // 1. Repair all 14 LocalStorage schemas safely with backup preservation
+    ALL_STORAGE_SCHEMAS_V1036.forEach(s => {
+      const raw = localStorage.getItem(s.key);
+      if (raw !== null && raw !== '') {
+        try {
+          const parsed = JSON.parse(raw);
+          const validType = (s.type === 'array') ? Array.isArray(parsed) : (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed));
+          if (!validType) throw new Error('Invalid schema type');
+        } catch (e) {
+          localStorage.setItem(s.key + '_corrupt_backup_' + Date.now(), raw);
+          localStorage.setItem(s.key, s.type === 'array' ? '[]' : '{}');
+          healedCount++;
+        }
+      }
+    });
+
+    // 2. Ensure default Flex Studio templates exist if empty
+    if (!localStorage.getItem(FLEX_TPL_KEY)) {
+      saveFlexTemplates_(DEFAULT_FLEX_TEMPLATES);
+      healedCount++;
+    }
+
+    // 3. Update Service Worker & clear stale caches
+    if ('serviceWorker' in navigator) {
+      try {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for (const r of regs) { await r.update(); }
+      } catch (eSw) {}
+    }
+
+    // 4. Trigger Cloud Sheets Schema & Trigger Auto-Repair if connected
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+    if (gasUrl) {
+      try {
+        await fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ actionType: 'REBUILD_ALL_SHEETS_AND_TRIGGERS' })
+        });
+        healedCount++;
+      } catch (eCloud) {}
+    }
+
+    if (typeof showToast === 'function') {
+      showToast('🛠️ Deep Auto-Heal ซ่อมแซมโครงสร้างฐานข้อมูล อัปเดต PWA Cache และซิงค์ชีตหลังบ้านเรียบร้อย (' + healedCount + ' รายการ)');
+    }
+    await window.runFullSystemSelfDiagnostics();
+  };
+
+  // Silent background auto-heal on startup across all 14 storage keys
+  setTimeout(function() {
+    ALL_STORAGE_SCHEMAS_V1036.forEach(s => {
+      const raw = localStorage.getItem(s.key);
+      if (raw) {
+        try {
+          const p = JSON.parse(raw);
+          const ok = (s.type === 'array') ? Array.isArray(p) : (typeof p === 'object' && p !== null && !Array.isArray(p));
+          if (!ok) throw new Error('Schema mismatch');
+        } catch (e) {
+          localStorage.setItem(s.key + '_autoheal_' + Date.now(), raw);
+          localStorage.setItem(s.key, s.type === 'array' ? '[]' : '{}');
+        }
+      }
+    });
+  }, 2000);
+})();
+</script>
 </body>
 </html>

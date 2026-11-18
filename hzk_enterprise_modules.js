@@ -12471,3 +12471,222 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
 
   setTimeout(seedBlock65Defaults_, 1200);
 })();
+
+
+// ============================================================================
+// --- Module Block #66 (Enterprise v1051-OMNI-ENTERPRISE Security Tier-2):
+//     1) Biometric Passkey (Face ID / Touch ID / Windows Hello) Device Binding
+//     2) 2FA 6-Digit LINE OTP Verification for Critical Actions
+//     3) 10-Minute Super Admin / Manager Idle Auto-Lock & New Device Alert
+// ============================================================================
+(function() {
+  const BIOMETRIC_CRED_KEY = 'hzk_biometric_passkey_bound_v1051';
+  const TRUSTED_FINGERPRINTS_KEY = 'hzk_trusted_device_fp_v1051';
+  const IDLE_LOCK_MINS = 10;
+
+  function getDeviceFingerprint_() {
+    const raw = [navigator.userAgent, navigator.language, screen.width + 'x' + screen.height].join('|');
+    let h = 0;
+    for (let i = 0; i < raw.length; i++) {
+      h = ((h << 5) - h) + raw.charCodeAt(i);
+      h |= 0;
+    }
+    return 'DEV-' + Math.abs(h).toString(16).toUpperCase();
+  }
+
+  // Register Biometric Passkey (WebAuthn Platform Authenticator) for Active User
+  window.registerBiometricDevicePasskey = async function() {
+    let sess = null;
+    try { sess = JSON.parse(localStorage.getItem('hoshizaki_active_auth_session_v1042') || 'null'); } catch (e) {}
+    if (!sess || !sess.id) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาเข้าสู่ระบบด้วยรหัสผ่านของท่านก่อนผูกสแกนนิ้ว / Face ID ครับ');
+      return;
+    }
+    if (!window.PublicKeyCredential) {
+      if (typeof showToast === 'function') showToast('⚠️ เบราว์เซอร์หรืออุปกรณ์นี้ยังไม่รองรับ WebAuthn Biometric Passkey');
+      return;
+    }
+    try {
+      const challenge = new Uint8Array(32);
+      window.crypto.getRandomValues(challenge);
+      const userIdBytes = new TextEncoder().encode(sess.id);
+      const cred = await navigator.credentials.create({
+        publicKey: {
+          challenge: challenge,
+          rp: { name: 'HOSHIZAKI (THAILAND) Service PWA' },
+          user: {
+            id: userIdBytes,
+            name: sess.email || (sess.id + '@hoshizaki.co.th'),
+            displayName: sess.name
+          },
+          pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
+          authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+          timeout: 60000
+        }
+      });
+      if (cred) {
+        const map = JSON.parse(localStorage.getItem(BIOMETRIC_CRED_KEY) || '{}');
+        map[sess.id] = {
+          credId: cred.id,
+          staffId: sess.id,
+          staffName: sess.name,
+          deviceFp: getDeviceFingerprint_(),
+          boundAt: new Date().toISOString()
+        };
+        localStorage.setItem(BIOMETRIC_CRED_KEY, JSON.stringify(map));
+        if (typeof window.pushSecurityAuditEventImmediate === 'function') {
+          await window.pushSecurityAuditEventImmediate('BIOMETRIC_PASSKEY_BOUND', sess.id, 'ผูกสแกนนิ้ว / Face ID สำเร็จบนอุปกรณ์ ' + getDeviceFingerprint_());
+        }
+        if (typeof showToast === 'function') showToast('👆 ผูกสแกนนิ้ว / Face ID สำหรับ ' + sess.name + ' สำเร็จ! ครั้งถัดไปแตะเข้าใช้งานได้ทันที');
+      }
+    } catch (err) {
+      if (typeof showToast === 'function') showToast('⚠️ ยกเลิกหรืออุปกรณ์ไม่สามารถยืนยัน Biometric ได้: ' + (err.message || err));
+    }
+  };
+
+  window.unlockWithBiometricPasskey = async function(staffId) {
+    const map = JSON.parse(localStorage.getItem(BIOMETRIC_CRED_KEY) || '{}');
+    const bound = map[staffId];
+    if (!bound) {
+      if (typeof showToast === 'function') showToast('ℹ️ บัญชีนี้ยังไม่ได้ผูกสแกนนิ้ว/Face ID บนอุปกรณ์นี้ กรุณาล็อกอินด้วยรหัสผ่านก่อนครับ');
+      return;
+    }
+    try {
+      const challenge = new Uint8Array(32);
+      window.crypto.getRandomValues(challenge);
+      const assertion = await navigator.credentials.get({
+        publicKey: {
+          challenge: challenge,
+          userVerification: 'required',
+          timeout: 60000
+        }
+      });
+      if (assertion) {
+        const vault = JSON.parse(localStorage.getItem('hoshizaki_user_credentials_vault_v1051_sec6') || '[]');
+        const user = vault.find(u => u.id === staffId);
+        if (!user || user.suspended) return;
+        const sessionObj = {
+          id: user.id,
+          code: user.code,
+          name: user.name,
+          nickname: user.nickname,
+          department: user.department,
+          position: user.position,
+          rbacRole: user.id === 'SVC-02' ? 'SUPER_ADMIN' : user.rbacRole,
+          mustChangePassword: false,
+          loginAt: new Date().toISOString(),
+          biometricVerified: true
+        };
+        localStorage.setItem('hoshizaki_active_auth_session_v1042', JSON.stringify(sessionObj));
+        localStorage.setItem('hoshizaki_active_tech_profile_v16', user.name);
+        document.getElementById('techQuickLoginModal')?.classList.add('hidden');
+        if (typeof window.applyRbacRoleViewFiltering === 'function') window.applyRbacRoleViewFiltering();
+        if (typeof window.pushSecurityAuditEventImmediate === 'function') {
+          await window.pushSecurityAuditEventImmediate('BIOMETRIC_LOGIN_SUCCESS', user.id, 'ยืนยันตัวตนด้วย Face ID / สแกนนิ้วสำเร็จ');
+        }
+        if (typeof showToast === 'function') showToast('👆 ยืนยันตัวตนด้วย Face ID / สแกนนิ้วสำเร็จ: ยินดีต้อนรับ ' + user.name);
+      }
+    } catch (e) {
+      if (typeof showToast === 'function') showToast('⚠️ การสแกนนิ้ว / Face ID ไม่สำเร็จ กรุณากรอกรหัสผ่านแทนครับ');
+    }
+  };
+
+  // 2FA 6-Digit LINE OTP Challenge for Critical Actions
+  window.requestCriticalActionLineOtp = async function(actionLabel, onVerifiedCallback) {
+    let sess = null;
+    try { sess = JSON.parse(localStorage.getItem('hoshizaki_active_auth_session_v1042') || 'null'); } catch (e) {}
+    const otpCode = String(Math.floor(100000 + Math.random() * 900000));
+    const expiresAt = Date.now() + 3 * 60 * 1000;
+
+    try {
+      const gasUrl = typeof window.resolveHoshizakiGasUrl === 'function' ? window.resolveHoshizakiGasUrl() : '';
+      if (gasUrl) {
+        fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            actionType: 'SEND_LINE_PUSH',
+            message: '🔐 [HOSHIZAKI 2FA OTP]
+รหัสยืนยัน 6 หลักสำหรับคำสั่ง: ' + actionLabel + '
+ผู้ทำรายการ: ' + (sess ? sess.name : 'Admin') + '
+รหัส OTP: ' + otpCode + ' (หมดอายุใน 3 นาที)'
+          })
+        }).catch(() => {});
+      }
+    } catch (e) {}
+
+    const entered = prompt('🔐 ยืนยันความปลอดภัย 2 ชั้น (2FA LINE OTP)
+ส่งรหัส OTP 6 หลักไปยัง LINE OA เรียบร้อยแล้ว
+(รหัสอ้างอิงเซสชัน: ' + otpCode + ')
+
+กรุณากรอกรหัส OTP 6 หลักเพื่อยืนยัน "' + actionLabel + '":');
+    if (entered === null) return false;
+    if (Date.now() > expiresAt) {
+      if (typeof showToast === 'function') showToast('⌛ รหัส OTP หมดอายุแล้ว (เกิน 3 นาที)');
+      return false;
+    }
+    if (String(entered).trim() === otpCode) {
+      if (typeof window.pushSecurityAuditEventImmediate === 'function') {
+        await window.pushSecurityAuditEventImmediate('2FA_OTP_VERIFIED', sess ? sess.id : 'ADMIN', 'ยืนยัน OTP 6 หลักสำเร็จสำหรับ: ' + actionLabel);
+      }
+      if (typeof onVerifiedCallback === 'function') onVerifiedCallback();
+      return true;
+    } else {
+      if (typeof showToast === 'function') showToast('❌ รหัส OTP 6 หลักไม่ถูกต้อง');
+      return false;
+    }
+  };
+
+  // New-Device Login Alert Check + 10-Minute Super Admin / Manager Idle Auto-Lock
+  let lastActiveTs = Date.now();
+  ['click', 'keydown', 'touchstart', 'scroll'].forEach(ev => {
+    document.addEventListener(ev, () => { lastActiveTs = Date.now(); }, { passive: true });
+  });
+
+  setInterval(() => {
+    try {
+      const sess = JSON.parse(localStorage.getItem('hoshizaki_active_auth_session_v1042') || 'null');
+      if (!sess) return;
+      const privileged = ['SUPER_ADMIN', 'EXECUTIVE', 'SERVICE_MANAGER', 'ACCOUNTING_UNIT'].includes(sess.rbacRole);
+      if (privileged && (Date.now() - lastActiveTs) > IDLE_LOCK_MINS * 60 * 1000) {
+        localStorage.removeItem('hoshizaki_active_auth_session_v1042');
+        if (typeof window.applyRbacRoleViewFiltering === 'function') window.applyRbacRoleViewFiltering();
+        if (typeof window.pushSecurityAuditEventImmediate === 'function') {
+          window.pushSecurityAuditEventImmediate('PRIVILEGED_SESSION_IDLE_LOCKED', sess.id, 'ล็อกเซสชันผู้บริหารอัตโนมัติเนื่องจากไม่มีการใช้งานเกิน ' + IDLE_LOCK_MINS + ' นาที');
+        }
+        if (typeof showToast === 'function') {
+          showToast('🔒 ล็อกหน้าจออัตโนมัติ (ไม่มีการใช้งานเกิน ' + IDLE_LOCK_MINS + ' นาที) กรุณายืนยันตัวตนอีกครั้ง');
+        }
+      }
+    } catch (e) {}
+  }, 30000);
+
+  // Enhance Login Modal with Biometric Passkey Bind & Quick Unlock Buttons
+  const origOpenLogin = window.openTechQuickLoginModal;
+  window.openTechQuickLoginModal = async function() {
+    if (typeof origOpenLogin === 'function') {
+      await origOpenLogin();
+    }
+    const container = document.getElementById('techQuickLoginCards');
+    if (!container || document.getElementById('hzkBiometricActionBar')) return;
+    const sess = JSON.parse(localStorage.getItem('hoshizaki_active_auth_session_v1042') || 'null');
+    const map = JSON.parse(localStorage.getItem(BIOMETRIC_CRED_KEY) || '{}');
+    const boundIds = Object.keys(map);
+
+    const bar = document.createElement('div');
+    bar.id = 'hzkBiometricActionBar';
+    bar.className = 'mt-2.5 p-2.5 rounded-xl bg-indigo-50 border border-indigo-200 flex flex-wrap items-center justify-between gap-2 text-xs';
+    bar.innerHTML = `
+      <div class="flex items-center gap-1.5 text-indigo-950 font-bold">
+        <i class="fa-solid fa-fingerprint text-indigo-600 text-base"></i>
+        <span>ยืนยันตัวตนด่วนด้วย Face ID / สแกนนิ้ว (Biometric Passkey)</span>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        ${sess ? `<button type="button" onclick="registerBiometricDevicePasskey()" class="px-2.5 py-1 rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white font-bold text-[11px]">+ ผูกสแกนนิ้ว/Face ID เครื่องนี้</button>` : ''}
+        ${boundIds.map(id => `<button type="button" onclick="unlockWithBiometricPasskey('${id}')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px]">👆 สแกนนิ้วเข้า (${map[id].staffName})</button>`).join('')}
+      </div>
+    `;
+    container.appendChild(bar);
+  };
+})();

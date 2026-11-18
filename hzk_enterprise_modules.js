@@ -12072,8 +12072,9 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
       const next15d = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
       const next120d = new Date(Date.now() + 120 * 86400000).toISOString().slice(0, 10);
       localStorage.setItem(WATER_CRM_KEY, JSON.stringify([
-        { id: 'WTR-001', serial: 'K88310M', model: 'KM-901MAJ', customer: 'โรงแรมแชงกรี-ลา กรุงเทพฯ', tdsPpm: 148, waterBar: 2.4, filterModel: '4HC-H (EV965516)', installedDate: '2026-06-02', nextDueDate: next15d, status: 'DUE_SOON_30D' },
-        { id: 'WTR-002', serial: 'H14289J', model: 'IM-240DNE-HC', customer: 'Starbucks Reserve — CentralWorld', tdsPpm: 62, waterBar: 2.8, filterModel: '4HC-H (EV965516)', installedDate: '2026-09-18', nextDueDate: next120d, status: 'NORMAL' }
+        { id: 'WTR-001', serial: 'K88310M', model: 'KM-901MAJ', customer: 'โรงแรมแชงกรี-ลา กรุงเทพฯ', accountType: 'DIRECT_SALE', cycleMonths: 6, tdsPpm: 148, waterBar: 2.4, filterModel: '4HC-H (EV965516)', installedDate: '2026-06-02', nextDueDate: next15d, status: 'DUE_SOON_30D' },
+        { id: 'WTR-002', serial: 'H14289J', model: 'IM-240DNE-HC', customer: 'Starbucks Reserve — CentralWorld', accountType: 'CHAIN_STORE_VIP', cycleMonths: 6, tdsPpm: 62, waterBar: 2.8, filterModel: '4HC-H (EV965516)', installedDate: '2026-09-18', nextDueDate: next120d, status: 'NORMAL' },
+        { id: 'WTR-003', serial: 'J90214P', model: 'IM-130NE-HC', customer: 'Ootoya Japanese Restaurant (สาขาทองหล่อ)', accountType: 'JAPANESE_RESTAURANT_DIRECT', cycleMonths: 12, tdsPpm: 54, waterBar: 3.0, filterModel: '4HC-H (EV965516)', installedDate: '2026-01-10', nextDueDate: '2027-01-10', status: 'NORMAL' }
       ]));
     }
     if (!localStorage.getItem(TOOL_LOANER_KEY)) {
@@ -12091,6 +12092,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     if (!localStorage.getItem(B2B_PORTAL_ORGS_KEY)) {
       localStorage.setItem(B2B_PORTAL_ORGS_KEY, JSON.stringify([
         { orgCode: 'CHAIN-SBX-TH', orgName: 'Starbucks Coffee (Thailand) — Chain Account', tier: 'CHAIN_STORE_VIP', totalBranches: 48, activeUnits: 92, contactEmail: 'facilities@coffee-chain.co.th' },
+        { orgCode: 'JP-DIRECT-OTY', orgName: 'Ootoya / Japanese Restaurant Group (Direct Sale Account)', tier: 'JAPANESE_RESTAURANT_DIRECT', totalBranches: 32, activeUnits: 58, contactEmail: 'jp-facility@japanese-food.co.th' },
         { orgCode: 'DLR-STK-HQ', orgName: 'S.T.KITCHEN (Dealer Grade A)', tier: 'DEALER_A', totalBranches: 5, activeUnits: 64, contactEmail: 'service@stkitchen.co.th' }
       ]));
     }
@@ -12115,30 +12117,35 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     const serial = String(document.getElementById('wtrInSerial')?.value || '').trim().toUpperCase();
     const model = String(document.getElementById('wtrInModel')?.value || 'IM-240DNE-HC').trim();
     const customer = String(document.getElementById('wtrInCustomer')?.value || '').trim();
+    const accountType = String(document.getElementById('wtrInAccountType')?.value || 'CHAIN_STORE_VIP');
+    const cycleMonths = Number(document.getElementById('wtrInCycleMonths')?.value || 6);
     const tdsPpm = Number(document.getElementById('wtrInTds')?.value || 85);
     const waterBar = Number(document.getElementById('wtrInBar')?.value || 2.5);
     if (!serial || !customer) {
       if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุ S/N เครื่องและชื่อลูกค้าครับ');
       return;
     }
-    const nextDue = new Date(Date.now() + 180 * 86400000).toISOString().slice(0, 10);
+    const daysOffset = cycleMonths === 12 ? 365 : 180;
+    const nextDue = new Date(Date.now() + daysOffset * 86400000).toISOString().slice(0, 10);
     const list = JSON.parse(localStorage.getItem(WATER_CRM_KEY) || '[]');
     const rec = {
       id: 'WTR-' + Date.now().toString().slice(-5),
       serial: serial,
       model: model,
       customer: customer,
+      accountType: accountType,
+      cycleMonths: cycleMonths,
       tdsPpm: tdsPpm,
       waterBar: waterBar,
       filterModel: '4HC-H (EV965516)',
       installedDate: new Date().toISOString().slice(0, 10),
       nextDueDate: nextDue,
-      status: tdsPpm > 200 ? 'HIGH_TDS_ALERT' : 'NORMAL'
+      status: tdsPpm > 150 ? 'HIGH_TDS_RECOMMEND_6M' : 'NORMAL'
     };
     list.unshift(rec);
     localStorage.setItem(WATER_CRM_KEY, JSON.stringify(list));
     syncBlock65ToCloud_('UPSERT_WATER_FILTER_CRM', { record: rec });
-    if (typeof showToast === 'function') showToast('💧 บันทึกค่าคุณภาพน้ำ TDS ' + tdsPpm + ' ppm และตั้งรอบเปลี่ยน 4HC-H อัตโนมัติแล้ว');
+    if (typeof showToast === 'function') showToast('💧 บันทึกค่า TDS ' + tdsPpm + ' ppm และตั้งรอบเปลี่ยน 4HC-H ทุก ' + cycleMonths + ' เดือนเรียบร้อยแล้ว');
     renderLifecycleSuiteTab_('WATER_FILTER');
   };
 
@@ -12225,6 +12232,36 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     renderLifecycleSuiteTab_('DISCOUNT_APPROVAL');
   };
 
+  window.submitB2bUrgentServiceDispatch = function(orgCode, orgName) {
+    const branch = String(document.getElementById('b2bPortalBranchIn')?.value || 'สาขาหลัก').trim();
+    const sn = String(document.getElementById('b2bPortalSnIn')?.value || '').trim().toUpperCase();
+    const urgency = String(document.getElementById('b2bPortalUrgencyIn')?.value || 'URGENT_4H');
+    const symptom = String(document.getElementById('b2bPortalSymptomIn')?.value || 'แจ้งตรวจเช็ก/ซ่อมด่วนจาก B2B Portal').trim();
+
+    const storeEl = document.getElementById('storeName') || document.getElementById('customerStore');
+    const snEl = document.getElementById('serialNumber');
+    const symEl = document.getElementById('diagSymptom');
+    if (storeEl) storeEl.value = orgName + ' — ' + branch;
+    if (snEl && sn) snEl.value = sn;
+    if (symEl) symEl.value = '[' + urgency + ' | ' + orgCode + '] ' + symptom;
+
+    syncBlock65ToCloud_('B2B_URGENT_SERVICE_DISPATCH', {
+      orgCode: orgCode,
+      orgName: orgName,
+      branch: branch,
+      serial: sn,
+      urgency: urgency,
+      symptom: symptom,
+      requestedAt: new Date().toISOString()
+    });
+
+    document.getElementById('hzkB2bPartnerPortalPreviewModal')?.classList.add('hidden');
+    document.getElementById('hzkEnterpriseLifecycleModal')?.classList.add('hidden');
+    if (typeof showToast === 'function') {
+      showToast('🚨 รับคำขอคิวช่างด่วนจาก ' + orgName + ' (' + branch + ') ลงใบงานและแจ้งกลุ่มช่างเรียบร้อย!');
+    }
+  };
+
   // --- Pillar 5 Handler: Open B2B Dealer / Chain-Store Self-Service Portal ---
   window.launchB2bPartnerSelfServiceView = function(orgCode) {
     const orgs = JSON.parse(localStorage.getItem(B2B_PORTAL_ORGS_KEY) || '[]');
@@ -12253,15 +12290,24 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
             <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200"><div class="text-emerald-700">เครื่องทำงานปกติ (Online/PM)</div><div class="text-xl font-black text-emerald-700">${org.activeUnits - 1} เครื่อง</div></div>
             <div class="bg-amber-50 p-3 rounded-xl border border-amber-200"><div class="text-amber-800">กำลังดำเนินการซ่อม</div><div class="text-xl font-black text-amber-700">1 เครื่อง</div></div>
           </div>
-          <div class="bg-white p-3.5 rounded-xl border border-slate-200 space-y-2">
-            <div class="font-extrabold text-sm text-[#002B49]">เปิดใบแจ้งซ่อมด่วน / ดาวน์โหลดใบรับรอง PM ประจำสาขา (Self-Service)</div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <input id="b2bPortalBranchIn" placeholder="ชื่อสาขา (เช่น สาขาเซ็นทรัลเวิลด์)" class="border rounded-lg px-2.5 py-2">
+          <div class="bg-white p-3.5 rounded-xl border-2 border-rose-200 space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-1">
+              <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-truck-medical text-rose-600 mr-1"></i>ระบบร้องขอคิวช่างเข้าตรวจเช็ก / ซ่อมด่วน (B2B Chain &amp; Japanese Restaurant Direct)</div>
+              <span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-extrabold">Urgent Dispatch SLA</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+              <input id="b2bPortalBranchIn" placeholder="ชื่อสาขา (เช่น สาขาทองหล่อ / เซ็นทรัลเวิลด์)" class="border rounded-lg px-2.5 py-2">
               <input id="b2bPortalSnIn" placeholder="Serial No. เครื่อง (เช่น H14289J)" class="border rounded-lg px-2.5 py-2 font-mono">
-              <button type="button" onclick="if(typeof showToast==='function') showToast('📲 รับแจ้งซ่อมจากพอร์ทัล B2B เข้าคิวตารางช่าง HOSHIZAKI ทันที!');" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg py-2 px-3">
-                <i class="fa-solid fa-paper-plane mr-1"></i> ส่งแจ้งซ่อมเข้าศูนย์บริการ
+              <select id="b2bPortalUrgencyIn" class="border rounded-lg px-2.5 py-2 bg-rose-50 font-bold text-rose-900">
+                <option value="URGENT_4H">🚨 ด่วนที่สุด: เครื่องหยุดผลิตน้ำแข็ง (SLA 4 ชม.)</option>
+                <option value="NEXT_DAY_CHECK">🔧 ขอคิวตรวจเช็ก / น้ำแข็งออกน้อย (ภายใน 24 ชม.)</option>
+                <option value="PM_FILTER_6_12M">💧 นัดล้าง PM &amp; เปลี่ยนไส้กรอง 4HC-H (รอบ 6/12 เดือน)</option>
+              </select>
+              <button type="button" onclick="submitB2bUrgentServiceDispatch('${org.orgCode}', '${org.orgName.replace(/'/g, '')}')" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-lg py-2 px-3 shadow-xs">
+                <i class="fa-solid fa-paper-plane mr-1"></i> ส่งคำขอเข้าคิวช่างทันที
               </button>
             </div>
+            <input id="b2bPortalSymptomIn" placeholder="ระบุอาการผิดปกติ / Error Code หน้าจอ / เบอร์ติดต่อผู้จัดการสาขา..." class="w-full border rounded-lg px-2.5 py-1.5">
           </div>
         </div>
       </div>
@@ -12315,30 +12361,55 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
 
     if (tab === 'WATER_FILTER') {
       const list = JSON.parse(localStorage.getItem(WATER_CRM_KEY) || '[]');
+      const cnt6m = list.filter(function(x) { return Number(x.cycleMonths || 6) === 6; }).length;
+      const cnt12m = list.filter(function(x) { return Number(x.cycleMonths) === 12; }).length;
+      const highTdsCnt = list.filter(function(x) { return Number(x.tdsPpm || 0) > 150; }).length;
+      const estAnnualFilters = (cnt6m * 2) + (cnt12m * 1);
+
       body.innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div class="bg-white p-3 rounded-xl border border-slate-200"><div class="text-[11px] text-slate-500 font-semibold">รอบเปลี่ยนทุก 6 เดือน (Heavy Use / High TDS)</div><div class="text-xl font-black text-[#002B49]">${cnt6m} <span class="text-xs font-normal">เครื่อง</span></div></div>
+          <div class="bg-white p-3 rounded-xl border border-slate-200"><div class="text-[11px] text-slate-500 font-semibold">รอบเปลี่ยนทุก 12 เดือน (Standard / Low TDS)</div><div class="text-xl font-black text-sky-700">${cnt12m} <span class="text-xs font-normal">เครื่อง</span></div></div>
+          <div class="bg-rose-50 p-3 rounded-xl border border-rose-200"><div class="text-[11px] text-rose-700 font-semibold">ค่า TDS สูง (&gt;150 ppm) ควรปรับเป็น 6 เดือน</div><div class="text-xl font-black text-rose-700">${highTdsCnt} <span class="text-xs font-normal">เครื่อง</span></div></div>
+          <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200"><div class="text-[11px] text-emerald-700 font-semibold">คาดการณ์ยอดใช้ไส้กรอง 4HC-H / ปี</div><div class="text-xl font-black text-emerald-700">${estAnnualFilters} <span class="text-xs font-normal">กระบอก/ปี</span></div></div>
+        </div>
+
         <div class="bg-white p-4 rounded-xl border border-cyan-200 space-y-2.5">
-          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-droplet text-cyan-600 mr-1"></i>บันทึกค่าคุณภาพน้ำ (TDS / แรงดัน) &amp; นับถอยหลังเปลี่ยนไส้กรอง 4HC-H ทุก 6 เดือน</div>
-          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-droplet text-cyan-600 mr-1"></i>บันทึกค่าคุณภาพน้ำ (TDS) &amp; กำหนดรอบเปลี่ยนไส้กรอง 4HC-H (ทุก 6 เดือน หรือ 12 เดือน)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-6 gap-2">
             <input id="wtrInSerial" placeholder="S/N เครื่อง *" class="border rounded-lg px-2.5 py-1.5 font-mono font-bold">
-            <input id="wtrInModel" placeholder="รุ่นเครื่อง (เช่น IM-240DNE-HC)" class="border rounded-lg px-2.5 py-1.5">
+            <input id="wtrInModel" placeholder="รุ่นเครื่อง (IM-240DNE)" class="border rounded-lg px-2.5 py-1.5">
             <input id="wtrInCustomer" placeholder="ชื่อร้านค้า / ลูกค้า *" class="border rounded-lg px-2.5 py-1.5">
-            <input id="wtrInTds" type="number" placeholder="ค่า TDS (ppm) เช่น 95" class="border rounded-lg px-2.5 py-1.5">
-            <button type="button" onclick="addWaterQualityRecord()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold rounded-lg py-1.5 px-3">+ บันทึกค่าคุณภาพน้ำ</button>
+            <select id="wtrInAccountType" class="border rounded-lg px-2 py-1.5 bg-white font-semibold">
+              <option value="CHAIN_STORE_VIP">Chain Store (เชนร้านค้า)</option>
+              <option value="JAPANESE_RESTAURANT_DIRECT">Japanese Restaurant (Direct)</option>
+              <option value="DIRECT_SALE">Direct Key Account</option>
+              <option value="DEALER_A">Authorized Dealer</option>
+            </select>
+            <select id="wtrInCycleMonths" class="border rounded-lg px-2 py-1.5 bg-sky-50 font-extrabold text-[#002B49]">
+              <option value="6">รอบเปลี่ยนทุก 6 เดือน (แนะนำ TDS &gt; 120)</option>
+              <option value="12">รอบเปลี่ยนทุก 12 เดือน (น้ำ RO / TDS ต่ำ)</option>
+            </select>
+            <div class="flex gap-1">
+              <input id="wtrInTds" type="number" placeholder="TDS ppm" class="w-20 border rounded-lg px-2 py-1.5">
+              <button type="button" onclick="addWaterQualityRecord()" class="flex-1 bg-[#002B49] hover:bg-[#00A3E0] text-white font-extrabold rounded-lg py-1.5 px-2">+ บันทึก</button>
+            </div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-xl border border-slate-200 overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs">
-            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">S/N / รุ่น</th><th class="p-2">ลูกค้า</th><th class="p-2 text-center">TDS (ppm)</th><th class="p-2 text-center">ไส้กรอง</th><th class="p-2 text-center">ครบกำหนดเปลี่ยน</th><th class="p-2 text-center">สร้างใบเสนอราคา</th></tr></thead>
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">S/N / รุ่น</th><th class="p-2">ลูกค้า &amp; กลุ่มบัญชี</th><th class="p-2 text-center">รอบเปลี่ยน</th><th class="p-2 text-center">TDS (ppm)</th><th class="p-2 text-center">ครบกำหนดเปลี่ยน</th><th class="p-2 text-center">ออกใบเสนอราคา</th></tr></thead>
             <tbody class="divide-y divide-slate-200">
               ${list.map(function(r) {
                 const highTds = Number(r.tdsPpm) > 150;
+                const cyc = Number(r.cycleMonths || 6);
                 return `<tr>
                   <td class="p-2 font-bold">${r.serial} <span class="text-slate-500 font-normal">(${r.model})</span></td>
-                  <td class="p-2 font-semibold">${r.customer}</td>
-                  <td class="p-2 text-center font-extrabold ${highTds ? 'text-rose-600' : 'text-emerald-700'}">${r.tdsPpm} ppm</td>
-                  <td class="p-2 text-center">${r.filterModel}</td>
+                  <td class="p-2"><div class="font-semibold">${r.customer}</div><div class="text-[10px] text-sky-700 font-bold">${r.accountType || 'DIRECT_SALE'}</div></td>
+                  <td class="p-2 text-center"><span class="px-2 py-0.5 rounded-full font-extrabold text-[10.5px] ${cyc === 6 ? 'bg-amber-100 text-amber-900' : 'bg-sky-100 text-sky-900'}">ทุก ${cyc} เดือน</span></td>
+                  <td class="p-2 text-center font-extrabold ${highTds ? 'text-rose-600' : 'text-emerald-700'}">${r.tdsPpm} ppm ${highTds && cyc === 12 ? '<div class="text-[9.5px] text-rose-600">แนะนำปรับเป็น 6 เดือน</div>' : ''}</td>
                   <td class="p-2 text-center font-bold text-amber-700">${r.nextDueDate}</td>
-                  <td class="p-2 text-center"><button type="button" onclick="generateFilter4HcRenewalQuote('${r.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-bold text-[11px]">ออก QT ไส้กรอง 4HC-H</button></td>
+                  <td class="p-2 text-center"><button type="button" onclick="generateFilter4HcRenewalQuote('${r.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-bold text-[11px]">ออก QT 4HC-H</button></td>
                 </tr>`;
               }).join('')}
             </tbody>
@@ -13312,4 +13383,689 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
   };
 
   setTimeout(seedBlock67Defaults_, 1400);
+})();
+
+
+// ============================================================================
+// --- Module Block #68 (Enterprise v1052-OMNI-ENTERPRISE Upgrade):
+//     1) Unified AI Content & Card Studio (Service Self-Check · Operational Display ·
+//        B2B Sales Promo · Omni-Social Ads) with Product-Specific Auto-Generator,
+//        1024px Auto-Image Diagram & Human-in-the-Loop Trilingual Editor (TH/EN/JP)
+//     2) Unit-Level Multi-Dealer Ownership per Branch (e.g., Sushiro Branch ->
+//        Dishwasher via Maruzen, Water Dispenser via Luckland, Chiller via Direct/JP)
+//     3) 10-Step B2B Dealer Inspection-to-Repair & Parts Lead-Time (GIT) Loop
+//        (LINE OA First-Aid -> S/N Dealer Lookup -> Inspection QT -> Confirm PO #1 ->
+//         Tech Check -> Additional Repair QT #2 + IMS/GIT ETA -> Dealer Markup ->
+//         Confirm PO #2 -> Parts at Tech Van Alert -> Final Re-Dispatch & Billing)
+// ============================================================================
+(function() {
+  const UNIT_OWNERSHIP_KEY = 'hzk_unit_level_dealer_ownership_v1052';
+  const B2B_10STEP_CASES_KEY = 'hzk_b2b_10step_service_cases_v1052';
+  const UNIFIED_CARDS_KEY = 'hzk_unified_ai_cards_library_v1052';
+
+  const PRODUCT_SELF_CHECK_KB = {
+    'IM': {
+      label: 'เครื่องทำน้ำแข็งก้อนสี่เหลี่ยม (IM Cube Series)',
+      imageHint: 'IM Series Front Air Filter & Water Valve Inspection Diagram',
+      stepsTh: [
+        '1. ตรวจสอบวาล์วน้ำประปาเข้าเครื่องว่าเปิดสุดและมีแรงดันน้ำไหลปกติ (2.0–3.5 Bar)',
+        '2. ดึงแผ่นกรองฝุ่น (Air Filter) ด้านหน้าออกมาล้างทำความสะอาดด้วยน้ำเปล่าเพื่อระบายความร้อน',
+        '3. ตรวจสอบระยะห่างรอบตัวเครื่องอย่างน้อย 15 ซม. ไม่วางกล่องหรือสิ่งของบังช่องระบายลมร้อน',
+        '4. ปิดสวิตช์/เบรกเกอร์ทิ้งไว้ 1 นาที แล้วเปิดใหม่เพื่อรีเซ็ตระบบควบคุม (หากขึ้น Error เดิม ให้กดเรียกช่างด้านล่าง)'
+      ],
+      stepsJp: [
+        '1. 給水バルブが全開で水圧が正常(2.0〜3.5 Bar)か確認してください。',
+        '2. 前面のエアフィルターを取り外し、水洗いしてホコリを除去してください。',
+        '3. 放熱スペース(周囲15cm以上)が確保されているか確認してください。',
+        '4. 電源ブレーカーを1分間切り、再投入してリセットをお試しください。'
+      ]
+    },
+    'KM': {
+      label: 'เครื่องทำน้ำแข็งเสี้ยวพระจันทร์ (KM Crescent Series)',
+      imageHint: 'KM Series Condenser & Bin Control Check',
+      stepsTh: [
+        '1. ตรวจสอบวาล์วน้ำเข้าและไส้กรองน้ำ 4HC-H ว่าไม่ตันหรือแรงดันตก',
+        '2. ทำความสะอาดแผ่นกรองฝุ่นแผงคอยล์ร้อนด้านหน้า/ด้านข้าง',
+        '3. ตรวจดูภายในถังเก็บน้ำแข็งว่าไม่มีน้ำแข็งเกาะบังสวิตช์ตัดน้ำแข็งเต็ม (Bin Control)',
+        '4. กดปุ่ม Reset บนกล่องควบคุมหรือปิด-เปิดเบรกเกอร์ 1 นาที'
+      ],
+      stepsJp: [
+        '1. 給水バルブおよび浄水フィルター(4HC-H)の目詰まりを確認してください。',
+        '2. 凝縮器エアフィルターの清掃を行ってください。',
+        '3. 貯氷庫内の貯氷スイッチ周辺に氷が詰まっていないか確認してください。',
+        '4. 制御ボックスのリセットまたはブレーカー再投入をお試しください。'
+      ]
+    },
+    'DCM': {
+      label: 'เครื่องทำน้ำแข็งและจ่ายน้ำอัตโนมัติ (DCM Dispenser Series)',
+      imageHint: 'DCM Dispenser Nozzle & Water Supply Check',
+      stepsTh: [
+        '1. ตรวจสอบแรงดันน้ำประปาเข้าเครื่องและวาล์วเปิดน้ำด้านหลังเครื่อง',
+        '2. ถอดหัวจ่ายน้ำแข็งและหัวจ่ายน้ำ (Dispensing Nozzle) ล้างทำความสะอาดคราบตะกรัน',
+        '3. ล้างแผ่นกรองฝุ่นด้านข้าง/ด้านหลังเพื่อป้องกันคอมเพรสเซอร์ตัดจากความร้อนสูง',
+        '4. ปิด-เปิดสวิตช์หลัก 1 นาที (ห้ามเปิดฝาครอบด้านบนโดยเด็ดขาด)'
+      ],
+      stepsJp: [
+        '1. 背面の給水バルブと水圧を確認してください。',
+        '2. 氷・水注出ノズルを取り外して洗浄してください。',
+        '3. エアフィルターを清掃し、放熱を確保してください。',
+        '4. 主電源を1分間オフにして再起動してください。'
+      ]
+    },
+    'JWE': {
+      label: 'เครื่องล้างจานอัตโนมัติ (JWE / HW Dishwasher Series)',
+      imageHint: 'JWE Strainer, Wash Arms & Chemical Tank Check',
+      stepsTh: [
+        '1. ยกตะแกรงกรองเศษอาหาร (Strainer) ภายในถังล้างออกมาเทเศษอาหารและล้างให้สะอาด',
+        '2. ตรวจเช็กหัวฉีดน้ำบน-ล่าง (Wash/Rinse Arms) ว่าหมุนคล่องและไม่มีเศษอาหารอุดตันรูฉีด',
+        '3. ตรวจสอบระดับน้ำยาล้างจาน (Detergent) และน้ำยาช่วยแห้ง (Rinse Aid) ในถังด้านข้าง',
+        '4. ตรวจสอบวาล์วน้ำเข้าและปิดฝาเครื่องให้สนิทก่อนกดเริ่มรอบล้างใหม่'
+      ],
+      stepsJp: [
+        '1. 洗浄槽内の残菜フィルター(ストレーナー)を取り出して清掃してください。',
+        '2. 上下洗浄ノズルがスムーズに回転し、ノズル穴に詰まりがないか確認してください。',
+        '3. 洗剤およびリンス剤の残量を確認してください。',
+        '4. 給水バルブを開き、ドアを確実に閉めて再運転してください。'
+      ]
+    },
+    'HR_HF': {
+      label: 'ตู้แช่เย็น / ตู้แช่แข็งสเตนเลส (HR / HF / RT Series)',
+      imageHint: 'HR/HF Door Gasket & Condenser Filter Check',
+      stepsTh: [
+        '1. ตรวจสอบยางขอบประตู (Door Gasket) ว่าปิดสนิทตลอดแนวและไม่มีสิ่งของค้างขอบประตู',
+        '2. จัดเรียงสินค้าภายในตู้ไม่ให้บังช่องลมเย็นหมุนเวียน (Air Curtain / Fan Guard)',
+        '3. ดึงแผ่นกรองฝุ่นด้านบน/ด้านล่างออกมาล้างทำความสะอาดฝุ่นและคราบน้ำมันในครัว',
+        '4. ตรวจสอบค่าอุณหภูมิที่ตั้งไว้บนหน้าจอดิจิทัล (ตู้เย็น +1°C ถึง +6°C / ตู้แช่แข็ง -18°C ถึง -22°C)'
+      ],
+      stepsJp: [
+        '1. ドアパッキンが全周しっかり閉まっているか確認してください。',
+        '2. 庫内の食材が冷気吹出口を塞いでいないか確認してください。',
+        '3. 凝縮器エアフィルターの油汚れ・ホコリを清掃してください。',
+        '4. デジタル表示の設定温度(冷蔵+1〜+6℃ / 冷凍-18〜-22℃)を確認してください。'
+      ]
+    }
+  };
+
+  function seedBlock68Defaults_() {
+    if (!localStorage.getItem(UNIT_OWNERSHIP_KEY)) {
+      localStorage.setItem(UNIT_OWNERSHIP_KEY, JSON.stringify([
+        {
+          unitId: 'UNIT-SSR-001',
+          chainGroup: 'SUSHIRO (THAILAND) — Chain Account',
+          branchName: 'Sushiro สาขาเซ็นทรัลเวิลด์ (CentralWorld)',
+          serial: 'W90112D',
+          model: 'JWE-680 (เครื่องล้างจาน)',
+          category: 'JWE',
+          dealerOwner: 'MARUZEN (THAILAND) CO., LTD.',
+          dealerCode: 'DLR-MRZ-JP',
+          dealerGrade: 'DEALER_A',
+          dealerLineGroup: 'C_MARUZEN_SERVICE_GRP',
+          dealerPhone: '02-111-2233',
+          warrantyStatus: 'IN_WARRANTY (ถึง 2027-08-15)'
+        },
+        {
+          unitId: 'UNIT-SSR-002',
+          chainGroup: 'SUSHIRO (THAILAND) — Chain Account',
+          branchName: 'Sushiro สาขาเซ็นทรัลเวิลด์ (CentralWorld)',
+          serial: 'D44810L',
+          model: 'DCM-120KE (เครื่องจ่ายน้ำและน้ำแข็ง)',
+          category: 'DCM',
+          dealerOwner: 'LUCKLAND (THAILAND) CO., LTD.',
+          dealerCode: 'DLR-LKL-JP',
+          dealerGrade: 'DEALER_A',
+          dealerLineGroup: 'C_LUCKLAND_SERVICE_GRP',
+          dealerPhone: '02-444-5566',
+          warrantyStatus: 'IN_WARRANTY (ถึง 2027-06-30)'
+        },
+        {
+          unitId: 'UNIT-SSR-003',
+          chainGroup: 'SUSHIRO (THAILAND) — Chain Account',
+          branchName: 'Sushiro สาขาเซ็นทรัลเวิลด์ (CentralWorld)',
+          serial: 'R77219H',
+          model: 'HR-126MA-S (ตู้แช่เย็นสเตนเลส)',
+          category: 'HR_HF',
+          dealerOwner: 'HOSHIZAKI Japanese Corporate Unit (Direct)',
+          dealerCode: 'HZK-JP-DIRECT',
+          dealerGrade: 'JAPANESE_CORPORATE',
+          dealerLineGroup: 'C_HZK_JP_CORP_GRP',
+          dealerPhone: '02-005-9980',
+          warrantyStatus: 'PM_CONTRACT_ACTIVE'
+        }
+      ]));
+    }
+
+    if (!localStorage.getItem(B2B_10STEP_CASES_KEY)) {
+      localStorage.setItem(B2B_10STEP_CASES_KEY, JSON.stringify([
+        {
+          caseId: 'B2B-CASE-2026-01',
+          createdAt: '2026-11-19 09:15',
+          chainGroup: 'SUSHIRO (THAILAND)',
+          branchName: 'Sushiro สาขาเซ็นทรัลเวิลด์',
+          serial: 'W90112D',
+          model: 'JWE-680',
+          dealerOwner: 'MARUZEN (THAILAND) CO., LTD.',
+          dealerGrade: 'DEALER_A',
+          symptom: 'เครื่องล้างจานขึ้นเตือนน้ำไม่เข้า (ลองเช็กวาล์วตามการ์ด LINE OA แล้วยังไม่หาย)',
+          currentStep: 6,
+          stepLabel: 'ขั้นที่ 6: ส่งใบเสนอราคาซ่อมเพิ่มเติม (QT #2) + ระยะเวลารออะไหล่ให้ Maruzen แล้ว (รอ Confirm PO #2)',
+          inspectionQtNo: 'QT-INSP-2026-101',
+          confirmPo1: 'PO-MRZ-8841 (เข้าตรวจเช็กแล้ว)',
+          detectedParts: '461494-01 Water Valve + 765080190 Wash Pump',
+          partsAvailability: 'WAITING_GIT_14D',
+          partsEtaText: 'ต้องรออะไหล่นำเข้าจากโรงงาน ~14 วัน (เรือเข้าคลัง HHE วันที่ 03/12/2026)',
+          repairQt2No: 'QT-REP-2026-205',
+          repairQt2DealerNet: 14800,
+          confirmPo2: '',
+          assignedTech: 'Mr.Surin S. (T01)',
+          reDispatchDate: ''
+        },
+        {
+          caseId: 'B2B-CASE-2026-02',
+          createdAt: '2026-11-18 14:20',
+          chainGroup: 'SUSHIRO (THAILAND)',
+          branchName: 'Sushiro สาขาเซ็นทรัลเวิลด์',
+          serial: 'D44810L',
+          model: 'DCM-120KE',
+          dealerOwner: 'LUCKLAND (THAILAND) CO., LTD.',
+          dealerGrade: 'DEALER_A',
+          symptom: 'เครื่องจ่ายน้ำแข็งกดไม่ออกหลังช่วงพีค',
+          currentStep: 9,
+          stepLabel: 'ขั้นที่ 9: ได้รับ Confirm PO #2 + อะไหล่ถึงมือช่าง T02 เรียบร้อย (พร้อมนัดคิวเข้าซ่อมรอบที่ 2)',
+          inspectionQtNo: 'QT-INSP-2026-098',
+          confirmPo1: 'PO-LKL-3310',
+          detectedParts: 'P03755-01 Actuator Motor (มีสต็อกพร้อมเบิก)',
+          partsAvailability: 'ARRIVED_AT_TECH_VAN',
+          partsEtaText: 'อะไหล่เบิกถึงมือช่าง Mr.Jeerapan (T02) เรียบร้อยแล้ว',
+          repairQt2No: 'QT-REP-2026-199',
+          repairQt2DealerNet: 4600,
+          confirmPo2: 'PO-LKL-3349 (Confirmed)',
+          assignedTech: 'Mr.Jeerapan (T02)',
+          reDispatchDate: '2026-11-20 10:00'
+        }
+      ]));
+    }
+  }
+
+  function syncBlock68Cloud_(actionType, payload) {
+    try {
+      const gasUrl = localStorage.getItem('hoshizaki_gas_url') || localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+      if (gasUrl && gasUrl.startsWith('http')) {
+        fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.assign({ actionType: actionType }, payload))
+        }).catch(function() {});
+      }
+    } catch (e) {}
+  }
+
+  // Generate 1024x576 Auto-Diagram / Ad Visual Canvas DataURL for any Card Category
+  function renderAiVisualCardBannerDataUrl_(cardType, productCode, title, subtitle, bgHex) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 576;
+    const ctx = canvas.getContext('2d');
+
+    const grad = ctx.createLinearGradient(0, 0, 1024, 576);
+    grad.addColorStop(0, bgHex || '#002B49');
+    grad.addColorStop(1, '#00A3E0');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1024, 576);
+
+    // Decorative grid & technical badge
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 2;
+    for (let x = 40; x < 1024; x += 64) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 576); ctx.stroke();
+    }
+
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillRect(48, 44, 420, 44);
+    ctx.fillStyle = '#FDE047';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillText('HOSHIZAKI AI STUDIO · ' + cardType, 66, 73);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 42px sans-serif';
+    ctx.fillText(String(title || 'HOSHIZAKI Smart Card').slice(0, 34), 48, 165);
+
+    ctx.fillStyle = '#E0F2FE';
+    ctx.font = '26px sans-serif';
+    ctx.fillText(String(subtitle || '').slice(0, 56), 48, 220);
+
+    // Visual Checklist / Highlight Box
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+    ctx.fillRect(48, 265, 928, 240);
+    ctx.strokeStyle = '#38BDF8';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(48, 265, 928, 240);
+
+    ctx.fillStyle = '#34D399';
+    ctx.font = 'bold 26px sans-serif';
+    ctx.fillText('● กลุ่มผลิตภัณฑ์: ' + (PRODUCT_SELF_CHECK_KB[productCode]?.label || productCode), 78, 320);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '24px sans-serif';
+    ctx.fillText('● รองรับ 3 ภาษา (ไทย / English / 日本語) + ลิงก์ประสานงาน B2B อัตโนมัติ', 78, 375);
+    ctx.fillStyle = '#FDE68A';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillText('● Hoshizaki (Thailand) Ltd. · Service · Sales · Marketing Unified AI', 78, 435);
+
+    return canvas.toDataURL('image/png');
+  }
+
+  window.generateUnifiedAiCardNow = function() {
+    const cardCat = document.getElementById('uaiCardCategory')?.value || 'SERVICE_SELF_CHECK';
+    const prodCode = document.getElementById('uaiProductSeries')?.value || 'IM';
+    const customTopic = String(document.getElementById('uaiCustomTopic')?.value || '').trim();
+    const kb = PRODUCT_SELF_CHECK_KB[prodCode] || PRODUCT_SELF_CHECK_KB['IM'];
+
+    let headerBadge = 'HOSHIZAKI FIRST-AID & SELF-CHECK';
+    let title = customTopic || ('วิธีตรวจเช็กเบื้องต้นด้วยตนเอง: ' + kb.label);
+    let bodyTh = kb.stepsTh.join('
+');
+    let bodyJp = kb.stepsJp.join('
+');
+    let bgHex = '#002B49';
+    let cta1 = '✅ ทำตามแล้ว เครื่องทำงานปกติ';
+    let cta2 = '🚨 ยังไม่หาย / ส่งต่อดีลเลอร์หรือช่าง';
+
+    if (cardCat === 'OPERATIONAL_DISPLAY') {
+      headerBadge = 'HOSHIZAKI OPERATIONAL & PM NOTICE';
+      title = customTopic || ('แจ้งเตือนรอบบำรุงรักษา PM & เปลี่ยนไส้กรอง 4HC-H (' + prodCode + ')');
+      bodyTh = '• ถึงกำหนดตรวจเช็กสภาพเครื่องทำน้ำแข็งและเปลี่ยนไส้กรองน้ำแท้ 4HC-H (รอบ 6/12 เดือน)
+• รองรับการเข้าบริการรวมทั้งสาขาในวันเดียว (Consolidated Store Visit)';
+      bodyJp = '• 定期保守点検(PM)および純正浄水フィルター(4HC-H)交換時期のお知らせです。
+• 店舗内全機器の一括点検に対応いたします。';
+      bgHex = '#0369A1';
+      cta1 = '📅 ยืนยันวันนัดเข้าบริการ PM';
+      cta2 = '📄 ดูใบรับรอง PM ล่าสุด';
+    } else if (cardCat === 'B2B_SALES_PROMO') {
+      headerBadge = 'HOSHIZAKI B2B & DEALER CO-BRAND PROMO';
+      title = customTopic || ('แพ็กเกจพิเศษสำหรับคู่ค้าดีลเลอร์ & เชนร้านอาหาร (' + prodCode + ')');
+      bodyTh = '• โปรโมชันสั่งซื้อไส้กรองน้ำแท้ 4HC-H ยกลัง & สัญญาบำรุงรักษารายปีสำหรับเชนร้านอาหาร
+• ตัวแทนจำหน่ายสามารถแก้ไขหัวกระดาษและราคาเสนอต่อให้ลูกค้าได้ทันที';
+      bodyJp = '• 代理店様・チェーン店様向け 4HC-Hフィルターおよび年間保守契約特別プランのご案内。';
+      bgHex = '#B45309';
+      cta1 = '💼 ขอใบเสนอราคาเรตดีลเลอร์ (QT)';
+      cta2 = '📲 ส่งต่อโปรโมชันให้ลูกค้า';
+    } else if (cardCat === 'SOCIAL_ADS') {
+      headerBadge = 'HOSHIZAKI OMNI-SOCIAL AD (TIKTOK / FB / YT)';
+      title = customTopic || ('ทำไมร้านอาหารญี่ปุ่นชั้นนำเลือกใช้ Hoshizaki ' + prodCode + ' Series?');
+      bodyTh = '🎬 Hook (0-3 วิ): "น้ำแข็งใสสะอาด ละลายช้า ประหยัดไฟ 24 ชม. มาตรฐานญี่ปุ่นแท้!"
+📌 จุดขาย: ระบบผลิตน้ำแข็งเซลล์ปิดถูกสุขอนามัย + มีทีมช่างและอะไหล่แท้ดูแลทั่วประเทศ
+🔗 UTM: ?utm_source=social_ai&utm_campaign=' + prodCode.toLowerCase();
+      bodyJp = '🎬 日本品質の製氷機・業務用冷蔵庫 HOSHIZAKI。省エネ設計と全国アフターサービス網で店舗運営を強力にサポート！';
+      bgHex = '#86198F';
+      cta1 = '💬 ทัก LINE OA ขอใบเสนอราคา';
+      cta2 = '🧮 คำนวณจุดคุ้มทุน ROI';
+    }
+
+    const imgDataUrl = renderAiVisualCardBannerDataUrl_(cardCat, prodCode, title, kb.label, bgHex);
+    document.getElementById('uaiEditTitle').value = title;
+    document.getElementById('uaiEditBodyTh').value = bodyTh;
+    document.getElementById('uaiEditBodyJp').value = bodyJp;
+    document.getElementById('uaiEditCta1').value = cta1;
+    document.getElementById('uaiEditCta2').value = cta2;
+    window._uaiCurrentPreviewImg = imgDataUrl;
+    window._uaiCurrentBgHex = bgHex;
+    window._uaiCurrentBadge = headerBadge;
+    window.refreshUnifiedAiCardPreview();
+
+    if (typeof showToast === 'function') showToast('✨ AI สร้างการ์ดและภาพประกอบ 1024px เรียบร้อย สามารถแก้ไขข้อความด้านล่างได้ทันที!');
+  };
+
+  window.refreshUnifiedAiCardPreview = function() {
+    const prev = document.getElementById('uaiLivePreviewContainer');
+    if (!prev) return;
+    const title = document.getElementById('uaiEditTitle')?.value || '';
+    const bodyTh = document.getElementById('uaiEditBodyTh')?.value || '';
+    const bodyJp = document.getElementById('uaiEditBodyJp')?.value || '';
+    const cta1 = document.getElementById('uaiEditCta1')?.value || '';
+    const cta2 = document.getElementById('uaiEditCta2')?.value || '';
+    const bgHex = window._uaiCurrentBgHex || '#002B49';
+    const badge = window._uaiCurrentBadge || 'HOSHIZAKI AI CARD';
+    const imgUrl = window._uaiCurrentPreviewImg || '';
+
+    prev.innerHTML = `
+      <div class="bg-[#8CABD9] p-3 rounded-2xl shadow-inner">
+        <div class="text-[10px] text-white font-extrabold mb-1.5 flex justify-between">
+          <span><i class="fa-brands fa-line mr-1"></i> Live Preview (LINE Flex / Social Card)</span>
+          <span>TH + 日本語 Bilingual</span>
+        </div>
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg max-w-[340px] mx-auto border border-slate-200">
+          <div style="background:${bgHex}" class="p-3 text-white">
+            <div class="text-[9.5px] font-extrabold text-amber-300">${badge}</div>
+            <div class="text-sm font-black leading-snug mt-0.5">${title}</div>
+          </div>
+          ${imgUrl ? `<img src="${imgUrl}" class="w-full aspect-video object-cover border-b" alt="AI Visual">` : ''}
+          <div class="p-3 space-y-2 text-xs">
+            <div class="text-slate-800 whitespace-pre-line leading-relaxed font-medium">${bodyTh}</div>
+            ${bodyJp ? `<div class="border-t pt-1.5 text-[11px] text-sky-900 whitespace-pre-line leading-relaxed">${bodyJp}</div>` : ''}
+          </div>
+          <div class="px-3 pb-3 space-y-1.5">
+            ${cta1 ? `<div class="bg-emerald-600 text-white text-center font-bold py-2 px-2 rounded-lg text-xs">${cta1}</div>` : ''}
+            ${cta2 ? `<div class="bg-[#002B49] text-white text-center font-bold py-2 px-2 rounded-lg text-xs">${cta2}</div>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
+  window.saveAndPushUnifiedAiCardToFlexStudio = function() {
+    const title = document.getElementById('uaiEditTitle')?.value || 'HOSHIZAKI Card';
+    const bodyTh = document.getElementById('uaiEditBodyTh')?.value || '';
+    const bodyJp = document.getElementById('uaiEditBodyJp')?.value || '';
+    const cta1 = document.getElementById('uaiEditCta1')?.value || 'เปิดระบบบริการ';
+    const cta2 = document.getElementById('uaiEditCta2')?.value || 'ติดต่อศูนย์บริการ';
+    const cat = document.getElementById('uaiCardCategory')?.value || 'SERVICE_SELF_CHECK';
+
+    const lib = JSON.parse(localStorage.getItem(UNIFIED_CARDS_KEY) || '[]');
+    const item = {
+      id: 'UAI-' + Date.now().toString().slice(-6),
+      category: cat,
+      title: title,
+      bodyTh: bodyTh,
+      bodyJp: bodyJp,
+      cta1: cta1,
+      cta2: cta2,
+      updatedAt: new Date().toLocaleString('th-TH')
+    };
+    lib.unshift(item);
+    localStorage.setItem(UNIFIED_CARDS_KEY, JSON.stringify(lib));
+
+    // Also sync directly into LINE Flex Studio state so it can be broadcast immediately
+    if (window.HZK_FLEX_STUDIO_STATE) {
+      window.HZK_FLEX_STUDIO_STATE.name = '[AI] ' + title.slice(0, 40);
+      window.HZK_FLEX_STUDIO_STATE.headerBg = window._uaiCurrentBgHex || '#002B49';
+      window.HZK_FLEX_STUDIO_STATE.headerBadge = window._uaiCurrentBadge || 'HOSHIZAKI AI STUDIO';
+      window.HZK_FLEX_STUDIO_STATE.headerTitle = title;
+      window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl = window._uaiCurrentPreviewImg || '';
+      window.HZK_FLEX_STUDIO_STATE.bodyRows = [
+        { label: 'คำแนะนำ / รายละเอียด (TH)', text: bodyTh, bold: false, color: '#0F172A' },
+        { label: '日本語案内 (JP)', text: bodyJp || '-', bold: false, color: '#0369A1' }
+      ];
+      window.HZK_FLEX_STUDIO_STATE.buttons = [
+        { label: cta1.slice(0, 38), uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#059669' },
+        { label: cta2.slice(0, 38), uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#002B49' }
+      ];
+    }
+
+    syncBlock68Cloud_('SAVE_UNIFIED_AI_CARD', { card: item });
+    if (typeof showToast === 'function') showToast('💾 บันทึกการ์ดลงคลังกลาง (Service · Sales · Marketing) และส่งเข้า LINE Flex Studio พร้อมบรอดแคสต์แล้ว!');
+  };
+
+  // --- Unit-Level Multi-Dealer Ownership & 10-Step B2B Inspection-to-Repair Actions ---
+  window.addUnitLevelDealerOwnership = function() {
+    const chainGroup = String(document.getElementById('uOwnChain')?.value || 'SUSHIRO (THAILAND)').trim();
+    const branchName = String(document.getElementById('uOwnBranch')?.value || '').trim();
+    const serial = String(document.getElementById('uOwnSerial')?.value || '').trim().toUpperCase();
+    const model = String(document.getElementById('uOwnModel')?.value || '').trim();
+    const dealerOwner = String(document.getElementById('uOwnDealer')?.value || '').trim();
+    if (!branchName || !serial || !dealerOwner) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาระบุชื่อสาขา, Serial No. และบริษัทตัวแทนจำหน่ายผู้ดูแลครับ');
+      return;
+    }
+    const list = JSON.parse(localStorage.getItem(UNIT_OWNERSHIP_KEY) || '[]');
+    const rec = {
+      unitId: 'UNIT-' + Date.now().toString().slice(-5),
+      chainGroup: chainGroup,
+      branchName: branchName,
+      serial: serial,
+      model: model || 'IM-240DNE-HC',
+      category: model.startsWith('JWE') ? 'JWE' : (model.startsWith('DCM') ? 'DCM' : 'IM'),
+      dealerOwner: dealerOwner,
+      dealerCode: 'DLR-' + dealerOwner.slice(0, 3).toUpperCase(),
+      dealerGrade: 'DEALER_A',
+      dealerLineGroup: 'C_' + dealerOwner.replace(/\W+/g, '_').toUpperCase(),
+      dealerPhone: '02-005-9980',
+      warrantyStatus: 'ACTIVE'
+    };
+    list.unshift(rec);
+    localStorage.setItem(UNIT_OWNERSHIP_KEY, JSON.stringify(list));
+    syncBlock68Cloud_('UPSERT_UNIT_DEALER_OWNERSHIP', { unit: rec });
+    if (typeof showToast === 'function') showToast('✅ ผูกสิทธิ์เจ้าของ S/N: ' + serial + ' → ' + dealerOwner + ' ในสาขา ' + branchName + ' เรียบร้อย');
+    renderUnifiedAiStudioTab_('MULTI_DEALER_BRANCH');
+  };
+
+  window.advanceB2b10StepCase = function(caseId, actionCode) {
+    const cases = JSON.parse(localStorage.getItem(B2B_10STEP_CASES_KEY) || '[]');
+    const c = cases.find(function(x) { return x.caseId === caseId; });
+    if (!c) return;
+
+    if (actionCode === 'CONFIRM_PO_2') {
+      const poNo = prompt('ระบุเลขที่ Confirm PO #2 จากดีลเลอร์ (' + c.dealerOwner + '):', 'PO-DLR-2026-' + Math.floor(1000 + Math.random() * 8999));
+      if (!poNo) return;
+      c.confirmPo2 = poNo.trim();
+      c.currentStep = 8;
+      c.stepLabel = 'ขั้นที่ 8: ได้รับ ' + c.confirmPo2 + ' แล้ว — จองอะไหล่ใน IMS & ติดตามกำหนดเข้าคลัง (GIT)';
+    } else if (actionCode === 'PARTS_ARRIVED_TECH') {
+      c.partsAvailability = 'ARRIVED_AT_TECH_VAN';
+      c.partsEtaText = 'อะไหล่เบิกถึงมือช่าง ' + c.assignedTech + ' เรียบร้อยแล้ว (แจ้ง Group LINE ดีลเลอร์แล้ว)';
+      c.currentStep = 9;
+      c.stepLabel = 'ขั้นที่ 9: อะไหล่ถึงมือช่างแล้ว — แจ้งดีลเลอร์เพื่อนัดคิวเข้าซ่อมรอบที่ 2';
+    } else if (actionCode === 'SCHEDULE_FINAL_REPAIR') {
+      const dt = prompt('ระบุวัน-เวลานัดคิวช่างเข้าเปลี่ยนอะไหล่รอบที่ 2:', '2026-11-21 10:00');
+      if (!dt) return;
+      c.reDispatchDate = dt.trim();
+      c.currentStep = 10;
+      c.stepLabel = 'ขั้นที่ 10: นัดคิวช่างเข้าซ่อมรอบที่ 2 (' + c.reDispatchDate + ') & เตรียมออกใบแจ้งหนี้เก็บดีลเลอร์';
+    } else if (actionCode === 'OPEN_DEALER_QT') {
+      const storeEl = document.getElementById('storeName') || document.getElementById('customerStore');
+      const snEl = document.getElementById('serialNumber');
+      const modEl = document.getElementById('machineModel');
+      if (storeEl) storeEl.value = c.dealerOwner + ' [หน้างาน: ' + c.branchName + ']';
+      if (snEl) snEl.value = c.serial;
+      if (modEl) modEl.value = c.model;
+      document.getElementById('hzkUnifiedAiStudioModal')?.classList.add('hidden');
+      if (typeof generateReceiptModal === 'function') generateReceiptModal(false);
+      if (typeof showToast === 'function') showToast('📄 เปิดหน้าทำใบเสนอราคาเรตดีลเลอร์สำหรับ ' + c.dealerOwner + ' (' + c.partsEtaText + ')');
+      return;
+    }
+
+    localStorage.setItem(B2B_10STEP_CASES_KEY, JSON.stringify(cases));
+    syncBlock68Cloud_('UPDATE_B2B_10STEP_CASE', { serviceCase: c });
+    if (typeof showToast === 'function') showToast('🔄 อัปเดตสถานะ ' + c.caseId + ' → ' + c.stepLabel);
+    renderUnifiedAiStudioTab_('B2B_10STEP_LOOP');
+  };
+
+  window.openUnifiedAiContentAndCardStudio = function(initialTab) {
+    seedBlock68Defaults_();
+    let modal = document.getElementById('hzkUnifiedAiStudioModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkUnifiedAiStudioModal';
+      modal.className = 'fixed inset-0 z-[9998] hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-6xl max-h-[94vh] rounded-2xl shadow-2xl border-2 border-[#002B49] flex flex-col overflow-hidden">
+          <div class="bg-gradient-to-r from-[#002B49] via-fuchsia-900 to-amber-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div>
+              <h2 class="text-base sm:text-lg font-extrabold"><i class="fa-solid fa-wand-magic-sparkles text-amber-300 mr-1.5"></i>Unified AI Content &amp; Card Studio · Multi-Dealer &amp; 10-Step B2B Loop (v1052)</h2>
+              <p class="text-[11px] text-sky-100">ใช้งานร่วมกัน 3 แผนก (Service · Sales · Marketing) | แยกเจ้าของ S/N รายเครื่องในสาขาเดียว (Sushiro · Maruzen / Luckland) | 10-Step B2B QT &amp; Parts ETA Loop</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkUnifiedAiStudioModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold">&times;</button>
+          </div>
+          <div class="bg-slate-100 border-b px-3 pt-2 flex items-center gap-1.5 overflow-x-auto shrink-0 text-xs font-bold">
+            <button type="button" id="uaiTab_SERVICE_SELF_CHECK" onclick="renderUnifiedAiStudioTab_('SERVICE_SELF_CHECK')" class="uai-tab px-3 py-2 rounded-t-lg whitespace-nowrap">1. Unified AI เจนการ์ด (ซ่อมเบื้องต้น · แสดงผล · โปร B2B · แอดโฆษณา)</button>
+            <button type="button" id="uaiTab_MULTI_DEALER_BRANCH" onclick="renderUnifiedAiStudioTab_('MULTI_DEALER_BRANCH')" class="uai-tab px-3 py-2 rounded-t-lg whitespace-nowrap">2. แยกดีลเลอร์ราย S/N ในสาขาเดียว (เช่น Sushiro: Maruzen / Luckland)</button>
+            <button type="button" id="uaiTab_B2B_10STEP_LOOP" onclick="renderUnifiedAiStudioTab_('B2B_10STEP_LOOP')" class="uai-tab px-3 py-2 rounded-t-lg whitespace-nowrap">3. ติดตาม 10 ขั้นตอน: ตรวจเช็ก → QT เพิ่ม → รออะไหล่ → Confirm PO → นัดซ่อม</button>
+          </div>
+          <div id="hzkUnifiedAiStudioBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-4 text-xs"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    window.renderUnifiedAiStudioTab_(initialTab || 'SERVICE_SELF_CHECK');
+  };
+
+  window.renderUnifiedAiStudioTab_ = function(tab) {
+    document.querySelectorAll('.uai-tab').forEach(function(b) {
+      const act = b.id === ('uaiTab_' + tab);
+      b.className = act
+        ? 'uai-tab px-3 py-2 rounded-t-lg bg-white text-[#002B49] border-b-2 border-[#002B49] whitespace-nowrap font-extrabold'
+        : 'uai-tab px-3 py-2 rounded-t-lg text-slate-600 hover:text-slate-900 whitespace-nowrap font-bold';
+    });
+
+    const body = document.getElementById('hzkUnifiedAiStudioBody');
+    if (!body) return;
+
+    if (tab === 'SERVICE_SELF_CHECK') {
+      body.innerHTML = `
+        <div class="bg-white p-4 rounded-xl border border-fuchsia-200 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-solid fa-robot text-fuchsia-600 mr-1"></i>เลือกประเภทการ์ด &amp; กลุ่มผลิตภัณฑ์ เพื่อให้ AI สร้างการ์ด + ภาพประกอบ 1024px อัตโนมัติ (แก้ไขเองได้)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <select id="uaiCardCategory" class="border rounded-lg px-2.5 py-2 bg-fuchsia-50 font-extrabold text-[#002B49]">
+              <option value="SERVICE_SELF_CHECK">1. การ์ดแนะนำวิธีตรวจเช็ก/ซ่อมเบื้องต้น (Service LINE OA)</option>
+              <option value="OPERATIONAL_DISPLAY">2. การ์ดแสดงผลทั่วไป / แจ้งรอบ PM &amp; ไส้กรอง 4HC-H</option>
+              <option value="B2B_SALES_PROMO">3. การ์ดโปรโมชัน B2B &amp; Co-Brand ดีลเลอร์ (Sales)</option>
+              <option value="SOCIAL_ADS">4. แอดโฆษณา TikTok / Facebook / YouTube Shorts (Marketing)</option>
+            </select>
+            <select id="uaiProductSeries" class="border rounded-lg px-2.5 py-2 bg-white font-bold">
+              <option value="IM">IM Series (เครื่องทำน้ำแข็งก้อนสี่เหลี่ยม)</option>
+              <option value="KM">KM Series (เครื่องทำน้ำแข็งเสี้ยวพระจันทร์)</option>
+              <option value="DCM">DCM Series (เครื่องจ่ายน้ำและน้ำแข็ง)</option>
+              <option value="JWE">JWE / HW Series (เครื่องล้างจานอัตโนมัติ)</option>
+              <option value="HR_HF">HR / HF / RT Series (ตู้แช่เย็น/ตู้แช่แข็ง)</option>
+            </select>
+            <input id="uaiCustomTopic" placeholder="หัวข้อเฉพาะ (เช่น แก้อาการ E1 / โปรเปลี่ยนไส้กรอง 4HC-H)..." class="border rounded-lg px-2.5 py-2">
+            <button type="button" onclick="generateUnifiedAiCardNow()" class="bg-gradient-to-r from-fuchsia-700 via-[#002B49] to-cyan-700 text-white font-extrabold rounded-lg py-2 px-3 shadow-sm">
+              ✨ Auto-Create การ์ด &amp; ภาพ
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+          <div class="lg:col-span-7 bg-white p-4 rounded-xl border border-slate-200 space-y-2.5">
+            <div class="font-extrabold text-sm text-[#002B49]">แก้ไขปรับปรุงข้อความ &amp; ปุ่มกดด้วยตนเอง (Human-in-the-Loop Editor)</div>
+            <div>
+              <label class="font-bold text-slate-700">หัวข้อการ์ด (Header Title):</label>
+              <input id="uaiEditTitle" oninput="refreshUnifiedAiCardPreview()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700">ข้อความหลัก / ขั้นตอนตรวจเช็ก (ภาษาไทย):</label>
+              <textarea id="uaiEditBodyTh" rows="4" oninput="refreshUnifiedAiCardPreview()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5"></textarea>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700">ข้อความกำกับภาษาญี่ปุ่น (日本語 — สำหรับร้านอาหารญี่ปุ่น):</label>
+              <textarea id="uaiEditBodyJp" rows="3" oninput="refreshUnifiedAiCardPreview()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5"></textarea>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label class="font-bold text-slate-700">ปุ่มกดที่ 1 (CTA 1):</label>
+                <input id="uaiEditCta1" oninput="refreshUnifiedAiCardPreview()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold text-emerald-800">
+              </div>
+              <div>
+                <label class="font-bold text-slate-700">ปุ่มกดที่ 2 (CTA 2):</label>
+                <input id="uaiEditCta2" oninput="refreshUnifiedAiCardPreview()" class="w-full mt-1 border rounded-lg px-2.5 py-1.5 font-bold text-[#002B49]">
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 pt-2">
+              <button type="button" onclick="saveAndPushUnifiedAiCardToFlexStudio()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl shadow-xs">
+                <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกเข้าคลังกลาง &amp; ส่งเข้า LINE Flex Studio
+              </button>
+              <button type="button" onclick="document.getElementById('hzkUnifiedAiStudioModal').classList.add('hidden'); openDualLineCommandCenterModal(); setTimeout(function(){ if(typeof switchDualLineCenterTab==='function') switchDualLineCenterTab('FLEXSTUDIO'); }, 150);" class="bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold px-4 py-2 rounded-xl shadow-xs">
+                <i class="fa-brands fa-line mr-1"></i> เปิดหน้าส่งบรอดแคสต์ LINE ทันที
+              </button>
+            </div>
+          </div>
+          <div class="lg:col-span-5" id="uaiLivePreviewContainer"></div>
+        </div>
+      `;
+      setTimeout(window.generateUnifiedAiCardNow, 30);
+    } else if (tab === 'MULTI_DEALER_BRANCH') {
+      const units = JSON.parse(localStorage.getItem(UNIT_OWNERSHIP_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-amber-50 border border-amber-300 rounded-xl p-3.5 text-amber-950 space-y-1">
+          <div class="font-extrabold text-sm"><i class="fa-solid fa-sitemap text-amber-700 mr-1"></i>โครงสร้าง Unit-Level Multi-Dealer Ownership (1 สาขา → หลายเครื่อง → แยกผู้รับผิดชอบระดับ Serial No.)</div>
+          <p class="text-[11px]">ตัวอย่าง: <b>Sushiro สาขาเซ็นทรัลเวิลด์</b> มีเครื่องล้างจาน <code>JWE-680</code> ที่ซื้อผ่าน <b>Maruzen</b> และเครื่องจ่ายน้ำ <code>DCM-120KE</code> ที่ซื้อผ่าน <b>Luckland</b> เมื่อลูกค้าทักแจ้งเข้า LINE OA ระบบจะตรวจเลข <b>S/N</b> ของเครื่องนั้นๆ และแยกส่งต่อให้ดีลเลอร์เจ้าของเครื่องอย่างถูกต้อง</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2.5">
+          <div class="font-extrabold text-sm text-[#002B49]">ลงทะเบียน / ผูกสิทธิ์ดีลเลอร์ผู้ดูแลรายเครื่อง (Serial No. Ownership)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <input id="uOwnChain" value="SUSHIRO (THAILAND)" placeholder="กลุ่มเชน / บริษัทแม่" class="border rounded-lg px-2.5 py-1.5 font-bold">
+            <input id="uOwnBranch" placeholder="ชื่อสาขา (เช่น สาขาอโศก) *" class="border rounded-lg px-2.5 py-1.5">
+            <input id="uOwnSerial" placeholder="Serial No. เครื่อง *" class="border rounded-lg px-2.5 py-1.5 font-mono font-bold">
+            <input id="uOwnModel" placeholder="รุ่นเครื่อง (JWE-680 / DCM-120KE)" class="border rounded-lg px-2.5 py-1.5">
+            <div class="flex gap-1">
+              <select id="uOwnDealer" class="flex-1 border rounded-lg px-2 py-1.5 bg-white font-bold">
+                <option value="MARUZEN (THAILAND) CO., LTD.">Maruzen (TH)</option>
+                <option value="LUCKLAND (THAILAND) CO., LTD.">Luckland (TH)</option>
+                <option value="S.T.KITCHEN CO., LTD.">S.T.Kitchen</option>
+                <option value="HOSHIZAKI Japanese Corporate Unit (Direct)">HZK JP Direct</option>
+              </select>
+              <button type="button" onclick="addUnitLevelDealerOwnership()" class="bg-[#002B49] text-white font-extrabold px-3 rounded-lg">+ ผูก S/N</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead><tr class="bg-[#002B49] text-white"><th class="p-2">เชนร้านอาหาร / สาขา</th><th class="p-2">Serial No.</th><th class="p-2">รุ่นเครื่อง</th><th class="p-2">ตัวแทนจำหน่ายผู้ดูแลเครื่องนี้</th><th class="p-2">Group LINE ดีลเลอร์</th><th class="p-2">สถานะประกัน</th></tr></thead>
+            <tbody class="divide-y divide-slate-200">
+              ${units.map(function(u) {
+                return `<tr>
+                  <td class="p-2"><div class="font-bold text-[#002B49]">${u.branchName}</div><div class="text-[10px] text-slate-500">${u.chainGroup}</div></td>
+                  <td class="p-2 font-mono font-extrabold text-sky-800">${u.serial}</td>
+                  <td class="p-2 font-semibold">${u.model}</td>
+                  <td class="p-2 font-extrabold text-amber-800">${u.dealerOwner}</td>
+                  <td class="p-2 font-mono text-[10.5px]">${u.dealerLineGroup}</td>
+                  <td class="p-2 font-bold text-emerald-700">${u.warrantyStatus}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else {
+      const cases = JSON.parse(localStorage.getItem(B2B_10STEP_CASES_KEY) || '[]');
+      body.innerHTML = `
+        <div class="bg-sky-50 border border-sky-200 rounded-xl p-3.5 text-[#002B49] space-y-1">
+          <div class="font-extrabold text-sm"><i class="fa-solid fa-arrows-spin text-sky-600 mr-1"></i>วงจร 10 ขั้นตอน: LINE OA แนะนำเบื้องต้น → ตรวจ S/N ดีลเลอร์ → QT เข้าตรวจเช็ก → Confirm PO #1 → QT ซ่อมเพิ่ม + ระยะเวลารออะไหล่ → Confirm PO #2 → อะไหล่ถึงมือช่าง → นัดคิวซ่อมรอบ 2</div>
+          <p class="text-[11px] text-slate-700">ใบเสนอราคาทั้งหมดส่งตรงให้ <b>ตัวแทนจำหน่าย (Dealer)</b> เพื่อนำไปปรับแก้หัวกระดาษ/มาร์คอัพส่งให้ลูกค้าปลายทางโดยไม่ข้ามหน้าดีลเลอร์</p>
+        </div>
+
+        <div class="space-y-3">
+          ${cases.map(function(c) {
+            return `
+              <div class="bg-white p-4 rounded-xl border-2 border-slate-200 shadow-xs space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+                  <div>
+                    <span class="px-2.5 py-0.5 rounded-full bg-[#002B49] text-white font-extrabold text-[10.5px]">${c.caseId} · Step ${c.currentStep}/10</span>
+                    <span class="font-extrabold text-sm text-[#002B49] ml-1.5">${c.branchName} — ${c.model} (S/N: ${c.serial})</span>
+                  </div>
+                  <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 font-extrabold text-[11px]">เจ้าของบัญชี: ${c.dealerOwner}</span>
+                </div>
+                <div class="text-slate-700"><b>อาการแจ้งเข้า LINE OA:</b> ${c.symptom}</div>
+                <div class="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 font-bold text-emerald-950">${c.stepLabel}</div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] bg-slate-50 p-2.5 rounded-lg border">
+                  <div><b>รอบ 1 (เข้าตรวจเช็ก):</b> ${c.inspectionQtNo} · ${c.confirmPo1}</div>
+                  <div><b>อะไหล่ที่พบ &amp; ระยะเวลารอ:</b> ${c.detectedParts}<br><span class="text-rose-700 font-bold">${c.partsEtaText}</span></div>
+                  <div><b>รอบ 2 (QT ซ่อมเพิ่ม &amp; PO):</b> ${c.repairQt2No} (${Number(c.repairQt2DealerNet).toLocaleString()} ฿ Net Dealer)<br><b>Confirm PO #2:</b> ${c.confirmPo2 || 'รอดีลเลอร์ส่ง Confirm PO #2'}</div>
+                </div>
+                <div class="flex flex-wrap gap-2 pt-1">
+                  <button type="button" onclick="advanceB2b10StepCase('${c.caseId}', 'OPEN_DEALER_QT')" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-file-invoice-dollar mr-1"></i> ออก/แก้ไข QT ส่งดีลเลอร์ (ซ่อนราคาหน้างาน)
+                  </button>
+                  <button type="button" onclick="advanceB2b10StepCase('${c.caseId}', 'CONFIRM_PO_2')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-file-signature mr-1"></i> บันทึก Confirm PO #2 จากดีลเลอร์
+                  </button>
+                  <button type="button" onclick="advanceB2b10StepCase('${c.caseId}', 'PARTS_ARRIVED_TECH')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-box-open mr-1"></i> แจ้งอะไหล่ถึงมือช่างแล้ว (แจ้ง Group LINE ดีลเลอร์)
+                  </button>
+                  <button type="button" onclick="advanceB2b10StepCase('${c.caseId}', 'SCHEDULE_FINAL_REPAIR')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">
+                    <i class="fa-solid fa-calendar-check mr-1"></i> นัดคิวช่างเข้าซ่อมรอบที่ 2
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+  };
+
+  setTimeout(seedBlock68Defaults_, 1500);
 })();

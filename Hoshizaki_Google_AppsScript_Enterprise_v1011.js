@@ -9735,3 +9735,25 @@ function handleNextGenAndSaleMarketingPost_(data) {
   }
   return null;
 }
+
+
+// ============================================================================
+// SECTION 31: ENTERPRISE v1052-OMNI-ENTERPRISE — UNIFIED AI CARDS,
+//             UNIT-LEVEL MULTI-DEALER OWNERSHIP & 10-STEP B2B DEALER LOOP
+// ============================================================================
+function syncV1052UnifiedAiAndB2bLoop_(ss, actionType, payload) {
+  var sheetName = 'B2B_10Step_Service_Loop';
+  if (actionType === 'UPSERT_UNIT_DEALER_OWNERSHIP') sheetName = 'Unit_Dealer_Ownership';
+  if (actionType === 'SAVE_UNIFIED_AI_CARD') sheetName = 'Unified_AI_Cards_Library';
+
+  var sh = ss.getSheetByName(sheetName);
+  if (!sh) {
+    sh = ss.insertSheet(sheetName);
+    sh.appendRow(['Timestamp', 'ActionType', 'Record_ID', 'JSON_Payload']);
+    sh.getRange(1, 1, 1, 4).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+  }
+  var rec = payload.serviceCase || payload.unit || payload.card || payload;
+  var recId = rec.caseId || rec.unitId || rec.id || ('V1052-' + Date.now());
+  sh.appendRow([new Date(), actionType, recId, JSON.stringify(rec)]);
+  return { status: 'ok', sheet: sheetName, recordId: recId };
+}

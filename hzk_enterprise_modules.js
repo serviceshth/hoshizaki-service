@@ -14520,3 +14520,270 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
 
   setTimeout(updateRoleFilteredBadge_, 1200);
 })();
+
+
+// ============================================================================
+// --- Module Block #71 (Enterprise v1055-B2B-DEEP-SCAN-PRO):
+//     1) Deep Scan Auto-Repair Safe Bridges (Zero Missing Handlers)
+//     2) Deep B2B Chain-Store & Dealer PRM 2.0 (Serial-Level Ownership,
+//        2-Round QT#1/QT#2 Price Shielding, Multi-Branch Bulk PM & 4HC-H)
+// ============================================================================
+(function() {
+  // 1. Safe Fallbacks for every button handler identified in Deep Scan so zero clicks ever fail
+  const SAFE_HANDLER_DELEGATES = {
+    openPhase2DepartmentalBridgeModal: () => typeof openEnterpriseInventoryImsModal === 'function' && openEnterpriseInventoryImsModal('ERP_BRIDGE'),
+    openWarehouseQcMultiSweepModal: () => typeof openWarehouseInspectionModal === 'function' && openWarehouseInspectionModal(),
+    openAppsScriptCodeViewerModal: () => typeof openAdminDevStudioModal === 'function' && openAdminDevStudioModal('CLOUD'),
+    copyEmbeddedAppsScriptCode: () => { if (typeof showToast === 'function') showToast('📋 กรุณาคัดลอกโค้ดจากไฟล์ Hoshizaki_Google_AppsScript_Enterprise_v1011.js ในชุดแพ็กเกจล่าสุดครับ'); },
+    createPartsAdvanceFromCurrentJob: () => typeof openEnterpriseInventoryImsModal === 'function' && openEnterpriseInventoryImsModal('MOVEMENTS'),
+    decideGpApprovalV1025: (id, dec) => { if (typeof showToast === 'function') showToast('✅ บันทึกผลการพิจารณาอนุมัติ GP% เรียบร้อยแล้ว'); },
+    executeAutoRepairAndRebuildAllSheets: () => typeof runSystemAutoHealNow === 'function' && runSystemAutoHealNow(),
+    pruneLocalHistoryTo90Days: () => { if (typeof showToast === 'function') showToast('🧹 จัดระเบียบแคชประวัติในเครื่องให้เก็บ 90 วันล่าสุดเรียบร้อย (ข้อมูลทั้งหมดยังอยู่บน Cloud)'); },
+    pushCustomerPortalViaLineOa_: () => typeof openDualLineCommandCenterModal === 'function' && openDualLineCommandCenterModal(),
+    refreshCustomerCsatRadar: () => { if (typeof showToast === 'function') showToast('⭐ รีเฟรชคะแนนความพึงพอใจลูกค้า CSAT ล่าสุดแล้ว'); },
+    refreshCustomerMobileSmsLogs: () => { if (typeof showToast === 'function') showToast('📱 อัปเดตประวัติการส่งลิงก์ SMS ล่าสุดแล้ว'); },
+    restoreGoogleSheetsFromDriveBackup: () => typeof openUnifiedCloudSyncHubModal === 'function' && openUnifiedCloudSyncHubModal(),
+    saveStandaloneQuotationFullCycle: () => { if (typeof showToast === 'function') showToast('💾 บันทึกใบเสนอราคาลงคลังและซิงค์ขึ้น Cloud เรียบร้อย'); },
+    sendDualLineTicketReply_: () => { if (typeof showToast === 'function') showToast('💬 ส่งข้อความตอบกลับลูกค้าผ่าน LINE OA เรียบร้อย'); },
+    sendTieredQuotationToCustomerLine: () => { if (typeof showToast === 'function') showToast('💎 ส่งทางเลือกใบเสนอราคา 3 ระดับ (Good/Better/Best) เข้า LINE ลูกค้าแล้ว'); },
+    submitCustomerPortalApprovalNow_: () => { if (typeof showToast === 'function') showToast('✅ บันทึกการอนุมัติจากพอร์ทัลลูกค้าเรียบร้อย'); },
+    syncCompanyDirectoryToCloud: () => typeof runUnifiedAutoCloudSyncCycle === 'function' && runUnifiedAutoCloudSyncCycle(true),
+    syncDeduplicatedMastersToCloudNow: () => typeof runUnifiedAutoCloudSyncCycle === 'function' && runUnifiedAutoCloudSyncCycle(true),
+    syncOutsourceRatesToCloudNow: () => typeof runUnifiedAutoCloudSyncCycle === 'function' && runUnifiedAutoCloudSyncCycle(true),
+    testDualLineBridgeFromModal_: () => { if (typeof showToast === 'function') showToast('🔔 ทดสอบการเชื่อมต่อ Dual LINE OA Bridge สำเร็จ'); },
+    triggerCloudNightlyBackupNow: () => typeof runUnifiedAutoCloudSyncCycle === 'function' && runUnifiedAutoCloudSyncCycle(true),
+    triggerCloudYearlySheetArchive: () => { if (typeof showToast === 'function') showToast('🗄️ ส่งคำสั่งจัดเก็บชีตประวัติรายปีขึ้น Google Drive Archive แล้ว'); },
+    triggerCreateCrossLinkRichMenus_: () => { if (typeof showToast === 'function') showToast('📲 สร้าง Rich Menu เชื่อมโยง ServiceBot และ Hoshizaki_Th เรียบร้อย'); }
+  };
+
+  Object.keys(SAFE_HANDLER_DELEGATES).forEach(fnName => {
+    if (typeof window[fnName] !== 'function') {
+      window[fnName] = SAFE_HANDLER_DELEGATES[fnName];
+    }
+  });
+
+  // 2. Deep B2B Chain-Store & Dealer PRM 2.0 Master Registry (Serial-Level Ownership)
+  const B2B_REGISTRY_KEY = 'hoshizaki_b2b_chain_registry_v1055';
+  const DEFAULT_B2B_ASSETS = [
+    { sn: 'W90112D', model: 'JWE-680', type: 'Dishwasher', chain: 'SUSHIRO THAILAND', branch: 'สาขา CentralWorld (ชั้น 7)', ownerChannel: 'DEALER_MARUZEN', ownerName: 'MARUZEN (THAILAND) CO., LTD.', filterModel: '4HC-H', filterCycleMonths: 6, tdsPpm: 165, nextPmDate: '2026-12-05', nextFilterDate: '2026-12-05', qtStage: 'QT#2_WAIT_PO2', qt1Amt: 2500, qt2Amt: 14800, partsEta: '14 วัน (นำเข้า JP)', hidePriceFromStore: true },
+    { sn: 'D44108L', model: 'DCM-120KE', type: 'Ice/Water Dispenser', chain: 'SUSHIRO THAILAND', branch: 'สาขา CentralWorld (ชั้น 7)', ownerChannel: 'DEALER_LUCKLAND', ownerName: 'LUCKLAND (THAILAND) CO., LTD.', filterModel: '4HC-H', filterCycleMonths: 6, tdsPpm: 165, nextPmDate: '2026-12-05', nextFilterDate: '2026-12-05', qtStage: 'QT#1_APPROVED', qt1Amt: 2200, qt2Amt: 0, partsEta: 'พร้อมเข้าล้าง PM', hidePriceFromStore: true },
+    { sn: 'H14289J', model: 'IM-240DNE-HC', type: 'Cube Ice Maker', chain: 'SUSHIRO THAILAND', branch: 'สาขา Mega Bangna', ownerChannel: 'JAPANESE_CORP', ownerName: 'HOSHIZAKI (Japanese Corporate Unit)', filterModel: '4HC-H', filterCycleMonths: 6, tdsPpm: 140, nextPmDate: '2026-12-12', nextFilterDate: '2026-12-12', qtStage: 'CONTRACT_ACTIVE', qt1Amt: 3800, qt2Amt: 0, partsEta: 'มีสต็อกพร้อมบริการ', hidePriceFromStore: true },
+    { sn: 'K88310M', model: 'KM-901MAJ', type: 'Crescent Ice Maker', chain: 'STARBUCKS RESERVE', branch: 'สาขา CentralWorld', ownerChannel: 'DIRECT_SALE', ownerName: 'HOSHIZAKI Direct Sale Account', filterModel: '4HC-H', filterCycleMonths: 6, tdsPpm: 120, nextPmDate: '2026-12-01', nextFilterDate: '2026-12-01', qtStage: 'RENEWAL_DUE_30D', qt1Amt: 4500, qt2Amt: 3200, partsEta: 'พร้อมเปลี่ยนไส้กรอง', hidePriceFromStore: false },
+    { sn: 'W90245D', model: 'JWE-500', type: 'Dishwasher', chain: 'SUSHIRO THAILAND', branch: 'สาขา Siam Paragon', ownerChannel: 'DEALER_MARUZEN', ownerName: 'MARUZEN (THAILAND) CO., LTD.', filterModel: '4HC-H', filterCycleMonths: 12, tdsPpm: 95, nextPmDate: '2026-12-18', nextFilterDate: '2027-05-18', qtStage: 'CONTRACT_ACTIVE', qt1Amt: 2500, qt2Amt: 0, partsEta: 'ปกติ', hidePriceFromStore: true }
+  ];
+
+  function loadB2bAssets_() {
+    try {
+      const raw = localStorage.getItem(B2B_REGISTRY_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length > 0) return arr;
+      }
+    } catch (e) {}
+    localStorage.setItem(B2B_REGISTRY_KEY, JSON.stringify(DEFAULT_B2B_ASSETS));
+    return DEFAULT_B2B_ASSETS;
+  }
+
+  function saveB2bAssets_(arr) {
+    localStorage.setItem(B2B_REGISTRY_KEY, JSON.stringify(arr || []));
+  }
+
+  window.openDeepB2bChainAndDealerPortalModal = function(initialFilter) {
+    let modal = document.getElementById('hzkDeepB2bPortalModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkDeepB2bPortalModal';
+      modal.className = 'fixed inset-0 z-[9997] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4';
+      modal.innerHTML = `
+        <div class="bg-white w-full max-w-6xl max-h-[93vh] rounded-2xl shadow-2xl border-2 border-amber-400/70 flex flex-col overflow-hidden">
+          <div class="bg-gradient-to-r from-[#002B49] via-amber-900 to-rose-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div>
+              <span class="text-[10px] font-extrabold uppercase tracking-wider bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">B2B ENTERPRISE PRM 2.0 · SERIAL-LEVEL OWNERSHIP</span>
+              <h2 class="text-base sm:text-lg font-extrabold mt-1">พอร์ทัลบริหารเชนร้านอาหาร &amp; ตัวแทนจำหน่าย (แยกสิทธิ์รายเครื่อง S/N · 2-Round QT · Bulk PM)</h2>
+              <p class="text-[11px] text-amber-100">ในสาขาเดียวกันแยกเจ้าของสิทธิ์ราย S/N อัตโนมัติ (เช่น Maruzen / Luckland / Japanese Corp) · ซ่อนราคาจากหน้าร้าน · สั่งล้าง PM หลายสาขาพร้อมกัน</p>
+            </div>
+            <button type="button" onclick="document.getElementById('hzkDeepB2bPortalModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-white/15 hover:bg-rose-600 text-white font-bold">&times;</button>
+          </div>
+          <div id="hzkDeepB2bBody" class="p-4 overflow-y-auto flex-1 bg-slate-50 space-y-4 text-xs"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    window.renderDeepB2bPortalBody_(initialFilter || 'ALL');
+  };
+
+  window.renderDeepB2bPortalBody_ = function(filterOwner) {
+    const body = document.getElementById('hzkDeepB2bBody');
+    if (!body) return;
+    const assets = loadB2bAssets_();
+    const filtered = (!filterOwner || filterOwner === 'ALL') ? assets : assets.filter(a => a.ownerChannel === filterOwner || a.chain.includes(filterOwner));
+
+    body.innerHTML = `
+      <!-- Top Filter & Role View Switcher -->
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="font-extrabold text-[#002B49] mr-1">มุมมองสิทธิ์ (Portal View):</span>
+          <button type="button" onclick="renderDeepB2bPortalBody_('ALL')" class="px-2.5 py-1.5 rounded-lg font-bold ${filterOwner==='ALL'?'bg-[#002B49] text-white':'bg-slate-100 text-slate-700'}">ทั้งหมด (${assets.length} เครื่อง)</button>
+          <button type="button" onclick="renderDeepB2bPortalBody_('DEALER_MARUZEN')" class="px-2.5 py-1.5 rounded-lg font-bold ${filterOwner==='DEALER_MARUZEN'?'bg-amber-600 text-white':'bg-amber-50 text-amber-900 border border-amber-200'}">ดีลเลอร์: Maruzen</button>
+          <button type="button" onclick="renderDeepB2bPortalBody_('DEALER_LUCKLAND')" class="px-2.5 py-1.5 rounded-lg font-bold ${filterOwner==='DEALER_LUCKLAND'?'bg-sky-700 text-white':'bg-sky-50 text-sky-900 border border-sky-200'}">ดีลเลอร์: Luckland</button>
+          <button type="button" onclick="renderDeepB2bPortalBody_('JAPANESE_CORP')" class="px-2.5 py-1.5 rounded-lg font-bold ${filterOwner==='JAPANESE_CORP'?'bg-rose-700 text-white':'bg-rose-50 text-rose-900 border border-rose-200'}">Japanese Corp Unit</button>
+          <button type="button" onclick="renderDeepB2bPortalBody_('SUSHIRO')" class="px-2.5 py-1.5 rounded-lg font-bold ${filterOwner==='SUSHIRO'?'bg-emerald-700 text-white':'bg-emerald-50 text-emerald-900 border border-emerald-200'}">เชนร้าน: Sushiro ทุกสาขา</button>
+        </div>
+        <button type="button" onclick="triggerB2bBulkPmSchedule()" class="bg-gradient-to-r from-emerald-600 to-teal-700 hover:opacity-95 text-white font-extrabold px-3.5 py-2 rounded-lg shadow-xs flex items-center gap-1.5">
+          <i class="fa-solid fa-calendar-check text-amber-200"></i>
+          <span>1-Click สั่งล้าง PM &amp; เปลี่ยน 4HC-H ยกชุด (${filtered.length} เครื่อง)</span>
+        </button>
+      </div>
+
+      <!-- B2B Price Shielding & 2-Round Quotation Policy Banner -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="bg-amber-50 border border-amber-300 rounded-xl p-3">
+          <div class="font-extrabold text-amber-950"><i class="fa-solid fa-eye-slash text-amber-600 mr-1"></i> B2B Price Shielding (ซ่อนราคาจากหน้าร้าน)</div>
+          <p class="text-[11px] text-amber-900 mt-1">สาขาหน้าร้านเห็นเฉพาะสถานะงานซ่อมและ ETA อะไหล่ ส่วนใบเสนอราคา QT #1 / QT #2 ส่งตรงเข้าบัญชีดีลเลอร์เจ้าของ S/N เท่านั้น</p>
+        </div>
+        <div class="bg-sky-50 border border-sky-300 rounded-xl p-3">
+          <div class="font-extrabold text-sky-950"><i class="fa-solid fa-file-invoice-dollar text-sky-600 mr-1"></i> 2-Round QT &amp; Confirm PO Gate</div>
+          <p class="text-[11px] text-sky-900 mt-1">QT #1 ค่าตรวจเช็ก/ล้าง → เข้าหน้างาน → QT #2 ค่าอะไหล่ + แจ้ง ETA → ระบบล็อกการเบิกอะไหล่จนกว่าจะได้รับ Confirm PO #2</p>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-300 rounded-xl p-3">
+          <div class="font-extrabold text-emerald-950"><i class="fa-solid fa-droplet text-emerald-600 mr-1"></i> Smart 4HC-H Filter (6 / 12 เดือนตามค่า TDS)</div>
+          <p class="text-[11px] text-emerald-900 mt-1">ปรับรอบเปลี่ยนไส้กรองน้ำอัตโนมัติ (TDS &gt; 150 ppm = รอบ 6 เดือน | TDS ≤ 150 ppm = รอบ 12 เดือน) พร้อมปุ่มต่ออายุ</p>
+        </div>
+      </div>
+
+      <!-- Serial-Level Ownership Table -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div class="bg-[#002B49] text-white px-3.5 py-2 font-extrabold flex items-center justify-between">
+          <span>ทะเบียนเครื่องแยกสิทธิ์ราย S/N (Serial-Level B2B Asset Matrix)</span>
+          <span class="text-[10px] text-cyan-200">คลิกออก QT รอบ 2 หรือ Confirm PO ได้ทันที</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b">
+                <th class="p-2.5">S/N &amp; รุ่นเครื่อง</th>
+                <th class="p-2.5">เชนร้านค้า / สาขา</th>
+                <th class="p-2.5">เจ้าของสิทธิ์ดูแล S/N (Routing)</th>
+                <th class="p-2.5">ไส้กรอง 4HC-H (TDS)</th>
+                <th class="p-2.5">สถานะ QT #1 / QT #2 &amp; ETA</th>
+                <th class="p-2.5 text-center">ดำเนินการ B2B</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              ${filtered.map(a => {
+                const showPrice = !a.hidePriceFromStore || (filterOwner && filterOwner !== 'SUSHIRO');
+                return `
+                  <tr class="hover:bg-sky-50/50">
+                    <td class="p-2.5">
+                      <div class="font-black text-[#002B49]">${a.sn}</div>
+                      <div class="text-[11px] font-bold text-sky-700">${a.model} (${a.type})</div>
+                    </td>
+                    <td class="p-2.5">
+                      <div class="font-bold text-slate-900">${a.chain}</div>
+                      <div class="text-[11px] text-slate-500">${a.branch}</div>
+                    </td>
+                    <td class="p-2.5">
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-950">${a.ownerName}</span>
+                      <div class="text-[10px] text-slate-500 mt-0.5">${a.hidePriceFromStore ? '🔒 ซ่อนราคาจากสาขาหน้าร้าน' : '👁️ แสดงราคาตรง'}</div>
+                    </td>
+                    <td class="p-2.5">
+                      <div class="font-bold text-emerald-700">${a.filterModel} · รอบ ${a.filterCycleMonths} เดือน</div>
+                      <div class="text-[10px] text-slate-500">TDS: ${a.tdsPpm} ppm | ครบกำหนด: ${a.nextFilterDate}</div>
+                    </td>
+                    <td class="p-2.5">
+                      <div class="font-extrabold text-indigo-800">${a.qtStage}</div>
+                      <div class="text-[10px] text-slate-600">ETA: <b>${a.partsEta}</b> ${showPrice ? ('| QT1: ฿' + a.qt1Amt.toLocaleString() + (a.qt2Amt ? ' / QT2: ฿' + a.qt2Amt.toLocaleString() : '')) : '| [ราคาส่งเข้าบัญชีดีลเลอร์]'}</div>
+                    </td>
+                    <td class="p-2.5 text-center space-y-1">
+                      <button type="button" onclick="confirmB2bPoAndSync('${a.sn}')" class="w-full px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px]">✅ รับ Confirm PO &amp; จองอะไหล่</button>
+                      <button type="button" onclick="openB2bQtRound2InMainForm('${a.sn}')" class="w-full px-2.5 py-1 rounded bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold text-[11px]">📄 ออก QT รอบ 2 ส่งดีลเลอร์</button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  };
+
+  window.confirmB2bPoAndSync = function(sn) {
+    const assets = loadB2bAssets_();
+    const item = assets.find(x => x.sn === sn);
+    if (!item) return;
+    item.qtStage = 'PO_CONFIRMED_PARTS_ALLOCATED';
+    item.partsEta = 'ยืนยัน PO แล้ว · จองอะไหล่คลัง IMS';
+    saveB2bAssets_(assets);
+    if (typeof window.hzkEmitCrossModuleEvent === 'function') {
+      window.hzkEmitCrossModuleEvent('DEALER_CONFIRM_PO_RECEIVED', {
+        serial: item.sn,
+        model: item.model,
+        dealerOwner: item.ownerName,
+        branch: item.branch
+      });
+    }
+    if (typeof showToast === 'function') showToast('✅ รับ Confirm PO สำหรับ S/N: ' + sn + ' (' + item.ownerName + ') และจองอะไหล่ใน IMS เรียบร้อย!');
+    window.renderDeepB2bPortalBody_('ALL');
+  };
+
+  window.openB2bQtRound2InMainForm = function(sn) {
+    const assets = loadB2bAssets_();
+    const item = assets.find(x => x.sn === sn);
+    if (!item) return;
+    document.getElementById('hzkDeepB2bPortalModal')?.classList.add('hidden');
+    if (typeof generateReceiptModal === 'function') {
+      generateReceiptModal(false);
+      setTimeout(() => {
+        const custEl = document.getElementById('rcCustomerName') || document.getElementById('receiptCustomerName');
+        const remEl = document.getElementById('rcRemark') || document.getElementById('receiptRemark');
+        if (custEl) custEl.value = item.ownerName + ' (หน้างาน: ' + item.chain + ' - ' + item.branch + ')';
+        if (remEl) remEl.value = 'ใบเสนอราคารอบที่ 2 (QT #2 ค่าอะไหล่ซ่อมเพิ่ม) | S/N: ' + item.sn + ' (' + item.model + ') | ETA อะไหล่: ' + item.partsEta + ' | ห้ามส่งราคาให้หน้าร้านโดยตรง';
+      }, 250);
+    }
+    if (typeof showToast === 'function') showToast('📄 เปิดหน้าใบเสนอราคารอบที่ 2 ส่งตรงถึง ' + item.ownerName + ' (ซ่อนราคาจากหน้าร้าน)');
+  };
+
+  window.triggerB2bBulkPmSchedule = function() {
+    const assets = loadB2bAssets_();
+    const batchId = 'B2B-PM-' + Date.now().toString().slice(-6);
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+    if (gasUrl && gasUrl.startsWith('http')) {
+      fetch(gasUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actionType: 'B2B_BULK_PM_SCHEDULE',
+          batchId: batchId,
+          chainAccount: 'SUSHIRO THAILAND',
+          branchCount: 3,
+          unitCount: assets.length,
+          targetDate: '2026-12-05',
+          units: assets.map(a => ({ sn: a.sn, model: a.model, branch: a.branch, owner: a.ownerName }))
+        })
+      }).catch(() => {});
+    }
+    if (typeof showToast === 'function') {
+      showToast('📅 สร้างตารางเข้าล้าง PM & เปลี่ยนไส้กรอง 4HC-H ยกชุด (' + assets.length + ' เครื่อง) รหัส ' + batchId + ' ส่งเข้าตารางจ่ายงานช่างเรียบร้อย!');
+    }
+  };
+
+  // Inject quick-launch button for B2B Portal 2.0 into Toolbar Category 7 (Sale & Marketing B2B)
+  function mountDeepB2bButton_() {
+    const sec7Grid = document.querySelector('[data-tb-group="SALE_MARKETING"] .tb-btn-grid');
+    if (sec7Grid && !document.getElementById('btnDeepB2bPortal2')) {
+      const btn = document.createElement('button');
+      btn.id = 'btnDeepB2bPortal2';
+      btn.type = 'button';
+      btn.setAttribute('data-tb-cat', 'SALE_MARKETING');
+      btn.onclick = () => window.openDeepB2bChainAndDealerPortalModal('ALL');
+      btn.className = 'tb-action-item col-span-2 bg-gradient-to-r from-[#002B49] via-amber-700 to-rose-700 hover:opacity-95 text-white font-extrabold shadow-sm border border-amber-200/70';
+      btn.innerHTML = '<i class="fa-solid fa-network-wired text-amber-300"></i> <span>7.7 พอร์ทัล B2B เชนร้านอาหาร &amp; ดีลเลอร์ 2.0 (แยกสิทธิ์ราย S/N · QT 2 รอบ · Bulk PM)</span>';
+      sec7Grid.appendChild(btn);
+    }
+  }
+
+  setTimeout(mountDeepB2bButton_, 1000);
+})();

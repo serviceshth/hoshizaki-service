@@ -180,6 +180,44 @@ function doPost(e) {
 
       // --- v1013 New Endpoints ---
       // --- v1024 Holistic Expansion & Outsource Parts Tracking Endpoints ---
+      if (action === 'LOG_CROSS_MODULE_EVENT_BUS') {
+        var evSheet = ss.getSheetByName('Cross_Module_Event_Bus_Log');
+        if (!evSheet) {
+          evSheet = ss.insertSheet('Cross_Module_Event_Bus_Log');
+          evSheet.appendRow(['Timestamp', 'Event_Name', 'Source_Module', 'Actor', 'Payload_JSON']);
+          evSheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+        }
+        evSheet.appendRow([
+          new Date(),
+          data.eventName || 'EVENT',
+          data.source || 'PWA',
+          data.actor || 'System',
+          JSON.stringify(data.payload || {})
+        ]);
+        return jsonOut({ status: 'ok', sheet: 'Cross_Module_Event_Bus_Log' });
+      }
+
+      if (action === 'B2B_BULK_PM_SCHEDULE') {
+        var b2bSheet = ss.getSheetByName('B2B_Chain_Bulk_PM_Requests');
+        if (!b2bSheet) {
+          b2bSheet = ss.insertSheet('B2B_Chain_Bulk_PM_Requests');
+          b2bSheet.appendRow(['Timestamp', 'Batch_ID', 'Chain_Account', 'Dealer_Owner', 'Branch_Count', 'Unit_Count', 'Target_Date', 'Units_JSON', 'Status']);
+          b2bSheet.getRange(1, 1, 1, 9).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+        }
+        b2bSheet.appendRow([
+          new Date(),
+          data.batchId || ('B2B-PM-' + Date.now()),
+          data.chainAccount || 'SUSHIRO THAILAND',
+          data.dealerOwner || 'MIXED_SERIAL_OWNERS',
+          data.branchCount || 1,
+          data.unitCount || 1,
+          data.targetDate || '',
+          JSON.stringify(data.units || []),
+          'SCHEDULED_TO_DISPATCH'
+        ]);
+        return jsonOut({ status: 'ok', sheet: 'B2B_Chain_Bulk_PM_Requests' });
+      }
+
       if (action === 'SYNC_USER_CREDENTIALS_VAULT') {
         return jsonOut(syncUserCredentialsVaultToSheet_(ss, data));
       }
@@ -1164,7 +1202,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1054-OMNI-PHASE3-COMPLETE',
+    version: 'Enterprise-v1055-B2B-DEEP-SCAN-PRO',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1203,7 +1241,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1054-OMNI-PHASE3-COMPLETE',
+    version: 'Enterprise-v1055-B2B-DEEP-SCAN-PRO',
     passed: passed,
     total: checks.length,
     checks: checks

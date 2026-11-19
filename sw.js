@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1071-clean-verified';
+﻿const CACHE_NAME = 'hoshizaki-service-pwa-v1073-omni-linked';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',
@@ -110,3 +110,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+

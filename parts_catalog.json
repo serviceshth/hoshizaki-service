@@ -1,1 +1,27 @@
-{"version":"1057-OMNI-SCALE-ENTERPRISE","updatedAt":"2026-11-19","parts":[]}
+﻿{
+  "updatedAt": "2026-11-20",
+  "totalParts": 20,
+  "version": "1073-OMNI-LINKED",
+  "parts": [
+    { "partNo": "4A1726-39", "desc": "COMPR BOXED (RST64C1E-CAZ-702)", "price": 0 },
+    { "partNo": "4A2666-01", "desc": "DRIER", "price": 0 },
+    { "partNo": "4A3978-01", "desc": "VALVE BODY - HOT GAS (#ATS-B7SHDU-2R)", "price": 0 },
+    { "partNo": "4A4008-01", "desc": "EXPANSION VALVE (#HFE-10NHDU-4)", "price": 0 },
+    { "partNo": "WV-STD", "desc": "Water Valve / วาล์วน้ำเข้า", "price": 0 },
+    { "partNo": "PM-STD", "desc": "Pump Motor / มอเตอร์ปั๊มน้ำ", "price": 0 },
+    { "partNo": "FM-STD", "desc": "Fan Motor / มอเตอร์พัดลมระบายความร้อน", "price": 0 },
+    { "partNo": "FS-STD", "desc": "Float Switch / ลูกลอยควบคุมระดับน้ำ", "price": 0 },
+    { "partNo": "BC-STD", "desc": "Bin Control Switch / สวิตช์ตัดน้ำแข็งเต็ม", "price": 0 },
+    { "partNo": "TH-STD", "desc": "Thermistor Sensor / เซ็นเซอร์วัดอุณหภูมิ", "price": 0 },
+    { "partNo": "CB-STD", "desc": "Control Board / แผงวงจรควบคุมหลัก", "price": 0 },
+    { "partNo": "HGV-STD", "desc": "Hot Gas Valve / วาล์วละลายน้ำแข็ง", "price": 0 },
+    { "partNo": "COMP-STD", "desc": "Compressor / คอมเพรสเซอร์ทำความเย็น", "price": 0 },
+    { "partNo": "RLY-STD", "desc": "Starting Relay & Capacitor / รีเลย์และแคปาซิเตอร์", "price": 0 },
+    { "partNo": "GSK-STD", "desc": "Door Gasket / ยางขอบประตูตู้แช่", "price": 0 },
+    { "partNo": "AF-STD", "desc": "Air Filter / แผ่นกรองฝุ่นคอนเดนเซอร์", "price": 0 },
+    { "partNo": "HOSE-STD", "desc": "Water Hose & Drain Pipe / ชุดท่อน้ำเข้า-น้ำทิ้ง", "price": 0 },
+    { "partNo": "R404A", "desc": "Refrigerant R404A / น้ำยาทำความเย็น R404A", "price": 0 },
+    { "partNo": "R134A", "desc": "Refrigerant R134a / น้ำยาทำความเย็น R134a", "price": 0 },
+    { "partNo": "PM-SVC", "desc": "PM Cleaning Service / ค่าบริการล้างบำรุงรักษา", "price": 0 }
+  ]
+}

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ============================================================================
  * HOSHIZAKI GLOBAL ENTERPRISE - Google Apps Script Backend (Enterprise v1041-FINAL)
  * ============================================================================
@@ -22,6 +22,7 @@
 
 var DEFAULT_API_SECRET_KEY = '';
 var ROOT_DRIVE_FOLDER_NAME = 'HOSHIZAKI_SERVICE_REPORTS_ARCHIVE';
+var ROOT_DRIVE_FOLDER_ID = '';
 var DEFAULT_BACKUP_EMAIL = 'services@hoshizaki.co.th';
 
 var SPEC_SHEET_FOLDER_ID = '1J-8iMryohfrHaD9gc_iiIRtZrqMECVPV';
@@ -1248,7 +1249,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1063-DEEP-REPAIRED',
+    version: 'Enterprise-v1073-OMNI-LINKED',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1287,7 +1288,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1063-DEEP-REPAIRED',
+    version: 'Enterprise-v1073-OMNI-LINKED',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -10051,3 +10052,4 @@ function buildCustomerCsatHtmlPage_(params) {
     '</body></html>';
   return HtmlService.createHtmlOutput(html).setTitle('HOSHIZAKI Customer Satisfaction');
 }
+

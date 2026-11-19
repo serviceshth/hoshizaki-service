@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1058-deep-resilience-pro';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1059-omni-nextgen-ultimate';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',

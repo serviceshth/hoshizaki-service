@@ -2518,15 +2518,9 @@
       renderFlexStudioEditorLists_();
       window.refreshFlexStudioPreview();
   };
-  const origSwitchDualLine = window.switchDualLineCenterTab;
-  window.switchDualLineCenterTab = function(tab) {
-    if (String(tab || '').toUpperCase() === 'FLEXSTUDIO') {
-      return window.renderFlexStudioTabV1065();
-    }
-    if (typeof origSwitchDualLine === 'function') {
-      return origSwitchDualLine(tab);
-    }
-  };
+  if (typeof window.installUnifiedDualLineTabRouterV1065 === 'function') {
+    window.installUnifiedDualLineTabRouterV1065();
+  }
 
   // =========================================================================
   // UPGRADE 2: FULL-STACK DEEP-SCAN AUTO-CHECK & AUTO-HEAL ENGINE (24 CHECKS)
@@ -16326,15 +16320,6 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
       </div>
     `;
   };
-  const prevSwitchTab = window.switchDualLineCenterTab;
-  window.switchDualLineCenterTab = function(tab) {
-    if (String(tab || '').toUpperCase() === 'DIRECTORY') {
-      return window.renderLineDirectoryTabV1065();
-    }
-    if (typeof prevSwitchTab === 'function') {
-      return prevSwitchTab(tab);
-    }
-  };
   if (typeof window.installUnifiedDualLineTabRouterV1065 === 'function') {
     window.installUnifiedDualLineTabRouterV1065();
   }
@@ -16462,6 +16447,9 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
   ];
 
   // Inject URL Config & Quick Reply Snippets into Tab 1 (BRIDGE) of Dual LINE OA Modal
+  if (typeof window.installUnifiedDualLineTabRouterV1065 === 'function') {
+    window.installUnifiedDualLineTabRouterV1065();
+  }
   const origSwitchDual = window.switchDualLineCenterTab;
   window.switchDualLineCenterTab = function(tab) {
     updatePlatformBadge_();

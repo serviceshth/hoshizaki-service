@@ -12694,20 +12694,13 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             actionType: 'SEND_LINE_PUSH',
-            message: '🔐 [HOSHIZAKI 2FA OTP]
-รหัสยืนยัน 6 หลักสำหรับคำสั่ง: ' + actionLabel + '
-ผู้ทำรายการ: ' + (sess ? sess.name : 'Admin') + '
-รหัส OTP: ' + otpCode + ' (หมดอายุใน 3 นาที)'
+            message: '🔐 [HOSHIZAKI 2FA OTP]\nรหัสยืนยัน 6 หลักสำหรับคำสั่ง: ' + actionLabel + '\nผู้ทำรายการ: ' + (sess ? sess.name : 'Admin') + '\nรหัส OTP: ' + otpCode + ' (หมดอายุใน 3 นาที)'
           })
         }).catch(() => {});
       }
     } catch (e) {}
 
-    const entered = prompt('🔐 ยืนยันความปลอดภัย 2 ชั้น (2FA LINE OTP)
-ส่งรหัส OTP 6 หลักไปยัง LINE OA เรียบร้อยแล้ว
-(รหัสอ้างอิงเซสชัน: ' + otpCode + ')
-
-กรุณากรอกรหัส OTP 6 หลักเพื่อยืนยัน "' + actionLabel + '":');
+    const entered = prompt('🔐 ยืนยันความปลอดภัย 2 ชั้น (2FA LINE OTP)\nส่งรหัส OTP 6 หลักไปยัง LINE OA เรียบร้อยแล้ว\n(รหัสอ้างอิงเซสชัน: ' + otpCode + ')\n\nกรุณากรอกรหัส OTP 6 หลักเพื่อยืนยัน "' + actionLabel + '":');
     if (entered === null) return false;
     if (Date.now() > expiresAt) {
       if (typeof showToast === 'function') showToast('⌛ รหัส OTP หมดอายุแล้ว (เกิน 3 นาที)');
@@ -12943,8 +12936,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     const rows = [
       ['QCF_Ref', 'Target_HQ', 'Model', 'Serial_Lot', 'Issue_Summary', 'Credit_Note_THB', 'SLA_Days_Open', 'Status']
     ].concat(qcfList.map(q => [q.qcfRef, q.targetHq, q.model, q.serialLot, '"' + q.issueSummary + '"', q.creditNoteThb, q.slaDaysOpen, q.status]));
-    const csv = '﻿' + rows.map(r => r.join(',')).join('
-');
+    const csv = '\ufeff' + rows.map(r => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -13678,10 +13670,8 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
 
     let headerBadge = 'HOSHIZAKI FIRST-AID & SELF-CHECK';
     let title = customTopic || ('วิธีตรวจเช็กเบื้องต้นด้วยตนเอง: ' + kb.label);
-    let bodyTh = kb.stepsTh.join('
-');
-    let bodyJp = kb.stepsJp.join('
-');
+    let bodyTh = kb.stepsTh.join('\n');
+    let bodyJp = kb.stepsJp.join('\n');
     let bgHex = '#002B49';
     let cta1 = '✅ ทำตามแล้ว เครื่องทำงานปกติ';
     let cta2 = '🚨 ยังไม่หาย / ส่งต่อดีลเลอร์หรือช่าง';
@@ -13689,18 +13679,15 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     if (cardCat === 'OPERATIONAL_DISPLAY') {
       headerBadge = 'HOSHIZAKI OPERATIONAL & PM NOTICE';
       title = customTopic || ('แจ้งเตือนรอบบำรุงรักษา PM & เปลี่ยนไส้กรอง 4HC-H (' + prodCode + ')');
-      bodyTh = '• ถึงกำหนดตรวจเช็กสภาพเครื่องทำน้ำแข็งและเปลี่ยนไส้กรองน้ำแท้ 4HC-H (รอบ 6/12 เดือน)
-• รองรับการเข้าบริการรวมทั้งสาขาในวันเดียว (Consolidated Store Visit)';
-      bodyJp = '• 定期保守点検(PM)および純正浄水フィルター(4HC-H)交換時期のお知らせです。
-• 店舗内全機器の一括点検に対応いたします。';
+      bodyTh = '• ถึงกำหนดตรวจเช็กสภาพเครื่องทำน้ำแข็งและเปลี่ยนไส้กรองน้ำแท้ 4HC-H (รอบ 6/12 เดือน)\n• รองรับการเข้าบริการรวมทั้งสาขาในวันเดียว (Consolidated Store Visit)';
+      bodyJp = '• 定期保守点検(PM)および純正浄水フィルター(4HC-H)交換時期のお知らせです。\n• 店舗内全機器の一括点検に対応いたします。';
       bgHex = '#0369A1';
       cta1 = '📅 ยืนยันวันนัดเข้าบริการ PM';
       cta2 = '📄 ดูใบรับรอง PM ล่าสุด';
     } else if (cardCat === 'B2B_SALES_PROMO') {
       headerBadge = 'HOSHIZAKI B2B & DEALER CO-BRAND PROMO';
       title = customTopic || ('แพ็กเกจพิเศษสำหรับคู่ค้าดีลเลอร์ & เชนร้านอาหาร (' + prodCode + ')');
-      bodyTh = '• โปรโมชันสั่งซื้อไส้กรองน้ำแท้ 4HC-H ยกลัง & สัญญาบำรุงรักษารายปีสำหรับเชนร้านอาหาร
-• ตัวแทนจำหน่ายสามารถแก้ไขหัวกระดาษและราคาเสนอต่อให้ลูกค้าได้ทันที';
+      bodyTh = '• โปรโมชันสั่งซื้อไส้กรองน้ำแท้ 4HC-H ยกลัง & สัญญาบำรุงรักษารายปีสำหรับเชนร้านอาหาร\n• ตัวแทนจำหน่ายสามารถแก้ไขหัวกระดาษและราคาเสนอต่อให้ลูกค้าได้ทันที';
       bodyJp = '• 代理店様・チェーン店様向け 4HC-Hフィルターおよび年間保守契約特別プランのご案内。';
       bgHex = '#B45309';
       cta1 = '💼 ขอใบเสนอราคาเรตดีลเลอร์ (QT)';
@@ -13708,9 +13695,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     } else if (cardCat === 'SOCIAL_ADS') {
       headerBadge = 'HOSHIZAKI OMNI-SOCIAL AD (TIKTOK / FB / YT)';
       title = customTopic || ('ทำไมร้านอาหารญี่ปุ่นชั้นนำเลือกใช้ Hoshizaki ' + prodCode + ' Series?');
-      bodyTh = '🎬 Hook (0-3 วิ): "น้ำแข็งใสสะอาด ละลายช้า ประหยัดไฟ 24 ชม. มาตรฐานญี่ปุ่นแท้!"
-📌 จุดขาย: ระบบผลิตน้ำแข็งเซลล์ปิดถูกสุขอนามัย + มีทีมช่างและอะไหล่แท้ดูแลทั่วประเทศ
-🔗 UTM: ?utm_source=social_ai&utm_campaign=' + prodCode.toLowerCase();
+      bodyTh = '🎬 Hook (0-3 วิ): "น้ำแข็งใสสะอาด ละลายช้า ประหยัดไฟ 24 ชม. มาตรฐานญี่ปุ่นแท้!"\n📌 จุดขาย: ระบบผลิตน้ำแข็งเซลล์ปิดถูกสุขอนามัย + มีทีมช่างและอะไหล่แท้ดูแลทั่วประเทศ\n🔗 UTM: ?utm_source=social_ai&utm_campaign=' + prodCode.toLowerCase();
       bodyJp = '🎬 日本品質の製氷機・業務用冷蔵庫 HOSHIZAKI。省エネ設計と全国アフターサービス網で店舗運営を強力にサポート！';
       bgHex = '#86198F';
       cta1 = '💬 ทัก LINE OA ขอใบเสนอราคา';

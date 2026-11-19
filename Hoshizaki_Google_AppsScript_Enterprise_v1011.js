@@ -1249,7 +1249,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1073-OMNI-LINKED',
+    version: 'Enterprise-v1076-COMPLETE-MASTER',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1288,7 +1288,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1073-OMNI-LINKED',
+    version: 'Enterprise-v1076-COMPLETE-MASTER',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -10052,4 +10052,5 @@ function buildCustomerCsatHtmlPage_(params) {
     '</body></html>';
   return HtmlService.createHtmlOutput(html).setTitle('HOSHIZAKI Customer Satisfaction');
 }
+
 

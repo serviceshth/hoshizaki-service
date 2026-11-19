@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1055-b2b-deep-scan-pro';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1057-omni-scale-enterprise';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',

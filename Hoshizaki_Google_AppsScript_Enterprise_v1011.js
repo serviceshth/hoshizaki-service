@@ -197,6 +197,52 @@ function doPost(e) {
         return jsonOut({ status: 'ok', sheet: 'Cross_Module_Event_Bus_Log' });
       }
 
+      if (action === 'SYNC_OMNI_SCALE_V1057_RECORD') {
+        var pillar = String(data.pillar || 'GENERAL');
+        var sheetMap = {
+          'RECURRING_BILLING': { name: 'Recurring_PM_4HCH_Billing', cols: ['Timestamp', 'Contract_ID', 'Serial_No', 'Model', 'Customer', 'Cycle_Type', 'Amount_THB', 'PromptPay_Ref', 'eTax_Status'] },
+          'CHAIN_PORTAL': { name: 'B2B_Chain_Consolidated_Billing', cols: ['Timestamp', 'Statement_ID', 'Chain_Group', 'Branch_Count', 'Total_Units', 'Total_Amount_THB', 'Billing_Month', 'Status'] },
+          'RENTAL_UNIT_PNL': { name: 'Rental_Fleet_Unit_PnL', cols: ['Timestamp', 'Serial_No', 'Model', 'Customer', 'Monthly_Rent_THB', 'Parts_Cost_THB', 'Labor_Cost_THB', 'Net_Margin_THB', 'ROI_Status'] },
+          'NAV_ERP_SYNC': { name: 'NAV_ERP_BiDirectional_Queue', cols: ['Timestamp', 'Doc_No', 'Doc_Type', 'Customer_Code', 'Amount_THB', 'VAT_THB', 'Sync_Target', 'Sync_Status'] },
+          'ASEAN_HQ_ROLLUP': { name: 'ASEAN_Regional_HQ_Rollup', cols: ['Timestamp', 'Entity_Code', 'Country', 'Currency', 'Active_Units', 'FTFR_Pct', 'Revenue_Local', 'Status'] }
+        };
+        var cfg = sheetMap[pillar] || { name: 'Omni_Scale_v1057_Log', cols: ['Timestamp', 'Pillar', 'Ref_ID', 'Entity', 'Summary', 'Amount', 'Meta_JSON', 'Status', 'Actor'] };
+        var sh = ss.getSheetByName(cfg.name);
+        if (!sh) {
+          sh = ss.insertSheet(cfg.name);
+          sh.appendRow(cfg.cols);
+          sh.getRange(1, 1, 1, cfg.cols.length).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+          sh.setFrozenRows(1);
+        }
+        var rowVals = Array.isArray(data.rowValues) ? data.rowValues : [new Date(), pillar, data.refId || '', data.entity || '', data.summary || '', data.amount || 0, JSON.stringify(data.payload || {}), data.status || 'SYNCED', data.actor || 'PWA'];
+        rowVals[0] = new Date();
+        sh.appendRow(rowVals);
+        return jsonOut({ status: 'ok', sheet: cfg.name, pillar: pillar });
+      }
+
+      if (action === 'PREDICTIVE_HEALTH_AND_RENEWAL_SYNC') {
+        var phSheet = ss.getSheetByName('Predictive_Asset_Health_Radar');
+        if (!phSheet) {
+          phSheet = ss.insertSheet('Predictive_Asset_Health_Radar');
+          phSheet.appendRow(['Timestamp', 'Serial_No', 'Model', 'Customer_Store', 'Health_Score', 'Risk_Level', 'TDS_ppm', 'Condenser_C', 'Next_4HC_H_Date', 'Recommended_Parts', 'Action_Status']);
+          phSheet.getRange(1, 1, 1, 11).setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+        }
+        phSheet.appendRow([
+          new Date(),
+          data.serial || '',
+          data.model || '',
+          data.customer || '',
+          data.healthScore || 0,
+          data.riskLevel || 'NORMAL',
+          data.tdsPpm || 0,
+          data.condenserC || 0,
+          data.nextFilterDate || '',
+          data.recommendedParts || '',
+          data.actionStatus || 'MONITORED'
+        ]);
+        return jsonOut({ status: 'ok', sheet: 'Predictive_Asset_Health_Radar' });
+      }
+
       if (action === 'B2B_BULK_PM_SCHEDULE') {
         var b2bSheet = ss.getSheetByName('B2B_Chain_Bulk_PM_Requests');
         if (!b2bSheet) {
@@ -1202,7 +1248,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1055-B2B-DEEP-SCAN-PRO',
+    version: 'Enterprise-v1057-OMNI-SCALE-ENTERPRISE',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1241,7 +1287,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1055-B2B-DEEP-SCAN-PRO',
+    version: 'Enterprise-v1057-OMNI-SCALE-ENTERPRISE',
     passed: passed,
     total: checks.length,
     checks: checks

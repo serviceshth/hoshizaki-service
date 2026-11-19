@@ -15956,7 +15956,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
 
 
 // ============================================================================
-// --- Module Block #76 (Enterprise v1060-STRUCTURAL-VERIFIED):
+// --- Module Block #76 (Enterprise v1062-CLEAN-VERIFIED):
 //     Universal 122-Modal Backdrop/ESC Guard, Floating Portal Submenu Synchronizer
 //     & Live Structural Integrity Verification Engine
 // ============================================================================
@@ -16012,7 +16012,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     const modals = document.querySelectorAll('[id$="Modal"]');
     const buttons = document.querySelectorAll('button');
     return {
-      version: 'Enterprise v1060-STRUCTURAL-VERIFIED',
+      version: 'Enterprise v1062-CLEAN-VERIFIED',
       liveDomIds: allDomIds.length,
       duplicateDomIds: dups.length,
       mountedModals: modals.length,

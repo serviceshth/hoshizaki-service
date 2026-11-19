@@ -35832,6 +35832,31 @@ DUAL LINE OA, TRILINGUAL CHATBOT & MOBILE SMS DISPATCH SUITE (v1021-LINE+)
 <button type="button" id="tabDualLineFlexstudio" onclick="switchDualLineCenterTab('FLEXSTUDIO')" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-sky-50 to-emerald-50 text-[#002B49] border border-sky-300 font-extrabold"><i class="fa-solid fa-wand-magic-sparkles text-sky-600 mr-1"></i>5. ออกแบบการ์ด LINE Flex Message (Studio)</button>
 <button type="button" id="tabDualLineDirectory" onclick="switchDualLineCenterTab('DIRECTORY')" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-50 to-sky-50 text-[#002B49] border border-amber-300 font-extrabold"><i class="fa-solid fa-address-book text-amber-600 mr-1"></i>6. ทะเบียนรายชื่อดีลเลอร์/ลูกค้า &amp; LINE ID (Group / ส่วนตัว)</button>
 </div>
+<div id="lineOaSmartDeviceLauncherBar" class="bg-gradient-to-r from-[#06C755]/15 via-emerald-50 to-sky-50 border-b border-emerald-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
+  <div class="flex items-center gap-2 min-w-0">
+    <span class="w-7 h-7 rounded-lg bg-[#06C755] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+      <i class="fa-brands fa-line text-base"></i>
+    </span>
+    <div class="min-w-0">
+      <div class="font-extrabold text-[#002B49] flex items-center gap-1.5 flex-wrap">
+        <span>เปิดห้องแชท LINE Official Account ทันที (Smart Device Launcher)</span>
+        <span id="lineOaDetectedPlatformBadge" class="px-2 py-0.5 rounded-full bg-[#002B49] text-amber-300 text-[10px] font-bold">ตรวจจับอุปกรณ์อัตโนมัติ...</span>
+      </div>
+      <div class="text-[10.5px] text-slate-600 truncate">PC เปิดหน้าต่างแชทแยก (Split-Screen) • Android / iPad / iPhone เด้งเข้าแอป LINE OA อัตโนมัติ</div>
+    </div>
+  </div>
+  <div class="flex flex-wrap items-center gap-1.5">
+    <button type="button" onclick="launchHoshizakiLineOaChat('CUSTOMER', false)" class="bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold px-3 py-1.5 rounded-lg shadow-xs flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-comments"></i> <span>เปิดแชท Customer LINE OA</span>
+    </button>
+    <button type="button" onclick="launchHoshizakiLineOaChat('INTERNAL', false)" class="bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold px-3 py-1.5 rounded-lg shadow-xs flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-headset text-amber-300"></i> <span>เปิดแชท Internal Bot OA</span>
+    </button>
+    <button type="button" onclick="copyActiveJobSummaryAndOpenLineOa()" class="bg-amber-500 hover:bg-amber-600 text-white font-extrabold px-3 py-1.5 rounded-lg shadow-xs flex items-center gap-1.5 transition" title="คัดลอกชื่อร้าน S/N อาการ และลิงก์ติดตามงาน ลง Clipboard แล้วเปิดแอป LINE OA ทันที">
+      <i class="fa-solid fa-copy"></i> <span>Copy สรุปใบงาน &amp; เปิดแชท</span>
+    </button>
+  </div>
+</div>
 <div id="dualLineCenterBody" class="p-4 overflow-y-auto flex-1 space-y-3 text-xs"></div>
 </div>
 </div>

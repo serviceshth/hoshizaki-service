@@ -16342,3 +16342,190 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     `;
   };
 })();
+
+
+// --- Module Block #78: Smart LINE OA Live Chat & App Launcher (PC Split-Window + Android/iPad Auto-App Deep Link + 3-Lang Quick Snippets) ---
+(function() {
+  const LINE_OA_URLS_KEY = 'hoshizaki_line_oa_chat_urls_v1062';
+
+  function getLineOaUrls_() {
+    let cfg = {};
+    try { cfg = JSON.parse(localStorage.getItem(LINE_OA_URLS_KEY) || '{}'); } catch (e) {}
+    return {
+      customerChatUrl: cfg.customerChatUrl || 'https://chat.line.biz/',
+      internalChatUrl: cfg.internalChatUrl || 'https://chat.line.biz/'
+    };
+  }
+
+  window.saveLineOaChatUrls = function() {
+    const cUrl = (document.getElementById('cfgCustomerLineOaChatUrl')?.value || '').trim() || 'https://chat.line.biz/';
+    const iUrl = (document.getElementById('cfgInternalLineOaChatUrl')?.value || '').trim() || 'https://chat.line.biz/';
+    localStorage.setItem(LINE_OA_URLS_KEY, JSON.stringify({
+      customerChatUrl: cUrl,
+      internalChatUrl: iUrl
+    }));
+    if (typeof showToast === 'function') showToast('✅ บันทึกลิงก์ห้องแชท Customer & Internal LINE OA เรียบร้อยแล้ว');
+  };
+
+  function detectClientPlatform_() {
+    const ua = navigator.userAgent || '';
+    const isIpad = /iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isIphone = /iPhone|iPod/i.test(ua);
+    const isAndroid = /Android/i.test(ua);
+    if (isIpad) return { type: 'IPAD', isMobileOrTablet: true, label: '📱 iPadOS (พร้อมเปิดแอป LINE OA)' };
+    if (isIphone) return { type: 'IOS', isMobileOrTablet: true, label: '📱 iOS (พร้อมเปิดแอป LINE OA)' };
+    if (isAndroid) return { type: 'ANDROID', isMobileOrTablet: true, label: '📱 Android (พร้อมเปิดแอป LINE OA)' };
+    return { type: 'DESKTOP', isMobileOrTablet: false, label: '💻 PC / Desktop (เปิดหน้าต่างแยก Split-Screen)' };
+  }
+
+  function updatePlatformBadge_() {
+    const badge = document.getElementById('lineOaDetectedPlatformBadge');
+    if (badge) {
+      badge.textContent = detectClientPlatform_().label;
+    }
+  }
+
+  window.launchHoshizakiLineOaChat = function(accountType, withSnippetText) {
+    const urls = getLineOaUrls_();
+    const targetUrl = (accountType === 'INTERNAL') ? urls.internalChatUrl : urls.customerChatUrl;
+    const plat = detectClientPlatform_();
+
+    if (withSnippetText && navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(withSnippetText).catch(() => {});
+    }
+
+    if (plat.isMobileOrTablet) {
+      // On Android / iPad / iPhone: Universal link https://chat.line.biz/ triggers the installed LINE Official Account app directly (or falls back to mobile browser)
+      if (typeof showToast === 'function') {
+        showToast(withSnippetText
+          ? '📋 คัดลอกข้อความแล้ว! กำลังเปิดแอป LINE Official Account...'
+          : '📱 กำลังเปิดแอป LINE Official Account บนอุปกรณ์...');
+      }
+      window.location.href = targetUrl;
+    } else {
+      // On PC / Desktop: Open a dedicated side-by-side Split-Screen popup window so admin can chat while keeping PWA open
+      const w = Math.min(1100, Math.round(window.screen.availWidth * 0.48));
+      const h = Math.round(window.screen.availHeight * 0.9);
+      const left = Math.max(0, window.screen.availWidth - w - 16);
+      const win = window.open(targetUrl, 'HoshizakiLineOaChatWin', `width=${w},height=${h},left=${left},top=24,resizable=yes,scrollbars=yes`);
+      if (!win) {
+        window.open(targetUrl, '_blank', 'noopener');
+      }
+      if (typeof showToast === 'function') {
+        showToast(withSnippetText
+          ? '📋 คัดลอกข้อความลง Clipboard แล้ว! กด Ctrl+V ในหน้าต่าง LINE OA เพื่อส่งได้เลย'
+          : '💻 เปิดหน้าต่างแชท LINE Official Account ด้านข้างเรียบร้อยแล้ว');
+      }
+    }
+  };
+
+  window.copyActiveJobSummaryAndOpenLineOa = function() {
+    const jobNo = document.getElementById('jobNo')?.value || 'JOB-NEW';
+    const store = document.getElementById('storeName')?.value || document.getElementById('customerStore')?.value || 'ลูกค้า HOSHIZAKI';
+    const model = document.getElementById('machineModel')?.value || '-';
+    const sn = document.getElementById('serialNumber')?.value || '-';
+    const status = document.getElementById('jobStatus')?.value || 'กำลังดำเนินการ';
+    const portalBase = 'https://serviceshth.github.io/hoshizaki-service/';
+    const portalLink = `${portalBase}?portal=customer&serial=${encodeURIComponent(sn)}&job=${encodeURIComponent(jobNo)}`;
+
+    const msg = [
+      `🐧 [HOSHIZAKI SERVICE UPDATE]`,
+      `• เลขที่ใบงาน: ${jobNo}`,
+      `• ร้านค้า/บริษัท: ${store}`,
+      `• รุ่นเครื่อง: ${model} | S/N: ${sn}`,
+      `• สถานะปัจจุบัน: ${status}`,
+      `📲 ติดตามสถานะงานซ่อม/อนุมัติใบเสนอราคา:`,
+      portalLink
+    ].join('\n');
+
+    window.launchHoshizakiLineOaChat('CUSTOMER', msg);
+  };
+
+  const QUICK_ADMIN_SNIPPETS = [
+    {
+      title: '1. ขอรูปถ่ายเนมเพลท S/N & อาการเบื้องต้น (TH / EN / JP)',
+      badge: 'รับแจ้งซ่อมใหม่',
+      text: 'สวัสดีครับ ศูนย์บริการ HOSHIZAKI (THAILAND) ยินดีให้บริการครับ 🙏\nรบกวนขอทราบ 1) ชื่อร้านค้า/สาขา 2) เบอร์โทรติดต่อ 3) รูปถ่ายป้าย Serial Number (S/N) ด้านข้างเครื่อง และอาการเบื้องต้น เพื่อตรวจสอบประวัติและนัดหมายช่างครับ\n\n[EN] Please share your Store Name, Contact No., and a photo of the Serial Number (S/N) plate so our service team can assist promptly.\n[JP] お世話になっております。ホシザキ(タイランド)サービス部です。店舗名・ご連絡先・機番(S/N)プレートのお写真をお送りください。'
+    },
+    {
+      title: '2. ยืนยันนัดหมายช่างเข้าบริการล่วงหน้า 1 วัน (1-Day Pre-Visit)',
+      badge: 'คอนเฟิร์มนัดหมาย',
+      text: '🐧 [HOSHIZAKI SERVICE] เรียนแจ้งยืนยันนัดหมายทีมช่างเข้าตรวจเช็ก/บำรุงรักษาเครื่องในวันพรุ่งนี้ครับ\nหากไม่สะดวกหรือต้องการเลื่อนนัด กรุณาแจ้งกลับในแชทนี้ได้เลยครับ ขอบคุณครับ'
+    },
+    {
+      title: '3. แจ้งส่งต่อเคสให้ตัวแทนจำหน่ายดูแล (Dealer Routing)',
+      badge: 'ส่งต่อดีลเลอร์',
+      text: '🐧 [HOSHIZAKI SERVICE] ทางเราได้ตรวจสอบข้อมูล Serial Number ของท่านเรียบร้อยแล้ว เครื่องอยู่ภายใต้การดูแลของตัวแทนจำหน่ายอย่างเป็นทางการ ทางเราได้ส่งเรื่องและรายละเอียดอาการให้ทีมบริการของตัวแทนจำหน่ายติดต่อกลับท่านโดยเร็วที่สุดครับ'
+    },
+    {
+      title: '4. แจ้งจัดส่งอะไหล่ / ไส้กรองน้ำ 4HC-H เรียบร้อยแล้ว',
+      badge: 'จัดส่งอะไหล่',
+      text: '📦 [HOSHIZAKI PARTS & LOGISTICS] จัดส่งรายการอะไหล่/ไส้กรองน้ำแท้ HOSHIZAKI เรียบร้อยแล้วครับ สามารถตรวจสอบสถานะการจัดส่งได้ผ่านลิงก์ Service Portal ครับ'
+    }
+  ];
+
+  // Inject URL Config & Quick Reply Snippets into Tab 1 (BRIDGE) of Dual LINE OA Modal
+  const origSwitchDual = window.switchDualLineCenterTab;
+  window.switchDualLineCenterTab = function(tab) {
+    updatePlatformBadge_();
+    if (typeof origSwitchDual === 'function') {
+      origSwitchDual(tab);
+    }
+    if (tab === 'BRIDGE' || !tab) {
+      const body = document.getElementById('dualLineCenterBody');
+      if (body && !document.getElementById('lineOaDirectLauncherPanel')) {
+        const urls = getLineOaUrls_();
+        const panel = document.createElement('div');
+        panel.id = 'lineOaDirectLauncherPanel';
+        panel.className = 'bg-white border-2 border-[#06C755]/40 rounded-xl p-3.5 shadow-xs space-y-3';
+        panel.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+            <div>
+              <div class="font-extrabold text-sm text-[#002B49]"><i class="fa-brands fa-line text-[#06C755] mr-1"></i> ตั้งค่าลิงก์ห้องแชท LINE OA (Browser / App) &amp; คลังข้อความตอบกลับด่วน</div>
+              <div class="text-[11px] text-slate-600">กำหนด URL ห้องแชทของ LINE Official Account Manager เพื่อให้กดเปิดจาก PC (Popup Split-Screen) หรือเด้งเข้าแอป LINE OA บน Android / iPad ได้ทันที</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+            <div class="sm:col-span-5">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">URL ห้องแชท Customer LINE OA:</label>
+              <input type="text" id="cfgCustomerLineOaChatUrl" value="${escapeHtml(urls.customerChatUrl)}" placeholder="https://chat.line.biz/..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono">
+            </div>
+            <div class="sm:col-span-5">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">URL ห้องแชท Internal ServiceBot OA:</label>
+              <input type="text" id="cfgInternalLineOaChatUrl" value="${escapeHtml(urls.internalChatUrl)}" placeholder="https://chat.line.biz/..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono">
+            </div>
+            <div class="sm:col-span-2">
+              <button type="button" onclick="saveLineOaChatUrls()" class="w-full bg-[#002B49] hover:bg-[#00A3E0] text-white font-bold py-1.5 px-3 rounded-lg text-xs">บันทึกลิงก์</button>
+            </div>
+          </div>
+
+          <div class="space-y-1.5 pt-1">
+            <div class="text-[11px] font-extrabold text-[#002B49]">⚡ คลังข้อความสำเร็จรูปสำหรับแอดมิน (คลิกเพื่อ Copy ข้อความ &amp; เด้งเปิดแอป/หน้าต่าง LINE OA ทันที):</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+              ${QUICK_ADMIN_SNIPPETS.map((s, idx) => `
+                <div class="border border-slate-200 rounded-xl p-2.5 bg-slate-50/70 flex flex-col justify-between gap-2">
+                  <div>
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                      <span class="font-bold text-slate-900 text-[11px]">${escapeHtml(s.title)}</span>
+                      <span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 font-bold text-[9.5px] whitespace-nowrap">${escapeHtml(s.badge)}</span>
+                    </div>
+                    <div class="text-[10.5px] text-slate-600 line-clamp-2 whitespace-pre-line">${escapeHtml(s.text)}</div>
+                  </div>
+                  <div class="flex justify-end">
+                    <button type="button" data-snip-idx="${idx}" onclick="launchHoshizakiLineOaChat('CUSTOMER', decodeURIComponent(this.getAttribute('data-snip-enc')))" data-snip-enc="${encodeURIComponent(s.text)}" class="bg-[#06C755] hover:bg-emerald-600 text-white font-extrabold px-2.5 py-1 rounded-lg text-[10.5px] flex items-center gap-1">
+                      <i class="fa-solid fa-copy"></i> <span>Copy &amp; เปิดแชท LINE OA</span>
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        body.insertBefore(panel, body.firstChild);
+      }
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', updatePlatformBadge_);
+})();

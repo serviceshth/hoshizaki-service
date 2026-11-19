@@ -1248,7 +1248,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1062-CLEAN-VERIFIED',
+    version: 'Enterprise-v1063-DEEP-REPAIRED',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1287,7 +1287,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1062-CLEAN-VERIFIED',
+    version: 'Enterprise-v1063-DEEP-REPAIRED',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -9996,4 +9996,58 @@ function syncJobLifecycleStageAndPush_(ss, payload) {
     payload.updatedBy || 'System'
   ]);
   return { status: 'ok', sheet: 'Job_Lifecycle_Progress' };
+}
+
+
+// ============================================================================
+// 17. CSAT PORTAL & TEMPLATE HELPERS (v1063-DEEP-REPAIRED)
+// ============================================================================
+function ensureCustomerCsatSheet_(ss) {
+  var sheet = ss.getSheetByName('Customer_CSAT_Ratings');
+  if (!sheet) {
+    sheet = ss.insertSheet('Customer_CSAT_Ratings');
+    sheet.getRange(1, 1, 1, 9).setValues([['Timestamp', 'Job No.', 'Customer Name', 'Model', 'Serial No.', 'Technician', 'Rating (1-5)', 'Comment', 'Source']])
+      .setFontWeight('bold').setBackground('#002B49').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function saveCustomerCsatRecord_(ss, params) {
+  var sheet = ensureCustomerCsatSheet_(ss);
+  var nowStr = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd HH:mm:ss');
+  var rating = Math.min(5, Math.max(1, Number(params.rating || params.score || 5)));
+  sheet.appendRow([
+    nowStr,
+    String(params.jobNo || '-'),
+    String(params.customer || params.cust || '-'),
+    String(params.model || '-'),
+    String(params.serial || '-'),
+    String(params.tech || '-'),
+    rating,
+    String(params.comment || ''),
+    String(params.source || 'WEB_PORTAL')
+  ]);
+  return { status: 'ok', rating: rating, jobNo: params.jobNo || '-' };
+}
+
+function buildCustomerCsatHtmlPage_(params) {
+  var jobNo = escapeHtml(params.jobNo || '-');
+  var cust = escapeHtml(params.cust || '');
+  var tech = escapeHtml(params.tech || '');
+  var webAppUrl = ScriptApp.getService().getUrl();
+  var html = '<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HOSHIZAKI CSAT</title></head>' +
+    '<body style="font-family:sans-serif;background:#f0f9ff;padding:20px;text-align:center;">' +
+    '<div style="max-width:420px;margin:auto;background:#fff;padding:24px;border-radius:16px;box-shadow:0 8px 24px rgba(0,43,73,.12);">' +
+    '<h2 style="color:#002B49;margin-top:0;">HOSHIZAKI SERVICE FEEDBACK</h2>' +
+    '<p style="font-size:13px;color:#334155;">ใบงาน: <b>' + jobNo + '</b> | ร้านค้า: <b>' + cust + '</b><br>ช่างผู้ดูแล: <b>' + tech + '</b></p>' +
+    '<select id="r" style="width:100%;padding:10px;font-size:16px;border-radius:8px;margin-bottom:10px;">' +
+    '<option value="5">⭐⭐⭐⭐⭐ (5 - ดีเยี่ยมมาก)</option><option value="4">⭐⭐⭐⭐ (4 - ดี)</option>' +
+    '<option value="3">⭐⭐⭐ (3 - ปานกลาง)</option><option value="2">⭐⭐ (2 - ควรปรับปรุง)</option><option value="1">⭐ (1 - ไม่พึงพอใจ)</option></select>' +
+    '<textarea id="c" rows="3" placeholder="ข้อเสนอแนะเพิ่มเติม..." style="width:100%;padding:10px;border-radius:8px;box-sizing:border-box;"></textarea>' +
+    '<button onclick="send()" style="margin-top:12px;width:100%;padding:12px;background:#059669;color:#fff;border:none;border-radius:10px;font-weight:bold;font-size:15px;">ส่งแบบประเมิน</button>' +
+    '<div id="msg" style="margin-top:14px;font-weight:bold;color:#059669;"></div></div>' +
+    '<script>function send(){fetch(' + JSON.stringify(webAppUrl) + '+"?action=submitCsatGet&jobNo="+encodeURIComponent(' + JSON.stringify(params.jobNo || '') + ')+"&cust="+encodeURIComponent(' + JSON.stringify(params.cust || '') + ')+"&tech="+encodeURIComponent(' + JSON.stringify(params.tech || '') + ')+"&rating="+document.getElementById("r").value+"&comment="+encodeURIComponent(document.getElementById("c").value)).then(function(){document.getElementById("msg").textContent="✅ ขอบคุณสำหรับการประเมินความพึงพอใจครับ";});}</script>' +
+    '</body></html>';
+  return HtmlService.createHtmlOutput(html).setTitle('HOSHIZAKI Customer Satisfaction');
 }

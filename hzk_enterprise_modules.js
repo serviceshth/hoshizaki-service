@@ -1147,7 +1147,7 @@
     localStorage.setItem(DEFECTIVE_TAG_KEY, JSON.stringify(list));
     appendSystemAuditLog('DEFECTIVE_PART_TAG', tagId, `สร้างป้ายคืนซากอะไหล่ ${partNo} (Job: ${jobNo}, Tracking: ${tracking})`);
     if (typeof showToast === 'function') showToast('✅ สร้างป้าย QR ซากอะไหล่เคลม ' + tagId + ' เรียบร้อยแล้ว');
-    renderGovEhsBody_('INVENTORY_QA');
+    window.renderGovEhsBody_('INVENTORY_QA');
   };
 
   // Save ESG Refrigerant Log
@@ -1175,7 +1175,7 @@
     localStorage.setItem(ESG_REFRIGERANT_KEY, JSON.stringify(logs));
     appendSystemAuditLog('ESG_REFRIGERANT', serial, `${action} ${gasType} ${kg} kg (${co2eKg} kgCO2e)`);
     if (typeof showToast === 'function') showToast('🌱 บันทึกข้อมูลสารทำความเย็น ESG (' + co2eKg + ' kgCO2e) เรียบร้อย');
-    renderGovEhsBody_('EHS_ESG');
+    window.renderGovEhsBody_('EHS_ESG');
   };
 
   // Export ERP / Microsoft Dynamics NAV CSV
@@ -1275,7 +1275,7 @@
     }
   };
 
-  function renderGovEhsBody_(tab) {
+  window.renderGovEhsBody_ = function(tab) {
     const body = document.getElementById('govEhsModalBody');
     if (!body) return;
     const logs = JSON.parse(localStorage.getItem(AUDIT_LOG_KEY) || '[]');
@@ -1302,7 +1302,7 @@
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2">
           <div class="flex items-center justify-between">
             <span class="font-extrabold text-sm text-[#002B49]">ประวัติการตรวจสอบความเคลื่อนไหวล่าสุด (Immutable Audit Log · ${logs.length} รายการ)</span>
-            <button type="button" onclick="appendSystemAuditLog('MANUAL_AUDIT_CHECK', 'GOVERNANCE', 'ผู้ดูแลระบบตรวจสอบ Audit Log'); renderGovEhsBody_('GOVERNANCE');" class="bg-[#002B49] text-white px-2.5 py-1 rounded text-[11px] font-bold">+ บันทึกรอบตรวจ</button>
+            <button type="button" onclick="appendSystemAuditLog('MANUAL_AUDIT_CHECK', 'GOVERNANCE', 'ผู้ดูแลระบบตรวจสอบ Audit Log'); window.renderGovEhsBody_('GOVERNANCE');" class="bg-[#002B49] text-white px-2.5 py-1 rounded text-[11px] font-bold">+ บันทึกรอบตรวจ</button>
           </div>
           <div class="overflow-x-auto max-h-64">
             <table class="w-full text-left border-collapse text-xs">
@@ -1488,7 +1488,7 @@
     });
     const act = document.getElementById('govTabBtn_' + tab);
     if (act) act.className = 'gov-tab-btn px-3 py-1.5 rounded-lg bg-[#002B49] text-white shadow-xs';
-    renderGovEhsBody_(tab);
+    window.renderGovEhsBody_(tab);
   };
 
   window.openEnterpriseGovernanceEhsErpModal = function(tab) {
@@ -16528,4 +16528,56 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
   };
 
   document.addEventListener('DOMContentLoaded', updatePlatformBadge_);
+})();
+
+
+// --- Module Block #77: Deep Scan Alias Bridge & Unified Menu/Popup Guard (v1063-DEEP-REPAIRED) ---
+(function() {
+  window.openAiFieldCopilotModal = window.openAiFieldCopilotModal || function(tab) {
+    if (typeof window.openAiNextGenServiceHubModal === 'function') return window.openAiNextGenServiceHubModal(tab || 'DIGITAL_TWIN');
+  };
+  window.openLiveIotTelemetryModal = window.openLiveIotTelemetryModal || function(tab) {
+    if (typeof window.openIotTelemetryHubModal === 'function') return window.openIotTelemetryHubModal(tab || 'FLEET');
+  };
+  window.openDealerRoutingModal = window.openDealerRoutingModal || function(tab) {
+    if (typeof window.openAiChatbotOrchestratorModal === 'function') return window.openAiChatbotOrchestratorModal(tab || 'DEALER_DIR');
+  };
+  window.openHolisticImsModal = window.openHolisticImsModal || function(tab) {
+    const mapTab = (tab === 'DASHBOARD' || !tab) ? 'OVERVIEW' : tab;
+    if (typeof window.openEnterpriseInventoryImsModal === 'function') return window.openEnterpriseInventoryImsModal(mapTab);
+  };
+  window.openHybridNavAccountingModal = window.openHybridNavAccountingModal || function(tab) {
+    if (typeof window.openHybridAccountingNavModal === 'function') return window.openHybridAccountingNavModal(tab || 'NAV_FULL_ERP');
+  };
+  window.openPartsAdvanceModal = window.openPartsAdvanceModal || function() {
+    if (typeof window.openPhase2DepartmentalBridgeModal === 'function') return window.openPhase2DepartmentalBridgeModal();
+  };
+  window.openFactoryGitEtaModal = window.openFactoryGitEtaModal || function() {
+    if (typeof window.openPhase2DepartmentalBridgeModal === 'function') return window.openPhase2DepartmentalBridgeModal();
+  };
+
+  // Update quotation archive count badges dynamically when quotation_archive.json loads
+  document.addEventListener('DOMContentLoaded', function() {
+    fetch('./quotation_archive.json', { cache: 'no-cache' })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data || !Array.isArray(data.quotations)) return;
+        const existing = Array.isArray(window.HOSHIZAKI_QUOTATION_ARCHIVE) ? window.HOSHIZAKI_QUOTATION_ARCHIVE : [];
+        const seen = new Set(existing.map(x => String(x.o || x.offerNo || '').trim()));
+        data.quotations.forEach(q => {
+          const key = String(q.o || '').trim();
+          if (key && !seen.has(key)) {
+            seen.add(key);
+            existing.push(q);
+          }
+        });
+        window.HOSHIZAKI_QUOTATION_ARCHIVE = existing;
+        const totalStr = existing.length.toLocaleString();
+        const badgeEl = document.getElementById('qtArchiveToolbarCount');
+        if (badgeEl) badgeEl.textContent = totalStr;
+        const subEl = document.getElementById('qtArchiveSummarySubtitle');
+        if (subEl) subEl.textContent = `คลังใบเสนอราคาอัปเดตล่าสุด ${totalStr} ฉบับ (รวมไฟล์ QUOTATION 2026) • พร้อมค้นหาตามเลขที่ใบเสนอราคา / ชื่อลูกค้า / รุ่น / S/N`;
+      })
+      .catch(() => {});
+  });
 })();

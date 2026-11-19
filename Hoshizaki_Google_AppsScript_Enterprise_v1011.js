@@ -2034,13 +2034,62 @@ function routeDualLineWebhook_(events, botMode) {
           var escParts = pb.split(':');
           var escSn = escParts[1] || '';
           var escIssue = decodeURIComponent(escParts[2] || 'ขอช่างเข้าตรวจเช็กอาการเสีย');
+          if ((!escSn || escSn === 'NO_SN') && userId) {
+            try {
+              CacheService.getScriptCache().put('CUST_PENDING_ISSUE_' + userId, escIssue, 900);
+            } catch (eCache) {}
+            var askSnFlex = {
+              type: 'flex',
+              altText: '🔍 กรุณาระบุ Serial Number (S/N) เพื่อค้นหาตัวแทนจำหน่ายที่ดูแล',
+              contents: {
+                type: 'bubble',
+                size: 'mega',
+                header: {
+                  type: 'box', layout: 'vertical', backgroundColor: '#002B49', paddingAll: '12px',
+                  contents: [
+                    { type: 'text', text: '🔍 STEP 2: SERIAL NUMBER VERIFICATION', color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+                    { type: 'text', text: 'ระบุเลขเครื่อง S/N เพื่อส่งต่อผู้ดูแลโดยตรง', color: '#FFFFFF', size: 'sm', weight: 'bold', margin: 'xs', wrap: true }
+                  ]
+                },
+                body: {
+                  type: 'box', layout: 'vertical', spacing: 'sm', paddingAll: '12px',
+                  contents: [
+                    { type: 'text', text: '📌 อาการที่แจ้ง: "' + escIssue.substring(0, 140) + '"', size: 'xs', weight: 'bold', color: '#0F172A', wrap: true },
+                    { type: 'text', text: 'กรุณาพิมพ์รหัส Serial Number (S/N) 7 หลักบนสติกเกอร์ข้างเครื่อง (เช่น H14289J) หรือถ่ายรูปป้ายเนมเพลทส่งเข้ามาในแชทนี้ เพื่อให้ระบบค้นหาตัวแทนจำหน่าย / ทีมดูแลที่รับผิดชอบเครื่องนี้โดยตรงครับ', size: 'xs', color: '#334155', wrap: true }
+                  ]
+                },
+                footer: {
+                  type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '10px',
+                  contents: [
+                    {
+                      type: 'button', style: 'secondary', height: 'sm',
+                      action: { type: 'postback', label: '⏭️ ไม่มี S/N / หาป้ายไม่พบ (ส่งศูนย์บริการ)', data: 'FORCE_ESCALATE_NO_SN:' + encodeURIComponent(escIssue.substring(0, 120)), displayText: 'หาป้าย S/N ไม่พบ ขอส่งเรื่องเข้าศูนย์บริการ Hoshizaki ครับ' }
+                    }
+                  ]
+                }
+              }
+            };
+            replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [askSnFlex]);
+            return;
+          }
           var routeRes = routeCustomerCaseToDealerOrDirect_(ss, {
             serialNo: escSn,
             symptom: escIssue,
             customerLineUserId: userId,
-            customerName: getLineUserDisplayName_(userId)
+            customerName: getLineUserDisplayName_(userId),
+            lang: lang
           }, secrets);
           replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [routeRes.customerFlexMessage]);
+        } else if (pb.indexOf('FORCE_ESCALATE_NO_SN:') === 0) {
+          var fIssue = decodeURIComponent(pb.split(':')[1] || 'ลูกค้าแจ้งซ่อม (ไม่มีเลข S/N)');
+          var fRouteRes = routeCustomerCaseToDealerOrDirect_(ss, {
+            serialNo: 'NO_SN',
+            symptom: fIssue,
+            customerLineUserId: userId,
+            customerName: getLineUserDisplayName_(userId),
+            lang: lang
+          }, secrets);
+          replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [fRouteRes.customerFlexMessage]);
         } else if (pb.indexOf('DEALER_ACK_CASE:') === 0) {
           var caseId = pb.split(':')[1] || '';
           updateDealerDispatchCaseStatus_(ss, caseId, 'DEALER_CONTACTED', 'ตัวแทนจำหน่ายกดยืนยันรับเรื่องและติดต่อลูกค้าแล้ว');
@@ -2175,17 +2224,28 @@ function routeDualLineWebhook_(events, botMode) {
           return;
         }
 
-        // 4) Detect Serial Number (e.g. H14289J, 51967170400060) or Explicit Service Request with S/N
-        var snMatch = txt.match(/\b([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})\b/i);
+        // 4) Detect Serial Number (supports H14289J, H-14289-J, H 14289 J, 51967170400060) + Cached Pending Symptom
+        var pendingIssueCached = '';
+        if (userId) {
+          try { pendingIssueCached = CacheService.getScriptCache().get('CUST_PENDING_ISSUE_' + userId) || ''; } catch (eC) {}
+        }
+        var snMatch = txt.match(/\b([A-Z][-\s]?\d{4,6}[-\s]?[A-Z0-9]{0,3}|\d{10,16})\b/i);
         var wantsTechNow = /^(แจ้งซ่อม|ขอซ่อม|นัดช่าง|ขอช่าง|REPAIR|SERVICE\s*CALL|BOOK|修理|点検依頼)/i.test(txt);
+        var compactTxtSn = txt.replace(/[^A-Z0-9]/gi, '');
+        var isPureSnInput = /^([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})$/i.test(compactTxtSn);
 
-        if (snMatch && (wantsTechNow || /^([A-Z]\d{4,6}[A-Z0-9]{0,3}|\d{10,16})$/i.test(txt) || /(S\/N|SN|SERIAL|ตัวแทน|ดีลเลอร์|ซ่อม|ไม่เย็น|ไม่ทำน้ำแข็ง|น้ำแข็งไม่ผลิต)/i.test(txt))) {
-          var detectedSn = snMatch[1].toUpperCase();
+        if (snMatch && (pendingIssueCached || wantsTechNow || isPureSnInput || /(S\/N|SN|SERIAL|ตัวแทน|ดีลเลอร์|ซ่อม|ไม่เย็น|ไม่ทำน้ำแข็ง|น้ำแข็งไม่ผลิต|シリアル|製造番号)/i.test(txt))) {
+          var detectedSn = snMatch[1].replace(/[-\s]/g, '').toUpperCase();
+          var combinedSymptom = pendingIssueCached ? (pendingIssueCached + ' | S/N: ' + detectedSn) : txt;
+          if (userId && pendingIssueCached) {
+            try { CacheService.getScriptCache().remove('CUST_PENDING_ISSUE_' + userId); } catch (eC2) {}
+          }
           var routeOutcome = routeCustomerCaseToDealerOrDirect_(ss, {
             serialNo: detectedSn,
-            symptom: txt,
+            symptom: combinedSymptom,
             customerLineUserId: userId,
-            customerName: getLineUserDisplayName_(userId)
+            customerName: getLineUserDisplayName_(userId),
+            lang: lang
           }, secrets);
           replyLineMessagesWithToken_(secrets.customerLineToken, ev.replyToken, [routeOutcome.customerFlexMessage]);
           return;
@@ -8869,13 +8929,47 @@ function getDealerChannelDirectoryFromSheet_(ss) {
   return { status: 'ok', dealers: dealers };
 }
 
+function normalizeCompanyEntityName_(raw) {
+  return String(raw || '')
+    .toUpperCase()
+    .replace(/\((?:THAILAND|ประเทศไทย|สำนักงานใหญ่|HEAD\s*OFFICE|HQ)\)/g, '')
+    .replace(/\b(?:CO\.,?\s*LTD\.?|LTD\.?|LIMITED|INC\.?|CORP\.?|CORPORATION|PARTNERSHIP)\b/g, '')
+    .replace(/(?:บริษัท|ห้างหุ้นส่วนจำกัด|หจก\.|บจก\.|จำกัด|\(มหาชน\))/g, '')
+    .replace(/[^A-Z0-9ก-๙]/g, '')
+    .trim();
+}
+
+function classifyChannelByKeywordsAndLang_(ownerName, symptomText, langCode) {
+  var combined = (String(ownerName || '') + ' ' + String(symptomText || '')).toUpperCase();
+  if (String(langCode || '').toUpperCase() === 'JP' || /(JAPAN|NIPPON|NIHON|SUSHI|RAMEN|IZAKAYA|TOYOTA|HONDA|DENSO|MARUZEN|YAMAZAKI|KISSUI|OTOYA|FUJI|SUKIYA|YOSHINOYA|COCO\s*ICHIBANYA|日系|日本)/i.test(combined)) {
+    return 'JAPANESE_CORPORATE';
+  }
+  if (/(GENERAL\s*TECH|WALK-?IN|ช่างอิสระ|ช่างทั่วไป|ผู้รับเหมา)/i.test(combined)) {
+    return 'GENERAL_TECHNICIAN';
+  }
+  if (/(DIRECT\s*SALE|HOSHIZAKI\s*DIRECT|ขายตรง|7-ELEVEN|CPALL|STARBUCKS|CENTRAL|MINT|MINOR)/i.test(combined)) {
+    return 'DIRECT_SALE';
+  }
+  return '';
+}
+
+function getChannelSlaMinutes_(channelType) {
+  var ch = String(channelType || '').toUpperCase();
+  if (ch === 'JAPANESE_CORPORATE') return 60;  // 1-Hr Priority VIP SLA
+  if (ch === 'DIRECT_SALE') return 90;         // 1.5-Hr Direct Service SLA
+  if (ch === 'GENERAL_TECHNICIAN') return 180; // 3-Hr Parts/Tech Desk SLA
+  return 120;                                  // 2-Hr Dealer A/B/C SLA
+}
+
 function findDealerProfileByName_(ss, dealerName) {
   var q = String(dealerName || '').trim().toUpperCase();
+  var qNorm = normalizeCompanyEntityName_(q);
   if (!q || q === '-') return null;
   var dir = getDealerChannelDirectoryFromSheet_(ss).dealers || [];
   for (var i = 0; i < dir.length; i++) {
     var dName = String(dir[i].name || '').trim().toUpperCase();
-    if (dName && (dName === q || dName.indexOf(q) > -1 || q.indexOf(dName) > -1)) {
+    var dNorm = normalizeCompanyEntityName_(dName);
+    if (dName && (dName === q || dName.indexOf(q) > -1 || q.indexOf(dName) > -1 || (qNorm.length >= 4 && dNorm.length >= 4 && (dNorm === qNorm || dNorm.indexOf(qNorm) > -1 || qNorm.indexOf(dNorm) > -1)))) {
       return dir[i];
     }
   }
@@ -8914,9 +9008,17 @@ function routeCustomerCaseToDealerOrDirect_(ss, data, secrets) {
   var modelName = salesInfo ? String(salesInfo.model || '-').trim() : '-';
   var dealerProfile = findDealerProfileByName_(ss, rawOwner);
 
-  var channelType = String(data.overrideChannelType || (dealerProfile ? dealerProfile.channelType : (rawOwner ? 'DEALER_ABC' : 'DIRECT_SALE'))).toUpperCase();
-  var assignedTarget = dealerProfile ? dealerProfile.name : (rawOwner || 'HOSHIZAKI Direct Service Team');
-  var isDirect = (channelType === 'DIRECT_SALE' || channelType === 'JAPANESE_CORPORATE');
+  var keywordChannel = classifyChannelByKeywordsAndLang_(rawOwner, symptom, data.lang || '');
+  var channelType = String(
+    data.overrideChannelType ||
+    (keywordChannel === 'JAPANESE_CORPORATE' ? 'JAPANESE_CORPORATE' : '') ||
+    (dealerProfile ? dealerProfile.channelType : '') ||
+    keywordChannel ||
+    (rawOwner ? 'DEALER_A' : 'DIRECT_SALE')
+  ).toUpperCase();
+  var assignedTarget = dealerProfile ? dealerProfile.name : (rawOwner || (channelType === 'JAPANESE_CORPORATE' ? 'Japanese Corporate VIP Unit' : 'HOSHIZAKI Direct Service Team'));
+  var isDirect = (channelType === 'DIRECT_SALE' || channelType === 'JAPANESE_CORPORATE' || channelType === 'GENERAL_TECHNICIAN');
+  var slaMins = getChannelSlaMinutes_(channelType);
 
   // 2. Log into Dealer_Service_Dispatch_Tracker
   var tracker = ensureDealerDispatchTrackerSheet_(ss);
@@ -9031,12 +9133,21 @@ function routeCustomerCaseToDealerOrDirect_(ss, data, secrets) {
         },
         footer: {
           type: 'box', layout: 'vertical', spacing: 'xs', paddingAll: '10px',
-          contents: [
-            {
-              type: 'button', style: 'primary', color: '#059669', height: 'sm',
-              action: { type: 'uri', label: '💬 ติดต่อตัวแทนจำหน่าย / ติดตามงาน', uri: dLineUrl }
+          contents: (function() {
+            var btns = [];
+            var telDigits = String(dPhone || '').replace(/[^0-9+]/g, '');
+            if (telDigits.length >= 8) {
+              btns.push({
+                type: 'button', style: 'primary', color: '#005696', height: 'sm',
+                action: { type: 'uri', label: '📞 โทรติดต่อศูนย์บริการตัวแทนจำหน่าย', uri: 'tel:' + telDigits }
+              });
             }
-          ]
+            btns.push({
+              type: 'button', style: 'primary', color: '#059669', height: 'sm',
+              action: { type: 'uri', label: '💬 แชท LINE ตัวแทนจำหน่าย / ติดตามงาน', uri: dLineUrl }
+            });
+            return btns;
+          })()
         }
       }
     };
@@ -9120,7 +9231,9 @@ function runDealerDispatchFollowUpAndEscalation_(ss, secrets) {
       var diffHrs = isNaN(lastDt.getTime()) ? 2.5 : ((nowMs - lastDt.getTime()) / (1000 * 3600));
       var remCount = Number(vals[i][12] || 0);
 
-      if (diffHrs >= 2) {
+      var rowChType = String(vals[i][7] || 'DEALER_A');
+      var slaHrs = getChannelSlaMinutes_(rowChType) / 60;
+      if (diffHrs >= slaHrs) {
         var caseId = String(vals[i][0] || '');
         var sn = String(vals[i][2] || '-');
         var model = String(vals[i][3] || '-');

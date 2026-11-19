@@ -1516,12 +1516,21 @@
   const DEALER_CASES_KEY = 'hoshizaki_dealer_dispatch_cases_v1035';
 
   const CHANNEL_LABELS = {
-    'DEALER_A': 'ตัวแทนจำหน่าย เกรด A (Dealer A)',
-    'DEALER_B': 'ตัวแทนจำหน่าย เกรด B (Dealer B)',
-    'DEALER_C': 'ตัวแทนจำหน่าย เกรด C (Dealer C)',
-    'DIRECT_SALE': 'งานขายตรง (Direct Sale — Hoshizaki)',
-    'JAPANESE_CORPORATE': 'ลูกค้าญี่ปุ่น (Japanese Corporate Unit)',
-    'GENERAL_TECHNICIAN': 'ช่างซ่อมทั่วไป / อิสระ (General Technician)'
+    'DEALER_A': 'Dealer A · เกรด A (SLA 2 ชม. | เรท Dealer A)',
+    'DEALER_B': 'Dealer B · เกรด B (SLA 2 ชม. | เรท Dealer B)',
+    'DEALER_C': 'Dealer C · เกรด C (SLA 2 ชม. | เรท Dealer C)',
+    'DIRECT_SALE': 'Direct Sale · งานขายตรง Hoshizaki (SLA 1.5 ชม.)',
+    'JAPANESE_CORPORATE': 'Japanese Corporate · ลูกค้าญี่ปุ่น VIP (SLA 1 ชม. | 3 ภาษา)',
+    'GENERAL_TECHNICIAN': 'General Technician · ช่างอิสระ/Walk-in (SLA 3 ชม.)'
+  };
+
+  const CHANNEL_ROUTING_POLICIES = {
+    'DEALER_A': { slaLabel: '2 ชม. (Escalate 4 ชม.)', billingRule: 'ส่งต่อ Group LINE Dealer A · หากขอเข้าแทนออก QT ให้ Dealer A เท่านั้น', badgeColor: 'bg-sky-100 text-sky-900' },
+    'DEALER_B': { slaLabel: '2 ชม. (Escalate 4 ชม.)', billingRule: 'ส่งต่อ Group LINE Dealer B · ประสานงานร่วมต่างจังหวัด · ออก QT ให้ Dealer B', badgeColor: 'bg-cyan-100 text-cyan-900' },
+    'DEALER_C': { slaLabel: '2 ชม. (Escalate 4 ชม.)', billingRule: 'ส่งต่อ Group LINE Dealer C + ปุ่มขอทีม Hoshizaki เข้าแทน (เรท Dealer C)', badgeColor: 'bg-teal-100 text-teal-900' },
+    'DIRECT_SALE': { slaLabel: '1.5 ชม. (Direct Unit)', billingRule: 'เปิด Ticket เข้าศูนย์บริการตรง Hoshizaki · ออก QT ตรงถึงลูกค้า', badgeColor: 'bg-emerald-100 text-emerald-900' },
+    'JAPANESE_CORPORATE': { slaLabel: '1 ชม. (Priority VIP)', billingRule: 'แจ้งทีมประสานงานญี่ปุ่นทันที · ตอบกลับภาษาญี่ปุ่น · รายงาน 3 ภาษา', badgeColor: 'bg-rose-100 text-rose-900' },
+    'GENERAL_TECHNICIAN': { slaLabel: '3 ชม. (Tech/Parts Desk)', billingRule: 'ส่งสเปก/Error Code อัตโนมัติ · ซื้ออะไหล่เรท General Tech (โอนก่อนส่ง)', badgeColor: 'bg-amber-100 text-amber-900' }
   };
 
   function seedDealersFromSerialDbIfEmpty_() {
@@ -16010,5 +16019,326 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
       interactiveButtons: buttons.length,
       status: dups.length === 0 ? '100% OPERATIONAL' : 'NEEDS_DEDUP'
     };
+  };
+})();
+
+
+// --- Module Block #77: LINE OA Directory (Dealer/Customer Dropdown + Group ID & Personal LINE ID) ---
+(function() {
+  const LINE_ACCT_DIR_KEY = 'hoshizaki_line_account_directory_v1061';
+
+  const CHANNEL_BADGES = {
+    'DEALER_A': { label: 'Dealer A (เกรด A)', cls: 'bg-sky-100 text-sky-900' },
+    'DEALER_B': { label: 'Dealer B (เกรด B)', cls: 'bg-cyan-100 text-cyan-900' },
+    'DEALER_C': { label: 'Dealer C (เกรด C)', cls: 'bg-teal-100 text-teal-900' },
+    'DIRECT_SALE': { label: 'Direct Sale (ขายตรง)', cls: 'bg-emerald-100 text-emerald-900' },
+    'JAPANESE_CORPORATE': { label: 'Japanese Corporate (VIP)', cls: 'bg-rose-100 text-rose-900' },
+    'GENERAL_TECHNICIAN': { label: 'General Technician (ช่างทั่วไป)', cls: 'bg-amber-100 text-amber-900' }
+  };
+
+  function loadLineAccountDirectory_() {
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem(LINE_ACCT_DIR_KEY) || '[]'); } catch (e) {}
+    if (Array.isArray(list) && list.length > 0) return list;
+
+    const seen = new Set();
+    const seeded = [];
+
+    // 1. Seed from Dealer_Channel_Directory
+    try {
+      const dlrs = JSON.parse(localStorage.getItem('hoshizaki_dealer_channel_directory_v1035') || '[]');
+      dlrs.forEach(d => {
+        const key = String(d.name || '').trim().toUpperCase();
+        if (key && !seen.has(key)) {
+          seen.add(key);
+          seeded.push({
+            id: d.id || ('ACC-' + Date.now() + Math.random().toString(36).slice(2, 5)),
+            accountName: d.name,
+            accountCategory: d.channelType || 'DEALER_A',
+            lineGroupId: d.lineGroupId || '',
+            linePersonalId: d.linePersonalId || '',
+            phone: d.phone || '',
+            email: d.email || ''
+          });
+        }
+      });
+    } catch (e1) {}
+
+    // 2. Seed from BUILTIN_SERIAL_ROWS
+    try {
+      const rows = (typeof BUILTIN_SERIAL_ROWS !== 'undefined' && Array.isArray(BUILTIN_SERIAL_ROWS)) ? BUILTIN_SERIAL_ROWS : [];
+      for (let i = 0; i < rows.length && seeded.length < 200; i++) {
+        const cust = String(rows[i][5] || '').trim();
+        const key = cust.toUpperCase();
+        if (cust && cust !== '-' && cust.length >= 3 && !seen.has(key)) {
+          seen.add(key);
+          const isJp = /(japan|nihon|nippon|sushi|ramen|izakaya|toyota|honda|denso)/i.test(cust);
+          seeded.push({
+            id: 'ACC-' + String(seeded.length + 1).padStart(4, '0'),
+            accountName: cust,
+            accountCategory: isJp ? 'JAPANESE_CORPORATE' : 'DEALER_A',
+            lineGroupId: '',
+            linePersonalId: '',
+            phone: '',
+            email: ''
+          });
+        }
+      }
+    } catch (e2) {}
+
+    localStorage.setItem(LINE_ACCT_DIR_KEY, JSON.stringify(seeded));
+    return seeded;
+  }
+
+  function saveLineAccountDirectory_(list) {
+    localStorage.setItem(LINE_ACCT_DIR_KEY, JSON.stringify(list || []));
+  }
+
+  window.onSelectLineDirDropdownAccount = function(selectedName) {
+    const list = loadLineAccountDirectory_();
+    const found = list.find(x => String(x.accountName || '').trim().toUpperCase() === String(selectedName || '').trim().toUpperCase());
+
+    if (document.getElementById('lineDirAccNameInput')) {
+      document.getElementById('lineDirAccNameInput').value = found ? found.accountName : (selectedName || '');
+    }
+    if (document.getElementById('lineDirAccCatSelect') && found) {
+      document.getElementById('lineDirAccCatSelect').value = found.accountCategory || 'DEALER_A';
+    }
+    if (document.getElementById('lineDirGroupIdInput')) {
+      document.getElementById('lineDirGroupIdInput').value = found ? (found.lineGroupId || '') : '';
+    }
+    if (document.getElementById('lineDirPersonalIdInput')) {
+      document.getElementById('lineDirPersonalIdInput').value = found ? (found.linePersonalId || '') : '';
+    }
+    if (document.getElementById('lineDirPhoneInput')) {
+      document.getElementById('lineDirPhoneInput').value = found ? (found.phone || '') : '';
+    }
+  };
+
+  window.filterLineDirTableRows = function(query) {
+    const q = String(query || '').trim().toLowerCase();
+    document.querySelectorAll('#lineDirAccountsTableBody tr').forEach(tr => {
+      const txt = tr.textContent.toLowerCase();
+      tr.style.display = (!q || txt.indexOf(q) > -1) ? '' : 'none';
+    });
+  };
+
+  window.saveLineAccountDirectoryEntry = async function() {
+    const name = (document.getElementById('lineDirAccNameInput')?.value || '').trim();
+    if (!name) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาเลือกหรือพิมพ์ชื่อตัวแทนจำหน่าย / ลูกค้า');
+      return;
+    }
+    const category = document.getElementById('lineDirAccCatSelect')?.value || 'DEALER_A';
+    const lineGroupId = (document.getElementById('lineDirGroupIdInput')?.value || '').trim();
+    const linePersonalId = (document.getElementById('lineDirPersonalIdInput')?.value || '').trim();
+    const phone = (document.getElementById('lineDirPhoneInput')?.value || '').trim();
+
+    const list = loadLineAccountDirectory_();
+    const idx = list.findIndex(x => String(x.accountName || '').trim().toUpperCase() === name.toUpperCase());
+    const entry = {
+      id: idx >= 0 ? list[idx].id : ('ACC-' + Date.now().toString().slice(-6)),
+      accountName: name,
+      accountCategory: category,
+      lineGroupId: lineGroupId,
+      linePersonalId: linePersonalId,
+      phone: phone,
+      updatedAt: new Date().toISOString()
+    };
+    if (idx >= 0) list[idx] = Object.assign({}, list[idx], entry);
+    else list.unshift(entry);
+    saveLineAccountDirectory_(list);
+
+    // Sync with Dealer_Channel_Directory (Group ID primary, Personal ID automatic fallback)
+    try {
+      const dlrKey = 'hoshizaki_dealer_channel_directory_v1035';
+      const dlrs = JSON.parse(localStorage.getItem(dlrKey) || '[]');
+      const dIdx = dlrs.findIndex(d => String(d.name || '').trim().toUpperCase() === name.toUpperCase());
+      const effectiveTargetId = lineGroupId || linePersonalId;
+      const dRec = {
+        id: dIdx >= 0 ? dlrs[dIdx].id : entry.id,
+        name: name,
+        channelType: category,
+        zoneTier: category,
+        phone: phone,
+        email: dIdx >= 0 ? (dlrs[dIdx].email || '') : '',
+        lineGroupId: effectiveTargetId,
+        rawGroupId: lineGroupId,
+        linePersonalId: linePersonalId,
+        lineOaLink: dIdx >= 0 ? (dlrs[dIdx].lineOaLink || '') : '',
+        smsMobile: phone,
+        province: 'ทั่วประเทศ'
+      };
+      if (dIdx >= 0) dlrs[dIdx] = dRec;
+      else dlrs.unshift(dRec);
+      localStorage.setItem(dlrKey, JSON.stringify(dlrs));
+
+      const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '';
+      if (gasUrl && gasUrl.indexOf('http') === 0) {
+        fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ actionType: 'SYNC_DEALER_CHANNEL_DIRECTORY', dealers: dlrs })
+        }).catch(() => {});
+      }
+    } catch (eSync) {}
+
+    if (typeof showToast === 'function') showToast('✅ บันทึก ID Group และ ID ส่วนตัวของ "' + name + '" เรียบร้อยแล้ว');
+    window.switchDualLineCenterTab('DIRECTORY');
+  };
+
+  window.pushTestToLineDirAccount = async function(groupId, personalId, accName) {
+    const targetId = groupId || personalId;
+    if (!targetId) {
+      if (typeof showToast === 'function') showToast('⚠️ บัญชีนี้ยังไม่ได้ระบุ LINE Group ID หรือ LINE ID ส่วนตัว');
+      return;
+    }
+    const modeLabel = groupId ? 'Group LINE (C...)' : 'LINE ส่วนตัวสำรอง (U...)';
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '';
+    if (!gasUrl || gasUrl.indexOf('http') !== 0) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาตั้งค่า Google Apps Script Web App URL ก่อนส่งข้อความ');
+      return;
+    }
+    try {
+      await fetch(gasUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actionType: 'SEND_LINE_PUSH',
+          lineTargetId: targetId,
+          message: '🐧 [HOSHIZAKI SERVICE CONNECT] ทดสอบการเชื่อมต่อแจ้งเตือน (' + modeLabel + ') สำหรับ "' + accName + '" เรียบร้อยแล้วครับ'
+        })
+      });
+      if (typeof showToast === 'function') showToast('🚀 ส่งข้อความทดสอบไปยัง ' + accName + ' [' + modeLabel + '] เรียบร้อยแล้ว');
+    } catch (e) {}
+  };
+
+  const prevSwitchTab = window.switchDualLineCenterTab;
+  window.switchDualLineCenterTab = function(tab) {
+    const allTabs = ['BRIDGE', 'TICKETS', 'SMS', 'SIM', 'FLEXSTUDIO', 'DIRECTORY'];
+    allTabs.forEach(t => {
+      const btn = document.getElementById('tabDualLine' + t.charAt(0) + t.slice(1).toLowerCase());
+      if (btn) {
+        btn.className = (t === tab)
+          ? 'px-3 py-1.5 rounded-lg bg-[#002B49] text-white font-bold shadow-xs'
+          : 'px-3 py-1.5 rounded-lg bg-white text-slate-800 border border-slate-300 font-bold hover:bg-slate-50';
+      }
+    });
+
+    if (tab !== 'DIRECTORY') {
+      if (typeof prevSwitchTab === 'function') prevSwitchTab(tab);
+      return;
+    }
+
+    const body = document.getElementById('dualLineCenterBody');
+    if (!body) return;
+    const list = loadLineAccountDirectory_();
+    const linkedGroupCnt = list.filter(x => x.lineGroupId).length;
+    const linkedPersonalCnt = list.filter(x => x.linePersonalId).length;
+
+    body.innerHTML = `
+      <div class="bg-gradient-to-r from-sky-50 via-white to-emerald-50 border border-sky-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div class="font-extrabold text-[#002B49] text-sm"><i class="fa-solid fa-address-book text-amber-600 mr-1"></i> ทะเบียนรายชื่อตัวแทนจำหน่าย / ลูกค้า &amp; ผูก LINE Group ID / LINE ID ส่วนตัว</div>
+          <div class="text-[11px] text-slate-600">ดึงรายชื่ออัตโนมัติจากฐานข้อมูล Serial Number &amp; ทะเบียนตัวแทนจำหน่าย พร้อมกำหนดกลุ่มช่องทางทั้ง 6 ประเภท</div>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] font-bold">
+          <span class="bg-sky-100 text-sky-900 px-2.5 py-1 rounded-lg">ผูก Group ID แล้ว: <b>${linkedGroupCnt}</b></span>
+          <span class="bg-indigo-100 text-indigo-900 px-2.5 py-1 rounded-lg">ผูก ID ส่วนตัวแล้ว: <b>${linkedPersonalCnt}</b></span>
+        </div>
+      </div>
+
+      <!-- Drop-Down Selector & ID Editor Form -->
+      <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs space-y-2.5">
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+          <div class="sm:col-span-5">
+            <label class="block text-[11px] font-extrabold text-[#002B49] mb-1">1. เลือกชื่อตัวแทนจำหน่าย / ลูกค้า (Drop-Down List):</label>
+            <select id="lineDirAccountDropdown" onchange="onSelectLineDirDropdownAccount(this.value)" class="w-full border-2 border-sky-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-sky-50/40 text-[#002B49]">
+              <option value="">-- เลือกรายชื่อจากฐานข้อมูล (${list.length} รายชื่อ) --</option>
+              ${list.map(x => `<option value="${escapeHtml(x.accountName)}">${escapeHtml(x.accountName)} [${x.accountCategory}]</option>`).join('')}
+            </select>
+          </div>
+          <div class="sm:col-span-4">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">หรือพิมพ์เพิ่มชื่อตัวแทนจำหน่าย / ลูกค้าใหม่:</label>
+            <input type="text" id="lineDirAccNameInput" placeholder="ระบุชื่อบริษัทตัวแทนจำหน่าย หรือชื่อร้านลูกค้า..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold">
+          </div>
+          <div class="sm:col-span-3">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">กลุ่มช่องทาง (6 ประเภท):</label>
+            <select id="lineDirAccCatSelect" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-bold bg-white text-[#002B49]">
+              <option value="DEALER_A">Dealer A (เกรด A)</option>
+              <option value="DEALER_B">Dealer B (เกรด B)</option>
+              <option value="DEALER_C">Dealer C (เกรด C)</option>
+              <option value="DIRECT_SALE">Direct Sale (ขายตรง)</option>
+              <option value="JAPANESE_CORPORATE">Japanese Corporate (VIP)</option>
+              <option value="GENERAL_TECHNICIAN">General Technician (ช่างทั่วไป)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[10.5px] font-extrabold text-sky-900 mb-0.5"><i class="fa-solid fa-users text-sky-600 mr-1"></i>LINE Group ID (ขึ้นต้นด้วย Cxxxx...):</label>
+            <input type="text" id="lineDirGroupIdInput" placeholder="สำหรับส่งการ์ดเคสซ่อม/โปรโมชันเข้ากลุ่มช่างดีลเลอร์..." class="w-full border border-sky-300 rounded-lg px-2.5 py-1.5 text-xs font-mono bg-sky-50/30">
+          </div>
+          <div>
+            <label class="block text-[10.5px] font-extrabold text-indigo-900 mb-0.5"><i class="fa-solid fa-user text-indigo-600 mr-1"></i>LINE ID ส่วนตัว / User ID (Uxxxx... หรือ @lineid):</label>
+            <input type="text" id="lineDirPersonalIdInput" placeholder="ส่งตรงถึงผู้ประสานงาน/เจ้าของร้าน (ใช้สำรองหากไม่มี Group ID)" class="w-full border border-indigo-300 rounded-lg px-2.5 py-1.5 text-xs font-mono bg-indigo-50/30">
+          </div>
+          <div>
+            <label class="block text-[10.5px] font-bold text-slate-700 mb-0.5"><i class="fa-solid fa-phone text-emerald-600 mr-1"></i>เบอร์โทรติดต่อศูนย์บริการ / ผู้ประสานงาน:</label>
+            <input type="text" id="lineDirPhoneInput" placeholder="02-xxx-xxxx / 08x-xxx-xxxx" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <span class="text-[10.5px] text-slate-500">💡 ระบบจะใช้ <b>LINE Group ID</b> เป็นหลัก และสลับใช้ <b>LINE ID ส่วนตัว</b> เป็นปลายทางสำรองอัตโนมัติหากยังไม่มี Group ID</span>
+          <button type="button" onclick="saveLineAccountDirectoryEntry()" class="bg-[#002B49] hover:bg-[#00A3E0] text-white px-4 py-2 rounded-lg font-extrabold text-xs shadow-xs">
+            <i class="fa-solid fa-floppy-disk mr-1 text-amber-300"></i> บันทึก ID Group / ID ส่วนตัว &amp; ซิงค์ขึ้น Cloud
+          </button>
+        </div>
+      </div>
+
+      <!-- Directory Table -->
+      <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs space-y-2">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="font-extrabold text-xs text-[#002B49]">ทะเบียนรายชื่อตัวแทนจำหน่าย / ลูกค้า และสถานะการผูก LINE ID (${list.length} บัญชี)</span>
+          <input type="text" oninput="filterLineDirTableRows(this.value)" placeholder="ค้นหาชื่อบัญชี, ประเภทกลุ่ม หรือ Group/User ID..." class="border border-slate-300 rounded-lg px-2.5 py-1 text-xs w-64">
+        </div>
+        <div class="overflow-x-auto max-h-64">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-[#002B49] text-white">
+                <th class="p-2">ชื่อตัวแทนจำหน่าย / ลูกค้า</th>
+                <th class="p-2">กลุ่มช่องทาง (6 ประเภท)</th>
+                <th class="p-2">LINE Group ID (C...)</th>
+                <th class="p-2">LINE ID ส่วนตัว (U... / @)</th>
+                <th class="p-2">เบอร์โทร</th>
+                <th class="p-2 text-center">จัดการ / ทดสอบส่ง</th>
+              </tr>
+            </thead>
+            <tbody id="lineDirAccountsTableBody" class="divide-y divide-slate-200">
+              ${list.map(item => {
+                const badge = CHANNEL_BADGES[item.accountCategory] || { label: item.accountCategory, cls: 'bg-slate-100 text-slate-800' };
+                return `
+                  <tr class="hover:bg-sky-50/60">
+                    <td class="p-2 font-bold text-slate-900">${escapeHtml(item.accountName)}</td>
+                    <td class="p-2"><span class="px-2 py-0.5 rounded font-bold text-[10px] ${badge.cls}">${escapeHtml(badge.label)}</span></td>
+                    <td class="p-2 font-mono text-[10.5px] text-sky-900">${escapeHtml(item.lineGroupId || '-')}</td>
+                    <td class="p-2 font-mono text-[10.5px] text-indigo-800">${escapeHtml(item.linePersonalId || '-')}</td>
+                    <td class="p-2 text-[11px] text-slate-600">${escapeHtml(item.phone || '-')}</td>
+                    <td class="p-2 text-center whitespace-nowrap space-x-1">
+                      <button type="button" onclick="document.getElementById('lineDirAccountDropdown').value='${escapeHtml(item.accountName)}'; onSelectLineDirDropdownAccount('${escapeHtml(item.accountName)}');" class="bg-amber-500 hover:bg-amber-600 text-white px-2 py-0.5 rounded text-[10.5px] font-bold">เลือกแก้ไข</button>
+                      <button type="button" onclick="pushTestToLineDirAccount('${escapeHtml(item.lineGroupId)}', '${escapeHtml(item.linePersonalId)}', '${escapeHtml(item.accountName)}')" class="bg-[#06C755] hover:bg-emerald-600 text-white px-2 py-0.5 rounded text-[10.5px] font-bold">ทดสอบส่ง</button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
   };
 })();

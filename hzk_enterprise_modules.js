@@ -3600,6 +3600,7 @@
   }, 1500);
 })();
 
+/* ==========================================================================
  * HOSHIZAKI (THAILAND) Enterprise Deferred Modules Bundle (v1041-FINAL)
  * Includes: IoT Telemetry, AI Co-Pilot, Governance/EHS/ERP, Dealer Router,
  * LINE Flex Studio, and Holistic Inventory Management System (IMS)

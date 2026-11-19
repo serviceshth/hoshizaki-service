@@ -819,7 +819,7 @@ transform: scale(0.96);
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-1.5 mt-1 min-w-0">
-<p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1063-DEEP-REPAIRED</span></p>
+<p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1065-ENTERPRISE-PRO</span></p>
 </div>
 <!-- แถวปุ่มสถานะด่วนกะทัดรัด (Flex-Wrap พอดีกรอบ 100% ไม่ล้นขอบจอทุกอุปกรณ์) -->
 <div id="topHeaderStatusPillsRow" class="flex flex-wrap items-center gap-1.5 mt-1.5 min-w-0 max-w-full">
@@ -886,7 +886,7 @@ transform: scale(0.96);
 สลับเป็นโหมดช่างดำเนินงาน
 </button>
 </div>
-<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1063-DEEP-REPAIRED · ≤30 Core Users) -->
+<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1065-ENTERPRISE-PRO · ≤30 Core Users) -->
 <div id="myDailyRoleWorkspaceBar" class="mt-2 rounded-xl bg-white/10 border border-white/20 p-2 text-xs">
 <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5 px-1">
 <span id="myDailyWorkspaceTitle" class="font-extrabold text-sky-200 flex items-center gap-1.5">
@@ -1776,7 +1776,7 @@ transform: scale(0.96);
 </nav>
 <!-- Main Job Sheet Printable Container -->
 <main id="jobSheetContainer" class="print-container max-w-4xl mx-auto bg-white rounded-xl shadow-xl p-3.5 sm:p-6 space-y-4 border border-gray-200">
-<!-- Visual 5-Stage End-to-End Lifecycle Stepper (Enterprise v1063-DEEP-REPAIRED) -->
+<!-- Visual 5-Stage End-to-End Lifecycle Stepper (Enterprise v1065-ENTERPRISE-PRO) -->
 <div id="jobEndToEndStepperBar" class="no-print bg-gradient-to-r from-[#002B49] via-sky-900 to-emerald-900 text-white rounded-xl p-2.5 shadow-sm border border-sky-300/40">
   <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2 px-1">
     <span class="text-[11px] font-extrabold text-amber-300 flex items-center gap-1.5">
@@ -2571,7 +2571,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <!-- Web App UI Footer -->
 <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
 <div class="font-extrabold tracking-wide text-amber-300">
-HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1063-DEEP-REPAIRED</span>
+HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1065-ENTERPRISE-PRO</span>
 </div>
 <div class="text-white/80 font-medium">
 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -5215,7 +5215,7 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             debounceAutoSave();
         }
 
-        function addPartsRow(data = { desc: '', qty: 1, price: '0.00' }) {
+        function addPartsRow(data = { desc: '', qty: 1, price: '0.00', discVal: '0', discType: 'THB' }) {
             const tbody = document.getElementById('partsTableBody');
             if (!tbody) return;
             const currentRows = tbody.querySelectorAll('.parts-row').length;
@@ -5233,6 +5233,15 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                 </td>
                 <td class="p-2">
                     <input type="number" inputmode="decimal" value="${data.price ?? '0.00'}" step="10" oninput="calculateTotals()" class="parts-price w-full text-right border border-gray-200 rounded p-1.5 focus:outline-none">
+                </td>
+                <td class="p-2">
+                    <div class="flex items-center gap-1">
+                        <input type="number" inputmode="decimal" value="${data.discVal ?? '0'}" min="0" step="1" oninput="calculateTotals()" class="parts-disc-val w-20 text-right border border-rose-200 rounded p-1.5 text-rose-600 font-semibold focus:outline-none bg-rose-50/30">
+                        <select onchange="calculateTotals()" class="parts-disc-type border border-rose-300 bg-rose-50 text-rose-800 font-bold rounded p-1.5 text-[11px] focus:outline-none">
+                            <option value="THB" ${(!data.discType || data.discType === 'THB') ? 'selected' : ''}>บาท</option>
+                            <option value="PERCENT" ${data.discType === 'PERCENT' ? 'selected' : ''}>%</option>
+                        </select>
+                    </div>
                 </td>
                 <td class="p-2 text-right font-semibold text-gray-700 parts-amount">0.00</td>
                 <td class="p-2 text-center no-print">
@@ -5455,6 +5464,8 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                     desc: row.querySelector('.parts-desc')?.value || '',
                     qty: row.querySelector('.parts-qty')?.value || '1',
                     price: row.querySelector('.parts-price')?.value || '0.00',
+                    discVal: row.querySelector('.parts-disc-val')?.value || '0',
+                    discType: row.querySelector('.parts-disc-type')?.value || 'THB',
                     procStatus: row.querySelector('.parts-proc-status')?.value || 'IN_STOCK'
                 });
             });
@@ -5526,7 +5537,15 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                 action: document.getElementById('diagAction')?.value || '',
                 parts: parts,
                 feeLabor: document.getElementById('feeLabor')?.value || '0.00',
+                feeLaborDisc: document.getElementById('feeLaborDisc')?.value || '0',
+                feeLaborDiscType: document.getElementById('feeLaborDiscType')?.value || 'THB',
                 feeTrip: document.getElementById('feeTrip')?.value || '0.00',
+                feeTripDisc: document.getElementById('feeTripDisc')?.value || '0',
+                feeTripDiscType: document.getElementById('feeTripDiscType')?.value || 'THB',
+                feeOtherDesc: document.getElementById('feeOtherDesc')?.value || '',
+                feeOther: document.getElementById('feeOther')?.value || '0.00',
+                feeOtherDisc: document.getElementById('feeOtherDisc')?.value || '0',
+                feeOtherDiscType: document.getElementById('feeOtherDiscType')?.value || 'THB',
                 priceTier: getActivePriceTier(),
                 feeDiscountType: document.getElementById('feeDiscountType')?.value || 'THB',
                 feeDiscount: document.getElementById('feeDiscount')?.value || '0',
@@ -5616,7 +5635,15 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             }
 
             if (document.getElementById('feeLabor')) document.getElementById('feeLabor').value = data.feeLabor || '0.00';
+            if (document.getElementById('feeLaborDisc')) document.getElementById('feeLaborDisc').value = data.feeLaborDisc || '0';
+            if (document.getElementById('feeLaborDiscType')) document.getElementById('feeLaborDiscType').value = data.feeLaborDiscType || 'THB';
             if (document.getElementById('feeTrip')) document.getElementById('feeTrip').value = data.feeTrip || '0.00';
+            if (document.getElementById('feeTripDisc')) document.getElementById('feeTripDisc').value = data.feeTripDisc || '0';
+            if (document.getElementById('feeTripDiscType')) document.getElementById('feeTripDiscType').value = data.feeTripDiscType || 'THB';
+            if (document.getElementById('feeOtherDesc')) document.getElementById('feeOtherDesc').value = data.feeOtherDesc || '';
+            if (document.getElementById('feeOther')) document.getElementById('feeOther').value = data.feeOther || '0.00';
+            if (document.getElementById('feeOtherDisc')) document.getElementById('feeOtherDisc').value = data.feeOtherDisc || '0';
+            if (document.getElementById('feeOtherDiscType')) document.getElementById('feeOtherDiscType').value = data.feeOtherDiscType || 'THB';
             if (document.getElementById('customerPriceTierSelect')) {
                 document.getElementById('customerPriceTierSelect').value = data.priceTier || 'DIRECT';
                 handlePriceTierChange(false);
@@ -6662,42 +6689,87 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
         }
 
         // --- CALCULATION LOGIC ---
+        function computeLineDiscountAmount(grossAmount, discVal, discType) {
+            const gross = Math.max(0, parseFloat(grossAmount) || 0);
+            const val = Math.max(0, parseFloat(discVal) || 0);
+            if (gross <= 0 || val <= 0) return 0;
+            if (discType === 'PERCENT') {
+                return Math.min(gross, Math.round(gross * (Math.min(100, val) / 100) * 100) / 100);
+            }
+            return Math.min(gross, Math.round(val * 100) / 100);
+        }
+
         function calculateTotals() {
-            let partsTotal = 0;
+            let netPartsTotal = 0;
+            let totalLineItemDiscounts = 0;
             const rows = document.querySelectorAll('.parts-row');
 
             rows.forEach(row => {
-                const qtyInput = row.querySelector('.parts-qty');
-                const priceInput = row.querySelector('.parts-price');
+                const qty = parseFloat(row.querySelector('.parts-qty')?.value || 0) || 0;
+                const price = parseFloat(row.querySelector('.parts-price')?.value || 0) || 0;
+                const discVal = parseFloat(row.querySelector('.parts-disc-val')?.value || 0) || 0;
+                const discType = row.querySelector('.parts-disc-type')?.value || 'THB';
+
+                const gross = qty * price;
+                const lineDisc = computeLineDiscountAmount(gross, discVal, discType);
+                const netAmount = Math.max(0, gross - lineDisc);
+
                 const amountCell = row.querySelector('.parts-amount');
-
-                const qty = parseFloat(qtyInput ? qtyInput.value : 0) || 0;
-                const price = parseFloat(priceInput ? priceInput.value : 0) || 0;
-                const amount = qty * price;
-
                 if (amountCell) {
-                    amountCell.innerText = amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    amountCell.innerText = netAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 }
-                partsTotal += amount;
+                netPartsTotal += netAmount;
+                totalLineItemDiscounts += lineDisc;
             });
 
             const subtotalPartsElem = document.getElementById('subtotalParts');
             if (subtotalPartsElem) {
-                subtotalPartsElem.innerText = partsTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                subtotalPartsElem.innerText = netPartsTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             }
 
-            const laborInput = document.getElementById('feeLabor');
-            const tripInput = document.getElementById('feeTrip');
+            const laborFee = parseFloat(document.getElementById('feeLabor')?.value || 0) || 0;
+            const laborDisc = computeLineDiscountAmount(
+                laborFee,
+                document.getElementById('feeLaborDisc')?.value || 0,
+                document.getElementById('feeLaborDiscType')?.value || 'THB'
+            );
+            const netLaborFee = Math.max(0, laborFee - laborDisc);
+
+            const tripFee = parseFloat(document.getElementById('feeTrip')?.value || 0) || 0;
+            const tripDisc = computeLineDiscountAmount(
+                tripFee,
+                document.getElementById('feeTripDisc')?.value || 0,
+                document.getElementById('feeTripDiscType')?.value || 'THB'
+            );
+            const netTripFee = Math.max(0, tripFee - tripDisc);
+
+            const otherFee = parseFloat(document.getElementById('feeOther')?.value || 0) || 0;
+            const otherDisc = computeLineDiscountAmount(
+                otherFee,
+                document.getElementById('feeOtherDisc')?.value || 0,
+                document.getElementById('feeOtherDiscType')?.value || 'THB'
+            );
+            const netOtherFee = Math.max(0, otherFee - otherDisc);
+
+            totalLineItemDiscounts += (laborDisc + tripDisc + otherDisc);
+
+            const lineDiscRow = document.getElementById('lineItemDiscountSummaryRow');
+            const lineDiscValEl = document.getElementById('lineItemDiscountSummaryVal');
+            if (lineDiscRow && lineDiscValEl) {
+                if (totalLineItemDiscounts > 0) {
+                    lineDiscRow.classList.remove('hidden');
+                    lineDiscValEl.innerText = `-${totalLineItemDiscounts.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                } else {
+                    lineDiscRow.classList.add('hidden');
+                }
+            }
+
             const discountInput = document.getElementById('feeDiscount');
             const discountType = document.getElementById('feeDiscountType')?.value || 'THB';
-            const laborFee = parseFloat(laborInput ? laborInput.value : 0) || 0;
-            const tripFee = parseFloat(tripInput ? tripInput.value : 0) || 0;
             const rawDiscountVal = Math.max(0, parseFloat(discountInput ? discountInput.value : 0) || 0);
 
-            const grossBeforeDiscount = partsTotal + laborFee + tripFee;
-            const discountFee = discountType === 'PERCENT'
-                ? Math.min(grossBeforeDiscount, grossBeforeDiscount * (Math.min(100, rawDiscountVal) / 100))
-                : Math.min(grossBeforeDiscount, rawDiscountVal);
+            const grossBeforeDiscount = netPartsTotal + netLaborFee + netTripFee + netOtherFee;
+            const discountFee = computeLineDiscountAmount(grossBeforeDiscount, rawDiscountVal, discountType);
 
             const discountRow = document.getElementById('discountDisplayRow');
             const discountValEl = document.getElementById('discountDisplayVal');
@@ -6724,10 +6796,10 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             if (grandTotalElem) {
                 grandTotalElem.innerText = grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             }
+            if (typeof updateFloatingSummaryBar === 'function') updateFloatingSummaryBar();
         }
 
-        // --- SHARE PDF TO LINE / MOBILE WEB SHARE ---
-                async function buildJobSheetPdfFile(prefix = 'Hoshizaki_JobSheet') {
+        function buildJobSheetPdfFile(prefix = 'Hoshizaki_JobSheet') {
             const element = document.getElementById('jobSheetContainer');
             const jobNo = document.getElementById('jobNo')?.value || 'Service_Report';
             const date = document.getElementById('jobDate')?.value || '';
@@ -6957,9 +7029,6 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             tbody.innerHTML = '';
 
             let itemIdx = 1;
-            let rawPartsSubtotal = 0;
-
-            // คำนวณส่วนลดรวมทั้งบิล (ถ้ามี) เพื่อแสดงในคอลัมน์ DISCOUNT ของตารางได้ตรงตามแบบฟอร์ม
             const rawDiscountVal = Math.max(0, parseFloat(document.getElementById('feeDiscount')?.value || 0) || 0);
             const discountType = document.getElementById('feeDiscountType')?.value || 'THB';
 
@@ -6967,60 +7036,95 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             const lineItems = [];
 
             rows.forEach(row => {
-                const descInput = row.querySelector('input[type="text"]');
+                const descInput = row.querySelector('.parts-desc') || row.querySelector('input[type="text"]');
                 const qtyInput = row.querySelector('.parts-qty');
                 const priceInput = row.querySelector('.parts-price');
+                const discValInput = row.querySelector('.parts-disc-val');
+                const discTypeSelect = row.querySelector('.parts-disc-type');
 
                 const rawDesc = descInput ? descInput.value.trim() : '';
                 const qty = parseFloat(qtyInput ? qtyInput.value : 0) || 0;
                 const price = parseFloat(priceInput ? priceInput.value : 0) || 0;
+                const dVal = parseFloat(discValInput ? discValInput.value : 0) || 0;
+                const dType = discTypeSelect ? discTypeSelect.value : 'THB';
+
                 if (rawDesc || (qty * price) > 0) {
                     const parsed = parsePartCodeAndDesc(rawDesc);
+                    const lineGross = qty * price;
+                    const lineDiscTotal = computeLineDiscountAmount(lineGross, dVal, dType);
+                    const pctBadge = (dVal > 0 && dType === 'PERCENT') ? ` (ส่วนลด ${dVal}%)` : '';
                     lineItems.push({
                         isServiceCharge: false,
                         partNo: parsed.partNo,
-                        desc: parsed.desc || 'อะไหล่บริการซ่อมบำรุง',
+                        desc: (parsed.desc || 'อะไหล่บริการซ่อมบำรุง') + pctBadge,
                         unitPrice: price,
-                        qty: qty
+                        qty: qty,
+                        lineDiscTotal: lineDiscTotal
                     });
-                    rawPartsSubtotal += (qty * price);
                 }
             });
 
             const laborFee = parseFloat(document.getElementById('feeLabor')?.value || 0) || 0;
             const tripFee = parseFloat(document.getElementById('feeTrip')?.value || 0) || 0;
+            const otherFee = parseFloat(document.getElementById('feeOther')?.value || 0) || 0;
 
             if (laborFee > 0) {
+                const lDiscVal = parseFloat(document.getElementById('feeLaborDisc')?.value || 0) || 0;
+                const lDiscType = document.getElementById('feeLaborDiscType')?.value || 'THB';
+                const lDiscTotal = computeLineDiscountAmount(laborFee, lDiscVal, lDiscType);
+                const lNote = (lDiscVal > 0 && lDiscType === 'PERCENT') ? ` (ส่วนลด ${lDiscVal}%)` : '';
                 lineItems.push({
                     isServiceCharge: true,
                     partNo: 'SERVICE CHARGE',
-                    desc: 'LABOR SERVICE FEE',
+                    desc: 'LABOR SERVICE FEE' + lNote,
                     unitPrice: laborFee,
-                    qty: 1
+                    qty: 1,
+                    lineDiscTotal: lDiscTotal
                 });
-                rawPartsSubtotal += laborFee;
             }
 
             if (tripFee > 0) {
+                const tDiscVal = parseFloat(document.getElementById('feeTripDisc')?.value || 0) || 0;
+                const tDiscType = document.getElementById('feeTripDiscType')?.value || 'THB';
+                const tDiscTotal = computeLineDiscountAmount(tripFee, tDiscVal, tDiscType);
+                const tNote = (tDiscVal > 0 && tDiscType === 'PERCENT') ? ` (ส่วนลด ${tDiscVal}%)` : '';
                 lineItems.push({
                     isServiceCharge: true,
                     partNo: 'SERVICE CHARGE',
-                    desc: 'DELIVERY FEE',
+                    desc: 'DELIVERY FEE' + tNote,
                     unitPrice: tripFee,
-                    qty: 1
+                    qty: 1,
+                    lineDiscTotal: tDiscTotal
                 });
-                rawPartsSubtotal += tripFee;
             }
 
-            const totalDiscountAmt = discountType === 'PERCENT'
-                ? Math.min(rawPartsSubtotal, rawPartsSubtotal * (Math.min(100, rawDiscountVal) / 100))
-                : Math.min(rawPartsSubtotal, rawDiscountVal);
+            if (otherFee > 0) {
+                const otherCustomDesc = (document.getElementById('feeOtherDesc')?.value || '').trim() || 'OTHER SERVICE CHARGE';
+                const oDiscVal = parseFloat(document.getElementById('feeOtherDisc')?.value || 0) || 0;
+                const oDiscType = document.getElementById('feeOtherDiscType')?.value || 'THB';
+                const oDiscTotal = computeLineDiscountAmount(otherFee, oDiscVal, oDiscType);
+                const oNote = (oDiscVal > 0 && oDiscType === 'PERCENT') ? ` (ส่วนลด ${oDiscVal}%)` : '';
+                lineItems.push({
+                    isServiceCharge: true,
+                    partNo: 'OTHER CHARGE',
+                    desc: otherCustomDesc + oNote,
+                    unitPrice: otherFee,
+                    qty: 1,
+                    lineDiscTotal: oDiscTotal
+                });
+            }
+
+            const netSubtotalBeforeExtra = lineItems.reduce((sum, li) => sum + Math.max(0, (li.unitPrice * li.qty) - (li.lineDiscTotal || 0)), 0);
+            const totalDiscountAmt = computeLineDiscountAmount(netSubtotalBeforeExtra, rawDiscountVal, discountType);
 
             let netSubtotalAfterDiscount = 0;
 
             lineItems.forEach((li, i) => {
                 const lineGross = li.unitPrice * li.qty;
-                const lineDiscTotal = rawPartsSubtotal > 0 ? (totalDiscountAmt * (lineGross / rawPartsSubtotal)) : 0;
+                const lineBaseDisc = li.lineDiscTotal || 0;
+                const netAfterLineDisc = Math.max(0, lineGross - lineBaseDisc);
+                const extraAllocDisc = netSubtotalBeforeExtra > 0 ? (totalDiscountAmt * (netAfterLineDisc / netSubtotalBeforeExtra)) : 0;
+                const lineDiscTotal = lineBaseDisc + extraAllocDisc;
                 const unitDisc = li.qty > 0 ? (lineDiscTotal / li.qty) : 0;
                 const unitAfterDisc = Math.max(0, li.unitPrice - unitDisc);
                 const lineAmount = Math.round(unitAfterDisc * li.qty * 100) / 100;
@@ -8187,6 +8291,8 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
             updateDispatchAssignedEmailsPreview();
 
+            if (document.getElementById('dispDealerClient')) document.getElementById('dispDealerClient').value = existing ? (existing.dealerClient || '') : '';
+            if (document.getElementById('dispTicketRef')) document.getElementById('dispTicketRef').value = existing ? (existing.ticketRef || '') : '';
             document.getElementById('dispStore').value = existing ? (existing.store || '') : '';
             document.getElementById('dispOnsiteContact').value = existing ? (existing.onsiteContact || '') : '';
             document.getElementById('dispAddress').value = existing ? (existing.address || '') : '';
@@ -8237,6 +8343,8 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 timeStart: document.getElementById('dispTimeStart').value || '09:00',
                 timeEnd: document.getElementById('dispTimeEnd').value || '12:00',
                 techs: techs,
+                dealerClient: document.getElementById('dispDealerClient')?.value.trim() || '',
+                ticketRef: document.getElementById('dispTicketRef')?.value.trim() || '',
                 store: document.getElementById('dispStore').value.trim(),
                 onsiteContact: document.getElementById('dispOnsiteContact').value.trim(),
                 address: document.getElementById('dispAddress').value.trim(),
@@ -8539,7 +8647,14 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             const mondayIso = getMondayOfDate(startInput?.value);
             if (startInput && startInput.value !== mondayIso) startInput.value = mondayIso;
 
-            const allItems = getScheduleItems();
+            const rawAllItems = getScheduleItems();
+            if (typeof refreshScheduleCompanyFilterOptions === 'function') {
+                refreshScheduleCompanyFilterOptions(rawAllItems);
+            }
+            const filterCompany = document.getElementById('scheduleBoardFilterCompany')?.value || 'ALL';
+            const allItems = filterCompany === 'ALL'
+                ? rawAllItems
+                : rawAllItems.filter(x => getScheduleCompanyKey(x) === filterCompany);
 
             // 1. Render Waiting Plan Chips
             const waitingItems = allItems.filter(x => x.slotType === 'WAITING');
@@ -17413,6 +17528,161 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
 
 
+
+<script>
+// === v1064 ENTERPRISE WORKFLOW: POST-SIGNATURE SAVE/QT SYNC & DEALER/CLIENT SCHEDULE SEGMENTATION ===
+async function saveSignedJobToDatabase() {
+    if (typeof saveToHistory === 'function') {
+        await saveToHistory();
+    }
+    const jobNo = document.getElementById('jobNo')?.value || '';
+    const store = document.getElementById('custStore')?.value || '';
+    if (typeof showToast === 'function') {
+        showToast(`บันทึกใบงาน ${jobNo} (${store || 'ลูกค้าทั่วไป'}) ลงฐานข้อมูลถาวรเรียบร้อยแล้ว ✓`);
+    }
+}
+
+async function syncCurrentJobToQuotation() {
+    if (typeof saveToHistory === 'function') {
+        await saveToHistory();
+    }
+    const receiptModal = document.getElementById('receiptModal');
+    if (receiptModal) {
+        receiptModal.classList.remove('hidden');
+    }
+    if (typeof setFinancialDocMode === 'function') {
+        setFinancialDocMode('QUOTATION');
+    }
+    if (typeof renderReceiptDocument === 'function') {
+        renderReceiptDocument();
+    }
+    const jobNo = document.getElementById('jobNo')?.value || '';
+    if (typeof showToast === 'function') {
+        showToast(`ซิงค์ข้อมูลจากใบงาน ${jobNo} ไปยังใบเสนอราคา (QT) เรียบร้อยแล้ว ✓`);
+    }
+}
+
+function getScheduleCompanyKey(item) {
+    if (!item) return 'ไม่ระบุบริษัท';
+    const dealer = (item.dealerClient || item.dealer || '').trim();
+    if (dealer) return dealer;
+    const store = (item.store || '').trim();
+    if (store.includes(':')) return store.split(':')[0].trim();
+    if (store.includes('-')) return store.split('-')[0].trim();
+    return store || 'ไม่ระบุบริษัท';
+}
+
+function refreshScheduleCompanyFilterOptions(allItems) {
+    const sel = document.getElementById('scheduleBoardFilterCompany');
+    if (!sel) return;
+    const currentVal = sel.value || 'ALL';
+    const companies = Array.from(new Set(
+        (allItems || []).map(getScheduleCompanyKey).filter(Boolean)
+    )).sort((a, b) => a.localeCompare(b, 'th'));
+
+    sel.innerHTML = '<option value="ALL">แสดงทุกบริษัท / ทุก Dealer (' + companies.length + ')</option>' +
+        companies.map(c => `<option value="${c.replace(/"/g, '&quot;')}">${c}</option>`).join('');
+
+    if (currentVal && Array.from(sel.options).some(o => o.value === currentVal)) {
+        sel.value = currentVal;
+    }
+}
+
+function exportWeeklyDealerClientReport() {
+    const selectedCompany = document.getElementById('scheduleBoardFilterCompany')?.value || 'ALL';
+    const mondayIso = typeof getMondayOfDate === 'function'
+        ? getMondayOfDate(document.getElementById('scheduleWeekStartInput')?.value)
+        : (document.getElementById('scheduleWeekStartInput')?.value || new Date().toISOString().split('T')[0]);
+    const sundayIso = typeof addDaysToIsoDate === 'function'
+        ? addDaysToIsoDate(mondayIso, 6)
+        : mondayIso;
+
+    const scheduleItems = typeof getScheduleItems === 'function' ? getScheduleItems() : [];
+    const jobHistory = typeof getJobHistorySync === 'function' ? getJobHistorySync() : [];
+
+    const matchedSchedule = scheduleItems.filter(it => {
+        const inWeek = it.date >= mondayIso && it.date <= sundayIso;
+        const matchCo = selectedCompany === 'ALL' || getScheduleCompanyKey(it) === selectedCompany;
+        return inWeek && matchCo;
+    });
+
+    const matchedJobs = jobHistory.filter(job => {
+        const jDate = job.date || '';
+        const inWeek = jDate >= mondayIso && jDate <= sundayIso;
+        const coKey = getScheduleCompanyKey({ dealerClient: job.dealer, store: job.store });
+        const matchCo = selectedCompany === 'ALL' || coKey === selectedCompany;
+        return inWeek && matchCo;
+    });
+
+    const reportRows = [];
+    matchedJobs.forEach(j => {
+        reportRows.push({
+            Date: j.date || '-',
+            Company_Dealer: getScheduleCompanyKey({ dealerClient: j.dealer, store: j.store }),
+            Location_Branch: j.store || '-',
+            Address: j.address || '-',
+            Model: j.model || '-',
+            Serial_No: j.serial || '-',
+            Job_No: j.jobNo || '-',
+            Status: j.jobStatus || 'Completed',
+            Repair_Details: [j.symptom, j.action].filter(Boolean).join(' / ') || '-',
+            Technician: j.responsibleTech || '-'
+        });
+    });
+
+    matchedSchedule.forEach(s => {
+        const alreadyInJobs = reportRows.some(r =>
+            r.Date === s.date && r.Location_Branch.toLowerCase() === (s.store || '').toLowerCase()
+        );
+        if (!alreadyInJobs) {
+            reportRows.push({
+                Date: s.date || '-',
+                Company_Dealer: getScheduleCompanyKey(s),
+                Location_Branch: s.store || '-',
+                Address: s.address || '-',
+                Model: s.model || '-',
+                Serial_No: s.serial || '-',
+                Job_No: s.ticketRef || s.id || '-',
+                Status: s.jobStatus || s.slotType || 'Scheduled',
+                Repair_Details: s.workDetail || '-',
+                Technician: (s.techs || []).join(', ') || '-'
+            });
+        }
+    });
+
+    if (reportRows.length === 0) {
+        if (typeof showToast === 'function') {
+            showToast(`ไม่พบรายการซ่อมของ "${selectedCompany}" ในช่วงวันที่ ${mondayIso} ถึง ${sundayIso}`);
+        }
+        return;
+    }
+
+    const label = selectedCompany === 'ALL' ? 'All_Clients' : selectedCompany.replace(/[^a-zA-Z0-9ก-๙_-]/g, '_');
+    const fileName = `HOSHIZAKI_Weekly_Service_Report_${label}_${mondayIso}_to_${sundayIso}.xlsx`;
+
+    if (typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.json_to_sheet(reportRows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Weekly_Service_Report');
+        XLSX.writeFile(wb, fileName);
+    } else {
+        const headers = Object.keys(reportRows[0]);
+        const csv = '\uFEFF' + [
+            headers.join(','),
+            ...reportRows.map(r => headers.map(h => `"${String(r[h] || '').replace(/"/g, '""')}"`).join(','))
+        ].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = fileName.replace('.xlsx', '.csv');
+        a.click();
+    }
+
+    if (typeof showToast === 'function') {
+        showToast(`ส่งออกรายงานประจำสัปดาห์ (${reportRows.length} รายการ) เรียบร้อยแล้ว ✓`);
+    }
+}
+</script>
 </body>
                 </html>
             `);
@@ -18687,7 +18957,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             } catch (e) {}
         });
     </script>
-<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1063-DEEP-REPAIRED) -->
+<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1065-ENTERPRISE-PRO) -->
 <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
 <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
 <!-- Top Navy Header -->
@@ -21585,7 +21855,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1063-DEEP-REPAIRED AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1065-ENTERPRISE-PRO AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -29439,7 +29709,7 @@ transition: all 0.15s ease;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1063-DEEP-REPAIRED)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1065-ENTERPRISE-PRO)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -29633,7 +29903,7 @@ display: none !important;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1063-DEEP-REPAIRED)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1065-ENTERPRISE-PRO)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -29642,7 +29912,7 @@ display: none !important;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1063-DEEP-REPAIRED)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1065-ENTERPRISE-PRO)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -29651,7 +29921,7 @@ display: none !important;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1063-DEEP-REPAIRED)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1065-ENTERPRISE-PRO)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -29733,21 +30003,21 @@ display: none !important;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1063-DEEP-REPAIRED) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1065-ENTERPRISE-PRO) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1063-DEEP-REPAIRED Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1065-ENTERPRISE-PRO Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1063-DEEP-REPAIRED）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1065-ENTERPRISE-PRO）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -32759,9 +33029,9 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1063-DEEP-REPAIRED',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1063-DEEP-REPAIRED)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1063-DEEP-REPAIRED)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1065-ENTERPRISE-PRO',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1065-ENTERPRISE-PRO)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1065-ENTERPRISE-PRO)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -32823,7 +33093,7 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1063-DEEP-REPAIRED Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1065-ENTERPRISE-PRO Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -33047,7 +33317,7 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
 <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
 <div>
-<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1063-DEEP-REPAIRED — Multi-Branch &amp; White-Label Ready)</h3>
+<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1065-ENTERPRISE-PRO — Multi-Branch &amp; White-Label Ready)</h3>
 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
 </div>
 <div class="flex items-center gap-1.5">
@@ -35829,8 +36099,8 @@ DUAL LINE OA, TRILINGUAL CHATBOT & MOBILE SMS DISPATCH SUITE (v1021-LINE+)
 <button type="button" id="tabDualLineTickets" onclick="switchDualLineCenterTab('TICKETS')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">2. คิวแชท &amp; แจ้งซ่อมลูกค้า (<span id="dualLineOpenTicketBadge">0</span>)</button>
 <button type="button" id="tabDualLineSms" onclick="switchDualLineCenterTab('SMS')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">3. ส่งลิงก์เข้าเบอร์มือถือ (SMS Fallback)</button>
 <button type="button" id="tabDualLineSim" onclick="switchDualLineCenterTab('SIM')" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 border">4. คู่มือคำสั่งบอท 3 ภาษา (TH/EN/JP)</button>
-<button type="button" id="tabDualLineFlexstudio" onclick="switchDualLineCenterTab('FLEXSTUDIO')" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-sky-50 to-emerald-50 text-[#002B49] border border-sky-300 font-extrabold"><i class="fa-solid fa-wand-magic-sparkles text-sky-600 mr-1"></i>5. ออกแบบการ์ด LINE Flex Message (Studio)</button>
-<button type="button" id="tabDualLineDirectory" onclick="switchDualLineCenterTab('DIRECTORY')" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-50 to-sky-50 text-[#002B49] border border-amber-300 font-extrabold"><i class="fa-solid fa-address-book text-amber-600 mr-1"></i>6. ทะเบียนรายชื่อดีลเลอร์/ลูกค้า &amp; LINE ID (Group / ส่วนตัว)</button>
+<button type="button" id="tabDualLineFlexstudio" onclick="if(window.installUnifiedDualLineTabRouterV1065)window.installUnifiedDualLineTabRouterV1065(); switchDualLineCenterTab('FLEXSTUDIO')" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-sky-50 to-emerald-50 text-[#002B49] border border-sky-300 font-extrabold"><i class="fa-solid fa-wand-magic-sparkles text-sky-600 mr-1"></i>5. ออกแบบการ์ด LINE Flex Message (Studio)</button>
+<button type="button" id="tabDualLineDirectory" onclick="if(window.installUnifiedDualLineTabRouterV1065)window.installUnifiedDualLineTabRouterV1065(); switchDualLineCenterTab('DIRECTORY')" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-50 to-sky-50 text-[#002B49] border border-amber-300 font-extrabold"><i class="fa-solid fa-address-book text-amber-600 mr-1"></i>6. ทะเบียนรายชื่อดีลเลอร์/ลูกค้า &amp; LINE ID (Group / ส่วนตัว)</button>
 </div>
 <div id="lineOaSmartDeviceLauncherBar" class="bg-gradient-to-r from-[#06C755]/15 via-emerald-50 to-sky-50 border-b border-emerald-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
   <div class="flex items-center gap-2 min-w-0">
@@ -37099,7 +37369,7 @@ CUSTOMER CSAT & 7-DAY POST-SERVICE QUALITY RADAR MODAL (v1021-CSAT-RADAR)
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1063-DEEP-REPAIRED — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1065-ENTERPRISE-PRO — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -37624,7 +37894,7 @@ FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1063-DEEP-REPAIRED</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1065-ENTERPRISE-PRO</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -38532,7 +38802,7 @@ Accounting VAT/WHT Ledger, Invoice/Receipt & NAV ERP Export • Audit Trail)
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1063-DEEP-REPAIRED</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1065-ENTERPRISE-PRO</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -40082,7 +40352,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1063-DEEP-REPAIRED</span>
+<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1065-ENTERPRISE-PRO</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
 </div>
@@ -40126,7 +40396,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1063-DEEP-REPAIRED</span>
+<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1065-ENTERPRISE-PRO</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
 </div>
@@ -40500,9 +40770,9 @@ Van Stock T01-T08, Parts Catalog, Factory GIT/ETA & NAV ERP CSV)
 </script>
 
 
-<script id="v1062-unified-line-tab56-guard">
+<script id="v1065-unified-line-tab56-router">
 (function() {
-  function syncDualLineTabActiveButtons_(activeTab) {
+  window.syncDualLineTabActiveButtonsV1065 = function(activeTab) {
     const allTabs = ['BRIDGE', 'TICKETS', 'SMS', 'SIM', 'FLEXSTUDIO', 'DIRECTORY'];
     allTabs.forEach(function(t) {
       const btn = document.getElementById('tabDualLine' + t.charAt(0) + t.slice(1).toLowerCase());
@@ -40512,35 +40782,60 @@ Van Stock T01-T08, Parts Catalog, Factory GIT/ETA & NAV ERP CSV)
           : 'px-3 py-1.5 rounded-lg bg-white text-slate-800 border border-slate-300 font-bold hover:bg-slate-50 transition';
       }
     });
-  }
+  };
 
-  function installUnifiedLineRouterGuard_() {
+  window.installUnifiedDualLineTabRouterV1065 = function() {
     if (typeof window.switchDualLineCenterTab !== 'function') return;
-    if (window.switchDualLineCenterTab._v1062Guarded) return;
+    if (window.switchDualLineCenterTab._v1065Unified) return;
 
-    const currentFn = window.switchDualLineCenterTab;
-    const guardedFn = function(tab) {
-      const targetTab = String(tab || 'BRIDGE').toUpperCase();
-      syncDualLineTabActiveButtons_(targetTab);
-      currentFn(targetTab);
+    const baseSwitchFn = window.switchDualLineCenterTab;
+    const unifiedRouter = function(tab) {
+      const targetTab = String(tab || 'BRIDGE').trim().toUpperCase();
+      window.syncDualLineTabActiveButtonsV1065(targetTab);
 
       const body = document.getElementById('dualLineCenterBody');
-      if (body && body.innerHTML.trim() === '') {
-        if (targetTab === 'FLEXSTUDIO' && typeof window.renderFlexStudioInline_ === 'function') {
-          window.renderFlexStudioInline_(body);
-        } else if (targetTab === 'DIRECTORY' && typeof window.renderLineDirectoryInline_ === 'function') {
-          window.renderLineDirectoryInline_(body);
-        }
-      }
-    };
-    guardedFn._v1062Guarded = true;
-    window.switchDualLineCenterTab = guardedFn;
-  }
+      if (!body) return;
 
-  window.addEventListener('DOMContentLoaded', installUnifiedLineRouterGuard_);
-  window.addEventListener('load', installUnifiedLineRouterGuard_);
-  setTimeout(installUnifiedLineRouterGuard_, 800);
-  setTimeout(installUnifiedLineRouterGuard_, 2000);
+      if (targetTab === 'FLEXSTUDIO') {
+        if (typeof window.renderFlexStudioTabV1065 === 'function') {
+          window.renderFlexStudioTabV1065(body);
+          return;
+        }
+        body.innerHTML = '<div class="p-6 text-center text-sky-800 font-bold"><i class="fa-solid fa-spinner fa-spin mr-1.5"></i> กำลังโหลด Visual LINE Flex Message Studio...</div>';
+        setTimeout(function() {
+          if (typeof window.renderFlexStudioTabV1065 === 'function') {
+            window.renderFlexStudioTabV1065(body);
+          }
+        }, 300);
+        return;
+      }
+
+      if (targetTab === 'DIRECTORY') {
+        if (typeof window.renderLineDirectoryTabV1065 === 'function') {
+          window.renderLineDirectoryTabV1065(body);
+          return;
+        }
+        body.innerHTML = '<div class="p-6 text-center text-amber-800 font-bold"><i class="fa-solid fa-spinner fa-spin mr-1.5"></i> กำลังโหลดทะเบียนรายชื่อดีลเลอร์/ลูกค้า &amp; LINE ID...</div>';
+        setTimeout(function() {
+          if (typeof window.renderLineDirectoryTabV1065 === 'function') {
+            window.renderLineDirectoryTabV1065(body);
+          }
+        }, 300);
+        return;
+      }
+
+      baseSwitchFn(targetTab);
+    };
+
+    unifiedRouter._v1065Unified = true;
+    window.switchDualLineCenterTab = unifiedRouter;
+  };
+
+  window.installUnifiedDualLineTabRouterV1065();
+  window.addEventListener('DOMContentLoaded', window.installUnifiedDualLineTabRouterV1065);
+  window.addEventListener('load', window.installUnifiedDualLineTabRouterV1065);
+  setTimeout(window.installUnifiedDualLineTabRouterV1065, 250);
+  setTimeout(window.installUnifiedDualLineTabRouterV1065, 1000);
 })();
 </script>
 

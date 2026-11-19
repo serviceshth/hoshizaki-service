@@ -2380,15 +2380,13 @@
     }
   };
 
-  // Hook into switchDualLineCenterTab to render FLEXSTUDIO tab cleanly
-  const origSwitchDualLine = window.switchDualLineCenterTab;
-  window.switchDualLineCenterTab = function(tab) {
-    if (typeof origSwitchDualLine === 'function') {
-      origSwitchDualLine(tab);
-    }
-    if (tab === 'FLEXSTUDIO') {
-      const body = document.getElementById('dualLineCenterBody');
+  // Direct global renderer for Tab 5 (FLEXSTUDIO) + backward-compatible hook
+  window.renderFlexStudioTabV1065 = function(targetBody) {
+      const body = targetBody || document.getElementById('dualLineCenterBody');
       if (!body) return;
+      if (typeof window.syncDualLineTabActiveButtonsV1065 === 'function') {
+        window.syncDualLineTabActiveButtonsV1065('FLEXSTUDIO');
+      }
       const st = window.HZK_FLEX_STUDIO_STATE;
       body.innerHTML = `
         <div class="bg-gradient-to-r from-sky-50 to-emerald-50 border border-sky-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
@@ -2519,6 +2517,14 @@
       renderSavedFlexTemplatesBar_();
       renderFlexStudioEditorLists_();
       window.refreshFlexStudioPreview();
+  };
+  const origSwitchDualLine = window.switchDualLineCenterTab;
+  window.switchDualLineCenterTab = function(tab) {
+    if (String(tab || '').toUpperCase() === 'FLEXSTUDIO') {
+      return window.renderFlexStudioTabV1065();
+    }
+    if (typeof origSwitchDualLine === 'function') {
+      return origSwitchDualLine(tab);
     }
   };
 
@@ -16215,24 +16221,17 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     } catch (e) {}
   };
 
-  const prevSwitchTab = window.switchDualLineCenterTab;
-  window.switchDualLineCenterTab = function(tab) {
+  window.renderLineDirectoryTabV1065 = function(targetBody) {
     const allTabs = ['BRIDGE', 'TICKETS', 'SMS', 'SIM', 'FLEXSTUDIO', 'DIRECTORY'];
     allTabs.forEach(t => {
       const btn = document.getElementById('tabDualLine' + t.charAt(0) + t.slice(1).toLowerCase());
       if (btn) {
-        btn.className = (t === tab)
+        btn.className = (t === 'DIRECTORY')
           ? 'px-3 py-1.5 rounded-lg bg-[#002B49] text-white font-bold shadow-xs'
           : 'px-3 py-1.5 rounded-lg bg-white text-slate-800 border border-slate-300 font-bold hover:bg-slate-50';
       }
     });
-
-    if (tab !== 'DIRECTORY') {
-      if (typeof prevSwitchTab === 'function') prevSwitchTab(tab);
-      return;
-    }
-
-    const body = document.getElementById('dualLineCenterBody');
+    const body = targetBody || document.getElementById('dualLineCenterBody');
     if (!body) return;
     const list = loadLineAccountDirectory_();
     const linkedGroupCnt = list.filter(x => x.lineGroupId).length;
@@ -16341,6 +16340,18 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
       </div>
     `;
   };
+  const prevSwitchTab = window.switchDualLineCenterTab;
+  window.switchDualLineCenterTab = function(tab) {
+    if (String(tab || '').toUpperCase() === 'DIRECTORY') {
+      return window.renderLineDirectoryTabV1065();
+    }
+    if (typeof prevSwitchTab === 'function') {
+      return prevSwitchTab(tab);
+    }
+  };
+  if (typeof window.installUnifiedDualLineTabRouterV1065 === 'function') {
+    window.installUnifiedDualLineTabRouterV1065();
+  }
 })();
 
 
@@ -16580,4 +16591,11 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
       })
       .catch(() => {});
   });
+})();
+
+// --- Module Block #79: Ensure Unified Dual LINE Tab 1-6 Router stays active ---
+(function() {
+  if (typeof window.installUnifiedDualLineTabRouterV1065 === 'function') {
+    window.installUnifiedDualLineTabRouterV1065();
+  }
 })();

@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'hoshizaki-service-pwa-v1129-pilot-phase1-master';
+﻿const CACHE_NAME = 'hoshizaki-service-pwa-v1131-auto-staff-onboarding';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',
@@ -110,6 +110,7 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
 
 
 

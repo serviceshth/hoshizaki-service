@@ -17733,3 +17733,187 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     setTimeout(mountTopPilotAndCommandBarV1129_, 600);
   }
 })();
+
+
+/* ==========================================================================
+ * STEP 51 MASTER MODULE: AUTO FIRST-TIME STAFF ONBOARDING & LINE ID GATE (v1131)
+ * - เด้งหน้าต่างกรอกข้อมูลส่วนตัวอัตโนมัติเมื่อเปิดบนมือถือ/คอมพิวเตอร์เครื่องใหม่ครั้งแรก
+ * - เก็บ: ชื่อ-นามสกุล, รหัสพนักงาน, แผนก, เบอร์มือถือ, LINE ID, รหัส PIN + คำใบ้, รูปแบบหน้าแรก
+ * - ยิงข้อมูลการลงทะเบียนพนักงานใหม่ขึ้น Google Sheets กลางและแจ้งเตือน LINE ทันที
+ * - มีปุ่ม "👤 โปรไฟล์ & LINE ID" บนแถบด้านบนสุดให้กดเปิดแก้ไขได้ตลอดเวลา
+ * ========================================================================== */
+(function() {
+  var STAFF_VAULT_KEY = 'hzk_staff_personal_vault_v1112';
+  var PILOT_GATE_KEY = 'hoshizaki_admin_pilot_access_gate_v1128';
+
+  function getStaffProfileV1131_() {
+    try {
+      var raw = localStorage.getItem(STAFF_VAULT_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return null;
+  }
+
+  window.saveStaffOnboardingProfileV1131 = function() {
+    var name = (document.getElementById('hzkObNameInV1131').value || '').trim();
+    var staffId = (document.getElementById('hzkObIdInV1131').value || '').trim().toUpperCase();
+    var dept = (document.getElementById('hzkObDeptSelV1131').value || 'service').toLowerCase();
+    var phone = (document.getElementById('hzkObPhoneInV1131').value || '').trim();
+    var lineId = (document.getElementById('hzkObLineIdInV1131').value || '').trim();
+    var pin = (document.getElementById('hzkObPinInV1131').value || '').trim();
+    var pinHint = (document.getElementById('hzkObPinHintInV1131').value || '').trim();
+    var homePref = (document.getElementById('hzkObHomePrefSelV1131').value || 'ROLE_SCOPED');
+    var firstFeedback = (document.getElementById('hzkObFeedbackInV1131').value || '').trim();
+
+    if (!name || !lineId) {
+      alert('กรุณากรอก "ชื่อ-นามสกุล" และ "LINE ID" เพื่อให้ระบบผูกบัญชีและส่งแจ้งเตือนเข้ามือถือคุณได้ถูกต้องครับ');
+      return;
+    }
+
+    // ตรวจสอบสิทธิ์เปิดใช้งานรายแผนก / รายบุคคล (Admin Studio Gate)
+    var gate = { enabledDepts: ['service', 'admin', 'marketing', 'sales', 'exec'], whitelistStaffIds: ['HTH-T01', 'HTH-MKT01', 'HTH-SLS01', '0972305941'] };
+    try { var gRaw = localStorage.getItem(PILOT_GATE_KEY); if (gRaw) gate = JSON.parse(gRaw); } catch (e) {}
+    var isAllowed = (dept === 'exec') ||
+                    (gate.enabledDepts && gate.enabledDepts.indexOf(dept) > -1) ||
+                    (gate.whitelistStaffIds && (gate.whitelistStaffIds.indexOf(staffId) > -1 || gate.whitelistStaffIds.indexOf(lineId) > -1 || gate.whitelistStaffIds.indexOf(phone) > -1));
+
+    if (!isAllowed) {
+      alert('⏳ แผนก (' + dept.toUpperCase() + ') ยังไม่เปิดใช้งานในรอบนำร่องปัจจุบัน กรุณาติดต่อ Admin Studio เพื่อเพิ่มสิทธิ์รายบุคคลครับ');
+      return;
+    }
+
+    var profile = {
+      staffName: name,
+      staffId: staffId || ('STAFF-' + lineId.slice(-4)),
+      dept: dept,
+      phone: phone || lineId,
+      lineId: lineId,
+      pin: pin || '1234',
+      pinHint: pinHint || 'รหัสมาตรฐาน 4 หลัก',
+      homePref: homePref,
+      registeredAt: new Date().toLocaleString('th-TH')
+    };
+
+    localStorage.setItem(STAFF_VAULT_KEY, JSON.stringify(profile));
+
+    var modal = document.getElementById('hzkStaffOnboardingModalV1131');
+    if (modal) modal.classList.add('hidden');
+
+    var badge = document.getElementById('hzkTopUserBadgeTextV1131');
+    if (badge) badge.textContent = name + ' (LINE: ' + lineId + ')';
+
+    // ส่งข้อมูลลงทะเบียนพนักงาน & LINE ID ขึ้น Google Sheets กลาง + แจ้งเตือน LINE ทันที
+    var regSummary = 'ลงทะเบียนผู้ใช้งานใหม่ | ชื่อ: ' + name + ' | รหัส: ' + profile.staffId + ' | แผนก: ' + dept.toUpperCase() + ' | LINE ID: ' + lineId + ' | โทร: ' + (phone || '-') + (firstFeedback ? (' | ความเห็น: ' + firstFeedback) : '');
+    if (typeof window.pushPilotFeedbackToCloudAndLineV1130 === 'function') {
+      window.pushPilotFeedbackToCloudAndLineV1130('STAFF_REGISTRATION', regSummary);
+    }
+    if (firstFeedback && typeof window.saveVoiceSuggestionV1129 === 'function') {
+      window.saveVoiceSuggestionV1129(firstFeedback);
+    }
+
+    if (typeof showToast === 'function') {
+      showToast('✅ บันทึกโปรไฟล์คุณ ' + name + ' (LINE ID: ' + lineId + ') และซิงค์ขึ้น Cloud เรียบร้อย!');
+    }
+  };
+
+  window.openStaffOnboardingModalV1131 = function(allowClose) {
+    var existing = getStaffProfileV1131_() || {};
+    var modal = document.getElementById('hzkStaffOnboardingModalV1131');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkStaffOnboardingModalV1131';
+      modal.className = 'fixed inset-0 z-[10400] bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4';
+      document.body.appendChild(modal);
+    }
+
+    var closeBtnHtml = (allowClose || existing.staffName)
+      ? '<button type="button" onclick="document.getElementById(\'hzkStaffOnboardingModalV1131\').classList.add(\'hidden\')" class="text-xl hover:text-amber-300">&times;</button>'
+      : '';
+
+    modal.innerHTML = '' +
+      '<div class="bg-white rounded-2xl shadow-2xl border-2 border-amber-400 w-full max-w-lg max-h-[92vh] flex flex-col overflow-hidden">' +
+        '<div class="bg-[#002B49] text-white px-4 py-3 flex items-center justify-between font-black text-sm">' +
+          '<span><i class="fa-solid fa-id-card-clip text-amber-300 mr-1.5"></i>ลงทะเบียนผู้ใช้งาน & ผูกบัญชี LINE ID (HOSHIZAKI PWA)</span>' +
+          closeBtnHtml +
+        '</div>' +
+        '<div class="p-3.5 sm:p-4 overflow-y-auto space-y-2.5 text-xs">' +
+          '<div class="bg-amber-50 border border-amber-300 rounded-xl p-2.5 text-amber-950 font-bold">' +
+            '👋 <b>ยินดีต้อนรับเข้าสู่ช่วงทดลองใช้งานระยะที่ 1 (Phase 1 Pilot):</b> กรุณากรอกข้อมูลส่วนตัวและ <b>LINE ID</b> ของคุณ เพื่อจัดเตรียมโต๊ะทำงานตามแผนกและส่งแจ้งเตือนงานเข้า LINE ของคุณได้ถูกต้องครับ' +
+          '</div>' +
+          '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
+            '<div>' +
+              '<label class="font-extrabold text-[#002B49] block mb-0.5">1. ชื่อ - นามสกุล / ชื่อเล่น *</label>' +
+              '<input id="hzkObNameInV1131" type="text" value="' + (existing.staffName || '') + '" placeholder="เช่น นพรินทร์ (ริน)" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold">' +
+            '</div>' +
+            '<div>' +
+              '<label class="font-extrabold text-[#002B49] block mb-0.5">2. แผนก / ฝ่ายที่สังกัด *</label>' +
+              '<select id="hzkObDeptSelV1131" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold bg-white">' +
+                '<option value="service" ' + (existing.dept === 'service' ? 'selected' : '') + '>🔧 แผนกบริการ / ช่างเทคนิค (Service)</option>' +
+                '<option value="admin" ' + (existing.dept === 'admin' ? 'selected' : '') + '>📋 แอดมินบริการ (Service Admin)</option>' +
+                '<option value="marketing" ' + (existing.dept === 'marketing' ? 'selected' : '') + '>📣 ฝ่ายการตลาด (Marketing)</option>' +
+                '<option value="sales" ' + (existing.dept === 'sales' ? 'selected' : '') + '>🤝 ฝ่ายขาย & ลูกค้าองค์กร (Sales / JCS)</option>' +
+                '<option value="warehouse" ' + (existing.dept === 'warehouse' ? 'selected' : '') + '>📦 ฝ่ายสโตร์อะไหล่ (Warehouse)</option>' +
+                '<option value="account" ' + (existing.dept === 'account' ? 'selected' : '') + '>💰 ฝ่ายบัญชีและการเงิน (Accounting)</option>' +
+                '<option value="exec" ' + (existing.dept === 'exec' ? 'selected' : '') + '>👑 ผู้บริหาร / Super Admin</option>' +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+          '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
+            '<div>' +
+              '<label class="font-extrabold text-emerald-900 block mb-0.5">3. LINE ID ของคุณ * (สำคัญ)</label>' +
+              '<input id="hzkObLineIdInV1131" type="text" value="' + (existing.lineId || '') + '" placeholder="เช่น 0972305941 หรือไอดีไลน์" class="w-full border-2 border-emerald-400 bg-emerald-50/40 rounded-lg px-2.5 py-1.5 font-mono font-black">' +
+            '</div>' +
+            '<div>' +
+              '<label class="font-extrabold text-[#002B49] block mb-0.5">4. เบอร์โทรศัพท์มือถือ / รหัสพนักงาน</label>' +
+              '<input id="hzkObPhoneInV1131" type="tel" value="' + (existing.phone || '') + '" placeholder="เช่น 097-230-5941" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold">' +
+              '<input id="hzkObIdInV1131" type="hidden" value="' + (existing.staffId || '') + '">' +
+            '</div>' +
+          '</div>' +
+          '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
+            '<div>' +
+              '<label class="font-extrabold text-[#002B49] block mb-0.5">5. ตั้งรหัส PIN ส่วนตัว (4-6 หลัก)</label>' +
+              '<input id="hzkObPinInV1131" type="password" inputmode="numeric" maxlength="6" value="' + (existing.pin || '') + '" placeholder="เช่น 1234" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 font-mono font-bold">' +
+            '</div>' +
+            '<div>' +
+              '<label class="font-extrabold text-[#002B49] block mb-0.5">6. คำใบ้ช่วยจำรหัส PIN (PIN Hint)</label>' +
+              '<input id="hzkObPinHintInV1131" type="text" value="' + (existing.pinHint || '') + '" placeholder="เช่น วันเกิด / เลขท้ายเบอร์โทร" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold">' +
+            '</div>' +
+          '</div>' +
+          '<div>' +
+            '<label class="font-extrabold text-[#002B49] block mb-0.5">7. รูปแบบหน้าแรกที่ต้องการให้แสดง:</label>' +
+            '<select id="hzkObHomePrefSelV1131" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold bg-white">' +
+              '<option value="ROLE_SCOPED" ' + (existing.homePref !== 'UNIFIED_ALL' ? 'selected' : '') + '>แสดงเฉพาะโต๊ะทำงานของแผนกฉัน (ใช้งานง่าย ไม่รก)</option>' +
+              '<option value="UNIFIED_ALL" ' + (existing.homePref === 'UNIFIED_ALL' ? 'selected' : '') + '>แสดงเมนูหลักรวมทุกส่วนเหมือนกันทั้งหมด</option>' +
+            '</select>' +
+          '</div>' +
+          '<div>' +
+            '<label class="font-extrabold text-sky-900 block mb-0.5">💡 ความคิดเห็นเพิ่มเติม (อยากให้มีอะไรแสดงหน้าแรกแจ้งได้เลยครับ):</label>' +
+            '<input id="hzkObFeedbackInV1131" type="text" placeholder="ระบุข้อเสนอแนะสำหรับเฟส 2 (ไม่บังคับ)" class="w-full border border-sky-300 bg-sky-50/40 rounded-lg px-2.5 py-1.5 font-bold">' +
+          '</div>' +
+          '<button type="button" onclick="saveStaffOnboardingProfileV1131()" class="w-full bg-[#0B875B] hover:bg-emerald-800 text-white py-2.5 rounded-xl font-black text-sm shadow-md"><i class="fa-solid fa-check-circle mr-1.5"></i>บันทึกข้อมูลส่วนตัว & เข้าใช้งานระบบทันที</button>' +
+        '</div>' +
+      '</div>';
+
+    modal.classList.remove('hidden');
+  };
+
+  // เพิ่มปุ่ม "👤 โปรไฟล์ & LINE ID" บนแถบด้านบน และเด้งหน้าลงทะเบียนอัตโนมัติถ้ายังไม่เคยกรอกข้อมูล
+  setTimeout(function() {
+    var prof = getStaffProfileV1131_();
+    var banner = document.getElementById('hzkPilotBannerV1129');
+    if (banner && !document.getElementById('hzkTopUserProfileBtnV1131')) {
+      var rightBox = banner.lastElementChild || banner;
+      var btn = document.createElement('button');
+      btn.id = 'hzkTopUserProfileBtnV1131';
+      btn.type = 'button';
+      btn.onclick = function() { window.openStaffOnboardingModalV1131(true); };
+      btn.className = 'bg-white text-[#002B49] hover:bg-amber-100 px-2.5 py-0.5 rounded font-black text-[10px] shadow-2xs';
+      btn.innerHTML = '👤 <span id="hzkTopUserBadgeTextV1131">' + (prof && prof.staffName ? (prof.staffName + ' (LINE: ' + (prof.lineId || '-') + ')') : 'ลงทะเบียนข้อมูล & LINE ID') + '</span>';
+      rightBox.insertBefore(btn, rightBox.firstChild);
+    }
+
+    if (!prof || !prof.staffName || !prof.lineId) {
+      window.openStaffOnboardingModalV1131(false);
+    }
+  }, 1400);
+})();

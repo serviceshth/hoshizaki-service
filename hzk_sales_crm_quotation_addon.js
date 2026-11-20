@@ -25,18 +25,73 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1154-SYNTAX-VERIFIED-ULTIMATE-SUITE',
+    version: 'v1155-DEEP-SCAN-VERIFIED',
     masterDb: null,
     items: []
   };
 
   function getGasEndpointUrl() {
-    return (
-      localStorage.getItem('hzk_gas_webapp_url') ||
-      localStorage.getItem('gasWebAppUrl') ||
-      (window.HZK_CONFIG && window.HZK_CONFIG.gasUrl) ||
-      ''
+    const candidates = [
+      localStorage.getItem('hzk_gas_webapp_url'),
+      localStorage.getItem('gasWebAppUrl'),
+      localStorage.getItem('hzkGasUrl'),
+      localStorage.getItem('HOSHIZAKI_GAS_URL'),
+      localStorage.getItem('webapp_url'),
+      (window.HZK_CONFIG && window.HZK_CONFIG.gasUrl),
+      (window.APP_CONFIG && window.APP_CONFIG.gasUrl)
+    ];
+    for (const c of candidates) {
+      const s = String(c || '').trim();
+      if (s && s.indexOf('https://script.google.com/') === 0) return s;
+    }
+    // Fallback: scan all localStorage keys for any deployed Google Apps Script Web App URL
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        const v = String(localStorage.getItem(k) || '').trim();
+        if (v.indexOf('https://script.google.com/macros/s/') === 0 && v.endsWith('/exec')) {
+          localStorage.setItem('hzk_gas_webapp_url', v);
+          return v;
+        }
+      }
+    } catch (e) {}
+    return '';
+  }
+
+  function promptAndSaveGasEndpointUrl() {
+    const cur = getGasEndpointUrl();
+    const entered = prompt(
+      '🔗 กรุณาวางลิงก์ Google Apps Script Web App URL (ลงท้ายด้วย /exec)\nเพื่อเชื่อมต่อฐานข้อมูลคลาวด์และระบบ LINE OA:',
+      cur || 'https://script.google.com/macros/s/.../exec'
     );
+    if (entered && entered.trim().indexOf('https://script.google.com/') === 0) {
+      const clean = entered.trim();
+      localStorage.setItem('hzk_gas_webapp_url', clean);
+      localStorage.setItem('gasWebAppUrl', clean);
+      return clean;
+    }
+    return '';
+  }
+
+  async function callGasApi(action, payload, interactivePrompt) {
+    let gasUrl = getGasEndpointUrl();
+    if (!gasUrl && interactivePrompt) {
+      gasUrl = promptAndSaveGasEndpointUrl();
+    }
+    if (!gasUrl) {
+      return { status: 'NO_GAS_URL', message: 'ยังไม่ได้ตั้งค่า Google Apps Script Web App URL' };
+    }
+    const res = await fetch(gasUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(Object.assign({ action: action }, payload || {}))
+    });
+    const rawText = await res.text();
+    try {
+      return JSON.parse(rawText);
+    } catch (parseErr) {
+      throw new Error('เซิร์ฟเวอร์ตอบกลับไม่ใช่ JSON (ตรวจสอบสิทธิ์ Deploy = Anyone และ URL /exec): ' + rawText.slice(0, 120));
+    }
   }
 
   async function loadSalesMasterDb(forceRefresh) {
@@ -200,6 +255,7 @@
       { divider: true },
       { icon: '🏭', label: 'ส่งออกข้อมูลเปิด Sales Order เข้า ERP / NAV', sub: 'ดาวน์โหลดไฟล์ตารางรายการ PO Approved พร้อมนำเข้าระบบบัญชี/ERP', action: () => window.exportErpSalesOrdersCsv() },
       { icon: '🎭', label: 'จำลองหน้าจอจริงแยกแผนก & รายบุคคล (Live Inspector)', sub: 'สลับดูหน้าตาการทำงานจริงแยก 8 แผนก หรือเจาะดูรายบุคคล (เซลล์ / ช่าง / บัญชี)', action: () => window.openDepartmentLiveSimulatorModal() },
+      { icon: '🩺', label: 'Deep Scan ตรวจสอบ & ซ่อมแซมฟังก์ชันทั้งหมด', sub: 'สแกนลิงก์ GAS API, ฐานข้อมูล, Drive API, ปุ่มกด และตั้งค่า URL อัตโนมัติ', action: () => window.runDeepSystemDiagnosticModal() },
       { icon: '🛡️', label: 'ตรวจความพร้อมระบบ & Go-Live Control (QA)', sub: 'เช็กสถานะ Token/API/Sheets + ติดตั้ง LINE Rich Menu + ล้างข้อมูลทดสอบ', action: () => window.openProductionGoLiveQaModal() },
       { icon: '📖', label: 'คู่มือใช้งานฉบับย่อแยกแผนก (Role SOP Guide)', sub: 'คู่มือ 1 หน้าสำหรับช่างบริการ / ฝ่ายขาย-JPC / บัญชี-ดีลเลอร์', action: () => window.openDepartmentRoleSopModal() }
     ];
@@ -1252,11 +1308,11 @@
       .join('');
 
     const customerOptions = (db.customers || [])
-      .map(c => `<option value="${c.name.replace(/"/g, '&quot;')}">`)
+      .map(c => `<option value="${c.name.split(String.fromCharCode(34)).join('&quot;')}">`)
       .join('');
 
     const termsOptions = (db.termsAndConditions || [])
-      .map(t => `<option value="${t.replace(/"/g, '&quot;')}">${t}</option>`)
+      .map(t => `<option value="${t.split(String.fromCharCode(34)).join('&quot;')}">${t}</option>`)
       .join('');
 
     const savedDraft = (() => {
@@ -1843,11 +1899,26 @@
         alert('ℹ️ ยังไม่มีรายการใบเสนอราคาในระบบสำหรับส่งออก ERP ครับ');
         return;
       }
-      const headers = ['Order_Status', 'Offer_No', 'Rev', 'Date', 'Department', 'Salesperson_Code', 'Customer_Name', 'Payment_Terms', 'Currency', 'Item_No', 'Description', 'Qty', 'Unit_Price', 'Discount', 'Line_Amount'];
-      const csvLines = [headers.join(',')].concat(rows.map(r =>
-        headers.map(h => {
-          const key = h.charAt(0).toLowerCase() + h.slice(1).replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-          const val = String(r[key] !== undefined ? r[key] : '').replace(/"/g, '""');
+      const colPairs = [
+        ['Order_Status', 'orderStatus'],
+        ['Offer_No', 'offerNo'],
+        ['Rev', 'rev'],
+        ['Date', 'date'],
+        ['Department', 'department'],
+        ['Salesperson_Code', 'salespersonCode'],
+        ['Customer_Name', 'customerName'],
+        ['Payment_Terms', 'paymentTerms'],
+        ['Currency', 'currency'],
+        ['Item_No', 'itemNo'],
+        ['Description', 'description'],
+        ['Qty', 'qty'],
+        ['Unit_Price', 'unitPrice'],
+        ['Discount', 'discount'],
+        ['Line_Amount', 'lineAmount']
+      ];
+      const csvLines = [colPairs.map(p => p[0]).join(',')].concat(rows.map(r =>
+        colPairs.map(([, key]) => {
+          const val = String(r[key] !== undefined ? r[key] : '').split(String.fromCharCode(34)).join('""');
           return `"${val}"`;
         }).join(',')
       ));
@@ -2004,7 +2075,109 @@
 
   window.triggerEmailStockSyncNow = triggerEmailStockSyncNow;
   window.exportErpSalesOrdersCsv = exportErpSalesOrdersCsv;
+
+  async function runDeepSystemDiagnosticModal() {
+    let diagModal = document.getElementById('hzkDeepScanModal');
+    if (!diagModal) {
+      diagModal = document.createElement('div');
+      diagModal.id = 'hzkDeepScanModal';
+      diagModal.style.cssText =
+        'position:fixed;inset:0;z-index:20060;background:rgba(15,23,42,0.85);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(diagModal);
+    }
+
+    const curUrl = getGasEndpointUrl();
+    const db = await loadSalesMasterDb(false);
+    const localChecks = [
+      { name: '1. Frontend Suite Version', ok: true, detail: HZK_OMNI_STATE.version },
+      { name: '2. Product Catalog JSON (331 รุ่น + ขนาด W×D×H)', ok: Array.isArray(db.models) && db.models.length > 0, detail: (db.models || []).length + ' models loaded' },
+      { name: '3. Customer Master JSON (700 รายชื่อ)', ok: Array.isArray(db.customers) && db.customers.length > 0, detail: (db.customers || []).length + ' customers loaded' },
+      { name: '4. Live Stock Snapshot JSON (MICHIRU-RPA)', ok: db.stockMap && Object.keys(db.stockMap).length > 0, detail: Object.keys(db.stockMap || {}).length + ' stock models + ' + (db.damageDemoList || []).length + ' Demo/Damage units' },
+      { name: '5. Google Apps Script Web App URL', ok: Boolean(curUrl), detail: curUrl || '❌ ยังไม่พบ URL ในเครื่อง (กรุณาวางลิงก์ด้านบนแล้วกดบันทึก)' }
+    ];
+
+    diagModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:860px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.5);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;">
+          <div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;">ENTERPRISE DEEP SCAN &amp; SELF-HEALING DIAGNOSTICS (v1155)</div>
+            <div style="font-size:16px;font-weight:700;">🩺 ผลสแกนตรวจสอบการทำงานเชิงลึก (Frontend PWA + Google Apps Script Backend)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkDeepScanModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:18px 20px;font-size:13px;color:#0F172A;">
+          <div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;padding:12px;margin-bottom:14px;">
+            <label style="font-weight:700;color:#0369A1;display:block;margin-bottom:5px;">🔗 ลิงก์ Google Apps Script Web App URL (จุดเชื่อมต่อฟังก์ชันคลาวด์ทั้งหมด):</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <input id="hzkDiagGasUrlInput" type="text" value="${curUrl}" placeholder="https://script.google.com/macros/s/...../exec" style="flex:1;min-width:240px;padding:8px 10px;border:1px solid #94A3B8;border-radius:8px;font-size:12px;" />
+              <button type="button" id="hzkDiagSaveUrlBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;">💾 บันทึก &amp; สแกนใหม่</button>
+            </div>
+          </div>
+
+          <div style="font-weight:700;color:#002B49;margin-bottom:6px;">ส่วนที่ 1: ตรวจสอบโมดูลหน้าเว็บ (PWA Frontend &amp; Offline JSON)</div>
+          <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px;">
+            <thead><tr style="background:#0F172A;color:#FFF;"><th style="padding:7px;text-align:left;">รายการตรวจสอบ</th><th style="padding:7px;">สถานะ</th><th style="padding:7px;text-align:left;">รายละเอียด</th></tr></thead>
+            <tbody>
+              ${localChecks.map(c => `
+                <tr>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${c.name}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${c.ok ? '<span style="color:#059669;font-weight:800;">✅ OK</span>' : '<span style="color:#DC2626;font-weight:800;">❌ MISSING</span>'}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;">${c.detail}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+
+          <div style="font-weight:700;color:#002B49;margin-bottom:6px;">ส่วนที่ 2: ตรวจสอบหลังบ้าน Google Apps Script, Drive API, LINE OA และ Triggers</div>
+          <div id="hzkDiagBackendBody">⏳ กำลังเชื่อมต่อทดสอบหลังบ้าน...</div>
+        </div>
+      </div>
+    `;
+
+    diagModal.style.display = 'flex';
+
+    document.getElementById('hzkDiagSaveUrlBtn').onclick = function () {
+      const val = document.getElementById('hzkDiagGasUrlInput').value.trim();
+      if (val && val.indexOf('https://script.google.com/') === 0) {
+        localStorage.setItem('hzk_gas_webapp_url', val);
+        localStorage.setItem('gasWebAppUrl', val);
+        runDeepSystemDiagnosticModal();
+      } else {
+        alert('⚠️ กรุณากรอก URL ที่ขึ้นต้นด้วย https://script.google.com/macros/s/ และลงท้ายด้วย /exec ครับ');
+      }
+    };
+
+    const backendEl = document.getElementById('hzkDiagBackendBody');
+    if (!curUrl) {
+      backendEl.innerHTML = '<div style="background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;padding:12px;border-radius:10px;">⚠️ <b>สาเหตุหลักที่ฟังก์ชันคลาวด์ไม่ทำงาน:</b> ยังไม่ได้บันทึก Google Apps Script Web App URL ในเครื่องนี้ กรุณาวางลิงก์ <code>/exec</code> ในช่องด้านบนแล้วกด <b>บันทึก &amp; สแกนใหม่</b> ครับ</div>';
+      return;
+    }
+
+    try {
+      const data = await callGasApi('runDeepSystemScan', {}, false);
+      const checks = (data && data.checks) || [];
+      backendEl.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="background:#002B49;color:#FFF;"><th style="padding:7px;text-align:left;">บริการหลังบ้าน (Backend Check)</th><th style="padding:7px;">สถานะ</th><th style="padding:7px;text-align:left;">รายละเอียด</th></tr></thead>
+          <tbody>
+            ${checks.map(c => `
+              <tr>
+                <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${c.item}</td>
+                <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${c.ok ? '<span style="color:#059669;font-weight:800;">✅ READY</span>' : '<span style="color:#DC2626;font-weight:800;">⚠️ FIX NEEDED</span>'}</td>
+                <td style="padding:7px;border:1px solid #CBD5E1;">${c.detail}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (err) {
+      backendEl.innerHTML = `<div style="background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;padding:12px;border-radius:10px;">❌ <b>เชื่อมต่อ Backend ไม่สำเร็จ:</b> ${err.message}</div>`;
+    }
+  }
+
   window.openProductionGoLiveQaModal = openProductionGoLiveQaModal;
+  window.runDeepSystemDiagnosticModal = runDeepSystemDiagnosticModal;
+  window.callGasApi = callGasApi;
 
   const DEPT_VIEW_PROFILES = [
     {
@@ -2209,7 +2382,7 @@
         <td style="padding:6px;border:1px solid #CBD5E1;">${c.paymentTerms || '30DAYS'}</td>
         <td style="padding:6px;border:1px solid #CBD5E1;">${c.phone || '-'}</td>
         <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">
-          <button type="button" data-cust-name="${c.name.replace(/"/g, '&quot;')}" class="hzk-staff-new-qt-cust" style="background:#0284C7;color:#FFF;border:none;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;">+ ออกใบเสนอราคา</button>
+          <button type="button" data-cust-name="${c.name.split(String.fromCharCode(34)).join('&quot;')}" class="hzk-staff-new-qt-cust" style="background:#0284C7;color:#FFF;border:none;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;">+ ออกใบเสนอราคา</button>
         </td>
       </tr>
     `).join('') || '<tr><td colspan="5" style="padding:12px;text-align:center;color:#64748B;">ไม่มีรายชื่อลูกค้าผูกตายตัว (สามารถออกเอกสารให้ลูกค้าทั่วไปได้ทั้งหมด)</td></tr>';

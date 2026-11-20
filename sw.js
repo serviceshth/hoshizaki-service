@@ -1,10 +1,11 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1145-omni-bridge';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1149-auto-email-stock';
 const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './hzk_sales_crm_quotation_addon.js',
-  './sales_crm_master_db_y2026.json'
+  './sales_crm_master_db_y2026.json',
+  './live_stock_snapshot_y2026.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -25,7 +26,6 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = event.request.url || '';
-  // Network-First for dynamic JS, JSON, and HTML so updates appear immediately on mobile & PC
   if (url.endsWith('.js') || url.endsWith('.json') || url.endsWith('.html') || event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)

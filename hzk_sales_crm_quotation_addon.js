@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1148-ALL-5-PILLARS-ENTERPRISE',
+    version: 'v1149-AUTO-EMAIL-STOCK-AND-INSPECTION',
     masterDb: null,
     items: []
   };
@@ -95,8 +95,21 @@
           if (Array.isArray(liveData.emailGroups) && liveData.emailGroups.length > 0) baseDb.emailGroups = liveData.emailGroups;
           if (liveData.stockMap) baseDb.stockMap = liveData.stockMap;
           if (liveData.portalUrl) baseDb.portalUrl = liveData.portalUrl;
+          if (Array.isArray(liveData.damageDemoList) && liveData.damageDemoList.length > 0) baseDb.damageDemoList = liveData.damageDemoList;
         }
       } catch (e) {}
+    }
+
+    // Load initial parsed Stock on Hand snapshot (`live_stock_snapshot_y2026.json`) if stockMap not yet loaded
+    if (!baseDb.stockMap || Object.keys(baseDb.stockMap).length === 0) {
+      try {
+        const snapRes = await fetch('./live_stock_snapshot_y2026.json?v=' + Date.now(), { cache: 'no-store' });
+        if (snapRes.ok) {
+          const snapJson = await snapRes.json();
+          if (snapJson && snapJson.stockMap) baseDb.stockMap = snapJson.stockMap;
+          if (snapJson && Array.isArray(snapJson.damageDemoList)) baseDb.damageDemoList = snapJson.damageDemoList;
+        }
+      } catch (eSnap) {}
     }
 
     HZK_OMNI_STATE.masterDb = baseDb;
@@ -175,6 +188,8 @@
       { icon: '🔄', label: 'ศูนย์ส่งต่องานข้ามแผนก (1-Click Handover)', sub: 'Sales ➔ ติดตั้ง/ลงทะเบียน S/N | Service ➔ บัญชี', action: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)', 'HANDOVER') },
       { icon: '🔔', label: 'ต่ออายุสัญญา PM & แจ้งเตือนหมดประกัน (60 วัน)', sub: 'สแกนเครื่องใกล้หมดประกัน + สร้างใบเสนอราคาต่อสัญญา 1 คลิก', action: () => window.openWarrantyPmRenewalModal() },
       { divider: true },
+      { icon: '🏷️', label: 'สต็อกเครื่องโชว์ / มีตำหนิ & ใบตรวจสภาพ (602 รายการ)', sub: 'ดูรายการเครื่อง Demo/Damage + ลิงก์ใบตรวจสภาพ + ดึงลงใบเสนอราคา', action: () => window.openDamageDemoStockModal() },
+      { icon: '📥', label: 'อัปเดต Stock จากอีเมล MICHIRU-RPA ทันที', sub: 'ดึงไฟล์ Stock on Hand ล่าสุดจาก Gmail เข้าฐานข้อมูลสด', action: () => window.triggerEmailStockSyncNow() },
       { icon: '🌐', label: 'พอร์ทัลลูกค้า & ตัวแทนจำหน่าย (Self-Service)', sub: 'เปิดหน้าเช็กเครื่องในร้าน ประวัติซ่อม และสถานะดีลเลอร์', action: () => window.openCustomerDealerPortalWindow() },
       { icon: '📊', label: 'ติดตามสถานะการรับเอกสาร (Tracking)', sub: 'เช็กสถานะ SENT / ยืนยันรับแล้ว / อนุมัติสั่งซื้อ (PO)', action: () => window.openDocumentTrackingDashboardModal() },
       { icon: '📈', label: 'รายงานสรุปผู้บริหาร & AI Copilot (BI)', sub: 'KPI รวม + AI ติดตามใบเสนอราคาค้าง + ส่งเข้า LINE ผู้บริหาร', action: () => window.openExecutiveBiDashboardModal() }
@@ -1684,7 +1699,124 @@ ze:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}
   };
   window.openExecutiveBiDashboardModal = openExecutiveBiDashboardModal;
   window.openWarrantyPmRenewalModal = openWarrantyPmRenewalModal;
+
+  async function openDamageDemoStockModal() {
+    const db = await loadSalesMasterDb(false);
+    const list = db.damageDemoList || [];
+    let dModal = document.getElementById('hzkDamageDemoStockModal');
+    if (!dModal) {
+      dModal = document.createElement('div');
+      dModal.id = 'hzkDamageDemoStockModal';
+      dModal.style.cssText =
+        'position:fixed;inset:0;z-index:10094;background:rgba(15,23,42,0.78);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(dModal);
+    }
+
+    dModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1020px;max-height:90vh;overflow-y:auto;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,0.4);font-family:sans-serif;">
+        <div style="background:#7C2D12;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;">
+          <div>
+            <div style="font-size:11px;color:#FDE68A;font-weight:800;">DEMO / CLEARANCE / INSPECTION STOCK CATALOG</div>
+            <div style="font-size:16px;font-weight:700;">🏷️ รายการเครื่องโชว์ / กล่องชำรุด / มีตำหนิพร้อมขาย (${list.length} รายการ)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkDamageDemoStockModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div style="padding:16px 20px;font-size:13px;">
+          <input id="hzkDmgSearchInp" type="text" placeholder="🔎 พิมพ์ค้นหารุ่นเครื่อง (เช่น IM-130NE, FM-1000) หรือ Serial No. หรือสถานะ..." style="width:100%;padding:9px 12px;border:1px solid #CBD5E1;border-radius:8px;margin-bottom:12px;" />
+          <div style="overflow-x:auto;">
+            <table style="width:100%;min-width:780px;border-collapse:collapse;font-size:12px;">
+              <thead>
+                <tr style="background:#0F172A;color:#FFF;">
+                  <th style="padding:8px;border:1px solid #CBD5E1;">Model</th>
+                  <th style="padding:8px;border:1px solid #CBD5E1;">Serial No.</th>
+                  <th style="padding:8px;border:1px solid #CBD5E1;">สภาพเครื่อง / หมายเหตุ (Remark)</th>
+                  <th style="padding:8px;border:1px solid #CBD5E1;">ใบตรวจสภาพ</th>
+                  <th style="padding:8px;border:1px solid #CBD5E1;">นำไปเสนอราคา</th>
+                </tr>
+              </thead>
+              <tbody id="hzkDmgTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+    dModal.style.display = 'flex';
+
+    function renderDmgRows(filterTxt) {
+      const q = String(filterTxt || '').trim().toUpperCase();
+      const filtered = q
+        ? list.filter(x => (x.model + ' ' + x.serialNo + ' ' + x.remark).toUpperCase().indexOf(q) !== -1)
+        : list;
+      const tbody = document.getElementById('hzkDmgTableBody');
+      tbody.innerHTML = filtered.slice(0, 120).map((it, idx) => `
+        <tr>
+          <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${it.model}</td>
+          <td style="padding:7px;border:1px solid #CBD5E1;">${it.serialNo || '-'}</td>
+          <td style="padding:7px;border:1px solid #CBD5E1;">${it.remark || '-'}</td>
+          <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+            ${it.link ? `<a href="${it.link}" target="_blank" style="background:#0284C7;color:#FFF;text-decoration:none;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;">📄 เปิดใบตรวจ</a>` : '<span style="color:#94A3B8;">-</span>'}
+          </td>
+          <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+            <button type="button" data-d-idx="${idx}" class="hzk-pick-dmg-btn" style="background:#059669;color:#FFF;border:none;border-radius:6px;padding:5px 9px;font-weight:700;cursor:pointer;">+ เลือกรุ่นนี้</button>
+          </td>
+        </tr>`).join('') || '<tr><td colspan="5" style="padding:14px;text-align:center;color:#64748B;">ไม่พบรายการที่ค้นหา</td></tr>';
+
+      tbody.querySelectorAll('.hzk-pick-dmg-btn').forEach(btn => {
+        btn.onclick = async function () {
+          const item = filtered[Number(btn.getAttribute('data-d-idx'))];
+          dModal.style.display = 'none';
+          const mObj = (db.models || []).find(m => m.model.toUpperCase() === item.model.toUpperCase()) || { w: '', d: '', h: '', description: 'Hoshizaki Equipment' };
+          HZK_OMNI_STATE.items.push({
+            model: item.model,
+            description: mObj.description + ' [S/N: ' + item.serialNo + ' — ' + item.remark + ']',
+            w: mObj.w || '',
+            d: mObj.d || '',
+            h: mObj.h || '',
+            unitPrice: 0,
+            discount: 0,
+            qty: 1,
+            isService: false
+          });
+          await openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)');
+        };
+      });
+    }
+
+    document.getElementById('hzkDmgSearchInp').oninput = function (e) {
+      renderDmgRows(e.target.value);
+    };
+    renderDmgRows('');
+  }
+
+  async function triggerEmailStockSyncNow() {
+    const gasUrl = getGasEndpointUrl();
+    if (!gasUrl) {
+      alert('⚠️ กรุณาตั้งค่า Google Apps Script URL ก่อนสั่งซิงก์สตอกจากอีเมลครับ');
+      return;
+    }
+    alert('⏳ กำลังค้นหาอีเมลล่าสุดหัวข้อ "Daily stock report" จาก MICHIRU-RPA และอัปเดตฐานข้อมูลสต็อก กรุณารอสักครู่...');
+    try {
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'syncEmailStockNow' })
+      });
+      const data = await res.json();
+      if (data && data.status === 'OK') {
+        await loadSalesMasterDb(true);
+        alert('✅ อัปเดตสต็อกประจำวันสำเร็จ!\n• อีเมล: ' + data.emailSubject + '\n• รุ่นสินค้าในคลัง: ' + data.totalModels + ' รุ่น (พร้อมส่ง ' + data.readyModels + ' รุ่น)\n• เครื่องโชว์/มีตำหนิ: ' + data.damageDemoCount + ' รายการ');
+      } else {
+        alert('⚠️ ' + ((data && data.message) || 'ไม่พบไฟล์ Stock on Hand ในอีเมลล่าสุด'));
+      }
+    } catch (err) {
+      alert('❌ เกิดข้อผิดพลาดในการดึงอีเมล: ' + err.message);
+    }
+  }
+
   window.openCustomerDealerPortalWindow = openCustomerDealerPortalWindow;
+  window.openDamageDemoStockModal = openDamageDemoStockModal;
+  window.triggerEmailStockSyncNow = triggerEmailStockSyncNow;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', dockOmniBridgeButtons);

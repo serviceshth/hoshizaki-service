@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1152-DEPT-AND-INDIVIDUAL-LIVE-INSPECTOR',
+    version: 'v1153-ULTIMATE-OMNI-SUITE',
     masterDb: null,
     items: []
   };
@@ -191,7 +191,11 @@
       { icon: '🏷️', label: 'สต็อกเครื่องโชว์ / มีตำหนิ & ใบตรวจสภาพ (602 รายการ)', sub: 'ดูรายการเครื่อง Demo/Damage + ลิงก์ใบตรวจสภาพ + ดึงลงใบเสนอราคา', action: () => window.openDamageDemoStockModal() },
       { icon: '📥', label: 'อัปเดต Stock จากอีเมล MICHIRU-RPA ทันที', sub: 'ดึงไฟล์ Stock on Hand ล่าสุดจาก Gmail เข้าฐานข้อมูลสด', action: () => window.triggerEmailStockSyncNow() },
       { icon: '🌐', label: 'พอร์ทัลลูกค้า & ตัวแทนจำหน่าย (Self-Service)', sub: 'เปิดหน้าเช็กเครื่องในร้าน ประวัติซ่อม และสถานะดีลเลอร์', action: () => window.openCustomerDealerPortalWindow() },
-      { icon: '📊', label: 'ติดตามสถานะการรับเอกสาร (Tracking)', sub: 'เช็กสถานะ SENT / ยืนยันรับแล้ว / อนุมัติสั่งซื้อ (PO)', action: () => window.openDocumentTrackingDashboardModal() },
+      { icon: '🔎', label: 'ประวัติเครื่องราย S/N 360° & อัลบั้มรูปหน้างาน', sub: 'ดูไทม์ไลน์ตั้งแต่คลัง ➔ ติดตั้ง ➔ ซ่อมบำรุง ➔ รูปถ่ายก่อน-หลัง', action: () => window.openSerial360TimelineModal() },
+      { icon: '🚐', label: 'คลังอะไหล่รถช่าง T01–T08 & เบิกเติมอัตโนมัติ', sub: 'เช็ก/ตัด/เติมอะไหล่รถช่าง + แจ้งเตือนสโตร์เมื่อต่ำกว่า Min Stock', action: () => window.openTechnicianVanStockModal() },
+      { icon: '📅', label: 'ตารางนัดหมายติดตั้ง & คิวงานช่าง (Dispatch Board)', sub: 'จัดคิวงานติดตั้ง/ซ่อมรายวันของช่าง T01–T08 + แจ้งเตือน LINE', action: () => window.openServiceDispatchCalendarModal() },
+      { icon: '🏆', label: 'สรุปผลงาน & Incentive รายบุคคล (Sales & Tech KPI)', sub: 'สรุปยอดปิดการขาย PO Approved และจำนวนปิดเคสช่างประจำเดือน', action: () => window.openMonthlyIncentiveKpiModal() },
+      { icon: '📊', label: 'ติดตามสถานะการรับเอกสาร & E-Sign PO (Tracking)', sub: 'เช็กสถานะ SENT / ยืนยันรับ / ลายเซ็น E-Sign & ไฟล์ PO ลูกค้า', action: () => window.openDocumentTrackingDashboardModal() },
       { icon: '📈', label: 'รายงานสรุปผู้บริหาร & AI Copilot (BI)', sub: 'KPI รวม + AI ติดตามใบเสนอราคาค้าง + ส่งเข้า LINE ผู้บริหาร', action: () => window.openExecutiveBiDashboardModal() },
       { divider: true },
       { icon: '🏭', label: 'ส่งออกข้อมูลเปิด Sales Order เข้า ERP / NAV', sub: 'ดาวน์โหลดไฟล์ตารางรายการ PO Approved พร้อมนำเข้าระบบบัญชี/ERP', action: () => window.exportErpSalesOrdersCsv() },
@@ -2455,7 +2459,363 @@ ze:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}
   }
 
   window.openDepartmentRoleSopModal = openDepartmentRoleSopModal;
+
+  async function openSerial360TimelineModal(prefillSn) {
+    let sModal = document.getElementById('hzkSerial360Modal');
+    if (!sModal) {
+      sModal = document.createElement('div');
+      sModal.id = 'hzkSerial360Modal';
+      sModal.style.cssText =
+        'position:fixed;inset:0;z-index:20040;background:rgba(15,23,42,0.82);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(sModal);
+    }
+
+    sModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:960px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;">
+          <div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;">SERIAL NUMBER 360° LIFECYCLE &amp; FIELD PHOTO GALLERY</div>
+            <div style="font-size:16px;font-weight:700;">🔎 ตรวจสอบประวัติเครื่องรายตัว (S/N 360° Timeline &amp; รูปหน้างาน)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkSerial360Modal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div style="padding:18px 20px;font-size:13px;color:#0F172A;">
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+            <input id="hzkSn360Input" type="text" value="${prefillSn || ''}" placeholder="พิมพ์หมายเลขเครื่อง Serial No. เช่น K01234J, L05678M..." style="flex:1;min-width:220px;padding:9px 12px;border:1.5px solid #CBD5E1;border-radius:8px;font-weight:700;" />
+            <button type="button" id="hzkSn360SearchBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer;">🔎 ค้นหาประวัติ 360°</button>
+          </div>
+          <div id="hzkSn360ResultBody" style="color:#64748B;">กรอกหมายเลข Serial Number แล้วกดค้นหาเพื่อดูประวัติตั้งแต่คลังสินค้า ติดตั้ง ดีลเลอร์ ซ่อมบำรุง และรูปภาพหน้างานครับ</div>
+        </div>
+      </div>
+    `;
+    sModal.style.display = 'flex';
+
+    async function runSearchSn() {
+      const sn = document.getElementById('hzkSn360Input').value.trim().toUpperCase();
+      if (!sn) return;
+      const gasUrl = getGasEndpointUrl();
+      const body = document.getElementById('hzkSn360ResultBody');
+      if (!gasUrl) {
+        body.innerHTML = '<div style="color:#B91C1C;">กรุณาตั้งค่า Google Apps Script URL ก่อนค้นหาครับ</div>';
+        return;
+      }
+      body.innerHTML = '⏳ กำลังรวบรวมข้อมูลประวัติเครื่อง ' + sn + ' จากทุกแผนก...';
+      try {
+        const res = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'getSerial360Timeline', serialNo: sn })
+        });
+        const d = await res.json();
+        const m = d.master || {};
+        const events = d.timeline || [];
+        const photos = d.photos || [];
+
+        const timelineHtml = events.map(ev => `
+          <div style="border-left:3px solid #0284C7;padding:8px 14px;margin-bottom:10px;background:#F8FAFC;border-radius:0 10px 10px 0;">
+            <div style="font-size:10.5px;font-weight:800;color:#0284C7;">${ev.stage} • ${ev.date}</div>
+            <div style="font-weight:700;color:#0F172A;margin-top:2px;">${ev.title}</div>
+            <div style="font-size:12px;color:#334155;margin-top:2px;">${ev.detail}</div>
+            ${ev.link ? `<a href="${ev.link}" target="_blank" style="display:inline-block;margin-top:4px;font-size:11px;color:#059669;font-weight:700;">🔗 เปิดดูเอกสาร/รูปภาพแนบ</a>` : ''}
+          </div>
+        `).join('') || '<div style="color:#64748B;padding:10px;">ยังไม่มีประวัติการเคลื่อนไหวเพิ่มเติมในระบบ</div>';
+
+        const photosHtml = photos.length
+          ? `<div style="margin-top:14px;"><div style="font-weight:700;color:#002B49;margin-bottom:8px;">📸 อัลบั้มรูปภาพหน้างานของเครื่องนี้ (${photos.length} ภาพ):</div>` +
+            `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
+            photos.map(p => `<a href="${p.url}" target="_blank" style="background:#EFF6FF;border:1px solid #BFDBFE;padding:8px 12px;border-radius:8px;text-decoration:none;color:#1E40AF;font-size:12px;font-weight:700;">🖼️ ${p.ticketId} (${p.date})</a>`).join('') +
+            `</div></div>`
+          : '';
+
+        body.innerHTML = `
+          <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:14px;margin-bottom:14px;">
+            <div style="font-size:15px;font-weight:800;color:#002B49;">❄️ S/N: ${d.serialNumber} — รุ่น: ${m.model || 'ไม่ระบุ'}</div>
+            <div style="font-size:12.5px;color:#1E293B;margin-top:4px;"><b>ลูกค้า / สถานที่ติดตั้ง:</b> ${m.customerStore || '-'} (${m.province || '-'}) | <b>โทร:</b> ${m.customerPhone || '-'}</div>
+            <div style="font-size:12.5px;color:#047857;margin-top:2px;"><b>สถานะการรับประกัน:</b> ${m.warrantyStatus || '-'}</div>
+            <div style="font-size:12.5px;color:#B45309;margin-top:2px;"><b>ตัวแทนจำหน่ายที่ดูแล:</b> ${m.dealerName || '-'} (${m.dealerContact || '-'} โทร ${m.dealerPhone || '-'})</div>
+          </div>
+          <div style="font-weight:700;color:#002B49;margin-bottom:8px;">📋 ไทม์ไลน์ประวัติเครื่อง 360°:</div>
+          ${timelineHtml}
+          ${photosHtml}
+        `;
+      } catch (err) {
+        body.innerHTML = '<div style="color:#B91C1C;">ค้นหาไม่สำเร็จ: ' + err.message + '</div>';
+      }
+    }
+
+    document.getElementById('hzkSn360SearchBtn').onclick = runSearchSn;
+    if (prefillSn) runSearchSn();
+  }
+
+  async function openTechnicianVanStockModal() {
+    let vModal = document.getElementById('hzkVanStockModal');
+    if (!vModal) {
+      vModal = document.createElement('div');
+      vModal.id = 'hzkVanStockModal';
+      vModal.style.cssText =
+        'position:fixed;inset:0;z-index:20042;background:rgba(15,23,42,0.82);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(vModal);
+    }
+
+    vModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:960px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:sans-serif;">
+        <div style="background:#7F1D1D;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;">
+          <div>
+            <div style="font-size:11px;color:#FECACA;font-weight:800;">TECHNICIAN VAN STOCK &amp; AUTO STORE REPLENISHMENT</div>
+            <div style="font-size:16px;font-weight:700;">🚐 คลังอะไหล่ประจำรถช่างบริการ (T01–T08) &amp; เบิกเติมอัตโนมัติ</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkVanStockModal').style.display='none'" style="background:#0F172A;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div style="padding:16px 20px;font-size:13px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">
+            <label style="font-weight:700;">เลือกรถช่าง:</label>
+            <select id="hzkVanFilterSel" style="padding:7px 12px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+              <option value="ALL">รถช่างทั้งหมด (T01 – T08)</option>
+              <option value="T01">T01 (Bangkok North)</option>
+              <option value="T02">T02 (Bangkok South)</option>
+              <option value="T03">T03 (Bangkok East)</option>
+              <option value="T04">T04 (Nonthaburi)</option>
+              <option value="T05">T05 (Samut Prakan)</option>
+              <option value="T06">T06 (Ayutthaya)</option>
+              <option value="T07">T07 (Upcountry)</option>
+              <option value="T08">T08 (Install &amp; PM)</option>
+            </select>
+            <button type="button" id="hzkVanRefreshBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">🔄 รีเฟรชสต็อก</button>
+          </div>
+          <div id="hzkVanTableWrap">⏳ กำลังโหลดข้อมูลสต็อกรถช่าง...</div>
+        </div>
+      </div>
+    `;
+    vModal.style.display = 'flex';
+
+    async function loadVanRows() {
+      const wrap = document.getElementById('hzkVanTableWrap');
+      const gasUrl = getGasEndpointUrl();
+      if (!gasUrl) {
+        wrap.innerHTML = '<div style="color:#B91C1C;">กรุณาตั้งค่า Google Apps Script URL ก่อนใช้งานครับ</div>';
+        return;
+      }
+      const vanCode = document.getElementById('hzkVanFilterSel').value;
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'getVanStock', vanCode: vanCode })
+      });
+      const data = await res.json();
+      const items = (data && data.items) || [];
+      wrap.innerHTML = `
+        <div style="overflow-x:auto;">
+          <table style="width:100%;min-width:740px;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:#0F172A;color:#FFF;">
+                <th style="padding:8px;">รถช่าง</th>
+                <th style="padding:8px;">รหัสอะไหล่</th>
+                <th style="padding:8px;text-align:left;">ชื่ออะไหล่</th>
+                <th style="padding:8px;">คงเหลือ</th>
+                <th style="padding:8px;">ขั้นต่ำ</th>
+                <th style="padding:8px;">เบิกใช้หน้างาน / เติมเข้าคลังรถ</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map(it => {
+                const isLow = it.qty < it.minQty;
+                return `
+                  <tr style="background:${isLow ? '#FEF2F2' : '#FFF'};">
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:700;">${it.vanCode}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${it.partCode}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;">${it.partName}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:800;color:${isLow ? '#DC2626' : '#059669'};">${it.qty}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${it.minQty}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+                      <button type="button" data-van="${it.vanCode}" data-part="${it.partCode}" data-delta="-1" class="hzk-van-adj-btn" style="background:#DC2626;color:#FFF;border:none;border-radius:6px;padding:4px 9px;font-weight:700;cursor:pointer;margin-right:4px;">-1 เบิกใช้</button>
+                      <button type="button" data-van="${it.vanCode}" data-part="${it.partCode}" data-delta="1" class="hzk-van-adj-btn" style="background:#059669;color:#FFF;border:none;border-radius:6px;padding:4px 9px;font-weight:700;cursor:pointer;">+1 เติมสต็อก</button>
+                    </td>
+                  </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      wrap.querySelectorAll('.hzk-van-adj-btn').forEach(btn => {
+        btn.onclick = async function () {
+          const r = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'adjustVanStock',
+              vanCode: btn.getAttribute('data-van'),
+              partCode: btn.getAttribute('data-part'),
+              delta: Number(btn.getAttribute('data-delta'))
+            })
+          });
+          const resAdj = await r.json();
+          if (resAdj && resAdj.lowStockAlert) {
+            alert('⚠️ อะไหล่เหลือน้อยกว่าเกณฑ์ขั้นต่ำ! ระบบส่งใบขอเบิกเติมเข้ากลุ่ม LINE สโตร์เรียบร้อยแล้วครับ');
+          }
+          loadVanRows();
+        };
+      });
+    }
+
+    document.getElementById('hzkVanRefreshBtn').onclick = loadVanRows;
+    document.getElementById('hzkVanFilterSel').onchange = loadVanRows;
+    loadVanRows();
+  }
+
+  async function openServiceDispatchCalendarModal() {
+    let dModal = document.getElementById('hzkDispatchCalendarModal');
+    if (!dModal) {
+      dModal = document.createElement('div');
+      dModal.id = 'hzkDispatchCalendarModal';
+      dModal.style.cssText =
+        'position:fixed;inset:0;z-index:20044;background:rgba(15,23,42,0.82);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(dModal);
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    dModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:960px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;">
+          <div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;">INSTALLATION &amp; FIELD SERVICE DISPATCH BOARD</div>
+            <div style="font-size:16px;font-weight:700;">📅 ตารางนัดหมายติดตั้ง &amp; จ่ายคิวงานช่าง (T01–T08)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkDispatchCalendarModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div style="padding:16px 20px;font-size:13px;">
+          <div style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:12px;padding:12px;margin-bottom:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;">
+            <input id="hzkDspDate" type="date" value="${today}" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+            <select id="hzkDspSlot" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;">
+              <option value="09:00 - 12:00">09:00 - 12:00 (เช้า)</option>
+              <option value="13:00 - 16:30">13:00 - 16:30 (บ่าย)</option>
+              <option value="ทั้งวัน (09:00 - 17:00)">ทั้งวัน (09:00 - 17:00)</option>
+            </select>
+            <select id="hzkDspVan" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+              <option value="T01">ช่าง T01</option><option value="T02">ช่าง T02</option><option value="T03">ช่าง T03</option><option value="T04">ช่าง T04</option>
+              <option value="T05">ช่าง T05</option><option value="T06">ช่าง T06</option><option value="T07">ช่าง T07</option><option value="T08">ช่าง T08 (Install)</option>
+            </select>
+            <select id="hzkDspType" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;">
+              <option value="New Installation (ติดตั้งใหม่)">🛠️ ติดตั้งเครื่องใหม่</option>
+              <option value="Repair Service (ซ่อมบำรุง)">🔧 ซ่อมบำรุงหน้างาน</option>
+              <option value="PM Contract (ล้างประจำปี)">✨ บำรุงรักษา PM</option>
+              <option value="Site Survey (สำรวจหน้างาน)">📐 สำรวจหน้างาน</option>
+            </select>
+            <input id="hzkDspCust" type="text" placeholder="ชื่อร้าน / ลูกค้า" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+            <input id="hzkDspModel" type="text" placeholder="รุ่น / S/N" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+            <button type="button" id="hzkDspAddBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;">+ ลงตาราง &amp; แจ้ง LINE</button>
+          </div>
+          <div id="hzkDspTableBody">⏳ กำลังโหลดตารางงานช่าง...</div>
+        </div>
+      </div>
+    `;
+    dModal.style.display = 'flex';
+
+    const gasUrl = getGasEndpointUrl();
+    async function loadSlots() {
+      const wrap = document.getElementById('hzkDspTableBody');
+      if (!gasUrl) return;
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'getDispatchSchedule' })
+      });
+      const data = await res.json();
+      const rows = (data && data.items) || [];
+      wrap.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="background:#0F172A;color:#FFF;"><th style="padding:7px;">วันที่</th><th style="padding:7px;">ช่วงเวลา</th><th style="padding:7px;">ช่าง</th><th style="padding:7px;">ประเภทงาน</th><th style="padding:7px;text-align:left;">ลูกค้า</th><th style="padding:7px;">รุ่น / S/N</th></tr></thead>
+          <tbody>
+            ${rows.map(r => `<tr><td style="padding:7px;border:1px solid #CBD5E1;">${r.date}</td><td style="padding:7px;border:1px solid #CBD5E1;">${r.timeSlot}</td><td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;text-align:center;">${r.vanCode}</td><td style="padding:7px;border:1px solid #CBD5E1;">${r.jobType}</td><td style="padding:7px;border:1px solid #CBD5E1;">${r.customer}</td><td style="padding:7px;border:1px solid #CBD5E1;">${r.modelSn}</td></tr>`).join('') || '<tr><td colspan="6" style="padding:12px;text-align:center;color:#64748B;">ยังไม่มีคิวงานในตาราง</td></tr>'}
+          </tbody>
+        </table>
+      `;
+    }
+
+    document.getElementById('hzkDspAddBtn').onclick = async function () {
+      if (!gasUrl) return;
+      await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'createDispatchSlot',
+          date: document.getElementById('hzkDspDate').value,
+          timeSlot: document.getElementById('hzkDspSlot').value,
+          vanCode: document.getElementById('hzkDspVan').value,
+          jobType: document.getElementById('hzkDspType').value,
+          customer: document.getElementById('hzkDspCust').value,
+          modelSn: document.getElementById('hzkDspModel').value
+        })
+      });
+      alert('✅ ลงตารางนัดหมายและแจ้งเตือนเข้ากลุ่ม LINE เรียบร้อยแล้ว');
+      loadSlots();
+    };
+    loadSlots();
+  }
+
+  async function openMonthlyIncentiveKpiModal() {
+    let kModal = document.getElementById('hzkMonthlyIncentiveModal');
+    if (!kModal) {
+      kModal = document.createElement('div');
+      kModal.id = 'hzkMonthlyIncentiveModal';
+      kModal.style.cssText =
+        'position:fixed;inset:0;z-index:20046;background:rgba(15,23,42,0.82);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(kModal);
+    }
+
+    kModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:920px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;">
+          <div>
+            <div style="font-size:11px;color:#FBBF24;font-weight:800;">SALES &amp; TECHNICIAN PERFORMANCE / INCENTIVE TRACKER</div>
+            <div style="font-size:16px;font-weight:700;">🏆 สรุปผลงานปิดการขาย (PO Approved) &amp; ปิดงานช่างรายบุคคล</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkMonthlyIncentiveModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div id="hzkIncentiveBody" style="padding:18px 20px;font-size:13px;">⏳ กำลังคำนวณผลงานรายบุคคล...</div>
+      </div>
+    `;
+    kModal.style.display = 'flex';
+
+    const gasUrl = getGasEndpointUrl();
+    const body = document.getElementById('hzkIncentiveBody');
+    if (!gasUrl) return;
+    const res = await fetch(gasUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'getMonthlyIncentiveKpi' })
+    });
+    const d = await res.json();
+    const sList = (d && d.salesRanking) || [];
+    const tList = (d && d.techRanking) || [];
+
+    body.innerHTML = `
+      <h4 style="margin:0 0 8px;color:#002B49;">💼 ผลงานฝ่ายขาย &amp; Japanese Corporate (Quoted vs PO Approved)</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px;">
+        <thead><tr style="background:#002B49;color:#FFF;"><th style="padding:7px;text-align:left;">รหัสพนักงาน</th><th style="padding:7px;">ใบเสนอราคา (ฉบับ)</th><th style="padding:7px;text-align:right;">ยอดเสนอรวม</th><th style="padding:7px;">ปิดการขาย (PO)</th><th style="padding:7px;text-align:right;">ยอดปิดการขายจริง</th></tr></thead>
+        <tbody>
+          ${sList.map(s => `<tr><td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${s.code}</td><td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${s.quotedCount}</td><td style="padding:7px;border:1px solid #CBD5E1;text-align:right;">${Number(s.quotedAmount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td><td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:700;color:#059669;">${s.wonCount}</td><td style="padding:7px;border:1px solid #CBD5E1;text-align:right;font-weight:700;color:#059669;">${Number(s.wonAmount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>`).join('') || '<tr><td colspan="5" style="padding:10px;text-align:center;color:#64748B;">ยังไม่มีข้อมูลยอดขาย</td></tr>'}
+        </tbody>
+      </table>
+      <h4 style="margin:0 0 8px;color:#7F1D1D;">🛠️ ผลงานฝ่ายบริการ &amp; ช่างภาคสนาม</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead><tr style="background:#7F1D1D;color:#FFF;"><th style="padding:7px;text-align:left;">ช่างบริการ</th><th style="padding:7px;">ใบงานทั้งหมด</th><th style="padding:7px;">ปิดงานสำเร็จ</th></tr></thead>
+        <tbody>
+          ${tList.map(t => `<tr><td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${t.tech}</td><td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${t.totalJobs}</td><td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:700;color:#059669;">${t.completedJobs}</td></tr>`).join('') || '<tr><td colspan="3" style="padding:10px;text-align:center;color:#64748B;">ยังไม่มีข้อมูลใบงานซ่อม</td></tr>'}
+        </tbody>
+      </table>
+    `;
+  }
+
   window.openDepartmentLiveSimulatorModal = openDepartmentLiveSimulatorModal;
+  window.openSerial360TimelineModal = openSerial360TimelineModal;
+  window.openTechnicianVanStockModal = openTechnicianVanStockModal;
+  window.openServiceDispatchCalendarModal = openServiceDispatchCalendarModal;
+  window.openMonthlyIncentiveKpiModal = openMonthlyIncentiveKpiModal;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', dockOmniBridgeButtons);

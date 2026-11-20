@@ -1249,7 +1249,7 @@ function doGet(e) {
 
   return jsonOut({
     status: 'ready',
-    version: 'Enterprise-v1080-ZERO-DUPLICATE',
+    version: 'Enterprise-v1129-PILOT-PHASE1-BANNER-AND-PHASE2-READINESS',
     phase: 'Phase-1-ServiceUnit-ServiceCenter',
     lineConfigured: isLineTokenConfigured(),
     groupConfigured: isLineGroupConfigured(),
@@ -1288,7 +1288,7 @@ function runBackendSelfDiagnostics_(ss, secrets) {
   var passed = checks.filter(function(c) { return c.ok; }).length;
   return {
     status: 'ok',
-    version: 'Enterprise-v1080-ZERO-DUPLICATE',
+    version: 'Enterprise-v1129-PILOT-PHASE1-BANNER-AND-PHASE2-READINESS',
     passed: passed,
     total: checks.length,
     checks: checks
@@ -10054,4 +10054,43 @@ function buildCustomerCsatHtmlPage_(params) {
 }
 
 
+
+
+
+/* ==========================================================================
+ * STEP 45-46 GAS ADD-ON: MEDIA REQUEST & BOT-TO-TECH-GROUP HANDOFF (v1129)
+ * ========================================================================== */
+function buildCustomerOrDealerMediaRequestReplyV1125_(senderRoleLabel, symptomText) {
+  return {
+    type: 'text',
+    text: 'สวัสดีครับ ' + (senderRoleLabel || 'คุณลูกค้า / ตัวแทนจำหน่าย') + ' 🙏\n' +
+          'รับทราบเรื่อง "' + (symptomText || 'อาการผิดปกติของเครื่อง') + '" เรียบร้อยครับ\n\n' +
+          '📸🎥 เพื่อความแม่นยำในการวิเคราะห์อาการและเตรียมอะไหล่ มีรูปภาพหรือคลิปวิดีโอประกอบหรือไม่ครับ? รบกวนช่วยแชร์รูปป้าย S/N หน้าเครื่อง หรือคลิปสั้นๆ (10-15 วินาที) ส่งกลับมาในแชทนี้ได้เลยครับ 🛠️❄️',
+    quickReply: {
+      items: [
+        { type: 'action', action: { type: 'camera', label: '📷 ถ่ายรูปส่งทันที' } },
+        { type: 'action', action: { type: 'cameraRoll', label: '🖼️ เลือกรูป/วิดีโอ' } }
+      ]
+    }
+  };
+}
+
+function escalateUnresolvedBotCaseToTechGroupV1126_(customerUserId, customerDisplayName, userMessageText, mediaSummaryText) {
+  var props = PropertiesService.getScriptProperties();
+  var techGroupId = props.getProperty('LINE_TECH_GROUP_ID') || '';
+  var internalToken = props.getProperty('INTERNAL_LINE_CHANNEL_ACCESS_TOKEN') || props.getProperty('LINE_CHANNEL_ACCESS_TOKEN') || '';
+  var ticketId = 'TK-' + Utilities.formatDate(new Date(), 'Asia/Bangkok', 'MMdd-HHmm');
+  if (techGroupId && internalToken) {
+    var alertText = '🚨 [ส่งต่อจากบอท — ต้องการช่างช่วยตอบกลับลูกค้า]\n🎫 รหัสเคส: ' + ticketId + '\n👤 ลูกค้า/ดีลเลอร์: ' + (customerDisplayName || customerUserId || 'ไม่ระบุชื่อ') + '\n💬 ข้อความ: ' + (userMessageText || '-') + (mediaSummaryText ? ('\n📸🎥 สื่อที่ส่งมา: ' + mediaSummaryText) : '') + '\n-----------------------------\n👉 พิมพ์ตอบกลับลูกค้า: REPLY ' + ticketId + ' [ข้อความคำตอบ]';
+    try {
+      UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
+        method: 'post', contentType: 'application/json',
+        headers: { Authorization: 'Bearer ' + internalToken },
+        payload: JSON.stringify({ to: techGroupId, messages: [{ type: 'text', text: alertText }] }),
+        muteHttpExceptions: true
+      });
+    } catch (e) {}
+  }
+  return { ticketId: ticketId, customerReply: { type: 'text', text: 'รับทราบครับ 🙏 บอทได้ส่งต่อข้อมูลไปยังกลุ่มทีมวิศวกรและช่างเทคนิคของ HOSHIZAKI เรียบร้อยแล้ว (รหัสเคส: ' + ticketId + ') เจ้าหน้าที่จะตรวจสอบและตอบกลับท่านโดยเร็วที่สุดครับ 🛠️❄️' } };
+}
 

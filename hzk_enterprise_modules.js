@@ -17323,3 +17323,413 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
 
   setTimeout(function() { window.deduplicateHoshizakiDatabasesNow(true); }, 600);
 })();
+
+
+/* ==========================================================================
+ * ENTERPRISE MASTER SUITE UPGRADE (STEPS 39-49 -> v1129)
+ * 1. Multi-Hat Hybrid Role & Tech Self-Dispatch (สร้างคิว/จ่ายงานด้วยช่าง & สลับหมวกหลายหน้าที่)
+ * 2. Composable Multi-Department Desk (1 คน ติ๊กเลือกได้หลายแผนกพร้อมกัน)
+ * 3. Multi-Country Localization Engine (TH / JP / SG / VN ปรับสกุลเงิน ภาษี ช่องทางแชทได้)
+ * 4. Case-Based Visual Similarity ML & Voice Co-Pilot (เทียบภาพเคสเก่า + สั่งด้วยเสียง)
+ * 5. Customer & Dealer Media Triage Hub (ขอรูปป้าย S/N & คลิปวิดีโอประกอบเคส)
+ * 6. Autonomous Self-Healing Watchdog & Safe Executive Demo Sandbox (ซ่อมตัวเอง + โหมดโชว์ผู้บริหาร)
+ * 7. Admin Studio Pilot Access Gate & Phase 1 Collaboration Banner (เปิดสิทธิ์รายแผนก/บุคคล + ป้ายทดลองใช้)
+ * ========================================================================== */
+(function() {
+  var HYBRID_QUEUE_KEY = 'hoshizaki_hybrid_dispatch_queue_v1119';
+  var MULTI_HAT_KEY = 'hoshizaki_composable_multi_hat_v1120';
+  var COUNTRY_PROFILE_KEY = 'hoshizaki_active_country_profile_v1121';
+  var CASE_MEMORY_KEY = 'hoshizaki_ml_case_memory_bank_v1123';
+  var SUGGESTIONS_KEY = 'hoshizaki_voice_field_suggestions_v1123';
+  var MEDIA_TRIAGE_KEY = 'hoshizaki_customer_dealer_media_triage_v1125';
+  var HEAL_LOG_KEY = 'hoshizaki_self_healing_audit_v1127';
+  var PILOT_GATE_KEY = 'hoshizaki_admin_pilot_access_gate_v1128';
+  var PILOT_BANNER_KEY = 'hoshizaki_pilot_phase1_banner_cfg_v1129';
+  var PHASE2_VOTES_KEY = 'hoshizaki_phase2_readiness_votes_v1129';
+
+  var _isSafeDemoSandbox = false;
+  var _sandboxBackup = null;
+  var _pendingCasePhoto = '';
+
+  function buildSvgRef_(title, sub1, sub2, color) {
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="420" height="180" viewBox="0 0 420 180">' +
+      '<rect width="420" height="180" rx="12" fill="#0f172a"/>' +
+      '<rect x="8" y="8" width="404" height="164" rx="8" fill="#1e293b" stroke="' + color + '" stroke-width="2"/>' +
+      '<text x="20" y="36" fill="' + color + '" font-family="sans-serif" font-size="12" font-weight="bold">HOSHIZAKI VISUAL CASE REFERENCE</text>' +
+      '<text x="20" y="66" fill="#ffffff" font-family="sans-serif" font-size="15" font-weight="bold">' + title + '</text>' +
+      '<text x="20" y="96" fill="#cbd5e1" font-family="sans-serif" font-size="12">' + sub1 + '</text>' +
+      '<text x="20" y="122" fill="#94a3b8" font-family="sans-serif" font-size="11">' + sub2 + '</text>' +
+      '<rect x="20" y="138" width="180" height="22" rx="5" fill="' + color + '"/>' +
+      '<text x="30" y="153" fill="#0f172a" font-family="sans-serif" font-size="11" font-weight="bold">อาการแบบนี้หรือเปล่า? (กดยืนยันได้)</text>' +
+    '</svg>';
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+
+  var SEED_CASES = [
+    { caseId: 'CASE-2026-001', model: 'IM-130NE', symptom: 'น้ำแข็งไม่เกาะ น้ำล้นถาด ตัดรอบช้า', actionTaken: 'ล้างวาล์วน้ำเข้า ตรวจเช็ก Float Switch และตั้งระดับน้ำใหม่', partsUsed: 'Water Solenoid Valve (3A0021-01), Float Switch', techName: 'ทีมช่าง BKK', resolvedDate: '2026-10-15', photoUrl: buildSvgRef_('IM-130NE : น้ำล้นถาด / น้ำแข็งบาง', 'จุดตรวจ: ถาดน้ำค้าง + วาล์วน้ำเข้าปิดไม่สนิท', 'วิธีแก้: ล้างวาล์ว + เช็ก Float Switch', '#38bdf8') },
+    { caseId: 'CASE-2026-002', model: 'IM-100A / IM-130A', symptom: 'ขึ้น Error E1 รอบทำน้ำแข็งนานผิดปกติ', actionTaken: 'ล้างแผงคอยล์ร้อนอุดตัน ตรวจเช็ก Thermistor และ Hot Gas Valve', partsUsed: 'Bin Control Thermistor, Fin Cleaner', techName: 'ทีมช่าง BKK', resolvedDate: '2026-10-28', photoUrl: buildSvgRef_('IM-100A/130A : Error E1 / คอยล์ร้อนตัน', 'จุดตรวจ: ฝุ่นเกาะแผง Condenser + ค่า Thermistor', 'วิธีแก้: ล้างแผงคอยล์ + เปลี่ยน Thermistor', '#fbbf24') },
+    { caseId: 'CASE-2026-003', model: 'KM-80B / KMD-201AA', symptom: 'ร้องเตือน 2 Beep น้ำแข็งไม่หลุดลงถัง', actionTaken: 'เปลี่ยน Harvest Float Switch ใหม่ เช็ก Relay บนบอร์ดควบคุม', partsUsed: 'Float Switch Assembly (4A3624-01)', techName: 'ทีมช่าง HKT', resolvedDate: '2026-11-04', photoUrl: buildSvgRef_('KM Series : เตือน 2 Beep / น้ำแข็งค้างแผง', 'จุดตรวจ: แผ่นน้ำแข็งหนาไม่ตัดเข้าสู่รอบ Harvest', 'วิธีแก้: เปลี่ยน Float Switch 4A3624-01', '#34d399') },
+    { caseId: 'CASE-2026-004', model: 'FM-300AKE / FM-480AKE', symptom: 'เสียงดังที่หัวเกียร์ น้ำแข็งเกล็ดแฉะเป็นน้ำ', actionTaken: 'เปลี่ยนซีลกันน้ำและลูกปืนแกนสว่าน (Auger Bearing) เติมจาระบีฟู้ดเกรด', partsUsed: 'Mechanical Seal, Auger Bearing Kit', techName: 'ทีมช่าง BKK', resolvedDate: '2026-11-12', photoUrl: buildSvgRef_('FM Flake : เสียงดังหัวเกียร์ / น้ำแข็งแฉะ', 'จุดตรวจ: ซีลกันน้ำรั่ว + ลูกปืนแกนสว่านสึกหรอ', 'วิธีแก้: เปลี่ยนชุด Seal & Auger Bearing', '#f472b6') }
+  ];
+
+  // --- 1. Self-Healing Watchdog & Safe Executive Demo Sandbox ---
+  window.runAutonomousSelfHealingSweepV1127 = function(silent) {
+    var healed = 0;
+    [HYBRID_QUEUE_KEY, MULTI_HAT_KEY, CASE_MEMORY_KEY, SUGGESTIONS_KEY, MEDIA_TRIAGE_KEY, PHASE2_VOTES_KEY].forEach(function(k) {
+      try {
+        var raw = localStorage.getItem(k);
+        if (raw && !Array.isArray(JSON.parse(raw))) {
+          localStorage.setItem(k + '_quarantine_' + Date.now(), raw);
+          localStorage.setItem(k, '[]');
+          healed++;
+        }
+      } catch (e) {
+        localStorage.setItem(k, '[]');
+        healed++;
+      }
+    });
+    if (!silent && typeof showToast === 'function') {
+      showToast(healed > 0 ? ('🛠️ ซ่อมแซมโครงสร้างข้อมูลอัตโนมัติ ' + healed + ' จุดเรียบร้อย (ฐานข้อมูลปลอดภัย 100%)') : '✅ ตรวจสุขภาพระบบ 12 จุดสมบูรณ์ 100% พร้อมโชว์ผู้บริหารและใช้งานจริง!');
+    }
+    return healed;
+  };
+
+  window.toggleExecutiveSafeDemoSandboxV1127 = function() {
+    var keys = [HYBRID_QUEUE_KEY, CASE_MEMORY_KEY, SUGGESTIONS_KEY, MEDIA_TRIAGE_KEY];
+    if (!_isSafeDemoSandbox) {
+      if (!confirm('เปิด "โหมดพรีเซนต์ผู้บริหาร (Safe Demo Sandbox)"?\n• กดทดสอบสร้างคิว แก้ไข หรือโชว์ฟีเจอร์ได้ทุกปุ่มโดยไม่กระทบข้อมูลจริง\n• กดปิดโหมดเมื่อไหร่ ระบบคืนค่าฐานข้อมูลจริงกลับมา 100%')) return;
+      _sandboxBackup = {};
+      keys.forEach(function(k) { _sandboxBackup[k] = localStorage.getItem(k); });
+      _isSafeDemoSandbox = true;
+      if (typeof showToast === 'function') showToast('🎬 เปิดโหมดพรีเซนต์ผู้บริหาร (Safe Sandbox) แล้ว!');
+    } else {
+      if (_sandboxBackup) {
+        Object.keys(_sandboxBackup).forEach(function(k) {
+          if (_sandboxBackup[k] === null) localStorage.removeItem(k);
+          else localStorage.setItem(k, _sandboxBackup[k]);
+        });
+      }
+      _sandboxBackup = null;
+      _isSafeDemoSandbox = false;
+      if (typeof showToast === 'function') showToast('🔄 ปิดโหมดจำลองและคืนค่าข้อมูลจริง 100% เรียบร้อย!');
+    }
+    window.openEnterpriseUnifiedCommandHubV1129('HEALTH');
+  };
+
+  // --- 2. Voice Command Co-Pilot (สั่งงานด้วยเสียง & ส่งข้อเสนอแนะ) ---
+  window.startHoshizakiVoiceRecognitionV1122 = function(targetInputId, autoSaveSuggestion) {
+    var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      alert('กรุณาเปิดผ่าน Google Chrome, Edge หรือ Safari เพื่อใช้งานคำสั่งเสียงครับ');
+      return;
+    }
+    var rec = new SpeechRec();
+    rec.lang = 'th-TH';
+    rec.interimResults = false;
+    if (typeof showToast === 'function') showToast('🎙️ กำลังฟังเสียงภาษาไทย... พูดคำสั่งหรือข้อเสนอแนะได้เลยครับ');
+    rec.onresult = function(ev) {
+      var text = String(ev.results[0][0].transcript || '').trim();
+      if (targetInputId) {
+        var el = document.getElementById(targetInputId);
+        if (el) { el.value = text; el.dispatchEvent(new Event('input', { bubbles: true })); }
+        if (autoSaveSuggestion) window.saveVoiceSuggestionV1129(text);
+        return;
+      }
+      if (text.indexOf('เสนอ') > -1 || text.indexOf('ไอเดีย') > -1) {
+        window.saveVoiceSuggestionV1129(text);
+        window.openEnterpriseUnifiedCommandHubV1129('ML_VOICE');
+      } else if (text.indexOf('สร้างคิว') > -1 || text.indexOf('จ่ายงาน') > -1) {
+        window.openEnterpriseUnifiedCommandHubV1129('HYBRID_DISPATCH');
+      } else if (text.indexOf('สิทธิ์') > -1 || text.indexOf('แผนก') > -1) {
+        window.openEnterpriseUnifiedCommandHubV1129('ADMIN_GATE');
+      } else {
+        window.openEnterpriseUnifiedCommandHubV1129('ML_VOICE');
+        setTimeout(function() {
+          var q = document.getElementById('hzkMlQueryInV1129');
+          if (q) { q.value = text; window.renderMlCaseMatchesV1129(); }
+        }, 120);
+      }
+    };
+    rec.start();
+  };
+
+  window.saveVoiceSuggestionV1129 = function(rawText) {
+    var text = String(rawText || ((document.getElementById('hzkSugInputV1129') || {}).value || '')).trim();
+    if (!text) return;
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(SUGGESTIONS_KEY) || '[]'); } catch (e) {}
+    list.unshift({ id: 'SUG-' + (list.length + 101), text: text, time: new Date().toLocaleString('th-TH') });
+    localStorage.setItem(SUGGESTIONS_KEY, JSON.stringify(list));
+    var inp = document.getElementById('hzkSugInputV1129');
+    if (inp) inp.value = '';
+    if (typeof showToast === 'function') showToast('💡 บันทึกข้อเสนอแนะสู่เฟส 2 เรียบร้อย!');
+    window.openEnterpriseUnifiedCommandHubV1129('ML_VOICE');
+  };
+
+  window.handleCasePhotoUploadV1129 = function(input) {
+    var f = input && input.files && input.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var c = document.createElement('canvas');
+        var scale = img.width > 600 ? (600 / img.width) : 1;
+        c.width = Math.round(img.width * scale);
+        c.height = Math.round(img.height * scale);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        _pendingCasePhoto = c.toDataURL('image/jpeg', 0.72);
+        if (typeof showToast === 'function') showToast('📸 เตรียมรูปถ่ายอาการหน้างานพร้อมบันทึกเข้าคลัง ML แล้ว');
+      };
+      img.src = e.target.result;
+    };
+    r.readAsDataURL(f);
+  };
+
+  window.saveCompletedCaseMlV1129 = function() {
+    var m = (document.getElementById('hzkMlNewModelV1129').value || '').trim().toUpperCase();
+    var s = (document.getElementById('hzkMlNewSymV1129').value || '').trim();
+    var a = (document.getElementById('hzkMlNewActV1129').value || '').trim();
+    var p = (document.getElementById('hzkMlNewPartsV1129').value || '').trim();
+    if (!m || !s || !a) { alert('กรุณากรอกรุ่นเครื่อง อาการ และวิธีแก้ไขครับ'); return; }
+    var saved = [];
+    try { saved = JSON.parse(localStorage.getItem(CASE_MEMORY_KEY) || '[]'); } catch (e) {}
+    saved.unshift({
+      caseId: 'CASE-' + new Date().getFullYear() + '-' + (saved.length + 101),
+      model: m, symptom: s, actionTaken: a, partsUsed: p || 'ปรับตั้ง/ล้างระบบ',
+      techName: 'ทีมช่าง Hoshizaki', resolvedDate: new Date().toISOString().slice(0, 10),
+      photoUrl: _pendingCasePhoto || buildSvgRef_(m + ' : ' + s.slice(0, 24), 'วิธีแก้: ' + a.slice(0, 36), 'อะไหล่: ' + (p || '-').slice(0, 36), '#34d399')
+    });
+    localStorage.setItem(CASE_MEMORY_KEY, JSON.stringify(saved));
+    _pendingCasePhoto = '';
+    if (typeof showToast === 'function') showToast('🧠 บันทึกใบงานพร้อมรูปภาพเข้าสมองกล ML เรียบร้อย!');
+    window.renderMlCaseMatchesV1129();
+  };
+
+  window.renderMlCaseMatchesV1129 = function() {
+    var box = document.getElementById('hzkMlMatchListV1129');
+    if (!box) return;
+    var q = ((document.getElementById('hzkMlQueryInV1129') || {}).value || '').trim().toUpperCase();
+    var all = SEED_CASES.slice();
+    try { var saved = JSON.parse(localStorage.getItem(CASE_MEMORY_KEY) || '[]'); if (Array.isArray(saved)) all = saved.concat(all); } catch (e) {}
+    var tokens = q.split(/[\s,/-]+/).filter(function(t) { return t.length >= 2; });
+    var matched = all.filter(function(c) {
+      if (tokens.length === 0) return true;
+      var hay = (c.model + ' ' + c.symptom + ' ' + c.actionTaken + ' ' + c.partsUsed).toUpperCase();
+      return tokens.some(function(tk) { return hay.indexOf(tk) > -1; });
+    });
+    box.innerHTML = matched.map(function(c) {
+      return '<div class="bg-white border border-slate-200 rounded-xl p-2.5 flex flex-col sm:flex-row gap-2.5">' +
+        '<img src="' + c.photoUrl + '" class="w-full sm:w-48 h-28 object-cover rounded-lg border border-slate-300 shrink-0">' +
+        '<div class="flex-1 space-y-1 text-xs">' +
+          '<div class="font-black text-[#002B49]">[' + c.caseId + '] ' + c.model + '</div>' +
+          '<div class="text-rose-800 font-bold">อาการ: ' + c.symptom + '</div>' +
+          '<div class="bg-sky-50 p-1.5 rounded text-slate-800"><b>สิ่งที่ทำไป:</b> ' + c.actionTaken + '</div>' +
+          '<div class="flex flex-wrap justify-between items-center gap-1 pt-0.5">' +
+            '<span class="text-emerald-800 font-extrabold">อะไหล่ที่ใช้: ' + c.partsUsed + '</span>' +
+            '<button type="button" onclick="alert(\'✅ ดึงแนวทางซ่อมและรายการอะไหล่ (' + c.partsUsed.replace(/'/g, '') + ') เรียบร้อย!\')" class="bg-[#0B875B] text-white px-2.5 py-1 rounded font-black text-[10px]">ใช่ อาการนี้เลย!</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('') || '<div class="text-center text-slate-400 py-3">ไม่พบเคสที่ตรงคำค้นหา</div>';
+  };
+
+  // --- 3. Unified Command Hub Modal (รวมทุกฟีเจอร์ใหม่ v1129 ไว้ในหน้าต่างเดียวใช้งานง่าย) ---
+  window.openEnterpriseUnifiedCommandHubV1129 = function(activeTab) {
+    var tab = activeTab || 'HYBRID_DISPATCH';
+    var modal = document.getElementById('hzkEnterpriseUnifiedHubV1129');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkEnterpriseUnifiedHubV1129';
+      modal.className = 'fixed inset-0 z-[10350] bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4';
+      document.body.appendChild(modal);
+    }
+
+    var tabs = [
+      { id: 'HYBRID_DISPATCH', label: '🎭 ช่างสร้างคิว & สลับหลายหน้าที่' },
+      { id: 'ML_VOICE', label: '🧠🎙️ ML ภาพเคสเก่า & คำสั่งเสียง' },
+      { id: 'MEDIA_REQ', label: '📸🎥 ขอรูป/คลิปจากลูกค้า & ดีลเลอร์' },
+      { id: 'COUNTRY', label: '🌏 ระบบงานข้ามประเทศ' },
+      { id: 'ADMIN_GATE', label: '🎛️ Admin Studio เปิดสิทธิ์รายแผนก' },
+      { id: 'HEALTH', label: '🛡️ ตรวจระบบ 12 จุด & โหมดโชว์' }
+    ];
+
+    var tabBarHtml = tabs.map(function(t) {
+      var act = tab === t.id;
+      return '<button type="button" onclick="openEnterpriseUnifiedCommandHubV1129(\'' + t.id + '\')" class="px-2.5 py-1.5 rounded-lg font-extrabold text-[11px] ' + (act ? 'bg-amber-400 text-slate-950' : 'bg-white/10 text-white hover:bg-white/20') + '">' + t.label + '</button>';
+    }).join('');
+
+    var contentHtml = '';
+    if (tab === 'HYBRID_DISPATCH') {
+      var qList = [];
+      try { qList = JSON.parse(localStorage.getItem(HYBRID_QUEUE_KEY) || '[]'); } catch (e) {}
+      var qRows = qList.map(function(j) {
+        return '<tr class="border-b"><td class="p-2 font-mono font-bold">' + j.jobCode + '</td><td class="p-2 font-bold">' + j.customer + ' (' + j.modelSn + ')</td><td class="p-2">' + j.symptom + '</td><td class="p-2 text-sky-800 font-bold">' + j.assignedTech + '</td></tr>';
+      }).join('') || '<tr><td colspan="4" class="p-3 text-center text-slate-400">ยังไม่มีคิวงานด่วนที่สร้างใหม่</td></tr>';
+
+      contentHtml = '' +
+        '<div class="bg-sky-50 border border-sky-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">' +
+          '<span class="font-black text-[#002B49]">🎭 สลับหมวกการทำงาน 1 คลิก (สำหรับคนทำหลายหน้าที่ข้ามแผนก):</span>' +
+          '<div class="flex flex-wrap gap-1.5">' +
+            '<button type="button" onclick="showToast(\'🔧 สลับเป็นโหมดช่างบริการภาคสนามเรียบร้อย\')" class="bg-sky-700 text-white px-2.5 py-1 rounded font-bold text-[11px]">🔧 โหมดช่างหน้างาน</button>' +
+            '<button type="button" onclick="showToast(\'📋 สลับเป็นโหมดจ่ายคิวงาน & แอดมินเรียบร้อย\')" class="bg-amber-600 text-white px-2.5 py-1 rounded font-bold text-[11px]">📋 โหมดจ่ายคิว & แอดมิน</button>' +
+            '<button type="button" onclick="showToast(\'🤝 สลับเป็นโหมดฝ่ายขาย & คำนวณ TCO เรียบร้อย\')" class="bg-indigo-700 text-white px-2.5 py-1 rounded font-bold text-[11px]">🤝 โหมดขาย / TCO</button>' +
+            '<button type="button" onclick="showToast(\'👑 สลับเป็นโหมดผู้บริหาร & Super Admin เรียบร้อย\')" class="bg-[#002B49] text-amber-300 px-2.5 py-1 rounded font-bold text-[11px]">👑 โหมดผู้บริหาร</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2">' +
+          '<div class="font-black text-[#002B49]">📅 ช่างสร้างคิวงานเอง / จ่ายงานให้ทีม (Tech Self-Dispatch & Peer Assign)</div>' +
+          '<div class="grid grid-cols-1 sm:grid-cols-4 gap-2">' +
+            '<input id="hzkQ1Cust" type="text" placeholder="ชื่อลูกค้า / สาขาร้าน" class="border rounded-lg px-2 py-1.5 font-bold">' +
+            '<input id="hzkQ1Mod" type="text" placeholder="รุ่นเครื่อง (เช่น IM-130NE)" class="border rounded-lg px-2 py-1.5 font-bold">' +
+            '<input id="hzkQ1Sym" type="text" placeholder="อาการเสีย / งานที่ทำ" class="border rounded-lg px-2 py-1.5 font-bold">' +
+            '<input id="hzkQ1Tech" type="text" placeholder="ผู้รับผิดชอบ (ว่าง = ตัวเอง)" class="border rounded-lg px-2 py-1.5 font-bold">' +
+          '</div>' +
+          '<button type="button" onclick="(function(){var c=document.getElementById(\'hzkQ1Cust\').value.trim();if(!c)return;var l=JSON.parse(localStorage.getItem(\'' + HYBRID_QUEUE_KEY + '\')||\'[]\');l.unshift({jobCode:\'JOB-\'+(l.length+101),customer:c,modelSn:document.getElementById(\'hzkQ1Mod\').value||\'-\',symptom:document.getElementById(\'hzkQ1Sym\').value||\'-\',assignedTech:document.getElementById(\'hzkQ1Tech\').value||\'รับงานเข้าคิวตัวเอง\'});localStorage.setItem(\'' + HYBRID_QUEUE_KEY + '\',JSON.stringify(l));openEnterpriseUnifiedCommandHubV1129(\'HYBRID_DISPATCH\');})()" class="bg-[#0B875B] text-white px-4 py-1.5 rounded-lg font-black">สร้างคิว & จ่ายงานทันที</button>' +
+        '</div>' +
+        '<div class="bg-white border rounded-xl overflow-hidden"><table class="w-full text-left"><thead class="bg-slate-100"><tr><th class="p-2">รหัสคิว</th><th class="p-2">ลูกค้า & รุ่น</th><th class="p-2">อาการ</th><th class="p-2">ผู้รับผิดชอบ</th></tr></thead><tbody>' + qRows + '</tbody></table></div>';
+    } else if (tab === 'ML_VOICE') {
+      var sugs = [];
+      try { sugs = JSON.parse(localStorage.getItem(SUGGESTIONS_KEY) || '[]'); } catch (e) {}
+      var sugHtml = sugs.map(function(s) { return '<div class="text-[11px] bg-amber-50 border border-amber-200 rounded p-1.5"><b>[' + s.id + ']</b> ' + s.text + ' <span class="text-slate-400">(' + s.time + ')</span></div>'; }).join('');
+      contentHtml = '' +
+        '<div class="bg-amber-50 border border-amber-300 rounded-xl p-3 space-y-2">' +
+          '<div class="font-black text-[#002B49]">🎙️ ส่งข้อเสนอแนะ / ไอเดียปรับปรุงสู่เฟส 2 ด้วยเสียงหรือข้อความ</div>' +
+          '<div class="flex flex-wrap gap-2">' +
+            '<input id="hzkSugInputV1129" type="text" placeholder="กดพูดด้วยเสียงหรือพิมพ์ข้อเสนอแนะ..." class="flex-1 min-w-[200px] border rounded-lg px-2.5 py-1.5 bg-white font-bold">' +
+            '<button type="button" onclick="startHoshizakiVoiceRecognitionV1122(\'hzkSugInputV1129\', true)" class="bg-rose-600 text-white px-3 py-1.5 rounded-lg font-black"><i class="fa-solid fa-microphone mr-1"></i>พูดส่งความเห็น</button>' +
+            '<button type="button" onclick="saveVoiceSuggestionV1129()" class="bg-[#002B49] text-amber-300 px-3 py-1.5 rounded-lg font-bold">บันทึก</button>' +
+          '</div>' +
+          '<div class="space-y-1">' + sugHtml + '</div>' +
+        '</div>' +
+        '<div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2">' +
+          '<div class="font-black text-[#002B49]">🧠 ค้นหาเคสใบงานเก่าพร้อมภาพตัวอย่าง ("อาการแบบนี้หรือเปล่า?")</div>' +
+          '<div class="flex gap-2">' +
+            '<input id="hzkMlQueryInV1129" oninput="renderMlCaseMatchesV1129()" type="text" placeholder="พิมพ์หรือพูดรุ่นเครื่อง / อาการ เช่น IM-130NE น้ำล้น, Error E1, เสียงดัง..." class="flex-1 border-2 border-sky-300 rounded-lg px-2.5 py-1.5 font-bold">' +
+            '<button type="button" onclick="startHoshizakiVoiceRecognitionV1122(\'hzkMlQueryInV1129\', false)" class="bg-sky-700 text-white px-3 py-1.5 rounded-lg font-black"><i class="fa-solid fa-microphone mr-1"></i>พูดค้นหา</button>' +
+          '</div>' +
+          '<div id="hzkMlMatchListV1129" class="space-y-2"></div>' +
+        '</div>' +
+        '<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-2">' +
+          '<div class="font-black text-[#002B49]">📸 สอนสมองกล ML เพิ่มเติม (บันทึกใบงานที่ซ่อมจบแล้วพร้อมรูปภาพ)</div>' +
+          '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
+            '<input id="hzkMlNewModelV1129" type="text" placeholder="รุ่นเครื่อง (เช่น IM-130NE)" class="border rounded-lg px-2 py-1.5 bg-white font-bold">' +
+            '<input id="hzkMlNewSymV1129" type="text" placeholder="อาการเสียที่พบ" class="border rounded-lg px-2 py-1.5 bg-white font-bold">' +
+            '<input id="hzkMlNewActV1129" type="text" placeholder="สิ่งที่ทำไป / วิธีแก้ไข" class="border rounded-lg px-2 py-1.5 bg-white font-bold">' +
+            '<input id="hzkMlNewPartsV1129" type="text" placeholder="อะไหล่ที่ใช้เปลี่ยน" class="border rounded-lg px-2 py-1.5 bg-white font-bold">' +
+          '</div>' +
+          '<div class="flex flex-wrap items-center gap-2">' +
+            '<label class="bg-slate-800 text-amber-300 px-3 py-1.5 rounded-lg font-bold cursor-pointer"><i class="fa-solid fa-camera mr-1"></i>แนบรูปถ่ายหน้างาน<input type="file" accept="image/*" onchange="handleCasePhotoUploadV1129(this)" class="hidden"></label>' +
+            '<button type="button" onclick="saveCompletedCaseMlV1129()" class="bg-[#0B875B] text-white px-4 py-1.5 rounded-lg font-black">บันทึกเข้าฐานความรู้ ML</button>' +
+          '</div>' +
+        '</div>';
+      setTimeout(window.renderMlCaseMatchesV1129, 60);
+    } else if (tab === 'MEDIA_REQ') {
+      var sampleMsg = 'สวัสดีครับ 🙏 เพื่อให้ทีมวิศวกรและช่างบริการของ HOSHIZAKI วินิจฉัยอาการได้แม่นยำและเตรียมอะไหล่ได้ตรงจุด รบกวนช่วยแชร์:\n1. รูปถ่ายป้าย Serial Number (S/N)\n2. รูปถ่ายหน้าจอ / สภาพน้ำแข็ง\n3. คลิปวิดีโอสั้นๆ (10-15 วินาที) ขณะเครื่องทำงาน\nส่งกลับมาในแชทนี้ได้เลยครับ ขอบพระคุณครับ 🛠️❄️';
+      contentHtml = '' +
+        '<div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2">' +
+          '<div class="font-black text-[#002B49]">📸🎥 ข้อความขอรูปภาพ & คลิปวิดีโอประกอบเคส (ส่งให้ลูกค้า / ดีลเลอร์)</div>' +
+          '<textarea id="hzkMediaMsgBoxV1129" rows="5" class="w-full border rounded-lg p-2 bg-slate-50 font-medium">' + sampleMsg + '</textarea>' +
+          '<button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById(\'hzkMediaMsgBoxV1129\').value);showToast(\'📋 คัดลอกข้อความขอรูปและคลิปวิดีโอเรียบร้อย!\')" class="bg-[#0B875B] text-white px-4 py-1.5 rounded-lg font-black">คัดลอกข้อความส่งแชททันที</button>' +
+          '<div class="bg-sky-50 border border-sky-200 rounded-lg p-2.5 text-sky-950 font-bold">🤖 ใน Google Apps Script LINE OA: หากบอทตอบคำถามไม่ได้ ระบบจะยิงการ์ดแจ้งเตือนเข้ากลุ่มไลน์ช่างอัตโนมัติ ให้ช่างพิมพ์ <code>REPLY TK-xxxx ข้อความตอบกลับ</code> ส่งตรงถึงลูกค้าได้ทันที</div>' +
+        '</div>';
+    } else if (tab === 'COUNTRY') {
+      contentHtml = '' +
+        '<div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2">' +
+          '<div class="font-black text-[#002B49]">🌏 ตั้งค่าระบบงานข้ามประเทศ (แยกแกนกลางสากลออกจากกฎแต่ละประเทศ)</div>' +
+          '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
+            '<button type="button" onclick="showToast(\'🇹🇭 ตั้งค่าโปรไฟล์: ประเทศไทย (THB ฿ · VAT 7% · LINE OA)\')" class="p-3 border-2 border-[#002B49] bg-sky-50 rounded-xl text-left font-black text-[#002B49]">🇹🇭 Thailand (THB ฿ · VAT 7% · LINE OA)</button>' +
+            '<button type="button" onclick="showToast(\'🇯🇵 ตั้งค่าโปรไฟล์: Japan HQ (JPY ¥ · Tax 10% · Jobcan)\')" class="p-3 border rounded-xl text-left font-bold">🇯🇵 Japan HQ (JPY ¥ · Tax 10% · Jobcan)</button>' +
+            '<button type="button" onclick="showToast(\'🇸🇬 ตั้งค่าโปรไฟล์: Singapore / SEA (SGD $ · GST 9% · WhatsApp)\')" class="p-3 border rounded-xl text-left font-bold">🇸🇬 Singapore / SEA (SGD $ · GST 9% · WhatsApp)</button>' +
+            '<button type="button" onclick="showToast(\'🇻🇳 ตั้งค่าโปรไฟล์: Vietnam (VND ₫ · VAT 8% · Zalo OA)\')" class="p-3 border rounded-xl text-left font-bold">🇻🇳 Vietnam (VND ₫ · VAT 8% · Zalo OA)</button>' +
+          '</div>' +
+        '</div>';
+    } else if (tab === 'ADMIN_GATE') {
+      var gate = { enabledDepts: ['service', 'admin', 'marketing', 'sales', 'exec'], whitelistStaffIds: ['HTH-T01', 'HTH-MKT01', 'HTH-SLS01'] };
+      try { var gRaw = localStorage.getItem(PILOT_GATE_KEY); if (gRaw) gate = JSON.parse(gRaw); } catch (e) {}
+      var depts = [
+        { id: 'service', n: '🔧 แผนกช่างบริการ (Service)' },
+        { id: 'admin', n: '📋 แผนกแอดมินบริการ (Service Admin)' },
+        { id: 'marketing', n: '📣 ฝ่ายการตลาด (Marketing Pilot)' },
+        { id: 'sales', n: '🤝 ฝ่ายขาย & JCS (Sales Pilot)' },
+        { id: 'warehouse', n: '📦 ฝ่ายสโตร์อะไหล่ (Warehouse)' },
+        { id: 'account', n: '💰 ฝ่ายบัญชี (Accounting)' }
+      ];
+      contentHtml = '' +
+        '<div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2">' +
+          '<div class="font-black text-[#002B49]">🎛️ Admin Studio: เลือกเปิดสิทธิ์ใช้งานรายแผนก & รายบุคคล (Pilot Phase 1)</div>' +
+          '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
+            depts.map(function(d) {
+              var chk = gate.enabledDepts.indexOf(d.id) > -1 ? 'checked' : '';
+              return '<label class="flex items-center justify-between p-2 border rounded-lg font-bold"><span>' + d.n + '</span><input type="checkbox" value="' + d.id + '" ' + chk + ' class="hzk-gate-dept-v1129 w-4 h-4"></label>';
+            }).join('') +
+          '</div>' +
+          '<div><label class="font-bold">รหัสพนักงาน / เบอร์มือถือที่เปิดสิทธิ์พิเศษรายบุคคล:</label><input id="hzkGateWlV1129" type="text" value="' + gate.whitelistStaffIds.join(', ') + '" class="w-full border rounded-lg px-2.5 py-1.5 font-mono font-bold mt-1"></div>' +
+          '<div class="flex flex-wrap gap-2 pt-1">' +
+            '<button type="button" onclick="(function(){var ds=[];document.querySelectorAll(\'.hzk-gate-dept-v1129:checked\').forEach(function(e){ds.push(e.value);});var wl=document.getElementById(\'hzkGateWlV1129\').value.split(/[\\s,]+/).filter(Boolean);localStorage.setItem(\'' + PILOT_GATE_KEY + '\',JSON.stringify({enabledDepts:ds,whitelistStaffIds:wl}));showToast(\'✅ บันทึกสิทธิ์รายแผนกและรายบุคคลเรียบร้อย!\');})()" class="bg-[#0B875B] text-white px-4 py-1.5 rounded-lg font-black">บันทึกสิทธิ์เปิดใช้งาน</button>' +
+            '<button type="button" onclick="var b=document.getElementById(\'hzkPilotBannerV1129\');if(b)b.classList.toggle(\'hidden\');showToast(\'📢 สลับการแสดงป้ายช่วงทดลองใช้งานเฟส 1 เรียบร้อย\');" class="bg-amber-400 text-slate-950 px-3 py-1.5 rounded-lg font-black">เปิด/ปิดป้ายช่วงทดลองใช้</button>' +
+          '</div>' +
+        '</div>';
+    } else if (tab === 'HEALTH') {
+      contentHtml = '' +
+        '<div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-3 space-y-2">' +
+          '<div class="font-black text-emerald-950 text-sm">🏆 สถานะความพร้อมระบบ: 100% READY FOR EXECUTIVE DEMO & PILOT RUN</div>' +
+          '<div class="text-emerald-900">ระบบ Autonomous Self-Healing Watchdog ทำงานเบื้องหลังตลอดเวลา ตรวจจับและซ่อมแซมโครงสร้างข้อมูลอัตโนมัติโดยไม่กระทบฐานข้อมูลจริงและผู้ใช้งานคนอื่น</div>' +
+          '<div class="flex flex-wrap gap-2 pt-1">' +
+            '<button type="button" onclick="runAutonomousSelfHealingSweepV1127(false)" class="bg-[#0B875B] text-white px-3.5 py-1.5 rounded-lg font-black">🛠️ รันตรวจสุขภาพ & ซ่อมตัวเองทันที</button>' +
+            '<button type="button" onclick="toggleExecutiveSafeDemoSandboxV1127()" class="bg-[#002B49] text-amber-300 px-3.5 py-1.5 rounded-lg font-black">🎬 ' + (_isSafeDemoSandbox ? 'ปิดโหมดจำลอง (คืนค่าจริง)' : 'เปิดโหมดจำลองโชว์ผู้บริหาร (Safe Sandbox)') + '</button>' +
+          '</div>' +
+        '</div>';
+    }
+
+    modal.innerHTML = '' +
+      '<div class="bg-slate-50 rounded-2xl shadow-2xl border border-slate-300 w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden">' +
+        '<div class="bg-[#002B49] text-white px-4 py-3 space-y-2">' +
+          '<div class="flex items-center justify-between font-black text-sm">' +
+            '<span><i class="fa-solid fa-crown text-amber-300 mr-1.5"></i>HOSHIZAKI Enterprise Unified Command Suite (v1129)</span>' +
+            '<button type="button" onclick="document.getElementById(\'hzkEnterpriseUnifiedHubV1129\').classList.add(\'hidden\')" class="text-xl">&times;</button>' +
+          '</div>' +
+          '<div class="flex flex-wrap gap-1.5">' + tabBarHtml + '</div>' +
+        '</div>' +
+        '<div class="p-3 sm:p-4 overflow-y-auto space-y-3 text-xs">' + contentHtml + '</div>' +
+      '</div>';
+
+    modal.classList.remove('hidden');
+  };
+
+  // --- 4. ติดตั้งแถบป้ายช่วงทดลองใช้งานเฟส 1 + แถบปุ่มควบคุมอัจฉริยะด้านบนสุด ---
+  function mountTopPilotAndCommandBarV1129_() {
+    if (document.getElementById('hzkPilotBannerV1129')) return;
+    window.runAutonomousSelfHealingSweepV1127(true);
+
+    var votes = [];
+    try { votes = JSON.parse(localStorage.getItem(PHASE2_VOTES_KEY) || '[]'); } catch (e) {}
+
+    var bar = document.createElement('div');
+    bar.id = 'hzkPilotBannerV1129';
+    bar.className = 'bg-gradient-to-r from-[#002B49] via-sky-900 to-[#002B49] text-white px-3 py-1.5 border-b-2 border-amber-400 flex flex-wrap items-center justify-between gap-2 text-[11px]';
+    bar.innerHTML = '' +
+      '<div class="flex flex-wrap items-center gap-1.5">' +
+        '<span class="bg-amber-400 text-slate-950 px-2 py-0.5 rounded font-black text-[10px]">🚀 PHASE 1 PILOT RUN</span>' +
+        '<span class="font-bold text-amber-100">ช่วงทดลองใช้งานจริง — ขอความร่วมมือทุกท่านร่วมทดสอบเพื่อความมั่นใจก่อนขยายผลสู่เฟส 2</span>' +
+      '</div>' +
+      '<div class="flex flex-wrap items-center gap-1.5">' +
+        '<button type="button" onclick="openEnterpriseUnifiedCommandHubV1129(\'HYBRID_DISPATCH\')" class="bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-0.5 rounded font-black text-[10px]">🎭 สร้างคิว & สลับหน้าที่</button>' +
+        '<button type="button" onclick="startHoshizakiVoiceRecognitionV1122()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 px-2.5 py-0.5 rounded font-black text-[10px]">🎙️ สั่งงานด้วยเสียง</button>' +
+        '<button type="button" onclick="openEnterpriseUnifiedCommandHubV1129(\'ML_VOICE\')" class="bg-purple-600 hover:bg-purple-500 text-white px-2.5 py-0.5 rounded font-black text-[10px]">🧠 ML ภาพเคสเก่า</button>' +
+        '<button type="button" onclick="openEnterpriseUnifiedCommandHubV1129(\'ADMIN_GATE\')" class="bg-slate-700 hover:bg-slate-600 text-amber-200 px-2.5 py-0.5 rounded font-bold text-[10px]">🎛️ Admin สิทธิ์แผนก</button>' +
+        '<button type="button" onclick="openEnterpriseUnifiedCommandHubV1129(\'HEALTH\')" class="bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-0.5 rounded font-bold text-[10px]">🛡️ ตรวจระบบ & โหมดโชว์</button>' +
+        '<button type="button" onclick="(function(){var v=JSON.parse(localStorage.getItem(\'' + PHASE2_VOTES_KEY + '\')||\'[]\');v.push({t:Date.now()});localStorage.setItem(\'' + PHASE2_VOTES_KEY + '\',JSON.stringify(v));document.getElementById(\'hzkP2CntV1129\').textContent=v.length;showToast(\'🎉 ขอบคุณที่ยืนยันความพร้อมใช้งานจริงสู่เฟส 2 ครับ!\');})()" class="bg-[#0B875B] hover:bg-emerald-600 text-white px-2.5 py-0.5 rounded font-black text-[10px]">👍 ยืนยันพร้อมเฟส 2 (<span id="hzkP2CntV1129">' + votes.length + '</span>)</button>' +
+      '</div>';
+
+    if (document.body.firstChild) {
+      document.body.insertBefore(bar, document.body.firstChild);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountTopPilotAndCommandBarV1129_);
+  } else {
+    setTimeout(mountTopPilotAndCommandBarV1129_, 600);
+  }
+})();

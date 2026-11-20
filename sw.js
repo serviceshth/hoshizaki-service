@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1155-deep-scan-verified';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1156-mobile-clean-ui';
 const CORE_ASSETS = [
   './',
   './index.html',

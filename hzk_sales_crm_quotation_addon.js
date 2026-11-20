@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1155-DEEP-SCAN-VERIFIED',
+    version: 'v1156-MOBILE-CLEAN-UI-VERIFIED',
     masterDb: null,
     items: []
   };
@@ -2989,10 +2989,221 @@
   window.openServiceDispatchCalendarModal = openServiceDispatchCalendarModal;
   window.openMonthlyIncentiveKpiModal = openMonthlyIncentiveKpiModal;
 
+
+  // ============================================================================
+  // MOBILE CLEAN-UI AUTO-DECLUTTER & UNIVERSAL RUNTIME GUARD (v1156)
+  // ============================================================================
+  function showHzkToastNotification(msg, isError) {
+    let toast = document.getElementById('hzkGlobalRuntimeToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'hzkGlobalRuntimeToast';
+      toast.style.cssText =
+        'position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:25000;' +
+        'max-width:92vw;padding:10px 16px;border-radius:12px;font-family:sans-serif;' +
+        'font-size:12.5px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,0.35);' +
+        'transition:opacity 0.25s ease;pointer-events:auto;';
+      document.body.appendChild(toast);
+    }
+    toast.style.background = isError ? '#991B1B' : '#002B49';
+    toast.style.color = '#FFFFFF';
+    toast.style.border = isError ? '1px solid #FCA5A5' : '1px solid #38BDF8';
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(() => { toast.style.opacity = '0'; }, 4200);
+  }
+
+  function installGlobalRuntimeGuard() {
+    if (window._hzkRuntimeGuardInstalled) return;
+    window._hzkRuntimeGuardInstalled = true;
+
+    window.addEventListener('error', function (ev) {
+      if (ev && ev.message) {
+        console.warn('[HZK Guard] Caught runtime error:', ev.message);
+        showHzkToastNotification('⚠️ แจ้งเตือนระบบ: ' + ev.message, true);
+      }
+    });
+
+    window.addEventListener('unhandledrejection', function (ev) {
+      const reason = ev && ev.reason ? (ev.reason.message || String(ev.reason)) : 'Network / Script Error';
+      console.warn('[HZK Guard] Unhandled promise:', reason);
+      showHzkToastNotification('⚠️ การเชื่อมต่อขัดข้อง: ' + reason, true);
+    });
+  }
+
+  function initMobileCleanUiDeclutter() {
+    const styleId = 'hzkMobileCleanUiCssV1156';
+    if (!document.getElementById(styleId)) {
+      const st = document.createElement('style');
+      st.id = styleId;
+      st.textContent = `
+        @media (max-width: 820px) {
+          body.hzk-mobile-clean-mode .hzk-mobile-collapsed-pill {
+            display: none !important;
+          }
+          body.hzk-mobile-clean-mode #hzkPilotCompactNote {
+            font-size: 11px !important;
+            line-height: 1.3 !important;
+            margin: 2px 0 4px !important;
+          }
+          #hzkMobileCleanControlBar {
+            display: flex !important;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            width: 100%;
+            margin-top: 6px;
+          }
+        }
+        @media (min-width: 821px) {
+          #hzkMobileCleanControlBar {
+            display: inline-flex !important;
+            gap: 6px;
+            align-items: center;
+          }
+        }
+      `;
+      document.head.appendChild(st);
+    }
+
+    // Default to clean mobile mode on phones/tablets <= 820px
+    const isMobile = window.innerWidth <= 820;
+    const savedPref = localStorage.getItem('hzk_mobile_clean_mode');
+    const enableClean = savedPref === null ? isMobile : (savedPref === 'true');
+    if (enableClean) {
+      document.body.classList.add('hzk-mobile-clean-mode');
+    }
+
+    // Tag secondary Admin/Dev buttons in header & pilot banner so they collapse cleanly on mobile
+    const secondaryPatterns = [
+      /Next-Gen 5 ด้าน/i,
+      /Audit & Resilience/i,
+      /Omni-Scale/i,
+      /KPI Report Studio/i,
+      /ตั้งค่าสาขา โลโก้/i,
+      /อัปเดตแอป/i,
+      /ML ภาพเคสเก่า/i,
+      /ตรวจระบบ & โหมดโชว์/i,
+      /ยืนยันพร้อมเฟส 2/i,
+      /Install App/i,
+      /คำสั่งด่วน/i,
+      /คู่มือ & ตัวอย่าง/i
+    ];
+
+    const collapsedButtons = [];
+    document.querySelectorAll('header button, #topHeaderRightPillsWrap button, #topHeaderStatusPillsRow button, div button').forEach(btn => {
+      if (btn.closest('#hzkUnifiedDocSuiteMenu') || btn.closest('#hzkMobileAdminDrawerMenu') || btn.id === 'hzkUnifiedDocSuiteBtn') return;
+      const txt = (btn.textContent || '').trim();
+      if (secondaryPatterns.some(rx => rx.test(txt))) {
+        btn.classList.add('hzk-mobile-collapsed-pill');
+        collapsedButtons.push({ label: txt, el: btn });
+      }
+    });
+
+    // Also compact the PHASE 1 PILOT RUN banner paragraph if present
+    document.querySelectorAll('div, p, span').forEach(el => {
+      if (el.children.length === 0 && /ช่วงทดลองใช้งานจริง\s*—\s*ขอความร่วมมือ/.test(el.textContent || '')) {
+        el.id = 'hzkPilotCompactNote';
+      }
+    });
+
+    // Build compact Mobile Control Bar (`📋 เอกสาร & ติดตามสถานะ ▾` + `⚙️ เครื่องมือระบบ ▾` + `👁️ ปุ่มทั้งหมด`)
+    const docWrap = document.getElementById('hzkUnifiedDocSuiteWrap');
+    const docBtn = document.getElementById('hzkUnifiedDocSuiteBtn');
+    if (!docWrap || !docBtn || document.getElementById('hzkMobileAdminToolsBtn')) return;
+
+    // Make docBtn compact & balanced instead of stretching full width
+    docBtn.style.width = 'auto';
+    docBtn.style.flex = '1 1 auto';
+    docBtn.style.justifyContent = 'center';
+
+    const adminToolsBtn = document.createElement('button');
+    adminToolsBtn.id = 'hzkMobileAdminToolsBtn';
+    adminToolsBtn.type = 'button';
+    adminToolsBtn.innerHTML = '⚙️ เครื่องมือระบบ ▾';
+    adminToolsBtn.style.cssText =
+      'background:#1E293B;color:#F8FAFC;border:1px solid #475569;' +
+      'border-radius:999px;padding:5px 12px;font-weight:700;font-size:12px;line-height:1.35;' +
+      'cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;height:28px;';
+
+    const toggleAllBtn = document.createElement('button');
+    toggleAllBtn.id = 'hzkToggleAllHeaderBtns';
+    toggleAllBtn.type = 'button';
+    toggleAllBtn.innerHTML = document.body.classList.contains('hzk-mobile-clean-mode') ? '👁️ แสดงปุ่มทั้งหมด' : '✨ ย่อหน้าจอ';
+    toggleAllBtn.style.cssText =
+      'background:#0F172A;color:#38BDF8;border:1px solid #0284C7;' +
+      'border-radius:999px;padding:5px 10px;font-weight:700;font-size:11px;line-height:1.35;' +
+      'cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;height:28px;';
+
+    toggleAllBtn.onclick = function (e) {
+      e.stopPropagation();
+      const nowClean = document.body.classList.toggle('hzk-mobile-clean-mode');
+      localStorage.setItem('hzk_mobile_clean_mode', String(nowClean));
+      toggleAllBtn.innerHTML = nowClean ? '👁️ แสดงปุ่มทั้งหมด' : '✨ ย่อหน้าจอ';
+      showHzkToastNotification(nowClean ? '✨ เปิดโหมดหน้าจอกระชับ (Mobile Clean-UI)' : '👁️ แสดงปุ่มควบคุมทั้งหมดแล้ว', false);
+    };
+
+    const adminDrawer = document.createElement('div');
+    adminDrawer.id = 'hzkMobileAdminDrawerMenu';
+    adminDrawer.style.cssText =
+      'display:none;position:fixed;min-width:265px;max-width:92vw;max-height:70vh;overflow-y:auto;' +
+      'background:#FFFFFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:12px;' +
+      'box-shadow:0 14px 35px rgba(15,23,42,0.35);padding:6px;z-index:20005;font-family:sans-serif;font-size:12.5px;';
+
+    adminToolsBtn.onclick = function (e) {
+      e.stopPropagation();
+      if (adminDrawer.style.display === 'block') {
+        adminDrawer.style.display = 'none';
+        return;
+      }
+      adminDrawer.innerHTML = '<div style="font-size:11px;font-weight:800;color:#0369A1;padding:6px 10px;border-bottom:1px solid #E2E8F0;">⚙️ เครื่องมือตั้งค่า &amp; Admin ที่ซ่อนไว้</div>';
+      if (collapsedButtons.length === 0) {
+        adminDrawer.innerHTML += '<div style="padding:10px;color:#64748B;font-size:12px;">ไม่มีปุ่มที่ถูกซ่อนในหน้านี้</div>';
+      } else {
+        collapsedButtons.forEach(item => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = item.label;
+          b.style.cssText =
+            'width:100%;text-align:left;background:transparent;border:none;border-radius:8px;' +
+            'padding:8px 10px;cursor:pointer;font-weight:700;font-size:12px;color:#0F172A;display:block;';
+          b.onmouseenter = () => { b.style.background = '#F0F9FF'; };
+          b.onmouseleave = () => { b.style.background = 'transparent'; };
+          b.onclick = () => {
+            adminDrawer.style.display = 'none';
+            item.el.click();
+          };
+          adminDrawer.appendChild(b);
+        });
+      }
+      const rect = adminToolsBtn.getBoundingClientRect();
+      adminDrawer.style.top = Math.min(window.innerHeight - 320, rect.bottom + 6) + 'px';
+      adminDrawer.style.left = Math.max(8, Math.min(window.innerWidth - 280, rect.left)) + 'px';
+      adminDrawer.style.display = 'block';
+    };
+
+    document.addEventListener('click', (e) => {
+      if (!adminToolsBtn.contains(e.target) && !adminDrawer.contains(e.target)) {
+        adminDrawer.style.display = 'none';
+      }
+    });
+
+    docWrap.style.display = 'flex';
+    docWrap.style.flexWrap = 'wrap';
+    docWrap.style.gap = '6px';
+    docWrap.style.alignItems = 'center';
+    docWrap.appendChild(adminToolsBtn);
+    docWrap.appendChild(toggleAllBtn);
+    document.body.appendChild(adminDrawer);
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', dockOmniBridgeButtons);
+    document.addEventListener('DOMContentLoaded', function () { installGlobalRuntimeGuard(); dockOmniBridgeButtons(); setTimeout(initMobileCleanUiDeclutter, 300); hookAdminStudioInspectorButton(); });
   } else {
+    installGlobalRuntimeGuard();
     dockOmniBridgeButtons();
+    setTimeout(initMobileCleanUiDeclutter, 300);
     hookAdminStudioInspectorButton();
   }
 })();

@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1153-ULTIMATE-OMNI-SUITE',
+    version: 'v1154-SYNTAX-VERIFIED-ULTIMATE-SUITE',
     masterDb: null,
     items: []
   };
@@ -887,7 +887,19 @@
     };
 
     document.getElementById('hzkShareSmsBtn').onclick = async function () {
-      const phone = document.getElementById('hzkShareS  async function openExecutiveBiDashboardModal() {
+      const phone = document.getElementById('hzkShareSmsPhone').value.replace(/[^0-9+]/g, '');
+      const data = await callShareGas('SMS', { smsPhone: phone });
+      if (data && data.pdfUrl) {
+        const smsText =
+          'HOSHIZAKI [' + (qt.department || 'Sales') + '] ' + (qt.docType || 'Doc') + ' ' + qt.offerNo +
+          ' (' + totalTxt + ') PDF: ' + data.pdfUrl + ' ยืนยันรับเอกสาร: ' + data.ackUrl;
+        setStatus('✅ สร้างลิงก์ PDF + ปุ่มยืนยันสำเร็จ (Track ID: ' + data.trackId + ')');
+        window.location.href = 'sms:' + phone + '?body=' + encodeURIComponent(smsText);
+      }
+    };
+  }
+
+  async function openExecutiveBiDashboardModal() {
     let biModal = document.getElementById('hzkExecutiveBiModal');
     if (!biModal) {
       biModal = document.createElement('div');
@@ -1098,19 +1110,6 @@
       return;
     }
     window.open(portalUrl, '_blank');
-  }
-
-ze:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}</b> | ดีลเลอร์รับงาน: <b>${s.dealerAccepted || 0}</b></div>
-          </div>
-        </div>
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:14px;">
-          <div style="font-weight:700;color:#002B49;margin-bottom:8px;">ยอดเสนอราคาแยกตามแผนก (Department Breakdown)</div>
-          ${deptRows}
-        </div>
-      `;
-    } catch (err) {
-      bodyEl.innerHTML = '<div style="color:#B91C1C;">โหลดรายงานไม่สำเร็จ: ' + err.message + '</div>';
-    }
   }
 
   async function openDocumentTrackingDashboardModal(db) {
@@ -2123,7 +2122,10 @@ ze:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}
         const toMgr = btns.find(b => /สลับเป็นโหมดผู้จัดการ|ผู้จัดการ\/จ่ายงาน/i.test(b.textContent || ''));
         if (toMgr && /ช่างดำเนินงาน/.test(document.body.innerText)) toMgr.click();
       }
-    } catch (e)  const FIELD_TECH_ROSTER = [
+    } catch (e) {}
+  }
+
+  const FIELD_TECH_ROSTER = [
     { code: 'T01', name: 'ช่างบริการ T01 (Bangkok North)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
     { code: 'T02', name: 'ช่างบริการ T02 (Bangkok South)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
     { code: 'T03', name: 'ช่างบริการ T03 (Bangkok East)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
@@ -2453,9 +2455,6 @@ ze:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}
       });
     });
     observer.observe(document.body, { childList: true, subtree: true });
-  }
-
-});
   }
 
   window.openDepartmentRoleSopModal = openDepartmentRoleSopModal;

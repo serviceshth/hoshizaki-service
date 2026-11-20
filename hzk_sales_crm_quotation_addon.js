@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1146-ENTERPRISE-COMPLETE-SUITE',
+    version: 'v1147-UNIFIED-DROPDOWN-MENU',
     masterDb: null,
     items: []
   };
@@ -129,47 +129,120 @@
   function dockOmniBridgeButtons() {
     injectResponsiveStyles();
 
-    if (!document.getElementById('hzkSalesCrmDockedBtn')) {
-      const hostContainer =
-        document.getElementById('topHeaderStatusPillsRow') ||
-        document.getElementById('topHeaderRightPillsWrap') ||
-        document.querySelector('header');
+    // Remove any legacy separate buttons if present
+    ['hzkSalesCrmDockedBtn', 'hzkServiceReportTrackedShareBtn'].forEach(id => {
+      const old = document.getElementById(id);
+      if (old) old.remove();
+    });
 
-      const btn = document.createElement('button');
-      btn.id = 'hzkSalesCrmDockedBtn';
-      btn.type = 'button';
-      btn.innerHTML = '💼 Sales &amp; JP Corp Quotation + Tracking';
-      btn.onclick = openSalesCorporateQuotationModal;
+    if (document.getElementById('hzkUnifiedDocSuiteWrap')) return;
 
-      if (hostContainer) {
-        btn.style.cssText =
-          'background:linear-gradient(135deg,#002B49,#0369A1);color:#FFFFFF;border:1px solid #38BDF8;' +
-          'border-radius:999px;padding:6px 14px;font-weight:700;font-size:12px;cursor:pointer;' +
-          'box-shadow:0 2px 8px rgba(0,43,73,0.25);white-space:nowrap;margin:2px 4px;';
-        hostContainer.appendChild(btn);
-      } else {
-        btn.style.cssText =
-          'position:fixed;bottom:14px;right:14px;z-index:9990;background:#002B49;color:#FFFFFF;' +
-          'border:1.5px solid #38BDF8;border-radius:999px;padding:8px 14px;font-weight:700;font-size:12px;cursor:pointer;';
-        document.body.appendChild(btn);
+    const hostContainer =
+      document.getElementById('topHeaderStatusPillsRow') ||
+      document.getElementById('topHeaderRightPillsWrap') ||
+      document.querySelector('header');
+
+    const wrap = document.createElement('div');
+    wrap.id = 'hzkUnifiedDocSuiteWrap';
+    wrap.style.cssText = 'position:relative;display:inline-flex;align-items:center;vertical-align:middle;';
+
+    // Match exact uniform pill size & style of `Executive Report ▾` / `KPI Report Studio`
+    const mainBtn = document.createElement('button');
+    mainBtn.id = 'hzkUnifiedDocSuiteBtn';
+    mainBtn.type = 'button';
+    mainBtn.innerHTML = '📋 เอกสาร &amp; ติดตามสถานะ (ทุกแผนก) ▾';
+    mainBtn.style.cssText =
+      'background:linear-gradient(135deg,#0284C7,#0369A1);color:#FFFFFF;border:1px solid #7DD3FC;' +
+      'border-radius:999px;padding:5px 13px;font-weight:700;font-size:12px;line-height:1.35;' +
+      'cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;' +
+      'box-shadow:0 2px 6px rgba(0,43,73,0.25);height:28px;';
+
+    const menu = document.createElement('div');
+    menu.id = 'hzkUnifiedDocSuiteMenu';
+    menu.style.cssText =
+      'display:none;position:fixed;min-width:295px;max-width:92vw;background:#FFFFFF;color:#0F172A;' +
+      'border:1px solid #CBD5E1;border-radius:12px;box-shadow:0 14px 35px rgba(15,23,42,0.32);' +
+      'padding:6px;z-index:20000;font-family:sans-serif;font-size:12.5px;';
+
+    const menuItems = [
+      { icon: '💼', label: 'ใบเสนอราคา Sales Department (THB)', sub: 'แบบฟอร์ม Y2026 + ขนาด W×D×H + Auto-Save', action: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)') },
+      { icon: '🇯🇵', label: 'ใบเสนอราคา Japanese Corporate', sub: 'สำหรับลูกค้าองค์กรญี่ปุ่น & Inter-Company', action: () => openSalesCorporateQuotationWithPreset('Japanese Corporate', 'ใบเสนอราคา (Quotation)') },
+      { icon: '📣', label: 'ใบเสนอราคา & โปรโมชัน Marketing', sub: 'แคมเปญการตลาดและเปิดตัวสินค้ารุ่นใหม่', action: () => openSalesCorporateQuotationWithPreset('Marketing', 'ใบเสนอราคา (Quotation)') },
+      { divider: true },
+      { icon: '🛠️', label: 'ส่ง & ติดตามเอกสาร Service / ใบวางบิล / ใบเสร็จ', sub: 'ดึงข้อมูลจากใบแจ้งบริการปัจจุบันส่งพร้อมปุ่ม Track', action: () => launchTrackedDocFromServiceForm() },
+      { icon: '🔄', label: 'ศูนย์ส่งต่องานข้ามแผนก (1-Click Handover)', sub: 'Sales ➔ ติดตั้ง/ลงทะเบียน S/N | Service ➔ บัญชี', action: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)', 'HANDOVER') },
+      { divider: true },
+      { icon: '📊', label: 'ติดตามสถานะการรับเอกสาร (Tracking)', sub: 'เช็กสถานะ SENT / ยืนยันรับแล้ว / อนุมัติสั่งซื้อ (PO)', action: () => window.openDocumentTrackingDashboardModal() },
+      { icon: '📈', label: 'รายงานสรุปผู้บริหาร (Executive BI)', sub: 'ยอดเสนอราคาแยกแผนก + สถิติงานบริการ & ดีลเลอร์', action: () => window.openExecutiveBiDashboardModal() }
+    ];
+
+    menuItems.forEach(item => {
+      if (item.divider) {
+        const hr = document.createElement('div');
+        hr.style.cssText = 'height:1px;background:#E2E8F0;margin:4px 6px;';
+        menu.appendChild(hr);
+        return;
       }
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.style.cssText =
+        'width:100%;text-align:left;background:transparent;border:none;border-radius:8px;' +
+        'padding:8px 10px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;color:#0F172A;';
+      row.innerHTML =
+        `<span style="font-size:15px;line-height:1.2;">${item.icon}</span>` +
+        `<span style="display:flex;flex-direction:column;">` +
+        `<span style="font-weight:700;font-size:12.5px;color:#002B49;">${item.label}</span>` +
+        `<span style="font-size:10.5px;color:#64748B;">${item.sub}</span>` +
+        `</span>`;
+      row.onmouseenter = () => { row.style.background = '#F0F9FF'; };
+      row.onmouseleave = () => { row.style.background = 'transparent'; };
+      row.onclick = (e) => {
+        e.stopPropagation();
+        menu.style.display = 'none';
+        item.action();
+      };
+      menu.appendChild(row);
+    });
+
+    mainBtn.onclick = (e) => {
+      e.stopPropagation();
+      const isOpen = menu.style.display === 'block';
+      if (isOpen) {
+        menu.style.display = 'none';
+        return;
+      }
+      const rect = mainBtn.getBoundingClientRect();
+      menu.style.top = Math.min(window.innerHeight - 360, rect.bottom + 6) + 'px';
+      menu.style.left = Math.max(8, Math.min(window.innerWidth - 310, rect.left)) + 'px';
+      menu.style.display = 'block';
+    };
+
+    document.addEventListener('click', (e) => {
+      if (!wrap.contains(e.target) && !menu.contains(e.target)) {
+        menu.style.display = 'none';
+      }
+    });
+
+    wrap.appendChild(mainBtn);
+    document.body.appendChild(menu);
+
+    if (hostContainer) {
+      hostContainer.appendChild(wrap);
+    } else {
+      wrap.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:9990;';
+      document.body.appendChild(wrap);
     }
+  }
 
-    if (!document.getElementById('hzkServiceReportTrackedShareBtn')) {
-      const printCandidates = Array.from(document.querySelectorAll('button')).filter(b =>
-        /พิมพ์|Print|ใบเสนอราคา|Quotation|บันทึกใบงาน/i.test(b.textContent || '')
-      );
-      if (printCandidates.length > 0 && printCandidates[0].parentElement) {
-        const svcBtn = document.createElement('button');
-        svcBtn.id = 'hzkServiceReportTrackedShareBtn';
-        svcBtn.type = 'button';
-        svcBtn.innerHTML = '📤 ส่ง &amp; ติดตามเอกสาร (Service / ใบวางบิล / ใบเสร็จ)';
-        svcBtn.style.cssText =
-          'background:linear-gradient(135deg,#7F1D1D,#B91C1C);color:#FFFFFF;border:1px solid #FCA5A5;' +
-          'border-radius:8px;padding:8px 14px;font-weight:700;font-size:12px;cursor:pointer;margin:4px;';
-        svcBtn.onclick = launchTrackedDocFromServiceForm;
-        printCandidates[0].parentElement.appendChild(svcBtn);
-      }
+  async function openSalesCorporateQuotationWithPreset(deptPreset, docTypePreset, extraAction) {
+    await openSalesCorporateQuotationModal();
+    const deptEl = document.getElementById('hzkSqDept');
+    const docEl = document.getElementById('hzkSqDocType');
+    if (deptEl && deptPreset) deptEl.value = deptPreset;
+    if (docEl && docTypePreset) docEl.value = docTypePreset;
+    if (extraAction === 'HANDOVER') {
+      const db = await loadSalesMasterDb(false);
+      openCrossDeptHandoverModal(db);
     }
   }
 

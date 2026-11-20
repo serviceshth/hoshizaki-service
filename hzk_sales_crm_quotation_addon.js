@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1149-AUTO-EMAIL-STOCK-AND-INSPECTION',
+    version: 'v1150-PRODUCTION-GO-LIVE-SUITE',
     masterDb: null,
     items: []
   };
@@ -192,7 +192,11 @@
       { icon: '📥', label: 'อัปเดต Stock จากอีเมล MICHIRU-RPA ทันที', sub: 'ดึงไฟล์ Stock on Hand ล่าสุดจาก Gmail เข้าฐานข้อมูลสด', action: () => window.triggerEmailStockSyncNow() },
       { icon: '🌐', label: 'พอร์ทัลลูกค้า & ตัวแทนจำหน่าย (Self-Service)', sub: 'เปิดหน้าเช็กเครื่องในร้าน ประวัติซ่อม และสถานะดีลเลอร์', action: () => window.openCustomerDealerPortalWindow() },
       { icon: '📊', label: 'ติดตามสถานะการรับเอกสาร (Tracking)', sub: 'เช็กสถานะ SENT / ยืนยันรับแล้ว / อนุมัติสั่งซื้อ (PO)', action: () => window.openDocumentTrackingDashboardModal() },
-      { icon: '📈', label: 'รายงานสรุปผู้บริหาร & AI Copilot (BI)', sub: 'KPI รวม + AI ติดตามใบเสนอราคาค้าง + ส่งเข้า LINE ผู้บริหาร', action: () => window.openExecutiveBiDashboardModal() }
+      { icon: '📈', label: 'รายงานสรุปผู้บริหาร & AI Copilot (BI)', sub: 'KPI รวม + AI ติดตามใบเสนอราคาค้าง + ส่งเข้า LINE ผู้บริหาร', action: () => window.openExecutiveBiDashboardModal() },
+      { divider: true },
+      { icon: '🏭', label: 'ส่งออกข้อมูลเปิด Sales Order เข้า ERP / NAV', sub: 'ดาวน์โหลดไฟล์ตารางรายการ PO Approved พร้อมนำเข้าระบบบัญชี/ERP', action: () => window.exportErpSalesOrdersCsv() },
+      { icon: '🛡️', label: 'ตรวจความพร้อมระบบ & Go-Live Control (QA)', sub: 'เช็กสถานะ Token/API/Sheets + ติดตั้ง LINE Rich Menu + ล้างข้อมูลทดสอบ', action: () => window.openProductionGoLiveQaModal() },
+      { icon: '📖', label: 'คู่มือใช้งานฉบับย่อแยกแผนก (Role SOP Guide)', sub: 'คู่มือ 1 หน้าสำหรับช่างบริการ / ฝ่ายขาย-JPC / บัญชี-ดีลเลอร์', action: () => window.openDepartmentRoleSopModal() }
     ];
 
     menuItems.forEach(item => {
@@ -1816,7 +1820,188 @@ ze:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}
 
   window.openCustomerDealerPortalWindow = openCustomerDealerPortalWindow;
   window.openDamageDemoStockModal = openDamageDemoStockModal;
+
+  async function exportErpSalesOrdersCsv() {
+    const gasUrl = getGasEndpointUrl();
+    if (!gasUrl) {
+      alert('⚠️ กรุณาตั้งค่า Google Apps Script URL ก่อนส่งออกข้อมูล ERP ครับ');
+      return;
+    }
+    try {
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'exportErpSalesOrders' })
+      });
+      const data = await res.json();
+      const rows = (data && data.rows) || [];
+      if (!rows.length) {
+        alert('ℹ️ ยังไม่มีรายการใบเสนอราคาในระบบสำหรับส่งออก ERP ครับ');
+        return;
+      }
+      const headers = ['Order_Status', 'Offer_No', 'Rev', 'Date', 'Department', 'Salesperson_Code', 'Customer_Name', 'Payment_Terms', 'Currency', 'Item_No', 'Description', 'Qty', 'Unit_Price', 'Discount', 'Line_Amount'];
+      const csvLines = [headers.join(',')].concat(rows.map(r =>
+        headers.map(h => {
+          const key = h.charAt(0).toLowerCase() + h.slice(1).replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+          const val = String(r[key] !== undefined ? r[key] : '').replace(/"/g, '""');
+          return `"${val}"`;
+        }).join(',')
+      ));
+      const blob = new Blob(['\ufeff' + csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'HOSHIZAKI_ERP_NAV_SalesOrders_' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert('✅ ส่งออกไฟล์ CSV สำหรับนำเข้า ERP / NAV เรียบร้อยแล้ว (' + rows.length + ' รายการ)');
+    } catch (err) {
+      alert('❌ ส่งออกไฟล์ไม่สำเร็จ: ' + err.message);
+    }
+  }
+
+  async function openProductionGoLiveQaModal() {
+    let qaModal = document.getElementById('hzkProductionQaModal');
+    if (!qaModal) {
+      qaModal = document.createElement('div');
+      qaModal.id = 'hzkProductionQaModal';
+      qaModal.style.cssText =
+        'position:fixed;inset:0;z-index:10096;background:rgba(15,23,42,0.8);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(qaModal);
+    }
+
+    qaModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:780px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,0.4);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;">
+          <div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;">PRODUCTION GO-LIVE READINESS &amp; ADMIN CONTROL</div>
+            <div style="font-size:16px;font-weight:700;">🛡️ ตรวจสอบความพร้อมระบบ &amp; เครื่องมือเปิดใช้งานจริง (v1150)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkProductionQaModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div style="padding:18px 20px;font-size:13px;color:#0F172A;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+            <button type="button" id="hzkDeployRichMenuBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer;">📱 สร้าง LINE Rich Menu 6 ปุ่ม (Customer OA)</button>
+            <button type="button" id="hzkResetDemoDataBtn" style="background:#DC2626;color:#FFF;border:none;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer;">🧹 ล้างข้อมูลทดสอบก่อน Go-Live (เก็บฐานหลักไว้ครบ)</button>
+          </div>
+          <div id="hzkQaChecklistBody">⏳ กำลังตรวจสอบความพร้อมของระบบทั้งหมด...</div>
+        </div>
+      </div>
+    `;
+    qaModal.style.display = 'flex';
+
+    const gasUrl = getGasEndpointUrl();
+    const bodyEl = document.getElementById('hzkQaChecklistBody');
+    if (!gasUrl) {
+      bodyEl.innerHTML = '<div style="color:#B91C1C;">กรุณาตั้งค่า Google Apps Script URL เพื่อตรวจสอบความพร้อมระบบครับ</div>';
+      return;
+    }
+
+    document.getElementById('hzkDeployRichMenuBtn').onclick = async function () {
+      const r = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'deployCustomerRichMenu' })
+      });
+      const d = await r.json();
+      alert(d.status === 'OK' ? ('✅ ' + d.note + '\nRich Menu ID: ' + d.richMenuId) : ('⚠️ ' + (d.message || 'ไม่สำเร็จ')));
+    };
+
+    document.getElementById('hzkResetDemoDataBtn').onclick = async function () {
+      if (!confirm('ยืนยันล้างข้อมูลเคสทดสอบและประวัติส่งเอกสารทดสอบ?\n(ฐานข้อมูลลูกค้า 700 ราย, รุ่นเครื่อง 331 รุ่น, พนักงาน, กลุ่มอีเมล และสต็อกจะไม่ถูกลบ)')) return;
+      const r = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'resetDemoDataSafe' })
+      });
+      const d = await r.json();
+      alert('✅ ล้างข้อมูลทดสอบเรียบร้อยแล้ว (' + (d.clearedSheets || []).join(', ') + ')');
+    };
+
+    try {
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'runProductionQaCheck' })
+      });
+      const data = await res.json();
+      const checks = (data && data.checks) || [];
+      bodyEl.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+          <thead><tr style="background:#0F172A;color:#FFF;"><th style="padding:8px;text-align:left;">รายการตรวจสอบ (System Check)</th><th style="padding:8px;">สถานะ</th><th style="padding:8px;text-align:left;">รายละเอียด</th></tr></thead>
+          <tbody>
+            ${checks.map(c => `
+              <tr>
+                <td style="padding:8px;border:1px solid #CBD5E1;font-weight:700;">${c.item}</td>
+                <td style="padding:8px;border:1px solid #CBD5E1;text-align:center;">${c.ok ? '<span style="color:#059669;font-weight:800;">✅ READY</span>' : '<span style="color:#DC2626;font-weight:800;">⚠️ CHECK</span>'}</td>
+                <td style="padding:8px;border:1px solid #CBD5E1;color:#334155;">${c.detail}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (err) {
+      bodyEl.innerHTML = '<div style="color:#B91C1C;">ตรวจสอบไม่สำเร็จ: ' + err.message + '</div>';
+    }
+  }
+
+  function openDepartmentRoleSopModal() {
+    let sopModal = document.getElementById('hzkRoleSopModal');
+    if (!sopModal) {
+      sopModal = document.createElement('div');
+      sopModal.id = 'hzkRoleSopModal';
+      sopModal.style.cssText =
+        'position:fixed;inset:0;z-index:10097;background:rgba(15,23,42,0.8);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(sopModal);
+    }
+
+    sopModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:880px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,0.4);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;">
+          <div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;">HOSHIZAKI (THAILAND) LIMITED — QUICK REFERENCE SOP</div>
+            <div style="font-size:16px;font-weight:700;">📖 คู่มือใช้งานระบบฉบับย่อแยกตามบทบาท (Role-Based Guide)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkRoleSopModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div style="padding:18px 20px;font-size:13px;color:#0F172A;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;">
+          <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#991B1B;font-size:14px;margin-bottom:8px;">1️⃣ ทีมช่างบริการ &amp; ดีลเลอร์ (มือถือ &amp; LINE)</div>
+            <ul style="margin:0;padding-left:18px;line-height:1.6;font-size:12.5px;">
+              <li><b>ในกลุ่ม LINE:</b> พิมพ์ <code>SPEC IM-130NE</code> เพื่อเปิดสเปก 5 หมวด, พิมพ์ <code>SN K01234J</code> เพื่อเช็กประกันและดีลเลอร์, พิมพ์ <code>AI &lt;อาการ&gt;</code> เพื่อถามวิศวกร AI</li>
+              <li><b>รับงานจากลูกค้า:</b> กดปุ่ม <b>แชร์ข้อมูลดีลเลอร์ให้ลูกค้า</b> หรือ <b>ส่งเคสเข้ากลุ่มดีลเลอร์</b></li>
+              <li><b>ส่งใบแจ้งบริการ/ใบเสร็จ:</b> กดปุ่ม <b>📋 เอกสาร &amp; ติดตามสถานะ ▾</b> เลือก <i>ส่ง &amp; ติดตามเอกสาร Service</i></li>
+            </ul>
+          </div>
+          <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#1E40AF;font-size:14px;margin-bottom:8px;">2️⃣ ฝ่ายขาย, Marketing &amp; Japanese Corporate (PC)</div>
+            <ul style="margin:0;padding-left:18px;line-height:1.6;font-size:12.5px;">
+              <li><b>ออกใบเสนอราคา Y2026:</b> กด <b>📋 เอกสาร &amp; ติดตามสถานะ ▾</b> เลือกแผนก ➔ พิมพ์ชื่อลูกค้า &amp; เลือกรุ่นเครื่อง (เติมขนาด <code>W×D×H</code> และเช็กสต็อกสดอัตโนมัติ)</li>
+              <li><b>ตรวจหน้ากระดาษ:</b> กด <b>👁️ Preview เอกสาร A4</b> ก่อนพิมพ์ PDF หรือ Export Excel</li>
+              <li><b>ส่งเอกสาร &amp; CC ทั้งแผนก:</b> กด <b>📤 แชร์ + Group CC/BCC</b> ติ๊กเลือกกลุ่มแผนกและส่งผ่าน Email/LINE/SMS พร้อมปุ่มให้ลูกค้ากดยืนยันรับเอกสาร</li>
+            </ul>
+          </div>
+          <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#166534;font-size:14px;margin-bottom:8px;">3️⃣ ฝ่ายบัญชี, ธุรการ &amp; ผู้บริหาร</div>
+            <ul style="margin:0;padding-left:18px;line-height:1.6;font-size:12.5px;">
+              <li><b>ออกใบวางบิล/ใบเสร็จ:</b> เปิดใบเสนอราคาเดิมแล้วกด <b>🧾 แปลงเป็นใบวางบิล/ใบเสร็จ</b></li>
+              <li><b>ส่งออกเข้า ERP / NAV:</b> เลือกเมนู <b>🏭 ส่งออกข้อมูลเปิด Sales Order เข้า ERP / NAV</b></li>
+              <li><b>ติดตาม KPI &amp; สต็อก:</b> ระบบดึงสต็อกจากอีเมล <code>MICHIRU-RPA</code> อัตโนมัติทุกวัน 18:00 น. และส่งสรุปผู้บริหารเข้า LINE ทุกวันศุกร์ 17:00 น.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    `;
+    sopModal.style.display = 'flex';
+  }
+
   window.triggerEmailStockSyncNow = triggerEmailStockSyncNow;
+  window.exportErpSalesOrdersCsv = exportErpSalesOrdersCsv;
+  window.openProductionGoLiveQaModal = openProductionGoLiveQaModal;
+  window.openDepartmentRoleSopModal = openDepartmentRoleSopModal;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', dockOmniBridgeButtons);

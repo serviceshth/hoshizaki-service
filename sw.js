@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1149-auto-email-stock';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1150-production-suite';
 const CORE_ASSETS = [
   './',
   './index.html',

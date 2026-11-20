@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1147-UNIFIED-DROPDOWN-MENU',
+    version: 'v1148-ALL-5-PILLARS-ENTERPRISE',
     masterDb: null,
     items: []
   };
@@ -93,6 +93,8 @@
           if (Array.isArray(liveData.customers) && liveData.customers.length > 0) baseDb.customers = liveData.customers;
           if (Array.isArray(liveData.models) && liveData.models.length > 0) baseDb.models = liveData.models;
           if (Array.isArray(liveData.emailGroups) && liveData.emailGroups.length > 0) baseDb.emailGroups = liveData.emailGroups;
+          if (liveData.stockMap) baseDb.stockMap = liveData.stockMap;
+          if (liveData.portalUrl) baseDb.portalUrl = liveData.portalUrl;
         }
       } catch (e) {}
     }
@@ -165,15 +167,17 @@
       'padding:6px;z-index:20000;font-family:sans-serif;font-size:12.5px;';
 
     const menuItems = [
-      { icon: '💼', label: 'ใบเสนอราคา Sales Department (THB)', sub: 'แบบฟอร์ม Y2026 + ขนาด W×D×H + Auto-Save', action: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)') },
+      { icon: '💼', label: 'ใบเสนอราคา Sales Department (THB)', sub: 'Y2026 + ขนาด W×D×H + เช็กสต็อกสด + คุมเพดานส่วนลด', action: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)') },
       { icon: '🇯🇵', label: 'ใบเสนอราคา Japanese Corporate', sub: 'สำหรับลูกค้าองค์กรญี่ปุ่น & Inter-Company', action: () => openSalesCorporateQuotationWithPreset('Japanese Corporate', 'ใบเสนอราคา (Quotation)') },
       { icon: '📣', label: 'ใบเสนอราคา & โปรโมชัน Marketing', sub: 'แคมเปญการตลาดและเปิดตัวสินค้ารุ่นใหม่', action: () => openSalesCorporateQuotationWithPreset('Marketing', 'ใบเสนอราคา (Quotation)') },
       { divider: true },
       { icon: '🛠️', label: 'ส่ง & ติดตามเอกสาร Service / ใบวางบิล / ใบเสร็จ', sub: 'ดึงข้อมูลจากใบแจ้งบริการปัจจุบันส่งพร้อมปุ่ม Track', action: () => launchTrackedDocFromServiceForm() },
       { icon: '🔄', label: 'ศูนย์ส่งต่องานข้ามแผนก (1-Click Handover)', sub: 'Sales ➔ ติดตั้ง/ลงทะเบียน S/N | Service ➔ บัญชี', action: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)', 'HANDOVER') },
+      { icon: '🔔', label: 'ต่ออายุสัญญา PM & แจ้งเตือนหมดประกัน (60 วัน)', sub: 'สแกนเครื่องใกล้หมดประกัน + สร้างใบเสนอราคาต่อสัญญา 1 คลิก', action: () => window.openWarrantyPmRenewalModal() },
       { divider: true },
+      { icon: '🌐', label: 'พอร์ทัลลูกค้า & ตัวแทนจำหน่าย (Self-Service)', sub: 'เปิดหน้าเช็กเครื่องในร้าน ประวัติซ่อม และสถานะดีลเลอร์', action: () => window.openCustomerDealerPortalWindow() },
       { icon: '📊', label: 'ติดตามสถานะการรับเอกสาร (Tracking)', sub: 'เช็กสถานะ SENT / ยืนยันรับแล้ว / อนุมัติสั่งซื้อ (PO)', action: () => window.openDocumentTrackingDashboardModal() },
-      { icon: '📈', label: 'รายงานสรุปผู้บริหาร (Executive BI)', sub: 'ยอดเสนอราคาแยกแผนก + สถิติงานบริการ & ดีลเลอร์', action: () => window.openExecutiveBiDashboardModal() }
+      { icon: '📈', label: 'รายงานสรุปผู้บริหาร & AI Copilot (BI)', sub: 'KPI รวม + AI ติดตามใบเสนอราคาค้าง + ส่งเข้า LINE ผู้บริหาร', action: () => window.openExecutiveBiDashboardModal() }
     ];
 
     menuItems.forEach(item => {
@@ -859,19 +863,7 @@
     };
 
     document.getElementById('hzkShareSmsBtn').onclick = async function () {
-      const phone = document.getElementById('hzkShareSmsPhone').value.replace(/[^0-9+]/g, '');
-      const data = await callShareGas('SMS', { smsPhone: phone });
-      if (data && data.pdfUrl) {
-        const smsText =
-          'HOSHIZAKI [' + (qt.department || 'Sales') + '] ' + (qt.docType || 'Doc') + ' ' + qt.offerNo +
-          ' (' + totalTxt + ') PDF: ' + data.pdfUrl + ' ยืนยันรับเอกสาร: ' + data.ackUrl;
-        setStatus('✅ สร้างลิงก์ PDF + ปุ่มยืนยันสำเร็จ (Track ID: ' + data.trackId + ')');
-        window.location.href = 'sms:' + phone + '?body=' + encodeURIComponent(smsText);
-      }
-    };
-  }
-
-  async function openExecutiveBiDashboardModal() {
+      const phone = document.getElementById('hzkShareS  async function openExecutiveBiDashboardModal() {
     let biModal = document.getElementById('hzkExecutiveBiModal');
     if (!biModal) {
       biModal = document.createElement('div');
@@ -883,13 +875,16 @@
     }
 
     biModal.innerHTML = `
-      <div style="background:#FFFFFF;width:100%;max-width:860px;border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.4);font-family:sans-serif;">
-        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="background:#FFFFFF;width:100%;max-width:900px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,0.4);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;gap:8px;flex-wrap:wrap;">
           <div>
-            <div style="font-size:11px;color:#FBBF24;font-weight:800;">UNIFIED EXECUTIVE BI &amp; CROSS-DEPARTMENT KPI</div>
-            <div style="font-size:16px;font-weight:700;">📈 รายงานสรุปผู้บริหาร (Sales + Service + Document Tracking)</div>
+            <div style="font-size:11px;color:#FBBF24;font-weight:800;">UNIFIED EXECUTIVE BI &amp; AI SALES COPILOT</div>
+            <div style="font-size:16px;font-weight:700;">📈 รายงานสรุปผู้บริหาร + AI ติดตามใบเสนอราคา</div>
           </div>
-          <button type="button" onclick="document.getElementById('hzkExecutiveBiModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          <div style="display:flex;gap:8px;">
+            <button type="button" id="hzkSendBriefingLineBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">📲 ส่งสรุปเข้า LINE ผู้บริหารทันที</button>
+            <button type="button" onclick="document.getElementById('hzkExecutiveBiModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          </div>
         </div>
         <div id="hzkBiBody" style="padding:18px 20px;font-size:13px;color:#0F172A;">⏳ กำลังดึงข้อมูลสรุปจาก Google Sheets...</div>
       </div>
@@ -903,19 +898,38 @@
       return;
     }
 
-    try {
-      const res = await fetch(gasUrl, {
+    document.getElementById('hzkSendBriefingLineBtn').onclick = async function () {
+      const r = await fetch(gasUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'getExecutiveBiSummary' })
+        body: JSON.stringify({ action: 'sendExecutiveBriefingNow' })
       });
-      const d = await res.json();
+      const resData = await r.json();
+      alert(resData && resData.status === 'OK' ? '✅ ส่งรายงานสรุปผู้บริหารเข้า LINE เรียบร้อยแล้ว!' : '⚠️ ส่งไม่สำเร็จ');
+    };
+
+    try {
+      const [resBi, resAi] = await Promise.all([
+        fetch(gasUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'getExecutiveBiSummary' }) }),
+        fetch(gasUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'getAiSalesFollowUps' }) })
+      ]);
+      const d = await resBi.json();
+      const ai = await resAi.json();
       const q = d.quotations || {};
       const t = d.tracking || {};
       const s = d.service || {};
+      const staleList = (ai && ai.items) || [];
+
       const deptRows = Object.keys(q.byDept || {}).map(k =>
         `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #E2E8F0;"><span>${k}</span><b>${Number(q.byDept[k] || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</b></div>`
       ).join('') || '<div style="color:#64748B;">ยังไม่มีข้อมูลแยกแผนก</div>';
+
+      const aiRows = staleList.slice(0, 10).map(item =>
+        `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #E2E8F0;gap:8px;">` +
+        `<div><b>${item.docNo}</b> — ${item.customer} <span style="color:#64748B;">(${item.dept} / ${item.sender})</span></div>` +
+        `<span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;">ส่งแล้ว ${item.daysAgo} วัน (${item.amount})</span>` +
+        `</div>`
+      ).join('') || '<div style="color:#059669;">✅ ไม่มีใบเสนอราคาค้างติดตามเกิน 3 วัน</div>';
 
       bodyEl.innerHTML = `
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px;">
@@ -933,6 +947,136 @@
             <div style="font-size:11px;font-weight:700;color:#B91C1C;">🛠️ งานบริการ &amp; ดีลเลอร์ (Service)</div>
             <div style="font-size:22px;font-weight:800;color:#7F1D1D;margin-top:4px;">${s.totalTickets || 0} เคส</div>
             <div style="font-size:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}</b> | ดีลเลอร์รับงาน: <b>${s.dealerAccepted || 0}</b></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:14px;">
+            <div style="font-weight:700;color:#002B49;margin-bottom:8px;">ยอดเสนอราคาแยกตามแผนก</div>
+            ${deptRows}
+          </div>
+          <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:14px;">
+            <div style="font-weight:700;color:#92400E;margin-bottom:8px;">🤖 AI Sales Follow-Up Copilot (ค้างติดตาม &gt; 3 วัน)</div>
+            ${aiRows}
+          </div>
+        </div>
+      `;
+    } catch (err) {
+      bodyEl.innerHTML = '<div style="color:#B91C1C;">โหลดรายงานไม่สำเร็จ: ' + err.message + '</div>';
+    }
+  }
+
+  async function openWarrantyPmRenewalModal() {
+    let pmModal = document.getElementById('hzkWarrantyPmRenewalModal');
+    if (!pmModal) {
+      pmModal = document.createElement('div');
+      pmModal.id = 'hzkWarrantyPmRenewalModal';
+      pmModal.style.cssText =
+        'position:fixed;inset:0;z-index:10092;background:rgba(15,23,42,0.78);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(pmModal);
+    }
+
+    pmModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:980px;max-height:90vh;overflow-y:auto;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,0.4);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;">
+          <div>
+            <div style="font-size:11px;color:#FBBF24;font-weight:800;">PREDICTIVE PM &amp; WARRANTY RENEWAL ENGINE</div>
+            <div style="font-size:16px;font-weight:700;">🔔 ระบบแจ้งเตือนเครื่องใกล้หมดประกัน &amp; ต่ออายุสัญญา PM อัตโนมัติ</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkWarrantyPmRenewalModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div id="hzkPmRenewalBody" style="padding:16px 20px;font-size:13px;">⏳ กำลังตรวจสอบวันหมดประกันและรอบบำรุงรักษา (PM) จากฐานข้อมูล...</div>
+      </div>
+    `;
+    pmModal.style.display = 'flex';
+
+    const gasUrl = getGasEndpointUrl();
+    const bodyEl = document.getElementById('hzkPmRenewalBody');
+    if (!gasUrl) {
+      bodyEl.innerHTML = '<div style="color:#B91C1C;">กรุณาตั้งค่า Google Apps Script URL ก่อนใช้งานครับ</div>';
+      return;
+    }
+
+    try {
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'getWarrantyPmRenewals' })
+      });
+      const data = await res.json();
+      const items = (data && data.items) || [];
+      if (!items.length) {
+        bodyEl.innerHTML = '<div style="color:#64748B;">ไม่พบรายการเครื่องในฐานข้อมูล Serial_Dealer_Master</div>';
+        return;
+      }
+
+      bodyEl.innerHTML = `
+        <div style="overflow-x:auto;">
+          <table style="width:100%;min-width:780px;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:#0F172A;color:#FFF;">
+                <th style="padding:8px;border:1px solid #CBD5E1;">Serial No.</th>
+                <th style="padding:8px;border:1px solid #CBD5E1;">Model</th>
+                <th style="padding:8px;border:1px solid #CBD5E1;">ลูกค้า / ร้าน</th>
+                <th style="padding:8px;border:1px solid #CBD5E1;">สถานะการรับประกัน</th>
+                <th style="padding:8px;border:1px solid #CBD5E1;">ค่าบริการ PM รายปีแนะนำ</th>
+                <th style="padding:8px;border:1px solid #CBD5E1;">สร้างใบเสนอราคาต่อสัญญา</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map((it, idx) => `
+                <tr>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${it.serialNumber}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;">${it.model}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;">${it.customerName} (${it.phone || '-'})</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;">${it.warrantyStatus}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;font-weight:700;">${Number(it.suggestedPmPrice || 4500).toLocaleString('en-US', { minimumFractionDigits: 2 })} THB</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+                    <button type="button" data-pm-idx="${idx}" class="hzk-create-pm-qt-btn" style="background:#059669;color:#FFF;border:none;border-radius:6px;padding:6px 10px;font-weight:700;cursor:pointer;">📄 ออกใบเสนอราคา PM</button>
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      bodyEl.querySelectorAll('.hzk-create-pm-qt-btn').forEach(btn => {
+        btn.onclick = async function () {
+          const item = items[Number(btn.getAttribute('data-pm-idx'))];
+          document.getElementById('hzkWarrantyPmRenewalModal').style.display = 'none';
+          HZK_OMNI_STATE.items = [{
+            model: item.model,
+            description: 'Annual Preventive Maintenance (PM Contract 4 Visits/Year) — S/N: ' + item.serialNumber,
+            w: '',
+            d: '',
+            h: '',
+            unitPrice: Number(item.suggestedPmPrice || 4500),
+            discount: 0,
+            qty: 1,
+            isService: true
+          }];
+          await openSalesCorporateQuotationWithPreset('Service & Billing', 'ใบเสนอราคา (Quotation)');
+          document.getElementById('hzkSqCustomer').value = item.customerName || '';
+          document.getElementById('hzkSqPhone').value = item.phone || '';
+        };
+      });
+    } catch (err) {
+      bodyEl.innerHTML = '<div style="color:#B91C1C;">เกิดข้อผิดพลาด: ' + err.message + '</div>';
+    }
+  }
+
+  async function openCustomerDealerPortalWindow() {
+    const db = await loadSalesMasterDb(false);
+    const gasUrl = getGasEndpointUrl();
+    const portalUrl = db.portalUrl || (gasUrl ? (gasUrl + '?action=portal') : '');
+    if (!portalUrl) {
+      alert('⚠️ กรุณาตั้งค่า Google Apps Script URL ก่อนเปิดหน้า Customer & Dealer Portal ครับ');
+      return;
+    }
+    window.open(portalUrl, '_blank');
+  }
+
+ze:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}</b> | ดีลเลอร์รับงาน: <b>${s.dealerAccepted || 0}</b></div>
           </div>
         </div>
         <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:14px;">
@@ -1073,8 +1217,15 @@
       .map(s => `<option value="${s.code}">${s.code} — ${s.name} (${s.dept})</option>`)
       .join('');
 
+    const stockMap = db.stockMap || {};
     const modelOptions = (db.models || [])
-      .map(m => `<option value="${m.model}">${m.model} (${m.w || '-'}x${m.d || '-'}x${m.h || '-'} mm) - ${m.description}</option>`)
+      .map(m => {
+        const st = stockMap[String(m.model || '').toUpperCase()];
+        const stockTag = st
+          ? (st.available > 0 ? ` [🟢 พร้อมส่ง ${st.available} เครื่อง]` : ` [🟠 ${st.leadTime}]`)
+          : '';
+        return `<option value="${m.model}">${m.model} (${m.w || '-'}x${m.d || '-'}x${m.h || '-'} mm) - ${m.description}${stockTag}</option>`;
+      })
       .join('');
 
     const customerOptions = (db.customers || [])
@@ -1268,6 +1419,7 @@
             <button type="button" id="hzkSqPreviewBtn" style="background:#002B49;color:#FFF;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;">👁️ Preview เอกสาร A4</button>
             <button type="button" id="hzkSqPrintPdfBtn" style="background:#DC2626;color:#FFF;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;">📕 พิมพ์ / บันทึก PDF (A4)</button>
             <button type="button" id="hzkSqExportExcelBtn" style="background:#15803D;color:#FFF;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;">📗 Export Excel (.xls)</button>
+            <button type="button" id="hzkSqMgrApproveBtn" style="background:#B45309;color:#FFF;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;">🔐 ขออนุมัติส่วนลด (LINE)</button>
             <button type="button" id="hzkSqShareHubBtn" style="background:#7C3AED;color:#FFF;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;">📤 แชร์ + Group CC/BCC</button>
             <button type="button" id="hzkSqSaveSyncBtn" style="background:#059669;color:#FFF;border:none;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;">☁️ บันทึกลงฐานข้อมูล</button>
           </div>
@@ -1402,6 +1554,22 @@
       downloadExcelFileDirect(db);
     };
 
+    document.getElementById('hzkSqMgrApproveBtn').onclick = async function () {
+      const qt = collectCurrentFormPayload(db);
+      const gasUrl = getGasEndpointUrl();
+      if (!gasUrl) {
+        alert('⚠️ กรุณาตั้งค่า Google Apps Script URL ก่อนส่งขออนุมัติครับ');
+        return;
+      }
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'requestDiscountApproval', quotation: qt })
+      });
+      const data = await res.json();
+      alert(data && data.message ? ('✅ ' + data.message) : '✅ ส่งคำขออนุมัติเรียบร้อยแล้ว');
+    };
+
     document.getElementById('hzkSqShareHubBtn').onclick = function () {
       openMultiChannelShareHubModal(db, null);
     };
@@ -1515,6 +1683,8 @@
     openDocumentTrackingDashboardModal(db);
   };
   window.openExecutiveBiDashboardModal = openExecutiveBiDashboardModal;
+  window.openWarrantyPmRenewalModal = openWarrantyPmRenewalModal;
+  window.openCustomerDealerPortalWindow = openCustomerDealerPortalWindow;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', dockOmniBridgeButtons);

@@ -17003,3 +17003,323 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountAllMasterUi_);
   else mountAllMasterUi_();
 })();
+
+
+/* ==========================================================================
+ * IN-FRAME STANDARD ACTION BAR & IMAGE/PDF SHARE ENGINE (v1079-INFRAME-STANDARD)
+ * ========================================================================== */
+(function() {
+  window.exportOrShareDocumentAsImageV1079 = async function(docKind) {
+    if (typeof showToast === 'function') showToast('📸 กำลังสร้างรูปภาพเอกสารความละเอียดสูง กรุณารอสักครู่...');
+    try {
+      var targetEl = (docKind === 'QUOTATION')
+        ? (document.getElementById('receiptContainer') || document.querySelector('#receiptModal .bg-white'))
+        : document.getElementById('jobSheetContainer');
+      if (!targetEl || typeof html2canvas !== 'function') {
+        if (typeof showToast === 'function') showToast('⚠️ ไม่พบพื้นที่เอกสารสำหรับสร้างรูปภาพ');
+        return;
+      }
+
+      var fileName = (docKind === 'QUOTATION')
+        ? ((document.getElementById('rcOfferNo') || document.getElementById('receiptOfferNo') || {}).value || 'HTH-Quotation') + '.png'
+        : ((document.getElementById('jobNo') || {}).value || 'JOB-ServiceReport') + '.png';
+
+      var canvas = await html2canvas(targetEl, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        ignoreElements: function(el) { return el.classList && el.classList.contains('no-print'); }
+      });
+
+      canvas.toBlob(async function(blob) {
+        if (!blob) return;
+        var file = new File([blob], fileName, { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'HOSHIZAKI Document - ' + fileName,
+              text: 'เอกสารจากระบบบริการ HOSHIZAKI (THAILAND)'
+            });
+            return;
+          } catch (eShare) {}
+        }
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+        if (typeof showToast === 'function') showToast('✅ บันทึกรูปภาพ ' + fileName + ' ลงเครื่องเรียบร้อย สามารถส่งเข้า LINE ได้ทันที!');
+      }, 'image/png', 0.95);
+    } catch (err) {
+      if (typeof showToast === 'function') showToast('⚠️ เกิดข้อผิดพลาดในการสร้างรูปภาพ: ' + err.message);
+    }
+  };
+
+  window.downloadCurrentDocumentPdfV1079 = function(docKind) {
+    if (docKind === 'QUOTATION') {
+      if (typeof printCurrentDocument === 'function') printCurrentDocument('RECEIPT');
+      else window.print();
+    } else {
+      if (typeof printCurrentDocument === 'function') printCurrentDocument('JOB');
+      else window.print();
+    }
+  };
+
+  function buildSharePopoverHtml_(menuId, docKind) {
+    var fnShare = docKind === 'QUOTATION' ? 'proDockShareQtAction' : 'proDockShareJobAction';
+    return '' +
+      '<div id="' + menuId + '" onclick="event.stopPropagation()" class="hidden absolute bottom-full right-0 mb-2 w-72 sm:w-80 bg-white rounded-lg shadow-2xl border border-slate-300 p-2 space-y-1 text-xs z-[9996] text-left">' +
+        '<div class="px-2.5 py-1.5 bg-[#002B49] text-white font-bold rounded flex items-center justify-between">' +
+          '<span><i class="fa-solid fa-share-nodes mr-1 text-amber-300"></i> เลือกรูปแบบและช่องทางแชร์</span>' +
+          '<button type="button" onclick="document.getElementById(\'' + menuId + '\').classList.add(\'hidden\')" class="text-white hover:text-rose-300 font-bold text-sm">&times;</button>' +
+        '</div>' +
+        '<div class="px-2 pt-1 text-[10px] font-extrabold text-sky-800 uppercase">รูปแบบที่ 1: แชร์เป็นรูปภาพ (ดูง่ายบนมือถือ/LINE)</div>' +
+        '<button type="button" onclick="document.getElementById(\'' + menuId + '\').classList.add(\'hidden\'); exportOrShareDocumentAsImageV1079(\'' + docKind + '\');" class="w-full text-left px-2.5 py-2 rounded hover:bg-sky-50 font-bold text-slate-900 flex items-center gap-2 border border-sky-100">' +
+          '<i class="fa-solid fa-image text-sky-600 text-sm"></i> <span>แชร์ / บันทึกรูปภาพเอกสาร (.PNG)</span>' +
+        '</button>' +
+        '<div class="px-2 pt-1.5 text-[10px] font-extrabold text-emerald-800 uppercase">รูปแบบที่ 2: แชร์เป็นไฟล์เอกสาร (PDF มาตรฐาน A4)</div>' +
+        '<button type="button" onclick="' + fnShare + '(\'LINE_GROUP\')" class="w-full text-left px-2.5 py-2 rounded hover:bg-emerald-50 font-semibold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-users text-[#002B49]"></i> <span>1. แชร์ PDF เข้า LINE กลุ่ม (ทีมช่าง / ดีลเลอร์)</span></button>' +
+        '<button type="button" onclick="' + fnShare + '(\'LINE_PERSONAL\')" class="w-full text-left px-2.5 py-2 rounded hover:bg-green-50 font-semibold text-slate-800 flex items-center gap-2"><i class="fa-brands fa-line text-[#06C755]"></i> <span>2. แชร์เข้า LINE ส่วนตัว / แชทลูกค้า</span></button>' +
+        '<button type="button" onclick="' + fnShare + '(\'EMAIL_PDF\')" class="w-full text-left px-2.5 py-2 rounded hover:bg-amber-50 font-semibold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-envelope text-amber-600"></i> <span>3. ส่งอีเมลพร้อมไฟล์แนบ PDF</span></button>' +
+        '<button type="button" onclick="document.getElementById(\'' + menuId + '\').classList.add(\'hidden\'); downloadCurrentDocumentPdfV1079(\'' + docKind + '\');" class="w-full text-left px-2.5 py-2 rounded hover:bg-slate-100 font-semibold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-file-pdf text-rose-600"></i> <span>4. พิมพ์ / บันทึกเป็นไฟล์ PDF (.pdf)</span></button>' +
+      '</div>';
+  }
+
+  function mountInFrameStandardBars_() {
+    ['hzkJobFloatingDock', 'hzkQuotationFloatingDock'].forEach(function(id) {
+      var oldDock = document.getElementById(id);
+      if (oldDock) oldDock.remove();
+    });
+
+    document.querySelectorAll('button, span, div').forEach(function(el) {
+      if (el.textContent && el.textContent.indexOf('แสดงทั้งหมด (4 หมวด)') > -1 && el.children.length <= 2) {
+        el.style.fontSize = '12px';
+        el.style.maxWidth = '100%';
+        el.style.whiteSpace = 'nowrap';
+        el.style.overflow = 'hidden';
+        el.style.textOverflow = 'ellipsis';
+      }
+    });
+
+    var jobContainer = document.getElementById('jobSheetContainer');
+    if (jobContainer && !document.getElementById('hzkInFrameJobActionBar')) {
+      var jobBar = document.createElement('div');
+      jobBar.id = 'hzkInFrameJobActionBar';
+      jobBar.className = 'no-print pt-3 mt-3 border-t-2 border-slate-200 relative';
+      jobBar.innerHTML = '' +
+        buildSharePopoverHtml_('hzkJobDockSharePopover', 'JOB') +
+        '<div class="grid grid-cols-2 sm:grid-cols-5 gap-2">' +
+          '<button type="button" onclick="proDockSaveJobUpsert()" class="h-10 bg-[#0B875B] hover:bg-[#096E4A] text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-floppy-disk"></i>' +
+            '<span id="hzkProDockSaveLabel">บันทึกใบงาน</span>' +
+          '</button>' +
+          '<button type="button" onclick="proDockOpenQuotationFromJob()" class="h-10 bg-[#D97706] hover:bg-[#B45309] text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-file-invoice-dollar"></i>' +
+            '<span>สร้างใบเสนอราคา</span>' +
+          '</button>' +
+          '<button type="button" onclick="if(typeof openFullSheetPreview===\'function\') openFullSheetPreview();" class="h-10 bg-[#002B49] hover:bg-[#00406B] text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-eye text-sky-300"></i>' +
+            '<span>พรีวิว A4</span>' +
+          '</button>' +
+          '<button type="button" onclick="toggleJobDockShareMenu(event)" class="h-10 bg-[#06C755] hover:bg-[#05B04B] text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-share-nodes"></i>' +
+            '<span>แชร์ (รูป/PDF)</span>' +
+          '</button>' +
+          '<button type="button" onclick="window.scrollTo({top:0,behavior:\'smooth\'})" class="col-span-2 sm:col-span-1 h-10 bg-slate-700 hover:bg-slate-800 text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-arrow-up text-amber-300"></i>' +
+            '<span>ขึ้นบนสุด</span>' +
+          '</button>' +
+        '</div>';
+      jobContainer.appendChild(jobBar);
+    }
+
+    var rcContainer = document.getElementById('receiptContainer');
+    if (rcContainer && !document.getElementById('hzkInFrameQtActionBar')) {
+      var qtBar = document.createElement('div');
+      qtBar.id = 'hzkInFrameQtActionBar';
+      qtBar.className = 'no-print pt-3 mt-3 border-t-2 border-slate-200 relative';
+      qtBar.innerHTML = '' +
+        buildSharePopoverHtml_('hzkQtDockSharePopover', 'QUOTATION') +
+        '<div class="grid grid-cols-2 sm:grid-cols-5 gap-2">' +
+          '<button type="button" onclick="proDockSaveQuotationUpsert()" class="h-10 bg-[#0B875B] hover:bg-[#096E4A] text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-floppy-disk"></i>' +
+            '<span>บันทึกใบเสนอราคา</span>' +
+          '</button>' +
+          '<button type="button" onclick="proDockConvertQtToInvoice()" class="h-10 bg-[#002B49] hover:bg-[#00406B] text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-file-invoice text-amber-300"></i>' +
+            '<span>ออกบิล (IV/RE)</span>' +
+          '</button>' +
+          '<button type="button" onclick="downloadCurrentDocumentPdfV1079(\'QUOTATION\')" class="h-10 bg-[#D97706] hover:bg-[#B45309] text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-print"></i>' +
+            '<span>พิมพ์ / PDF</span>' +
+          '</button>' +
+          '<button type="button" onclick="toggleQtDockShareMenu(event)" class="h-10 bg-[#06C755] hover:bg-[#05B04B] text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-share-nodes"></i>' +
+            '<span>แชร์ (รูป/PDF)</span>' +
+          '</button>' +
+          '<button type="button" onclick="var s=document.querySelector(\'#receiptModal .overflow-y-auto, #receiptModal .mobile-scroll-x\'); if(s) s.scrollTo({top:0,behavior:\'smooth\'});" class="col-span-2 sm:col-span-1 h-10 bg-slate-700 hover:bg-slate-800 text-white rounded-lg px-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition">' +
+            '<i class="fa-solid fa-arrow-up text-amber-300"></i>' +
+            '<span>ขึ้นบนสุด</span>' +
+          '</button>' +
+        '</div>';
+      rcContainer.appendChild(qtBar);
+    }
+  }
+
+  setTimeout(mountInFrameStandardBars_, 300);
+  setTimeout(mountInFrameStandardBars_, 1200);
+  var origGenRc = window.generateReceiptModal;
+  if (typeof origGenRc === 'function' && !origGenRc._v1079Wrapped) {
+    window.generateReceiptModal = function() {
+      var r = origGenRc.apply(this, arguments);
+      setTimeout(mountInFrameStandardBars_, 220);
+      return r;
+    };
+    window.generateReceiptModal._v1079Wrapped = true;
+  }
+})();
+
+/* ==========================================================================
+ * ZERO-DUPLICATE UPSERT & 1-JOB-TO-1-QUOTATION GUARD (v1080-ZERO-DUPLICATE)
+ * ========================================================================== */
+(function() {
+  var _isSavingJobLock = false;
+  var _isSavingQtLock = false;
+
+  function normKey_(val) {
+    return String(val || '').trim().toUpperCase().replace(/\s+/g, '');
+  }
+
+  window.deduplicateHoshizakiDatabasesNow = function(silent) {
+    var removedJobs = 0;
+    var removedQts = 0;
+    try {
+      var jobs = JSON.parse(localStorage.getItem('hoshizaki_job_history') || '[]');
+      if (Array.isArray(jobs)) {
+        var seenJ = {};
+        var cleanJ = [];
+        jobs.forEach(function(item) {
+          var k = normKey_(item && item.jobNo);
+          if (!k) return;
+          if (!seenJ[k]) {
+            seenJ[k] = true;
+            cleanJ.push(item);
+          } else {
+            removedJobs++;
+          }
+        });
+        if (removedJobs > 0) localStorage.setItem('hoshizaki_job_history', JSON.stringify(cleanJ));
+      }
+    } catch (e1) {}
+
+    try {
+      var qts = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
+      if (Array.isArray(qts)) {
+        var seenQ = {};
+        var cleanQ = [];
+        qts.forEach(function(item) {
+          var k = normKey_(item && item.offerNo);
+          if (!k) return;
+          if (!seenQ[k]) {
+            seenQ[k] = true;
+            cleanQ.push(item);
+          } else {
+            removedQts++;
+          }
+        });
+        if (removedQts > 0) localStorage.setItem('hoshizaki_quotations_history', JSON.stringify(cleanQ));
+      }
+    } catch (e2) {}
+
+    if (!silent && typeof showToast === 'function') {
+      showToast('🛡️ ตรวจสอบความซ้ำซ้อนเสร็จสิ้น (ล้างซ้ำ: ใบงาน ' + removedJobs + ' / ใบเสนอราคา ' + removedQts + ')');
+    }
+    return { removedJobs: removedJobs, removedQts: removedQts };
+  };
+
+  var _origSaveToHistory = window.saveToHistory;
+  if (typeof _origSaveToHistory === 'function' && !_origSaveToHistory._v1080Guarded) {
+    window.saveToHistory = function() {
+      if (_isSavingJobLock) return;
+      _isSavingJobLock = true;
+      setTimeout(function() { _isSavingJobLock = false; }, 1800);
+
+      var jobEl = document.getElementById('jobNo');
+      if (jobEl) jobEl.value = String(jobEl.value || '').trim().toUpperCase();
+
+      var res = _origSaveToHistory.apply(this, arguments);
+      window.deduplicateHoshizakiDatabasesNow(true);
+      return res;
+    };
+    window.saveToHistory._v1080Guarded = true;
+  }
+
+  window.proDockOpenQuotationFromJob = function() {
+    var jobNoRaw = (document.getElementById('jobNo') || {}).value || '';
+    var jobNoNorm = normKey_(jobNoRaw);
+
+    if (typeof window.runJobAutoSaveV1076 === 'function') window.runJobAutoSaveV1076(true);
+    if (typeof window.saveToHistory === 'function') {
+      try { window.saveToHistory(); } catch (e) {}
+    }
+
+    var existingQt = null;
+    try {
+      var qts = JSON.parse(localStorage.getItem('hoshizaki_quotations_history') || '[]');
+      existingQt = qts.find(function(q) {
+        return jobNoNorm && normKey_(q.refJobNo) === jobNoNorm;
+      });
+    } catch (e2) {}
+
+    if (typeof generateReceiptModal === 'function') {
+      generateReceiptModal(false);
+      setTimeout(function() {
+        var br = typeof window.getActiveHoshizakiBranch === 'function' ? window.getActiveHoshizakiBranch() : 'BKK';
+        var offerInput = document.getElementById('rcOfferNo') || document.getElementById('receiptOfferNo');
+        var refJobEl = document.getElementById('rcRefJobNo') || document.getElementById('receiptRefJobNo');
+
+        if (refJobEl && jobNoRaw) refJobEl.value = jobNoRaw.trim().toUpperCase();
+
+        if (existingQt && existingQt.offerNo && offerInput) {
+          offerInput.value = existingQt.offerNo;
+          offerInput.dispatchEvent(new Event('change', { bubbles: true }));
+          if (typeof showToast === 'function') {
+            showToast('🔗 พบใบเสนอราคาเดิม (' + existingQt.offerNo + ') ของใบงานนี้ โหลดขึ้นมาอัปเดตต่อให้แล้ว (ไม่สร้างซ้ำ)');
+          }
+        } else if (offerInput) {
+          offerInput.value = typeof window.generateNextBranchQuotationNo === 'function'
+            ? window.generateNextBranchQuotationNo(br, 'HTH')
+            : offerInput.value;
+          offerInput.dispatchEvent(new Event('change', { bubbles: true }));
+          if (typeof showToast === 'function') {
+            showToast('📄 สร้างใบเสนอราคาใหม่ (' + offerInput.value + ') จากใบงาน ' + jobNoRaw + ' เรียบร้อย');
+          }
+        }
+      }, 170);
+    }
+  };
+
+  window.proDockSaveQuotationUpsert = function() {
+    if (_isSavingQtLock) return;
+    _isSavingQtLock = true;
+    setTimeout(function() { _isSavingQtLock = false; }, 1800);
+
+    var offerInput = document.getElementById('rcOfferNo') || document.getElementById('receiptOfferNo');
+    if (offerInput) offerInput.value = String(offerInput.value || '').trim().toUpperCase();
+
+    if (typeof saveCurrentQuotationToHistory === 'function') {
+      saveCurrentQuotationToHistory();
+    } else {
+      var saveBtn = document.querySelector('#receiptModal button[onclick*="save"]');
+      if (saveBtn) saveBtn.click();
+    }
+    window.deduplicateHoshizakiDatabasesNow(true);
+    if (typeof showToast === 'function') {
+      showToast('💾 บันทึก / อัปเดตใบเสนอราคา (' + (offerInput ? offerInput.value : '') + ') เรียบร้อย (ไม่ซ้ำซ้อน)');
+    }
+  };
+
+  setTimeout(function() { window.deduplicateHoshizakiDatabasesNow(true); }, 600);
+})();

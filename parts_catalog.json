@@ -1,7 +1,7 @@
 ﻿{
   "updatedAt": "2026-11-20",
   "totalParts": 20,
-  "version": "1076-COMPLETE-MASTER",
+  "version": "1080-ZERO-DUPLICATE",
   "parts": [
     { "partNo": "4A1726-39", "desc": "COMPR BOXED (RST64C1E-CAZ-702)", "price": 0 },
     { "partNo": "4A2666-01", "desc": "DRIER", "price": 0 },
@@ -25,3 +25,4 @@
     { "partNo": "PM-SVC", "desc": "PM Cleaning Service / ค่าบริการล้างบำรุงรักษา", "price": 0 }
   ]
 }
+

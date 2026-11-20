@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1150-PRODUCTION-GO-LIVE-SUITE',
+    version: 'v1152-DEPT-AND-INDIVIDUAL-LIVE-INSPECTOR',
     masterDb: null,
     items: []
   };
@@ -195,6 +195,7 @@
       { icon: '📈', label: 'รายงานสรุปผู้บริหาร & AI Copilot (BI)', sub: 'KPI รวม + AI ติดตามใบเสนอราคาค้าง + ส่งเข้า LINE ผู้บริหาร', action: () => window.openExecutiveBiDashboardModal() },
       { divider: true },
       { icon: '🏭', label: 'ส่งออกข้อมูลเปิด Sales Order เข้า ERP / NAV', sub: 'ดาวน์โหลดไฟล์ตารางรายการ PO Approved พร้อมนำเข้าระบบบัญชี/ERP', action: () => window.exportErpSalesOrdersCsv() },
+      { icon: '🎭', label: 'จำลองหน้าจอจริงแยกแผนก & รายบุคคล (Live Inspector)', sub: 'สลับดูหน้าตาการทำงานจริงแยก 8 แผนก หรือเจาะดูรายบุคคล (เซลล์ / ช่าง / บัญชี)', action: () => window.openDepartmentLiveSimulatorModal() },
       { icon: '🛡️', label: 'ตรวจความพร้อมระบบ & Go-Live Control (QA)', sub: 'เช็กสถานะ Token/API/Sheets + ติดตั้ง LINE Rich Menu + ล้างข้อมูลทดสอบ', action: () => window.openProductionGoLiveQaModal() },
       { icon: '📖', label: 'คู่มือใช้งานฉบับย่อแยกแผนก (Role SOP Guide)', sub: 'คู่มือ 1 หน้าสำหรับช่างบริการ / ฝ่ายขาย-JPC / บัญชี-ดีลเลอร์', action: () => window.openDepartmentRoleSopModal() }
     ];
@@ -2001,11 +2002,465 @@ ze:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}
   window.triggerEmailStockSyncNow = triggerEmailStockSyncNow;
   window.exportErpSalesOrdersCsv = exportErpSalesOrdersCsv;
   window.openProductionGoLiveQaModal = openProductionGoLiveQaModal;
+
+  const DEPT_VIEW_PROFILES = [
+    {
+      id: 'SERVICE_TECH',
+      icon: '🛠️',
+      deptName: 'Service Field Technician (ช่างบริการภาคสนาม)',
+      badgeColor: '#991B1B',
+      bgLight: '#FEF2F2',
+      borderCol: '#FECACA',
+      uiMode: 'TECH',
+      visibleModules: 'ใบแจ้งบริการ (Service Report), สแกน S/N & คู่มือ 5 หมวด, ส่งใบแจ้งบริการ/ใบเสร็จพร้อมปุ่ม Track, เช็กอะไหล่ในรถ',
+      hiddenModules: 'ซ่อนราคาทุน (Cost), ซ่อนกำไรขั้นต้น (GP%), ซ่อนเมนูอนุมัติส่วนลดผู้บริหารและส่งออก ERP',
+      launchWorkspace: () => {
+        applyGlobalAppRoleMode('TECH');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    {
+      id: 'SERVICE_MGR',
+      icon: '🧑‍💼',
+      deptName: 'Service Manager & Dispatch (ผู้จัดการฝ่ายบริการ/จ่ายงาน)',
+      badgeColor: '#B91C1C',
+      bgLight: '#FFF1F2',
+      borderCol: '#FECDD3',
+      uiMode: 'MANAGER',
+      visibleModules: 'เห็นราคาทุน & GP%, จ่ายงานช่าง (T01-T08), ติดตามเคสดีลเลอร์ (SLA 2 ชม.), ต่ออายุสัญญา PM & ประกัน 60 วัน',
+      hiddenModules: 'เปิดสิทธิ์ครบทุกเครื่องมือแผนกบริการและตรวจสอบคุณภาพ',
+      launchWorkspace: () => {
+        applyGlobalAppRoleMode('MANAGER');
+        window.openWarrantyPmRenewalModal();
+      }
+    },
+    {
+      id: 'SALES_TH',
+      icon: '💼',
+      deptName: 'Commercial Sales (ฝ่ายขายในประเทศ THB)',
+      badgeColor: '#002B49',
+      bgLight: '#EFF6FF',
+      borderCol: '#BFDBFE',
+      uiMode: 'MANAGER',
+      visibleModules: 'ใบเสนอราคา Y2026 (THB + VAT 7% + WHT 3%), เติมขนาด W×D×H อัตโนมัติ, เช็กสต็อกสด HHE, ส่งต่องานติดตั้ง/ลงทะเบียน S/N',
+      hiddenModules: 'ล็อกเพดานส่วนลด >5% ต้องกดขออนุมัติผู้จัดการผ่าน LINE',
+      launchWorkspace: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)')
+    },
+    {
+      id: 'JPC_CORP',
+      icon: '🇯🇵',
+      deptName: 'Japanese Corporate (ฝ่ายขายองค์กรญี่ปุ่น & Inter-Co)',
+      badgeColor: '#1E1B4B',
+      bgLight: '#EEF2FF',
+      borderCol: '#C7D2FE',
+      uiMode: 'MANAGER',
+      visibleModules: 'ใบเสนอราคา Japanese Corporate (THB Local & USD Export 0% VAT), เชื่อมฐานลูกค้า Mr. Furujo, CC กลุ่ม JPC_TEAM อัตโนมัติ',
+      hiddenModules: 'แสดงแถบการ์ด LINE สีม่วงครามเฉพาะฝ่าย Japanese Corporate',
+      launchWorkspace: () => openSalesCorporateQuotationWithPreset('Japanese Corporate', 'ใบเสนอราคา (Quotation)')
+    },
+    {
+      id: 'MARKETING',
+      icon: '📣',
+      deptName: 'Marketing & Product (ฝ่ายการตลาดและผลิตภัณฑ์)',
+      badgeColor: '#065F46',
+      bgLight: '#ECFDF5',
+      borderCol: '#A7F3D0',
+      uiMode: 'MANAGER',
+      visibleModules: 'ใบเสนอราคาแคมเปญโปรโมชัน, ตารางสต็อกเครื่องโชว์/มีตำหนิ 602 รายการพร้อมลิงก์ใบตรวจสภาพ, การ์ด LINE สีเขียวมรกต',
+      hiddenModules: 'สามารถดึงเครื่อง Demo/Clearance ลงใบเสนอราคาได้ทันที',
+      launchWorkspace: () => window.openDamageDemoStockModal()
+    },
+    {
+      id: 'ACCOUNTING',
+      icon: '🧾',
+      deptName: 'Accounting & Billing (ฝ่ายบัญชีและการเงิน)',
+      badgeColor: '#0F766E',
+      bgLight: '#F0FDFA',
+      borderCol: '#99F6E4',
+      uiMode: 'MANAGER',
+      visibleModules: 'แปลงใบเสนอราคาเป็นใบวางบิล/ใบเสร็จ (1 คลิก), กรอกเลขผู้เสียภาษี 13 หลัก/สาขา, CC ฝ่ายบัญชีอัตโนมัติ, ส่งออก CSV เข้า ERP/NAV',
+      hiddenModules: 'ติดตามสถานะลูกค้ากดยืนยันรับใบวางบิล/ใบเสร็จแบบเรียลไทม์',
+      launchWorkspace: () => openSalesCorporateQuotationWithPreset('Service & Billing', 'ใบวางบิล (Billing Note)')
+    },
+    {
+      id: 'ADMIN_HR',
+      icon: '🏢',
+      deptName: 'Admin & HR (ฝ่ายธุรการและบุคคล)',
+      badgeColor: '#4338CA',
+      bgLight: '#F5F3FF',
+      borderCol: '#DDD6FE',
+      uiMode: 'MANAGER',
+      visibleModules: 'จัดการรายชื่อพนักงาน (CRM_Staff_Directory), ตั้งค่ากลุ่มอีเมล CC/BCC 7 แผนก, ตรวจความพร้อมระบบ Go-Live QA & คู่มือ SOP',
+      hiddenModules: 'ควบคุมสิทธิ์การเข้าถึงและการสำรองข้อมูลกลาง',
+      launchWorkspace: () => window.openProductionGoLiveQaModal()
+    },
+    {
+      id: 'EXECUTIVE',
+      icon: '📈',
+      deptName: 'Executive Management (คณะผู้บริหารสูงสุด)',
+      badgeColor: '#B45309',
+      bgLight: '#FFFBEB',
+      borderCol: '#FDE68A',
+      uiMode: 'MANAGER',
+      visibleModules: 'Executive BI Dashboard รวมทุกแผนก, AI Sales Follow-Up Copilot, อนุมัติส่วนลด >12% ผ่าน LINE, รับสรุปรายสัปดาห์อัตโนมัติ',
+      hiddenModules: 'รับสำเนาลับ (BCC) ใบเสนอราคาโครงการสำคัญ',
+      launchWorkspace: () => window.openExecutiveBiDashboardModal()
+    }
+  ];
+
+  function applyGlobalAppRoleMode(mode) {
+    try {
+      // Trigger existing PWA technician/manager toggle if available in DOM
+      const btns = Array.from(document.querySelectorAll('button'));
+      if (mode === 'TECH') {
+        const toTech = btns.find(b => /สลับเป็นโหมดช่างดำเนินงาน/i.test(b.textContent || ''));
+        if (toTech) toTech.click();
+      } else {
+        const toMgr = btns.find(b => /สลับเป็นโหมดผู้จัดการ|ผู้จัดการ\/จ่ายงาน/i.test(b.textContent || ''));
+        if (toMgr && /ช่างดำเนินงาน/.test(document.body.innerText)) toMgr.click();
+      }
+    } catch (e)  const FIELD_TECH_ROSTER = [
+    { code: 'T01', name: 'ช่างบริการ T01 (Bangkok North)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
+    { code: 'T02', name: 'ช่างบริการ T02 (Bangkok South)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
+    { code: 'T03', name: 'ช่างบริการ T03 (Bangkok East)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
+    { code: 'T04', name: 'ช่างบริการ T04 (Nonthaburi / Pathum)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
+    { code: 'T05', name: 'ช่างบริการ T05 (Samut Prakan / Chonburi)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
+    { code: 'T06', name: 'ช่างบริการ T06 (Ayutthaya / Central)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
+    { code: 'T07', name: 'ช่างบริการ T07 (Upcountry / Dealer Sub)', dept: 'Service Field Tech', role: 'Field Service Technician', email: 'services@hoshizaki.co.th', isTech: true },
+    { code: 'T08', name: 'ช่างบริการ T08 (Installation & PM)', dept: 'Service Field Tech', role: 'Installation Specialist', email: 'services@hoshizaki.co.th', isTech: true }
+  ];
+
+  function showDepartmentSimulationBanner(profile, staffMember) {
+    let banner = document.getElementById('hzkDeptSimActiveBanner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'hzkDeptSimActiveBanner';
+      banner.style.cssText =
+        'position:fixed;bottom:14px;left:14px;z-index:20050;background:#0F172A;color:#FFF;' +
+        'border:2px solid #38BDF8;border-radius:12px;padding:10px 14px;box-shadow:0 10px 30px rgba(0,0,0,0.4);' +
+        'font-family:sans-serif;font-size:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:94vw;';
+      document.body.appendChild(banner);
+    }
+
+    if (staffMember) {
+      banner.innerHTML = `
+        <div>
+          <div style="font-size:10px;color:#FBBF24;font-weight:800;">👤 INDIVIDUAL STAFF LIVE VIEW (SUPER ADMIN AUDIT)</div>
+          <div style="font-weight:700;">กำลังดูหน้าจอของ: ${staffMember.name} [${staffMember.dept}]</div>
+        </div>
+        <button type="button" id="hzkReopenStaffDetailBtn" style="background:#059669;color:#FFF;border:none;border-radius:7px;padding:6px 10px;font-weight:700;cursor:pointer;white-space:nowrap;">📊 ดูงาน/ลูกค้าของคนนี้</button>
+        <button type="button" id="hzkSwitchDeptBannerBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:7px;padding:6px 10px;font-weight:700;cursor:pointer;white-space:nowrap;">เปลี่ยนคน/แผนก</button>
+        <button type="button" id="hzkExitDeptBannerBtn" style="background:#EF4444;color:#FFF;border:none;border-radius:7px;padding:6px 10px;font-weight:700;cursor:pointer;white-space:nowrap;">✕ กลับ Super Admin</button>
+      `;
+      banner.style.display = 'flex';
+      document.getElementById('hzkReopenStaffDetailBtn').onclick = () => openIndividualStaffWorkspaceDrawer(staffMember);
+    } else {
+      banner.innerHTML = `
+        <div>
+          <div style="font-size:10px;color:#38BDF8;font-weight:800;">🎭 ACTIVE DEPARTMENT VIEW SIMULATION</div>
+          <div style="font-weight:700;">${profile.icon} กำลังแสดงมุมมอง: ${profile.deptName}</div>
+        </div>
+        <button type="button" id="hzkSwitchDeptBannerBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:7px;padding:6px 10px;font-weight:700;cursor:pointer;white-space:nowrap;">เปลี่ยนแผนก/บุคคล</button>
+        <button type="button" id="hzkExitDeptBannerBtn" style="background:#EF4444;color:#FFF;border:none;border-radius:7px;padding:6px 10px;font-weight:700;cursor:pointer;white-space:nowrap;">✕ กลับ Super Admin</button>
+      `;
+      banner.style.display = 'flex';
+    }
+
+    document.getElementById('hzkSwitchDeptBannerBtn').onclick = openDepartmentLiveSimulatorModal;
+    document.getElementById('hzkExitDeptBannerBtn').onclick = function () {
+      applyGlobalAppRoleMode('MANAGER');
+      banner.style.display = 'none';
+    };
+  }
+
+  async function openIndividualStaffWorkspaceDrawer(staff) {
+    const db = await loadSalesMasterDb(false);
+    const assignedCustomers = (db.customers || []).filter(c =>
+      String(c.assignedSales || '').trim().toUpperCase() === String(staff.code || '').trim().toUpperCase()
+    );
+
+    const localArchives = (() => {
+      try { return JSON.parse(localStorage.getItem(STORAGE_ARCHIVE_KEY) || '[]'); } catch (e) { return []; }
+    })();
+    const staffQuotes = localArchives.filter(q =>
+      String(q.salesperson || '').trim().toUpperCase() === String(staff.code || '').trim().toUpperCase()
+    );
+
+    let drawer = document.getElementById('hzkIndividualStaffDrawerModal');
+    if (!drawer) {
+      drawer = document.createElement('div');
+      drawer.id = 'hzkIndividualStaffDrawerModal';
+      drawer.style.cssText =
+        'position:fixed;inset:0;z-index:20030;background:rgba(15,23,42,0.82);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(drawer);
+    }
+
+    const custRows = assignedCustomers.slice(0, 60).map((c, idx) => `
+      <tr>
+        <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">${idx + 1}</td>
+        <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${c.name}</td>
+        <td style="padding:6px;border:1px solid #CBD5E1;">${c.paymentTerms || '30DAYS'}</td>
+        <td style="padding:6px;border:1px solid #CBD5E1;">${c.phone || '-'}</td>
+        <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">
+          <button type="button" data-cust-name="${c.name.replace(/"/g, '&quot;')}" class="hzk-staff-new-qt-cust" style="background:#0284C7;color:#FFF;border:none;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;">+ ออกใบเสนอราคา</button>
+        </td>
+      </tr>
+    `).join('') || '<tr><td colspan="5" style="padding:12px;text-align:center;color:#64748B;">ไม่มีรายชื่อลูกค้าผูกตายตัว (สามารถออกเอกสารให้ลูกค้าทั่วไปได้ทั้งหมด)</td></tr>';
+
+    const qtRows = staffQuotes.slice(0, 25).map(q => `
+      <tr>
+        <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${q.offerNo} (${q.rev})</td>
+        <td style="padding:6px;border:1px solid #CBD5E1;">${q.customerName || '-'}</td>
+        <td style="padding:6px;border:1px solid #CBD5E1;">${q.date || '-'}</td>
+        <td style="padding:6px;border:1px solid #CBD5E1;text-align:right;font-weight:700;">${Number(q.grandTotal || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+      </tr>
+    `).join('') || '<tr><td colspan="4" style="padding:12px;text-align:center;color:#64748B;">ยังไม่มีประวัติใบเสนอราคาในเครื่องของรหัสนี้</td></tr>';
+
+    drawer.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:960px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:sans-serif;">
+        <div style="background:#1E1B4B;color:#FFF;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-size:11px;color:#FBBF24;font-weight:800;">INDIVIDUAL STAFF WORKSPACE &amp; KPI SNAPSHOT</div>
+            <div style="font-size:16px;font-weight:700;">👤 ${staff.name} (${staff.code}) — แผนก: ${staff.dept}</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button type="button" id="hzkStaffCreateDocAsUserBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">📄 ออกเอกสารในชื่อ ${staff.name}</button>
+            <button type="button" onclick="document.getElementById('hzkIndividualStaffDrawerModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          </div>
+        </div>
+
+        <div style="padding:16px 20px;font-size:13px;color:#0F172A;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:16px;">
+            <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:12px;">
+              <div style="font-size:11px;font-weight:700;color:#1D4ED8;">🏢 ลูกค้าในความดูแล (Assigned Accounts)</div>
+              <div style="font-size:20px;font-weight:800;color:#002B49;margin-top:4px;">${assignedCustomers.length} บริษัท</div>
+            </div>
+            <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:12px;">
+              <div style="font-size:11px;font-weight:700;color:#15803D;">📄 เอกสารที่ออกในเครื่อง (Local Archive)</div>
+              <div style="font-size:20px;font-weight:800;color:#14532D;margin-top:4px;">${staffQuotes.length} ฉบับ</div>
+            </div>
+            <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:12px;">
+              <div style="font-size:11px;font-weight:700;color:#B45309;">🛡️ โหมดสิทธิ์หน้าจอจริง (RBAC Mode)</div>
+              <div style="font-size:16px;font-weight:800;color:#78350F;margin-top:6px;">${staff.isTech ? '🛠️ Field Technician (ซ่อนทุน/GP%)' : '💼 Commercial / Manager View'}</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <div style="font-weight:700;color:#002B49;margin-bottom:6px;">รายชื่อลูกค้าที่ผูกกับคุณ ${staff.name} (${assignedCustomers.length} ราย):</div>
+            <div style="overflow-x:auto;max-height:240px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;">
+              <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <thead><tr style="background:#002B49;color:#FFF;"><th style="padding:7px;">#</th><th style="padding:7px;text-align:left;">ชื่อบริษัทลูกค้า</th><th style="padding:7px;">เครดิต</th><th style="padding:7px;">เบอร์โทร</th><th style="padding:7px;">ดำเนินการ</th></tr></thead>
+                <tbody>${custRows}</tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-weight:700;color:#002B49;margin-bottom:6px;">ประวัติใบเสนอราคาล่าสุดของ ${staff.name}:</div>
+            <div style="overflow-x:auto;border:1px solid #E2E8F0;border-radius:8px;">
+              <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <thead><tr style="background:#0F172A;color:#FFF;"><th style="padding:7px;text-align:left;">Offer No.</th><th style="padding:7px;text-align:left;">ลูกค้า</th><th style="padding:7px;">วันที่</th><th style="padding:7px;text-align:right;">ยอดสุทธิ</th></tr></thead>
+                <tbody>${qtRows}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    drawer.style.display = 'flex';
+
+    document.getElementById('hzkStaffCreateDocAsUserBtn').onclick = async function () {
+      drawer.style.display = 'none';
+      const targetDept = /Japan/i.test(staff.dept) ? 'Japanese Corporate' : (/Market/i.test(staff.dept) ? 'Marketing' : (/Service/i.test(staff.dept) ? 'Service & Billing' : 'Sales'));
+      await openSalesCorporateQuotationWithPreset(targetDept, 'ใบเสนอราคา (Quotation)');
+      const spEl = document.getElementById('hzkSqSalesperson');
+      if (spEl) spEl.value = staff.code;
+      const remEl = document.getElementById('hzkSqRemarks');
+      if (remEl && remEl.value.indexOf('Super Admin Audit') === -1) {
+        remEl.value += '\n- [Super Admin Audit Support: ตรวจสอบ/ออกเอกสารร่วมกับ ' + staff.name + ']';
+      }
+    };
+
+    drawer.querySelectorAll('.hzk-staff-new-qt-cust').forEach(btn => {
+      btn.onclick = async function () {
+        const cName = btn.getAttribute('data-cust-name');
+        drawer.style.display = 'none';
+        const targetDept = /Japan/i.test(staff.dept) ? 'Japanese Corporate' : 'Sales';
+        await openSalesCorporateQuotationWithPreset(targetDept, 'ใบเสนอราคา (Quotation)');
+        const spEl = document.getElementById('hzkSqSalesperson');
+        if (spEl) spEl.value = staff.code;
+        const cEl = document.getElementById('hzkSqCustomer');
+        if (cEl) {
+          cEl.value = cName;
+          cEl.dispatchEvent(new Event('change'));
+        }
+      };
+    });
+  }
+
+  async function openDepartmentLiveSimulatorModal() {
+    const db = await loadSalesMasterDb(false);
+    const allIndividuals = (db.activeStaff || []).map(s => ({
+      code: s.code,
+      name: s.name,
+      dept: s.dept || 'Sales',
+      role: s.role || 'Staff',
+      email: s.email || 'services@hoshizaki.co.th',
+      isTech: false
+    })).concat(FIELD_TECH_ROSTER);
+
+    let simModal = document.getElementById('hzkDeptLiveSimulatorModal');
+    if (!simModal) {
+      simModal = document.createElement('div');
+      simModal.id = 'hzkDeptLiveSimulatorModal';
+      simModal.style.cssText =
+        'position:fixed;inset:0;z-index:20020;background:rgba(15,23,42,0.82);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(simModal);
+    }
+
+    const deptCardsHtml = DEPT_VIEW_PROFILES.map((p, idx) => `
+      <div style="background:${p.bgLight};border:1.5px solid ${p.borderCol};border-radius:14px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="background:${p.badgeColor};color:#FFF;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:800;">${p.icon} ${p.id}</span>
+            <span style="font-size:10.5px;font-weight:700;color:#475569;">โหมดระบบ: ${p.uiMode}</span>
+          </div>
+          <div style="font-weight:800;font-size:14px;color:#0F172A;margin-bottom:6px;">${p.deptName}</div>
+          <div style="font-size:11.5px;color:#1E293B;line-height:1.45;margin-bottom:5px;"><b>✅ ฟังก์ชันที่มองเห็นและใช้งานได้:</b> ${p.visibleModules}</div>
+          <div style="font-size:11px;color:#475569;line-height:1.4;"><b>🔒 การควบคุมสิทธิ์/การแสดงผล:</b> ${p.hiddenModules}</div>
+        </div>
+        <button type="button" data-sim-idx="${idx}" class="hzk-launch-dept-sim-btn" style="width:100%;background:${p.badgeColor};color:#FFF;border:none;border-radius:9px;padding:9px 12px;font-weight:700;font-size:12px;cursor:pointer;">👁️ เปิดดูหน้าจอจริงของแผนกนี้</button>
+      </div>
+    `).join('');
+
+    const staffCardsHtml = allIndividuals.map((st, idx) => {
+      const custCount = (db.customers || []).filter(c => String(c.assignedSales || '').toUpperCase() === st.code.toUpperCase()).length;
+      const badgeBg = st.isTech ? '#991B1B' : (/Japan/i.test(st.dept) ? '#1E1B4B' : (/Market/i.test(st.dept) ? '#065F46' : '#002B49'));
+      return `
+        <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:5px;">
+              <span style="background:${badgeBg};color:#FFF;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:800;">${st.code}</span>
+              <span style="font-size:10.5px;font-weight:700;color:#475569;">${st.dept}</span>
+            </div>
+            <div style="font-weight:800;font-size:13.5px;color:#0F172A;">👤 ${st.name}</div>
+            <div style="font-size:11.5px;color:#334155;margin-top:3px;">ตำแหน่ง: ${st.role || '-'}</div>
+            <div style="font-size:11px;color:#0369A1;margin-top:3px;">${st.isTech ? '🛠️ สิทธิ์หน้างานช่าง (ซ่อนราคาทุน/GP%)' : ('🏢 ลูกค้าที่ดูแล: <b>' + custCount + ' บริษัท</b>')}</div>
+          </div>
+          <button type="button" data-staff-idx="${idx}" class="hzk-launch-staff-sim-btn" style="width:100%;background:${badgeBg};color:#FFF;border:none;border-radius:8px;padding:8px 10px;font-weight:700;font-size:11.5px;cursor:pointer;">👁️ สวมมุมมองดูหน้าจอของคนนี้</button>
+        </div>
+      `;
+    }).join('');
+
+    simModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1080px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;">SUPER ADMIN &amp; ADMIN STUDIO — DEPARTMENT &amp; INDIVIDUAL LIVE INSPECTOR</div>
+            <div style="font-size:16px;font-weight:700;">🎭 ศูนย์ตรวจสอบหน้าจอจริงแยกตามแผนก (8 แผนก) และรายบุคคล (${allIndividuals.length} คน)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkDeptLiveSimulatorModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:16px 20px;">
+          <div style="display:flex;gap:8px;margin-bottom:14px;border-bottom:2px solid #E2E8F0;padding-bottom:10px;flex-wrap:wrap;">
+            <button type="button" id="hzkTabDeptViewBtn" style="background:#002B49;color:#FFF;border:none;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer;">🏢 1. ดูหน้าจอแยกตามแผนก (8 แผนก)</button>
+            <button type="button" id="hzkTabStaffViewBtn" style="background:#E2E8F0;color:#0F172A;border:none;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer;">👤 2. ดูหน้าจอแยกเป็นรายบุคคล (${allIndividuals.length} คน)</button>
+          </div>
+
+          <div id="hzkSimDeptPane" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
+            ${deptCardsHtml}
+          </div>
+
+          <div id="hzkSimStaffPane" style="display:none;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;">
+            ${staffCardsHtml}
+          </div>
+        </div>
+      </div>
+    `;
+
+    simModal.style.display = 'flex';
+
+    const btnDept = document.getElementById('hzkTabDeptViewBtn');
+    const btnStaff = document.getElementById('hzkTabStaffViewBtn');
+    const paneDept = document.getElementById('hzkSimDeptPane');
+    const paneStaff = document.getElementById('hzkSimStaffPane');
+
+    btnDept.onclick = () => {
+      paneDept.style.display = 'grid';
+      paneStaff.style.display = 'none';
+      btnDept.style.background = '#002B49';
+      btnDept.style.color = '#FFF';
+      btnStaff.style.background = '#E2E8F0';
+      btnStaff.style.color = '#0F172A';
+    };
+
+    btnStaff.onclick = () => {
+      paneDept.style.display = 'none';
+      paneStaff.style.display = 'grid';
+      btnStaff.style.background = '#1E1B4B';
+      btnStaff.style.color = '#FFF';
+      btnDept.style.background = '#E2E8F0';
+      btnDept.style.color = '#0F172A';
+    };
+
+    simModal.querySelectorAll('.hzk-launch-dept-sim-btn').forEach(btn => {
+      btn.onclick = function () {
+        const profile = DEPT_VIEW_PROFILES[Number(btn.getAttribute('data-sim-idx'))];
+        simModal.style.display = 'none';
+        showDepartmentSimulationBanner(profile, null);
+        profile.launchWorkspace();
+      };
+    });
+
+    simModal.querySelectorAll('.hzk-launch-staff-sim-btn').forEach(btn => {
+      btn.onclick = function () {
+        const staff = allIndividuals[Number(btn.getAttribute('data-staff-idx'))];
+        simModal.style.display = 'none';
+        applyGlobalAppRoleMode(staff.isTech ? 'TECH' : 'MANAGER');
+        showDepartmentSimulationBanner(null, staff);
+        openIndividualStaffWorkspaceDrawer(staff);
+      };
+    });
+  }
+
+  // Also inject a quick launcher button inside existing Admin Studio modal whenever opened
+  function hookAdminStudioInspectorButton() {
+    const observer = new MutationObserver(() => {
+      const studioBtns = Array.from(document.querySelectorAll('button, h2, h3')).filter(el =>
+        /Admin Studio|สิทธิ์แผนก|RBAC/i.test(el.textContent || '')
+      );
+      studioBtns.forEach(el => {
+        const container = el.closest('[id*="Modal"], [class*="modal"], .modal-content') || el.parentElement;
+        if (container && !container.querySelector('#hzkInjectedStudioSimBtn')) {
+          const simBtn = document.createElement('button');
+          simBtn.id = 'hzkInjectedStudioSimBtn';
+          simBtn.type = 'button';
+          simBtn.innerHTML = '🎭 จำลองดูหน้าจอจริงแยกแผนก & รายบุคคล (Live Inspector)';
+          simBtn.style.cssText =
+            'background:linear-gradient(135deg,#0284C7,#1E1B4B);color:#FFF;border:1px solid #7DD3FC;' +
+            'border-radius:8px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer;margin:6px;';
+          simBtn.onclick = openDepartmentLiveSimulatorModal;
+          if (el.parentElement) el.parentElement.appendChild(simBtn);
+        }
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+});
+  }
+
   window.openDepartmentRoleSopModal = openDepartmentRoleSopModal;
+  window.openDepartmentLiveSimulatorModal = openDepartmentLiveSimulatorModal;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', dockOmniBridgeButtons);
   } else {
     dockOmniBridgeButtons();
+    hookAdminStudioInspectorButton();
   }
 })();

@@ -1,26 +1,31 @@
 /**
  * ============================================================================
- * HOSHIZAKI (THAILAND) LIMITED — OMNI-BRIDGE CROSS-DEPARTMENT & DOC TRACKING ADD-ON
- * Module Version: v1145-OMNI-BRIDGE-OPTIMIZED
+ * HOSHIZAKI (THAILAND) LIMITED — ENTERPRISE COMPLETE SUITE (v1146)
  * Features:
- *   1) Live Google Sheets Master Sync (`getLiveSalesCrmMaster`) + JSON Fallback
- *   2) Direct Injection into Service Report Form (`📤 ส่ง & ติดตามใบแจ้งบริการ / ใบวางบิล / ใบเสร็จ`)
- *   3) Cross-Department Handover Hub (1-Click Handover):
- *      - Sales -> Service (New Installation / Site Survey + Auto Serial/Warranty Registration)
- *      - Sales / Service -> Accounting (Billing Note / Tax Invoice / Receipt)
- *      - Service -> Sales (Trade-in / Equipment Replacement Opportunity)
- *   4) Department-Branded LINE Flex Cards + 1-Tap PO Approval & Document Acknowledgement
- *   5) Isolated A4 Print Preview, Direct PDF & Excel (.xls), and Multi-Channel Share Hub
+ *   1) 7-Department Group CC / BCC & Multi-LINE Group Distribution Pills (Auto-Suggest + Deduplicate)
+ *   2) Customer Tax ID (13 Digits) & Branch (Head Office / Branch No.) + 1-Click Convert to Billing/Receipt
+ *   3) Unified Executive BI Dashboard (`📈 สรุปผู้บริหาร (BI)`) combining Sales, Tracking & Service KPIs
+ *   4) Live Google Sheets Master Sync, Isolated A4 Preview, Auto-Save, Direct PDF & Excel (.xls)
  * ============================================================================
  */
 (function () {
   'use strict';
 
-  const STORAGE_DRAFT_KEY = 'hzk_sales_qt_autosave_draft_v1145';
-  const STORAGE_ARCHIVE_KEY = 'hzk_sales_qt_archive_list_v1145';
+  const STORAGE_DRAFT_KEY = 'hzk_sales_qt_autosave_draft_v1146';
+  const STORAGE_ARCHIVE_KEY = 'hzk_sales_qt_archive_list_v1146';
+
+  const DEFAULT_GROUPS = [
+    { code: 'SALES_ALL', label: 'All Sales Team', emails: 'ketsaraporn@hoshizaki.co.th, kulathida@hoshizaki.co.th, janyaluck@hoshizaki.co.th', lineGroupId: '', defaultMode: 'CC', department: 'Sales' },
+    { code: 'JPC_TEAM', label: 'Japanese Corporate', emails: 'furujo@hoshizaki.co.th', lineGroupId: '', defaultMode: 'CC', department: 'Japanese Corporate' },
+    { code: 'MARKETING_ALL', label: 'All Marketing', emails: 'marketing@hoshizaki.co.th', lineGroupId: '', defaultMode: 'CC', department: 'Marketing' },
+    { code: 'SERVICE_ALL', label: 'All Service Team', emails: 'noparin@hoshizaki.co.th, services@hoshizaki.co.th', lineGroupId: '', defaultMode: 'CC', department: 'Service' },
+    { code: 'FINANCE_ACC', label: 'Finance & Accounting', emails: 'accounting@hoshizaki.co.th', lineGroupId: '', defaultMode: 'CC', department: 'Accounting' },
+    { code: 'ADMIN_HR', label: 'Admin & HR', emails: 'admin@hoshizaki.co.th', lineGroupId: '', defaultMode: 'CC', department: 'Admin' },
+    { code: 'MANAGEMENT_BCC', label: 'Management (BCC ลับ)', emails: 'noparin@hoshizaki.co.th', lineGroupId: '', defaultMode: 'BCC', department: 'Management' }
+  ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1145-OMNI-BRIDGE-OPTIMIZED',
+    version: 'v1146-ENTERPRISE-COMPLETE-SUITE',
     masterDb: null,
     items: []
   };
@@ -64,11 +69,15 @@
         models: [],
         customers: [],
         hoshiGroup: [],
-        termsAndConditions: []
+        termsAndConditions: [],
+        emailGroups: DEFAULT_GROUPS
       };
     }
 
-    // Attempt live overlay from Google Sheets (`CRM_Staff_Directory`, `CRM_Customer_Master`, `CRM_Model_Catalog`)
+    if (!Array.isArray(baseDb.emailGroups) || !baseDb.emailGroups.length) {
+      baseDb.emailGroups = DEFAULT_GROUPS;
+    }
+
     const gasUrl = getGasEndpointUrl();
     if (gasUrl) {
       try {
@@ -80,15 +89,10 @@
         const liveData = await liveRes.json();
         if (liveData && liveData.status === 'OK') {
           if (liveData.companyHeader) baseDb.companyHeader = liveData.companyHeader;
-          if (Array.isArray(liveData.activeStaff) && liveData.activeStaff.length > 0) {
-            baseDb.activeStaff = liveData.activeStaff;
-          }
-          if (Array.isArray(liveData.customers) && liveData.customers.length > 0) {
-            baseDb.customers = liveData.customers;
-          }
-          if (Array.isArray(liveData.models) && liveData.models.length > 0) {
-            baseDb.models = liveData.models;
-          }
+          if (Array.isArray(liveData.activeStaff) && liveData.activeStaff.length > 0) baseDb.activeStaff = liveData.activeStaff;
+          if (Array.isArray(liveData.customers) && liveData.customers.length > 0) baseDb.customers = liveData.customers;
+          if (Array.isArray(liveData.models) && liveData.models.length > 0) baseDb.models = liveData.models;
+          if (Array.isArray(liveData.emailGroups) && liveData.emailGroups.length > 0) baseDb.emailGroups = liveData.emailGroups;
         }
       } catch (e) {}
     }
@@ -106,6 +110,8 @@
       .hzk-sq-grid-cust { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
       .hzk-sq-grid-bottom { display: grid; grid-template-columns: 1fr 310px; gap: 16px; }
       .hzk-sq-action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+      .hzk-grp-pill { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; border: 1px solid #CBD5E1; background: #FFF; font-size: 11px; font-weight: 700; cursor: pointer; user-select: none; }
+      .hzk-grp-pill input { margin: 0; }
       @media (max-width: 768px) {
         .hzk-sq-grid-top { grid-template-columns: 1fr 1fr; }
         .hzk-sq-grid-cust { grid-template-columns: 1fr; }
@@ -123,7 +129,6 @@
   function dockOmniBridgeButtons() {
     injectResponsiveStyles();
 
-    // 1) Dock main Sales / JP Corp / Marketing / Doc Tracking launcher in header
     if (!document.getElementById('hzkSalesCrmDockedBtn')) {
       const hostContainer =
         document.getElementById('topHeaderStatusPillsRow') ||
@@ -150,7 +155,6 @@
       }
     }
 
-    // 2) Inject Service Report Tracked Document button directly into the main Service Report form area
     if (!document.getElementById('hzkServiceReportTrackedShareBtn')) {
       const printCandidates = Array.from(document.querySelectorAll('button')).filter(b =>
         /พิมพ์|Print|ใบเสนอราคา|Quotation|บันทึกใบงาน/i.test(b.textContent || '')
@@ -170,7 +174,6 @@
   }
 
   function launchTrackedDocFromServiceForm() {
-    // Scrape active Service Report inputs if present on main page
     const pickVal = (selectors) => {
       for (const sel of selectors) {
         const el = document.querySelector(sel);
@@ -242,6 +245,8 @@
       senderDisplayName: staffObj.name,
       senderEmail: staffObj.email || 'services@hoshizaki.co.th',
       customerName: document.getElementById('hzkSqCustomer').value.trim(),
+      taxId: document.getElementById('hzkSqTaxId').value.trim(),
+      branch: document.getElementById('hzkSqBranch').value.trim(),
       contactPerson: document.getElementById('hzkSqContact').value.trim(),
       address: document.getElementById('hzkSqAddress').value.trim(),
       phone: document.getElementById('hzkSqPhone').value.trim(),
@@ -307,6 +312,7 @@
     }).join('') || '<tr><td colspan="10" style="border:1px solid #334155;padding:14px;text-align:center;color:#64748B;">- ยังไม่มีรายการสินค้า -</td></tr>';
 
     const remarksHtml = String(qt.remarks || '').split(/\r?\n/).map(l => `<div>${l}</div>`).join('');
+    const taxLine = qt.taxId ? ` (Tax ID: ${qt.taxId} / ${qt.branch || 'สำนักงานใหญ่'})` : '';
 
     return `<!DOCTYPE html>
 <html>
@@ -356,7 +362,7 @@
     <table style="margin-bottom:12px;font-size:11px;">
       <tr>
         <td style="width:16%;font-weight:700;padding:3px 0;">Customer Name :</td>
-        <td style="width:44%;padding:3px 0;">${qt.customerName || '-'}</td>
+        <td style="width:44%;padding:3px 0;">${qt.customerName || '-'}${taxLine}</td>
         <td style="width:18%;font-weight:700;padding:3px 0;">วันที่ / Date :</td>
         <td style="width:22%;padding:3px 0;">${qt.date || '-'}</td>
       </tr>
@@ -556,6 +562,19 @@
     };
   }
 
+  function deduplicateEmails(rawStr) {
+    const seen = new Set();
+    const out = [];
+    String(rawStr || '').split(/[,;\s]+/).forEach(em => {
+      const clean = em.trim().toLowerCase();
+      if (clean && clean.indexOf('@') > 0 && !seen.has(clean)) {
+        seen.add(clean);
+        out.push(clean);
+      }
+    });
+    return out.join(', ');
+  }
+
   async function openMultiChannelShareHubModal(db, overrideDoc) {
     const qt = overrideDoc || collectCurrentFormPayload(db);
     if (!overrideDoc) {
@@ -566,6 +585,23 @@
     const staffEmailOptions = (db.activeStaff || [])
       .map(s => `<option value="${s.email || 'services@hoshizaki.co.th'}" data-name="${s.name}" data-dept="${s.dept}" ${s.code === qt.salesperson ? 'selected' : ''}>${s.name} [${s.dept}] — ${s.email || 'services@hoshizaki.co.th'}</option>`)
       .join('');
+
+    const groups = db.emailGroups || DEFAULT_GROUPS;
+    const docTypeU = String(qt.docType || '');
+    const deptU = String(qt.department || '');
+
+    const groupPillsHtml = groups.map(g => {
+      let autoChecked = false;
+      if (g.code === 'FINANCE_ACC' && /วางบิล|เสร็จ|Billing|Receipt/i.test(docTypeU)) autoChecked = true;
+      if (g.code === 'JPC_TEAM' && /Japan/i.test(deptU)) autoChecked = true;
+      if (g.code === 'MARKETING_ALL' && /Market/i.test(deptU)) autoChecked = true;
+      if (g.code === 'SERVICE_ALL' && /Service/i.test(deptU)) autoChecked = true;
+      return `
+        <label class="hzk-grp-pill" title="${g.emails}">
+          <input type="checkbox" class="hzk-grp-cb" data-code="${g.code}" data-emails="${g.emails}" data-mode="${g.defaultMode || 'CC'}" data-line="${g.lineGroupId || ''}" ${autoChecked ? 'checked' : ''} />
+          <span>${g.defaultMode === 'BCC' ? '🔒 BCC:' : '👥 CC:'} ${g.label}</span>
+        </label>`;
+    }).join('');
 
     let shareModal = document.getElementById('hzkSqShareHubModal');
     if (!shareModal) {
@@ -581,22 +617,18 @@
     const totalTxt = Number(qt.grandTotal || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' ' + curr;
 
     shareModal.innerHTML = `
-      <div style="background:#FFFFFF;width:100%;max-width:650px;border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.4);font-family:sans-serif;">
-        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="background:#FFFFFF;width:100%;max-width:690px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,0.4);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;">
           <div>
-            <div style="font-size:11px;color:#38BDF8;font-weight:800;">MULTI-CHANNEL SHARE + 1-TAP PO APPROVAL &amp; TRACKING</div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;">MULTI-CHANNEL SHARE + GROUP CC/BCC (7 DEPTS) + DOC TRACKING</div>
             <div style="font-size:15px;font-weight:700;">[${qt.department || 'Sales'}] ${qt.docType || 'ใบเสนอราคา'} ${qt.offerNo} (${qt.rev}) — ${totalTxt}</div>
           </div>
           <button type="button" onclick="document.getElementById('hzkSqShareHubModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
         </div>
 
         <div style="padding:18px 20px;font-size:13px;color:#0F172A;display:flex;flex-direction:column;gap:14px;">
-          <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:10px 12px;font-size:12px;color:#1E3A8A;">
-            <b>🏷️ ข้อมูลกำกับผู้ส่งบน Flex Card &amp; Email:</b> แผนก <b>${qt.department || 'Sales'}</b> | ผู้ส่ง: <b>${qt.senderDisplayName || qt.salesperson || 'เจ้าหน้าที่ HOSHIZAKI'}</b> (แนบปุ่ม <i>"✅ ยืนยันได้รับเอกสาร"</i>, <i>"✍️ อนุมัติสั่งซื้อ"</i> และ <i>"❓ แจ้งไม่ได้รับไฟล์"</i> อัตโนมัติ)
-          </div>
-
           <div style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:10px;padding:12px;">
-            <div style="font-weight:700;color:#002B49;margin-bottom:8px;">1️⃣ ส่งทางอีเมลพร้อมแนบไฟล์จริง + ปุ่มยืนยันรับเอกสาร</div>
+            <div style="font-weight:700;color:#002B49;margin-bottom:8px;">1️⃣ ส่งทางอีเมลพร้อมแนบไฟล์จริง + เลือกกลุ่ม CC / BCC รายแผนก</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
               <div>
                 <label style="font-size:12px;font-weight:700;">ผู้ส่ง / อีเมลตอบกลับ (From / Reply-To)</label>
@@ -612,22 +644,35 @@
                   <option value="BOTH">📦 แนบทั้งไฟล์ PDF + Excel</option>
                 </select>
               </div>
-              <div>
-                <label style="font-size:12px;font-weight:700;">อีเมลลูกค้า (To Email)</label>
+              <div style="grid-column:1/-1;">
+                <label style="font-size:12px;font-weight:700;">อีเมลผู้รับหลัก (To Email)</label>
                 <input id="hzkShareToEmail" type="email" value="${qt.customerEmail || ''}" placeholder="customer@company.co.th" style="width:100%;padding:7px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;" />
               </div>
+            </div>
+
+            <div style="margin-bottom:8px;">
+              <div style="font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">ติ๊กเลือกกลุ่มสำเนาอีเมลทั้งแผนก (Group CC / BCC — แก้ไขสมาชิกได้ใน Google Sheets):</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">${groupPillsHtml}</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
               <div>
-                <label style="font-size:12px;font-weight:700;">สำเนาถึง (CC Email - ถ้ามี)</label>
-                <input id="hzkShareCcEmail" type="email" placeholder="sales@hoshizaki.co.th" style="width:100%;padding:7px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;" />
+                <label style="font-size:11px;font-weight:700;color:#475569;">รายชื่ออีเมล CC รวม (แก้ไขเพิ่ม/ลดได้)</label>
+                <input id="hzkShareCcEmail" type="text" placeholder="cc1@hoshizaki.co.th, cc2@..." style="width:100%;padding:7px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;font-size:12px;" />
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:#475569;">รายชื่ออีเมล BCC (สำเนาลับผู้บริหาร)</label>
+                <input id="hzkShareBccEmail" type="text" placeholder="bcc@hoshizaki.co.th" style="width:100%;padding:7px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;font-size:12px;" />
               </div>
             </div>
-            <button type="button" id="hzkShareSendEmailBtn" style="width:100%;background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">📧 ส่งอีเมลแนบไฟล์ + ปุ่ม Track การรับเอกสาร</button>
+
+            <button type="button" id="hzkShareSendEmailBtn" style="width:100%;background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">📧 ส่งอีเมลแนบไฟล์ + CC/BCC กลุ่มที่เลือก + ปุ่มยืนยันรับเอกสาร</button>
           </div>
 
           <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:12px;">
             <div style="font-weight:700;color:#166534;margin-bottom:8px;">2️⃣ แชร์เข้า LINE (การ์ดแยกสีตามแผนก + ปุ่มยืนยันรับ &amp; อนุมัติสั่งซื้อ)</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button type="button" id="hzkShareLinePushBtn" style="flex:1;background:#059669;color:#FFF;border:none;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">💬 ส่ง Flex Card แยกแผนกเข้า LINE OA</button>
+              <button type="button" id="hzkShareLinePushBtn" style="flex:1;background:#059669;color:#FFF;border:none;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">💬 ส่ง Flex Card เข้า LINE OA &amp; กลุ่มที่เลือก</button>
               <button type="button" id="hzkShareLinePickerBtn" style="flex:1;background:#15803D;color:#FFF;border:none;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">📲 เปิดหน้าเลือกเพื่อน/กลุ่มใน LINE</button>
             </div>
           </div>
@@ -646,11 +691,39 @@
     `;
 
     shareModal.style.display = 'flex';
+
+    function syncGroupCheckboxesToFields() {
+      let ccList = [];
+      let bccList = [];
+      shareModal.querySelectorAll('.hzk-grp-cb:checked').forEach(cb => {
+        const em = cb.getAttribute('data-emails') || '';
+        const mode = cb.getAttribute('data-mode') || 'CC';
+        if (mode === 'BCC') bccList.push(em);
+        else ccList.push(em);
+      });
+      document.getElementById('hzkShareCcEmail').value = deduplicateEmails(ccList.join(', '));
+      document.getElementById('hzkShareBccEmail').value = deduplicateEmails(bccList.join(', '));
+    }
+
+    shareModal.querySelectorAll('.hzk-grp-cb').forEach(cb => {
+      cb.onchange = syncGroupCheckboxesToFields;
+    });
+    syncGroupCheckboxesToFields();
+
     const statusBox = document.getElementById('hzkShareStatusBox');
     const setStatus = (msg) => {
       statusBox.style.display = 'block';
       statusBox.innerHTML = msg;
     };
+
+    function getSelectedExtraLineGroupIds() {
+      const ids = [];
+      shareModal.querySelectorAll('.hzk-grp-cb:checked').forEach(cb => {
+        const g = (cb.getAttribute('data-line') || '').trim();
+        if (g && ids.indexOf(g) === -1) ids.push(g);
+      });
+      return ids;
+    }
 
     async function callShareGas(channel, extra) {
       const gasUrl = getGasEndpointUrl();
@@ -662,7 +735,12 @@
       const res = await fetch(gasUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(Object.assign({ action: 'shareSalesQuotation', channel: channel, quotation: qt }, extra || {}))
+        body: JSON.stringify(Object.assign({
+          action: 'shareSalesQuotation',
+          channel: channel,
+          quotation: qt,
+          extraLineGroupIds: getSelectedExtraLineGroupIds()
+        }, extra || {}))
       });
       return await res.json();
     }
@@ -673,6 +751,7 @@
       const data = await callShareGas('EMAIL', {
         toEmail: document.getElementById('hzkShareToEmail').value,
         ccEmail: document.getElementById('hzkShareCcEmail').value,
+        bccEmail: document.getElementById('hzkShareBccEmail').value,
         attachType: document.getElementById('hzkShareAttachType').value,
         replyToEmail: sel.value,
         senderName: opt ? opt.getAttribute('data-name') : qt.senderDisplayName
@@ -717,6 +796,80 @@
         window.location.href = 'sms:' + phone + '?body=' + encodeURIComponent(smsText);
       }
     };
+  }
+
+  async function openExecutiveBiDashboardModal() {
+    let biModal = document.getElementById('hzkExecutiveBiModal');
+    if (!biModal) {
+      biModal = document.createElement('div');
+      biModal.id = 'hzkExecutiveBiModal';
+      biModal.style.cssText =
+        'position:fixed;inset:0;z-index:10095;background:rgba(15,23,42,0.8);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(biModal);
+    }
+
+    biModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:860px;border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.4);font-family:sans-serif;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:11px;color:#FBBF24;font-weight:800;">UNIFIED EXECUTIVE BI &amp; CROSS-DEPARTMENT KPI</div>
+            <div style="font-size:16px;font-weight:700;">📈 รายงานสรุปผู้บริหาร (Sales + Service + Document Tracking)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkExecutiveBiModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div id="hzkBiBody" style="padding:18px 20px;font-size:13px;color:#0F172A;">⏳ กำลังดึงข้อมูลสรุปจาก Google Sheets...</div>
+      </div>
+    `;
+    biModal.style.display = 'flex';
+
+    const gasUrl = getGasEndpointUrl();
+    const bodyEl = document.getElementById('hzkBiBody');
+    if (!gasUrl) {
+      bodyEl.innerHTML = '<div style="color:#B91C1C;">กรุณาตั้งค่า Google Apps Script URL เพื่อดูรายงานสรุปผู้บริหารครับ</div>';
+      return;
+    }
+
+    try {
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'getExecutiveBiSummary' })
+      });
+      const d = await res.json();
+      const q = d.quotations || {};
+      const t = d.tracking || {};
+      const s = d.service || {};
+      const deptRows = Object.keys(q.byDept || {}).map(k =>
+        `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #E2E8F0;"><span>${k}</span><b>${Number(q.byDept[k] || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</b></div>`
+      ).join('') || '<div style="color:#64748B;">ยังไม่มีข้อมูลแยกแผนก</div>';
+
+      bodyEl.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px;">
+          <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:14px;">
+            <div style="font-size:11px;font-weight:700;color:#1D4ED8;">💼 ใบเสนอราคาสะสม (Sales &amp; JPC)</div>
+            <div style="font-size:22px;font-weight:800;color:#002B49;margin-top:4px;">${q.count || 0} ฉบับ</div>
+            <div style="font-size:12px;color:#334155;">มูลค่ารวม: <b>${Number(q.totalAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</b></div>
+          </div>
+          <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:14px;">
+            <div style="font-size:11px;font-weight:700;color:#15803D;">📊 สถานะการรับเอกสาร &amp; PO</div>
+            <div style="font-size:22px;font-weight:800;color:#14532D;margin-top:4px;">${(t.ACKNOWLEDGED || 0) + (t.PO_APPROVED || 0)} ยืนยันแล้ว</div>
+            <div style="font-size:12px;color:#334155;">อนุมัติสั่งซื้อ: <b>${t.PO_APPROVED || 0}</b> | รอตอบรับ: <b>${t.SENT || 0}</b></div>
+          </div>
+          <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:14px;">
+            <div style="font-size:11px;font-weight:700;color:#B91C1C;">🛠️ งานบริการ &amp; ดีลเลอร์ (Service)</div>
+            <div style="font-size:22px;font-weight:800;color:#7F1D1D;margin-top:4px;">${s.totalTickets || 0} เคส</div>
+            <div style="font-size:12px;color:#334155;">ปิดจบเอง (FCR): <b>${s.fcrResolved || 0}</b> | ดีลเลอร์รับงาน: <b>${s.dealerAccepted || 0}</b></div>
+          </div>
+        </div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:14px;">
+          <div style="font-weight:700;color:#002B49;margin-bottom:8px;">ยอดเสนอราคาแยกตามแผนก (Department Breakdown)</div>
+          ${deptRows}
+        </div>
+      `;
+    } catch (err) {
+      bodyEl.innerHTML = '<div style="color:#B91C1C;">โหลดรายงานไม่สำเร็จ: ' + err.message + '</div>';
+    }
   }
 
   async function openDocumentTrackingDashboardModal(db) {
@@ -873,13 +1026,15 @@
       <div style="background:#FFFFFF;width:100%;max-width:1100px;max-height:95vh;overflow-y:auto;border-radius:16px;box-shadow:0 20px 45px rgba(0,0,0,0.35);font-family:sans-serif;">
         <div style="background:#002B49;color:#FFFFFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;gap:8px;flex-wrap:wrap;">
           <div>
-            <div style="font-size:11px;color:#38BDF8;font-weight:800;letter-spacing:0.05em;">HOSHIZAKI (THAILAND) LIMITED — OMNI-BRIDGE ENTERPRISE HUB</div>
-            <div style="font-size:16px;font-weight:700;">ระบบออกเอกสาร &amp; เชื่อมงานข้ามแผนก (Y2026) <span id="hzkSqAutoSaveBadge" style="font-size:11px;background:#065F46;color:#A7F3D0;padding:2px 8px;border-radius:999px;margin-left:6px;">● Auto-Save Ready</span></div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;letter-spacing:0.05em;">HOSHIZAKI (THAILAND) LIMITED — ENTERPRISE COMPLETE SUITE (v1146)</div>
+            <div style="font-size:16px;font-weight:700;">ระบบออกเอกสาร &amp; เชื่อมงานข้ามแผนก <span id="hzkSqAutoSaveBadge" style="font-size:11px;background:#065F46;color:#A7F3D0;padding:2px 8px;border-radius:999px;margin-left:6px;">● Auto-Save Ready</span></div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <button type="button" id="hzkSqHandoverBtn" style="background:#D97706;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">🔄 ส่งต่องานข้ามแผนก</button>
-            <button type="button" id="hzkSqOpenTrackDashBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">📊 ติดตามสถานะรับเอกสาร</button>
-            <button type="button" onclick="document.getElementById('hzkSalesCorporateQtModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <button type="button" id="hzkSqConvertBillBtn" style="background:#0D9488;color:#FFF;border:none;border-radius:8px;padding:7px 11px;font-weight:700;cursor:pointer;">🧾 แปลงเป็นใบวางบิล/ใบเสร็จ</button>
+            <button type="button" id="hzkSqHandoverBtn" style="background:#D97706;color:#FFF;border:none;border-radius:8px;padding:7px 11px;font-weight:700;cursor:pointer;">🔄 ส่งต่องานข้ามแผนก</button>
+            <button type="button" id="hzkSqOpenTrackDashBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:7px 11px;font-weight:700;cursor:pointer;">📊 ติดตามเอกสาร</button>
+            <button type="button" id="hzkSqOpenBiBtn" style="background:#4F46E5;color:#FFF;border:none;border-radius:8px;padding:7px 11px;font-weight:700;cursor:pointer;">📈 สรุปผู้บริหาร (BI)</button>
+            <button type="button" onclick="document.getElementById('hzkSalesCorporateQtModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 11px;font-weight:700;cursor:pointer;">✕ ปิด</button>
           </div>
         </div>
 
@@ -943,6 +1098,13 @@
               <datalist id="hzkSqCustomerList">${customerOptions}</datalist>
             </div>
             <div>
+              <label style="font-weight:700;display:block;margin-bottom:4px;">เลขประจำตัวผู้เสียภาษี (Tax ID 13 หลัก) / สาขา</label>
+              <div style="display:flex;gap:6px;">
+                <input id="hzkSqTaxId" type="text" value="${(savedDraft && savedDraft.taxId) || ''}" placeholder="เลขผู้เสียภาษี 13 หลัก" style="flex:2;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+                <input id="hzkSqBranch" type="text" value="${(savedDraft && savedDraft.branch) || 'สำนักงานใหญ่'}" placeholder="สาขา" style="flex:1;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+              </div>
+            </div>
+            <div>
               <label style="font-weight:700;display:block;margin-bottom:4px;">ผู้ติดต่อ (Contact Person)</label>
               <input id="hzkSqContact" type="text" value="${(savedDraft && savedDraft.contactPerson) || ''}" placeholder="ระบุชื่อผู้ติดต่อ..." style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
             </div>
@@ -955,12 +1117,11 @@
               <input id="hzkSqCustEmail" type="email" value="${(savedDraft && savedDraft.customerEmail) || ''}" placeholder="customer@company.co.th" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
             </div>
             <div>
-              <label style="font-weight:700;display:block;margin-bottom:4px;">เงื่อนไขการชำระเงิน (Term of Payment)</label>
-              <input id="hzkSqPayment" type="text" value="${(savedDraft && savedDraft.paymentTerms) || '30DAYS'}" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
-            </div>
-            <div>
-              <label style="font-weight:700;display:block;margin-bottom:4px;">วันที่เอกสาร (Date)</label>
-              <input id="hzkSqDate" type="date" value="${todayStr}" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+              <label style="font-weight:700;display:block;margin-bottom:4px;">เงื่อนไขการชำระเงิน (Term of Payment) / วันที่</label>
+              <div style="display:flex;gap:6px;">
+                <input id="hzkSqPayment" type="text" value="${(savedDraft && savedDraft.paymentTerms) || '30DAYS'}" style="flex:1;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+                <input id="hzkSqDate" type="date" value="${todayStr}" style="flex:1;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+              </div>
             </div>
             <div style="grid-column:1/-1;">
               <label style="font-weight:700;display:block;margin-bottom:4px;">ที่อยู่ลูกค้า (Address)</label>
@@ -1034,7 +1195,7 @@
             <button type="button" id="hzkSqPreviewBtn" style="background:#002B49;color:#FFF;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;">👁️ Preview เอกสาร A4</button>
             <button type="button" id="hzkSqPrintPdfBtn" style="background:#DC2626;color:#FFF;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;">📕 พิมพ์ / บันทึก PDF (A4)</button>
             <button type="button" id="hzkSqExportExcelBtn" style="background:#15803D;color:#FFF;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;">📗 Export Excel (.xls)</button>
-            <button type="button" id="hzkSqShareHubBtn" style="background:#7C3AED;color:#FFF;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;">📤 แชร์ + ปุ่มยืนยันรับเอกสาร</button>
+            <button type="button" id="hzkSqShareHubBtn" style="background:#7C3AED;color:#FFF;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;">📤 แชร์ + Group CC/BCC</button>
             <button type="button" id="hzkSqSaveSyncBtn" style="background:#059669;color:#FFF;border:none;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;">☁️ บันทึกลงฐานข้อมูล</button>
           </div>
         </div>
@@ -1052,12 +1213,31 @@
       el.addEventListener('change', () => autoSaveDraftToLocal(db));
     });
 
+    document.getElementById('hzkSqConvertBillBtn').onclick = function () {
+      const docSel = document.getElementById('hzkSqDocType');
+      const offerInp = document.getElementById('hzkSqOfferNo');
+      const curDoc = docSel.value;
+      if (curDoc.indexOf('วางบิล') === -1) {
+        docSel.value = 'ใบวางบิล (Billing Note)';
+        offerInp.value = offerInp.value.replace(/^HTH-/, 'INV-');
+      } else {
+        docSel.value = 'ใบเสร็จรับเงิน (Receipt)';
+        offerInp.value = offerInp.value.replace(/^INV-/, 'REC-');
+      }
+      autoSaveDraftToLocal(db);
+      alert('✅ แปลงประเภทเอกสารเป็น "' + docSel.value + '" เลขที่ ' + offerInp.value + ' เรียบร้อยแล้ว');
+    };
+
     document.getElementById('hzkSqHandoverBtn').onclick = function () {
       openCrossDeptHandoverModal(db);
     };
 
     document.getElementById('hzkSqOpenTrackDashBtn').onclick = function () {
       openDocumentTrackingDashboardModal(db);
+    };
+
+    document.getElementById('hzkSqOpenBiBtn').onclick = function () {
+      openExecutiveBiDashboardModal();
     };
 
     const custInput = document.getElementById('hzkSqCustomer');
@@ -1261,6 +1441,7 @@
     const db = await loadSalesMasterDb(false);
     openDocumentTrackingDashboardModal(db);
   };
+  window.openExecutiveBiDashboardModal = openExecutiveBiDashboardModal;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', dockOmniBridgeButtons);

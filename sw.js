@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1166-adaptive-theme-gen-ui';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1167-INSPECTION-FIXED-BKK-BRIDGE';
 const CORE_ASSETS = [
   './',
   './index.html',

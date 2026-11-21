@@ -9063,18 +9063,32 @@
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
     } catch (e) {}
-    // Seed initial directory profiles (editable anytime by user or HR/Admin)
+    // Seed full synced staff directory (18 Office/Management Staff + Field Service Team T01-T08)
     const todayIso = new Date().toISOString().slice(0, 10);
     const seed = [
-      { id: 'SVC-02', name: 'Noparin Homhoul', nickname: 'Noparin', gender: 'Male', birthDate: '1986-' + todayIso.slice(5), hireDate: '2016-05-01', dept: 'Service Unit', position: 'Deputy Service Manager' },
-      { id: 'SVC-01', name: 'Thanakrit Chanmokonpanit', nickname: 'Tae', gender: 'Male', birthDate: '1984-08-18', hireDate: '2014-03-10', dept: 'Service Unit', position: 'Service Manager' },
-      { id: 'SVC-05', name: 'Wanwipha', nickname: 'Wan', gender: 'Female', birthDate: '1991-03-22', hireDate: '2018-07-01', dept: 'Service Unit', position: 'Service Supervisor / Admin' },
-      { id: 'SVC-03', name: 'Surin S.', nickname: 'Surin', gender: 'Male', birthDate: '1989-06-14', hireDate: '2017-02-15', dept: 'Service Unit', position: 'Senior Service Supervisor' },
-      { id: 'SVC-04', name: 'Nirun', nickname: 'Pui', gender: 'Male', birthDate: '1992-09-05', hireDate: '2019-04-01', dept: 'Service Unit', position: 'Field Service Technician' },
-      { id: 'SVC-06', name: 'Surin T.', nickname: 'Beer', gender: 'Male', birthDate: '1993-12-02', hireDate: '2020-01-15', dept: 'Service Unit', position: 'Field Service Technician' },
-      { id: 'SVC-07', name: 'Jeerapan Phrasawang', nickname: 'Zcar', gender: 'Male', birthDate: '1994-02-27', hireDate: '2020-08-01', dept: 'Service Unit', position: 'Field Service Technician' },
-      { id: 'CTR-01', name: 'Pawat Warongtheradet', nickname: 'Pawat', gender: 'Male', birthDate: '1990-07-11', hireDate: '2018-11-01', dept: 'Service Center & Warehouse IMS', position: 'Service Center Supervisor' },
-      { id: 'EXE-01', name: 'Daisuke Suzuki', nickname: 'Suzuki-san', gender: 'Male', birthDate: '1978-10-09', hireDate: '2015-04-01', dept: 'Executive Management', position: 'Managing Director (MD)' }
+      { id: 'DAISUKE_S', name: 'Mr. Daisuke Suzuki', nickname: 'Suzuki-san', gender: 'Male', birthDate: '1978-10-09', hireDate: '2015-04-01', dept: 'Executive', position: 'Managing Director / GM All Departments', gen: 'GEN_X' },
+      { id: 'FURUJO', name: 'Mr. Naoki Furujo', nickname: 'Furujo-san', gender: 'Male', birthDate: '1983-05-14', hireDate: '2018-04-01', dept: 'Japanese Corporate', position: 'Senior Sales Staff (Japanese Corporate)', gen: 'MILLENNIAL' },
+      { id: 'SULEEWAN_S', name: 'Ms. Suleewan Siripirom (Pang)', nickname: 'Pang', gender: 'Female', birthDate: '1992-07-19', hireDate: '2019-06-01', dept: 'Japanese Corporate', position: 'Japanese Corporate Staff', gen: 'MILLENNIAL' },
+      { id: 'KULATHIDA_C', name: 'Ms. Kulathida Charoenying (Honey)', nickname: 'Honey', gender: 'Female', birthDate: '1986-04-12', hireDate: '2016-02-01', dept: 'Sales', position: 'Deputy Sales Manager', gen: 'MILLENNIAL' },
+      { id: 'JANYALUCK_P', name: 'Ms. Janyaluck Paithaisong (Nui)', nickname: 'Nui', gender: 'Female', birthDate: '1988-09-25', hireDate: '2017-05-15', dept: 'Sales', position: 'Senior Sales Staff', gen: 'MILLENNIAL' },
+      { id: 'KETSARAPORN', name: 'Ms. Ketsaraporn Porjai (Nam)', nickname: 'Nam', gender: 'Female', birthDate: '1990-11-08', hireDate: '2018-03-01', dept: 'Sales', position: 'Senior Sales Staff', gen: 'MILLENNIAL' },
+      { id: 'WISUTTHA_W', name: 'Ms. Wisuttha Wonglaw (Sand)', nickname: 'Sand', gender: 'Female', birthDate: '1999-02-18', hireDate: '2025-01-15', dept: 'Sales', position: 'Sales Support (ext. 20)', gen: 'GEN_Z' },
+      { id: 'TAKSAON_T', name: 'Ms. Taksaon Tipsrisombat (Poy)', nickname: 'Poy', gender: 'Female', birthDate: '1987-06-30', hireDate: '2016-09-01', dept: 'Marketing', position: 'Marketing Unit Manager (ext. 21)', gen: 'MILLENNIAL' },
+      { id: 'KHAJORNYOT_J', name: 'Mr. Khajornyot Jewkrang (Men)', nickname: 'Men', gender: 'Male', birthDate: '1994-08-21', hireDate: '2020-04-01', dept: 'Marketing', position: 'Marketing Staff', gen: 'MILLENNIAL' },
+      { id: 'THANAKRIT_C', name: 'Mr. Thanakrit Chanmokonpanit (Tae)', nickname: 'Tae', gender: 'Male', birthDate: '1984-08-18', hireDate: '2014-03-10', dept: 'Service & Billing', position: 'Services Unit Manager (ext. 31)', gen: 'MILLENNIAL' },
+      { id: 'NOPARIN_H', name: 'นพรินทร์ หอมหวล (Noparin Homhoul / Rinny)', nickname: 'Rinny', gender: 'Male', birthDate: '1986-' + todayIso.slice(5), hireDate: '2016-05-01', dept: 'Service Unit', position: 'Deputy Services Unit Manager', gen: 'MILLENNIAL' },
+      { id: 'WANWIPHA_N', name: 'Ms. Wanwipha Nakamrod (Oh)', nickname: 'Oh', gender: 'Female', birthDate: '1991-03-22', hireDate: '2018-07-01', dept: 'Service & Billing', position: 'Services Admin Staff (ext. 30)', gen: 'MILLENNIAL' },
+      { id: 'KANOKWAN_T', name: 'Ms. Kanokwan Treesukol (June)', nickname: 'June', gender: 'Female', birthDate: '1981-01-16', hireDate: '2013-08-01', dept: 'Admin & HR', position: 'Administration Manager (ext. 03)', gen: 'MILLENNIAL' },
+      { id: 'NATTAPONG_C', name: 'Mr. Nattapong Chataram (Nat)', nickname: 'Nat', gender: 'Male', birthDate: '1989-10-11', hireDate: '2017-01-15', dept: 'Admin & HR', position: 'Senior Administration Staff (ext. 01)', gen: 'MILLENNIAL' },
+      { id: 'CHAYANIN_K', name: 'Mr. Chayanin Kuptrakul (Beer)', nickname: 'Beer', gender: 'Male', birthDate: '1995-05-27', hireDate: '2021-03-01', dept: 'Admin & HR', position: 'Administration Staff (ext. 02)', gen: 'MILLENNIAL' },
+      { id: 'WARAPORN_K', name: 'Ms. Waraporn Kianthong (Noi San)', nickname: 'Noi San', gender: 'Female', birthDate: '1979-12-04', hireDate: '2012-06-01', dept: 'Accounting', position: 'Accounting Manager (ext. 10)', gen: 'GEN_X' },
+      { id: 'DUANGKAMON_T', name: 'Ms. Duangkamon Tantayanon (Yok)', nickname: 'Yok', gender: 'Female', birthDate: '1988-04-29', hireDate: '2016-11-01', dept: 'Accounting', position: 'Senior Accounting Staff (ext. 12)', gen: 'MILLENNIAL' },
+      { id: 'WITHARAT_R', name: 'Ms. Witharat Riangpha (Z-cath)', nickname: 'Z-cath', gender: 'Female', birthDate: '1993-09-14', hireDate: '2019-09-01', dept: 'Accounting', position: 'Accounting Staff (ext. 11)', gen: 'MILLENNIAL' },
+      { id: 'T01', name: 'Surin S. (Senior Service Supervisor)', nickname: 'Surin', gender: 'Male', birthDate: '1989-06-14', hireDate: '2017-02-15', dept: 'Service Unit', position: 'Senior Service Supervisor (T01)', gen: 'MILLENNIAL' },
+      { id: 'T02', name: 'Nirun (Field Service Technician)', nickname: 'Pui', gender: 'Male', birthDate: '1992-09-05', hireDate: '2019-04-01', dept: 'Service Unit', position: 'Field Service Technician (T02)', gen: 'MILLENNIAL' },
+      { id: 'T03', name: 'Surin T. (Field Service Technician)', nickname: 'Beer (Tech)', gender: 'Male', birthDate: '1993-12-02', hireDate: '2020-01-15', dept: 'Service Unit', position: 'Field Service Technician (T03)', gen: 'MILLENNIAL' },
+      { id: 'T04', name: 'Jeerapan Phrasawang (Field Service Technician)', nickname: 'Zcar', gender: 'Male', birthDate: '1994-02-27', hireDate: '2020-08-01', dept: 'Service Unit', position: 'Field Service Technician (T04)', gen: 'MILLENNIAL' },
+      { id: 'T05', name: 'Pawat Warongtheradet (Service Center Supervisor)', nickname: 'Pawat', gender: 'Male', birthDate: '1990-07-11', hireDate: '2018-11-01', dept: 'Service Center & Warehouse IMS', position: 'Service Center Supervisor (T05)', gen: 'MILLENNIAL' }
     ];
     localStorage.setItem(EMP_BDAY_DB_KEY, JSON.stringify(seed));
     return seed;
@@ -16584,12 +16598,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
   var AUTOSAVE_KEY = 'hoshizaki_active_job_autosave_v1076';
   var BRANCH_PREF_KEY = 'hoshizaki_active_branch_code_v1076';
   var BRANCHES = [
-    { code: 'BKK', label: 'BKK — สำนักงานใหญ่กรุงเทพฯ (Head Office)' },
-    { code: 'HKT', label: 'HKT — สาขาภูเก็ต (Phuket Branch)' },
-    { code: 'KKC', label: 'KKC — สาขาขอนแก่น (Khon Kaen Branch)' },
-    { code: 'CMX', label: 'CMX — สาขาเชียงใหม่ (Chiang Mai Branch)' },
-    { code: 'RYG', label: 'RYG — ศูนย์บริการภาคตะวันออก (Eastern)' },
-    { code: 'HDY', label: 'HDY — ศูนย์บริการหาดใหญ่ (Hat Yai)' }
+    { code: 'BKK', label: 'BKK — สำนักงานใหญ่กรุงเทพฯ (Head Office)' }
   ];
 
   function cleanStrayCodeText_() {
@@ -16619,7 +16628,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
   }
 
   window.getActiveHoshizakiBranch = function() {
-    return (localStorage.getItem(BRANCH_PREF_KEY) || 'BKK').toUpperCase();
+    return 'BKK';
   };
 
   window.setActiveHoshizakiBranch = function(code, regenerateDocs) {
@@ -16870,7 +16879,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     if (!offerInput || document.getElementById('hzkQtBranchControls')) return;
     var wrap = document.createElement('div');
     wrap.id = 'hzkQtBranchControls';
-    wrap.className = 'no-print flex flex-wrap items-center gap-1.5 mt-1.5 bg-amber-50 border border-amber-300 rounded-lg p-1.5 text-[11px]';
+    wrap.className = 'hidden no-print';
     wrap.innerHTML = '' +
       '<span class="font-extrabold text-[#002B49]"><i class="fa-solid fa-building text-amber-600 mr-1"></i>สาขา:</span>' +
       buildBranchSelectHtml_('border border-amber-400 rounded px-2 py-1 font-bold text-[#002B49] bg-white text-[11px]') +
@@ -16919,7 +16928,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     if (jobInput && !document.getElementById('hzkJobBranchSelectorBar')) {
       var bar = document.createElement('div');
       bar.id = 'hzkJobBranchSelectorBar';
-      bar.className = 'no-print flex flex-wrap items-center justify-between gap-2 bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 mb-2 text-xs';
+      bar.className = 'hidden no-print';
       bar.innerHTML = '' +
         '<div class="flex flex-wrap items-center gap-2">' +
           '<span class="font-extrabold text-[#002B49]"><i class="fa-solid fa-code-branch text-sky-600 mr-1"></i>สาขาที่ออกเอกสาร (Navision Branch):</span>' +

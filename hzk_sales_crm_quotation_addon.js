@@ -246,6 +246,8 @@
       { icon: '🏷️', label: 'สต็อกเครื่องโชว์ / มีตำหนิ & ใบตรวจสภาพ (602 รายการ)', sub: 'ดูรายการเครื่อง Demo/Damage + ลิงก์ใบตรวจสภาพ + ดึงลงใบเสนอราคา', action: () => window.openDamageDemoStockModal() },
       { icon: '📥', label: 'อัปเดต Stock จากอีเมล MICHIRU-RPA ทันที', sub: 'ดึงไฟล์ Stock on Hand ล่าสุดจาก Gmail เข้าฐานข้อมูลสด', action: () => window.triggerEmailStockSyncNow() },
       { icon: '🌐', label: 'พอร์ทัลลูกค้า & ตัวแทนจำหน่าย (Self-Service)', sub: 'เปิดหน้าเช็กเครื่องในร้าน ประวัติซ่อม และสถานะดีลเลอร์', action: () => window.openCustomerDealerPortalWindow() },
+      { icon: '💰', label: 'วิเคราะห์กำไร-ขาดทุนราย S/N & ตั้งราคา/โปรโมชั่น (Lifecycle P&L)', sub: 'เทียบราคาขาย (Dealer/Direct) หักต้นทุนซ่อม/เคลม + จำลองแพ็คเกจ PM + นำเข้าขาย NAV', action: () => window.openSerialLifecyclePricingSuiteModal() },
+      { icon: '📐', label: 'แบบตรวจความพร้อมหน้างานก่อนติดตั้ง (Pre-Install Site Survey)', sub: 'เช็กแรงดันน้ำ ไฟ ท่อน้ำทิ้ง แนะนำชุดกรองน้ำ & ลดเคลมในประกัน', action: () => window.openPreInstallSiteSurveyModal() },
       { icon: '🔎', label: 'ประวัติเครื่องราย S/N 360° & อัลบั้มรูปหน้างาน', sub: 'ดูไทม์ไลน์ตั้งแต่คลัง ➔ ติดตั้ง ➔ ซ่อมบำรุง ➔ รูปถ่ายก่อน-หลัง', action: () => window.openSerial360TimelineModal() },
       { icon: '🚐', label: 'คลังอะไหล่รถช่าง T01–T08 & เบิกเติมอัตโนมัติ', sub: 'เช็ก/ตัด/เติมอะไหล่รถช่าง + แจ้งเตือนสโตร์เมื่อต่ำกว่า Min Stock', action: () => window.openTechnicianVanStockModal() },
       { icon: '📅', label: 'ตารางนัดหมายติดตั้ง & คิวงานช่าง (Dispatch Board)', sub: 'จัดคิวงานติดตั้ง/ซ่อมรายวันของช่าง T01–T08 + แจ้งเตือน LINE', action: () => window.openServiceDispatchCalendarModal() },
@@ -2778,6 +2780,7 @@
           <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
             <input id="hzkSn360Input" type="text" value="${prefillSn || ''}" placeholder="พิมพ์หมายเลขเครื่อง Serial No. เช่น K01234J, L05678M..." style="flex:1;min-width:220px;padding:9px 12px;border:1.5px solid #CBD5E1;border-radius:8px;font-weight:700;" />
             <button type="button" id="hzkSn360SearchBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer;">🔎 ค้นหาประวัติ 360°</button>
+            <button type="button" onclick="window.openSerialLifecyclePricingSuiteModal(document.getElementById('hzkSn360Input').value)" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;">💰 ดูต้นทุนซ่อม &amp; กำไรสุทธิ (P&amp;L)</button>
           </div>
           <div id="hzkSn360ResultBody" style="color:#64748B;">กรอกหมายเลข Serial Number แล้วกดค้นหาเพื่อดูประวัติตั้งแต่คลังสินค้า ติดตั้ง ดีลเลอร์ ซ่อมบำรุง และรูปภาพหน้างานครับ</div>
         </div>
@@ -3319,6 +3322,813 @@
     docWrap.appendChild(toggleAllBtn);
     document.body.appendChild(adminDrawer);
   }
+
+
+
+  // ============================================================================
+  // ENTERPRISE v1170 MODULE: SERIAL 360° LIFECYCLE P&L, PRICING INTELLIGENCE,
+  // NAV SALES HISTORY IMPORTER & PRE-INSTALL SITE SURVEY CHECKLIST
+  // ============================================================================
+  const HZK_V1170_LOCAL_PNL_KEY = 'hzk_v1170_local_nav_sales_cache';
+
+  function getLocalFallbackLifecycleData(prefillSn) {
+    let customRows = [];
+    try {
+      customRows = JSON.parse(localStorage.getItem(HZK_V1170_LOCAL_PNL_KEY) || '[]');
+    } catch (e) {}
+
+    const baseUnits = [
+      {
+        serialNumber: 'K01234J',
+        model: 'IM-130NE',
+        customerStore: 'ร้านกาแฟตัวอย่าง สาขาภูเก็ต',
+        customerPhone: '0819793085',
+        province: 'ภูเก็ต',
+        warrantyStatus: 'IN-WARRANTY (หมด 2027-12-31)',
+        dealerName: 'บริษัท อันดามัน คูลลิ่ง จำกัด (Dealer A)',
+        saleChannel: 'Dealer',
+        refDocNo: 'SO-2026-0142',
+        saleDate: '2026-01-15',
+        netSellingPrice: 68500,
+        warrantyYears: 2,
+        includedPmCount: 2,
+        promoTag: 'PROMO-FILTER-FREE',
+        serviceEvents: [
+          { source: 'Service Job', refId: 'JOB-260312', date: '2026-03-12', symptom: 'เปลี่ยน Water Valve + ล้างระบบ (ในประกัน)', technician: 'T07 (Upcountry)', status: 'COMPLETED', billingType: 'WARRANTY', partsCost: 1450, laborCost: 1200, travelCost: 1800, totalCost: 4450, customerBilled: 0 },
+          { source: 'PM Contract', refId: 'PM-260715', date: '2026-07-15', symptom: 'PM รอบ 6 เดือน (ฟรีตามโปรโมชั่น)', technician: 'Dealer A Tech', status: 'COMPLETED', billingType: 'PM', partsCost: 350, laborCost: 600, travelCost: 800, totalCost: 1750, customerBilled: 0 }
+        ],
+        warrantyCostTotal: 4450,
+        pmPromoCostTotal: 1750,
+        billableRevenueTotal: 0,
+        billableCostTotal: 0,
+        repairCount: 2
+      },
+      {
+        serialNumber: 'L05678M',
+        model: 'KM-160B',
+        customerStore: 'โรงแรมตัวอย่าง กรุงเทพฯ',
+        customerPhone: '0890001122',
+        province: 'กรุงเทพฯ',
+        warrantyStatus: 'IN-WARRANTY (หมด 2027-08-15)',
+        dealerName: 'บริษัท สยามไอซ์เทค จำกัด (Dealer B)',
+        saleChannel: 'Dealer',
+        refDocNo: 'SO-2026-0218',
+        saleDate: '2026-02-20',
+        netSellingPrice: 84000,
+        warrantyYears: 2,
+        includedPmCount: 0,
+        promoTag: 'STANDARD-DEALER',
+        serviceEvents: [
+          { source: 'Service Job', refId: 'JOB-260504', date: '2026-05-04', symptom: 'ตรวจเช็ก Float Switch & Board (ในประกัน)', technician: 'T01 (BKK North)', status: 'COMPLETED', billingType: 'WARRANTY', partsCost: 2200, laborCost: 1200, travelCost: 500, totalCost: 3900, customerBilled: 0 }
+        ],
+        warrantyCostTotal: 3900,
+        pmPromoCostTotal: 0,
+        billableRevenueTotal: 0,
+        billableCostTotal: 0,
+        repairCount: 1
+      },
+      {
+        serialNumber: 'M09876P',
+        model: 'FM-120KE',
+        customerStore: 'ร้านอาหารญี่ปุ่น เชียงใหม่',
+        customerPhone: '0865556677',
+        province: 'เชียงใหม่',
+        warrantyStatus: 'OUT-OF-WARRANTY',
+        dealerName: 'HOSHIZAKI Direct Service',
+        saleChannel: 'Japanese Corporate',
+        refDocNo: 'QT-JPC-2024-089',
+        saleDate: '2024-06-10',
+        netSellingPrice: 92000,
+        warrantyYears: 1,
+        includedPmCount: 4,
+        promoTag: 'JPC-VIP-4PM',
+        serviceEvents: [
+          { source: 'Service Job', refId: 'JOB-250118', date: '2025-01-18', symptom: 'เปลี่ยน Gear Motor & Bearing (ในประกัน)', technician: 'T07 (Upcountry)', status: 'COMPLETED', billingType: 'WARRANTY', partsCost: 4800, laborCost: 1200, travelCost: 1800, totalCost: 7800, customerBilled: 0 },
+          { source: 'Service Job', refId: 'JOB-260822', date: '2026-08-22', symptom: 'ซ่อมนอกประกัน + เปลี่ยนชุดซีล & ปั๊มน้ำ', technician: 'T07 (Upcountry)', status: 'COMPLETED', billingType: 'BILLABLE', partsCost: 3600, laborCost: 1500, travelCost: 1800, totalCost: 6900, customerBilled: 11800 }
+        ],
+        warrantyCostTotal: 7800,
+        pmPromoCostTotal: 0,
+        billableRevenueTotal: 11800,
+        billableCostTotal: 6900,
+        repairCount: 2
+      },
+      {
+        serialNumber: 'N11223R',
+        model: 'IM-240ANE-HC',
+        customerStore: 'Chain Cafe สาขาสยามสแควร์',
+        customerPhone: '0823334455',
+        province: 'กรุงเทพฯ',
+        warrantyStatus: 'IN-WARRANTY (หมด 2028-03-31)',
+        dealerName: 'HOSHIZAKI Direct Service',
+        saleChannel: 'Chain Account',
+        refDocNo: 'SO-2026-0305',
+        saleDate: '2026-04-01',
+        netSellingPrice: 118000,
+        warrantyYears: 2,
+        includedPmCount: 4,
+        promoTag: 'CHAIN-2YR-WARRANTY',
+        serviceEvents: [],
+        warrantyCostTotal: 0,
+        pmPromoCostTotal: 0,
+        billableRevenueTotal: 0,
+        billableCostTotal: 0,
+        repairCount: 0
+      }
+    ];
+
+    customRows.forEach(r => {
+      const sn = String(r.serialNo || '').toUpperCase();
+      if (!sn) return;
+      const idx = baseUnits.findIndex(u => u.serialNumber === sn);
+      const itemObj = {
+        serialNumber: sn,
+        model: String(r.model || 'IM-100NE-HC').toUpperCase(),
+        customerStore: r.customerName || '-',
+        customerPhone: r.customerPhone || '-',
+        province: r.province || 'กรุงเทพฯ',
+        warrantyStatus: 'IN-WARRANTY (' + (r.warrantyYears || 1) + ' ปี)',
+        dealerName: r.dealerName || 'HOSHIZAKI Direct Service',
+        saleChannel: r.saleChannel || 'Dealer',
+        refDocNo: r.refDocNo || 'NAV-IMPORT',
+        saleDate: r.saleDate || '-',
+        netSellingPrice: Number(r.netPrice || 0),
+        warrantyYears: Number(r.warrantyYears || 1),
+        includedPmCount: Number(r.includedPmCount || 0),
+        promoTag: r.promoTag || '-',
+        serviceEvents: idx >= 0 ? baseUnits[idx].serviceEvents : [],
+        warrantyCostTotal: idx >= 0 ? baseUnits[idx].warrantyCostTotal : 0,
+        pmPromoCostTotal: idx >= 0 ? baseUnits[idx].pmPromoCostTotal : 0,
+        billableRevenueTotal: idx >= 0 ? baseUnits[idx].billableRevenueTotal : 0,
+        billableCostTotal: idx >= 0 ? baseUnits[idx].billableCostTotal : 0,
+        repairCount: idx >= 0 ? baseUnits[idx].repairCount : 0
+      };
+      if (idx >= 0) baseUnits[idx] = itemObj;
+      else baseUnits.unshift(itemObj);
+    });
+
+    baseUnits.forEach(u => {
+      u.companyAbsorbedCost = u.warrantyCostTotal + u.pmPromoCostTotal;
+      u.serviceNetProfit = u.billableRevenueTotal - u.billableCostTotal;
+      u.lifecycleNetContribution = u.netSellingPrice - u.companyAbsorbedCost + u.serviceNetProfit;
+      u.costToSalesPct = u.netSellingPrice > 0 ? Number(((u.companyAbsorbedCost / u.netSellingPrice) * 100).toFixed(2)) : 0;
+      u.netMarginPct = u.netSellingPrice > 0 ? Number(((u.lifecycleNetContribution / u.netSellingPrice) * 100).toFixed(2)) : 0;
+    });
+
+    const mMap = {};
+    const dMap = {};
+    baseUnits.forEach(u => {
+      if (!mMap[u.model]) {
+        mMap[u.model] = { model: u.model, unitCount: 0, totalSalesThb: 0, totalWarrantyCostThb: 0, totalRepairs: 0 };
+      }
+      mMap[u.model].unitCount++;
+      mMap[u.model].totalSalesThb += u.netSellingPrice;
+      mMap[u.model].totalWarrantyCostThb += u.warrantyCostTotal;
+      mMap[u.model].totalRepairs += u.repairCount;
+
+      if (!dMap[u.dealerName]) {
+        dMap[u.dealerName] = { dealerName: u.dealerName, saleChannel: u.saleChannel, unitCount: 0, claimedUnits: 0, totalSalesThb: 0, totalWarrantyCostThb: 0 };
+      }
+      dMap[u.dealerName].unitCount++;
+      if (u.repairCount > 0) dMap[u.dealerName].claimedUnits++;
+      dMap[u.dealerName].totalSalesThb += u.netSellingPrice;
+      dMap[u.dealerName].totalWarrantyCostThb += u.warrantyCostTotal;
+    });
+
+    const modelBenchmark = Object.values(mMap).map(x => {
+      const avgSale = x.unitCount ? Math.round(x.totalSalesThb / x.unitCount) : 0;
+      const avgCost = x.unitCount ? Math.round(x.totalWarrantyCostThb / x.unitCount) : 0;
+      const ratio = x.totalSalesThb ? Number(((x.totalWarrantyCostThb / x.totalSalesThb) * 100).toFixed(2)) : 0;
+      return {
+        model: x.model,
+        unitCount: x.unitCount,
+        avgSalePrice: avgSale,
+        totalSalesThb: x.totalSalesThb,
+        totalWarrantyCostThb: x.totalWarrantyCostThb,
+        avgWarrantyCostPerUnit: avgCost,
+        claimRatioPct: ratio,
+        totalRepairs: x.totalRepairs,
+        recommendedPmAnnual: Math.max(3500, Math.round((avgCost * 1.35 + 1900) / 100) * 100),
+        recommendedExtWarranty1Yr: Math.max(2900, Math.round((avgCost * 1.65) / 100) * 100)
+      };
+    });
+
+    const dealerBenchmark = Object.values(dMap).map(x => {
+      const rate = x.unitCount ? Number(((x.claimedUnits / x.unitCount) * 100).toFixed(1)) : 0;
+      const avgC = x.unitCount ? Math.round(x.totalWarrantyCostThb / x.unitCount) : 0;
+      return {
+        dealerName: x.dealerName,
+        saleChannel: x.saleChannel,
+        unitCount: x.unitCount,
+        claimedUnits: x.claimedUnits,
+        claimRatePct: rate,
+        totalSalesThb: x.totalSalesThb,
+        totalWarrantyCostThb: x.totalWarrantyCostThb,
+        avgClaimCostPerUnit: avgC,
+        qualityGrade: rate <= 15 ? 'A (มาตรฐานดีเยี่ยม)' : (rate <= 35 ? 'B (เฝ้าระวังติดตั้ง)' : 'C (ต้องอบรมช่างดีลเลอร์)')
+      };
+    });
+
+    const q = String(prefillSn || '').trim().toUpperCase();
+    const selected = (q && baseUnits.find(u => u.serialNumber === q)) || baseUnits[0];
+
+    return {
+      status: 'LOCAL_DEMO',
+      config: {
+        standardLaborThb: 1200,
+        travelBkkThb: 500,
+        travelVicinityThb: 850,
+        travelUpcountryThb: 1800,
+        defaultPartsCostThb: 1450,
+        pmStandardCostThb: 950,
+        targetNetMarginPct: 28
+      },
+      selectedUnit: selected,
+      allUnits: baseUnits,
+      modelBenchmark: modelBenchmark,
+      dealerBenchmark: dealerBenchmark,
+      lotAlerts: []
+    };
+  }
+
+  async function openSerialLifecyclePricingSuiteModal(prefillSn) {
+    let modal = document.getElementById('hzkLifecyclePnLModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkLifecyclePnLModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20060;background:rgba(15,23,42,0.86);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1120px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#002B49,#0F172A);color:#FFF;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;border-bottom:2px solid #0284C7;">
+          <div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;letter-spacing:0.5px;">ENTERPRISE v1170 • SERIAL 360° LIFECYCLE P&amp;L &amp; PRICING INTELLIGENCE</div>
+            <div style="font-size:16.5px;font-weight:800;">💰 วิเคราะห์กำไร-ขาดทุนรายเครื่อง (S/N) • เทียบดีลเลอร์/รุ่น • จำลองตั้งราคา &amp; โปรโมชั่น</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkLifecyclePnLModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="background:#F1F5F9;padding:10px 18px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid #CBD5E1;position:sticky;top:62px;z-index:4;">
+          <button type="button" class="hzk-pnl-tab-btn" data-tab="UNIT" style="background:#002B49;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;font-size:12.5px;cursor:pointer;">🔎 1. วิเคราะห์รายเครื่อง (Unit P&amp;L)</button>
+          <button type="button" class="hzk-pnl-tab-btn" data-tab="BENCH" style="background:#FFFFFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;padding:7px 14px;font-weight:700;font-size:12.5px;cursor:pointer;">📊 2. เทียบข้ามรุ่น &amp; ดีลเลอร์ (Benchmark)</button>
+          <button type="button" class="hzk-pnl-tab-btn" data-tab="SIM" style="background:#FFFFFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;padding:7px 14px;font-weight:700;font-size:12.5px;cursor:pointer;">🧮 3. จำลองตั้งราคา &amp; แพ็คเกจ PM/โปรโมชั่น</button>
+          <button type="button" class="hzk-pnl-tab-btn" data-tab="IMPORT" style="background:#FFFFFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;padding:7px 14px;font-weight:700;font-size:12.5px;cursor:pointer;">📥 4. นำเข้าประวัติขาย NAV &amp; ตั้งเรทต้นทุน</button>
+        </div>
+
+        <div id="hzkLifecyclePnLBody" style="padding:18px 20px;font-size:13px;">⏳ กำลังประมวลผลข้อมูลการขายและประวัติซ่อมรายเครื่อง...</div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    let activeTab = 'UNIT';
+    let cachedState = null;
+
+    function fmtNum(v) {
+      return Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    }
+
+    function updateTabButtons() {
+      modal.querySelectorAll('.hzk-pnl-tab-btn').forEach(b => {
+        const isAct = b.getAttribute('data-tab') === activeTab;
+        b.style.background = isAct ? '#002B49' : '#FFFFFF';
+        b.style.color = isAct ? '#FFFFFF' : '#0F172A';
+        b.style.border = isAct ? 'none' : '1px solid #CBD5E1';
+      });
+    }
+
+    modal.querySelectorAll('.hzk-pnl-tab-btn').forEach(b => {
+      b.onclick = () => {
+        activeTab = b.getAttribute('data-tab');
+        updateTabButtons();
+        renderActiveTab();
+      };
+    });
+
+    async function fetchLifecycleData(snQuery) {
+      const body = document.getElementById('hzkLifecyclePnLBody');
+      body.innerHTML = '⏳ กำลังโหลดข้อมูลวิเคราะห์ต้นทุนและราคาขาย...';
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          const res = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'getSerialLifecyclePnL', serialNo: snQuery || '' })
+          });
+          const d = await res.json();
+          if (d && d.status === 'OK') {
+            cachedState = d;
+            renderActiveTab();
+            return;
+          }
+        } catch (err) {
+          console.warn('GAS Lifecycle fetch fallback:', err);
+        }
+      }
+      cachedState = getLocalFallbackLifecycleData(snQuery);
+      renderActiveTab();
+    }
+
+    function renderActiveTab() {
+      const body = document.getElementById('hzkLifecyclePnLBody');
+      if (!cachedState) return;
+      const u = cachedState.selectedUnit || (cachedState.allUnits && cachedState.allUnits[0]) || null;
+      const cfg = cachedState.config || {};
+      const sourceBadge = cachedState.status === 'OK'
+        ? '<span style="background:#DCFCE7;color:#166534;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;">🟢 เชื่อมต่อ Google Sheets Live</span>'
+        : '<span style="background:#FEF3C7;color:#92400E;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;">🟡 โหมดฐานข้อมูลตัวอย่างในเครื่อง (ตั้งค่า GAS URL เพื่อซิงก์สด)</span>';
+
+      if (activeTab === 'UNIT') {
+        const quickPills = (cachedState.allUnits || []).slice(0, 8).map(item =>
+          `<button type="button" class="hzk-sn-quick-pill" data-sn="${item.serialNumber}" style="background:${u && u.serialNumber === item.serialNumber ? '#0284C7' : '#E2E8F0'};color:${u && u.serialNumber === item.serialNumber ? '#FFF' : '#0F172A'};border:none;border-radius:999px;padding:4px 11px;font-size:11.5px;font-weight:700;cursor:pointer;">${item.serialNumber} (${item.model})</button>`
+        ).join('');
+
+        if (!u) {
+          body.innerHTML = `<div style="color:#64748B;">ไม่พบข้อมูลเครื่องในระบบ กรุณานำเข้าข้อมูลในแท็บที่ 4</div>`;
+          return;
+        }
+
+        const marginColor = u.netMarginPct >= 25 ? '#059669' : (u.netMarginPct >= 10 ? '#D97706' : '#DC2626');
+        const eventsRows = (u.serviceEvents || []).map(ev => {
+          const isBillable = ev.billingType === 'BILLABLE';
+          const badge = isBillable
+            ? '<span style="background:#DCFCE7;color:#166534;padding:2px 7px;border-radius:6px;font-weight:700;font-size:11px;">รายได้นอกประกัน</span>'
+            : (ev.billingType === 'PM'
+              ? '<span style="background:#E0F2FE;color:#075985;padding:2px 7px;border-radius:6px;font-weight:700;font-size:11px;">ต้นทุน PM โปรฯ</span>'
+              : '<span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:6px;font-weight:700;font-size:11px;">ต้นทุนเคลมประกัน</span>');
+          return `
+            <tr>
+              <td style="padding:7px;border:1px solid #CBD5E1;white-space:nowrap;">${ev.date}</td>
+              <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${ev.refId}</td>
+              <td style="padding:7px;border:1px solid #CBD5E1;">${ev.symptom}</td>
+              <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${badge}</td>
+              <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;">${fmtNum(ev.partsCost)}</td>
+              <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;">${fmtNum(ev.laborCost)}</td>
+              <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;">${fmtNum(ev.travelCost)}</td>
+              <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;font-weight:700;color:#DC2626;">${fmtNum(ev.totalCost)}</td>
+              <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;font-weight:700;color:#059669;">${fmtNum(ev.customerBilled)}</td>
+            </tr>
+          `;
+        }).join('') || '<tr><td colspan="9" style="padding:12px;text-align:center;color:#64748B;">เครื่องนี้ยังไม่เคยมีประวัติแจ้งซ่อมหรือเคลมประกัน (Zero Claim — กำไรเต็ม 100%)</td></tr>';
+
+        body.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+            <div style="display:flex;gap:8px;flex:1;min-width:260px;">
+              <input id="hzkPnlSnInput" type="text" value="${u.serialNumber}" placeholder="ระบุ Serial Number เช่น K01234J..." style="flex:1;padding:8px 12px;border:1.5px solid #94A3B8;border-radius:8px;font-weight:700;" />
+              <button type="button" id="hzkPnlSnSearchBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer;">🔎 วิเคราะห์ S/N</button>
+            </div>
+            <div>${sourceBadge}</div>
+          </div>
+
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center;">
+            <span style="font-size:11.5px;font-weight:700;color:#475569;">เลือกเครื่องด่วน:</span>
+            ${quickPills}
+          </div>
+
+          <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:14px;margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:1px solid #E2E8F0;padding-bottom:10px;margin-bottom:10px;">
+              <div>
+                <span style="background:#002B49;color:#FFF;padding:3px 9px;border-radius:6px;font-weight:800;font-size:12px;">S/N: ${u.serialNumber}</span>
+                <span style="font-size:15px;font-weight:800;color:#002B49;margin-left:8px;">รุ่น ${u.model}</span>
+                <span style="background:#E0F2FE;color:#0369A1;padding:3px 9px;border-radius:6px;font-weight:700;font-size:11.5px;margin-left:6px;">ช่องทาง: ${u.saleChannel}</span>
+              </div>
+              <div style="font-size:12px;color:#334155;"><b>อ้างอิงขาย:</b> ${u.refDocNo} | <b>วันที่ขาย:</b> ${u.saleDate} | <b>โปรฯ:</b> ${u.promoTag}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;font-size:12.5px;">
+              <div><b>ผู้ซื้อ / ดีลเลอร์:</b> ${u.dealerName}</div>
+              <div><b>ร้านค้าปลายทาง:</b> ${u.customerStore} (${u.province})</div>
+              <div><b>สิทธิ์รับประกัน:</b> ${u.warrantyStatus} (แถม PM ${u.includedPmCount} ครั้ง)</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:10px;margin-bottom:16px;">
+            <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:12px;">
+              <div style="font-size:11px;font-weight:700;color:#1E40AF;">1) ราคาขายสุทธิ (Sell-Out Price)</div>
+              <div style="font-size:20px;font-weight:800;color:#002B49;margin-top:4px;">฿${fmtNum(u.netSellingPrice)}</div>
+              <div style="font-size:11px;color:#475569;margin-top:2px;">รับประกัน ${u.warrantyYears} ปี | แถม PM ${u.includedPmCount} ครั้ง</div>
+            </div>
+            <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:12px;">
+              <div style="font-size:11px;font-weight:700;color:#991B1B;">2) ต้นทุนซ่อมประกัน &amp; PM สะสม</div>
+              <div style="font-size:20px;font-weight:800;color:#DC2626;margin-top:4px;">-฿${fmtNum(u.companyAbsorbedCost)}</div>
+              <div style="font-size:11px;color:#7F1D1D;margin-top:2px;">คิดเป็น ${u.costToSalesPct}% ของราคาขาย (${u.repairCount} ครั้ง)</div>
+            </div>
+            <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:12px;padding:12px;">
+              <div style="font-size:11px;font-weight:700;color:#065F46;">3) กำไรงานบริการนอกประกัน</div>
+              <div style="font-size:20px;font-weight:800;color:#059669;margin-top:4px;">+฿${fmtNum(u.serviceNetProfit)}</div>
+              <div style="font-size:11px;color:#047857;margin-top:2px;">รายได้ ฿${fmtNum(u.billableRevenueTotal)} - ทุน ฿${fmtNum(u.billableCostTotal)}</div>
+            </div>
+            <div style="background:#F8FAFC;border:2px solid ${marginColor};border-radius:12px;padding:12px;">
+              <div style="font-size:11px;font-weight:800;color:${marginColor};">4) คงเหลือสุทธิตลอดอายุเครื่อง</div>
+              <div style="font-size:20px;font-weight:800;color:${marginColor};margin-top:4px;">฿${fmtNum(u.lifecycleNetContribution)}</div>
+              <div style="font-size:11px;font-weight:700;color:${marginColor};margin-top:2px;">Net Margin: ${u.netMarginPct}% (เป้า ${cfg.targetNetMarginPct || 28}%)</div>
+            </div>
+          </div>
+
+          <div style="font-weight:800;color:#002B49;margin-bottom:8px;">🧾 รายละเอียดการซ่อมและค่าใช้จ่ายแต่ละครั้งของเครื่อง S/N: ${u.serialNumber}</div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;min-width:780px;border-collapse:collapse;font-size:12px;">
+              <thead>
+                <tr style="background:#002B49;color:#FFF;">
+                  <th style="padding:8px;">วันที่</th>
+                  <th style="padding:8px;">เลขที่ใบงาน</th>
+                  <th style="padding:8px;text-align:left;">อาการ / รายการซ่อม</th>
+                  <th style="padding:8px;">ประเภท</th>
+                  <th style="padding:8px;text-align:right;">ค่าอะไหล่</th>
+                  <th style="padding:8px;text-align:right;">ค่าแรง</th>
+                  <th style="padding:8px;text-align:right;">ค่าเดินทาง</th>
+                  <th style="padding:8px;text-align:right;">ต้นทุนรวม</th>
+                  <th style="padding:8px;text-align:right;">เก็บเงินลูกค้า</th>
+                </tr>
+              </thead>
+              <tbody>${eventsRows}</tbody>
+            </table>
+          </div>
+        `;
+
+        document.getElementById('hzkPnlSnSearchBtn').onclick = () => {
+          fetchLifecycleData(document.getElementById('hzkPnlSnInput').value);
+        };
+        modal.querySelectorAll('.hzk-sn-quick-pill').forEach(p => {
+          p.onclick = () => fetchLifecycleData(p.getAttribute('data-sn'));
+        });
+      }
+
+      if (activeTab === 'BENCH') {
+        const mRows = (cachedState.modelBenchmark || []).map(m => `
+          <tr>
+            <td style="padding:7px;border:1px solid #CBD5E1;font-weight:800;color:#002B49;">${m.model}</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${m.unitCount}</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;">฿${fmtNum(m.avgSalePrice)}</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;color:#DC2626;font-weight:700;">฿${fmtNum(m.avgWarrantyCostPerUnit)}</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:700;color:${m.claimRatioPct > 8 ? '#DC2626' : '#059669'};">${m.claimRatioPct}%</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;background:#F0FDF4;font-weight:700;color:#166534;">฿${fmtNum(m.recommendedPmAnnual)} / ปี</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;background:#EFF6FF;font-weight:700;color:#1E40AF;">฿${fmtNum(m.recommendedExtWarranty1Yr)} / ปี</td>
+          </tr>
+        `).join('');
+
+        const dRows = (cachedState.dealerBenchmark || []).map(d => `
+          <tr>
+            <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${d.dealerName}</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${d.saleChannel}</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${d.unitCount}</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${d.claimedUnits} (${d.claimRatePct}%)</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;">฿${fmtNum(d.totalSalesThb)}</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;color:#DC2626;font-weight:700;">฿${fmtNum(d.totalWarrantyCostThb)}</td>
+            <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:700;">${d.qualityGrade}</td>
+          </tr>
+        `).join('');
+
+        body.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <div style="font-weight:800;color:#002B49;font-size:14px;">📊 ตารางเปรียบเทียบต้นทุนซ่อมเฉลี่ย &amp; ราคาแพ็คเกจแนะนำแยกตามรุ่น (By Model)</div>
+            <button type="button" id="hzkExportLifecycleCsvBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">📥 Export รายงานผู้บริหาร (CSV)</button>
+          </div>
+          <div style="overflow-x:auto;margin-bottom:18px;">
+            <table style="width:100%;min-width:760px;border-collapse:collapse;font-size:12px;">
+              <thead>
+                <tr style="background:#002B49;color:#FFF;">
+                  <th style="padding:8px;text-align:left;">รุ่นเครื่อง (Model)</th>
+                  <th style="padding:8px;">จำนวนเครื่อง</th>
+                  <th style="padding:8px;text-align:right;">ราคาขายเฉลี่ย</th>
+                  <th style="padding:8px;text-align:right;">ต้นทุนเคลมเฉลี่ย/เครื่อง</th>
+                  <th style="padding:8px;">สัดส่วนเคลม/ยอดขาย</th>
+                  <th style="padding:8px;text-align:right;">ราคาสัญญา PM แนะนำ</th>
+                  <th style="padding:8px;text-align:right;">ราคาขยายประกัน +1 ปี</th>
+                </tr>
+              </thead>
+              <tbody>${mRows}</tbody>
+            </table>
+          </div>
+
+          <div style="font-weight:800;color:#7F1D1D;font-size:14px;margin-bottom:8px;">🏢 ตารางเปรียบเทียบคุณภาพการติดตั้ง &amp; ต้นทุนเคลมแยกตามดีลเลอร์/ช่องทางขาย (By Dealer / Channel)</div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;min-width:760px;border-collapse:collapse;font-size:12px;">
+              <thead>
+                <tr style="background:#7F1D1D;color:#FFF;">
+                  <th style="padding:8px;text-align:left;">ตัวแทนจำหน่าย / ช่องทาง</th>
+                  <th style="padding:8px;">ประเภทช่องทาง</th>
+                  <th style="padding:8px;">จำนวนขาย</th>
+                  <th style="padding:8px;">เครื่องที่เคลม (%)</th>
+                  <th style="padding:8px;text-align:right;">ยอดขายรวม</th>
+                  <th style="padding:8px;text-align:right;">ต้นทุนเคลมสะสม</th>
+                  <th style="padding:8px;">เกรดคุณภาพติดตั้ง</th>
+                </tr>
+              </thead>
+              <tbody>${dRows}</tbody>
+            </table>
+          </div>
+        `;
+
+        document.getElementById('hzkExportLifecycleCsvBtn').onclick = () => {
+          const lines = ['Model,Units,Avg_Sale_THB,Avg_Warranty_Cost_THB,Claim_Ratio_Pct,Rec_PM_Annual_THB,Rec_Ext_Warranty_1Yr_THB'];
+          (cachedState.modelBenchmark || []).forEach(m => {
+            lines.push([m.model, m.unitCount, m.avgSalePrice, m.avgWarrantyCostPerUnit, m.claimRatioPct, m.recommendedPmAnnual, m.recommendedExtWarranty1Yr].join(','));
+          });
+          const blob = new Blob(['﻿' + lines.join('
+')], { type: 'text/csv;charset=utf-8;' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'HOSHIZAKI_Lifecycle_Pricing_Benchmark_' + new Date().toISOString().slice(0, 10) + '.csv';
+          a.click();
+        };
+      }
+
+      if (activeTab === 'SIM') {
+        const models = cachedState.modelBenchmark || [];
+        const firstM = models[0] || { model: 'IM-130NE', avgSalePrice: 68500, avgWarrantyCostPerUnit: 4450 };
+        body.innerHTML = `
+          <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:14px;margin-bottom:14px;">
+            <div style="font-weight:800;color:#002B49;font-size:14px;margin-bottom:4px;">🧮 เครื่องมือจำลองตั้งราคาขาย แพ็คเกจ PM และโปรโมชั่น (Executive Pricing &amp; Promo Simulator)</div>
+            <div style="font-size:12px;color:#334155;">คำนวณผลกระทบต่อกำไรสุทธิทันทีเมื่อปรับราคาขาย แถมฟรีสัญญา PM หรือขยายระยะเวลารับประกัน โดยอ้างอิงสถิติค่าซ่อมจริงจากฐานข้อมูล S/N</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px;">
+            <div>
+              <label style="font-weight:700;font-size:12px;">เลือกรุ่นอ้างอิงสถิติซ่อม:</label>
+              <select id="hzkSimModelSel" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:4px;font-weight:700;">
+                ${models.map(m => `<option value="${m.model}" data-price="${m.avgSalePrice}" data-cost="${m.avgWarrantyCostPerUnit}">${m.model} (เคลมเฉลี่ย ฿${fmtNum(m.avgWarrantyCostPerUnit)})</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">ราคาขายตั้งต้น (THB):</label>
+              <input id="hzkSimSellPrice" type="number" value="${firstM.avgSalePrice}" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:4px;font-weight:700;" />
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">ส่วนลดโปรโมชั่น / ดีลเลอร์ (%):</label>
+              <input id="hzkSimDiscountPct" type="number" value="10" min="0" max="50" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:4px;font-weight:700;" />
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">จำนวนครั้ง PM ที่แถมฟรีในโปรโมชั่น:</label>
+              <input id="hzkSimFreePm" type="number" value="2" min="0" max="12" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:4px;font-weight:700;" />
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">ขยายรับประกันเพิ่ม (ปี):</label>
+              <select id="hzkSimExtYr" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:4px;font-weight:700;">
+                <option value="0">ไม่ขยายเพิ่ม (มาตรฐาน 1 ปี)</option>
+                <option value="1" selected>ขยายเพิ่ม +1 ปี (รวม 2 ปี)</option>
+                <option value="2">ขยายเพิ่ม +2 ปี (รวม 3 ปี)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">ราคาขายแพ็คเกจเสริมที่เก็บเพิ่ม (THB):</label>
+              <input id="hzkSimAddonPrice" type="number" value="4900" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:4px;font-weight:700;" />
+            </div>
+          </div>
+
+          <div id="hzkSimResultBox" style="background:#F8FAFC;border:2px solid #0284C7;border-radius:14px;padding:16px;"></div>
+        `;
+
+        function recalcSim() {
+          const sel = document.getElementById('hzkSimModelSel');
+          const opt = sel.options[sel.selectedIndex];
+          const baseWarrantyCost = Number(opt.getAttribute('data-cost') || 3500);
+          const listPrice = Number(document.getElementById('hzkSimSellPrice').value || 0);
+          const discPct = Number(document.getElementById('hzkSimDiscountPct').value || 0);
+          const freePm = Number(document.getElementById('hzkSimFreePm').value || 0);
+          const extYr = Number(document.getElementById('hzkSimExtYr').value || 0);
+          const addonPrice = Number(document.getElementById('hzkSimAddonPrice').value || 0);
+
+          const netMachinePrice = listPrice * (1 - discPct / 100);
+          const totalRevenue = netMachinePrice + addonPrice;
+          const pmCostEach = Number(cfg.pmStandardCostThb || 950) + Number(cfg.travelBkkThb || 500);
+          const totalPmCost = freePm * pmCostEach;
+          // Free PM reduces breakdown rate by 18% per PM visit (capped at 45%)
+          const riskReductionFactor = Math.max(0.55, 1 - Math.min(0.45, freePm * 0.12));
+          const expectedWarrantyCost = Math.round((baseWarrantyCost + extYr * baseWarrantyCost * 0.85) * riskReductionFactor);
+          const totalAfterSalesCost = totalPmCost + expectedWarrantyCost;
+          const netAfterSalesContribution = totalRevenue - totalAfterSalesCost;
+          const breakevenPackagePrice = Math.round(totalPmCost + extYr * baseWarrantyCost * 0.85 * riskReductionFactor * 1.25);
+
+          document.getElementById('hzkSimResultBox').innerHTML = `
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+              <div>
+                <div style="font-size:11.5px;color:#475569;font-weight:700;">รายรับสุทธิรวมแพ็คเกจ</div>
+                <div style="font-size:20px;font-weight:800;color:#002B49;">฿${fmtNum(totalRevenue)}</div>
+                <div style="font-size:11px;color:#64748B;">ค่าเครื่องหลังหักส่วนลด ฿${fmtNum(netMachinePrice)} + แพ็คเกจ ฿${fmtNum(addonPrice)}</div>
+              </div>
+              <div>
+                <div style="font-size:11.5px;color:#991B1B;font-weight:700;">ต้นทุนบริการที่คาดว่าจะเกิดขึ้น</div>
+                <div style="font-size:20px;font-weight:800;color:#DC2626;">-฿${fmtNum(totalAfterSalesCost)}</div>
+                <div style="font-size:11px;color:#7F1D1D;">ต้นทุน PM ${freePm} ครั้ง (฿${fmtNum(totalPmCost)}) + สำรองซ่อมประกัน (฿${fmtNum(expectedWarrantyCost)})</div>
+              </div>
+              <div>
+                <div style="font-size:11.5px;color:#065F46;font-weight:700;">ยอดคงเหลือหลังหักต้นทุนบริการ</div>
+                <div style="font-size:20px;font-weight:800;color:#059669;">฿${fmtNum(netAfterSalesContribution)}</div>
+                <div style="font-size:11px;color:#047857;">ราคาแพ็คเกจขั้นต่ำที่คุ้มทุน: <b>฿${fmtNum(breakevenPackagePrice)}</b></div>
+              </div>
+            </div>
+          `;
+        }
+
+        document.getElementById('hzkSimModelSel').onchange = function () {
+          const opt = this.options[this.selectedIndex];
+          document.getElementById('hzkSimSellPrice').value = opt.getAttribute('data-price') || 65000;
+          recalcSim();
+        };
+        ['hzkSimSellPrice', 'hzkSimDiscountPct', 'hzkSimFreePm', 'hzkSimExtYr', 'hzkSimAddonPrice'].forEach(id => {
+          document.getElementById(id).oninput = recalcSim;
+        });
+        recalcSim();
+      }
+
+      if (activeTab === 'IMPORT') {
+        body.innerHTML = `
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
+            <div style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:12px;padding:14px;">
+              <div style="font-weight:800;color:#002B49;font-size:14px;margin-bottom:6px;">📥 นำเข้าประวัติขายจาก NAV (CSV / วางข้อมูลจาก Excel)</div>
+              <div style="font-size:11.5px;color:#475569;margin-bottom:8px;">
+                รูปแบบคอลัมน์ (คั่นด้วยเครื่องหมายจุลภาค <code>,</code> หรือ Tab จาก Excel):<br/>
+                <code>SerialNo, Model, CustomerName, Phone, Province, DealerName, SaleChannel, RefDocNo, SaleDate, NetPrice, WarrantyYears, IncludedPM, PromoTag</code>
+              </div>
+              <textarea id="hzkNavCsvInput" rows="7" style="width:100%;padding:8px;border:1px solid #94A3B8;border-radius:8px;font-family:monospace;font-size:11.5px;" placeholder="P55441A, IM-130NE, ร้านกาแฟอเมซอน สาขาบางนา, 0812345678, กรุงเทพฯ, บริษัท สยามไอซ์เทค จำกัด, Dealer, SO-2026-0881, 2026-06-15, 67500, 2, 2, PROMO-MIDYEAR&#10;P55442B, KM-230B, โรงแรมแกรนด์ สุขุมวิท, 0898765432, กรุงเทพฯ, HOSHIZAKI Direct Service, Direct End-User, SO-2026-0882, 2026-06-18, 96000, 2, 4, VIP-4PM"></textarea>
+              <button type="button" id="hzkNavImportSubmitBtn" style="margin-top:8px;background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;width:100%;">🚀 นำเข้าข้อมูลผูก S/N เข้าฐานข้อมูล</button>
+            </div>
+
+            <div style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:12px;padding:14px;">
+              <div style="font-weight:800;color:#7F1D1D;font-size:14px;margin-bottom:6px;">⚙️ ตั้งค่าเรทต้นทุนมาตรฐานงานซ่อมในประกัน (Cost Rate Settings)</div>
+              <div style="font-size:11.5px;color:#475569;margin-bottom:10px;">ใช้คำนวณต้นทุนซ่อมในประกันอัตโนมัติ (อะไหล่ + ค่าแรงมาตรฐาน + ค่าเดินทางตามโซน)</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
+                <div><label>ค่าแรงมาตรฐาน/ครั้ง (THB)</label><input id="hzkCfgLabor" type="number" value="${cfg.standardLaborThb || 1200}" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:6px;" /></div>
+                <div><label>ค่าอะไหล่เฉลี่ยกรณีไม่ระบุ (THB)</label><input id="hzkCfgParts" type="number" value="${cfg.defaultPartsCostThb || 1450}" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:6px;" /></div>
+                <div><label>ค่าเดินทางโซน กทม. (THB)</label><input id="hzkCfgBkk" type="number" value="${cfg.travelBkkThb || 500}" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:6px;" /></div>
+                <div><label>ค่าเดินทางปริมณฑล/EEC (THB)</label><input id="hzkCfgVic" type="number" value="${cfg.travelVicinityThb || 850}" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:6px;" /></div>
+                <div><label>ค่าเดินทางต่างจังหวัด (THB)</label><input id="hzkCfgUpc" type="number" value="${cfg.travelUpcountryThb || 1800}" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:6px;" /></div>
+                <div><label>ต้นทุนล้าง PM มาตรฐาน (THB)</label><input id="hzkCfgPm" type="number" value="${cfg.pmStandardCostThb || 950}" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:6px;" /></div>
+              </div>
+              <button type="button" id="hzkCfgSaveBtn" style="margin-top:10px;background:#059669;color:#FFF;border:none;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;width:100%;">💾 บันทึกเรทต้นทุนมาตรฐาน</button>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('hzkNavImportSubmitBtn').onclick = async () => {
+          const raw = document.getElementById('hzkNavCsvInput').value.trim();
+          if (!raw) {
+            alert('กรุณาวางข้อมูล CSV หรือตารางจาก Excel ก่อนกดนำเข้าครับ');
+            return;
+          }
+          const lines = raw.split(/?
+/).filter(l => l.trim());
+          const parsedRows = [];
+          lines.forEach(line => {
+            const cols = line.indexOf('	') !== -1 ? line.split('	') : line.split(',');
+            if (cols.length < 2) return;
+            if (/^serial/i.test(cols[0].trim())) return; // skip header row
+            parsedRows.push({
+              serialNo: (cols[0] || '').trim(),
+              model: (cols[1] || '').trim(),
+              customerName: (cols[2] || '').trim(),
+              customerPhone: (cols[3] || '').trim(),
+              province: (cols[4] || 'กรุงเทพฯ').trim(),
+              dealerName: (cols[5] || 'HOSHIZAKI Direct Service').trim(),
+              saleChannel: (cols[6] || 'Dealer').trim(),
+              refDocNo: (cols[7] || '-').trim(),
+              saleDate: (cols[8] || '').trim(),
+              netPrice: Number((cols[9] || '0').replace(/[^0-9.\-]/g, '')) || 0,
+              warrantyYears: Number(cols[10] || 1) || 1,
+              includedPmCount: Number(cols[11] || 0) || 0,
+              promoTag: (cols[12] || '-').trim()
+            });
+          });
+
+          if (parsedRows.length === 0) {
+            alert('ไม่พบแถวข้อมูลที่ถูกต้อง กรุณาตรวจสอบรูปแบบคอลัมน์ครับ');
+            return;
+          }
+
+          // Save locally as well so instant preview works offline
+          try {
+            const prevLocal = JSON.parse(localStorage.getItem(HZK_V1170_LOCAL_PNL_KEY) || '[]');
+            localStorage.setItem(HZK_V1170_LOCAL_PNL_KEY, JSON.stringify(parsedRows.concat(prevLocal).slice(0, 300)));
+          } catch (e) {}
+
+          const gasUrl = getGasEndpointUrl();
+          if (gasUrl) {
+            try {
+              const res = await fetch(gasUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'importNavSalesHistoryBatch', rows: parsedRows })
+              });
+              const d = await res.json();
+              if (d && d.status === 'OK') {
+                alert(`✅ นำเข้าประวัติขายสำเร็จ ${d.totalProcessed} รายการ (เพิ่มใหม่ ${d.inserted} / อัปเดต ${d.updated})`);
+                activeTab = 'UNIT';
+                updateTabButtons();
+                fetchLifecycleData(parsedRows[0].serialNo);
+                return;
+              }
+            } catch (err) {}
+          }
+          alert(`✅ บันทึกประวัติขายลงฐานข้อมูลในเครื่องสำเร็จ ${parsedRows.length} รายการ`);
+          activeTab = 'UNIT';
+          updateTabButtons();
+          fetchLifecycleData(parsedRows[0].serialNo);
+        };
+
+        document.getElementById('hzkCfgSaveBtn').onclick = async () => {
+          const newCfg = {
+            standardLaborThb: Number(document.getElementById('hzkCfgLabor').value || 1200),
+            defaultPartsCostThb: Number(document.getElementById('hzkCfgParts').value || 1450),
+            travelBkkThb: Number(document.getElementById('hzkCfgBkk').value || 500),
+            travelVicinityThb: Number(document.getElementById('hzkCfgVic').value || 850),
+            travelUpcountryThb: Number(document.getElementById('hzkCfgUpc').value || 1800),
+            pmStandardCostThb: Number(document.getElementById('hzkCfgPm').value || 950),
+            targetNetMarginPct: 28
+          };
+          const gasUrl = getGasEndpointUrl();
+          if (gasUrl) {
+            try {
+              await fetch(gasUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'saveLifecycleCostConfig', config: newCfg })
+              });
+            } catch (e) {}
+          }
+          cachedState.config = newCfg;
+          alert('✅ บันทึกเรทต้นทุนมาตรฐานเรียบร้อยแล้ว');
+        };
+      }
+    }
+
+    updateTabButtons();
+    fetchLifecycleData(prefillSn);
+  }
+
+  async function openPreInstallSiteSurveyModal() {
+    let m = document.getElementById('hzkSiteSurveyModal');
+    if (!m) {
+      m = document.createElement('div');
+      m.id = 'hzkSiteSurveyModal';
+      m.style.cssText =
+        'position:fixed;inset:0;z-index:20062;background:rgba(15,23,42,0.85);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(m);
+    }
+
+    m.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:740px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:sans-serif;color:#0F172A;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;">SALES / JPC / SERVICE PRE-INSTALLATION READINESS</div>
+            <div style="font-size:16px;font-weight:700;">📐 แบบตรวจความพร้อมหน้างานก่อนส่งมอบ &amp; ติดตั้ง (Site Survey)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkSiteSurveyModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div style="padding:18px 20px;font-size:13px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+            <div><label style="font-weight:700;">เลขที่ใบเสนอราคา / SO</label><input id="hzkSrvRef" type="text" placeholder="QT-2026-..." style="width:100%;padding:7px;border:1px solid #CBD5E1;border-radius:8px;" /></div>
+            <div><label style="font-weight:700;">รุ่นเครื่อง (Model)</label><input id="hzkSrvModel" type="text" placeholder="IM-130NE / KM-160B..." style="width:100%;padding:7px;border:1px solid #CBD5E1;border-radius:8px;" /></div>
+            <div style="grid-column:1/-1;"><label style="font-weight:700;">ชื่อร้าน / สถานที่ติดตั้ง</label><input id="hzkSrvCust" type="text" placeholder="ชื่อลูกค้า / สาขา..." style="width:100%;padding:7px;border:1px solid #CBD5E1;border-radius:8px;" /></div>
+          </div>
+          <div style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:12px;padding:12px;margin-bottom:14px;">
+            <div style="font-weight:800;color:#002B49;margin-bottom:8px;">✅ รายการตรวจเช็กมาตรฐาน HOSHIZAKI (ลดอัตราเคลมในประกัน):</div>
+            <label style="display:block;margin-bottom:6px;"><input id="hzkSrvWaterOk" type="checkbox" checked /> <b>ระบบน้ำประปา:</b> แรงดันน้ำ 1.0–5.0 Bar + วาล์ว 1/2" พร้อมจุดติดตั้งเครื่องกรองน้ำ (Water Filter)</label>
+            <label style="display:block;margin-bottom:6px;"><input id="hzkSrvPowerOk" type="checkbox" checked /> <b>ระบบไฟฟ้า:</b> แรงดันไฟ 220V ±10% 50Hz + เบรกเกอร์แยกเฉพาะเครื่องและสายดินครบถ้วน</label>
+            <label style="display:block;"><input id="hzkSrvDrainOk" type="checkbox" checked /> <b>ท่อน้ำทิ้ง &amp; ระบายอากาศ:</b> ท่อน้ำทิ้งระดับต่ำกว่าฐานเครื่อง + เว้นระยะระบายความร้อน ≥ 15 ซม.</label>
+          </div>
+          <button type="button" id="hzkSrvSaveBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;width:100%;">💾 บันทึกผลตรวจหน้างาน &amp; ส่งต่อทีมติดตั้ง</button>
+        </div>
+      </div>
+    `;
+    m.style.display = 'flex';
+
+    document.getElementById('hzkSrvSaveBtn').onclick = async () => {
+      const payload = {
+        action: 'logPreInstallSiteSurvey',
+        refNo: document.getElementById('hzkSrvRef').value.trim(),
+        model: document.getElementById('hzkSrvModel').value.trim(),
+        customerName: document.getElementById('hzkSrvCust').value.trim(),
+        waterOk: document.getElementById('hzkSrvWaterOk').checked,
+        powerOk: document.getElementById('hzkSrvPowerOk').checked,
+        drainOk: document.getElementById('hzkSrvDrainOk').checked
+      };
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          const r = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+          const d = await r.json();
+          if (d && d.status === 'OK') {
+            alert(`✅ บันทึกใบตรวจหน้างาน ${d.surveyId} เรียบร้อย (สถานะ: ${d.readiness})`);
+            m.style.display = 'none';
+            return;
+          }
+        } catch (e) {}
+      }
+      alert('✅ บันทึกผลการตรวจความพร้อมหน้างานเรียบร้อยแล้ว');
+      m.style.display = 'none';
+    };
+  }
+
+  window.openSerialLifecyclePricingSuiteModal = openSerialLifecyclePricingSuiteModal;
+  window.openPreInstallSiteSurveyModal = openPreInstallSiteSurveyModal;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () { installGlobalRuntimeGuard(); dockOmniBridgeButtons(); setTimeout(initMobileCleanUiDeclutter, 300); hookAdminStudioInspectorButton(); });

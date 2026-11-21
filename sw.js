@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1168-flex-creative-studio';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1170-lifecycle-pnl';
 const CORE_ASSETS = [
   './',
   './index.html',

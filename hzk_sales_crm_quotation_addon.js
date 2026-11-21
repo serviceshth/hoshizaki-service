@@ -689,8 +689,7 @@
         : (hType === 'SERVICE_TO_SALES_REPLACE' ? 'Commercial Sales' : 'Service & Installation');
 
       const st = document.getElementById('hzkHndStatus');
-      st.style.display = 'block';
-      st.textContent = '⏳ กำลังบันทึกการส่งต่องานและแจ้งเตือนแผนก ' + toDept + '...';
+      if (st) { st.style.display = 'block'; st.textContent = '⏳ กำลังบันทึกการส่งต่องานและแจ้งเตือนแผนก ' + toDept + '...'; }
 
       const res = await fetch(gasUrl, {
         method: 'POST',
@@ -1732,11 +1731,11 @@
     const grandTotal = subTotal + vatAmt - whtAmt;
     const curr = format === 'EXPORT' ? ' USD' : ' THB';
 
-    document.getElementById('hzkSqVatLabel').textContent = format === 'EXPORT' ? 'VAT 0% (Export):' : 'VAT 7%:';
-    document.getElementById('hzkSqSubTotal').textContent = subTotal.toLocaleString('en-US', { minimumFractionDigits: 2 }) + curr;
-    document.getElementById('hzkSqVatAmt').textContent = vatAmt.toLocaleString('en-US', { minimumFractionDigits: 2 }) + curr;
-    document.getElementById('hzkSqWhtAmt').textContent = (whtAmt > 0 ? '-' : '') + whtAmt.toLocaleString('en-US', { minimumFractionDigits: 2 }) + curr;
-    document.getElementById('hzkSqGrandTotal').textContent = grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2 }) + curr;
+    const _elVatL = document.getElementById('hzkSqVatLabel'); if (_elVatL) _elVatL.textContent = format === 'EXPORT' ? 'VAT 0% (Export):' : 'VAT 7%:';
+    const _elSubT = document.getElementById('hzkSqSubTotal'); if (_elSubT) _elSubT.textContent = subTotal.toLocaleString('en-US', { minimumFractionDigits: 2 }) + curr;
+    const _elVatA = document.getElementById('hzkSqVatAmt'); if (_elVatA) _elVatA.textContent = vatAmt.toLocaleString('en-US', { minimumFractionDigits: 2 }) + curr;
+    const _elWhtA = document.getElementById('hzkSqWhtAmt'); if (_elWhtA) _elWhtA.textContent = (whtAmt > 0 ? '-' : '') + whtAmt.toLocaleString('en-US', { minimumFractionDigits: 2 }) + curr;
+    const _elGrdT = document.getElementById('hzkSqGrandTotal'); if (_elGrdT) _elGrdT.textContent = grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2 }) + curr;
 
     return { subTotal, vatAmt, whtAmt, grandTotal };
   }
@@ -2348,6 +2347,7 @@
     document.getElementById('hzkSwitchDeptBannerBtn').onclick = openDepartmentLiveSimulatorModal;
     document.getElementById('hzkExitDeptBannerBtn').onclick = function () {
       applyGlobalAppRoleMode('MANAGER');
+      applyDepartmentLandingWorkspaceView(null, null);
       banner.style.display = 'none';
     };
   }
@@ -2480,6 +2480,11 @@
   }
 
   async function openDepartmentLiveSimulatorModal() {
+    if (!isCurrentUserSoleSuperAdmin()) {
+      showHzkToastNotification('⛔ สงวนสิทธิ์เฉพาะ Mr. Noparin Homhoul (Sole Super Admin) เท่านั้นในการสลับดูหน้าจอของแผนกและบุคคลอื่น', true);
+      if (typeof window.openTechQuickLoginModal === 'function') window.openTechQuickLoginModal();
+      return;
+    }
     const db = await loadSalesMasterDb(false);
     const allIndividuals = (db.activeStaff || []).map(s => ({
       code: s.code,
@@ -2590,6 +2595,7 @@
       btn.onclick = function () {
         const profile = DEPT_VIEW_PROFILES[Number(btn.getAttribute('data-sim-idx'))];
         simModal.style.display = 'none';
+        applyDepartmentLandingWorkspaceView(profile, null);
         showDepartmentSimulationBanner(profile, null);
         profile.launchWorkspace();
       };
@@ -2600,10 +2606,126 @@
         const staff = allIndividuals[Number(btn.getAttribute('data-staff-idx'))];
         simModal.style.display = 'none';
         applyGlobalAppRoleMode(staff.isTech ? 'TECH' : 'MANAGER');
+        applyDepartmentLandingWorkspaceView(null, staff);
         showDepartmentSimulationBanner(null, staff);
         openIndividualStaffWorkspaceDrawer(staff);
       };
     });
+  }
+
+  function isCurrentUserSoleSuperAdmin() {
+    try {
+      const raw = localStorage.getItem('hoshizaki_active_auth_session_v1042');
+      if (!raw) return false;
+      const sess = JSON.parse(raw);
+      return sess && (sess.id === 'SVC-02' || (sess.rbacRole === 'SUPER_ADMIN' && String(sess.name || '').toLowerCase().indexOf('noparin') > -1));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function applyDepartmentLandingWorkspaceView(profile, staffMember) {
+    const jobSheet = document.getElementById('jobSheetContainer');
+    const mobNav = document.getElementById('mobileSectionNav');
+    let deptLandingCard = document.getElementById('hzkDepartmentLandingWorkspaceCard');
+
+    const deptKey = profile ? profile.id : (staffMember ? (staffMember.isTech ? 'SERVICE_TECH' : (/Japan/i.test(staffMember.dept) ? 'JPC_CORP' : (/Market/i.test(staffMember.dept) ? 'MARKETING' : (/Account/i.test(staffMember.dept) ? 'ACCOUNTING' : (/Admin|HR/i.test(staffMember.dept) ? 'ADMIN_HR' : (/Exec/i.test(staffMember.dept) ? 'EXECUTIVE' : (/Service/i.test(staffMember.dept) ? 'SERVICE_MGR' : 'SALES_TH'))))))) : 'SERVICE_MGR');
+    const isServiceView = (deptKey === 'SERVICE_TECH' || deptKey === 'SERVICE_MGR');
+
+    if (isServiceView) {
+      if (jobSheet) jobSheet.style.display = '';
+      if (mobNav) mobNav.style.display = '';
+      if (deptLandingCard) deptLandingCard.style.display = 'none';
+      return;
+    }
+
+    // Non-Service department: hide technician Job Service Report form & show tailored Department Landing Workspace
+    if (jobSheet) jobSheet.style.display = 'none';
+    if (mobNav) mobNav.style.display = 'none';
+
+    if (!deptLandingCard) {
+      deptLandingCard = document.createElement('section');
+      deptLandingCard.id = 'hzkDepartmentLandingWorkspaceCard';
+      deptLandingCard.className = 'max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border-2 border-sky-200 p-4 sm:p-6 space-y-4 my-3';
+      if (jobSheet && jobSheet.parentNode) {
+        jobSheet.parentNode.insertBefore(deptLandingCard, jobSheet);
+      } else {
+        document.body.appendChild(deptLandingCard);
+      }
+    }
+
+    const activeProf = profile || DEPT_VIEW_PROFILES.find(p => p.id === deptKey) || DEPT_VIEW_PROFILES[2];
+    const whoTitle = staffMember ? `${staffMember.name} (${staffMember.code}) — ${staffMember.dept}` : activeProf.deptName;
+
+    const DEPT_ACTION_CARDS = {
+      SALES_TH: [
+        { icon: '📄', title: 'ออกใบเสนอราคาขาย (THB Y2026)', sub: 'เติมขนาด W×D×H + เช็กสต็อกสด HHE อัตโนมัติ', fn: "openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)')" },
+        { icon: '📦', title: 'เช็กสต็อกเครื่องพร้อมขาย (203 รุ่น)', sub: 'ดูยอดคงเหลือจริงจาก Daily Stock Report', fn: "window.openLiveStockSnapshotModal && window.openLiveStockSnapshotModal()" },
+        { icon: '🏢', title: 'ฐานลูกค้า B2B & ดีลเลอร์ (700 ราย)', sub: 'ค้นหาลูกค้า เงื่อนไขเครดิต และประวัติเสนอราคา', fn: "window.openQuotationArchiveModal && window.openQuotationArchiveModal()" },
+        { icon: '🔄', title: 'ส่งต่องานติดตั้ง & ลงทะเบียน S/N', sub: 'แจ้งฝ่ายบริการเข้าติดตั้งเมื่อลูกค้าออก PO แล้ว', fn: "window.openCrossDeptHandoffHubModal && window.openCrossDeptHandoffHubModal()" }
+      ],
+      JPC_CORP: [
+        { icon: '🇯🇵', title: 'ใบเสนอราคา Japanese Corporate (THB/USD)', sub: 'รองรับ Export 0% VAT & Local THB + CC JPC_TEAM', fn: "openSalesCorporateQuotationWithPreset('Japanese Corporate', 'ใบเสนอราคา (Quotation)')" },
+        { icon: '📊', title: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)', sub: 'รายงาน KPI ประจำสัปดาห์สำหรับผู้บริหารญี่ปุ่น', fn: "window.openTrilingualExecutiveBriefModal && window.openTrilingualExecutiveBriefModal()" },
+        { icon: '🔎', title: 'ตรวจสอบประวัติเครื่อง S/N 360°', sub: 'ดูประวัติเครื่องของลูกค้าองค์กรญี่ปุ่นย้อนหลัง', fn: "openSerial360TimelineModal('')" },
+        { icon: '🌐', title: 'เชื่อมระบบ Jobcan & สำนักงานใหญ่ญี่ปุ่น', sub: 'จัดการเอกสารและอนุมัติคำขอข้ามสาขา', fn: "window.openVoiceTeamsAndJobcanHqModal && window.openVoiceTeamsAndJobcanHqModal('JOBCAN_HQ')" }
+      ],
+      MARKETING: [
+        { icon: '🏷️', title: 'สต็อกเครื่องโชว์ / มีตำหนิ (602 รายการ)', sub: 'พร้อมลิงก์ใบตรวจสภาพ QCF และดึงลงใบเสนอราคา', fn: "window.openDamageDemoStockModal && window.openDamageDemoStockModal()" },
+        { icon: '📣', title: 'ใบเสนอราคาแคมเปญ & โปรโมชัน', sub: 'ออกใบเสนอราคาส่งเสริมการขายและงานแสดงสินค้า', fn: "openSalesCorporateQuotationWithPreset('Marketing', 'ใบเสนอราคา (Quotation)')" },
+        { icon: '🎨', title: 'Unified AI Content & Promo Card Studio', sub: 'สร้างการ์ดโปรโมชัน / แอดโฆษณา / คู่มือดีลเลอร์', fn: "window.openUnifiedAiContentAndCardStudio && window.openUnifiedAiContentAndCardStudio('SERVICE_SELF_CHECK')" },
+        { icon: '🎪', title: 'ออกบูธ THAIFEX / Showroom & จ่ายลีด', sub: 'กระจายลีดลูกค้าใหม่ให้เครือข่ายดีลเลอร์ทั่วประเทศ', fn: "window.openSaleMarketingGrowthModal && window.openSaleMarketingGrowthModal('EVENTS_SHOWROOM')" }
+      ],
+      ACCOUNTING: [
+        { icon: '🧾', title: 'ออกใบวางบิล / ใบเสร็จรับเงิน (1 คลิก)', sub: 'แปลงจากใบเสนอราคา + เลขผู้เสียภาษี 13 หลัก/สาขา', fn: "openSalesCorporateQuotationWithPreset('Service & Billing', 'ใบวางบิล (Billing Note)')" },
+        { icon: '🔍', title: 'ตรวจสอบงานซ่อมค้างวางบิล (Revenue Audit)', sub: 'ตรวจเช็กใบงานปิดแล้วที่ยังไม่ออกใบวางบิล', fn: "window.openRevenueLeakageAuditModal && window.openRevenueLeakageAuditModal()" },
+        { icon: '⚖️', title: 'ระบบบัญชีบริการ & ส่งออก Microsoft Dynamics NAV', sub: 'สรุปรายรับ AR/AP ภาษี VAT 7% และ WHT 3%', fn: "window.openPhase2DepartmentalBridgeModal && window.openPhase2DepartmentalBridgeModal()" },
+        { icon: '📁', title: 'คลังเอกสารใบเสนอราคา & ใบวางบิล (4,546+ ฉบับ)', sub: 'ตรวจสอบประวัติเอกสารและการยืนยันรับบิลของลูกค้า', fn: "window.openQuotationArchiveModal && window.openQuotationArchiveModal()" }
+      ],
+      ADMIN_HR: [
+        { icon: '🕒', title: 'ตอกบัตร Auto-Stamp · WFH Selfie & OT', sub: 'ตรวจสอบเวลาเข้า-ออกงานของพนักงานทุกแผนก', fn: "window.openHrWorkflowSuiteModal && window.openHrWorkflowSuiteModal('ATTENDANCE')" },
+        { icon: '📅', title: 'อนุมัติใบลา & ซิงค์ตารางจ่ายงานช่าง', sub: 'จัดการวันลาพักร้อน ลากิจ และวันหยุดประจำปี', fn: "window.openHrWorkflowSuiteModal && window.openHrWorkflowSuiteModal('LEAVE')" },
+        { icon: '💳', title: 'อนุมัติเบิกค่าใช้จ่าย & รอบโอนจ่าย พฤ.–ศ.', sub: 'ตรวจใบเสร็จ OCR, Pre-Travel, RINGI และส่งออก NAV', fn: "window.openHrWorkflowSuiteModal && window.openHrWorkflowSuiteModal('APPROVAL_PAYOUT')" },
+        { icon: '👥', title: 'จัดการรายชื่อบุคลากร & ความพร้อม Go-Live QA', sub: 'อัปเดตฐานข้อมูลพนักงานและตรวจสอบความพร้อมระบบ', fn: "window.openProductionGoLiveQaModal && window.openProductionGoLiveQaModal()" }
+      ],
+      EXECUTIVE: [
+        { icon: '👑', title: 'MD Boardroom BI & สไลด์ประชุม 3 ภาษา', sub: 'แดชบอร์ดภาพรวมรายได้ สต็อก และ KPI ทุกแผนก', fn: "window.openMdBoardroomModal && window.openMdBoardroomModal('OVERVIEW')" },
+        { icon: '📈', title: 'Executive Sales & Service BI Dashboard', sub: 'วิเคราะห์อัตราปิดการขาย (PO) และประสิทธิภาพบริการ', fn: "window.openExecutiveBiDashboardModal && window.openExecutiveBiDashboardModal()" },
+        { icon: '📊', title: 'KPI Report Studio (รายสัปดาห์/เดือน/ไตรมาส/ปี)', sub: 'สร้างรายงานเปรียบเทียบผลงานทุกแผนกอัตโนมัติ', fn: "window.openKpiReportStudioModal && window.openKpiReportStudioModal('DASHBOARD')" },
+        { icon: '🌐', title: 'สรุปผู้บริหาร 3 ภาษา (TH / EN / 日本語)', sub: 'ส่งออกรายงานสรุปผู้บริหารพร้อมส่งอีเมล/LINE', fn: "window.openTrilingualExecutiveBriefModal && window.openTrilingualExecutiveBriefModal()" }
+      ]
+    };
+
+    const cards = DEPT_ACTION_CARDS[deptKey] || DEPT_ACTION_CARDS.SALES_TH;
+    deptLandingCard.innerHTML = `
+      <div style="background:${activeProf.badgeColor};color:#FFF;border-radius:14px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="font-size:11px;color:#FDE68A;font-weight:800;letter-spacing:0.04em;">DEPARTMENT PRIMARY WORKSPACE · ซ่อนฟอร์มงานซ่อมช่างอัตโนมัติ</div>
+          <div style="font-size:17px;font-weight:800;margin-top:2px;">${activeProf.icon} ${whoTitle}</div>
+          <div style="font-size:12px;opacity:0.9;margin-top:3px;">${activeProf.visibleModules}</div>
+        </div>
+        <button type="button" id="hzkShowJobSheetOverrideBtn" style="background:rgba(255,255,255,0.18);color:#FFF;border:1px solid rgba(255,255,255,0.45);border-radius:9px;padding:8px 12px;font-size:11.5px;font-weight:700;cursor:pointer;">🛠️ เปิดดูฟอร์ม Job Service ชั่วคราว</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;">
+        ${cards.map(c => `
+          <button type="button" onclick="${c.fn}" style="text-align:left;background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:14px;cursor:pointer;transition:all 0.15s ease;">
+            <div style="font-size:22px;margin-bottom:6px;">${c.icon}</div>
+            <div style="font-weight:800;font-size:13.5px;color:#0F172A;">${c.title}</div>
+            <div style="font-size:11.5px;color:#475569;margin-top:4px;line-height:1.4;">${c.sub}</div>
+          </button>
+        `).join('')}
+      </div>
+    `;
+    deptLandingCard.style.display = 'block';
+
+    const overrideBtn = document.getElementById('hzkShowJobSheetOverrideBtn');
+    if (overrideBtn) {
+      overrideBtn.onclick = function () {
+        if (jobSheet) jobSheet.style.display = '';
+        if (mobNav) mobNav.style.display = '';
+        deptLandingCard.style.display = 'none';
+      };
+    }
   }
 
   // Also inject a quick launcher button inside existing Admin Studio modal whenever opened

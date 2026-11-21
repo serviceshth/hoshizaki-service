@@ -22298,7 +22298,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             const ddmmyy = String(now.getDate()).padStart(2, '0') + String(now.getMonth() + 1).padStart(2, '0') + String(now.getFullYear()).slice(-2);
             const ymd = now.toISOString().slice(0, 10);
             currentQcfRefInspectionId = '';
-            document.getElementById('qcfRefInspectionTag').textContent = 'Mode: Free-Form / Manual';
+            const _qcfTag1 = document.getElementById('qcfRefInspectionTag'); if (_qcfTag1) _qcfTag1.textContent = 'Mode: Free-Form / Manual';
             document.getElementById('qcfIssuedNoInput').value = `QCF_HTH${ddmmyy}`;
             document.getElementById('qcfIssuedDateInput').value = ymd;
             document.getElementById('qcfCompanyInput').value = 'HTH';
@@ -22369,7 +22369,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             currentQcfRefInspectionId = appendMode && currentQcfRefInspectionId
                 ? `${currentQcfRefInspectionId}, ${insRec.inspectionId}`
                 : insRec.inspectionId;
-            document.getElementById('qcfRefInspectionTag').textContent = `Linked: ${currentQcfRefInspectionId}`;
+            const _qcfTag2 = document.getElementById('qcfRefInspectionTag'); if (_qcfTag2) _qcfTag2.textContent = `Linked: ${currentQcfRefInspectionId}`;
 
             const curModels = document.getElementById('qcfModelInput').value.trim();
             const curSerials = document.getElementById('qcfSerialInput').value.trim();
@@ -23059,7 +23059,7 @@ Defect: ${defectText}`;
             const d = list.find(x => x.qcfIssuedNo === qcfNo);
             if (!d) return;
             currentQcfRefInspectionId = d.refInspectionId || '';
-            document.getElementById('qcfRefInspectionTag').textContent = `Editing: ${d.qcfIssuedNo} (${d.refInspectionId || 'Free-Form'})`;
+            const _qcfTag3 = document.getElementById('qcfRefInspectionTag'); if (_qcfTag3) _qcfTag3.textContent = `Editing: ${d.qcfIssuedNo} (${d.refInspectionId || 'Free-Form'})`;
             document.getElementById('qcfIssuedNoInput').value = d.qcfIssuedNo || '';
             document.getElementById('qcfIssuedDateInput').value = d.issuedDate || '';
             document.getElementById('qcfCompanyInput').value = d.companyName || 'HTH';
@@ -27129,7 +27129,7 @@ Defect: ${defectText}`;
 
         const modelVal = (document.getElementById('eqModel')?.value || 'Hoshizaki Machine').trim();
         const sympVal = (document.getElementById('diagSymptom')?.value || '').toLowerCase();
-        document.getElementById('v200SmartDiagModelLabel').textContent = modelVal || 'ไม่ระบุรุ่น';
+        const _v200DiagLbl = document.getElementById('v200SmartDiagModelLabel'); if (_v200DiagLbl) _v200DiagLbl.textContent = modelVal || 'ไม่ระบุรุ่น';
 
         // Sort playbooks so matching symptom appears first
         const sorted = [...SMART_DIAG_PLAYBOOKS].sort((a, b) => {
@@ -27936,8 +27936,8 @@ Defect: ${defectText}`;
             document.body.appendChild(modal);
         }
 
-        document.getElementById('v200MachineQrSnLabel').textContent = `S/N: ${serial}`;
-        document.getElementById('v200MachineQrModelLabel').textContent = `${model || 'Hoshizaki'} · ${cust || ''}`;
+        const _v200QrSn = document.getElementById('v200MachineQrSnLabel'); if (_v200QrSn) _v200QrSn.textContent = `S/N: ${serial}`;
+        const _v200QrMod = document.getElementById('v200MachineQrModelLabel'); if (_v200QrMod) _v200QrMod.textContent = `${model || 'Hoshizaki'} · ${cust || ''}`;
         document.getElementById('btnCopyMachinePortalUrl').onclick = () => {
             if (navigator.clipboard) navigator.clipboard.writeText(portalUrl).catch(() => {});
             if (typeof showToast === 'function') showToast('คัดลอกลิงก์ Machine QR Passport เรียบร้อยแล้ว ✓');
@@ -30435,7 +30435,7 @@ display: none !important;
 
         let list = [];
         try { list = JSON.parse(localStorage.getItem(PA_LOCAL_KEY) || '[]'); } catch (e) {}
-        document.getElementById('paWorkflowCountBadge').textContent = list.length + ' รายการ';
+        const _paBadge = document.getElementById('paWorkflowCountBadge'); if (_paBadge) _paBadge.textContent = list.length + ' รายการ';
 
         paBox.innerHTML = list.length === 0
             ? '<div class="text-slate-500 py-4 text-center">ยังไม่มีรายการเบิกอะไหล่ล่วงหน้า กดปุ่ม "+ สร้างใบเบิกอะไหล่ล่วงหน้า" ด้านบน</div>'
@@ -30456,7 +30456,7 @@ display: none !important;
         let jobs = [];
         try { jobs = JSON.parse(localStorage.getItem('hoshizaki_service_history_v1') || '[]'); } catch (e) {}
         const billable = jobs.filter(j => (parseFloat(String(j.grandTotal || '0').replace(/,/g, '')) || 0) > 0).slice(0, 15);
-        document.getElementById('acctHandoverCountBadge').textContent = billable.length + ' รายการ';
+        const _acctBadge = document.getElementById('acctHandoverCountBadge'); if (_acctBadge) _acctBadge.textContent = billable.length + ' รายการ';
 
         acctBox.innerHTML = billable.length === 0
             ? '<div class="text-slate-500 py-4 text-center">ยังไม่มีรายการงานมีค่าใช้จ่ายรอส่งฝ่ายบัญชี</div>'

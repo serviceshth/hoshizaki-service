@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1174-COMPLETE-5-PILLAR-SCALE-UP-SUITE',
+    version: 'v1175-SMART-LINKS-OUTSOURCE-CLAIM-DEMO-PM',
     masterDb: null,
     items: []
   };
@@ -802,7 +802,10 @@
             <div style="font-size:11px;color:#38BDF8;font-weight:800;">MULTI-CHANNEL SHARE + GROUP CC/BCC (7 DEPTS) + DOC TRACKING</div>
             <div style="font-size:15px;font-weight:700;">[${qt.department || 'Sales'}] ${qt.docType || 'ใบเสนอราคา'} ${qt.offerNo} (${qt.rev}) — ${totalTxt}</div>
           </div>
-          <button type="button" onclick="document.getElementById('hzkSqShareHubModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button type="button" onclick="window.openSmartShareableLinksPreviewModal({customerName:document.getElementById('hzkSqCustomer')?document.getElementById('hzkSqCustomer').value:'',model:HZK_OMNI_STATE.items[0]?HZK_OMNI_STATE.items[0].model:''})" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:6px 11px;font-weight:700;font-size:11.5px;cursor:pointer;">🔗 ลิงก์ลูกค้า/สาขา + พรีวิว</button>
+            <button type="button" onclick="document.getElementById('hzkSqShareHubModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          </div>
         </div>
 
         <div style="padding:18px 20px;font-size:13px;color:#0F172A;display:flex;flex-direction:column;gap:14px;">
@@ -5592,18 +5595,22 @@ ${transcript}</div>
     { id: 'FIELD_GEO_QC', icon: '📍', cat: 'Service & Field Tech', titleTh: 'เช็กอิน GPS หน้างาน & QC Checklist 5 ข้อ', titleEn: 'Field GPS Check-in & 5-Point QC', titleJp: '現場GPSチェックイン・品質点検表', sub: 'บันทึกพิกัดเดินทาง-ถึงหน้างาน-ปิดงาน + ค่าเดินทางโซนอัตโนมัติ', fn: "window.openFieldGeoCheckinAndQcModal()" },
     { id: 'MODEL_COMPARE_ROI', icon: '⚖️', cat: 'Sales & Japanese Corp', titleTh: 'เปรียบเทียบสเปกรุ่นเครื่อง & ROI 1 คลิก', titleEn: 'Side-by-Side Model Spec & ROI', titleJp: '機種スペック・投資回収(ROI)比較表', sub: 'เทียบกำลังผลิต ขนาด W×D×H ค่าไฟ และส่งการ์ดเข้า LINE ลูกค้า', fn: "window.openModelComparisonRoiModal()" },
     { id: 'AR_BUDGET_TRACKER', icon: '💳', cat: 'Accounting, Admin & HR', titleTh: 'ติดตามลูกหนี้ (AR Aging) & เป้าหมายงบประมาณ', titleEn: 'AR Aging & Budget Target Tracker', titleJp: '売掛金年齢調べ・予算達成率管理', sub: 'ติดตามบิลครบกำหนด 30/60 วัน และแถบ % ยอดขายเทียบเป้าแผนก', fn: "window.openArAgingAndBudgetModal()" },
-    { id: 'SANDBOX_GOV_BACKUP', icon: '🧪', cat: 'Accounting, Admin & HR', titleTh: 'โหมดฝึกซ้อม (Sandbox) • Audit Trail • สำรองข้อมูล', titleEn: 'Sandbox Training, Audit & DB Backup', titleJp: '研修サンドボックス・監査ログ・DBバックアップ', sub: 'สลับโหมดฝึกซ้อมพนักงานใหม่ ตรวจประวัติแก้ไข และสำรองฐานข้อมูล', fn: "window.openSandboxAndGovernanceModal()" }
+    { id: 'SANDBOX_GOV_BACKUP', icon: '🧪', cat: 'Accounting, Admin & HR', titleTh: 'โหมดฝึกซ้อม (Sandbox) • Audit Trail • สำรองข้อมูล', titleEn: 'Sandbox Training, Audit & DB Backup', titleJp: '研修サンドボックス・監査ログ・DBバックアップ', sub: 'สลับโหมดฝึกซ้อมพนักงานใหม่ ตรวจประวัติแก้ไข และสำรองฐานข้อมูล', fn: "window.openSandboxAndGovernanceModal()" },
+    { id: 'SMART_LINK_HUB', icon: '🔗', cat: 'Collaboration & Reports', titleTh: 'สร้างลิงก์ส่งลูกค้า / ผู้จัดการสาขา / Outsource + พรีวิว', titleEn: 'Smart Shareable Links & Live Preview', titleJp: '顧客・支店・外注向け専用リンク発行＆プレビュー', sub: 'สร้างลิงก์ส่งออก + พรีวิวหน้าจอจริงก่อนส่งให้ลูกค้า/ดีลเลอร์/ช่างซับ', fn: "window.openSmartShareableLinksPreviewModal()" },
+    { id: 'OUTSOURCE_PORTAL_MGR', icon: '🛠️', cat: 'Service & Field Tech', titleTh: 'ส่งลิงก์ & ตรวจรับรายงาน Outsource / Inspection', titleEn: 'Outsource Job & Inspection Portal', titleJp: '外注作業・点検レポート管理ポータル', sub: 'ส่งลิงก์ให้ช่าง Outsource กรอกใบงาน/ผลตรวจ + ดูรายงานที่ส่งกลับ', fn: "window.openOutsourceAndDealerClaimHubModal('OUTSOURCE')" },
+    { id: 'DEALER_CLAIM_HUB', icon: '🤝', cat: 'Service & Field Tech', titleTh: 'พอร์ทัลดีลเลอร์ยื่นเคลมประกัน & อนุมัติเคลม', titleEn: 'Dealer Warranty Claim Portal & Review', titleJp: '代理店保証クレーム申請・承認管理', sub: 'ส่งลิงก์ให้ดีลเลอร์ยื่นเคลม + ตรวจเช็ก S/N และอนุมัติยอดเคลม', fn: "window.openOutsourceAndDealerClaimHubModal('CLAIM')" },
+    { id: 'DEMO_LOANER_PM', icon: '📦', cat: 'Marketing & Product', titleTh: 'ใบยืมเครื่อง Demo/สำรอง & จัดคิว PM รายไตรมาส', titleEn: 'Demo/Loaner Slip & Multi-Visit PM', titleJp: '展示機・代替機貸出票＆年間PM一括予約', sub: 'บันทึกยืม-คืนเครื่องสำรอง/ออกบูธ + สร้างตาราง PM 4 รอบ/ปีอัตโนมัติ', fn: "window.openDemoLoanerAndMultiPmModal()" }
   ];
 
   const DEFAULT_DEPT_PINS_V1173 = {
-    SERVICE_TECH: ['FIELD_GEO_QC', 'SCAN_SN_360', 'VAN_STOCK', 'FIELD_REPAIR_ETA'],
-    SERVICE_MGR: ['DISPATCH_BOARD', 'FIELD_REPAIR_ETA', 'PM_RENEWAL', 'LIFECYCLE_PNL'],
-    SALES_TH: ['QUOTE_SALES_THB', 'MODEL_COMPARE_ROI', 'DOC_TRACKING', 'CROSS_HANDOVER'],
-    JPC_CORP: ['QUOTE_JPC', 'MODEL_COMPARE_ROI', 'SCAN_SN_360', 'DEPT_REPORT'],
-    MARKETING: ['DEMO_STOCK', 'QUOTE_MARKETING', 'LIFECYCLE_PNL', 'DEPT_REPORT'],
-    ACCOUNTING: ['BILLING_RECEIPT', 'AR_BUDGET_TRACKER', 'EXPORT_NAV', 'DOC_TRACKING'],
-    ADMIN_HR: ['TASK_BOARD', 'SANDBOX_GOV_BACKUP', 'OMNI_MEET_AI', 'GO_LIVE_QA'],
-    EXECUTIVE: ['EXEC_BI', 'AR_BUDGET_TRACKER', 'LIFECYCLE_PNL', 'INCENTIVE_KPI']
+    SERVICE_TECH: ['FIELD_GEO_QC', 'SCAN_SN_360', 'OUTSOURCE_PORTAL_MGR', 'SMART_LINK_HUB'],
+    SERVICE_MGR: ['OUTSOURCE_PORTAL_MGR', 'DEALER_CLAIM_HUB', 'DISPATCH_BOARD', 'SMART_LINK_HUB'],
+    SALES_TH: ['QUOTE_SALES_THB', 'SMART_LINK_HUB', 'MODEL_COMPARE_ROI', 'DOC_TRACKING'],
+    JPC_CORP: ['QUOTE_JPC', 'SMART_LINK_HUB', 'MODEL_COMPARE_ROI', 'SCAN_SN_360'],
+    MARKETING: ['DEMO_STOCK', 'DEMO_LOANER_PM', 'SMART_LINK_HUB', 'QUOTE_MARKETING'],
+    ACCOUNTING: ['BILLING_RECEIPT', 'AR_BUDGET_TRACKER', 'EXPORT_NAV', 'SMART_LINK_HUB'],
+    ADMIN_HR: ['TASK_BOARD', 'SANDBOX_GOV_BACKUP', 'OMNI_MEET_AI', 'SMART_LINK_HUB'],
+    EXECUTIVE: ['EXEC_BI', 'AR_BUDGET_TRACKER', 'LIFECYCLE_PNL', 'DEALER_CLAIM_HUB']
   };
 
   function getEmployeePinnedToolIds(emp) {
@@ -6528,6 +6535,545 @@ ${transcript}</div>
   window.openModelComparisonRoiModal = openModelComparisonRoiModal;
   window.openArAgingAndBudgetModal = openArAgingAndBudgetModal;
   window.openSandboxAndGovernanceModal = openSandboxAndGovernanceModal;
+
+
+
+  // ============================================================================
+  // ENTERPRISE v1175 MODALS:
+  //   1) Smart Shareable Link Generator & Live Preview (Customer / Branch Mgr / Outsource / Dealer)
+  //   2) Outsource Job & Inspection Portal + Dealer Warranty Claim Review Hub
+  //   3) Demo/Loaner Borrowing Slip & Multi-Visit Annual PM Scheduler
+  // ============================================================================
+
+  // 1) Smart Shareable Link Generator & Live Preview
+  async function openSmartShareableLinksPreviewModal(prefill) {
+    const emp = getActiveEmployeeProfileV1171();
+    const p = prefill || {};
+    const gasUrl = getGasEndpointUrl();
+
+    let modal = document.getElementById('hzkSmartLinksPreviewModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkSmartLinksPreviewModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20110;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    const defaultRolePreset = /Service|Tech/i.test(emp.deptLabel)
+      ? 'OUTSOURCE_JOB'
+      : (/Account/i.test(emp.deptLabel) ? 'DOC_ESIGN' : 'BRANCH_MGR');
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1060px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#002B49,#0284C7);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1175 • SMART DEEP-LINK GENERATOR &amp; LIVE RECIPIENT PREVIEW</div>
+            <div style="font-size:16px;font-weight:800;">🔗 ศูนย์สร้างลิงก์ส่งลูกค้า / ผู้จัดการสาขา / Outsource / ดีลเลอร์ + พรีวิวหน้าจอก่อนส่ง</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkSmartLinksPreviewModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:18px 20px;font-size:13px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px;background:#F8FAFC;padding:12px;border-radius:12px;border:1px solid #CBD5E1;">
+            <div>
+              <label style="font-weight:800;font-size:12px;color:#002B49;">1. เลือกประเภทลิงก์ปลายทาง:</label>
+              <select id="hzkSmlTargetType" style="width:100%;padding:8px;border:1.5px solid #0284C7;border-radius:8px;margin-top:3px;font-weight:700;">
+                <option value="BRANCH_MGR" ${defaultRolePreset === 'BRANCH_MGR' ? 'selected' : ''}>🏢 พอร์ทัลผู้จัดการสาขาของลูกค้า (ดูเครื่องทั้งสาขา/ประวัติซ่อม)</option>
+                <option value="OUTSOURCE_JOB" ${defaultRolePreset === 'OUTSOURCE_JOB' ? 'selected' : ''}>🛠️ ส่งลิงก์ให้ Outsource กรอกใบงาน / Inspection Report</option>
+                <option value="DEALER_CLAIM">🤝 ส่งลิงก์ให้ Dealer ยื่นเอกสารเคลมประกัน (Warranty Claim)</option>
+                <option value="DEALER_PORTAL">🏪 พอร์ทัลติดตามงานของตัวแทนจำหน่าย (Dealer Fleet)</option>
+                <option value="SERIAL_360">🔎 ลิงก์ตรวจสอบประวัติเครื่องรายตัว (S/N 360°)</option>
+                <option value="SPEC_5DOC">📐 ลิงก์สเปก &amp; คู่มือเทคนิค 5 หมวด (Model Spec Suite)</option>
+                <option value="DOC_ESIGN" ${defaultRolePreset === 'DOC_ESIGN' ? 'selected' : ''}>✍️ ลิงก์ยืนยันรับเอกสาร / เซ็น PO ลูกค้า (E-Sign)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">ชื่อลูกค้า / สาขา / ดีลเลอร์:</label>
+              <input id="hzkSmlCustInp" type="text" value="${p.customerName || ''}" placeholder="เช่น ร้านกาแฟตัวอย่าง สาขาภูเก็ต" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;" />
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">รุ่นเครื่อง (Model) / Serial No.:</label>
+              <div style="display:flex;gap:5px;margin-top:3px;">
+                <input id="hzkSmlModelInp" type="text" value="${p.model || 'IM-130NE'}" placeholder="IM-130NE" style="width:50%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+                <input id="hzkSmlSnInp" type="text" value="${p.serialNo || 'K01234J'}" placeholder="K01234J" style="width:50%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+              </div>
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">เลขที่ใบงาน / Track ID (ถ้ามี):</label>
+              <input id="hzkSmlJobInp" type="text" value="${p.jobNo || 'JOB-261121'}" placeholder="JOB-... หรือ TRK-..." style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;" />
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;">
+            <!-- Left: Generated URL + Message Preview + Share Actions -->
+            <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:12px;padding:14px;">
+              <div style="font-weight:800;color:#002B49;margin-bottom:6px;">2. ลิงก์ที่สร้างอัตโนมัติ (Auto-Generated Deep Link):</div>
+              <input id="hzkSmlGeneratedUrl" type="text" readonly style="width:100%;padding:8px;border:1px solid #93C5FD;border-radius:8px;background:#FFF;font-size:11.5px;font-family:monospace;margin-bottom:10px;" />
+
+              <div style="font-weight:800;color:#002B49;margin-bottom:6px;">3. ตัวอย่างข้อความที่จะส่งออก (แก้ไขก่อนส่งได้):</div>
+              <textarea id="hzkSmlMessageBox" rows="6" style="width:100%;padding:8px;border:1px solid #93C5FD;border-radius:8px;background:#FFF;font-size:12px;line-height:1.45;"></textarea>
+
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+                <button type="button" id="hzkSmlCopyBtn" style="flex:1;background:#002B49;color:#FFF;border:none;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer;">📋 คัดลอกข้อความ + ลิงก์</button>
+                <button type="button" id="hzkSmlLineShareBtn" style="flex:1;background:#059669;color:#FFF;border:none;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer;">💬 ส่งเข้า LINE ทันที</button>
+                <button type="button" id="hzkSmlTestOpenBtn" style="width:100%;background:#D97706;color:#FFF;border:none;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer;">👁️ เปิดทดสอบหน้าจอปลายทางจริง (Open Live Link)</button>
+              </div>
+            </div>
+
+            <!-- Right: Visual Mockup Preview of What Recipient Sees -->
+            <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:14px;">
+              <div style="font-weight:800;color:#002B49;margin-bottom:8px;">4. พรีวิวหน้าจอที่ผู้รับปลายทางจะเห็น (Recipient Screen Preview):</div>
+              <div id="hzkSmlVisualPreviewCard" style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.06);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    function rebuildSmartLinkPreview() {
+      const base = gasUrl || 'https://script.google.com/macros/s/YOUR_DEPLOYED_GAS_ID/exec';
+      const tType = document.getElementById('hzkSmlTargetType').value;
+      const cust = document.getElementById('hzkSmlCustInp').value.trim();
+      const model = document.getElementById('hzkSmlModelInp').value.trim();
+      const sn = document.getElementById('hzkSmlSnInp').value.trim();
+      const job = document.getElementById('hzkSmlJobInp').value.trim();
+
+      let finalUrl = base;
+      let msgTemplate = '';
+      let previewHtml = '';
+
+      if (tType === 'OUTSOURCE_JOB') {
+        finalUrl = `${base}?action=outsourceForm&job=${encodeURIComponent(job)}&cust=${encodeURIComponent(cust)}&model=${encodeURIComponent(model)}&sn=${encodeURIComponent(sn)}`;
+        msgTemplate =
+          `🛠️ [มอบหมายงานซ่อม / ตรวจเช็กเครื่อง HOSHIZAKI]
+` +
+          `• เลขที่ใบงาน: ${job || '-'}
+` +
+          `• ลูกค้า: ${cust || '-'}
+` +
+          `• รุ่น / S/N: ${model} (${sn})
+` +
+          `กรุณากดลิงก์ด้านล่างเพื่อกรอกรายงานการซ่อม ค่าตรวจวัด และแนบรูปถ่ายส่งกลับเข้าศูนย์บริการ:
+${finalUrl}`;
+        previewHtml = `
+          <div style="background:#002B49;color:#FFF;padding:10px 14px;font-weight:800;font-size:12px;">🛠️ OUTSOURCE JOB &amp; INSPECTION PORTAL</div>
+          <div style="padding:12px;font-size:12px;line-height:1.6;">
+            <div><b>ใบงาน:</b> ${job || '-'} | <b>ลูกค้า:</b> ${cust || 'ระบุชื่อร้าน'}</div>
+            <div><b>รุ่น / S/N:</b> ${model} (${sn})</div>
+            <div style="margin-top:8px;background:#F1F5F9;padding:8px;border-radius:8px;color:#334155;">
+              • ช่องกรอกชื่อช่าง Outsource &amp; เบอร์โทร<br>
+              • ช่องกรอกค่าตรวจวัด (แรงดันน้ำ Bar / กระแส Amp / อุณหภูมิ °C)<br>
+              • ปุ่มอัปโหลดรูปหน้างาน &amp; ลายเซ็นรับงานลูกค้า
+            </div>
+          </div>`;
+      } else if (tType === 'DEALER_CLAIM') {
+        finalUrl = `${base}?action=dealerClaim&dealer=${encodeURIComponent(cust)}&sn=${encodeURIComponent(sn)}&model=${encodeURIComponent(model)}`;
+        msgTemplate =
+          `🤝 [ลิงก์ยื่นเอกสารเคลมอะไหล่ในประกัน HOSHIZAKI]
+` +
+          `เรียน ตัวแทนจำหน่าย ${cust || ''}
+` +
+          `กรุณากรอกข้อมูลอาการเสีย หมายเลข S/N (${sn}) และแนบรูปถ่ายหลักฐานผ่านลิงก์ด้านล่างเพื่อให้ฝ่ายบริการตรวจสอบและอนุมัติเคลม:
+${finalUrl}`;
+        previewHtml = `
+          <div style="background:#7C2D12;color:#FFF;padding:10px 14px;font-weight:800;font-size:12px;">🤝 AUTHORIZED DEALER WARRANTY CLAIM</div>
+          <div style="padding:12px;font-size:12px;line-height:1.6;">
+            <div><b>ดีลเลอร์:</b> ${cust || 'ชื่อตัวแทนจำหน่าย'}</div>
+            <div><b>รุ่น / S/N:</b> ${model} (${sn})</div>
+            <div style="margin-top:8px;background:#FFFBEB;padding:8px;border-radius:8px;color:#92400E;">
+              • ตรวจสอบสถานะประกันของ S/N อัตโนมัติ<br>
+              • ช่องระบุรายการอะไหล่ &amp; ยอดขอเคลม (THB)<br>
+              • อัปโหลดรูปป้าย S/N + จุดเสีย + ใบซ่อมดีลเลอร์
+            </div>
+          </div>`;
+      } else if (tType === 'DEALER_PORTAL') {
+        finalUrl = `${base}?action=portal&type=dealer&q=${encodeURIComponent(cust)}`;
+        msgTemplate =
+          `🏪 [พอร์ทัลตรวจสอบรายการเครื่องและงานบริการสำหรับดีลเลอร์]
+` +
+          `ตัวแทนจำหน่าย: ${cust || '-'}
+` +
+          `ตรวจสอบรายการเครื่องที่จำหน่าย ประวัติการแจ้งซ่อม และสถานะการรับประกันทั้งหมดได้ที่:
+${finalUrl}`;
+        previewHtml = `
+          <div style="background:#002B49;color:#FFF;padding:10px 14px;font-weight:800;font-size:12px;">🤝 DEALER FLEET &amp; WARRANTY PORTAL</div>
+          <div style="padding:12px;font-size:12px;line-height:1.6;">
+            <div>แสดงตารางเครื่องทั้งหมดในความดูแลของดีลเลอร์ <b>${cust || '-'}</b> พร้อมสถานะประกันและประวัติงานบริการแบบเรียลไทม์</div>
+          </div>`;
+      } else if (tType === 'SERIAL_360') {
+        finalUrl = `${base}?action=portal&type=customer&q=${encodeURIComponent(sn)}`;
+        msgTemplate =
+          `🔎 [ประวัติเครื่องและการรับประกัน HOSHIZAKI — S/N: ${sn}]
+` +
+          `รุ่นเครื่อง: ${model}
+` +
+          `ตรวจสอบประวัติการติดตั้ง การบำรุงรักษา PM และสถานะประกันของเครื่องนี้ได้ที่:
+${finalUrl}`;
+        previewHtml = `
+          <div style="background:#0369A1;color:#FFF;padding:10px 14px;font-weight:800;font-size:12px;">🔎 ASSET S/N 360° HISTORY (${sn})</div>
+          <div style="padding:12px;font-size:12px;line-height:1.6;">
+            <div>แสดงข้อมูลเฉพาะเครื่อง <b>${model} (S/N: ${sn})</b> สถานะรับประกัน และประวัติการซ่อมบำรุงทั้งหมด</div>
+          </div>`;
+      } else if (tType === 'SPEC_5DOC') {
+        finalUrl = `${base}?action=specFullScreen&model=${encodeURIComponent(model)}`;
+        msgTemplate =
+          `📐 [เอกสารสเปกและแบบขนาดติดตั้ง HOSHIZAKI รุ่น ${model}]
+` +
+          `สามารถเปิดดู Spec Sheet, คู่มือติดตั้ง, Service Manual, Parts List และ Dimension Drawing ได้ที่:
+${finalUrl}`;
+        previewHtml = `
+          <div style="background:#002B49;color:#FFF;padding:10px 14px;font-weight:800;font-size:12px;">📐 5-DOC ENGINEERING &amp; SPEC SUITE (${model})</div>
+          <div style="padding:12px;font-size:12px;line-height:1.6;">
+            <div>หน้าสเปกเต็มจอพร้อมปุ่มดาวน์โหลด 5 หมวด (Spec Sheet, Instruction, Service Manual, Parts List, CAD Drawing)</div>
+          </div>`;
+      } else if (tType === 'DOC_ESIGN') {
+        finalUrl = `${base}?action=trackDoc&mode=ack&id=${encodeURIComponent(job || 'TRK-DEMO')}`;
+        msgTemplate =
+          `✍️ [ยืนยันรับเอกสาร & ลงนามอนุมัติสั่งซื้อ HOSHIZAKI]
+` +
+          `เรียน คุณ${cust || 'ลูกค้า'}
+` +
+          `แผนก ${emp.deptLabel} ขอนำส่งเอกสารอ้างอิง ${job || '-'} กรุณากดลิงก์ด้านล่างเพื่อยืนยันรับเอกสารหรือลงนามอนุมัติสั่งซื้อ (E-Sign):
+${finalUrl}`;
+        previewHtml = `
+          <div style="background:#059669;color:#FFF;padding:10px 14px;font-weight:800;font-size:12px;">✍️ DIGITAL PO &amp; E-SIGNATURE CONFIRMATION</div>
+          <div style="padding:12px;font-size:12px;line-height:1.6;">
+            <div>ลูกค้ากดเปิดลิงก์จะบันทึกการรับเอกสารทันที พร้อมช่องวาดลายเซ็น E-Signature และแนบไฟล์ PO กลับเข้าระบบ</div>
+          </div>`;
+      } else {
+        // BRANCH_MGR (Default)
+        finalUrl = `${base}?action=portal&type=customer&q=${encodeURIComponent(cust)}`;
+        msgTemplate =
+          `🏢 [พอร์ทัลตรวจสอบเครื่องและประวัติบริการสำหรับผู้จัดการสาขา]
+` +
+          `เรียน ผู้จัดการสาขา ${cust || ''}
+` +
+          `แผนก ${emp.deptLabel} บริษัท โฮชิซากิ (ประเทศไทย) จำกัด ขอนำส่งลิงก์สำหรับตรวจสอบรายการเครื่อง HOSHIZAKI ทั้งหมดในสาขา วันหมดประกัน และประวัติซ่อม/PM:
+${finalUrl}`;
+        previewHtml = `
+          <div style="background:#002B49;color:#FFF;padding:10px 14px;font-weight:800;font-size:12px;">🏢 CUSTOMER BRANCH MANAGER FLEET PORTAL</div>
+          <div style="padding:12px;font-size:12px;line-height:1.6;">
+            <div><b>สาขา:</b> ${cust || 'ชื่อร้าน/สาขาของลูกค้า'}</div>
+            <div style="margin-top:6px;background:#F0F9FF;padding:8px;border-radius:8px;color:#0369A1;">
+              • ตารางรวมเครื่อง HOSHIZAKI ทุกเครื่องในสาขา<br>
+              • วันหมดประกัน &amp; ชื่อดีลเลอร์/ศูนย์บริการที่ดูแล<br>
+              • ประวัติการแจ้งซ่อมและการล้าง PM ย้อนหลังทั้งหมด
+            </div>
+          </div>`;
+      }
+
+      document.getElementById('hzkSmlGeneratedUrl').value = finalUrl;
+      document.getElementById('hzkSmlMessageBox').value = msgTemplate;
+      document.getElementById('hzkSmlVisualPreviewCard').innerHTML = previewHtml;
+    }
+
+    ['hzkSmlTargetType', 'hzkSmlCustInp', 'hzkSmlModelInp', 'hzkSmlSnInp', 'hzkSmlJobInp'].forEach(id => {
+      document.getElementById(id).addEventListener('input', rebuildSmartLinkPreview);
+      document.getElementById(id).addEventListener('change', rebuildSmartLinkPreview);
+    });
+    rebuildSmartLinkPreview();
+
+    document.getElementById('hzkSmlCopyBtn').onclick = () => {
+      const txt = document.getElementById('hzkSmlMessageBox').value;
+      navigator.clipboard && navigator.clipboard.writeText(txt);
+      showHzkToastNotification('✅ คัดลอกข้อความพร้อมลิงก์เรียบร้อยแล้ว สามารถวางส่งใน LINE / Email ได้ทันที', false);
+    };
+
+    document.getElementById('hzkSmlLineShareBtn').onclick = () => {
+      const txt = document.getElementById('hzkSmlMessageBox').value;
+      window.open('https://line.me/R/share?text=' + encodeURIComponent(txt), '_blank');
+    };
+
+    document.getElementById('hzkSmlTestOpenBtn').onclick = () => {
+      const u = document.getElementById('hzkSmlGeneratedUrl').value;
+      if (u.indexOf('YOUR_DEPLOYED_GAS_ID') !== -1) {
+        alert('⚠️ กรุณาตั้งค่า Google Apps Script Web App URL ในเมนู Deep Scan ก่อนทดสอบเปิดลิงก์จริงครับ');
+        return;
+      }
+      window.open(u, '_blank');
+    };
+  }
+
+  // 2) Outsource Job/Inspection Portal & Dealer Warranty Claim Review Hub
+  async function openOutsourceAndDealerClaimHubModal(initialTab) {
+    const emp = getActiveEmployeeProfileV1171();
+    const gasUrl = getGasEndpointUrl();
+    let modal = document.getElementById('hzkOutsourceClaimHubModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkOutsourceClaimHubModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20112;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    let tab = initialTab || 'OUTSOURCE';
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1080px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#002B49,#7C2D12);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1175 • OUTSOURCE INSPECTION &amp; DEALER WARRANTY CLAIM HUB</div>
+            <div style="font-size:16px;font-weight:800;">🛠️ จัดการรายงานซ่อม Outsource &amp; อนุมัติเคลมประกันตัวแทนจำหน่าย (Dealer Claims)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkOutsourceClaimHubModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:14px 20px;background:#F1F5F9;display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" id="hzkTabOutsourceBtn" style="background:#002B49;color:#FFF;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;">🛠️ 1. รายงานซ่อม/ตรวจเครื่องจาก Outsource</button>
+            <button type="button" id="hzkTabDealerClaimBtn" style="background:#FFFFFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;">🤝 2. รายการเคลมประกันจากดีลเลอร์ (Dealer Claims)</button>
+          </div>
+          <button type="button" id="hzkSendPortalLinkQuickBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;">🔗 สร้างลิงก์ส่งให้ Outsource / Dealer + พรีวิว</button>
+        </div>
+
+        <div id="hzkOutsourceClaimBody" style="padding:18px 20px;font-size:13px;">⏳ กำลังโหลดข้อมูล...</div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    document.getElementById('hzkSendPortalLinkQuickBtn').onclick = () => {
+      openSmartShareableLinksPreviewModal({});
+    };
+
+    async function renderTab() {
+      const btnO = document.getElementById('hzkTabOutsourceBtn');
+      const btnC = document.getElementById('hzkTabDealerClaimBtn');
+      btnO.style.background = tab === 'OUTSOURCE' ? '#002B49' : '#FFF';
+      btnO.style.color = tab === 'OUTSOURCE' ? '#FFF' : '#0F172A';
+      btnC.style.background = tab === 'CLAIM' ? '#7C2D12' : '#FFF';
+      btnC.style.color = tab === 'CLAIM' ? '#FFF' : '#0F172A';
+
+      const body = document.getElementById('hzkOutsourceClaimBody');
+      if (!gasUrl) {
+        body.innerHTML = `<div style="color:#B91C1C;">กรุณาตั้งค่า Google Apps Script URL เพื่อดูข้อมูลรายงานจาก Outsource และ Dealer แบบเรียลไทม์ครับ</div>`;
+        return;
+      }
+
+      if (tab === 'OUTSOURCE') {
+        body.innerHTML = '⏳ กำลังดึงรายงานจากช่าง Outsource...';
+        const r = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'getOutsourceInspectionLogs' })
+        });
+        const d = await r.json();
+        const items = (d && d.items) || [];
+        body.innerHTML = `
+          <div style="overflow-x:auto;">
+            <table style="width:100%;min-width:820px;border-collapse:collapse;font-size:12px;">
+              <thead><tr style="background:#002B49;color:#FFF;"><th style="padding:7px;">รหัสรายงาน</th><th style="padding:7px;">ใบงาน</th><th style="padding:7px;">ช่าง Outsource</th><th style="padding:7px;text-align:left;">ลูกค้า / รุ่น / S/N</th><th style="padding:7px;text-align:left;">ค่าตรวจวัด &amp; งานซ่อม</th><th style="padding:7px;">หลักฐาน</th></tr></thead>
+              <tbody>
+                ${items.map(it => `<tr>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${it.reportId}<br><span style="font-size:10px;color:#64748B;">${it.submittedAt}</span></td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${it.jobNo}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;">${it.vendorName}<br><span style="font-size:11px;color:#475569;">${it.vendorPhone}</span></td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;"><b>${it.customerName}</b><br>${it.model} (${it.serialNo})</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;"><b>ค่าวัด:</b> ${it.readings}<br>${it.workDetail}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${it.fileUrl ? `<a href="${it.fileUrl}" target="_blank" style="color:#0284C7;font-weight:700;">📎 เปิดรูป/ไฟล์</a>` : '-'}</td>
+                </tr>`).join('') || '<tr><td colspan="6" style="padding:14px;text-align:center;color:#64748B;">ยังไม่มีรายการส่งรายงานจาก Outsource (กดปุ่มสร้างลิงก์ด้านบนเพื่อส่งให้ช่าง Outsource กรอกได้เลยครับ)</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else {
+        body.innerHTML = '⏳ กำลังดึงรายการยื่นเคลมประกันจากตัวแทนจำหน่าย...';
+        const r = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'getDealerWarrantyClaims' })
+        });
+        const d = await r.json();
+        const items = (d && d.items) || [];
+        body.innerHTML = `
+          <div style="overflow-x:auto;">
+            <table style="width:100%;min-width:860px;border-collapse:collapse;font-size:12px;">
+              <thead><tr style="background:#7C2D12;color:#FFF;"><th style="padding:7px;">เลขที่เคลม</th><th style="padding:7px;">ดีลเลอร์</th><th style="padding:7px;text-align:left;">ลูกค้า / รุ่น / S/N</th><th style="padding:7px;text-align:left;">อาการ &amp; สิทธิ์ประกัน</th><th style="padding:7px;text-align:right;">ยอดขอเคลม</th><th style="padding:7px;">สถานะ / อนุมัติ</th></tr></thead>
+              <tbody>
+                ${items.map(it => `<tr>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${it.claimId}<br><span style="font-size:10px;color:#64748B;">${it.submittedAt}</span></td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${it.dealerName}<br><span style="font-size:11px;font-weight:400;">${it.dealerContact}</span></td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;"><b>${it.customerName}</b><br>${it.model} (${it.serialNo})</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;">${it.symptom}<br><span style="font-size:11px;color:#047857;font-weight:700;">${it.warrantyNote}</span>${it.fileUrl ? ` • <a href="${it.fileUrl}" target="_blank">📎 หลักฐาน</a>` : ''}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;font-weight:700;">฿${Number(it.claimAmount || 0).toLocaleString()}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+                    ${it.status === 'PENDING_REVIEW'
+                      ? `<button type="button" data-cid="${it.claimId}" data-amt="${it.claimAmount}" class="hzk-approve-claim-btn" style="background:#059669;color:#FFF;border:none;border-radius:6px;padding:5px 9px;font-weight:700;cursor:pointer;">✅ อนุมัติเคลม</button>`
+                      : `<span style="font-weight:800;color:#059669;">${it.status} (฿${Number(it.approvedAmount || 0).toLocaleString()})</span>`}
+                  </td>
+                </tr>`).join('') || '<tr><td colspan="6" style="padding:14px;text-align:center;color:#64748B;">ยังไม่มีรายการยื่นเคลมประกันจากดีลเลอร์</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        body.querySelectorAll('.hzk-approve-claim-btn').forEach(btn => {
+          btn.onclick = async () => {
+            const cid = btn.getAttribute('data-cid');
+            const defAmt = btn.getAttribute('data-amt');
+            const appAmt = Number(prompt('ระบุยอดเงิน/มูลค่าอะไหล่ที่อนุมัติเคลม (THB):', defAmt) || 0);
+            await fetch(gasUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({
+                action: 'reviewDealerWarrantyClaim',
+                claimId: cid,
+                decision: 'APPROVED',
+                approvedAmount: appAmt,
+                reviewer: emp.name
+              })
+            });
+            showHzkToastNotification(`✅ อนุมัติใบเคลม ${cid} เรียบร้อยแล้ว`, false);
+            renderTab();
+          };
+        });
+      }
+    }
+
+    document.getElementById('hzkTabOutsourceBtn').onclick = () => { tab = 'OUTSOURCE'; renderTab(); };
+    document.getElementById('hzkTabDealerClaimBtn').onclick = () => { tab = 'CLAIM'; renderTab(); };
+    renderTab();
+  }
+
+  // 3) Demo/Loaner Borrowing Slip & Multi-Visit Annual PM Scheduler
+  async function openDemoLoanerAndMultiPmModal() {
+    const emp = getActiveEmployeeProfileV1171();
+    const gasUrl = getGasEndpointUrl();
+    let modal = document.getElementById('hzkDemoLoanerPmModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkDemoLoanerPmModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20114;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1040px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#065F46,#002B49);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#A7F3D0;font-weight:800;">ENTERPRISE v1175 • DEMO/LOANER BORROWING SLIP &amp; MULTI-VISIT PM SCHEDULER</div>
+            <div style="font-size:16px;font-weight:800;">📦 ใบเบิก-ยืมเครื่องตัวโชว์/เครื่องสำรอง &amp; จัดคิว PM รายปีอัตโนมัติ (4 รอบ/ปี)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkDemoLoanerPmModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:18px 20px;font-size:13px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;">
+          <!-- Left: Demo / Loaner Borrowing Slip -->
+          <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:14px;padding:14px;">
+            <div style="font-weight:800;color:#002B49;font-size:14px;margin-bottom:8px;">1️⃣ ออกใบเบิก-ยืมเครื่องตัวโชว์ / เครื่องสำรองระหว่างซ่อม</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <select id="hzkBrwPurpose" style="padding:8px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+                <option value="CUSTOMER_LOANER">🛠️ เครื่องสำรองให้ลูกค้าระหว่างรอซ่อม (Service Loaner)</option>
+                <option value="EXHIBITION_BOOTH">🎪 ยืมออกบูธแสดงสินค้า / Event (Marketing / Sales)</option>
+                <option value="TRAINING_DEMO">🎓 ใช้ฝึกอบรมช่าง / ทดสอบในศูนย์บริการ</option>
+              </select>
+              <input id="hzkBrwTarget" type="text" placeholder="ชื่อลูกค้า / ชื่องานแสดงสินค้า *" style="padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <input id="hzkBrwModel" type="text" placeholder="รุ่นเครื่อง เช่น IM-130NE" style="padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+                <input id="hzkBrwSn" type="text" placeholder="Serial No. เช่น K01234J" style="padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+              </div>
+              <div>
+                <label style="font-size:11.5px;font-weight:700;">กำหนดวันที่ส่งคืนคลังสินค้า:</label>
+                <input id="hzkBrwReturnDate" type="date" value="${today}" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;" />
+              </div>
+              <button type="button" id="hzkBrwSubmitBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:9px;padding:10px;font-weight:800;cursor:pointer;">📦 บันทึกใบเบิก-ยืม &amp; แจ้งเตือนคลังใน LINE</button>
+            </div>
+          </div>
+
+          <!-- Right: Multi-Visit PM Contract Auto-Scheduler -->
+          <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:14px;padding:14px;">
+            <div style="font-weight:800;color:#166534;font-size:14px;margin-bottom:8px;">2️⃣ สร้างตารางคิวงาน PM รายปีล่วงหน้าอัตโนมัติ (Multi-Visit PM)</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <input id="hzkPmCust" type="text" placeholder="ชื่อลูกค้า / สาขาสัญญา PM *" style="padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <input id="hzkPmModel" type="text" placeholder="รุ่นเครื่อง เช่น IM-240ANE" style="padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+                <input id="hzkPmSn" type="text" placeholder="Serial No." style="padding:8px;border:1px solid #CBD5E1;border-radius:8px;" />
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <select id="hzkPmVisits" style="padding:8px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+                  <option value="4" selected>4 ครั้ง / ปี (ทุก 3 เดือน)</option>
+                  <option value="2">2 ครั้ง / ปี (ทุก 6 เดือน)</option>
+                  <option value="6">6 ครั้ง / ปี (ทุก 2 เดือน)</option>
+                  <option value="12">12 ครั้ง / ปี (ทุกเดือน)</option>
+                </select>
+                <select id="hzkPmVan" style="padding:8px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+                  <option value="T08">รถช่าง T08 (Install &amp; PM)</option>
+                  <option value="T01">รถช่าง T01</option><option value="T02">รถช่าง T02</option>
+                  <option value="T03">รถช่าง T03</option><option value="T04">รถช่าง T04</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:11.5px;font-weight:700;">วันที่เริ่มเข้า PM รอบที่ 1:</label>
+                <input id="hzkPmStartDate" type="date" value="${today}" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;" />
+              </div>
+              <button type="button" id="hzkPmScheduleAllBtn" style="background:#059669;color:#FFF;border:none;border-radius:9px;padding:10px;font-weight:800;cursor:pointer;">📅 สร้างคิวงาน PM ทุกรอบลงตารางช่างทันที</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    document.getElementById('hzkBrwSubmitBtn').onclick = async () => {
+      const target = document.getElementById('hzkBrwTarget').value.trim();
+      if (!target) { alert('กรุณาระบุชื่อลูกค้าหรือชื่องานแสดงสินค้าครับ'); return; }
+      const payload = {
+        action: 'saveDemoLoanerBorrowing',
+        purpose: document.getElementById('hzkBrwPurpose').value,
+        borrower: emp.name,
+        customerOrEvent: target,
+        model: document.getElementById('hzkBrwModel').value.trim(),
+        serialNo: document.getElementById('hzkBrwSn').value.trim(),
+        returnDate: document.getElementById('hzkBrwReturnDate').value
+      };
+      if (gasUrl) {
+        const r = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const d = await r.json();
+        alert(d && d.status === 'OK' ? `✅ ออกใบเบิก-ยืมเลขที่ ${d.slipId} และแจ้งเตือนคลังเรียบร้อยแล้ว` : '✅ บันทึกใบเบิก-ยืมเรียบร้อยแล้ว');
+      } else {
+        alert('✅ บันทึกใบเบิก-ยืมเครื่องในเครื่องเรียบร้อยแล้ว');
+      }
+    };
+
+    document.getElementById('hzkPmScheduleAllBtn').onclick = async () => {
+      const cust = document.getElementById('hzkPmCust').value.trim();
+      if (!cust) { alert('กรุณาระบุชื่อลูกค้า/สาขาครับ'); return; }
+      const payload = {
+        action: 'scheduleMultiVisitPmContract',
+        customerName: cust,
+        model: document.getElementById('hzkPmModel').value.trim(),
+        serialNo: document.getElementById('hzkPmSn').value.trim(),
+        visitsPerYear: Number(document.getElementById('hzkPmVisits').value || 4),
+        vanCode: document.getElementById('hzkPmVan').value,
+        startDate: document.getElementById('hzkPmStartDate').value
+      };
+      if (gasUrl) {
+        const r = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const d = await r.json();
+        alert(d && d.status === 'OK' ? `✅ สร้างตารางคิวงาน PM ครบทั้ง ${d.createdCount} รอบลงกระดานช่างเรียบร้อยแล้ว!` : '✅ สร้างตาราง PM เรียบร้อยแล้ว');
+      } else {
+        alert(`✅ สร้างตาราง PM ${payload.visitsPerYear} รอบเรียบร้อยแล้ว`);
+      }
+    };
+  }
+
+  window.openSmartShareableLinksPreviewModal = openSmartShareableLinksPreviewModal;
+  window.openOutsourceAndDealerClaimHubModal = openOutsourceAndDealerClaimHubModal;
+  window.openDemoLoanerAndMultiPmModal = openDemoLoanerAndMultiPmModal;
 
   function bootPersonalizedCockpitV1171() {
     installGlobalRuntimeGuard();

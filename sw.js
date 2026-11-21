@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1174-complete-scaleup';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1175-smart-links-outsource';
 const CORE_ASSETS = [
   './',
   './index.html',

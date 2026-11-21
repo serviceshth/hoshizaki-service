@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1172-omni-meet-taskboard';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1173-clean-canvas-pin';
 const CORE_ASSETS = [
   './',
   './index.html',

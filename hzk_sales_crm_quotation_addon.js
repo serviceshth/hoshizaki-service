@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1172-OMNI-MEET-TASKBOARD-FIELD-PARTS-REPORTS',
+    version: 'v1173-CLEAN-CANVAS-PERSONAL-PIN-APP-DRAWER',
     masterDb: null,
     items: []
   };
@@ -3848,8 +3848,7 @@
           (cachedState.modelBenchmark || []).forEach(m => {
             lines.push([m.model, m.unitCount, m.avgSalePrice, m.avgWarrantyCostPerUnit, m.claimRatioPct, m.recommendedPmAnnual, m.recommendedExtWarranty1Yr].join(','));
           });
-          const blob = new Blob(['﻿' + lines.join('
-')], { type: 'text/csv;charset=utf-8;' });
+          const blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
           const a = document.createElement('a');
           a.href = URL.createObjectURL(blob);
           a.download = 'HOSHIZAKI_Lifecycle_Pricing_Benchmark_' + new Date().toISOString().slice(0, 10) + '.csv';
@@ -3990,9 +3989,7 @@
             alert('กรุณาวางข้อมูล CSV หรือตารางจาก Excel ก่อนกดนำเข้าครับ');
             return;
           }
-          const lines = raw.split(/
-?
-/).filter(l => l.trim());
+          const lines = raw.split(/\r?\n/).filter(l => l.trim());
           const parsedRows = [];
           lines.forEach(line => {
             const cols = line.indexOf('	') !== -1 ? line.split('	') : line.split(',');
@@ -5117,8 +5114,7 @@
         recognition.onresult = (ev) => {
           for (let i = ev.resultIndex; i < ev.results.length; i++) {
             if (ev.results[i].isFinal) {
-              ta.value += (ta.value ? '
-' : '') + '• ' + ev.results[i][0].transcript.trim();
+              ta.value += (ta.value ? '\n' : '') + '• ' + ev.results[i][0].transcript.trim();
             }
           }
         };
@@ -5532,8 +5528,7 @@ ${transcript}</div>
       const csvLines = [(latestReport.headers || []).join(',')].concat(
         (latestReport.rows || []).map(r => r.map(c => `"${String(c !== null && c !== undefined ? c : '').split('"').join('""')}"`).join(','))
       );
-      const blob = new Blob(['﻿' + csvLines.join('
-')], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob(['﻿' + csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = 'HOSHIZAKI_' + latestReport.department.replace(/[^A-Za-z0-9]/g, '_') + '_Report_' + new Date().toISOString().slice(0, 10) + '.csv';
@@ -5548,10 +5543,506 @@ ${transcript}</div>
   window.openFieldRepairPartsPipelineModal = openFieldRepairPartsPipelineModal;
   window.openDepartmentReportCenterModal = openDepartmentReportCenterModal;
 
+
+
+  // ============================================================================
+  // ENTERPRISE v1173 MODULE: CLEAN-CANVAS HOME + PERSONAL PIN & APP DRAWER
+  // - Ultra-clean, uncluttered daily workspace tailored to each employee & dept
+  // - Universal Command Search Bar (S/N, Model, Customer, Tool)
+  // - 4-6 Personal Pinned Tools per employee (persisted locally + synced to GAS)
+  // - Collapsible App Drawer ("⊞ คลังเครื่องมือทั้งหมด") to pin/unpin/launch any tool
+  // ============================================================================
+  const HZK_V1173_PIN_MAP_KEY = 'hzk_v1173_employee_pinned_tools_map';
+  const HZK_V1173_CLEAN_MODE_KEY = 'hzk_v1173_ultra_clean_canvas_mode';
+
+  const MASTER_TOOL_CATALOG_V1173 = [
+    // Service & Field Tech
+    { id: 'SCAN_SN_360', icon: '📷', cat: 'Service & Field Tech', titleTh: 'สแกน S/N & ดูประวัติ 360°', titleEn: 'Scan S/N & 360° History', titleJp: 'S/Nスキャン・360°履歴', sub: 'เช็กประกัน ดีลเลอร์ และประวัติซ่อมเก่า', fn: "window.openSerial360TimelineModal('')" },
+    { id: 'FIELD_REPAIR_ETA', icon: '🔧', cat: 'Service & Field Tech', titleTh: 'งานซ่อมต่อเนื่อง & รอบอะไหล่ (ETA)', titleEn: 'Multi-Round Repair & Parts ETA', titleJp: '継続修理・部品納期(ETA)管理', sub: 'เสนอราคาอะไหล่เพิ่ม + ล็อกคิวช่างอัตโนมัติ', fn: "window.openFieldRepairPartsPipelineModal()" },
+    { id: 'VAN_STOCK', icon: '🚐', cat: 'Service & Field Tech', titleTh: 'คลังอะไหล่รถช่าง (T01–T08)', titleEn: 'Technician Van Stock', titleJp: 'サービスカー部品在庫', sub: 'ตัดสต็อกหน้างาน + แจ้งเตือนสโตร์อัตโนมัติ', fn: "window.openTechnicianVanStockModal()" },
+    { id: 'DISPATCH_BOARD', icon: '📅', cat: 'Service & Field Tech', titleTh: 'กระดานจ่ายงานช่าง & ติดตั้ง', titleEn: 'Technician Dispatch Board', titleJp: '技術者ディスパッチ予定表', sub: 'จัดคิวติดตั้ง/ซ่อมรายวันของช่าง T01–T08', fn: "window.openServiceDispatchCalendarModal()" },
+    { id: 'PM_RENEWAL', icon: '🔔', cat: 'Service & Field Tech', titleTh: 'แจ้งเตือนหมดประกัน & ต่อสัญญา PM (60 วัน)', titleEn: 'PM & Warranty Renewal (60d)', titleJp: '保証期限・保守契約更新 (60日前)', sub: 'สแกนเครื่องใกล้หมดประกัน + ออกใบเสนอราคา 1 คลิก', fn: "window.openWarrantyPmRenewalModal()" },
+    { id: 'SEND_SERVICE_DOC', icon: '📤', cat: 'Service & Field Tech', titleTh: 'ส่งใบแจ้งบริการ / ใบเสร็จให้ลูกค้า', titleEn: 'Send Tracked Service Doc', titleJp: 'サービス報告書・領収書送信', sub: 'ส่งเข้า LINE / Email พร้อมปุ่มยืนยันรับ', fn: "launchTrackedDocFromServiceForm()" },
+
+    // Commercial Sales & Japanese Corporate
+    { id: 'QUOTE_SALES_THB', icon: '📄', cat: 'Sales & Japanese Corp', titleTh: 'ออกใบเสนอราคา Sales (THB)', titleEn: 'New Sales Quotation (THB)', titleJp: '新規見積書作成 (THB)', sub: 'เติมขนาด W×D×H + เช็กสต็อกสด 203 รุ่น', fn: "openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)')" },
+    { id: 'QUOTE_JPC', icon: '🇯🇵', cat: 'Sales & Japanese Corp', titleTh: 'ใบเสนอราคา Japanese Corporate', titleEn: 'New JPC Quotation (THB/USD)', titleJp: '日系法人向け見積書作成', sub: 'รองรับ Export USD 0% VAT & Local THB + CC JPC', fn: "openSalesCorporateQuotationWithPreset('Japanese Corporate', 'ใบเสนอราคา (Quotation)')" },
+    { id: 'SITE_SURVEY', icon: '📐', cat: 'Sales & Japanese Corp', titleTh: 'แบบตรวจความพร้อมหน้างาน (Site Survey)', titleEn: 'Pre-Install Site Survey', titleJp: '設置前現場チェックシート', sub: 'เช็กแรงดันน้ำ ไฟ ท่อน้ำทิ้ง & ชุดกรองน้ำ', fn: "window.openPreInstallSiteSurveyModal()" },
+    { id: 'CROSS_HANDOVER', icon: '🔄', cat: 'Sales & Japanese Corp', titleTh: 'ส่งต่องานติดตั้ง & ลงทะเบียน S/N', titleEn: 'Sales-to-Service Handover', titleJp: 'サービス部へ設置作業引継', sub: 'ส่งใบงานให้ฝ่ายบริการเข้าติดตั้งพร้อมผูกประกัน', fn: "openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)', 'HANDOVER')" },
+    { id: 'DOC_TRACKING', icon: '📊', cat: 'Sales & Japanese Corp', titleTh: 'ติดตามเอกสาร & E-Sign PO ลูกค้า', titleEn: 'Document & PO Tracking', titleJp: '見積書送付・注文書(PO)承認状況', sub: 'เช็กสถานะเปิดอ่าน ยืนยันรับ และเซ็น PO', fn: "window.openDocumentTrackingDashboardModal()" },
+
+    // Marketing & Product
+    { id: 'DEMO_STOCK', icon: '🏷️', cat: 'Marketing & Product', titleTh: 'สต็อกเครื่องโชว์ / มีตำหนิ (602 รายการ)', titleEn: 'Demo & Clearance Stock (602)', titleJp: '展示機・訳あり在庫一覧 (602台)', sub: 'ดูสภาพเครื่อง ใบตรวจสภาพ และดึงลงใบเสนอราคา', fn: "window.openDamageDemoStockModal()" },
+    { id: 'QUOTE_MARKETING', icon: '📣', cat: 'Marketing & Product', titleTh: 'ออกใบเสนอราคาแคมเปญ Marketing', titleEn: 'Campaign & Promo Quotation', titleJp: 'キャンペーン見積書作成', sub: 'สร้างใบเสนอราคาโปรโมชันพร้อมการ์ด LINE', fn: "openSalesCorporateQuotationWithPreset('Marketing', 'ใบเสนอราคา (Quotation)')" },
+    { id: 'SYNC_EMAIL_STOCK', icon: '📥', cat: 'Marketing & Product', titleTh: 'อัปเดตสต็อกสด MICHIRU-RPA', titleEn: 'Sync Daily Stock Report', titleJp: '日次在庫レポート同期', sub: 'ดึงไฟล์ Stock on Hand ล่าสุดเข้าฐานข้อมูล', fn: "window.triggerEmailStockSyncNow()" },
+
+    // Accounting, Admin & HR
+    { id: 'BILLING_RECEIPT', icon: '🧾', cat: 'Accounting, Admin & HR', titleTh: 'ออกใบวางบิล / ใบเสร็จรับเงิน (1 คลิก)', titleEn: 'Create Billing Note / Receipt', titleJp: '請求書・領収書作成', sub: 'Tax ID 13 หลัก/สาขา + VAT 7% / WHT 3%', fn: "openSalesCorporateQuotationWithPreset('Service & Billing', 'ใบวางบิล (Billing Note)')" },
+    { id: 'EXPORT_NAV', icon: '🏭', cat: 'Accounting, Admin & HR', titleTh: 'ส่งออก Sales Order เข้า NAV (CSV)', titleEn: 'Export PO Approved to NAV', titleJp: '承認済POデータをNAV用CSV出力', sub: 'ดาวน์โหลดไฟล์ CSV นำเข้า Microsoft Dynamics NAV', fn: "window.exportErpSalesOrdersCsv()" },
+    { id: 'GO_LIVE_QA', icon: '🛡️', cat: 'Accounting, Admin & HR', titleTh: 'ตรวจความพร้อมระบบ & Go-Live QA', titleEn: 'Production Readiness QA', titleJp: '本番稼働・システムヘルス点検', sub: 'เช็กสถานะ API, Google Sheets, LINE OA', fn: "window.openProductionGoLiveQaModal()" },
+    { id: 'ROLE_SOP', icon: '📖', cat: 'Accounting, Admin & HR', titleTh: 'คู่มือใช้งานแยกแผนก (Role SOP Guide)', titleEn: 'Department Role SOP Guide', titleJp: '部署別操作マニュアル (SOP)', sub: 'คู่มือมาตรฐานการทำงานสำหรับทุกแผนก', fn: "window.openDepartmentRoleSopModal()" },
+
+    // Collaboration, Task Board, BI & Executive
+    { id: 'TASK_BOARD', icon: '📋', cat: 'Collaboration & Reports', titleTh: 'กระดานงาน & To-Do List แผนก', titleEn: 'Department Task Board & To-Do', titleJp: '部署別タスクボード・To-Do', sub: 'รวมงานค้างตามลำดับความสำคัญ + Kanban 4 ช่อง', fn: "window.openDepartmentTaskBoardModal()" },
+    { id: 'OMNI_MEET_AI', icon: '📹', cat: 'Collaboration & Reports', titleTh: 'ประชุมทีม & AI สรุปรายงานประชุม', titleEn: 'Omni-Meet & AI Minutes', titleJp: 'Web会議・AI議事録自動作成', sub: 'ประชุมหน้างาน/WFH/แผนก + อัดเสียงสรุป 3 ภาษา', fn: "window.openOmniMeetAndAiMinutesModal()" },
+    { id: 'DEPT_REPORT', icon: '📑', cat: 'Collaboration & Reports', titleTh: 'ศูนย์ออกรายงานประจำแผนก 1 คลิก', titleEn: '1-Click Department Reports', titleJp: '部署別ワンクリックレポート出力', sub: 'ดาวน์โหลดรายงานเฉพาะแผนก (CSV / Excel)', fn: "window.openDepartmentReportCenterModal()" },
+    { id: 'LIFECYCLE_PNL', icon: '💰', cat: 'Executive & Intelligence', titleTh: 'วิเคราะห์กำไร-ขาดทุน S/N & ตั้งราคา', titleEn: 'Serial Lifecycle P&L & Pricing', titleJp: '機種別ライフサイクル損益・価格戦略', sub: 'เทียบราคาขายหักต้นทุนซ่อม + จำลองโปรฯ', fn: "window.openSerialLifecyclePricingSuiteModal()" },
+    { id: 'EXEC_BI', icon: '📈', cat: 'Executive & Intelligence', titleTh: 'รายงานสรุปผู้บริหาร & AI Copilot (BI)', titleEn: 'Executive BI & AI Copilot', titleJp: '経営サマリーBI & AIコパイロット', sub: 'ภาพรวมยอดขาย PO งานบริการ & ส่งเข้า LINE', fn: "window.openExecutiveBiDashboardModal()" },
+    { id: 'INCENTIVE_KPI', icon: '🏆', cat: 'Executive & Intelligence', titleTh: 'สรุปผลงาน & Incentive รายบุคคล', titleEn: 'Monthly Sales & Tech KPI', titleJp: '月次営業・サービス個人別実績KPI', sub: 'จัดอันดับยอดปิดการขายและผลงานช่างรายเดือน', fn: "window.openMonthlyIncentiveKpiModal()" }
+  ];
+
+  const DEFAULT_DEPT_PINS_V1173 = {
+    SERVICE_TECH: ['SCAN_SN_360', 'VAN_STOCK', 'FIELD_REPAIR_ETA', 'OMNI_MEET_AI'],
+    SERVICE_MGR: ['DISPATCH_BOARD', 'FIELD_REPAIR_ETA', 'PM_RENEWAL', 'LIFECYCLE_PNL'],
+    SALES_TH: ['QUOTE_SALES_THB', 'DOC_TRACKING', 'CROSS_HANDOVER', 'TASK_BOARD'],
+    JPC_CORP: ['QUOTE_JPC', 'SCAN_SN_360', 'DEPT_REPORT', 'OMNI_MEET_AI'],
+    MARKETING: ['DEMO_STOCK', 'QUOTE_MARKETING', 'LIFECYCLE_PNL', 'DEPT_REPORT'],
+    ACCOUNTING: ['BILLING_RECEIPT', 'EXPORT_NAV', 'DOC_TRACKING', 'DEPT_REPORT'],
+    ADMIN_HR: ['TASK_BOARD', 'OMNI_MEET_AI', 'GO_LIVE_QA', 'DEPT_REPORT'],
+    EXECUTIVE: ['EXEC_BI', 'LIFECYCLE_PNL', 'INCENTIVE_KPI', 'OMNI_MEET_AI']
+  };
+
+  function getEmployeePinnedToolIds(emp) {
+    try {
+      const map = JSON.parse(localStorage.getItem(HZK_V1173_PIN_MAP_KEY) || '{}');
+      if (emp && emp.id && Array.isArray(map[emp.id]) && map[emp.id].length > 0) {
+        return map[emp.id];
+      }
+    } catch (e) {}
+    return (emp && DEFAULT_DEPT_PINS_V1173[emp.deptKey]) || DEFAULT_DEPT_PINS_V1173.SERVICE_MGR;
+  }
+
+  async function saveEmployeePinnedToolIds(emp, pinIds) {
+    if (!emp || !emp.id) return;
+    try {
+      const map = JSON.parse(localStorage.getItem(HZK_V1173_PIN_MAP_KEY) || '{}');
+      map[emp.id] = pinIds;
+      localStorage.setItem(HZK_V1173_PIN_MAP_KEY, JSON.stringify(map));
+    } catch (e) {}
+
+    const gasUrl = getGasEndpointUrl();
+    if (gasUrl) {
+      try {
+        await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'saveEmployeePinnedPreferences',
+            empId: emp.id,
+            empName: emp.name,
+            department: emp.deptLabel,
+            pinnedIds: pinIds,
+            lang: getActiveCockpitLang()
+          })
+        });
+      } catch (e) {}
+    }
+  }
+
+  function openPersonalAppDrawerModal() {
+    const emp = getActiveEmployeeProfileV1171();
+    const lang = getActiveCockpitLang();
+    let pinnedIds = getEmployeePinnedToolIds(emp);
+
+    let modal = document.getElementById('hzkPersonalAppDrawerModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkPersonalAppDrawerModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20090;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    function renderDrawerContent(searchQuery) {
+      const q = String(searchQuery || '').trim().toLowerCase();
+      const categories = [
+        'Service & Field Tech',
+        'Sales & Japanese Corp',
+        'Marketing & Product',
+        'Accounting, Admin & HR',
+        'Collaboration & Reports',
+        'Executive & Intelligence'
+      ];
+
+      const catBlocks = categories.map(cat => {
+        const tools = MASTER_TOOL_CATALOG_V1173.filter(t => {
+          if (t.cat !== cat) return false;
+          if (!q) return true;
+          return (t.titleTh + ' ' + t.titleEn + ' ' + t.titleJp + ' ' + t.sub + ' ' + t.cat).toLowerCase().indexOf(q) !== -1;
+        });
+        if (!tools.length) return '';
+
+        const cards = tools.map(t => {
+          const isPinned = pinnedIds.indexOf(t.id) !== -1;
+          const label = lang === 'JP' ? t.titleJp : (lang === 'EN' ? t.titleEn : t.titleTh);
+          return `
+            <div style="background:${isPinned ? '#F0F9FF' : '#F8FAFC'};border:1.5px solid ${isPinned ? '#0284C7' : '#CBD5E1'};border-radius:12px;padding:11px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;">
+              <div onclick="document.getElementById('hzkPersonalAppDrawerModal').style.display='none';${t.fn}" style="cursor:pointer;display:flex;align-items:flex-start;gap:10px;">
+                <span style="font-size:22px;line-height:1.1;">${t.icon}</span>
+                <div>
+                  <div style="font-weight:800;font-size:13px;color:#0F172A;">${label}</div>
+                  <div style="font-size:11px;color:#475569;margin-top:2px;">${t.sub}</div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #E2E8F0;padding-top:6px;">
+                <button type="button" onclick="document.getElementById('hzkPersonalAppDrawerModal').style.display='none';${t.fn}" style="background:#002B49;color:#FFF;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;">▶ เปิดใช้งาน</button>
+                <button type="button" data-pin-id="${t.id}" class="hzk-drawer-pin-toggle-btn" style="background:${isPinned ? '#0284C7' : '#E2E8F0'};color:${isPinned ? '#FFF' : '#0F172A'};border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;">${isPinned ? '📌 ปักหมุดอยู่ (ถอดหมุด)' : '📍 ปักหมุดขึ้นหน้าแรก'}</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div style="margin-bottom:14px;">
+            <div style="font-weight:800;color:#002B49;font-size:13px;margin-bottom:6px;border-bottom:1px solid #E2E8F0;padding-bottom:3px;">${cat}</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;">${cards}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('hzkAppDrawerListWrap').innerHTML = catBlocks || '<div style="color:#64748B;padding:12px;">ไม่พบเครื่องมือที่ค้นหา</div>';
+
+      modal.querySelectorAll('.hzk-drawer-pin-toggle-btn').forEach(btn => {
+        btn.onclick = async () => {
+          const tid = btn.getAttribute('data-pin-id');
+          if (pinnedIds.indexOf(tid) !== -1) {
+            if (pinnedIds.length <= 1) {
+              alert('ควรมีปุ่มปักหมุดบนหน้าแรกอย่างน้อย 1 ปุ่มครับ');
+              return;
+            }
+            pinnedIds = pinnedIds.filter(x => x !== tid);
+          } else {
+            if (pinnedIds.length >= 6) {
+              alert('แนะนำให้ปักหมุดบนหน้าแรกสูงสุด 6 ปุ่มเพื่อให้หน้าจอโล่งสะอาดตาครับ (กรุณาถอดหมุดปุ่มที่ไม่ใช้ออกก่อน)');
+              return;
+            }
+            pinnedIds = pinnedIds.concat([tid]);
+          }
+          await saveEmployeePinnedToolIds(emp, pinnedIds);
+          renderDrawerContent(document.getElementById('hzkDrawerSearchInp').value);
+          renderCleanCanvasCockpitV1173(emp);
+        };
+      });
+    }
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1040px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#002B49,#0369A1);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1173 • PERSONAL APP DRAWER &amp; PIN CUSTOMIZER</div>
+            <div style="font-size:16px;font-weight:800;">⊞ คลังเครื่องมือทั้งหมด (เลือกปักหมุดขึ้นหน้าแรกของ ${emp.nickname || emp.code})</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button type="button" id="hzkResetPinsDefaultBtn" style="background:rgba(255,255,255,0.18);color:#FFF;border:1px solid rgba(255,255,255,0.4);border-radius:8px;padding:6px 11px;font-size:11.5px;font-weight:700;cursor:pointer;">↺ คืนค่าปุ่มมาตรฐานแผนก</button>
+            <button type="button" onclick="document.getElementById('hzkPersonalAppDrawerModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          </div>
+        </div>
+        <div style="padding:16px 20px;">
+          <input id="hzkDrawerSearchInp" type="text" placeholder="🔍 ค้นหาชื่อเครื่องมือ เช่น ใบเสนอราคา, วางบิล, สต็อก, S/N, ประชุม..." style="width:100%;padding:9px 12px;border:1.5px solid #94A3B8;border-radius:10px;font-size:13px;margin-bottom:14px;" />
+          <div id="hzkAppDrawerListWrap"></div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    document.getElementById('hzkDrawerSearchInp').oninput = function () {
+      renderDrawerContent(this.value);
+    };
+
+    document.getElementById('hzkResetPinsDefaultBtn').onclick = async () => {
+      pinnedIds = DEFAULT_DEPT_PINS_V1173[emp.deptKey] || DEFAULT_DEPT_PINS_V1173.SERVICE_MGR;
+      await saveEmployeePinnedToolIds(emp, pinnedIds);
+      renderDrawerContent('');
+      renderCleanCanvasCockpitV1173(emp);
+      showHzkToastNotification('✅ คืนค่าปุ่มปักหมุดมาตรฐานของแผนกเรียบร้อยแล้ว', false);
+    };
+
+    renderDrawerContent('');
+  }
+
+  function executeUniversalCommandSearch(rawQuery) {
+    const q = String(rawQuery || '').trim();
+    if (!q) {
+      openPersonalAppDrawerModal();
+      return;
+    }
+    const upper = q.toUpperCase();
+    // 1) Product model pattern (e.g. IM-130NE, KM-160B)
+    if (/^(IM|KM|FM|HR|HF|RT|HNC|HSU|JWE|DBF|DCM)-?[A-Z0-9\-]+$/i.test(upper)) {
+      window.openSerialLifecyclePricingSuiteModal(upper);
+      return;
+    }
+    // 2) Serial number pattern (e.g. K01234J)
+    if (/^[A-Z][0-9]{4,6}[A-Z0-9]$/i.test(upper)) {
+      window.openSerial360TimelineModal(upper);
+      return;
+    }
+    // 3) Keyword routing
+    if (/วางบิล|ใบเสร็จ|nav|บัญชี/i.test(q)) {
+      openSalesCorporateQuotationWithPreset('Service & Billing', 'ใบวางบิล (Billing Note)');
+      return;
+    }
+    if (/เสนอราคา|quote|qt/i.test(q)) {
+      openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)');
+      return;
+    }
+    if (/ประชุม|meet|สรุป/i.test(q)) {
+      window.openOmniMeetAndAiMinutesModal();
+      return;
+    }
+    if (/งานค้าง|todo|กระดาน/i.test(q)) {
+      window.openDepartmentTaskBoardModal();
+      return;
+    }
+    // Otherwise open App Drawer pre-filtered with query
+    openPersonalAppDrawerModal();
+    setTimeout(() => {
+      const inp = document.getElementById('hzkDrawerSearchInp');
+      if (inp) {
+        inp.value = q;
+        inp.dispatchEvent(new Event('input'));
+      }
+    }, 50);
+  }
+
+  async function renderCleanCanvasCockpitV1173(empProfile) {
+    const emp = empProfile || getActiveEmployeeProfileV1171();
+    const cfg = DEPT_COCKPIT_CONFIGS_V1171[emp.deptKey] || DEPT_COCKPIT_CONFIGS_V1171.SERVICE_MGR;
+    const lang = getActiveCockpitLang();
+    const isUltraClean = localStorage.getItem(HZK_V1173_CLEAN_MODE_KEY) !== 'false';
+
+    const pillBtn = document.getElementById('hzkMyPersonalCockpitPillBtn');
+    if (pillBtn) {
+      pillBtn.innerHTML = `🧑‍💻 ${emp.nickname || emp.code} [${emp.deptLabel}] ▾`;
+    }
+
+    const jobSheet = document.getElementById('jobSheetContainer');
+    const mobNav = document.getElementById('mobileSectionNav');
+    const showJobOverride = sessionStorage.getItem('hzk_v1171_force_show_jobsheet') === 'true';
+
+    if (cfg.hideJobSheet && !showJobOverride) {
+      if (jobSheet) jobSheet.style.display = 'none';
+      if (mobNav) mobNav.style.display = 'none';
+    } else {
+      if (jobSheet) jobSheet.style.display = '';
+      if (mobNav) mobNav.style.display = '';
+    }
+
+    let cockpit = document.getElementById('hzkPersonalizedEmployeeCockpitCard');
+    if (!cockpit) {
+      cockpit = document.createElement('section');
+      cockpit.id = 'hzkPersonalizedEmployeeCockpitCard';
+      cockpit.style.cssText =
+        'max-width:1040px;margin:10px auto 14px;background:#FFFFFF;border-radius:16px;' +
+        'box-shadow:0 10px 28px rgba(15,23,42,0.09);overflow:hidden;font-family:sans-serif;';
+      if (jobSheet && jobSheet.parentNode) {
+        jobSheet.parentNode.insertBefore(cockpit, jobSheet);
+      } else {
+        document.body.insertBefore(cockpit, document.body.firstChild);
+      }
+    }
+
+    cockpit.style.border = `1.5px solid ${cfg.accent}`;
+    const pinnedIds = getEmployeePinnedToolIds(emp);
+    const pinnedTools = pinnedIds
+      .map(id => MASTER_TOOL_CATALOG_V1173.find(t => t.id === id))
+      .filter(Boolean);
+
+    const pinnedCardsHtml = pinnedTools.map(t => {
+      const label = lang === 'JP' ? t.titleJp : (lang === 'EN' ? t.titleEn : t.titleTh);
+      return `
+        <button type="button" onclick="${t.fn}" style="text-align:left;background:#FFFFFF;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px 15px;cursor:pointer;display:flex;align-items:center;gap:12px;box-shadow:0 2px 6px rgba(15,23,42,0.04);transition:all 0.15s ease;min-height:64px;">
+          <span style="font-size:25px;line-height:1;">${t.icon}</span>
+          <span>
+            <div style="font-weight:800;font-size:13.5px;color:#0F172A;">${label}</div>
+            <div style="font-size:11.5px;color:#64748B;margin-top:2px;">${t.sub}</div>
+          </span>
+        </button>
+      `;
+    }).join('');
+
+    const toggleJobBtnHtml = cfg.hideJobSheet
+      ? `<button type="button" id="hzkV1171ToggleJobFormBtn" style="background:rgba(255,255,255,0.16);color:#FFF;border:1px solid rgba(255,255,255,0.38);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;">${showJobOverride ? '🙈 ซ่อนฟอร์มช่าง' : '🛠️ ฟอร์มช่าง'}</button>`
+      : '';
+
+    cockpit.innerHTML = `
+      <!-- Clean Header Bar -->
+      <div style="background:${cfg.gradient};color:#FFFFFF;padding:13px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span style="background:rgba(0,0,0,0.28);color:#FDE047;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;">${emp.deptLabel.toUpperCase()}</span>
+            <span style="font-size:14.5px;font-weight:800;">สวัสดี, ${emp.name}</span>
+          </div>
+          <div style="font-size:11.5px;opacity:0.88;margin-top:2px;">${emp.role} • หน้าจอโฟกัสประจำวัน (Clean Workspace)</div>
+        </div>
+
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          <div style="background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;display:inline-flex;gap:2px;">
+            <button type="button" data-lang="TH" class="hzk-v1171-lang-btn" style="background:${lang === 'TH' ? '#FFF' : 'transparent'};color:${lang === 'TH' ? '#002B49' : '#FFF'};border:none;border-radius:6px;padding:3px 7px;font-size:10.5px;font-weight:800;cursor:pointer;">TH</button>
+            <button type="button" data-lang="EN" class="hzk-v1171-lang-btn" style="background:${lang === 'EN' ? '#FFF' : 'transparent'};color:${lang === 'EN' ? '#002B49' : '#FFF'};border:none;border-radius:6px;padding:3px 7px;font-size:10.5px;font-weight:800;cursor:pointer;">EN</button>
+            <button type="button" data-lang="JP" class="hzk-v1171-lang-btn" style="background:${lang === 'JP' ? '#FFF' : 'transparent'};color:${lang === 'JP' ? '#002B49' : '#FFF'};border:none;border-radius:6px;padding:3px 7px;font-size:10.5px;font-weight:800;cursor:pointer;">日本語</button>
+          </div>
+          ${toggleJobBtnHtml}
+          <button type="button" id="hzkV1171SwitchUserBtn" style="background:#FDE047;color:#0F172A;border:none;border-radius:8px;padding:5px 11px;font-size:11.5px;font-weight:800;cursor:pointer;">🔄 สลับพนักงาน</button>
+        </div>
+      </div>
+
+      <!-- Clean Body Canvas -->
+      <div style="padding:14px 18px;background:#F8FAFC;">
+        <!-- Universal Command Search + Drawer Trigger -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+          <div style="flex:1;min-width:220px;display:flex;background:#FFFFFF;border:1.5px solid #CBD5E1;border-radius:11px;overflow:hidden;">
+            <input id="hzkUniversalCmdInput" type="text" placeholder="🔍 ค้นหาด่วน: พิมพ์เลข S/N, รุ่นเครื่อง (IM-130NE), วางบิล, ประชุม..." style="flex:1;border:none;padding:9px 12px;font-size:12.5px;outline:none;" />
+            <button type="button" id="hzkUniversalCmdGoBtn" style="background:#002B49;color:#FFF;border:none;padding:0 14px;font-weight:700;font-size:12px;cursor:pointer;">ค้นหา</button>
+          </div>
+          <button type="button" id="hzkOpenAppDrawerBtn" style="background:#FFFFFF;color:#002B49;border:1.5px solid #0284C7;border-radius:11px;padding:8px 14px;font-weight:800;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+            ⊞ คลังเครื่องมือทั้งหมด (${MASTER_TOOL_CATALOG_V1173.length}) / ปักหมุด
+          </button>
+        </div>
+
+        <!-- Morning Focus Strip (Compact Status Pills) -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px;background:#FFFFFF;border:1px solid #E2E8F0;border-radius:11px;padding:8px 12px;font-size:12px;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <span>📥 ส่งต่อถึงฉัน: <b id="hzkMetricHandovers" style="color:#002B49;">0</b></span>
+            <span>🛠️ งานค้างระบบ: <b id="hzkMetricOpenJobs" style="color:#B91C1C;">-</b></span>
+            <span>📄 ใบเสนอราคาฉัน: <b id="hzkMetricMyQt" style="color:#0284C7;">-</b></span>
+            <span>✅ PO รอวางบิล: <b id="hzkMetricPoApproved" style="color:#059669;">-</b></span>
+          </div>
+          <button type="button" id="hzkToggleFocusDetailBtn" style="background:transparent;border:none;color:#0284C7;font-weight:700;font-size:11.5px;cursor:pointer;text-decoration:underline;">
+            ${isUltraClean ? '▾ กางแถบงานร่วมกัน (To-Do / ประชุม / รายงาน)' : '▴ ย่อหน้าจอให้โล่ง'}
+          </button>
+        </div>
+
+        <!-- Pinned Personal Shortcuts (Clean 2-Column Grid) -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+          <span style="font-size:11.5px;font-weight:800;color:#475569;">📌 เครื่องมือที่ปักหมุดไว้ของฉัน (My Pinned Shortcuts)</span>
+          <button type="button" onclick="window.openPersonalAppDrawerModal()" style="background:transparent;border:none;color:#0284C7;font-size:11.5px;font-weight:700;cursor:pointer;">⚙️ ปรับแต่งปุ่มปักหมุด</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;">
+          ${pinnedCardsHtml}
+        </div>
+
+        <!-- Collapsible Secondary Bar (Hidden in Clean-Canvas Mode until toggled) -->
+        <div id="hzkCleanCanvasExtraDrawer" style="display:${isUltraClean ? 'none' : 'flex'};margin-top:12px;background:#FFFFFF;border:1px solid #CBD5E1;border-radius:11px;padding:9px 12px;gap:6px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+          <span style="font-size:11.5px;font-weight:800;color:#002B49;">⚡ เครื่องมือเพิ่มเติม:</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" onclick="window.openDepartmentTaskBoardModal()" style="background:#002B49;color:#FDE047;border:none;border-radius:7px;padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">📋 กระดานงาน &amp; To-Do</button>
+            <button type="button" onclick="window.openOmniMeetAndAiMinutesModal()" style="background:#4F46E5;color:#FFF;border:none;border-radius:7px;padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">📹 ประชุมทีม &amp; AI สรุปมติ</button>
+            <button type="button" onclick="window.openFieldRepairPartsPipelineModal()" style="background:#B91C1C;color:#FFF;border:none;border-radius:7px;padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">🔧 งานซ่อม &amp; รอบอะไหล่ ETA</button>
+            <button type="button" onclick="window.openDepartmentReportCenterModal()" style="background:#059669;color:#FFF;border:none;border-radius:7px;padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">📑 รายงานประจำแผนก</button>
+          </div>
+        </div>
+
+        <div id="hzkV1171CrossDeptInboxWrap" style="margin-top:10px;display:none;background:#FFFBEB;border:1px solid #FDE68A;border-radius:11px;padding:9px 12px;">
+          <div style="font-weight:800;color:#92400E;font-size:12px;margin-bottom:5px;">📥 งานส่งต่อที่รอรับเรื่อง (${emp.deptLabel}):</div>
+          <div id="hzkV1171CrossDeptInboxList" style="display:flex;flex-direction:column;gap:5px;"></div>
+        </div>
+      </div>
+    `;
+
+    cockpit.querySelectorAll('.hzk-v1171-lang-btn').forEach(btn => {
+      btn.onclick = () => {
+        localStorage.setItem(HZK_V1171_LANG_KEY, btn.getAttribute('data-lang'));
+        renderCleanCanvasCockpitV1173(emp);
+      };
+    });
+
+    document.getElementById('hzkV1171SwitchUserBtn').onclick = openPersonalEmployeeSelectorModal;
+    document.getElementById('hzkOpenAppDrawerBtn').onclick = openPersonalAppDrawerModal;
+
+    const cmdInp = document.getElementById('hzkUniversalCmdInput');
+    document.getElementById('hzkUniversalCmdGoBtn').onclick = () => executeUniversalCommandSearch(cmdInp.value);
+    cmdInp.onkeydown = (e) => { if (e.key === 'Enter') executeUniversalCommandSearch(cmdInp.value); };
+
+    document.getElementById('hzkToggleFocusDetailBtn').onclick = () => {
+      const nextClean = !isUltraClean;
+      localStorage.setItem(HZK_V1173_CLEAN_MODE_KEY, String(nextClean));
+      renderCleanCanvasCockpitV1173(emp);
+    };
+
+    const toggleJobBtn = document.getElementById('hzkV1171ToggleJobFormBtn');
+    if (toggleJobBtn) {
+      toggleJobBtn.onclick = () => {
+        sessionStorage.setItem('hzk_v1171_force_show_jobsheet', String(!showJobOverride));
+        renderCleanCanvasCockpitV1173(emp);
+      };
+    }
+
+    // Sync metrics & cloud-saved pins if GAS URL is configured
+    const gasUrl = getGasEndpointUrl();
+    if (gasUrl) {
+      try {
+        const res = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'getEmployeeWorkspaceBriefing',
+            empId: emp.id,
+            empCode: emp.code,
+            department: emp.deptLabel
+          })
+        });
+        const d = await res.json();
+        if (d && d.status === 'OK' && d.metrics) {
+          const m = d.metrics;
+          const elH = document.getElementById('hzkMetricHandovers');
+          const elJ = document.getElementById('hzkMetricOpenJobs');
+          const elQ = document.getElementById('hzkMetricMyQt');
+          const elP = document.getElementById('hzkMetricPoApproved');
+          if (elH) elH.textContent = `${m.pendingHandoversCount}`;
+          if (elJ) elJ.textContent = emp.isTech ? `${m.myJobsCount}/${m.openJobsCount}` : `${m.openJobsCount}`;
+          if (elQ) elQ.textContent = `${m.myQtCount}/${m.totalQtCount}`;
+          if (elP) elP.textContent = `${m.poApprovedCount}`;
+
+          const inboxWrap = document.getElementById('hzkV1171CrossDeptInboxWrap');
+          const inboxList = document.getElementById('hzkV1171CrossDeptInboxList');
+          if (inboxWrap && inboxList && Array.isArray(d.pendingHandovers) && d.pendingHandovers.length > 0) {
+            inboxWrap.style.display = 'block';
+            inboxList.innerHTML = d.pendingHandovers.map(h => `
+              <div style="background:#FFFFFF;border:1px solid #FCD34D;border-radius:8px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;font-size:11.5px;">
+                <div><b>[${h.handoverId}] ${h.fromDept}</b> ➔ <b>${h.customerName}</b> | ${h.modelSn} (${h.amount})</div>
+                <button type="button" data-hnd-id="${h.handoverId}" class="hzk-v1171-ack-hnd-btn" style="background:#059669;color:#FFF;border:none;border-radius:6px;padding:4px 9px;font-weight:700;cursor:pointer;">✅ รับเรื่อง</button>
+              </div>
+            `).join('');
+
+            inboxList.querySelectorAll('.hzk-v1171-ack-hnd-btn').forEach(b => {
+              b.onclick = async () => {
+                const hId = b.getAttribute('data-hnd-id');
+                b.disabled = true;
+                await fetch(gasUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                  body: JSON.stringify({ action: 'completeCrossDeptHandover', handoverId: hId, actorName: emp.name })
+                });
+                renderCleanCanvasCockpitV1173(emp);
+              };
+            });
+          }
+        }
+      } catch (err) {}
+    } else {
+      const localArchives = (() => {
+        try { return JSON.parse(localStorage.getItem(STORAGE_ARCHIVE_KEY) || '[]'); } catch (e) { return []; }
+      })();
+      const myQt = localArchives.filter(q => String(q.salesperson || '').toUpperCase() === emp.code.toUpperCase());
+      const elQ = document.getElementById('hzkMetricMyQt');
+      const elJ = document.getElementById('hzkMetricOpenJobs');
+      const elP = document.getElementById('hzkMetricPoApproved');
+      if (elQ) elQ.textContent = `${myQt.length}/${localArchives.length}`;
+      if (elJ) elJ.textContent = 'Offline';
+      if (elP) elP.textContent = '0';
+    }
+  }
+
+  // Override renderPersonalizedEmployeeCockpit with Clean-Canvas v1173 engine
+  window.renderPersonalizedEmployeeCockpit = renderCleanCanvasCockpitV1173;
+  window.openPersonalAppDrawerModal = openPersonalAppDrawerModal;
+
   function bootPersonalizedCockpitV1171() {
     installGlobalRuntimeGuard();
     dockOmniBridgeButtons();
-    renderPersonalizedEmployeeCockpit(getActiveEmployeeProfileV1171());
+    renderCleanCanvasCockpitV1173(getActiveEmployeeProfileV1171());
     setTimeout(initMobileCleanUiDeclutter, 300);
     hookAdminStudioInspectorButton();
   }

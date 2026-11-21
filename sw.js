@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1184-closed-loop-epod-vat';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1185-enterprise-18-modules-complete';
 const CORE_ASSETS = [
   './',
   './index.html',

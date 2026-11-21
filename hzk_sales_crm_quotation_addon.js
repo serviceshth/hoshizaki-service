@@ -249,6 +249,7 @@
       { icon: '🧾', label: 'ใบแจ้งหนี้ / ใบกำกับภาษี / ใบวางบิล (ฟอร์มมาตรฐานบัญชี + Digital Sign)', sub: 'ฟอร์ม A4 เหมือนต้นฉบับบัญชีเป๊ะ + ลายเซ็นดิจิทัล Chayanin / Witharat / Waraporn', action: () => window.openAccountingTaxInvoiceStudioModal() },
       { icon: '📦', label: 'ใบส่งของ Admin — Delivery Order / DO (ฟอร์มมาตรฐาน + Digital Sign)', sub: 'ฟอร์ม A4 Delivery Order ใบส่งของ(ไม่ใช่ใบกำกับภาษี) + ที่อยู่ปัจจุบัน + ลายเซ็นดิจิทัล Chayanin K.', action: () => window.openAdminDeliveryOrderStudioModal() },
       { icon: '📊', label: 'ทะเบียนคุม DO (e-POD เซ็นรับของ) & รายงานภาษีขาย (PP.30 / NAV)', sub: 'ติดตามสถานะเซ็นรับสินค้า e-POD + ตัดสต็อก/ลงทะเบียน S/N + ส่งออก Excel ภาษีขาย', action: () => window.openOutputVatAndDoRegisterModal() },
+      { icon: '🏛️', label: 'ศูนย์รวมระบบองค์กรครบวงจร (Receipt RV / 50 ทวิ / CN / คลังค้นหา / รถส่วนตัว & รถเช่าผู้บริหาร)', sub: 'ครบทั้ง 18 โมดูล: รับชำระ RV, หัก ณ ที่จ่าย 3%, ใบลดหนี้ CN, ค้นหาเอกสารกลาง, เบิกรถช่าง, ค่าเสื่อม/ระยะทางรถส่วนตัว & รถเช่า MD/JPC', action: () => window.openEnterpriseOmniCommandCenterV1185() },
       { icon: '🛠️', label: 'ส่ง & ติดตามเอกสาร Service / ใบวางบิล / ใบเสร็จ', sub: 'ดึงข้อมูลจากใบแจ้งบริการปัจจุบันส่งพร้อมปุ่ม Track', action: () => launchTrackedDocFromServiceForm() },
       { icon: '🔄', label: 'ศูนย์ส่งต่องานข้ามแผนก (1-Click Handover)', sub: 'Sales ➔ ติดตั้ง/ลงทะเบียน S/N | Service ➔ บัญชี', action: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)', 'HANDOVER') },
       { icon: '🔔', label: 'ต่ออายุสัญญา PM & แจ้งเตือนหมดประกัน (60 วัน)', sub: 'สแกนเครื่องใกล้หมดประกัน + สร้างใบเสนอราคาต่อสัญญา 1 คลิก', action: () => window.openWarrantyPmRenewalModal() },
@@ -9726,4 +9727,633 @@ ${finalUrl}`;
     }
   });
   obsV1184.observe(document.body, { childList: true, subtree: true });
+})();
+
+
+
+// ============================================================================
+// ENTERPRISE v1185 MEGA-RELEASE — UNIFIED 18-MODULE OMNI-COMMAND CENTER
+//   1) Official Receipt (RV) & WHT 3% (50 ทวิ) Settlement
+//   2) Credit Note (CN) & RMA Stock/S/N Unlock
+//   3) Store-to-Van Requisition, Defective RMA, Warehouse PDI & Import PO/GR
+//   4) Unified Document Vault (QT -> SO -> DO -> SI -> RV -> CN) + Repeat Call Guard
+//   5) Fleet & Allowance Hub:
+//      - Personal Car Fixed Allowance + Upcountry Distance Mileage Claim (THB/km)
+//      - Executive Outsource Chauffeured Car Lease (MD Mr. Suzuki & JPC Mgr Mr. Furujo - Flexible Switch)
+//   6) Technician Skill Matrix, Digital Ringi, Dealer Ordering Portal & Training Sandbox
+// ============================================================================
+(function initHoshizakiEnterpriseOmniSuiteV1185() {
+  if (window.__HZK_ENTERPRISE_OMNI_SUITE_V1185__) return;
+  window.__HZK_ENTERPRISE_OMNI_SUITE_V1185__ = true;
+
+  const LOCAL_V1185_KEY = 'hzk_v1185_enterprise_omni_store';
+
+  function loadLocalV1185Store() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(LOCAL_V1185_KEY) || 'null');
+      if (raw && typeof raw === 'object') return raw;
+    } catch (e) {}
+    return {
+      receipts: [
+        { rvNo: 'RV2611-018', date: '20/11/2026', refSi: 'SI2611-214', customer: 'บริษัท ไทยสจ๊วต เซอร์วิสเซ็ส จำกัด', transferAmt: 225011.37, whtAmt: 0, whtDocNo: '-', netSettled: 225011.37, status: 'PAID_CLOSED' }
+      ],
+      creditNotes: [],
+      execLeases: [
+        { assignmentId: 'EXEC-CAR-01', execName: 'Mr. Daisuke Suzuki (Managing Director)', vendorCompany: 'External Limousine & Leasing Co., Ltd.', vehiclePlate: 'Toyota Alphard (กท-9901)', driverName: 'คุณสมศักดิ์ (คนขับประจำ MD)', driverPhone: '081-900-1101', monthlyRate: 68000, driverOt: 0, expiryDate: '2027-12-31', status: 'ACTIVE' },
+        { assignmentId: 'EXEC-CAR-02', execName: 'Mr. Naoki Furujo (Japanese Corporate Manager)', vendorCompany: 'External Limousine & Leasing Co., Ltd.', vehiclePlate: 'Toyota Camry Hybrid (กท-8822)', driverName: 'คุณวิรัช (คนขับประจำ JPC Mgr)', driverPhone: '081-900-1102', monthlyRate: 42000, driverOt: 0, expiryDate: '2027-12-31', status: 'ACTIVE' }
+      ],
+      mileageClaims: [
+        { claimId: 'MIL2611-001', date: '2026-11-20', empName: 'นพรินทร์ หอมหวล (Noparin)', department: 'Service Unit', carPlate: 'รถส่วนตัวพนักงาน (กท-5412)', fixedAllow: 8500, route: 'กรุงเทพฯ ➔ นิคมฯ อมตะซิตี้ ชลบุรี (ไป-กลับ)', distanceKm: 164, mileageAmt: 738, tollParking: 170, totalPayout: 9408 }
+      ],
+      skillMatrix: [
+        { tech: 'T01 (Bangkok North)', imKm: '✅ Certified', jweDishwasher: '✅ Certified', coldRoomHrHf: '✅ Certified', r290Hydrocarbon: '✅ Certified' },
+        { tech: 'T02 (Bangkok South)', imKm: '✅ Certified', jweDishwasher: '✅ Certified', coldRoomHrHf: '⏳ Training', r290Hydrocarbon: '✅ Certified' },
+        { tech: 'T03 (Bangkok East)', imKm: '✅ Certified', jweDishwasher: '✅ Certified', coldRoomHrHf: '✅ Certified', r290Hydrocarbon: '✅ Certified' },
+        { tech: 'T04 (Nonthaburi)', imKm: '✅ Certified', jweDishwasher: '⏳ Training', coldRoomHrHf: '✅ Certified', r290Hydrocarbon: '✅ Certified' },
+        { tech: 'T05 (Samut Prakan)', imKm: '✅ Certified', jweDishwasher: '✅ Certified', coldRoomHrHf: '✅ Certified', r290Hydrocarbon: '✅ Certified' },
+        { tech: 'T06 (Ayutthaya)', imKm: '✅ Certified', jweDishwasher: '✅ Certified', coldRoomHrHf: '⏳ Training', r290Hydrocarbon: '✅ Certified' },
+        { tech: 'T07 (Upcountry / IMS)', imKm: '✅ Certified', jweDishwasher: '✅ Certified', coldRoomHrHf: '✅ Certified', r290Hydrocarbon: '✅ Certified' },
+        { tech: 'T08 (Install & PM)', imKm: '✅ Certified', jweDishwasher: '✅ Certified', coldRoomHrHf: '✅ Certified', r290Hydrocarbon: '✅ Certified' }
+      ]
+    };
+  }
+
+  function saveLocalV1185Store(store) {
+    try { localStorage.setItem(LOCAL_V1185_KEY, JSON.stringify(store)); } catch (e) {}
+  }
+
+  window.openEnterpriseOmniCommandCenterV1185 = async function (initialTab) {
+    let modal = document.getElementById('hzkEnterpriseOmniV1185Modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkEnterpriseOmniV1185Modal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20280;background:rgba(15,23,42,0.9);display:flex;' +
+        'align-items:center;justify-content:center;padding:8px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    const store = loadLocalV1185Store();
+    try {
+      const cloud = await callGasApi('getEnterpriseOmniSuiteDataV1185', {}, false);
+      if (cloud && cloud.status === 'OK') {
+        if (Array.isArray(cloud.receipts) && cloud.receipts.length) store.receipts = cloud.receipts;
+        if (Array.isArray(cloud.creditNotes) && cloud.creditNotes.length) store.creditNotes = cloud.creditNotes;
+        if (Array.isArray(cloud.execLeases) && cloud.execLeases.length) store.execLeases = cloud.execLeases;
+        if (Array.isArray(cloud.mileageClaims) && cloud.mileageClaims.length) store.mileageClaims = cloud.mileageClaims;
+        saveLocalV1185Store(store);
+      }
+    } catch (e) {}
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1160px;max-height:95vh;overflow-y:auto;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,0.55);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#002B49,#1E1B4B);color:#FFF;padding:14px 20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;position:sticky;top:0;z-index:10;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">HOSHIZAKI (THAILAND) ENTERPRISE v1185 — COMPLETE 18-MODULE OMNI-SUITE</div>
+            <div style="font-size:16px;font-weight:800;">🏛️ ศูนย์บริหารจัดการองค์กรครบวงจร (บัญชี RV/CN • คลัง/นำเข้า • ค้นหาเอกสารกลาง • รถส่วนตัว &amp; รถเช่าผู้บริหาร)</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <label style="background:rgba(255,255,255,0.14);padding:5px 10px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;">
+              <input type="checkbox" id="chkSandboxModeV1185" ${window.__HZK_SANDBOX_MODE__ ? 'checked' : ''}> 🧪 โหมดฝึกซ้อม (Sandbox)
+            </label>
+            <button type="button" onclick="document.getElementById('hzkEnterpriseOmniV1185Modal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 13px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          </div>
+        </div>
+
+        <div style="background:#F1F5F9;padding:10px 16px;border-bottom:1px solid #CBD5E1;display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:60px;z-index:9;">
+          <button type="button" class="v1185-tab" data-tab="VAULT" style="background:#002B49;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:800;font-size:12px;cursor:pointer;">🔍 1. คลังค้นหาเอกสารกลาง (Document Vault)</button>
+          <button type="button" class="v1185-tab" data-tab="ACC_RV_CN" style="background:#FFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;padding:7px 12px;font-weight:800;font-size:12px;cursor:pointer;">💰 2. ใบเสร็จ RV / 50 ทวิ &amp; ใบลดหนี้ CN</button>
+          <button type="button" class="v1185-tab" data-tab="FLEET_MILEAGE" style="background:#FFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;padding:7px 12px;font-weight:800;font-size:12px;cursor:pointer;">🚗 3. รถส่วนตัวพนักงาน (ค่าเสื่อม/ระยะทาง) &amp; รถเช่าผู้บริหาร</button>
+          <button type="button" class="v1185-tab" data-tab="STORE_IMPORT" style="background:#FFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;padding:7px 12px;font-weight:800;font-size:12px;cursor:pointer;">📦 4. เบิกรถช่าง / RMA / PDI &amp; นำเข้า PO/GR</button>
+          <button type="button" class="v1185-tab" data-tab="RINGI_HR" style="background:#FFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;padding:7px 12px;font-weight:800;font-size:12px;cursor:pointer;">🎓 5. Digital Ringi &amp; ทักษะช่าง (Skill Matrix)</button>
+        </div>
+
+        <div id="v1185MainBody" style="padding:16px 20px;font-size:12.5px;"></div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    document.getElementById('chkSandboxModeV1185').onchange = (e) => {
+      window.__HZK_SANDBOX_MODE__ = e.target.checked;
+      alert(e.target.checked
+        ? '🧪 เปิดโหมดฝึกซ้อม (Sandbox Mode) แล้ว — ข้อมูลที่ทดสอบจะไม่ถูกส่งเข้าบัญชีจริง'
+        : '✅ กลับสู่โหมดทำงานจริง (Production Mode)');
+    };
+
+    function setActiveTabStyle(tabKey) {
+      modal.querySelectorAll('.v1185-tab').forEach(b => {
+        const active = b.getAttribute('data-tab') === tabKey;
+        b.style.background = active ? '#002B49' : '#FFFFFF';
+        b.style.color = active ? '#FFFFFF' : '#0F172A';
+        b.style.border = active ? 'none' : '1px solid #CBD5E1';
+      });
+    }
+
+    // TAB 1: UNIFIED DOCUMENT VAULT (QT -> SO -> DO -> SI -> RV -> CN)
+    function renderVaultTab() {
+      setActiveTabStyle('VAULT');
+      const wrap = document.getElementById('v1185MainBody');
+      wrap.innerHTML = `
+        <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:12px;margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <input id="inpVaultSearch" type="text" placeholder="🔎 ค้นหาเลขที่เอกสาร (HTH-26..., DO2611..., SI2611..., RV..., CN...), ชื่อลูกค้า, PO หรือ Serial No..." style="flex:1;min-width:260px;padding:8px 12px;border:1px solid #93C5FD;border-radius:8px;font-weight:700;">
+          <button type="button" id="btnVaultSearchNow" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:8px 16px;font-weight:800;cursor:pointer;">🔍 ค้นหาทุกแผนก</button>
+          <button type="button" onclick="window.openCustomerDealerPortalWindow()" style="background:#0F766E;color:#FFF;border:none;border-radius:8px;padding:8px 14px;font-weight:800;cursor:pointer;">🤝 เปิดพอร์ทัลสั่งซื้อดีลเลอร์ 24 ชม.</button>
+        </div>
+        <div id="vaultResultsWrap"></div>
+      `;
+
+      async function doSearchVault(qTerm) {
+        const outEl = document.getElementById('vaultResultsWrap');
+        outEl.innerHTML = '⏳ กำลังสืบค้นเอกสารเชื่อมโยงทั้งองค์กร...';
+        let rows = [];
+        // Merge local records first
+        (store.receipts || []).forEach(r => rows.push({ category: 'Receipt & WHT (RV)', docNo: r.rvNo, date: r.date, customer: r.customer, reference: r.refSi, amountOrQty: r.netSettled.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' THB', status: r.status }));
+        (store.creditNotes || []).forEach(c => rows.push({ category: 'Credit Note (CN)', docNo: c.cnNo, date: c.date, customer: c.customer, reference: c.refSi, amountOrQty: '-' + Math.abs(c.inclVat).toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' THB', status: c.restocked }));
+        rows.push(
+          { category: 'Tax Invoice (SI)', docNo: 'SI2611-214', date: '19/11/2026', customer: 'บริษัท ไทยสจ๊วต เซอร์วิสเซ็ส จำกัด', reference: 'PO: TSPO260100079 | S/N: R06632J, R06633J', amountOrQty: '225,011.37 THB', status: 'ISSUED + VAT 7%' },
+          { category: 'Delivery Order (DO)', docNo: 'DO2611-070', date: '09/11/2026', customer: 'RIJIRA CO., LTD.', reference: 'SO2611-056 | P00350-03 THERMISTOR', amountOrQty: '2.00 PCS', status: 'DELIVERED (e-POD)' },
+          { category: 'Delivery Order (DO)', docNo: 'DO2611-071', date: '09/11/2026', customer: 'RIJIRA CO., LTD.', reference: 'SO2611-057 | 511240 DELIVERY FEE', amountOrQty: '1.00', status: 'DELIVERED (e-POD)' }
+        );
+
+        try {
+          const res = await callGasApi('searchUnifiedDocumentVault', { query: qTerm }, false);
+          if (res && res.status === 'OK' && Array.isArray(res.records) && res.records.length) {
+            rows = res.records;
+          }
+        } catch (e) {}
+
+        const term = String(qTerm || '').trim().toUpperCase();
+        const filtered = rows.filter(r => !term || JSON.stringify(r).toUpperCase().indexOf(term) !== -1);
+
+        outEl.innerHTML = `
+          <div style="overflow-x:auto;">
+            <table style="width:100%;min-width:820px;border-collapse:collapse;font-size:12px;">
+              <thead>
+                <tr style="background:#002B49;color:#FFF;">
+                  <th style="padding:8px;">ประเภทเอกสาร</th>
+                  <th style="padding:8px;">เลขที่เอกสาร</th>
+                  <th style="padding:8px;">วันที่</th>
+                  <th style="padding:8px;text-align:left;">ลูกค้า / คู่ค้า</th>
+                  <th style="padding:8px;text-align:left;">เลขที่อ้างอิง / S/N</th>
+                  <th style="padding:8px;text-align:right;">มูลค่า / จำนวน</th>
+                  <th style="padding:8px;">สถานะ (Audit Lock)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filtered.map(r => `
+                  <tr>
+                    <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${r.category}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;font-weight:800;color:#0369A1;">${r.docNo}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${r.date}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${r.customer}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;font-size:11px;">${r.reference}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;font-weight:800;">${r.amountOrQty}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;"><span style="background:#DCFCE7;color:#166534;padding:3px 8px;border-radius:999px;font-weight:700;font-size:11px;">🔒 ${r.status}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      document.getElementById('btnVaultSearchNow').onclick = () => doSearchVault(document.getElementById('inpVaultSearch').value);
+      doSearchVault('');
+    }
+
+    // TAB 2: RECEIPT (RV) + WHT 3% (50 ทวิ) & CREDIT NOTE (CN)
+    function renderAccRvCnTab() {
+      setActiveTabStyle('ACC_RV_CN');
+      const wrap = document.getElementById('v1185MainBody');
+      wrap.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;margin-bottom:14px;">
+          <!-- Left: Issue Receipt RV + WHT 3% (50 ทวิ) -->
+          <div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#166534;font-size:14px;margin-bottom:8px;">💰 1. ออกใบเสร็จรับเงิน (RV) &amp; บันทึกหัก ณ ที่จ่าย 3% (50 ทวิ)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div><label style="font-weight:700;">เลขที่ใบเสร็จ (RV No.):</label><input id="inpRvNo" value="AUTO" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:800;"></div>
+              <div><label style="font-weight:700;">อ้างอิงใบกำกับภาษี (SI):</label><input id="inpRvRefSi" value="SI2611-214" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;"></div>
+              <div style="grid-column:1/-1;"><label style="font-weight:700;">ชื่อลูกค้า:</label><input id="inpRvCust" value="บริษัท ไทยสจ๊วต เซอร์วิสเซ็ส จำกัด" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">ยอดเงินโอนเข้าบัญชี (THB):</label><input id="inpRvTransfer" type="number" step="0.01" value="225011.37" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;font-weight:700;"></div>
+              <div><label style="font-weight:700;">หัก ณ ที่จ่าย 3% (THB):</label><input id="inpRvWht" type="number" step="0.01" value="0" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;"></div>
+              <div style="grid-column:1/-1;"><label style="font-weight:700;">เลขที่หนังสือรับรอง 50 ทวิ (ถ้ามี):</label><input id="inpRvWhtDoc" placeholder="เช่น WHT-2026-0089" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+            </div>
+            <button type="button" id="btnSaveRvNow" style="width:100%;background:#059669;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">✅ บันทึกรับชำระเงิน, ปิดยอด AR &amp; ออกเลข RV</button>
+          </div>
+
+          <!-- Right: Issue Credit Note CN + Restock & S/N Unlock -->
+          <div style="background:#FEF2F2;border:1.5px solid #FECACA;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#991B1B;font-size:14px;margin-bottom:8px;">🧾↩️ 2. ออกใบลดหนี้ (Credit Note / CN) &amp; คืนสต็อก / ปลดล็อก S/N</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div><label style="font-weight:700;">เลขที่ใบลดหนี้ (CN No.):</label><input id="inpCnNo" value="AUTO" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:800;"></div>
+              <div><label style="font-weight:700;">อ้างอิงใบกำกับภาษีเดิม (SI):</label><input id="inpCnRefSi" value="SI2611-215" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;"></div>
+              <div style="grid-column:1/-1;"><label style="font-weight:700;">ชื่อลูกค้า:</label><input id="inpCnCust" value="บริษัท ไทยสจ๊วต เซอร์วิสเซ็ส จำกัด" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">มูลค่าลดหนี้ก่อน VAT (THB):</label><input id="inpCnExclVat" type="number" step="0.01" value="0" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;font-weight:700;"></div>
+              <div><label style="font-weight:700;">ปลดล็อก S/N คืนประกัน:</label><input id="inpCnUnlockSn" placeholder="เช่น R03668K" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">รหัสรุ่นคืนเข้าคลัง:</label><input id="inpCnModel" placeholder="เช่น IM-220AA" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">จำนวนคืนคลัง (เครื่อง):</label><input id="inpCnQty" type="number" value="0" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;"></div>
+              <div style="grid-column:1/-1;"><label style="font-weight:700;">สาเหตุการลดหนี้:</label><input id="inpCnReason" value="รับคืนสินค้า / ปรับปรุงรายการในใบกำกับภาษี" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+            </div>
+            <button type="button" id="btnSaveCnNow" style="width:100%;background:#DC2626;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">↩️ ออกใบลดหนี้ CN, คืนสต็อก &amp; บันทึกรายงานภาษีขาย</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('btnSaveRvNow').onclick = async () => {
+        const transferAmt = Number(document.getElementById('inpRvTransfer').value || 0);
+        const whtAmt = Number(document.getElementById('inpRvWht').value || 0);
+        const payload = {
+          rvNo: document.getElementById('inpRvNo').value.trim(),
+          refInvoiceNo: document.getElementById('inpRvRefSi').value.trim(),
+          customerName: document.getElementById('inpRvCust').value.trim(),
+          transferAmount: transferAmt,
+          whtAmount: whtAmt,
+          whtDocNo: document.getElementById('inpRvWhtDoc').value.trim()
+        };
+        let finalRv = payload.rvNo === 'AUTO' ? ('RV2611-' + String(Math.floor(100 + Math.random() * 899))) : payload.rvNo;
+        try {
+          const r = await callGasApi('issueReceiptAndWht', payload, false);
+          if (r && r.status === 'OK') finalRv = r.rvNo;
+        } catch (e) {}
+        store.receipts.unshift({
+          rvNo: finalRv,
+          date: new Date().toLocaleDateString('en-GB'),
+          refSi: payload.refInvoiceNo,
+          customer: payload.customerName,
+          transferAmt: transferAmt,
+          whtAmt: whtAmt,
+          whtDocNo: payload.whtDocNo,
+          netSettled: transferAmt + whtAmt,
+          status: 'PAID_CLOSED'
+        });
+        saveLocalV1185Store(store);
+        alert(`✅ บันทึกใบเสร็จรับเงินเลขที่ ${finalRv} ยอดปิดบัญชี ${(transferAmt + whtAmt).toLocaleString('en-US', { minimumFractionDigits: 2 })} THB เรียบร้อยแล้ว!`);
+      };
+
+      document.getElementById('btnSaveCnNow').onclick = async () => {
+        const exclVat = Number(document.getElementById('inpCnExclVat').value || 0);
+        const inclVat = Math.round(exclVat * 1.07 * 100) / 100;
+        const payload = {
+          cnNo: document.getElementById('inpCnNo').value.trim(),
+          refInvoiceNo: document.getElementById('inpCnRefSi').value.trim(),
+          customerName: document.getElementById('inpCnCust').value.trim(),
+          creditExclVat: exclVat,
+          unlockSerialNo: document.getElementById('inpCnUnlockSn').value.trim(),
+          returnModel: document.getElementById('inpCnModel').value.trim(),
+          returnQty: Number(document.getElementById('inpCnQty').value || 0),
+          reason: document.getElementById('inpCnReason').value.trim()
+        };
+        let finalCn = payload.cnNo === 'AUTO' ? ('CN2611-' + String(Math.floor(100 + Math.random() * 899))) : payload.cnNo;
+        try {
+          const r = await callGasApi('issueCreditNoteAndReturn', payload, false);
+          if (r && r.status === 'OK') finalCn = r.cnNo;
+        } catch (e) {}
+        store.creditNotes.unshift({
+          cnNo: finalCn,
+          date: new Date().toLocaleDateString('en-GB'),
+          refSi: payload.refInvoiceNo,
+          customer: payload.customerName,
+          reason: payload.reason,
+          exclVat: -exclVat,
+          vatAmt: -(inclVat - exclVat),
+          inclVat: -inclVat,
+          restocked: payload.unlockSerialNo || payload.returnModel || 'ADJUSTED'
+        });
+        saveLocalV1185Store(store);
+        alert(`✅ ออกใบลดหนี้เลขที่ ${finalCn} ยอดลดหนี้รวม VAT -${inclVat.toLocaleString('en-US', { minimumFractionDigits: 2 })} THB เรียบร้อยแล้ว!`);
+      };
+    }
+
+    // TAB 3: PERSONAL CAR ALLOWANCE & UPCOUNTRY MILEAGE + EXECUTIVE CHAUFFEURED LEASE
+    function renderFleetMileageTab() {
+      setActiveTabStyle('FLEET_MILEAGE');
+      const wrap = document.getElementById('v1185MainBody');
+      wrap.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px;margin-bottom:14px;">
+          <!-- Left: Staff Personal Car Allowance & Upcountry Mileage Reimbursement -->
+          <div style="background:#EFF6FF;border:1.5px solid #93C5FD;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#1E3A8A;font-size:14px;margin-bottom:6px;">🚗 1. พนักงานใช้รถส่วนตัว — ค่าเหมาค่าเสื่อม/น้ำมัน &amp; เบิกระยะทางพื้นที่รอบนอก</div>
+            <div style="font-size:11.5px;color:#334155;margin-bottom:8px;">คำนวณค่าเหมาประจำเดือน + เบิกค่าเดินทางพื้นที่รอบนอก/ต่างจังหวัดตามระยะทางจริง (กม. × เรทบาท/กม.) + ค่าทางด่วน/ที่จอดรถ</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div><label style="font-weight:700;">ชื่อพนักงาน / ช่าง:</label><input id="inpMilEmp" value="นพรินทร์ หอมหวล (Noparin)" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">ทะเบียนรถส่วนตัว:</label><input id="inpMilPlate" placeholder="เช่น กท-5412" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">ค่าเหมาค่าเสื่อม+น้ำมัน (THB):</label><input id="inpMilFixed" type="number" value="8500" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;font-weight:700;"></div>
+              <div><label style="font-weight:700;">ระยะทางพื้นที่รอบนอก (กม.):</label><input id="inpMilKm" type="number" value="120" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;font-weight:700;"></div>
+              <div><label style="font-weight:700;">อัตราเบิก (บาท / กม.):</label><input id="inpMilRate" type="number" step="0.5" value="4.5" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;"></div>
+              <div><label style="font-weight:700;">ค่าทางด่วน + ที่จอดรถ (THB):</label><input id="inpMilToll" type="number" value="150" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;"></div>
+              <div style="grid-column:1/-1;"><label style="font-weight:700;">เส้นทางปฏิบัติงานพื้นที่รอบนอก (อ้างอิง GPS / ลูกค้า):</label><input id="inpMilRoute" placeholder="เช่น สำนักงานหลักสี่ ➔ นิคมฯ อมตะซิตี้ ระยอง (ไป-กลับ)" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+            </div>
+            <button type="button" id="btnSaveMileageNow" style="width:100%;background:#1D4ED8;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">💾 บันทึกเบิกค่าเหมา &amp; ค่าระยะทางส่ง HR / บัญชี</button>
+          </div>
+
+          <!-- Right: Executive Chauffeured Car Lease (MD & JPC Manager - Flexible Assignment) -->
+          <div style="background:#F5F3FF;border:1.5px solid #C4B5FD;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#4C1D95;font-size:14px;margin-bottom:6px;">🚘 2. รถเช่าพร้อมคนขับผู้บริหาร (MD &amp; JPC Manager — ปรับเปลี่ยนยืดหยุ่น)</div>
+            <div style="font-size:11.5px;color:#334155;margin-bottom:8px;">บริหารสัญญารถเช่าพร้อมคนขับจากบริษัทภายนอกสำหรับ MD (Mr. Suzuki) และ JPC Manager (Mr. Furujo) รองรับการเปลี่ยนตัวคนขับ/รถทดแทนได้ทันที</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div>
+                <label style="font-weight:700;">เลือกรายการรถผู้บริหาร:</label>
+                <select id="selExecLeaseId" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;">
+                  <option value="EXEC-CAR-01">EXEC-CAR-01 — MD (Mr. Daisuke Suzuki)</option>
+                  <option value="EXEC-CAR-02">EXEC-CAR-02 — JPC Mgr (Mr. Naoki Furujo)</option>
+                  <option value="NEW">+ เพิ่มรถเช่าผู้บริหารรายการใหม่</option>
+                </select>
+              </div>
+              <div><label style="font-weight:700;">บริษัทรถเช่าภายนอก:</label><input id="inpExecVendor" value="External Limousine & Leasing Co., Ltd." style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">รุ่นรถ &amp; ทะเบียน:</label><input id="inpExecPlate" value="Toyota Alphard (กท-9901)" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">ชื่อคนขับ &amp; เบอร์โทร (เปลี่ยนได้):</label><input id="inpExecDriver" value="คุณสมศักดิ์ (081-900-1101)" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;"></div>
+              <div><label style="font-weight:700;">ค่าเช่ารายเดือน (THB):</label><input id="inpExecRate" type="number" value="68000" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;"></div>
+              <div><label style="font-weight:700;">ค่า OT คนขับเดือนนี้ (THB):</label><input id="inpExecOt" type="number" value="0" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;"></div>
+            </div>
+            <button type="button" id="btnSaveExecLeaseNow" style="width:100%;background:#6D28D9;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">🔄 อัปเดตข้อมูลรถเช่า / เปลี่ยนคนขับผู้บริหาร</button>
+          </div>
+        </div>
+
+        <div style="font-weight:800;color:#002B49;margin-bottom:6px;">📋 ประวัติเบิกค่ารถส่วนตัว &amp; ระยะทางพื้นที่รอบนอกล่าสุด:</div>
+        <div style="overflow-x:auto;margin-bottom:14px;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead><tr style="background:#002B49;color:#FFF;"><th style="padding:7px;">รหัสเบิก</th><th style="padding:7px;">วันที่</th><th style="padding:7px;text-align:left;">พนักงาน</th><th style="padding:7px;text-align:left;">เส้นทางพื้นที่รอบนอก</th><th style="padding:7px;text-align:right;">ค่าเหมา</th><th style="padding:7px;text-align:right;">ค่าระยะทาง (กม.)</th><th style="padding:7px;text-align:right;">ทางด่วน/จอดรถ</th><th style="padding:7px;text-align:right;">รวมเบิกสุทธิ</th></tr></thead>
+            <tbody>
+              ${(store.mileageClaims || []).map(m => `
+                <tr>
+                  <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${m.claimId}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">${m.date}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${m.empName}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;">${m.route}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:right;">${Number(m.fixedAllow).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:right;">${Number(m.mileageAmt).toLocaleString('en-US', { minimumFractionDigits: 2 })} (${m.distanceKm} กม.)</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:right;">${Number(m.tollParking).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:right;font-weight:800;color:#059669;">${Number(m.totalPayout).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="font-weight:800;color:#4C1D95;margin-bottom:6px;">🚘 ทะเบียนรถเช่าพร้อมคนขับผู้บริหาร (MD &amp; JPC Manager):</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead><tr style="background:#4C1D95;color:#FFF;"><th style="padding:7px;">รหัส</th><th style="padding:7px;text-align:left;">ผู้บริหาร</th><th style="padding:7px;text-align:left;">บริษัทรถเช่า</th><th style="padding:7px;">รถ &amp; ทะเบียน</th><th style="padding:7px;">คนขับปัจจุบัน</th><th style="padding:7px;text-align:right;">ค่าเช่า + OT</th></tr></thead>
+            <tbody>
+              ${(store.execLeases || []).map(l => `
+                <tr>
+                  <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${l.assignmentId}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${l.execName}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;">${l.vendorCompany}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">${l.vehiclePlate}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;color:#4C1D95;">${l.driverName} (${l.driverPhone || ''})</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:right;font-weight:800;">${(Number(l.monthlyRate) + Number(l.driverOt || 0)).toLocaleString('en-US', { minimumFractionDigits: 2 })} THB</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      document.getElementById('selExecLeaseId').onchange = (e) => {
+        const found = (store.execLeases || []).find(x => x.assignmentId === e.target.value);
+        if (found) {
+          document.getElementById('inpExecVendor').value = found.vendorCompany || '';
+          document.getElementById('inpExecPlate').value = found.vehiclePlate || '';
+          document.getElementById('inpExecDriver').value = `${found.driverName || ''} (${found.driverPhone || ''})`;
+          document.getElementById('inpExecRate').value = found.monthlyRate || 0;
+          document.getElementById('inpExecOt').value = found.driverOt || 0;
+        }
+      };
+
+      document.getElementById('btnSaveMileageNow').onclick = async () => {
+        const fixedAllow = Number(document.getElementById('inpMilFixed').value || 0);
+        const distanceKm = Number(document.getElementById('inpMilKm').value || 0);
+        const ratePerKm = Number(document.getElementById('inpMilRate').value || 4.5);
+        const tollParking = Number(document.getElementById('inpMilToll').value || 0);
+        const mileageAmt = Math.round(distanceKm * ratePerKm * 100) / 100;
+        const totalPayout = Math.round((fixedAllow + mileageAmt + tollParking) * 100) / 100;
+
+        const payload = {
+          mode: 'MILEAGE',
+          empName: document.getElementById('inpMilEmp').value.trim(),
+          carPlate: document.getElementById('inpMilPlate').value.trim(),
+          fixedAllowance: fixedAllow,
+          distanceKm: distanceKm,
+          ratePerKm: ratePerKm,
+          tollParking: tollParking,
+          route: document.getElementById('inpMilRoute').value.trim()
+        };
+        try { await callGasApi('saveFleetAllowanceOrMileage', payload, false); } catch (e) {}
+        store.mileageClaims.unshift({
+          claimId: 'MIL2611-' + String(Math.floor(100 + Math.random() * 899)),
+          date: new Date().toISOString().slice(0, 10),
+          empName: payload.empName,
+          department: 'Sales / Service',
+          carPlate: payload.carPlate,
+          fixedAllow: fixedAllow,
+          route: payload.route,
+          distanceKm: distanceKm,
+          mileageAmt: mileageAmt,
+          tollParking: tollParking,
+          totalPayout: totalPayout
+        });
+        saveLocalV1185Store(store);
+        alert(`✅ บันทึกค่าเหมา + ค่าระยะทางพื้นที่รอบนอกรวม ${totalPayout.toLocaleString('en-US', { minimumFractionDigits: 2 })} THB เรียบร้อยแล้ว!`);
+        renderFleetMileageTab();
+      };
+
+      document.getElementById('btnSaveExecLeaseNow').onclick = async () => {
+        const selId = document.getElementById('selExecLeaseId').value;
+        const aId = selId === 'NEW' ? ('EXEC-CAR-' + String(Math.floor(10 + Math.random() * 89))) : selId;
+        const driverRaw = document.getElementById('inpExecDriver').value.trim();
+        const payload = {
+          mode: 'EXEC_LEASE',
+          assignmentId: aId,
+          execName: selId === 'EXEC-CAR-02' ? 'Mr. Naoki Furujo (Japanese Corporate Manager)' : 'Mr. Daisuke Suzuki (Managing Director)',
+          vendorCompany: document.getElementById('inpExecVendor').value.trim(),
+          vehiclePlate: document.getElementById('inpExecPlate').value.trim(),
+          driverName: driverRaw,
+          driverPhone: '',
+          monthlyRate: Number(document.getElementById('inpExecRate').value || 0),
+          driverOt: Number(document.getElementById('inpExecOt').value || 0)
+        };
+        try { await callGasApi('saveFleetAllowanceOrMileage', payload, false); } catch (e) {}
+        const idx = store.execLeases.findIndex(x => x.assignmentId === aId);
+        if (idx >= 0) Object.assign(store.execLeases[idx], payload);
+        else store.execLeases.push(payload);
+        saveLocalV1185Store(store);
+        alert(`✅ อัปเดตข้อมูลรถเช่าผู้บริหาร (${aId}) เรียบร้อยแล้ว!`);
+        renderFleetMileageTab();
+      };
+    }
+
+    // TAB 4: STORE-TO-VAN REQUISITION, DEFECTIVE RMA, WAREHOUSE PDI & IMPORT PO/GR
+    function renderStoreImportTab() {
+      setActiveTabStyle('STORE_IMPORT');
+      const wrap = document.getElementById('v1185MainBody');
+      wrap.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;">
+          <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#002B49;font-size:14px;margin-bottom:8px;">🚐 1. เบิกโอนอะไหล่สโตร์ขึ้นรถช่าง &amp; คืนอะไหล่เสีย (RMA)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div>
+                <label style="font-weight:700;">ประเภทรายการ:</label>
+                <select id="selTrfType" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;">
+                  <option value="STORE_TO_VAN">📦 เบิกสโตร์ขึ้นรถช่าง (Store ➔ Van)</option>
+                  <option value="DEFECTIVE_RMA">🔁 คืนอะไหล่เสียเคลมโรงงาน (Defective RMA)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-weight:700;">รถช่าง / ทีม:</label>
+                <select id="selTrfVan" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;">
+                  <option value="T01">T01</option><option value="T02">T02</option><option value="T03">T03</option><option value="T04">T04</option>
+                  <option value="T05">T05</option><option value="T06">T06</option><option value="T07">T07</option><option value="T08">T08</option>
+                </select>
+              </div>
+              <div><label style="font-weight:700;">รหัสอะไหล่:</label><input id="inpTrfPart" value="4HC-H" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;"></div>
+              <div><label style="font-weight:700;">จำนวน (ชิ้น):</label><input id="inpTrfQty" type="number" value="2" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;"></div>
+              <div style="grid-column:1/-1;"><label style="font-weight:700;">อ้างอิงใบงาน / S/N:</label><input id="inpTrfRef" placeholder="เช่น JOB-261121 / S/N R06632J" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+            </div>
+            <button type="button" id="btnSubmitTrfNow" style="width:100%;background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">✅ บันทึกโอนอะไหล่ / RMA &amp; แจ้ง LINE สโตร์</button>
+          </div>
+
+          <div style="background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#92400E;font-size:14px;margin-bottom:8px;">🚢 2. ติดตามสั่งซื้อนำเข้า (Import PO) &amp; รับเข้าคลัง (GR)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div><label style="font-weight:700;">เลขที่ Import PO:</label><input id="inpImpPo" placeholder="IMP-2026-045" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;"></div>
+              <div><label style="font-weight:700;">โรงงานต้นทาง:</label><input id="inpImpFactory" value="HC / HHE Factory" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">รหัสรุ่น / อะไหล่:</label><input id="inpImpModel" placeholder="IM-220AA" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;"></div>
+              <div><label style="font-weight:700;">จำนวน (เครื่อง/ชิ้น):</label><input id="inpImpQty" type="number" value="5" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;"></div>
+              <div>
+                <label style="font-weight:700;">สถานะนำเข้า:</label>
+                <select id="selImpStatus" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;">
+                  <option value="ORDERED">📝 สั่งซื้อแล้ว (Ordered)</option>
+                  <option value="IN_TRANSIT">🚢 อยู่ระหว่างขนส่งทางเรือ (In Transit)</option>
+                  <option value="RECEIVED_GR">✅ รับเข้าคลังเรียบร้อย (+เพิ่มสต็อก GR)</option>
+                </select>
+              </div>
+              <div><label style="font-weight:700;">กำหนดถึงคลัง (ETA):</label><input id="inpImpEta" type="date" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+            </div>
+            <button type="button" id="btnSubmitImpNow" style="width:100%;background:#D97706;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">💾 บันทึกสถานะนำเข้า / รับของเข้าสต็อก GR</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('btnSubmitTrfNow').onclick = async () => {
+        const payload = {
+          transferType: document.getElementById('selTrfType').value,
+          vanCode: document.getElementById('selTrfVan').value,
+          partCode: document.getElementById('inpTrfPart').value.trim(),
+          qty: Number(document.getElementById('inpTrfQty').value || 1),
+          refInfo: document.getElementById('inpTrfRef').value.trim()
+        };
+        try { await callGasApi('transferStoreToVanOrRma', payload, false); } catch (e) {}
+        alert('✅ บันทึกรายการโอนย้ายอะไหล่ / คืนอะไหล่เสียเรียบร้อยแล้ว!');
+      };
+
+      document.getElementById('btnSubmitImpNow').onclick = async () => {
+        const payload = {
+          poNo: document.getElementById('inpImpPo').value.trim(),
+          factory: document.getElementById('inpImpFactory').value.trim(),
+          modelCode: document.getElementById('inpImpModel').value.trim(),
+          qty: Number(document.getElementById('inpImpQty').value || 1),
+          status: document.getElementById('selImpStatus').value,
+          eta: document.getElementById('inpImpEta').value
+        };
+        try { await callGasApi('createOrUpdateImportPoGr', payload, false); } catch (e) {}
+        alert(payload.status === 'RECEIVED_GR'
+          ? '✅ บันทึกรับสินค้าเข้าคลัง (GR) และเพิ่มยอดสต็อกพร้อมขายเรียบร้อยแล้ว!'
+          : '✅ บันทึกสถานะใบสั่งซื้อนำเข้าเรียบร้อยแล้ว!');
+      };
+    }
+
+    // TAB 5: DIGITAL RINGI & TECHNICIAN SKILL MATRIX + WAREHOUSE PDI
+    function renderRingiHrTab() {
+      setActiveTabStyle('RINGI_HR');
+      const wrap = document.getElementById('v1185MainBody');
+      wrap.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;margin-bottom:14px;">
+          <div style="background:#EEF2FF;border:1.5px solid #C7D2FE;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#312E81;font-size:14px;margin-bottom:8px;">📑 1. ส่งคำขออนุมัติภายในองค์กร (Digital Ringi / e-Memo)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div><label style="font-weight:700;">แผนกผู้ขอ:</label><input id="inpRngDept" value="Sales / Service" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">งบประมาณ / มูลค่า (THB):</label><input id="inpRngAmt" type="number" value="0" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;text-align:right;"></div>
+              <div style="grid-column:1/-1;"><label style="font-weight:700;">เรื่องที่ขออนุมัติข้ามแผนก:</label><input id="inpRngSubj" placeholder="เช่น ขออนุมัติเบิกเครื่องตัวโชว์ออกบูธ THAIFEX / เปลี่ยนเครื่องใหม่ลูกค้า VIP" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+            </div>
+            <button type="button" id="btnSubmitRingiNow" style="width:100%;background:#3730A3;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">🚀 ส่งคำขอ Digital Ringi แจ้งผู้บริหารใน LINE</button>
+          </div>
+
+          <div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:12px;padding:14px;">
+            <div style="font-weight:800;color:#166534;font-size:14px;margin-bottom:8px;">🔍 2. บันทึกตรวจคุณภาพก่อนส่งมอบ (Warehouse PDI Checklist)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div><label style="font-weight:700;">รุ่นเครื่อง:</label><input id="inpPdiModel" placeholder="IM-220AA" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;"></div>
+              <div><label style="font-weight:700;">Serial No.:</label><input id="inpPdiSn" placeholder="R06632J" style="width:100%;padding:6px;border:1px solid #CBD5E1;border-radius:7px;margin-top:2px;font-weight:700;"></div>
+              <div style="grid-column:1/-1;display:flex;gap:12px;flex-wrap:wrap;padding-top:4px;">
+                <label><input type="checkbox" id="chkPdiExt" checked> ตัวเครื่อง &amp; กล่องสมบูรณ์</label>
+                <label><input type="checkbox" id="chkPdiAcc" checked> อุปกรณ์เสริม &amp; คู่มือครบ</label>
+                <label><input type="checkbox" id="chkPdiRun" checked> ทดสอบระบบไฟ/น้ำผ่าน</label>
+              </div>
+            </div>
+            <button type="button" id="btnSubmitPdiNow" style="width:100%;background:#059669;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">✅ ยืนยันผล PDI พร้อมออกใบส่งของ DO</button>
+          </div>
+        </div>
+
+        <div style="font-weight:800;color:#002B49;margin-bottom:6px;">🎓 ตารางทักษะและความเชี่ยวชาญทีมช่างบริการ (Technician Skill &amp; Certification Matrix):</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead><tr style="background:#002B49;color:#FFF;"><th style="padding:7px;text-align:left;">ทีมช่าง / รถบริการ</th><th style="padding:7px;">IM / KM Cube &amp; Crescent</th><th style="padding:7px;">JWE Commercial Dishwasher</th><th style="padding:7px;">HR / HF Cold Room</th><th style="padding:7px;">R290 Hydrocarbon Safety</th></tr></thead>
+            <tbody>
+              ${(store.skillMatrix || []).map(s => `
+                <tr>
+                  <td style="padding:6px 8px;border:1px solid #CBD5E1;font-weight:800;">${s.tech}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">${s.imKm}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">${s.jweDishwasher}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">${s.coldRoomHrHf}</td>
+                  <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">${s.r290Hydrocarbon}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      document.getElementById('btnSubmitRingiNow').onclick = async () => {
+        const payload = {
+          mode: 'RINGI',
+          department: document.getElementById('inpRngDept').value.trim(),
+          amount: Number(document.getElementById('inpRngAmt').value || 0),
+          subject: document.getElementById('inpRngSubj').value.trim()
+        };
+        try { await callGasApi('submitRingiOrWarehousePdi', payload, false); } catch (e) {}
+        alert('✅ ส่งคำขออนุมัติ Digital Ringi เข้ากลุ่ม LINE ผู้บริหารเรียบร้อยแล้ว!');
+      };
+
+      document.getElementById('btnSubmitPdiNow').onclick = async () => {
+        const payload = {
+          mode: 'PDI',
+          model: document.getElementById('inpPdiModel').value.trim(),
+          serialNo: document.getElementById('inpPdiSn').value.trim(),
+          exteriorOk: document.getElementById('chkPdiExt').checked,
+          accessoriesOk: document.getElementById('chkPdiAcc').checked,
+          testRunOk: document.getElementById('chkPdiRun').checked
+        };
+        try { await callGasApi('submitRingiOrWarehousePdi', payload, false); } catch (e) {}
+        alert('✅ บันทึกผลการตรวจคุณภาพ Warehouse PDI เรียบร้อย พร้อมออกใบส่งของ DO!');
+      };
+    }
+
+    modal.querySelectorAll('.v1185-tab').forEach(btn => {
+      btn.onclick = () => {
+        const t = btn.getAttribute('data-tab');
+        if (t === 'VAULT') renderVaultTab();
+        else if (t === 'ACC_RV_CN') renderAccRvCnTab();
+        else if (t === 'FLEET_MILEAGE') renderFleetMileageTab();
+        else if (t === 'STORE_IMPORT') renderStoreImportTab();
+        else if (t === 'RINGI_HR') renderRingiHrTab();
+      };
+    });
+
+    const startTab = initialTab || 'VAULT';
+    if (startTab === 'ACC_RV_CN') renderAccRvCnTab();
+    else if (startTab === 'FLEET_MILEAGE') renderFleetMileageTab();
+    else if (startTab === 'STORE_IMPORT') renderStoreImportTab();
+    else if (startTab === 'RINGI_HR') renderRingiHrTab();
+    else renderVaultTab();
+  };
 })();

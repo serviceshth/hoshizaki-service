@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1163-dept-workspace-nullsafe';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1164-inspection-workflow-suite';
 const CORE_ASSETS = [
   './',
   './index.html',

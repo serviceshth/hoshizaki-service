@@ -819,7 +819,7 @@ transform: scale(0.96);
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-1.5 mt-1 min-w-0">
-<p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE</span></p>
+<p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1164-INSPECTION-WORKFLOW-SUITE</span></p>
 </div>
 <!-- แถวปุ่มสถานะด่วนกะทัดรัด (Flex-Wrap พอดีกรอบ 100% ไม่ล้นขอบจอทุกอุปกรณ์) -->
 <div id="topHeaderStatusPillsRow" class="flex flex-wrap items-center gap-1.5 mt-1.5 min-w-0 max-w-full">
@@ -886,7 +886,7 @@ transform: scale(0.96);
 สลับเป็นโหมดช่างดำเนินงาน
 </button>
 </div>
-<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE · ≤30 Core Users) -->
+<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1164-INSPECTION-WORKFLOW-SUITE · ≤30 Core Users) -->
 <div id="myDailyRoleWorkspaceBar" class="mt-2 rounded-xl bg-white/10 border border-white/20 p-2 text-xs">
 <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5 px-1">
 <span id="myDailyWorkspaceTitle" class="font-extrabold text-sky-200 flex items-center gap-1.5">
@@ -1776,7 +1776,7 @@ transform: scale(0.96);
 </nav>
 <!-- Main Job Sheet Printable Container -->
 <main id="jobSheetContainer" class="print-container max-w-4xl mx-auto bg-white rounded-xl shadow-xl p-3.5 sm:p-6 space-y-4 border border-gray-200">
-<!-- Visual 5-Stage End-to-End Lifecycle Stepper (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE) -->
+<!-- Visual 5-Stage End-to-End Lifecycle Stepper (Enterprise v1164-INSPECTION-WORKFLOW-SUITE) -->
 <div id="jobEndToEndStepperBar" class="no-print bg-gradient-to-r from-[#002B49] via-sky-900 to-emerald-900 text-white rounded-xl p-2.5 shadow-sm border border-sky-300/40">
   <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2 px-1">
     <span class="text-[11px] font-extrabold text-amber-300 flex items-center gap-1.5">
@@ -1819,8 +1819,14 @@ Website : www.hoshizaki-sea.com</p>
 <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2">
 <div class="flex items-center gap-2">
 <canvas id="jobQrCanvas" width="44" height="44" class="border border-gray-200 rounded bg-white p-0.5 flex-shrink-0" title="QR Code สำหรับสแกนเปิดใบงานนี้"></canvas>
-<div class="inline-block bg-hoshizaki-navy text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-md tracking-wider">
+<div class="flex flex-col items-end gap-1">
+<div class="no-print inline-flex rounded-lg border border-sky-300 bg-sky-50 p-0.5 text-[11px] font-extrabold shadow-xs" role="group" aria-label="เลือกประเภทเอกสาร">
+  <button type="button" id="btnDocModeService" onclick="switchReportDocumentMode('SERVICE')" class="px-2.5 py-1 rounded-md bg-hoshizaki-navy text-white transition">🛠️ Service Report (ซ่อม/บริการ)</button>
+  <button type="button" id="btnDocModeInspection" onclick="switchReportDocumentMode('INSPECTION')" class="px-2.5 py-1 rounded-md text-hoshizaki-navy hover:bg-sky-100 transition">📋 Inspection Report (ตรวจเช็กทั่วไป)</button>
+</div>
+<div id="docHeaderTitleBadge" class="inline-block bg-hoshizaki-navy text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-md tracking-wider">
 SERVICE REPORT / ใบแจ้งบริการ
+</div>
 </div>
 </div>
 <select id="jobStatus" onchange="updateJobStatusStyle(); debounceAutoSave();" class="text-xs font-bold rounded-md px-2.5 py-1 border border-emerald-300 bg-emerald-50 text-emerald-800 focus:outline-none">
@@ -1848,6 +1854,54 @@ SERVICE REPORT / ใบแจ้งบริการ
 <input type="date" id="jobDate" class="border-b border-gray-400 w-44 sm:w-36 text-center focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
 </div>
 </div>
+</div>
+<!-- Inspection Report Internal Workflow & Traffic-Light Bar (Visible in INSPECTION mode) -->
+<div id="inspectionModeWorkflowPanel" class="hidden border-2 border-indigo-300 bg-gradient-to-r from-indigo-50 via-sky-50 to-emerald-50 rounded-xl p-3.5 space-y-3">
+  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-200 pb-2">
+    <div class="flex items-center gap-2">
+      <span class="bg-indigo-700 text-white text-[10.5px] font-extrabold px-2.5 py-0.5 rounded-full">INTERNAL INSPECTION WORKFLOW</span>
+      <span class="font-extrabold text-xs sm:text-sm text-indigo-950">รายงานตรวจเช็กสภาพเครื่องทั่วไป (ช่างผู้ตรวจ ➔ Admin Office / Manager ➔ ออกรายงานลูกค้า &amp; ผู้บริหาร)</span>
+    </div>
+    <div class="no-print flex flex-wrap items-center gap-1.5">
+      <button type="button" onclick="convertInspectionToOfficialCustomerReport()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold px-3 py-1.5 rounded-lg shadow-xs flex items-center gap-1">
+        <i class="fa-solid fa-file-export"></i> <span>สร้างรายงานส่งลูกค้า (Official Customer Report)</span>
+      </button>
+      <button type="button" onclick="sendInspectionToQuotation()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg shadow-xs flex items-center gap-1">
+        <i class="fa-solid fa-file-invoice-dollar"></i> <span>ส่งต่อออกใบเสนอราคาซ่อม/PM</span>
+      </button>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs">
+    <div class="bg-white border border-indigo-200 rounded-lg p-2.5">
+      <label class="block font-extrabold text-indigo-950 mb-1">1. วัตถุประสงค์การตรวจ (Inspection Purpose):</label>
+      <select id="inspectionPurposeSelect" onchange="debounceAutoSave()" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 font-semibold text-gray-800 bg-white">
+        <option value="PRE_DELIVERY">ตรวจเช็กเครื่องก่อนส่งมอบ (Pre-Delivery / Warehouse QC)</option>
+        <option value="ROUTINE_PM">ตรวจเช็กสภาพเครื่องประจำรอบ (Routine PM Inspection)</option>
+        <option value="SITE_SURVEY">สำรวจหน้างานก่อนติดตั้ง (Pre-Installation Site Survey)</option>
+        <option value="WARRANTY_AUDIT">ตรวจประเมินสภาพเครื่องเพื่อรับประกัน / เคลม</option>
+      </select>
+    </div>
+    <div class="bg-white border border-indigo-200 rounded-lg p-2.5">
+      <label class="block font-extrabold text-indigo-950 mb-1">2. ผลประเมินสภาพเครื่อง (Traffic-Light Verdict):</label>
+      <select id="inspectionTrafficVerdict" onchange="updateInspectionVerdictBadge(); debounceAutoSave();" class="w-full border border-emerald-400 rounded-lg px-2 py-1.5 font-extrabold text-emerald-900 bg-emerald-50">
+        <option value="PASS">🟢 PASS — สภาพปกติ ผ่านเกณฑ์พร้อมใช้งาน</option>
+        <option value="WATCH">🟡 WATCH — ใช้งานได้ แนะนำบำรุงรักษา / เปลี่ยนอะไหล่ตามรอบ</option>
+        <option value="CRITICAL">🔴 CRITICAL — พบจุดชำรุด ต้องซ่อมด่วนหรือดำเนินการเคลม</option>
+      </select>
+    </div>
+    <div class="bg-white border border-indigo-200 rounded-lg p-2.5">
+      <label class="block font-extrabold text-indigo-950 mb-1">3. สถานะการตรวจรับงาน (Approval Stage):</label>
+      <select id="inspectionApprovalStage" onchange="debounceAutoSave()" class="w-full border border-amber-400 rounded-lg px-2 py-1.5 font-extrabold text-amber-950 bg-amber-50">
+        <option value="FIELD_SUBMITTED">🟡 1. ช่างตรวจเสร็จ &amp; ส่งเข้า Admin/Manager แล้ว</option>
+        <option value="REVIEWED_APPROVED">🔵 2. Admin Office / Manager ตรวจทานและอนุมัติแล้ว</option>
+        <option value="ISSUED_OFFICIAL">🟢 3. ออกรายงานทางการส่งลูกค้า &amp; ผู้บริหารแล้ว</option>
+      </select>
+    </div>
+  </div>
+  <div class="bg-white border border-indigo-200 rounded-lg p-2.5 text-xs">
+    <label class="block font-bold text-indigo-950 mb-1">หมายเหตุภายในสำหรับ Admin Office / Manager (ไม่แสดงในรายงานส่งลูกค้า):</label>
+    <input type="text" id="inspectionInternalNote" oninput="debounceAutoSave()" placeholder="บันทึกข้อมูลภายใน เช่น อะไหล่ที่ควรเสนอราคาเพิ่ม, สภาพพื้นที่หน้างาน, ข้อสังเกตสำหรับผู้บริหาร..." class="w-full border-b border-gray-300 focus:border-indigo-600 focus:outline-none py-1 bg-transparent">
+  </div>
 </div>
 <!-- Section 1: Customer & Equipment Info Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
@@ -2289,7 +2343,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <!-- Section 3: Spare Parts & Billing Table (v13.0 Multi-Tier 8 Grades + Dealer Auto-Link) -->
 <div id="secSpareParts" class="scroll-mt-14 border border-gray-200 rounded-lg p-3.5 bg-gray-50/50 space-y-3">
 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b border-gray-200 pb-2 text-hoshizaki-navy font-bold text-xs uppercase tracking-wider">
-<span class="flex items-center gap-2"><i class="fa-solid fa-list-check text-hoshizaki-blue"></i> รายการอะไหล่และค่าบริการ (Spare Parts & Billing)</span>
+<span id="secSparePartsTitle" class="flex items-center gap-2"><i class="fa-solid fa-list-check text-hoshizaki-blue"></i> รายการอะไหล่และค่าบริการ (Spare Parts &amp; Billing)</span>
 <div class="no-print flex flex-wrap items-center gap-1.5">
 <button type="button" onclick="openDealerGradeModal()" class="bg-sky-700 hover:bg-sky-800 text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm" title="ผูกเกรดราคา (A+, A, B+, B, C+, C, Direct, Special) เข้ากับรายชื่อดีลเลอร์/ลูกค้า">
 <i class="fa-solid fa-address-book"></i> เกรดดีลเลอร์/ลูกค้า
@@ -2383,7 +2437,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 </table>
 </div>
 <!-- Financial Summary Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-200">
+<div id="sparePartsFinancialSummaryGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-200">
 <div class="space-y-2 text-xs">
 <div class="flex items-center justify-between gap-2">
 <span class="text-gray-600 font-medium">ค่าแรงช่างบริการ (Labor Fee):</span>
@@ -2454,9 +2508,9 @@ SERVICE REPORT / ใบแจ้งบริการ
 </div>
 </div>
 <!-- Section 5: Signatures Canvas Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+<div id="signaturesCanvasGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2">
 <!-- Customer Sig -->
-<div class="border border-gray-300 rounded-lg p-2.5 bg-white text-center space-y-1.5">
+<div id="sigCardCustomer" class="border border-gray-300 rounded-lg p-2.5 bg-white text-center space-y-1.5">
 <div class="flex items-center justify-between text-[11px] font-bold text-hoshizaki-navy border-b pb-1">
 <span>ลายเซ็นลูกค้า (Customer)</span>
 <button type="button" onclick="openFullscreenSigModal('sigCustomer', 'ลายเซ็นลูกค้า (Customer)')" class="no-print text-[10px] bg-blue-50 text-hoshizaki-darkblue px-1.5 py-0.5 rounded font-medium">
@@ -2547,7 +2601,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <div id="managerApprovalDate" class="text-[11px] font-medium text-emerald-700 hidden"></div>
 </div>
 <!-- Payee Sig -->
-<div class="border border-gray-300 rounded-lg p-2.5 bg-white text-center space-y-1.5">
+<div id="sigCardPayee" class="border border-gray-300 rounded-lg p-2.5 bg-white text-center space-y-1.5">
 <div class="flex items-center justify-between text-[11px] font-bold text-hoshizaki-navy border-b pb-1">
 <span>ผู้รับเงิน (Payee)</span>
 <button type="button" onclick="openFullscreenSigModal('sigPayee', 'ผู้รับเงิน (Payee)')" class="no-print text-[10px] bg-blue-50 text-hoshizaki-darkblue px-1.5 py-0.5 rounded font-medium">
@@ -2571,7 +2625,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <!-- Web App UI Footer -->
 <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
 <div class="font-extrabold tracking-wide text-amber-300">
-HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE</span>
+HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1164-INSPECTION-WORKFLOW-SUITE</span>
 </div>
 <div class="text-white/80 font-medium">
 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -4247,7 +4301,8 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                 ? overrideTechName
                 : (document.getElementById('responsibleTechSelect')?.value || '');
             const techCode = getTechCodeByName(techName);
-            const prefix = techCode ? `JOB-${dateStr}-${techCode}-` : `JOB-${dateStr}-`;
+            const docPrefix = (window._currentReportDocMode === 'INSPECTION') ? 'INS' : 'JOB';
+            const prefix = techCode ? `${docPrefix}-${dateStr}-${techCode}-` : `${docPrefix}-${dateStr}-`;
 
             const history = getJobHistorySync();
             let maxSeq = 0;
@@ -5489,6 +5544,11 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             });
 
             return {
+                docReportMode: window._currentReportDocMode || 'SERVICE',
+                inspectionPurpose: document.getElementById('inspectionPurposeSelect')?.value || 'PRE_DELIVERY',
+                inspectionVerdict: document.getElementById('inspectionTrafficVerdict')?.value || 'PASS',
+                inspectionApprovalStage: document.getElementById('inspectionApprovalStage')?.value || 'FIELD_SUBMITTED',
+                inspectionInternalNote: document.getElementById('inspectionInternalNote')?.value || '',
                 jobNo: document.getElementById('jobNo')?.value || 'JOB-001',
                 date: document.getElementById('jobDate')?.value || '',
                 store: document.getElementById('custStore')?.value || '',
@@ -5574,6 +5634,16 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             if (document.getElementById('eqModel')) document.getElementById('eqModel').value = data.model || '';
             if (document.getElementById('eqSerial')) document.getElementById('eqSerial').value = data.serial || '';
             if (document.getElementById('eqProductType')) document.getElementById('eqProductType').value = data.productType || '';
+            if (typeof switchReportDocumentMode === 'function') {
+                switchReportDocumentMode(data.docReportMode || (String(data.jobNo || '').startsWith('INS-') ? 'INSPECTION' : 'SERVICE'), true);
+            }
+            if (document.getElementById('inspectionPurposeSelect')) document.getElementById('inspectionPurposeSelect').value = data.inspectionPurpose || 'PRE_DELIVERY';
+            if (document.getElementById('inspectionTrafficVerdict')) {
+                document.getElementById('inspectionTrafficVerdict').value = data.inspectionVerdict || 'PASS';
+                if (typeof updateInspectionVerdictBadge === 'function') updateInspectionVerdictBadge();
+            }
+            if (document.getElementById('inspectionApprovalStage')) document.getElementById('inspectionApprovalStage').value = data.inspectionApprovalStage || 'FIELD_SUBMITTED';
+            if (document.getElementById('inspectionInternalNote')) document.getElementById('inspectionInternalNote').value = data.inspectionInternalNote || '';
             if (document.getElementById('eqDateOut')) document.getElementById('eqDateOut').value = data.eqDateOut || '';
             if (document.getElementById('eqInvoiceNo')) document.getElementById('eqInvoiceNo').value = data.eqInvoiceNo || '';
             if (document.getElementById('eqPoNo')) document.getElementById('eqPoNo').value = data.eqPoNo || '';
@@ -17521,7 +17591,278 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
                 <style id="v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE">header.no-print{position:relative;z-index:45!important}#topExecutiveReportDropdownMenu,#outsourceHubDropdownMenu,#pmSuiteDropdownMenu,#manualSearchMenu{z-index:9998!important;max-height:80vh;overflow-y:auto}@media(min-width:640px){#toolbarActions{display:block!important}#topExecutiveReportDropdownMenu{position:fixed!important;right:24px!important;top:76px!important;left:auto!important;width:340px!important}#manualSearchMenu{position:fixed!important;right:24px!important;top:130px!important;left:auto!important;width:400px!important}}</style></head>
                 <body onload="setTimeout(() => { window.print(); }, 400);">
                     ${sheetHtml}
-                </body>
+                
+<script id="v1164-INSPECTION-REPORT-MODE-SUITE">
+(function() {
+  window._currentReportDocMode = 'SERVICE';
+
+  window.updateInspectionVerdictBadge = function() {
+    const sel = document.getElementById('inspectionTrafficVerdict');
+    if (!sel) return;
+    const v = sel.value;
+    if (v === 'CRITICAL') {
+      sel.className = 'w-full border border-rose-400 rounded-lg px-2 py-1.5 font-extrabold text-rose-900 bg-rose-50';
+    } else if (v === 'WATCH') {
+      sel.className = 'w-full border border-amber-400 rounded-lg px-2 py-1.5 font-extrabold text-amber-900 bg-amber-50';
+    } else {
+      sel.className = 'w-full border border-emerald-400 rounded-lg px-2 py-1.5 font-extrabold text-emerald-900 bg-emerald-50';
+    }
+  };
+
+  window.switchReportDocumentMode = function(mode, skipJobNoSwap) {
+    const target = (String(mode || 'SERVICE').toUpperCase() === 'INSPECTION') ? 'INSPECTION' : 'SERVICE';
+    window._currentReportDocMode = target;
+    const isInsp = (target === 'INSPECTION');
+
+    const btnSvc = document.getElementById('btnDocModeService');
+    const btnIns = document.getElementById('btnDocModeInspection');
+    const badge = document.getElementById('docHeaderTitleBadge');
+    const wfPanel = document.getElementById('inspectionModeWorkflowPanel');
+    const sigCust = document.getElementById('sigCardCustomer');
+    const sigPayee = document.getElementById('sigCardPayee');
+    const sigGrid = document.getElementById('signaturesCanvasGrid');
+    const finGrid = document.getElementById('sparePartsFinancialSummaryGrid');
+    const spTitle = document.getElementById('secSparePartsTitle');
+    const quickBar = document.getElementById('quickServiceFeeBar');
+
+    if (btnSvc && btnIns) {
+      btnSvc.className = !isInsp
+        ? 'px-2.5 py-1 rounded-md bg-hoshizaki-navy text-white transition'
+        : 'px-2.5 py-1 rounded-md text-hoshizaki-navy hover:bg-sky-100 transition';
+      btnIns.className = isInsp
+        ? 'px-2.5 py-1 rounded-md bg-indigo-700 text-white transition'
+        : 'px-2.5 py-1 rounded-md text-hoshizaki-navy hover:bg-sky-100 transition';
+    }
+
+    if (badge) {
+      badge.textContent = isInsp
+        ? 'INSPECTION REPORT / ใบรายงานตรวจเช็กสภาพเครื่อง'
+        : 'SERVICE REPORT / ใบแจ้งบริการ';
+      badge.className = isInsp
+        ? 'inline-block bg-indigo-800 text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-md tracking-wider'
+        : 'inline-block bg-hoshizaki-navy text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-md tracking-wider';
+    }
+
+    if (wfPanel) wfPanel.classList.toggle('hidden', !isInsp);
+
+    // Hide Customer & Payee signatures in Inspection Report mode (internal Tech -> Admin/Manager workflow)
+    if (sigCust) sigCust.classList.toggle('hidden', isInsp);
+    if (sigPayee) sigPayee.classList.toggle('hidden', isInsp);
+    if (sigGrid) {
+      sigGrid.className = isInsp
+        ? 'grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2'
+        : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2';
+    }
+
+    // Hide financial billing totals in Inspection Report mode while keeping recommended parts list active
+    if (finGrid) finGrid.classList.toggle('hidden', isInsp);
+    if (quickBar) quickBar.classList.toggle('hidden', isInsp);
+    if (spTitle) {
+      spTitle.innerHTML = isInsp
+        ? '<i class="fa-solid fa-clipboard-list text-indigo-600"></i> รายการอะไหล่ / อุปกรณ์ที่แนะนำให้เปลี่ยนหรือบำรุงรักษา (Recommended Parts)'
+        : '<i class="fa-solid fa-list-check text-hoshizaki-blue"></i> รายการอะไหล่และค่าบริการ (Spare Parts &amp; Billing)';
+    }
+
+    // Toggle price/amount columns visibility in parts table
+    document.querySelectorAll('#secSpareParts table th:nth-child(4), #secSpareParts table th:nth-child(5), #secSpareParts .parts-row td:nth-child(4), #secSpareParts .parts-row td:nth-child(5)').forEach(cell => {
+      cell.classList.toggle('hidden', isInsp);
+    });
+
+    // Update JOB NO / INS NO prefix smoothly
+    if (!skipJobNoSwap) {
+      const jobNoEl = document.getElementById('jobNo');
+      if (jobNoEl && jobNoEl.value) {
+        if (isInsp && jobNoEl.value.startsWith('JOB-')) {
+          jobNoEl.value = jobNoEl.value.replace(/^JOB-/, 'INS-');
+        } else if (!isInsp && jobNoEl.value.startsWith('INS-')) {
+          jobNoEl.value = jobNoEl.value.replace(/^INS-/, 'JOB-');
+        }
+      }
+      if (typeof showToast === 'function') {
+        showToast(isInsp
+          ? '📋 สลับเป็นโหมด Inspection Report (ซ่อนลายเซ็นลูกค้า/ผู้รับเงิน และส่วนคิดเงินอัตโนมัติ)'
+          : '🛠️ สลับกลับเป็นโหมด Service Report (แสดงฟอร์มงานซ่อมและช่องลายเซ็นครบ 4 ช่อง)');
+      }
+    }
+  };
+
+  window.convertInspectionToOfficialCustomerReport = function() {
+    const data = typeof collectFullJobData === 'function' ? collectFullJobData() : {};
+    const stageEl = document.getElementById('inspectionApprovalStage');
+    if (stageEl) stageEl.value = 'ISSUED_OFFICIAL';
+
+    const purposeMap = {
+      PRE_DELIVERY: 'Pre-Delivery / Warehouse Quality Inspection',
+      ROUTINE_PM: 'Preventive Maintenance (PM) Condition Inspection',
+      SITE_SURVEY: 'Pre-Installation Site Survey Report',
+      WARRANTY_AUDIT: 'Warranty & Technical Condition Assessment'
+    };
+    const verdictMap = {
+      PASS: '🟢 PASS — Normal Condition / Ready for Operation (สภาพปกติ ผ่านเกณฑ์พร้อมใช้งาน)',
+      WATCH: '🟡 WATCH — Operational, Preventive Maintenance / Parts Replacement Recommended (แนะนำบำรุงรักษา)',
+      CRITICAL: '🔴 CRITICAL — Action / Repair Required Immediately (พบจุดชำรุด ต้องดำเนินการแก้ไข)'
+    };
+
+    const purposeTxt = purposeMap[data.inspectionPurpose] || 'Equipment Technical Inspection';
+    const verdictTxt = verdictMap[data.inspectionVerdict] || verdictMap.PASS;
+    const partsListHtml = (data.parts || [])
+      .filter(p => (p.desc || '').trim())
+      .map((p, i) => `<tr><td style="border:1px solid #334155;padding:6px;text-align:center;">${i + 1}</td><td style="border:1px solid #334155;padding:6px;">${p.desc}</td><td style="border:1px solid #334155;padding:6px;text-align:center;">${p.qty}</td></tr>`)
+      .join('') || '<tr><td colspan="3" style="border:1px solid #334155;padding:8px;text-align:center;color:#64748B;">No replacement parts required (ไม่พบรายการอะไหล่ที่ต้องเปลี่ยน)</td></tr>';
+
+    const photosHtml = (data.photos || []).slice(0, 12).map((ph, idx) => `
+      <div style="border:1px solid #CBD5E1;border-radius:8px;padding:6px;text-align:center;page-break-inside:avoid;">
+        <img src="${ph.src}" style="width:100%;height:155px;object-fit:cover;border-radius:4px;" />
+        <div style="font-size:10px;color:#334155;margin-top:4px;font-weight:700;">Photo #${idx + 1}: ${ph.caption || 'Inspection Evidence'}</div>
+      </div>
+    `).join('');
+
+    const techSigImg = data.sigData && data.sigData.sigTech ? `<img src="${data.sigData.sigTech}" style="max-height:56px;margin:0 auto;" />` : '<div style="height:56px;"></div>';
+    const mgrSigImg = data.sigData && data.sigData.sigManager ? `<img src="${data.sigData.sigManager}" style="max-height:56px;margin:0 auto;" />` : '<div style="height:56px;"></div>';
+
+    const htmlDoc = `<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>Official Inspection Report — ${data.jobNo || 'INS-REPORT'}</title>
+  <style>
+    @page { size: A4 portrait; margin: 12mm; }
+    body { font-family: Arial, Helvetica, sans-serif; font-size: 11.5px; color: #0F172A; margin: 0; background: #E2E8F0; }
+    .bar { background: #002B49; color: #FFF; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; }
+    .page { background: #FFF; width: 210mm; min-height: 297mm; margin: 14px auto; padding: 14mm; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    th { background: #002B49; color: #FFF; border: 1px solid #002B49; padding: 6px; font-size: 11px; }
+    @media print { body { background: #FFF; } .bar { display: none !important; } .page { margin: 0; box-shadow: none; width: 100%; padding: 0; } }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <div><b>📄 OFFICIAL CUSTOMER &amp; EXECUTIVE INSPECTION REPORT:</b> ${data.jobNo || ''} — ${data.store || ''}</div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="window.print()" style="background:#059669;color:#FFF;border:none;border-radius:6px;padding:7px 14px;font-weight:700;cursor:pointer;">🖨️ พิมพ์ / บันทึก PDF ส่งลูกค้า &amp; ผู้บริหาร</button>
+      <button onclick="window.close()" style="background:#EF4444;color:#FFF;border:none;border-radius:6px;padding:7px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+    </div>
+  </div>
+  <div class="page">
+    <div style="border-bottom:2px solid #002B49;padding-bottom:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:#002B49;">HOSHIZAKI (THAILAND) LIMITED</div>
+        <div style="font-size:12px;font-weight:700;">บริษัท โฮชิซากิ (ประเทศไทย) จำกัด</div>
+        <div style="font-size:10.5px;color:#334155;">Building A, 1st floor, No. 10/11 Soi Vibhavadi Rangsit 64 (Mahanakorn), Lak Si, Bangkok 10210</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="background:#002B49;color:#FFF;padding:5px 10px;border-radius:6px;font-weight:800;font-size:12px;">OFFICIAL INSPECTION REPORT</div>
+        <div style="margin-top:4px;font-size:11px;">Ref No: <b>${data.jobNo || '-'}</b> | Date: <b>${data.date || '-'}</b></div>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <td style="border:1px solid #CBD5E1;padding:6px;width:50%;"><b>Customer / Site:</b> ${data.store || '-'}</td>
+        <td style="border:1px solid #CBD5E1;padding:6px;width:50%;"><b>Inspection Type:</b> ${purposeTxt}</td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #CBD5E1;padding:6px;"><b>Address:</b> ${data.address || '-'}</td>
+        <td style="border:1px solid #CBD5E1;padding:6px;"><b>Contact Person:</b> ${data.contact || '-'}</td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #CBD5E1;padding:6px;"><b>Machine Model:</b> ${data.model || '-'}</td>
+        <td style="border:1px solid #CBD5E1;padding:6px;"><b>Serial No.:</b> ${data.serial || '-'}</td>
+      </tr>
+    </table>
+
+    <div style="background:#F0F9FF;border:1.5px solid #0284C7;border-radius:8px;padding:10px 12px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:800;color:#0369A1;">OVERALL INSPECTION RESULT / สรุปผลการตรวจเช็กสภาพเครื่อง:</div>
+      <div style="font-size:13.5px;font-weight:800;margin-top:3px;">${verdictTxt}</div>
+    </div>
+
+    <table>
+      <thead><tr><th colspan="4">Technical Measurement Readings (ค่าตรวจวัดทางเทคนิค)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="border:1px solid #CBD5E1;padding:6px;"><b>Display / Actual Temp:</b> ${data.tempDisplay || '-'} / ${data.tempActual || '-'} °C</td>
+          <td style="border:1px solid #CBD5E1;padding:6px;"><b>Pressure (PSI):</b> ${data.gaugePsi || '-'}</td>
+          <td style="border:1px solid #CBD5E1;padding:6px;"><b>Voltage / Amp:</b> ${data.gaugeVolt || '-'} V / ${data.gaugeAmp || '-'} A</td>
+          <td style="border:1px solid #CBD5E1;padding:6px;"><b>Water / Ambient:</b> ${data.gaugeWater || '-'} / ${data.gaugeAmbient || '-'}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <thead><tr><th style="text-align:left;">Inspection Findings &amp; Technical Recommendations (รายละเอียดการตรวจเช็กและข้อเสนอแนะ)</th></tr></thead>
+      <tbody>
+        <tr><td style="border:1px solid #CBD5E1;padding:8px;line-height:1.5;">
+          <div><b>Reported Condition / Scope:</b> ${data.symptom || '-'}</div>
+          <div style="margin-top:4px;"><b>Technical Assessment &amp; Action Taken:</b> ${data.actionTaken || data.cause || '-'}</div>
+        </td></tr>
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:45px;">#</th>
+          <th style="text-align:left;">Recommended Spare Parts / Maintenance Items (รายการอะไหล่ที่แนะนำ)</th>
+          <th style="width:70px;">Qty</th>
+        </tr>
+      </thead>
+      <tbody>${partsListHtml}</tbody>
+    </table>
+
+    ${photosHtml ? `<div style="font-weight:800;color:#002B49;margin:10px 0 6px;">Photographic Inspection Evidence (ภาพถ่ายประกอบรายงาน):</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">${photosHtml}</div>` : ''}
+
+    <table style="margin-top:18px;text-align:center;">
+      <tr>
+        <td style="border:1px solid #CBD5E1;padding:8px;width:33.3%;">
+          <div style="font-weight:700;font-size:11px;">Inspected By (Field Engineer)</div>
+          ${techSigImg}
+          <div style="border-top:1px solid #94A3B8;padding-top:4px;font-size:11px;">${(data.selectedTechs && data.selectedTechs.join(', ')) || data.responsibleTech || 'Hoshizaki Service Engineer'}</div>
+        </td>
+        <td style="border:1px solid #CBD5E1;padding:8px;width:33.3%;">
+          <div style="font-weight:700;font-size:11px;">Reviewed &amp; Approved By (Service Manager / Admin)</div>
+          ${mgrSigImg}
+          <div style="border-top:1px solid #94A3B8;padding-top:4px;font-size:11px;">${document.getElementById('nameManager')?.value || 'Service Manager / Admin Office'}</div>
+        </td>
+        <td style="border:1px solid #CBD5E1;padding:8px;width:33.3%;">
+          <div style="font-weight:700;font-size:11px;">Acknowledged By (Customer / Recipient)</div>
+          <div style="height:56px;"></div>
+          <div style="border-top:1px solid #94A3B8;padding-top:4px;font-size:11px;">${data.contact || 'Authorized Customer Signature'}</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank', 'width=960,height=920');
+    if (!win) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาอนุญาต Pop-up เพื่อเปิดรายงานส่งลูกค้าครับ');
+      return;
+    }
+    win.document.open();
+    win.document.write(htmlDoc);
+    win.document.close();
+  };
+
+  window.sendInspectionToQuotation = async function() {
+    const data = typeof collectFullJobData === 'function' ? collectFullJobData() : {};
+    if (typeof window.openSalesCorporateQuotationModal === 'function') {
+      await window.openSalesCorporateQuotationModal();
+      const custEl = document.getElementById('hzkSqCustomer');
+      if (custEl && data.store) {
+        custEl.value = data.store;
+        custEl.dispatchEvent(new Event('change'));
+      }
+      const remEl = document.getElementById('hzkSqRemarks');
+      if (remEl) {
+        remEl.value += `
+- Ref Inspection Report: ${data.jobNo || ''} | Model: ${data.model || '-'} | S/N: ${data.serial || '-'}`;
+      }
+    }
+  };
+})();
+</script>
+</body>
                 </html>
             `);
             win.document.close();
@@ -18949,7 +19290,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             } catch (e) {}
         });
     </script>
-<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE) -->
+<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1164-INSPECTION-WORKFLOW-SUITE) -->
 <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
 <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
 <!-- Top Navy Header -->
@@ -21847,7 +22188,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1164-INSPECTION-WORKFLOW-SUITE AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -29701,7 +30042,7 @@ transition: all 0.15s ease;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1164-INSPECTION-WORKFLOW-SUITE)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -29895,7 +30236,7 @@ display: none !important;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1164-INSPECTION-WORKFLOW-SUITE)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -29904,7 +30245,7 @@ display: none !important;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1164-INSPECTION-WORKFLOW-SUITE)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -29913,7 +30254,7 @@ display: none !important;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1164-INSPECTION-WORKFLOW-SUITE)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -29995,21 +30336,21 @@ display: none !important;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1164-INSPECTION-WORKFLOW-SUITE) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1164-INSPECTION-WORKFLOW-SUITE Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1164-INSPECTION-WORKFLOW-SUITE）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -33021,9 +33362,9 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1164-INSPECTION-WORKFLOW-SUITE',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1164-INSPECTION-WORKFLOW-SUITE)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1164-INSPECTION-WORKFLOW-SUITE)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -33085,7 +33426,7 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1164-INSPECTION-WORKFLOW-SUITE Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -33309,7 +33650,7 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
 <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
 <div>
-<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE — Multi-Branch &amp; White-Label Ready)</h3>
+<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1164-INSPECTION-WORKFLOW-SUITE — Multi-Branch &amp; White-Label Ready)</h3>
 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
 </div>
 <div class="flex items-center gap-1.5">
@@ -37361,7 +37702,7 @@ CUSTOMER CSAT & 7-DAY POST-SERVICE QUALITY RADAR MODAL (v1131-AUTO-FIRST-TIME-ST
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1164-INSPECTION-WORKFLOW-SUITE — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -37886,7 +38227,7 @@ FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1164-INSPECTION-WORKFLOW-SUITE</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -38794,7 +39135,7 @@ Accounting VAT/WHT Ledger, Invoice/Receipt & NAV ERP Export • Audit Trail)
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1164-INSPECTION-WORKFLOW-SUITE</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -40344,7 +40685,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE</span>
+<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1164-INSPECTION-WORKFLOW-SUITE</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
 </div>
@@ -40388,7 +40729,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1131-AUTO-FIRST-TIME-STAFF-ONBOARDING-GATE</span>
+<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1164-INSPECTION-WORKFLOW-SUITE</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
 </div>

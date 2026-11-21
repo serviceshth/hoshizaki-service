@@ -30,6 +30,8 @@
     items: []
   };
 
+  const DEFAULT_PRODUCTION_GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby_coDZUVdP0Cc5dwsY5SMuIHngvnPlRUddmsCsahTkgyKmBmpOIgB551ym8fu1W6Ix/exec';
+
   function getGasEndpointUrl() {
     const candidates = [
       localStorage.getItem('hzk_gas_webapp_url'),
@@ -42,20 +44,25 @@
     ];
     for (const c of candidates) {
       const s = String(c || '').trim();
-      if (s && s.indexOf('https://script.google.com/') === 0) return s;
+      if (s && s.indexOf('https://script.google.com/macros/s/') === 0 && s.endsWith('/exec') && s.indexOf('YOUR_DEPLOYED_GAS_ID') === -1) return s;
     }
     // Fallback: scan all localStorage keys for any deployed Google Apps Script Web App URL
     try {
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
         const v = String(localStorage.getItem(k) || '').trim();
-        if (v.indexOf('https://script.google.com/macros/s/') === 0 && v.endsWith('/exec')) {
+        if (v.indexOf('https://script.google.com/macros/s/') === 0 && v.endsWith('/exec') && v.indexOf('YOUR_DEPLOYED_GAS_ID') === -1) {
           localStorage.setItem('hzk_gas_webapp_url', v);
           return v;
         }
       }
     } catch (e) {}
-    return '';
+    // Auto-persist permanent production Web App URL across all devices & browsers
+    try {
+      localStorage.setItem('hzk_gas_webapp_url', DEFAULT_PRODUCTION_GAS_WEBAPP_URL);
+      localStorage.setItem('gasWebAppUrl', DEFAULT_PRODUCTION_GAS_WEBAPP_URL);
+    } catch (e) {}
+    return DEFAULT_PRODUCTION_GAS_WEBAPP_URL;
   }
 
   function promptAndSaveGasEndpointUrl() {
@@ -6634,7 +6641,7 @@ ${transcript}</div>
     modal.style.display = 'flex';
 
     function rebuildSmartLinkPreview() {
-      const base = gasUrl || 'https://script.google.com/macros/s/YOUR_DEPLOYED_GAS_ID/exec';
+      const base = gasUrl || 'https://script.google.com/macros/s/AKfycby_coDZUVdP0Cc5dwsY5SMuIHngvnPlRUddmsCsahTkgyKmBmpOIgB551ym8fu1W6Ix/exec';
       const tType = document.getElementById('hzkSmlTargetType').value;
       const cust = document.getElementById('hzkSmlCustInp').value.trim();
       const model = document.getElementById('hzkSmlModelInp').value.trim();

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1175-smart-links-outsource';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1178-clean-canvas-app-drawer';
 const CORE_ASSETS = [
   './',
   './index.html',

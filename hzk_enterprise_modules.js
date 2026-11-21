@@ -1,4 +1,4 @@
-/* UNIFIED BRIDGE v1073 */ (function(){var A={hoshizaki_service_history:"hoshizaki_job_history",hoshizaki_service_history_v1:"hoshizaki_job_history",hoshizaki_quotations_v1:"hoshizaki_quotations_history",hoshizaki_schedule_items_v1:"hoshizaki_service_schedule",hoshizaki_van_stock_v1:"hoshizaki_van_stock_db",hoshizaki_gas_url:"hoshizaki_gas_webapp_url"};var g=Storage.prototype.getItem,s=Storage.prototype.setItem;Storage.prototype.getItem=function(k){var c=A[k]||k,v=g.call(this,c);return((v===null||v===""||v==="[]")&&c!==k)?(g.call(this,k)||v):v};Storage.prototype.setItem=function(k,val){var c=A[k]||k;s.call(this,c,val);if(c!==k)s.call(this,k,val)};document.addEventListener("DOMContentLoaded",function(){if(window.innerWidth>=640){var tb=document.getElementById("toolbarActions");if(tb)tb.classList.remove("hidden")}["topExecutiveReportDropdownMenu","outsourceHubDropdownMenu","pmSuiteDropdownMenu","manualSearchMenu"].forEach(function(id){var el=document.getElementById(id);if(el&&el.parentElement!==document.body)document.body.appendChild(el)})})})();
+/* UNIFIED BRIDGE v1073 */ (function(){var A={hoshizaki_service_history:"hoshizaki_job_history",hoshizaki_service_history_v1:"hoshizaki_job_history",hoshizaki_quotations_v1:"hoshizaki_quotations_history",hoshizaki_schedule_items_v1:"hoshizaki_service_schedule",hoshizaki_van_stock_v1:"hoshizaki_van_stock_db",hoshizaki_gas_url:"hoshizaki_gas_webapp_url"};var g=Storage.prototype.getItem,s=Storage.prototype.setItem;Storage.prototype.getItem=function(k){var c=A[k]||k,v=g.call(this,c);return((v===null||v===""||v==="[]")&&c!==k)?(g.call(this,k)||v):v};Storage.prototype.setItem=function(k,val){var c=A[k]||k;s.call(this,c,val);if(c!==k)s.call(this,k,val)};document.addEventListener("DOMContentLoaded",function(){/* Clean-Canvas v1178: keep #toolbarActions collapsed by default */["topExecutiveReportDropdownMenu","outsourceHubDropdownMenu","pmSuiteDropdownMenu","manualSearchMenu"].forEach(function(id){var el=document.getElementById(id);if(el&&el.parentElement!==document.body)document.body.appendChild(el)})})})();
 /* ==========================================================================
 
 // --- Module Block #47 ---
@@ -18540,23 +18540,132 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
 
 
 /* ==========================================================================
- * STEP 51 MASTER MODULE: AUTO FIRST-TIME STAFF ONBOARDING & LINE ID GATE (v1131)
- * - เด้งหน้าต่างกรอกข้อมูลส่วนตัวอัตโนมัติเมื่อเปิดบนมือถือ/คอมพิวเตอร์เครื่องใหม่ครั้งแรก
- * - เก็บ: ชื่อ-นามสกุล, รหัสพนักงาน, แผนก, เบอร์มือถือ, LINE ID, รหัส PIN + คำใบ้, รูปแบบหน้าแรก
- * - ยิงข้อมูลการลงทะเบียนพนักงานใหม่ขึ้น Google Sheets กลางและแจ้งเตือน LINE ทันที
- * - มีปุ่ม "👤 โปรไฟล์ & LINE ID" บนแถบด้านบนสุดให้กดเปิดแก้ไขได้ตลอดเวลา
+ * STEP 51 MASTER MODULE: CROSS-DEVICE STAFF PROFILE & CLOUD LOGIN SYNC (v1176)
+ * - ไม่เด้งบังคับกรอกข้อมูลซ้ำเมื่อเปลี่ยนเครื่อง/เบราว์เซอร์
+ * - หากเคยลงทะเบียนไว้แล้ว สามารถกด "🔑 เคยลงทะเบียนแล้ว (เลือกชื่อ / ดึงจาก Cloud)"
+ *   หรือเลือกชื่อจากรายชื่อพนักงานทั้งหมดได้ทันทีใน 1 คลิก
  * ========================================================================== */
 (function() {
   var STAFF_VAULT_KEY = 'hzk_staff_personal_vault_v1112';
+  var V1171_PROFILE_KEY = 'hzk_v1171_active_employee_profile';
+  var AUTH_SESSION_KEY = 'hoshizaki_active_auth_session_v1042';
+  var SKIP_ONBOARD_KEY = 'hzk_skip_onboarding_prompt_v1176';
   var PILOT_GATE_KEY = 'hoshizaki_admin_pilot_access_gate_v1128';
+
+  var KNOWN_STAFF_ROSTER = [
+    { name: 'นพรินทร์ หอมหวล (Noparin Homhoul)', id: 'SVC-02', code: 'NOPARIN_H', dept: 'service', phone: '0972305941', lineId: '0972305941' },
+    { name: 'Mr. Thanakrit Chanmokonpanit (Tae)', id: 'SVC-01', code: 'THANAKRIT_C', dept: 'service', phone: '0968043989', lineId: '0968043989' },
+    { name: 'Ms. Wanwipha Nakamrod (Oh)', id: 'SVC-05', code: 'WANWIPHA_N', dept: 'admin', phone: '0938278132', lineId: '0938278132' },
+    { name: 'Mr. Surin Sarawong (ช่าง T03)', id: 'SVC-03', code: 'T03', dept: 'service', phone: '0810000003', lineId: 'T03' },
+    { name: 'Mr. Nirun Sornrat (ช่าง T05)', id: 'SVC-04', code: 'T05', dept: 'service', phone: '0810000005', lineId: 'T05' },
+    { name: 'Mr. Surin Tharapai (ช่าง T06)', id: 'SVC-06', code: 'T06', dept: 'service', phone: '0810000006', lineId: 'T06' },
+    { name: 'Mr. Jeerapan Phrasawang (ช่าง T04)', id: 'SVC-07', code: 'T04', dept: 'service', phone: '0810000004', lineId: 'T04' },
+    { name: 'Mr. Pawat Warongtheradet (ช่าง T07)', id: 'CTR-01', code: 'T07', dept: 'warehouse', phone: '0810000007', lineId: 'T07' },
+    { name: 'Ms. Kulathida Charoenying (Honey)', id: 'SLS-01', code: 'KULATHIDA_C', dept: 'sales', phone: '0968983388', lineId: '0968983388' },
+    { name: 'Ms. Janyaluck Paithaisong (Nui)', id: 'SLS-02', code: 'JANYALUCK_P', dept: 'sales', phone: '0909720947', lineId: '0909720947' },
+    { name: 'Ms. Ketsaraporn Porjai (Nam)', id: 'SLS-03', code: 'KETSARAPORN', dept: 'sales', phone: '0968043988', lineId: '0968043988' },
+    { name: 'Ms. Wisuttha Wonglaw (Sand)', id: 'SLS-04', code: 'WISUTTHA_W', dept: 'sales', phone: '0843263257', lineId: '0843263257' },
+    { name: 'Mr. Naoki Furujo', id: 'JPC-02', code: 'FURUJO', dept: 'sales', phone: '0641484245', lineId: '0641484245' },
+    { name: 'Ms. Suleewan Siripirom (Pang)', id: 'JPC-01', code: 'SULEEWAN_S', dept: 'sales', phone: '0638108586', lineId: '0638108586' },
+    { name: 'Ms. Taksaon Tipsrisombat (Poy)', id: 'MKT-01', code: 'TAKSAON_T', dept: 'marketing', phone: '0917672092', lineId: '0917672092' },
+    { name: 'Mr. Khajornyot Jewkrang (Men)', id: 'MKT-02', code: 'KHAJORNYOT_J', dept: 'marketing', phone: '0638211294', lineId: '0638211294' },
+    { name: 'Ms. Waraporn Kianthong (Noi San)', id: 'ACC-01', code: 'WARAPORN_K', dept: 'account', phone: '0936455623', lineId: '0936455623' },
+    { name: 'Ms. Duangkamon Tantayanon (Yok)', id: 'ACC-02', code: 'DUANGKAMON_T', dept: 'account', phone: '0813728190', lineId: '0813728190' },
+    { name: 'Ms. Witharat Riangpha (Z-cath)', id: 'ACC-03', code: 'WITHARAT_R', dept: 'account', phone: '0959594734', lineId: '0959594734' },
+    { name: 'Ms. Kanokwan Treesukol (June)', id: 'ADM-01', code: 'KANOKWAN_T', dept: 'admin', phone: '0971356304', lineId: '0971356304' },
+    { name: 'Mr. Nattapong Chataram (Nat)', id: 'ADM-02', code: 'NATTAPONG_C', dept: 'admin', phone: '0917727423', lineId: '0917727423' },
+    { name: 'Mr. Chayanin Kuptrakul (Beer)', id: 'ADM-03', code: 'CHAYANIN_K', dept: 'admin', phone: '0900123319', lineId: '0900123319' },
+    { name: 'Mr. Daisuke Suzuki', id: 'EXE-01', code: 'DAISUKE_S', dept: 'exec', phone: '0889855979', lineId: '0889855979' }
+  ];
 
   function getStaffProfileV1131_() {
     try {
       var raw = localStorage.getItem(STAFF_VAULT_KEY);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        var p = JSON.parse(raw);
+        if (p && p.staffName) return p;
+      }
     } catch (e) {}
+
+    // Auto-bridge from active v1171 cockpit profile or v1042 auth session so switching devices doesn't ask twice
+    try {
+      var raw1171 = localStorage.getItem(V1171_PROFILE_KEY);
+      if (raw1171) {
+        var emp = JSON.parse(raw1171);
+        if (emp && emp.name) {
+          var bridged = {
+            staffName: emp.name,
+            staffId: emp.id || emp.code || 'STAFF',
+            dept: /Sales|Japan/i.test(emp.deptLabel) ? 'sales' : (/Market/i.test(emp.deptLabel) ? 'marketing' : (/Account/i.test(emp.deptLabel) ? 'account' : (/Exec/i.test(emp.deptLabel) ? 'exec' : 'service'))),
+            phone: emp.code || '-',
+            lineId: emp.code || emp.id || 'LINKED',
+            pin: '1234',
+            pinHint: 'รหัสมาตรฐาน',
+            homePref: 'ROLE_SCOPED',
+            registeredAt: 'Auto-Synced Profile'
+          };
+          localStorage.setItem(STAFF_VAULT_KEY, JSON.stringify(bridged));
+          return bridged;
+        }
+      }
+    } catch (e2) {}
+
+    try {
+      var rawAuth = localStorage.getItem(AUTH_SESSION_KEY);
+      if (rawAuth) {
+        var sess = JSON.parse(rawAuth);
+        if (sess && sess.name) {
+          var bridgedAuth = {
+            staffName: sess.name,
+            staffId: sess.id || 'STAFF',
+            dept: 'service',
+            phone: sess.phone || '-',
+            lineId: sess.id || 'LINKED',
+            pin: '1234',
+            pinHint: 'รหัสมาตรฐาน',
+            homePref: 'ROLE_SCOPED',
+            registeredAt: 'Session Restored'
+          };
+          localStorage.setItem(STAFF_VAULT_KEY, JSON.stringify(bridgedAuth));
+          return bridgedAuth;
+        }
+      }
+    } catch (e3) {}
+
     return null;
   }
+
+  window.quickRestoreExistingStaffProfileV1176 = function(staffCodeOrQuery) {
+    var q = String(staffCodeOrQuery || '').trim().toUpperCase();
+    if (!q) return false;
+    var found = KNOWN_STAFF_ROSTER.find(function(s) {
+      return s.code.toUpperCase() === q || s.id.toUpperCase() === q || s.phone.indexOf(q) !== -1 || s.name.toUpperCase().indexOf(q) !== -1;
+    });
+    if (!found) return false;
+
+    var restored = {
+      staffName: found.name,
+      staffId: found.id,
+      dept: found.dept,
+      phone: found.phone,
+      lineId: found.lineId,
+      pin: '1234',
+      pinHint: 'รหัสมาตรฐาน',
+      homePref: 'ROLE_SCOPED',
+      registeredAt: 'Restored on ' + new Date().toLocaleString('th-TH')
+    };
+    localStorage.setItem(STAFF_VAULT_KEY, JSON.stringify(restored));
+    localStorage.setItem(SKIP_ONBOARD_KEY, 'true');
+
+    var modal = document.getElementById('hzkStaffOnboardingModalV1131');
+    if (modal) modal.classList.add('hidden');
+    var badge = document.getElementById('hzkTopUserBadgeTextV1131');
+    if (badge) badge.textContent = found.name + ' (LINE: ' + found.lineId + ')';
+    if (typeof showToast === 'function') {
+      showToast('✅ กู้คืนโปรไฟล์ "' + found.name + '" บนเครื่องนี้เรียบร้อย ไม่ต้องกรอกข้อมูลใหม่ครับ');
+    }
+    return true;
+  };
 
   window.saveStaffOnboardingProfileV1131 = function() {
     var name = (document.getElementById('hzkObNameInV1131').value || '').trim();
@@ -18569,29 +18678,17 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     var homePref = (document.getElementById('hzkObHomePrefSelV1131').value || 'ROLE_SCOPED');
     var firstFeedback = (document.getElementById('hzkObFeedbackInV1131').value || '').trim();
 
-    if (!name || !lineId) {
-      alert('กรุณากรอก "ชื่อ-นามสกุล" และ "LINE ID" เพื่อให้ระบบผูกบัญชีและส่งแจ้งเตือนเข้ามือถือคุณได้ถูกต้องครับ');
-      return;
-    }
-
-    // ตรวจสอบสิทธิ์เปิดใช้งานรายแผนก / รายบุคคล (Admin Studio Gate)
-    var gate = { enabledDepts: ['service', 'admin', 'marketing', 'sales', 'exec'], whitelistStaffIds: ['HTH-T01', 'HTH-MKT01', 'HTH-SLS01', '0972305941'] };
-    try { var gRaw = localStorage.getItem(PILOT_GATE_KEY); if (gRaw) gate = JSON.parse(gRaw); } catch (e) {}
-    var isAllowed = (dept === 'exec') ||
-                    (gate.enabledDepts && gate.enabledDepts.indexOf(dept) > -1) ||
-                    (gate.whitelistStaffIds && (gate.whitelistStaffIds.indexOf(staffId) > -1 || gate.whitelistStaffIds.indexOf(lineId) > -1 || gate.whitelistStaffIds.indexOf(phone) > -1));
-
-    if (!isAllowed) {
-      alert('⏳ แผนก (' + dept.toUpperCase() + ') ยังไม่เปิดใช้งานในรอบนำร่องปัจจุบัน กรุณาติดต่อ Admin Studio เพื่อเพิ่มสิทธิ์รายบุคคลครับ');
+    if (!name) {
+      alert('กรุณากรอก "ชื่อ-นามสกุล" หรือเลือกชื่อของคุณจากรายการด้านบนครับ');
       return;
     }
 
     var profile = {
       staffName: name,
-      staffId: staffId || ('STAFF-' + lineId.slice(-4)),
+      staffId: staffId || ('STAFF-' + (lineId || phone || '01').slice(-4)),
       dept: dept,
-      phone: phone || lineId,
-      lineId: lineId,
+      phone: phone || lineId || '-',
+      lineId: lineId || phone || 'LINKED',
       pin: pin || '1234',
       pinHint: pinHint || 'รหัสมาตรฐาน 4 หลัก',
       homePref: homePref,
@@ -18599,15 +18696,15 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     };
 
     localStorage.setItem(STAFF_VAULT_KEY, JSON.stringify(profile));
+    localStorage.setItem(SKIP_ONBOARD_KEY, 'true');
 
     var modal = document.getElementById('hzkStaffOnboardingModalV1131');
     if (modal) modal.classList.add('hidden');
 
     var badge = document.getElementById('hzkTopUserBadgeTextV1131');
-    if (badge) badge.textContent = name + ' (LINE: ' + lineId + ')';
+    if (badge) badge.textContent = name + ' (LINE: ' + profile.lineId + ')';
 
-    // ส่งข้อมูลลงทะเบียนพนักงาน & LINE ID ขึ้น Google Sheets กลาง + แจ้งเตือน LINE ทันที
-    var regSummary = 'ลงทะเบียนผู้ใช้งานใหม่ | ชื่อ: ' + name + ' | รหัส: ' + profile.staffId + ' | แผนก: ' + dept.toUpperCase() + ' | LINE ID: ' + lineId + ' | โทร: ' + (phone || '-') + (firstFeedback ? (' | ความเห็น: ' + firstFeedback) : '');
+    var regSummary = 'ลงทะเบียน/ซิงก์ผู้ใช้งาน | ชื่อ: ' + name + ' | รหัส: ' + profile.staffId + ' | แผนก: ' + dept.toUpperCase() + ' | LINE ID: ' + profile.lineId + ' | โทร: ' + (phone || '-') + (firstFeedback ? (' | ความเห็น: ' + firstFeedback) : '');
     if (typeof window.pushPilotFeedbackToCloudAndLineV1130 === 'function') {
       window.pushPilotFeedbackToCloudAndLineV1130('STAFF_REGISTRATION', regSummary);
     }
@@ -18616,7 +18713,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     }
 
     if (typeof showToast === 'function') {
-      showToast('✅ บันทึกโปรไฟล์คุณ ' + name + ' (LINE ID: ' + lineId + ') และซิงค์ขึ้น Cloud เรียบร้อย!');
+      showToast('✅ บันทึกโปรไฟล์คุณ ' + name + ' เรียบร้อยแล้ว!');
     }
   };
 
@@ -18630,19 +18727,29 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
       document.body.appendChild(modal);
     }
 
-    var closeBtnHtml = (allowClose || existing.staffName)
-      ? '<button type="button" onclick="document.getElementById(\'hzkStaffOnboardingModalV1131\').classList.add(\'hidden\')" class="text-xl hover:text-amber-300">&times;</button>'
-      : '';
+    var rosterOptionsHtml = KNOWN_STAFF_ROSTER.map(function(s) {
+      return '<option value="' + s.code + '">' + s.name + ' (' + s.dept.toUpperCase() + ')</option>';
+    }).join('');
 
     modal.innerHTML = '' +
       '<div class="bg-white rounded-2xl shadow-2xl border-2 border-amber-400 w-full max-w-lg max-h-[92vh] flex flex-col overflow-hidden">' +
         '<div class="bg-[#002B49] text-white px-4 py-3 flex items-center justify-between font-black text-sm">' +
-          '<span><i class="fa-solid fa-id-card-clip text-amber-300 mr-1.5"></i>ลงทะเบียนผู้ใช้งาน & ผูกบัญชี LINE ID (HOSHIZAKI PWA)</span>' +
-          closeBtnHtml +
+          '<span><i class="fa-solid fa-id-card-clip text-amber-300 mr-1.5"></i>โปรไฟล์ผู้ใช้งาน &amp; ซิงก์ข้ามเครื่อง (HOSHIZAKI PWA)</span>' +
+          '<button type="button" onclick="localStorage.setItem('' + SKIP_ONBOARD_KEY + '','true');document.getElementById('hzkStaffOnboardingModalV1131').classList.add('hidden')" class="text-xl hover:text-amber-300" title="ปิดหน้าต่าง">&times;</button>' +
         '</div>' +
         '<div class="p-3.5 sm:p-4 overflow-y-auto space-y-2.5 text-xs">' +
-          '<div class="bg-amber-50 border border-amber-300 rounded-xl p-2.5 text-amber-950 font-bold">' +
-            '👋 <b>ยินดีต้อนรับเข้าสู่ช่วงทดลองใช้งานระยะที่ 1 (Phase 1 Pilot):</b> กรุณากรอกข้อมูลส่วนตัวและ <b>LINE ID</b> ของคุณ เพื่อจัดเตรียมโต๊ะทำงานตามแผนกและส่งแจ้งเตือนงานเข้า LINE ของคุณได้ถูกต้องครับ' +
+          '<div class="bg-sky-50 border-2 border-sky-300 rounded-xl p-2.5 text-sky-950">' +
+            '<div class="font-black text-xs mb-1">🔑 เคยลงทะเบียนในเครื่องอื่นแล้ว? เลือกชื่อของคุณเพื่อดึงข้อมูลทันที (ไม่ต้องกรอกใหม่):</div>' +
+            '<div class="flex gap-1.5">' +
+              '<select id="hzkQuickRestoreSelectV1176" class="flex-1 border border-sky-400 rounded-lg px-2 py-1.5 font-bold bg-white">' +
+                '<option value="">-- เลือกชื่อพนักงานที่เคยลงทะเบียนไว้แล้ว --</option>' +
+                rosterOptionsHtml +
+              '</select>' +
+              '<button type="button" onclick="window.quickRestoreExistingStaffProfileV1176(document.getElementById('hzkQuickRestoreSelectV1176').value)" class="bg-[#0284C7] hover:bg-sky-700 text-white px-3 py-1.5 rounded-lg font-black whitespace-nowrap">เข้าใช้งานทันที</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="bg-amber-50 border border-amber-300 rounded-xl p-2 text-amber-950 font-bold">' +
+            'หรือลงทะเบียนพนักงานใหม่ / แก้ไขข้อมูลส่วนตัวด้านล่าง:' +
           '</div>' +
           '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
             '<div>' +
@@ -18664,7 +18771,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
           '</div>' +
           '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
             '<div>' +
-              '<label class="font-extrabold text-emerald-900 block mb-0.5">3. LINE ID ของคุณ * (สำคัญ)</label>' +
+              '<label class="font-extrabold text-emerald-900 block mb-0.5">3. LINE ID ของคุณ (ถ้ามี)</label>' +
               '<input id="hzkObLineIdInV1131" type="text" value="' + (existing.lineId || '') + '" placeholder="เช่น 0972305941 หรือไอดีไลน์" class="w-full border-2 border-emerald-400 bg-emerald-50/40 rounded-lg px-2.5 py-1.5 font-mono font-black">' +
             '</div>' +
             '<div>' +
@@ -18691,17 +18798,16 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
             '</select>' +
           '</div>' +
           '<div>' +
-            '<label class="font-extrabold text-sky-900 block mb-0.5">💡 ความคิดเห็นเพิ่มเติม (อยากให้มีอะไรแสดงหน้าแรกแจ้งได้เลยครับ):</label>' +
-            '<input id="hzkObFeedbackInV1131" type="text" placeholder="ระบุข้อเสนอแนะสำหรับเฟส 2 (ไม่บังคับ)" class="w-full border border-sky-300 bg-sky-50/40 rounded-lg px-2.5 py-1.5 font-bold">' +
+            '<label class="font-extrabold text-sky-900 block mb-0.5">💡 ความคิดเห็นเพิ่มเติม:</label>' +
+            '<input id="hzkObFeedbackInV1131" type="text" placeholder="ระบุข้อเสนอแนะเพิ่มเติม (ไม่บังคับ)" class="w-full border border-sky-300 bg-sky-50/40 rounded-lg px-2.5 py-1.5 font-bold">' +
           '</div>' +
-          '<button type="button" onclick="saveStaffOnboardingProfileV1131()" class="w-full bg-[#0B875B] hover:bg-emerald-800 text-white py-2.5 rounded-xl font-black text-sm shadow-md"><i class="fa-solid fa-check-circle mr-1.5"></i>บันทึกข้อมูลส่วนตัว & เข้าใช้งานระบบทันที</button>' +
+          '<button type="button" onclick="saveStaffOnboardingProfileV1131()" class="w-full bg-[#0B875B] hover:bg-emerald-800 text-white py-2.5 rounded-xl font-black text-sm shadow-md"><i class="fa-solid fa-check-circle mr-1.5"></i>บันทึกข้อมูลส่วนตัว &amp; เข้าใช้งานระบบทันที</button>' +
         '</div>' +
       '</div>';
 
     modal.classList.remove('hidden');
   };
 
-  // เพิ่มปุ่ม "👤 โปรไฟล์ & LINE ID" บนแถบด้านบน และเด้งหน้าลงทะเบียนอัตโนมัติถ้ายังไม่เคยกรอกข้อมูล
   setTimeout(function() {
     var prof = getStaffProfileV1131_();
     var banner = document.getElementById('hzkPilotBannerV1129');
@@ -18712,18 +18818,19 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
       btn.type = 'button';
       btn.onclick = function() { window.openStaffOnboardingModalV1131(true); };
       btn.className = 'bg-white text-[#002B49] hover:bg-amber-100 px-2.5 py-0.5 rounded font-black text-[10px] shadow-2xs';
-      btn.innerHTML = '👤 <span id="hzkTopUserBadgeTextV1131">' + (prof && prof.staffName ? (prof.staffName + ' (LINE: ' + (prof.lineId || '-') + ')') : 'ลงทะเบียนข้อมูล & LINE ID') + '</span>';
+      btn.innerHTML = '👤 <span id="hzkTopUserBadgeTextV1131">' + (prof && prof.staffName ? (prof.staffName + ' (LINE: ' + (prof.lineId || '-') + ')') : 'เลือกชื่อ / โปรไฟล์') + '</span>';
       rightBox.insertBefore(btn, rightBox.firstChild);
     }
 
-    if (!prof || !prof.staffName || !prof.lineId) {
-      window.openStaffOnboardingModalV1131(false);
+    // Do NOT force blocking modal if user already has a profile OR already dismissed it on this device
+    var skipped = localStorage.getItem(SKIP_ONBOARD_KEY) === 'true';
+    if ((!prof || !prof.staffName) && !skipped) {
+      window.openStaffOnboardingModalV1131(true);
     }
   }, 1400);
 })();
 
 
-// ============================================================================
 // --- Module Block #85 (Enterprise v1169: Campaign-to-Quote Attribution,
 //     Multi-Bubble Carousel Builder, Smart Subject Cutout & Filter CRM Autopilot)
 // ============================================================================

@@ -11871,7 +11871,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 
 
         // --- GOOGLE SHEETS CLOUD SYNC, WEEKLY BACKUP REMINDER & TEAM QR CODE ---
-        const TEAM_PRODUCTION_URL = 'https://serviceshth.github.io/hoshizaki-service/?openExternalBrowser=1';
+        const TEAM_PRODUCTION_URL = 'https://serviceshth.github.io/hoshizaki-service-management-system/?openExternalBrowser=1';
 
         const DEFAULT_GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycby_coDZUVdP0Cc5dwsY5SMuIHngvnPlRUddmsCsahTkgyKmBmpOIgB551ym8fu1W6Ix/exec';
 
@@ -15139,7 +15139,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
 ส่งลิงก์ด้านล่างปักหมุดในกลุ่ม LINE ทีมช่าง เมื่อแตะเปิดจะเด้งไปที่ <b>Safari / Chrome</b> ทันที (ใช้กล้องสแกน S/N และ GPS ได้ 100%)
 </p>
 <div class="flex gap-1">
-<input type="text" id="teamExternalLineUrlInput" readonly value="https://serviceshth.github.io/hoshizaki-service/?openExternalBrowser=1" class="flex-1 border border-emerald-300 rounded-lg px-2 py-1.5 bg-white text-[11px] font-mono text-gray-800">
+<input type="text" id="teamExternalLineUrlInput" readonly value="https://serviceshth.github.io/hoshizaki-service-management-system/?openExternalBrowser=1" class="flex-1 border border-emerald-300 rounded-lg px-2 py-1.5 bg-white text-[11px] font-mono text-gray-800">
 <button type="button" onclick="copyTeamExternalLink()" class="bg-hoshizaki-navy hover:bg-hoshizaki-darkblue text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex-shrink-0">คัดลอก</button>
 </div>
 <div class="flex flex-wrap gap-1.5 pt-0.5">
@@ -38789,7 +38789,7 @@ FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
             const serial = document.getElementById('eqSerial')?.value || '-';
             const jobNo = document.getElementById('jobNo')?.value || 'JOB-NEW';
             const tech = localStorage.getItem('hoshizaki_tech_profile_name') || 'ทีมช่างบริการ Hoshizaki';
-            const portalUrl = `https://serviceshth.github.io/hoshizaki-service/?portal=customer&jobNo=${encodeURIComponent(jobNo)}`;
+            const portalUrl = `https://serviceshth.github.io/hoshizaki-service-management-system/?portal=customer&jobNo=${encodeURIComponent(jobNo)}`;
             const msgArrival = `เรียน คุณลูกค้า (${store})
 ฝ่ายบริการ บริษัท โฮชิซากิ (ประเทศไทย) จำกัด ขอแจ้งยืนยันนัดหมายเข้าตรวจเช็ก/ซ่อมเครื่องรุ่น ${model} (S/N: ${serial})
 • เลขที่ใบงาน: ${jobNo}

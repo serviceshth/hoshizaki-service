@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1175-SMART-LINKS-OUTSOURCE-CLAIM-DEMO-PM',
+    version: 'v1187-DEEP-SCAN-100PCT-LINKED',
     masterDb: null,
     items: []
   };
@@ -10635,3 +10635,122 @@ ${finalUrl}`;
     });
   };
 })();
+
+
+
+// ============================================================================
+// ENTERPRISE v1187 — LIVE STOCK-ON-HAND VIEWER MODAL (`openLiveStockSnapshotModal`)
+//   - Displays all 203+ active models from `live_stock_snapshot_y2026.json` & GAS `Live_Stock_Master`
+//   - Supports instant search, warehouse filter & 1-click add into Sales Quotation
+// ============================================================================
+window.openLiveStockSnapshotModal = async function () {
+  const db = await loadSalesMasterDb(false);
+  const stockMap = db.stockMap || {};
+  const stockList = Object.values(stockMap);
+
+  let modal = document.getElementById('hzkLiveStockSnapshotModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'hzkLiveStockSnapshotModal';
+    modal.style.cssText =
+      'position:fixed;inset:0;z-index:20295;background:rgba(15,23,42,0.86);display:flex;' +
+      'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div style="background:#FFFFFF;width:100%;max-width:1040px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:sans-serif;color:#0F172A;">
+      <div style="background:linear-gradient(135deg,#002B49,#0284C7);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div style="font-size:11px;color:#FDE047;font-weight:800;">LIVE WAREHOUSE INVENTORY SNAPSHOT (MICHIRU-RPA &amp; CLOUD SYNC)</div>
+          <div style="font-size:16px;font-weight:800;">📦 สต็อกเครื่องและสินค้าพร้อมขาย (${stockList.length} รุ่นในระบบคลัง)</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button type="button" onclick="window.triggerEmailStockSyncNow()" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">📥 ซิงก์สต็อกล่าสุดจากอีเมล</button>
+          <button type="button" onclick="document.getElementById('hzkLiveStockSnapshotModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+      </div>
+      <div style="padding:16px 20px;font-size:13px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+          <input id="hzkLiveStockSearchInp" type="text" placeholder="🔎 พิมพ์ค้นหารุ่นเครื่อง (เช่น IM-130NE, KM-160B, FM-120KE) หรือคลังสินค้า..." style="flex:1;min-width:240px;padding:9px 12px;border:1.5px solid #93C5FD;border-radius:8px;font-weight:700;" />
+          <select id="hzkLiveStockFilterSel" style="padding:9px 12px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+            <option value="ALL">แสดงทั้งหมด (${stockList.length} รุ่น)</option>
+            <option value="READY">🟢 เฉพาะรุ่นที่มีของพร้อมส่ง (Available &gt; 0)</option>
+            <option value="OUT">🟠 เฉพาะรุ่นที่ต้องสั่งนำเข้า / รอเข้า</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;min-width:760px;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:#002B49;color:#FFF;">
+                <th style="padding:8px;text-align:left;">รุ่นสินค้า (Model)</th>
+                <th style="padding:8px;">ยอดในคลัง (Ready)</th>
+                <th style="padding:8px;">จองแล้ว (Reserved)</th>
+                <th style="padding:8px;">พร้อมขายสุทธิ (Available)</th>
+                <th style="padding:8px;">คลังเก็บ</th>
+                <th style="padding:8px;">สถานะจัดส่ง (Lead Time)</th>
+                <th style="padding:8px;">ออกใบเสนอราคา</th>
+              </tr>
+            </thead>
+            <tbody id="hzkLiveStockTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+
+  function renderStockRows() {
+    const q = (document.getElementById('hzkLiveStockSearchInp').value || '').trim().toUpperCase();
+    const mode = document.getElementById('hzkLiveStockFilterSel').value;
+    const filtered = stockList.filter(s => {
+      if (mode === 'READY' && Number(s.available || 0) <= 0) return false;
+      if (mode === 'OUT' && Number(s.available || 0) > 0) return false;
+      if (!q) return true;
+      return (String(s.model) + ' ' + String(s.warehouse) + ' ' + String(s.leadTime)).toUpperCase().indexOf(q) !== -1;
+    }).sort((a, b) => Number(b.available || 0) - Number(a.available || 0));
+
+    const tbody = document.getElementById('hzkLiveStockTableBody');
+    tbody.innerHTML = filtered.slice(0, 150).map(s => {
+      const avail = Number(s.available || 0);
+      return `
+        <tr style="background:${avail > 0 ? '#FFFFFF' : '#FFFBEB'};">
+          <td style="padding:7px 9px;border:1px solid #CBD5E1;font-weight:800;color:#002B49;">${s.model}</td>
+          <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${Number(s.ready || 0)}</td>
+          <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${Number(s.reserved || 0)}</td>
+          <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:800;color:${avail > 0 ? '#059669' : '#D97706'};">${avail}</td>
+          <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${s.warehouse || 'BKK-WH1'}</td>
+          <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${s.leadTime || '-'}</td>
+          <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+            <button type="button" data-st-model="${s.model}" class="btn-pick-live-stock-qt" style="background:#0284C7;color:#FFF;border:none;border-radius:6px;padding:5px 9px;font-weight:700;cursor:pointer;">+ ใส่ใบเสนอราคา</button>
+          </td>
+        </tr>`;
+    }).join('') || '<tr><td colspan="7" style="padding:14px;text-align:center;color:#64748B;">ไม่พบรายการรุ่นสินค้าที่ค้นหา</td></tr>';
+
+    tbody.querySelectorAll('.btn-pick-live-stock-qt').forEach(btn => {
+      btn.onclick = async () => {
+        const mCode = btn.getAttribute('data-st-model');
+        modal.style.display = 'none';
+        const mObj = (db.models || []).find(m => String(m.model).toUpperCase() === mCode.toUpperCase()) || {
+          model: mCode, description: 'Hoshizaki Commercial Equipment', w: '', d: '', h: ''
+        };
+        HZK_OMNI_STATE.items.push({
+          model: mObj.model,
+          description: mObj.description,
+          w: mObj.w || '',
+          d: mObj.d || '',
+          h: mObj.h || '',
+          unitPrice: Number(mObj.listPrice || mObj.unitPrice || 0),
+          discount: 0,
+          qty: 1,
+          isService: false
+        });
+        await openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)');
+      };
+    });
+  }
+
+  document.getElementById('hzkLiveStockSearchInp').oninput = renderStockRows;
+  document.getElementById('hzkLiveStockFilterSel').onchange = renderStockRows;
+  renderStockRows();
+};

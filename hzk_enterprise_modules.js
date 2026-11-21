@@ -8961,7 +8961,7 @@
   //    OFFLINE SYNC CONFLICT RESOLVER & PM LIFECYCLE RENEWAL RADAR
   // --------------------------------------------------------------------------
   window.openOnboardingCredentialSlipModal = function(staffId, name, dept, role, defaultPin) {
-    const appUrl = 'https://serviceshth.github.io/hoshizaki-service/';
+    const appUrl = 'https://serviceshth.github.io/hoshizaki-service-management-system/';
     const slipText = [
       '====================================================',
       'HOSHIZAKI (THAILAND) LIMITED — SERVICE PWA ACCESS',
@@ -15291,7 +15291,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
         <li><b>วงจรใบเสนอราคา 2 รอบ:</b> รอบที่ 1 ค่าตรวจเช็ก/ล้าง → เข้าหน้างาน → รอบที่ 2 ค่าอะไหล่ซ่อมเพิ่มพร้อมแจ้ง ETA อะไหล่ (ซ่อนราคาจากหน้าร้าน) → รอ Confirm PO #2 ก่อนสั่งอะไหล่และเข้าซ่อม</li>
         <li><b>ระบบบริหารไส้กรองน้ำ 4HC-H (รอบ 6 และ 12 เดือน):</b> ปรับรอบเปลี่ยนอัตโนมัติตามค่าความกระด้างน้ำ (TDS) และออกใบเสนอราคาต่ออายุล่วงหน้า 30 วัน</li>
       </ul>
-      <p style="font-size:12px;color:#475569;"><b>Remark:</b> Demo Web App สามารถนำไปทำซ้ำ แก้ไข หรือดัดแปลงเพิ่มเติมได้ ภายในองค์กรเท่านั้น | PWA URL: https://serviceshth.github.io/hoshizaki-service/</p>
+      <p style="font-size:12px;color:#475569;"><b>Remark:</b> Demo Web App สามารถนำไปทำซ้ำ แก้ไข หรือดัดแปลงเพิ่มเติมได้ ภายในองค์กรเท่านั้น | PWA URL: https://serviceshth.github.io/hoshizaki-service-management-system/</p>
     </div></body></html>`;
     const blob = new Blob([htmlDoc], { type: 'text/html;charset=utf-8' });
     const a = document.createElement('a');
@@ -17219,7 +17219,7 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     const model = document.getElementById('machineModel')?.value || '-';
     const sn = document.getElementById('serialNumber')?.value || '-';
     const status = document.getElementById('jobStatus')?.value || 'กำลังดำเนินการ';
-    const portalBase = 'https://serviceshth.github.io/hoshizaki-service/';
+    const portalBase = 'https://serviceshth.github.io/hoshizaki-service-management-system/';
     const portalLink = `${portalBase}?portal=customer&serial=${encodeURIComponent(sn)}&job=${encodeURIComponent(jobNo)}`;
 
     const msg = [

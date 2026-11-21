@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1158-deepscan-fixed';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1159-serial-loader-fixed';
 const CORE_ASSETS = [
   './',
   './index.html',

@@ -12036,9 +12036,10 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             }
         }
 
+        window.loadExternalSerialDatabase = loadSerialDbJson;
         window.addEventListener('load', () => {
             setTimeout(checkWeeklyBackupReminder, 800);
-            loadExternalSerialDatabase();
+            if (typeof loadSerialDbJson === 'function') loadSerialDbJson();
         });
 
         (function initPwaAndLineCheck() {

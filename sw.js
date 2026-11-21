@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1165-staff-directory-synced';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1166-adaptive-theme-gen-ui';
 const CORE_ASSETS = [
   './',
   './index.html',

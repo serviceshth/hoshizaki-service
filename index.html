@@ -819,15 +819,18 @@ transform: scale(0.96);
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-1.5 mt-1 min-w-0">
-<p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE</span></p>
+<p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE</span></p>
 </div>
 <!-- แถวปุ่มสถานะด่วนกะทัดรัด (Flex-Wrap พอดีกรอบ 100% ไม่ล้นขอบจอทุกอุปกรณ์) -->
 <div id="topHeaderStatusPillsRow" class="flex flex-wrap items-center gap-1.5 mt-1.5 min-w-0 max-w-full">
 <button type="button" id="techQuickProfileBadge" onclick="openTechQuickLoginModal()" class="hzk-compact-pill text-[10px] bg-teal-500/25 hover:bg-teal-500/40 text-teal-100 border border-teal-400/50 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="เลือกโปรไฟล์ผู้ใช้งาน / เข้าสู่ระบบ (Password &amp; RBAC 8 แผนก)">
 <i class="fa-solid fa-id-badge text-amber-300"></i> <span id="techQuickProfileName">เลือกโปรไฟล์ช่าง</span>
 </button>
-<button type="button" id="btnEmployeeBirthdayProfile" onclick="openEmployeeBirthdayProfileModal()" class="hidden hzk-compact-pill text-[10px] bg-pink-500/25 hover:bg-pink-500/40 text-pink-100 border border-pink-300/60 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ข้อมูลส่วนตัว &amp; วันเกิดพนักงาน / การ์ดอวยพรวันเกิด 3 ภาษา (TH/EN/JP)">
+<button type="button" id="btnEmployeeBirthdayProfile" onclick="openEmployeeBirthdayProfileModal()" class="hzk-compact-pill text-[10px] bg-pink-500/25 hover:bg-pink-500/40 text-pink-100 border border-pink-300/60 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="ข้อมูลส่วนตัว &amp; วันเกิดพนักงาน / การ์ดอวยพรวันเกิด 3 ภาษา (TH/EN/JP)">
 <i class="fa-solid fa-cake-candles text-amber-300"></i> <span id="empBdayTopPillLabel">วันเกิด &amp; โปรไฟล์</span>
+</button>
+<button type="button" id="btnTopThemeAndGenSwitcher" onclick="openThemeAndGenerationModal()" class="hzk-compact-pill text-[10px] bg-violet-500/30 hover:bg-violet-500/50 text-violet-100 border border-violet-300/60 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap" title="สลับโหมดสว่าง / โหมดมืด และธีมปรับแต่งตามช่วงวัย (Gen Z · Millennial · Gen X · Baby Boomer)">
+<i class="fa-solid fa-palette text-amber-300"></i> <span id="topThemeGenPillLabel">☀️ ธีม &amp; ช่วงวัย</span>
 </button>
 <!-- Unified Live Cloud Auto-Sync Status Pill (รวมดึงข้อมูล Cloud + Auto-Sync + คิวออฟไลน์ไว้ในปุ่มเดียว) -->
 <button type="button" id="unifiedCloudSyncStatusPill" onclick="openUnifiedCloudSyncHubModal()" class="hzk-compact-pill text-[10px] bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-100 border border-emerald-400/55 px-2.5 rounded-full font-bold transition inline-flex items-center gap-1 whitespace-nowrap shadow-xs" title="ซิงค์ข้อมูล Cloud อัตโนมัติทุกครั้งที่เปิดแอป (คลิกเพื่อเปิดศูนย์ควบคุม Sync &amp; Backup)">
@@ -886,7 +889,7 @@ transform: scale(0.96);
 สลับเป็นโหมดช่างดำเนินงาน
 </button>
 </div>
-<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE · ≤30 Core Users) -->
+<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE · ≤30 Core Users) -->
 <div id="myDailyRoleWorkspaceBar" class="mt-2 rounded-xl bg-white/10 border border-white/20 p-2 text-xs">
 <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5 px-1">
 <span id="myDailyWorkspaceTitle" class="font-extrabold text-sky-200 flex items-center gap-1.5">
@@ -1776,7 +1779,7 @@ transform: scale(0.96);
 </nav>
 <!-- Main Job Sheet Printable Container -->
 <main id="jobSheetContainer" class="print-container max-w-4xl mx-auto bg-white rounded-xl shadow-xl p-3.5 sm:p-6 space-y-4 border border-gray-200">
-<!-- Visual 5-Stage End-to-End Lifecycle Stepper (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE) -->
+<!-- Visual 5-Stage End-to-End Lifecycle Stepper (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE) -->
 <div id="jobEndToEndStepperBar" class="no-print bg-gradient-to-r from-[#002B49] via-sky-900 to-emerald-900 text-white rounded-xl p-2.5 shadow-sm border border-sky-300/40">
   <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2 px-1">
     <span class="text-[11px] font-extrabold text-amber-300 flex items-center gap-1.5">
@@ -2625,7 +2628,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <!-- Web App UI Footer -->
 <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
 <div class="font-extrabold tracking-wide text-amber-300">
-HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE</span>
+HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE</span>
 </div>
 <div class="text-white/80 font-medium">
 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -17831,6 +17834,232 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
       </tr>
     </table>
   </div>
+
+<style id="v1166-ADAPTIVE-THEME-AND-GEN-CSS">
+  /* Generation-Adaptive Typography & Spacing Profiles */
+  html[data-hzk-gen="GEN_Z"] {
+    font-size: 15px;
+  }
+  html[data-hzk-gen="GEN_Z"] .rounded-xl,
+  html[data-hzk-gen="GEN_Z"] .rounded-lg {
+    border-radius: 0.9rem !important;
+  }
+  html[data-hzk-gen="MILLENNIAL"] {
+    font-size: 16px;
+  }
+  html[data-hzk-gen="GEN_X"] {
+    font-size: 17.5px;
+  }
+  html[data-hzk-gen="GEN_X"] input,
+  html[data-hzk-gen="GEN_X"] select,
+  html[data-hzk-gen="GEN_X"] textarea {
+    border-width: 1.5px !important;
+  }
+  html[data-hzk-gen="BOOMER"] {
+    font-size: 19px;
+  }
+  html[data-hzk-gen="BOOMER"] button,
+  html[data-hzk-gen="BOOMER"] input,
+  html[data-hzk-gen="BOOMER"] select,
+  html[data-hzk-gen="BOOMER"] textarea {
+    font-weight: 600 !important;
+    min-height: 44px !important;
+  }
+
+  /* Midnight Navy Dark Mode (Screen Only - Excluded from Print) */
+  @media screen {
+    html[data-hzk-theme="DARK"] body {
+      background-color: #09111E !important;
+      color: #E2E8F0 !important;
+    }
+    html[data-hzk-theme="DARK"] #jobSheetContainer,
+    html[data-hzk-theme="DARK"] #hzkDepartmentLandingWorkspaceCard,
+    html[data-hzk-theme="DARK"] #mobileSectionNav {
+      background-color: #111C2E !important;
+      color: #F1F5F9 !important;
+      border-color: #263854 !important;
+    }
+    html[data-hzk-theme="DARK"] #jobSheetContainer .bg-white,
+    html[data-hzk-theme="DARK"] #jobSheetContainer .bg-gray-50\/50,
+    html[data-hzk-theme="DARK"] #jobSheetContainer .bg-gray-100 {
+      background-color: #16243B !important;
+      color: #F1F5F9 !important;
+      border-color: #2D4263 !important;
+    }
+    html[data-hzk-theme="DARK"] #jobSheetContainer input:not([type="checkbox"]):not([type="radio"]),
+    html[data-hzk-theme="DARK"] #jobSheetContainer select,
+    html[data-hzk-theme="DARK"] #jobSheetContainer textarea {
+      background-color: #0D1726 !important;
+      color: #F8FAFC !important;
+      border-color: #3B557D !important;
+    }
+    html[data-hzk-theme="DARK"] #jobSheetContainer .text-hoshizaki-navy,
+    html[data-hzk-theme="DARK"] #jobSheetContainer .text-gray-700,
+    html[data-hzk-theme="DARK"] #jobSheetContainer .text-gray-600 {
+      color: #E2E8F0 !important;
+    }
+  }
+
+  /* Force Clean White Paper on Print / PDF */
+  @media print {
+    html[data-hzk-theme="DARK"] body,
+    html[data-hzk-theme="DARK"] #jobSheetContainer {
+      background: #FFFFFF !important;
+      color: #000000 !important;
+    }
+  }
+</style>
+<script id="v1166-ADAPTIVE-THEME-AND-GEN-ENGINE">
+(function() {
+  const THEME_KEY = 'hoshizaki_ui_theme_mode_v1166';
+  const GEN_KEY = 'hoshizaki_ui_gen_profile_v1166';
+
+  const GEN_META = {
+    AUTO: { label: 'อัตโนมัติตามวันเกิด', short: 'Auto', desc: 'คำนวณช่วงวัยจากปีเกิดในโปรไฟล์พนักงานอัตโนมัติ' },
+    GEN_Z: { label: 'Gen Z (1997–2012)', short: 'Gen Z', desc: 'ดีไซน์โมเดิร์น กะทัดรัด ขอบโค้งมน คล่องตัวสูง' },
+    MILLENNIAL: { label: 'Gen Y / Millennial (1981–1996)', short: 'Gen Y', desc: 'สมดุลมาตรฐานองค์กร Hoshizaki Pro (100%)' },
+    GEN_X: { label: 'Gen X (1965–1980)', short: 'Gen X', desc: 'ขยายตัวอักษร +10% เพิ่มเส้นขอบชัด ลดความล้าสายตา' },
+    BOOMER: { label: 'Baby Boomer / Senior (1946–1964)', short: 'Senior+', desc: 'ตัวอักษรและปุ่มกดใหญ่พิเศษ +20% อ่านง่ายชัดเจน' }
+  };
+
+  function detectGenerationFromBirthYear(birthDateStr) {
+    if (!birthDateStr) return 'MILLENNIAL';
+    const y = parseInt(String(birthDateStr).slice(0, 4), 10);
+    if (isNaN(y)) return 'MILLENNIAL';
+    if (y >= 1997) return 'GEN_Z';
+    if (y >= 1981) return 'MILLENNIAL';
+    if (y >= 1965) return 'GEN_X';
+    return 'BOOMER';
+  }
+
+  function resolveActiveEmployeeBirthDate() {
+    try {
+      const activeUser = JSON.parse(localStorage.getItem('hoshizaki_active_auth_session_v1042') || 'null');
+      const bdayDb = JSON.parse(localStorage.getItem('hoshizaki_employee_birthdays_v1') || '[]');
+      if (activeUser && Array.isArray(bdayDb)) {
+        const match = bdayDb.find(x =>
+          (x.id && x.id === activeUser.id) ||
+          (x.name && activeUser.name && x.name.toLowerCase().includes(activeUser.name.toLowerCase().replace(/^mr\.|^ms\./i, '').trim()))
+        );
+        if (match && match.birthDate) return match.birthDate;
+      }
+    } catch (e) {}
+    return '';
+  }
+
+  window.applyHzkThemeAndGeneration = function(themeMode, genProfile, notify) {
+    const tMode = themeMode || localStorage.getItem(THEME_KEY) || 'LIGHT';
+    const gPref = genProfile || localStorage.getItem(GEN_KEY) || 'MILLENNIAL';
+
+    localStorage.setItem(THEME_KEY, tMode);
+    localStorage.setItem(GEN_KEY, gPref);
+
+    let effectiveTheme = tMode;
+    if (tMode === 'AUTO') {
+      const hr = new Date().getHours();
+      effectiveTheme = (hr >= 18 || hr < 6) ? 'DARK' : 'LIGHT';
+    }
+
+    let effectiveGen = gPref;
+    if (gPref === 'AUTO') {
+      effectiveGen = detectGenerationFromBirthYear(resolveActiveEmployeeBirthDate());
+    }
+
+    document.documentElement.setAttribute('data-hzk-theme', effectiveTheme);
+    document.documentElement.setAttribute('data-hzk-gen', effectiveGen);
+
+    const pill = document.getElementById('topThemeGenPillLabel');
+    if (pill) {
+      const icon = effectiveTheme === 'DARK' ? '🌙' : '☀️';
+      const gShort = (GEN_META[effectiveGen] && GEN_META[effectiveGen].short) || 'Gen Y';
+      pill.textContent = `${icon} ${effectiveTheme === 'DARK' ? 'โหมดมืด' : 'โหมดสว่าง'} · ${gShort}`;
+    }
+
+    if (notify && typeof showToast === 'function') {
+      const gLabel = (GEN_META[effectiveGen] && GEN_META[effectiveGen].label) || effectiveGen;
+      showToast(`🎨 อัปเดตธีม: ${effectiveTheme === 'DARK' ? '🌙 โหมดมืด (Dark Mode)' : '☀️ โหมดสว่าง (Light Mode)'} | ช่วงวัย: ${gLabel}`);
+    }
+  };
+
+  window.openThemeAndGenerationModal = function() {
+    const curTheme = localStorage.getItem(THEME_KEY) || 'LIGHT';
+    const curGen = localStorage.getItem(GEN_KEY) || 'MILLENNIAL';
+
+    let modal = document.getElementById('hzkThemeAndGenModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkThemeAndGenModal';
+      modal.className = 'fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="bg-white text-slate-900 w-full max-w-xl rounded-2xl shadow-2xl border-2 border-[#002B49] overflow-hidden text-xs">
+        <div class="bg-gradient-to-r from-[#002B49] via-indigo-900 to-violet-800 text-white px-4 py-3 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] text-amber-300 font-extrabold uppercase tracking-wider">PERSONALIZED DISPLAY &amp; GENERATION UI ENGINE</div>
+            <div class="text-sm font-extrabold">🎨 ตั้งค่าธีมหน้าจอ (สว่าง/มืด) และรูปแบบตามช่วงวัย (Generation)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkThemeAndGenModal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-rose-600 text-white font-bold text-base">&times;</button>
+        </div>
+
+        <div class="p-4 space-y-4">
+          <!-- 1. Light / Dark / Auto Mode -->
+          <div class="space-y-2">
+            <div class="font-extrabold text-[#002B49] text-xs">1. เลือกโหมดแสงหน้าจอ (Display Brightness Mode):</div>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" onclick="applyHzkThemeAndGeneration('LIGHT', null, true); openThemeAndGenerationModal();" class="p-3 rounded-xl border-2 text-center font-bold transition ${curTheme === 'LIGHT' ? 'border-[#00A3E0] bg-sky-50 text-[#002B49]' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}">
+                <div class="text-lg mb-1">☀️</div>
+                <div>โหมดสว่าง (Light)</div>
+                <div class="text-[10px] font-normal text-slate-500">มาตรฐานงานเอกสาร</div>
+              </button>
+              <button type="button" onclick="applyHzkThemeAndGeneration('DARK', null, true); openThemeAndGenerationModal();" class="p-3 rounded-xl border-2 text-center font-bold transition ${curTheme === 'DARK' ? 'border-indigo-500 bg-slate-900 text-white' : 'border-slate-200 bg-slate-800 text-slate-200 hover:bg-slate-900'}">
+                <div class="text-lg mb-1">🌙</div>
+                <div>โหมดมืด (Dark)</div>
+                <div class="text-[10px] font-normal text-slate-300">ถนอมสายตา/ในห้องเย็น</div>
+              </button>
+              <button type="button" onclick="applyHzkThemeAndGeneration('AUTO', null, true); openThemeAndGenerationModal();" class="p-3 rounded-xl border-2 text-center font-bold transition ${curTheme === 'AUTO' ? 'border-emerald-600 bg-emerald-50 text-emerald-950' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}">
+                <div class="text-lg mb-1">🌓</div>
+                <div>อัตโนมัติ (Auto)</div>
+                <div class="text-[10px] font-normal text-slate-500">สว่างกลางวัน / มืดกลางคืน</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Generation UI Profile -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-[#002B49] text-xs">2. เลือกธีมขนาดตัวอักษรและปุ่มกดตามช่วงวัย (Generation UI):</span>
+              <button type="button" onclick="document.getElementById('hzkThemeAndGenModal').classList.add('hidden'); if(typeof openEmployeeBirthdayProfileModal==='function') openEmployeeBirthdayProfileModal();" class="text-[11px] text-pink-700 font-bold underline">🎂 ตั้งค่าวันเกิดพนักงาน</button>
+            </div>
+            <div class="space-y-1.5">
+              ${Object.keys(GEN_META).map(gKey => {
+                const info = GEN_META[gKey];
+                const active = (curGen === gKey);
+                return `
+                  <button type="button" onclick="applyHzkThemeAndGeneration(null, '${gKey}', true); openThemeAndGenerationModal();" class="w-full text-left p-2.5 rounded-xl border-2 flex items-center justify-between transition ${active ? 'border-[#002B49] bg-sky-50' : 'border-slate-200 bg-white hover:bg-slate-50'}">
+                    <div>
+                      <div class="font-extrabold text-[#002B49]">${info.label}</div>
+                      <div class="text-[11px] text-slate-600">${info.desc}</div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold ${active ? 'bg-[#002B49] text-white' : 'bg-slate-100 text-slate-600'}">${active ? '✓ ใช้งานอยู่' : 'เลือก'}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.classList.remove('hidden');
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    window.applyHzkThemeAndGeneration(null, null, false);
+  });
+})();
+</script>
 </body>
 </html>`;
 
@@ -19290,7 +19519,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             } catch (e) {}
         });
     </script>
-<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE) -->
+<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE) -->
 <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
 <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
 <!-- Top Navy Header -->
@@ -22188,7 +22417,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -30042,7 +30271,7 @@ transition: all 0.15s ease;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -30236,7 +30465,7 @@ display: none !important;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -30245,7 +30474,7 @@ display: none !important;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -30254,7 +30483,7 @@ display: none !important;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -30336,21 +30565,21 @@ display: none !important;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -33362,9 +33591,9 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -33426,7 +33655,7 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -33650,7 +33879,7 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
 <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
 <div>
-<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE — Multi-Branch &amp; White-Label Ready)</h3>
+<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE — Multi-Branch &amp; White-Label Ready)</h3>
 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
 </div>
 <div class="flex items-center gap-1.5">
@@ -37702,7 +37931,7 @@ CUSTOMER CSAT & 7-DAY POST-SERVICE QUALITY RADAR MODAL (v1131-AUTO-FIRST-TIME-ST
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -38227,7 +38456,7 @@ FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -39135,7 +39364,7 @@ Accounting VAT/WHT Ledger, Invoice/Receipt & NAV ERP Export • Audit Trail)
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -40685,7 +40914,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE</span>
+<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
 </div>
@@ -40729,7 +40958,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1165-STAFF-DIRECTORY-SYNCED-SUITE</span>
+<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1166-ADAPTIVE-THEME-GEN-UI-SUITE</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
 </div>

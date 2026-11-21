@@ -21,7 +21,7 @@
     { code: 'SERVICE_ALL', label: 'All Service Team', emails: 'thanakrit@hoshizaki.co.th, noparin@hoshizaki.co.th, wanwipha@hoshizaki.co.th', lineGroupId: '', defaultMode: 'CC', department: 'Service' },
     { code: 'FINANCE_ACC', label: 'Finance & Accounting', emails: 'waraporn@hoshizaki.co.th, duangkamon@hoshizaki.co.th, witharat@hoshizaki.co.th', lineGroupId: '', defaultMode: 'CC', department: 'Accounting' },
     { code: 'ADMIN_HR', label: 'Admin & HR', emails: 'kanokwan@hoshizaki.co.th, nattapong@hoshizaki.co.th, chayanin@hoshizaki.co.th', lineGroupId: '', defaultMode: 'CC', department: 'Admin' },
-    { code: 'MANAGEMENT_BCC', label: 'Management (BCC ลับ)', emails: 'suzuki@hoshizaki.co.th, noparin@hoshizaki.co.th', lineGroupId: '', defaultMode: 'BCC', department: 'Management' }
+    { code: 'MANAGEMENT_BCC', label: 'Management (BCC ลับ)', emails: 'suzuki@hoshizaki.co.th', lineGroupId: '', defaultMode: 'BCC', department: 'Management' }
   ];
 
   const HZK_OMNI_STATE = {

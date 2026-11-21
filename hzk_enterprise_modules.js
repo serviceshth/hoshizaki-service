@@ -9516,11 +9516,7 @@
     );
     const labelText = (document.getElementById('techQuickProfileName')?.innerText || '').trim();
     const hasRealUser = isLoggedIn && labelText && labelText !== 'เลือกโปรไฟล์ช่าง';
-    if (hasRealUser) {
-      btn.classList.remove('hidden');
-    } else {
-      btn.classList.add('hidden');
-    }
+    btn.classList.remove('hidden');
   }
 
   // Hook login & profile selection functions so button reveals only after login

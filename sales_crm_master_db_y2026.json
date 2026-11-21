@@ -85,7 +85,7 @@
     {
       "code": "NOPARIN_H",
       "name": "นพรินทร์ หอมหวล (Noparin Homhoul / Rinny)",
-      "dept": "Service & Billing",
+      "dept": "Service Unit",
       "role": "Deputy Services Unit Manager",
       "email": "noparin@hoshizaki.co.th",
       "phone": "097-230-5941"
@@ -9500,7 +9500,7 @@
     {
       "code": "MANAGEMENT_BCC",
       "label": "Management (BCC ลับ)",
-      "emails": "suzuki@hoshizaki.co.th, noparin@hoshizaki.co.th",
+      "emails": "suzuki@hoshizaki.co.th",
       "lineGroupId": "",
       "defaultMode": "BCC",
       "department": "Management"

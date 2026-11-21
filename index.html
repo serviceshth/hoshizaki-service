@@ -9769,7 +9769,7 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
             // ซ่อน/แสดงกล่องข้อมูลประวัติการขายเชิงลึก (Date Out, Invoice, PO)
             ['eqDateOut', 'eqInvoiceNo', 'eqPoNo'].forEach(id => {
                 const el = document.getElementById(id);
-                const wrapper = el ? el.closest('.grid, .flex.flex-col.sm\:flex-row') : null;
+                const wrapper = el ? el.closest('.grid, .flex.flex-col') : null;
                 if (wrapper) wrapper.classList.toggle('hidden', isTech);
             });
 

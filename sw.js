@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1161-async-syntax-fixed';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1162-selector-fixed';
 const CORE_ASSETS = [
   './',
   './index.html',

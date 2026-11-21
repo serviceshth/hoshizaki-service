@@ -12,51 +12,147 @@
   "activeStaff": [
     {
       "code": "FURUJO",
-      "name": "Mr. Furujo",
+      "name": "Mr. Naoki Furujo",
       "dept": "Japanese Corporate",
-      "role": "Japanese Corporate Manager",
-      "email": "",
-      "phone": ""
+      "role": "Senior Sales Staff (Japanese Corporate)",
+      "email": "furujo@hoshizaki.co.th",
+      "phone": "064-148-4245"
     },
     {
-      "code": "NOPARIN_H",
-      "name": "นพรินทร์ หอมหวล (Noparin Homhoul)",
-      "dept": "Service & Technical Support",
-      "role": "Deputy Service Manager",
-      "email": "noparin@hoshizaki.co.th",
-      "phone": "(+66)97-230-5941"
-    },
-    {
-      "code": "KETSARAPORN",
-      "name": "Ketsaraporn",
-      "dept": "Sales",
-      "role": "Sales Executive",
-      "email": "",
-      "phone": ""
+      "code": "SULEEWAN_S",
+      "name": "Ms. Suleewan Siripirom (Pang)",
+      "dept": "Japanese Corporate",
+      "role": "Japanese Corporate Staff",
+      "email": "suleewan@hoshizaki.co.th",
+      "phone": "063-810-8586"
     },
     {
       "code": "KULATHIDA_C",
-      "name": "Kulathida C.",
+      "name": "Ms. Kulathida Charoenying (Honey)",
       "dept": "Sales",
-      "role": "Sales Executive",
-      "email": "",
-      "phone": ""
+      "role": "Deputy Sales Manager",
+      "email": "kulathida@hoshizaki.co.th",
+      "phone": "096-898-3388"
     },
     {
       "code": "JANYALUCK_P",
-      "name": "Janyaluck P.",
+      "name": "Ms. Janyaluck Paithaisong (Nui)",
       "dept": "Sales",
-      "role": "Sales Executive",
-      "email": "",
-      "phone": ""
+      "role": "Senior Sales Staff",
+      "email": "janyaluck@hoshizaki.co.th",
+      "phone": "090-972-0947"
     },
     {
-      "code": "MARKETING_TH",
-      "name": "Marketing & Product Team",
+      "code": "KETSARAPORN",
+      "name": "Ms. Ketsaraporn Porjai (Nam)",
+      "dept": "Sales",
+      "role": "Senior Sales Staff",
+      "email": "ketsaraporn@hoshizaki.co.th",
+      "phone": "096-804-3988"
+    },
+    {
+      "code": "WISUTTHA_W",
+      "name": "Ms. Wisuttha Wonglaw (Sand) [New]",
+      "dept": "Sales",
+      "role": "Sales Support (ext. 20)",
+      "email": "wisuttha@hoshizaki.co.th",
+      "phone": "084-326-3257"
+    },
+    {
+      "code": "TAKSAON_T",
+      "name": "Ms. Taksaon Tipsrisombat (Poy)",
       "dept": "Marketing",
-      "role": "Marketing Coordinator",
-      "email": "",
-      "phone": ""
+      "role": "Marketing Unit Manager (ext. 21)",
+      "email": "taksaon@hoshizaki.co.th",
+      "phone": "091-767-2092"
+    },
+    {
+      "code": "KHAJORNYOT_J",
+      "name": "Mr. Khajornyot Jewkrang (Men)",
+      "dept": "Marketing",
+      "role": "Marketing Staff",
+      "email": "khajornyot@hoshizaki.co.th",
+      "phone": "063-821-1294"
+    },
+    {
+      "code": "THANAKRIT_C",
+      "name": "Mr. Thanakrit Chanmokonpanit (Tae)",
+      "dept": "Service & Billing",
+      "role": "Services Unit Manager (ext. 31)",
+      "email": "thanakrit@hoshizaki.co.th",
+      "phone": "096-804-3989"
+    },
+    {
+      "code": "NOPARIN_H",
+      "name": "นพรินทร์ หอมหวล (Noparin Homhoul / Rinny)",
+      "dept": "Service & Billing",
+      "role": "Deputy Services Unit Manager",
+      "email": "noparin@hoshizaki.co.th",
+      "phone": "097-230-5941"
+    },
+    {
+      "code": "WANWIPHA_N",
+      "name": "Ms. Wanwipha Nakamrod (Oh)",
+      "dept": "Service & Billing",
+      "role": "Services Admin Staff (ext. 30)",
+      "email": "wanwipha@hoshizaki.co.th",
+      "phone": "093-827-8132"
+    },
+    {
+      "code": "KANOKWAN_T",
+      "name": "Ms. Kanokwan Treesukol (June)",
+      "dept": "Admin & HR",
+      "role": "Administration Manager (ext. 03)",
+      "email": "kanokwan@hoshizaki.co.th",
+      "phone": "097-135-6304"
+    },
+    {
+      "code": "NATTAPONG_C",
+      "name": "Mr. Nattapong Chataram (Nat)",
+      "dept": "Admin & HR",
+      "role": "Senior Administration Staff (ext. 01)",
+      "email": "nattapong@hoshizaki.co.th",
+      "phone": "091-772-7423"
+    },
+    {
+      "code": "CHAYANIN_K",
+      "name": "Mr. Chayanin Kuptrakul (Beer)",
+      "dept": "Admin & HR",
+      "role": "Administration Staff (ext. 02)",
+      "email": "chayanin@hoshizaki.co.th",
+      "phone": "090-012-3319"
+    },
+    {
+      "code": "WARAPORN_K",
+      "name": "Ms. Waraporn Kianthong (Noi San)",
+      "dept": "Accounting",
+      "role": "Accounting Manager (ext. 10)",
+      "email": "waraporn@hoshizaki.co.th",
+      "phone": "093-645-5623"
+    },
+    {
+      "code": "DUANGKAMON_T",
+      "name": "Ms. Duangkamon Tantayanon (Yok)",
+      "dept": "Accounting",
+      "role": "Senior Accounting Staff (ext. 12)",
+      "email": "duangkamon@hoshizaki.co.th",
+      "phone": "081-372-8190"
+    },
+    {
+      "code": "WITHARAT_R",
+      "name": "Ms. Witharat Riangpha (Z-cath)",
+      "dept": "Accounting",
+      "role": "Accounting Staff (ext. 11)",
+      "email": "witharat@hoshizaki.co.th",
+      "phone": "095-959-4734"
+    },
+    {
+      "code": "DAISUKE_S",
+      "name": "Mr. Daisuke Suzuki",
+      "dept": "Executive",
+      "role": "Managing Director / GM All Departments",
+      "email": "suzuki@hoshizaki.co.th",
+      "phone": "088-985-5979"
     }
   ],
   "models": [
@@ -9351,5 +9447,63 @@
     "* Adverse operating conditions as set forth in th owner / user manual for the product",
     "* Failure to clean and/or maintain product as set forth in the owner/user manual for the product",
     "- Interest of 1.5% per month will be chargeable for all overdue invoices"
+  ],
+  "emailGroups": [
+    {
+      "code": "SALES_ALL",
+      "label": "All Sales Team (รวม Sales Support ใหม่)",
+      "emails": "kulathida@hoshizaki.co.th, janyaluck@hoshizaki.co.th, ketsaraporn@hoshizaki.co.th, wisuttha@hoshizaki.co.th",
+      "lineGroupId": "",
+      "defaultMode": "CC",
+      "department": "Sales"
+    },
+    {
+      "code": "JPC_TEAM",
+      "label": "Japanese Corporate",
+      "emails": "furujo@hoshizaki.co.th, suleewan@hoshizaki.co.th",
+      "lineGroupId": "",
+      "defaultMode": "CC",
+      "department": "Japanese Corporate"
+    },
+    {
+      "code": "MARKETING_ALL",
+      "label": "All Marketing",
+      "emails": "taksaon@hoshizaki.co.th, khajornyot@hoshizaki.co.th",
+      "lineGroupId": "",
+      "defaultMode": "CC",
+      "department": "Marketing"
+    },
+    {
+      "code": "SERVICE_ALL",
+      "label": "All Service Team",
+      "emails": "thanakrit@hoshizaki.co.th, noparin@hoshizaki.co.th, wanwipha@hoshizaki.co.th",
+      "lineGroupId": "",
+      "defaultMode": "CC",
+      "department": "Service"
+    },
+    {
+      "code": "FINANCE_ACC",
+      "label": "Finance & Accounting",
+      "emails": "waraporn@hoshizaki.co.th, duangkamon@hoshizaki.co.th, witharat@hoshizaki.co.th",
+      "lineGroupId": "",
+      "defaultMode": "CC",
+      "department": "Accounting"
+    },
+    {
+      "code": "ADMIN_HR",
+      "label": "Admin & HR",
+      "emails": "kanokwan@hoshizaki.co.th, nattapong@hoshizaki.co.th, chayanin@hoshizaki.co.th",
+      "lineGroupId": "",
+      "defaultMode": "CC",
+      "department": "Admin"
+    },
+    {
+      "code": "MANAGEMENT_BCC",
+      "label": "Management (BCC ลับ)",
+      "emails": "suzuki@hoshizaki.co.th, noparin@hoshizaki.co.th",
+      "lineGroupId": "",
+      "defaultMode": "BCC",
+      "department": "Management"
+    }
   ]
 }

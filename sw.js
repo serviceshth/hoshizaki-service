@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1164-inspection-workflow-suite';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1165-staff-directory-synced';
 const CORE_ASSETS = [
   './',
   './index.html',

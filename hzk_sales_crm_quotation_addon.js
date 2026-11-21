@@ -248,6 +248,7 @@
       { divider: true },
       { icon: '🧾', label: 'ใบแจ้งหนี้ / ใบกำกับภาษี / ใบวางบิล (ฟอร์มมาตรฐานบัญชี + Digital Sign)', sub: 'ฟอร์ม A4 เหมือนต้นฉบับบัญชีเป๊ะ + ลายเซ็นดิจิทัล Chayanin / Witharat / Waraporn', action: () => window.openAccountingTaxInvoiceStudioModal() },
       { icon: '📦', label: 'ใบส่งของ Admin — Delivery Order / DO (ฟอร์มมาตรฐาน + Digital Sign)', sub: 'ฟอร์ม A4 Delivery Order ใบส่งของ(ไม่ใช่ใบกำกับภาษี) + ที่อยู่ปัจจุบัน + ลายเซ็นดิจิทัล Chayanin K.', action: () => window.openAdminDeliveryOrderStudioModal() },
+      { icon: '📊', label: 'ทะเบียนคุม DO (e-POD เซ็นรับของ) & รายงานภาษีขาย (PP.30 / NAV)', sub: 'ติดตามสถานะเซ็นรับสินค้า e-POD + ตัดสต็อก/ลงทะเบียน S/N + ส่งออก Excel ภาษีขาย', action: () => window.openOutputVatAndDoRegisterModal() },
       { icon: '🛠️', label: 'ส่ง & ติดตามเอกสาร Service / ใบวางบิล / ใบเสร็จ', sub: 'ดึงข้อมูลจากใบแจ้งบริการปัจจุบันส่งพร้อมปุ่ม Track', action: () => launchTrackedDocFromServiceForm() },
       { icon: '🔄', label: 'ศูนย์ส่งต่องานข้ามแผนก (1-Click Handover)', sub: 'Sales ➔ ติดตั้ง/ลงทะเบียน S/N | Service ➔ บัญชี', action: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)', 'HANDOVER') },
       { icon: '🔔', label: 'ต่ออายุสัญญา PM & แจ้งเตือนหมดประกัน (60 วัน)', sub: 'สแกนเครื่องใกล้หมดประกัน + สร้างใบเสนอราคาต่อสัญญา 1 คลิก', action: () => window.openWarrantyPmRenewalModal() },
@@ -8483,6 +8484,8 @@ ${finalUrl}`;
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
             <button type="button" id="btnInvPreviewA4" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:7px 13px;font-weight:800;cursor:pointer;">👁️ พรีวิวฟอร์ม A4 เหมือนต้นฉบับ</button>
             <button type="button" id="btnInvPrintPdf" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:7px 13px;font-weight:800;cursor:pointer;">🖨️ พิมพ์ / Save PDF (A4)</button>
+            <button type="button" id="btnInvPickSerialStock" style="background:#4F46E5;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:800;cursor:pointer;">🔢 เลือก S/N จากคลัง</button>
+            <button type="button" id="btnInvIssueAndRecordVat" style="background:#047857;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:800;cursor:pointer;">💾 ออกเลข SI &amp; บันทึกภาษีขาย</button>
             <button type="button" id="btnInvShareTrack" style="background:#D97706;color:#FFF;border:none;border-radius:8px;padding:7px 13px;font-weight:800;cursor:pointer;">📤 แชร์ &amp; ติดตามผลลูกค้า</button>
             <button type="button" onclick="document.getElementById('hzkAccountingTaxInvoiceModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
           </div>
@@ -9054,6 +9057,7 @@ ${finalUrl}`;
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
             <button type="button" id="btnDoPreviewA4" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:7px 13px;font-weight:800;cursor:pointer;">👁️ พรีวิวฟอร์ม A4</button>
             <button type="button" id="btnDoPrintPdf" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:7px 13px;font-weight:800;cursor:pointer;">🖨️ พิมพ์ / Save PDF</button>
+            <button type="button" id="btnDoIssueDeductAndEpod" style="background:#4F46E5;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:800;cursor:pointer;">📦 ออกเลข DO, ตัดสต็อก &amp; ลิงก์เซ็นรับ e-POD</button>
             <button type="button" id="btnDoConvertToSi" style="background:#0F766E;color:#FFF;border:none;border-radius:8px;padding:7px 13px;font-weight:800;cursor:pointer;">🧾 ส่งต่อออกใบกำกับภาษี (SI)</button>
             <button type="button" id="btnDoShareTrack" style="background:#D97706;color:#FFF;border:none;border-radius:8px;padding:7px 13px;font-weight:800;cursor:pointer;">📤 แชร์ &amp; ติดตามรับของ</button>
             <button type="button" onclick="document.getElementById('hzkAdminDeliveryOrderModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
@@ -9267,4 +9271,459 @@ ${finalUrl}`;
       }
     };
   };
+})();
+
+
+
+// ============================================================================
+// ENTERPRISE v1184 — CLOSED-LOOP FULFILLMENT, DIGITAL e-POD, S/N STOCK PICKER
+//                    & ACCOUNTING OUTPUT VAT REGISTER (PP.30 / NAV READY)
+// ============================================================================
+(function initHoshizakiClosedLoopFulfillmentV1184() {
+  if (window.__HZK_CLOSED_LOOP_FULFILLMENT_V1184__) return;
+  window.__HZK_CLOSED_LOOP_FULFILLMENT_V1184__ = true;
+
+  const LOCAL_DO_REG_KEY = 'hzk_v1184_issued_do_register';
+  const LOCAL_SI_VAT_KEY = 'hzk_v1184_issued_si_vat_register';
+
+  function getLocalDoList() {
+    try { return JSON.parse(localStorage.getItem(LOCAL_DO_REG_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveLocalDoRecord(rec) {
+    try {
+      const list = getLocalDoList();
+      const idx = list.findIndex(x => x.doNo === rec.doNo);
+      if (idx >= 0) list[idx] = rec; else list.unshift(rec);
+      localStorage.setItem(LOCAL_DO_REG_KEY, JSON.stringify(list.slice(0, 150)));
+    } catch (e) {}
+  }
+
+  function getLocalSiVatList() {
+    try { return JSON.parse(localStorage.getItem(LOCAL_SI_VAT_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveLocalSiVatRecord(rec) {
+    try {
+      const list = getLocalSiVatList();
+      const idx = list.findIndex(x => x.invoiceNo === rec.invoiceNo);
+      if (idx >= 0) list[idx] = rec; else list.unshift(rec);
+      localStorage.setItem(LOCAL_SI_VAT_KEY, JSON.stringify(list.slice(0, 200)));
+    } catch (e) {}
+  }
+
+  // Serial Number Stock Picker Modal for Tax Invoice / Delivery Order
+  window.openSerialStockPickerForDocModal = async function () {
+    let serialDb = [];
+    try {
+      const r = await fetch('./serial_db.json?v=' + Date.now());
+      if (r.ok) {
+        const raw = await r.json();
+        serialDb = Array.isArray(raw) ? raw : (raw.serials || raw.records || Object.values(raw || {}));
+      }
+    } catch (e) {}
+
+    let pModal = document.getElementById('hzkSerialStockPickerModal');
+    if (!pModal) {
+      pModal = document.createElement('div');
+      pModal.id = 'hzkSerialStockPickerModal';
+      pModal.style.cssText =
+        'position:fixed;inset:0;z-index:20260;background:rgba(15,23,42,0.85);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(pModal);
+    }
+
+    pModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:760px;max-height:88vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:sans-serif;color:#0F172A;">
+        <div style="background:#002B49;color:#FFF;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;">
+          <div>
+            <div style="font-size:11px;color:#38BDF8;font-weight:800;">SERIAL NUMBER INVENTORY &amp; WARRANTY AUTO-BINDER</div>
+            <div style="font-size:15px;font-weight:800;">🔢 เลือกหมายเลขเครื่อง (Serial No.) เพื่อใส่ในใบกำกับภาษี &amp; เปิดสิทธิ์ประกัน</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkSerialStockPickerModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div style="padding:14px 18px;font-size:12.5px;">
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+            <input id="inpSnPickerSearch" type="text" placeholder="🔎 พิมพ์ค้นหา S/N หรือรุ่นเครื่อง เช่น IM-220AA, R066..." style="flex:1;min-width:220px;padding:8px 10px;border:1px solid #CBD5E1;border-radius:8px;">
+            <input id="inpSnManualAdd" type="text" placeholder="หรือพิมพ์ S/N ใหม่ เช่น R06634J" style="width:180px;padding:8px 10px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+            <button type="button" id="btnSnManualInsert" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;">+ ใส่ S/N นี้</button>
+          </div>
+          <div id="snPickerListWrap" style="max-height:360px;overflow-y:auto;border:1px solid #CBD5E1;border-radius:10px;"></div>
+        </div>
+      </div>
+    `;
+    pModal.style.display = 'flex';
+
+    function injectSnIntoFirstMatchingRow(snCode, modelHint) {
+      const inv = window.HZK_TAX_INVOICE_STATE;
+      if (!inv || !Array.isArray(inv.items) || !inv.items.length) return;
+      let targetIdx = 0;
+      if (modelHint) {
+        const foundIdx = inv.items.findIndex(it => String(it.code || '').toUpperCase().indexOf(String(modelHint).toUpperCase()) !== -1);
+        if (foundIdx >= 0) targetIdx = foundIdx;
+      }
+      const curNote = String(inv.items[targetIdx].serialNote || '').replace(/[()]/g, '').trim();
+      const parts = curNote ? curNote.split(/,\s*/).filter(Boolean) : [];
+      if (parts.indexOf(snCode) === -1) parts.push(snCode);
+      inv.items[targetIdx].serialNote = '(' + parts.join(', ') + ')';
+      pModal.style.display = 'none';
+      if (typeof window.openAccountingTaxInvoiceStudioModal === 'function') {
+        window.openAccountingTaxInvoiceStudioModal();
+      }
+    }
+
+    document.getElementById('btnSnManualInsert').onclick = () => {
+      const snVal = document.getElementById('inpSnManualAdd').value.trim().toUpperCase();
+      if (snVal) injectSnIntoFirstMatchingRow(snVal, '');
+    };
+
+    function renderSnRows(q) {
+      const term = String(q || '').trim().toUpperCase();
+      const filtered = serialDb.filter(r => {
+        const s = String(r.serial || r.serialNo || r.sn || '').toUpperCase();
+        const m = String(r.model || '').toUpperCase();
+        return !term || s.indexOf(term) !== -1 || m.indexOf(term) !== -1;
+      }).slice(0, 60);
+
+      const wrap = document.getElementById('snPickerListWrap');
+      if (!filtered.length) {
+        wrap.innerHTML = '<div style="padding:14px;text-align:center;color:#64748B;">ไม่พบรายการที่ค้นหา — สามารถพิมพ์ S/N ในช่องด้านบนขวาแล้วกด "+ ใส่ S/N นี้" ได้ทันที</div>';
+        return;
+      }
+      wrap.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="background:#0F172A;color:#FFF;"><th style="padding:7px;text-align:left;">Serial No.</th><th style="padding:7px;text-align:left;">Model</th><th style="padding:7px;text-align:left;">ลูกค้า/สถานะเดิม</th><th style="padding:7px;">เลือกใช้</th></tr></thead>
+          <tbody>
+            ${filtered.map((r, i) => {
+              const s = r.serial || r.serialNo || r.sn || '-';
+              const m = r.model || '-';
+              const c = r.customer || r.customerName || r.store || 'พร้อมใช้งาน';
+              return `<tr>
+                <td style="padding:6px 8px;border-bottom:1px solid #E2E8F0;font-weight:800;">${s}</td>
+                <td style="padding:6px 8px;border-bottom:1px solid #E2E8F0;">${m}</td>
+                <td style="padding:6px 8px;border-bottom:1px solid #E2E8F0;color:#475569;">${c}</td>
+                <td style="padding:6px 8px;border-bottom:1px solid #E2E8F0;text-align:center;"><button type="button" data-pick-sn="${s}" data-pick-m="${m}" class="btn-pick-sn-row" style="background:#0284C7;color:#FFF;border:none;border-radius:6px;padding:4px 10px;font-weight:700;cursor:pointer;">+ เลือก</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+      wrap.querySelectorAll('.btn-pick-sn-row').forEach(b => {
+        b.onclick = () => injectSnIntoFirstMatchingRow(b.getAttribute('data-pick-sn'), b.getAttribute('data-pick-m'));
+      });
+    }
+
+    document.getElementById('inpSnPickerSearch').oninput = (e) => renderSnRows(e.target.value);
+    renderSnRows('');
+  };
+
+  // Output VAT Register (PP.30 / NAV) & Delivery Order e-POD Dashboard
+  window.openOutputVatAndDoRegisterModal = async function () {
+    let regModal = document.getElementById('hzkOutputVatDoRegModal');
+    if (!regModal) {
+      regModal = document.createElement('div');
+      regModal.id = 'hzkOutputVatDoRegModal';
+      regModal.style.cssText =
+        'position:fixed;inset:0;z-index:20250;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(regModal);
+    }
+
+    regModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1100px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#002B49,#0F766E);color:#FFF;padding:14px 20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;position:sticky;top:0;z-index:10;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1184 • ADMIN e-POD DELIVERY REGISTER &amp; ACCOUNTING OUTPUT VAT (PP.30 / NAV)</div>
+            <div style="font-size:16px;font-weight:800;">📊 ทะเบียนคุมใบส่งของ (DO e-POD) &amp; รายงานภาษีขาย (Output VAT 7%)</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" id="btnExportOutputVatCsv" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:7px 13px;font-weight:800;cursor:pointer;">📥 Export รายงานภาษีขาย (CSV / Excel)</button>
+            <button type="button" onclick="document.getElementById('hzkOutputVatDoRegModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          </div>
+        </div>
+
+        <div style="padding:16px 20px;font-size:12.5px;">
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+            <button type="button" id="tabRegDoEpodBtn" style="background:#002B49;color:#FFF;border:none;border-radius:8px;padding:8px 14px;font-weight:800;cursor:pointer;">📦 1. ทะเบียนใบส่งของ Admin &amp; สถานะเซ็นรับ e-POD</button>
+            <button type="button" id="tabRegOutputVatBtn" style="background:#E2E8F0;color:#0F172A;border:none;border-radius:8px;padding:8px 14px;font-weight:800;cursor:pointer;">🧾 2. รายงานภาษีขาย (Output VAT 7% / ยื่น ภ.พ.30)</button>
+          </div>
+          <div id="regModalBodyWrap">⏳ กำลังโหลดข้อมูลทะเบียนเอกสาร...</div>
+        </div>
+      </div>
+    `;
+    regModal.style.display = 'flex';
+
+    let doRecords = getLocalDoList();
+    let siRecords = getLocalSiVatList();
+
+    // Seed with sample records if empty so team can immediately inspect & export
+    if (!doRecords.length) {
+      doRecords = [
+        { doNo: 'DO2611-070', shipDate: '09/11/2026', salesOrderNo: 'SO2611-056', customerName: 'RIJIRA CO., LTD.', shipmentMethod: 'FLASH EXPRESS', totalQty: 2, epodStatus: 'DELIVERED', receiverInfo: 'ผู้รับหน้างาน (11/11/2026)' },
+        { doNo: 'DO2611-071', shipDate: '09/11/2026', salesOrderNo: 'SO2611-057', customerName: 'RIJIRA CO., LTD.', shipmentMethod: 'FLASH EXPRESS', totalQty: 1, epodStatus: 'DELIVERED', receiverInfo: 'ผู้รับหน้างาน (11/11/2026)' }
+      ];
+    }
+    if (!siRecords.length) {
+      siRecords = [
+        { invoiceNo: 'SI2611-214', date: '19/11/2026', poNo: 'TSPO260100079', customerName: 'บริษัท ไทยสจ๊วต เซอร์วิสเซ็ส จำกัด', taxId: '0105535144001', branch: '00000 (Head Office)', exclVat: 210291.00, vatAmt: 14720.37, inclVat: 225011.37, serials: 'R06632J, R06633J, R03781K, R03782K' },
+        { invoiceNo: 'SI2611-215', date: '19/11/2026', poNo: 'TSPO261000064', customerName: 'บริษัท ไทยสจ๊วต เซอร์วิสเซ็ส จำกัด', taxId: '0105535144001', branch: '00000 (Head Office)', exclVat: 78900.00, vatAmt: 5523.00, inclVat: 84423.00, serials: 'R03668K' },
+        { invoiceNo: 'SI2611-212', date: '19/11/2026', poNo: 'TSPO260900053', customerName: 'บริษัท ไทยสจ๊วต เซอร์วิสเซ็ส จำกัด', taxId: '0105535144001', branch: '00000 (Head Office)', exclVat: 78900.00, vatAmt: 5523.00, inclVat: 84423.00, serials: 'R03667K' }
+      ];
+    }
+
+    try {
+      const cloudRes = await callGasApi('getOutputVatAndDoRegister', {}, false);
+      if (cloudRes && cloudRes.status === 'OK') {
+        if (Array.isArray(cloudRes.doRecords) && cloudRes.doRecords.length) doRecords = cloudRes.doRecords;
+        if (Array.isArray(cloudRes.siRecords) && cloudRes.siRecords.length) siRecords = cloudRes.siRecords;
+      }
+    } catch (e) {}
+
+    const gasUrl = getGasEndpointUrl();
+
+    function renderDoTab() {
+      document.getElementById('tabRegDoEpodBtn').style.background = '#002B49';
+      document.getElementById('tabRegDoEpodBtn').style.color = '#FFF';
+      document.getElementById('tabRegOutputVatBtn').style.background = '#E2E8F0';
+      document.getElementById('tabRegOutputVatBtn').style.color = '#0F172A';
+
+      document.getElementById('regModalBodyWrap').innerHTML = `
+        <div style="overflow-x:auto;">
+          <table style="width:100%;min-width:820px;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:#002B49;color:#FFF;">
+                <th style="padding:8px;">เลขที่ DO</th>
+                <th style="padding:8px;">วันที่ส่ง</th>
+                <th style="padding:8px;">อ้างอิง SO</th>
+                <th style="padding:8px;text-align:left;">ลูกค้า</th>
+                <th style="padding:8px;">ขนส่ง</th>
+                <th style="padding:8px;">สถานะ e-POD</th>
+                <th style="padding:8px;">ผู้เซ็นรับของ</th>
+                <th style="padding:8px;">ดำเนินการ</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${doRecords.map(d => {
+                const epodLink = gasUrl ? `${gasUrl}?action=epodDo&doNo=${encodeURIComponent(d.doNo)}&cust=${encodeURIComponent(d.customerName || '')}` : '#';
+                const isDeliv = String(d.epodStatus || '').toUpperCase() === 'DELIVERED';
+                return `
+                  <tr>
+                    <td style="padding:7px;border:1px solid #CBD5E1;font-weight:800;">${d.doNo}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${d.shipDate || '-'}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${d.salesOrderNo || '-'}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${d.customerName || '-'}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${d.shipmentMethod || '-'}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+                      ${isDeliv
+                        ? '<span style="background:#DCFCE7;color:#166534;padding:3px 8px;border-radius:999px;font-weight:800;">✅ เซ็นรับแล้ว (DELIVERED)</span>'
+                        : '<span style="background:#FEF3C7;color:#92400E;padding:3px 8px;border-radius:999px;font-weight:800;">⏳ รอเซ็นรับ e-POD</span>'}
+                    </td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;">${d.receiverInfo || '-'}</td>
+                    <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+                      <a href="${epodLink}" target="_blank" style="background:#0284C7;color:#FFF;text-decoration:none;padding:4px 9px;border-radius:6px;font-weight:700;font-size:11px;">✍️ เปิดหน้าเซ็นรับ e-POD</a>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderVatTab() {
+      document.getElementById('tabRegOutputVatBtn').style.background = '#0F766E';
+      document.getElementById('tabRegOutputVatBtn').style.color = '#FFF';
+      document.getElementById('tabRegDoEpodBtn').style.background = '#E2E8F0';
+      document.getElementById('tabRegDoEpodBtn').style.color = '#0F172A';
+
+      let sumExcl = 0, sumVat = 0, sumIncl = 0;
+      siRecords.forEach(s => {
+        sumExcl += Number(s.exclVat || 0);
+        sumVat += Number(s.vatAmt || 0);
+        sumIncl += Number(s.inclVat || 0);
+      });
+
+      document.getElementById('regModalBodyWrap').innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px;">
+          <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;">
+            <div style="font-size:11px;color:#166534;font-weight:700;">มูลค่าสินค้าก่อนภาษีรวม (Excl. VAT)</div>
+            <div style="font-size:18px;font-weight:900;color:#0F172A;">${sumExcl.toLocaleString('en-US', { minimumFractionDigits: 2 })} THB</div>
+          </div>
+          <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:10px 14px;">
+            <div style="font-size:11px;color:#1E40AF;font-weight:700;">ภาษีขายรวม 7% (Output VAT)</div>
+            <div style="font-size:18px;font-weight:900;color:#1D4ED8;">${sumVat.toLocaleString('en-US', { minimumFractionDigits: 2 })} THB</div>
+          </div>
+          <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:10px 14px;">
+            <div style="font-size:11px;color:#92400E;font-weight:700;">ยอดรวมทั้งสิ้น (Total Incl. VAT)</div>
+            <div style="font-size:18px;font-weight:900;color:#B45309;">${sumIncl.toLocaleString('en-US', { minimumFractionDigits: 2 })} THB</div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;min-width:860px;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:#0F766E;color:#FFF;">
+                <th style="padding:8px;">เลขที่ใบกำกับภาษี</th>
+                <th style="padding:8px;">วันที่</th>
+                <th style="padding:8px;text-align:left;">ชื่อผู้ซื้อ / ลูกค้า</th>
+                <th style="padding:8px;">Tax ID (13 หลัก)</th>
+                <th style="padding:8px;text-align:right;">มูลค่าก่อน VAT</th>
+                <th style="padding:8px;text-align:right;">VAT 7%</th>
+                <th style="padding:8px;text-align:right;">รวมทั้งสิ้น</th>
+                <th style="padding:8px;text-align:left;">S/N ลงทะเบียนประกัน</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${siRecords.map(s => `
+                <tr>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-weight:800;">${s.invoiceNo}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${s.date}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${s.customerName}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${s.taxId || '-'}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;">${Number(s.exclVat || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;font-weight:700;color:#1D4ED8;">${Number(s.vatAmt || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;font-weight:800;">${Number(s.inclVat || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-size:11px;color:#047857;">${s.serials || '-'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    document.getElementById('tabRegDoEpodBtn').onclick = renderDoTab;
+    document.getElementById('tabRegOutputVatBtn').onclick = renderVatTab;
+
+    document.getElementById('btnExportOutputVatCsv').onclick = () => {
+      const headers = ['Invoice_No', 'Date', 'PO_No', 'Customer_Name', 'Tax_ID_13_Digits', 'Branch', 'Amount_Excl_VAT', 'VAT_7_Pct', 'Total_Incl_VAT', 'Registered_Serials'];
+      const lines = [headers.join(',')].concat(siRecords.map(s =>
+        [
+          s.invoiceNo,
+          s.date,
+          s.poNo || '',
+          `"${String(s.customerName || '').replace(/"/g, '""')}"`,
+          `"${String(s.taxId || '')}"`,
+          `"${String(s.branch || '00000')}"`,
+          Number(s.exclVat || 0).toFixed(2),
+          Number(s.vatAmt || 0).toFixed(2),
+          Number(s.inclVat || 0).toFixed(2),
+          `"${String(s.serials || '')}"`
+        ].join(',')
+      ));
+      const blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'HOSHIZAKI_Output_VAT_PP30_' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.click();
+    };
+
+    renderDoTab();
+  };
+
+  // Wire up the new buttons inside Tax Invoice Studio & Admin DO Studio whenever opened
+  const obsV1184 = new MutationObserver(() => {
+    const btnPickSn = document.getElementById('btnInvPickSerialStock');
+    if (btnPickSn && !btnPickSn._boundV1184) {
+      btnPickSn._boundV1184 = true;
+      btnPickSn.onclick = () => window.openSerialStockPickerForDocModal();
+    }
+
+    const btnIssueSi = document.getElementById('btnInvIssueAndRecordVat');
+    if (btnIssueSi && !btnIssueSi._boundV1184) {
+      btnIssueSi._boundV1184 = true;
+      btnIssueSi.onclick = async () => {
+        const inv = window.HZK_TAX_INVOICE_STATE || {};
+        inv.invoiceNo = (document.getElementById('inpInvNo')?.value || inv.invoiceNo || 'AUTO').trim();
+        inv.date = (document.getElementById('inpInvDate')?.value || inv.date || '').trim();
+        inv.poNo = (document.getElementById('inpInvPo')?.value || inv.poNo || '').trim();
+        inv.salesmanCode = (document.getElementById('inpInvSales')?.value || inv.salesmanCode || '').trim();
+        inv.dealerNo = (document.getElementById('inpInvDealerNo')?.value || inv.dealerNo || '').trim();
+        inv.dealerNameTh = (document.getElementById('inpInvDealerTh')?.value || inv.dealerNameTh || '').trim();
+        inv.dealerNameEn = (document.getElementById('inpInvDealerEn')?.value || inv.dealerNameEn || '').trim();
+        inv.customerTaxId = (document.getElementById('inpInvCustTax')?.value || inv.customerTaxId || '').trim();
+
+        let sub = 0;
+        (inv.items || []).forEach(it => { sub += Math.max(0, Number(it.qty || 1) * Number(it.unitPrice || 0) - Number(it.discount || 0)); });
+        const vat = Math.round(sub * 0.07 * 100) / 100;
+        const grand = Math.round((sub + vat) * 100) / 100;
+        const sns = (inv.items || []).map(it => it.serialNote || '').filter(Boolean).join(', ');
+
+        btnIssueSi.disabled = true;
+        btnIssueSi.textContent = '⏳ กำลังบันทึก...';
+        let finalNo = inv.invoiceNo;
+        try {
+          const res = await callGasApi('issueTaxInvoiceAndRecordVat', { invoiceData: inv }, false);
+          if (res && res.status === 'OK') {
+            finalNo = res.invoiceNo;
+            if (document.getElementById('inpInvNo')) document.getElementById('inpInvNo').value = finalNo;
+          }
+        } catch (e) {}
+
+        saveLocalSiVatRecord({
+          invoiceNo: finalNo,
+          date: inv.date,
+          poNo: inv.poNo,
+          customerName: inv.dealerNameTh || inv.dealerNameEn,
+          taxId: String(inv.customerTaxId || '').replace(/[^0-9]/g, ''),
+          branch: '00000 (Head Office)',
+          exclVat: sub,
+          vatAmt: vat,
+          inclVat: grand,
+          serials: sns
+        });
+
+        btnIssueSi.disabled = false;
+        btnIssueSi.textContent = '💾 ออกเลข SI & บันทึกภาษีขาย';
+        alert('✅ ออกใบกำกับภาษีเลขที่ ' + finalNo + ' บันทึกรายงานภาษีขาย 7% และลงทะเบียนรับประกัน S/N เรียบร้อยแล้ว!');
+      };
+    }
+
+    const btnIssueDo = document.getElementById('btnDoIssueDeductAndEpod');
+    if (btnIssueDo && !btnIssueDo._boundV1184) {
+      btnIssueDo._boundV1184 = true;
+      btnIssueDo.onclick = async () => {
+        const doObj = window.HZK_ADMIN_DO_STATE || {};
+        doObj.doNo = (document.getElementById('inpDoNo')?.value || doObj.doNo || 'AUTO').trim();
+        doObj.shipDate = (document.getElementById('inpDoShipDate')?.value || doObj.shipDate || '').trim();
+        doObj.salesOrderNo = (document.getElementById('inpDoSoNo')?.value || doObj.salesOrderNo || '').trim();
+        doObj.shipmentMethod = (document.getElementById('inpDoShipMethod')?.value || doObj.shipmentMethod || '').trim();
+        doObj.customerName = (document.getElementById('inpDoCustName')?.value || doObj.customerName || '').trim();
+        doObj.address = (document.getElementById('inpDoAddress')?.value || doObj.address || '').trim();
+        doObj.tel = (document.getElementById('inpDoTel')?.value || doObj.tel || '').trim();
+
+        btnIssueDo.disabled = true;
+        btnIssueDo.textContent = '⏳ กำลังตัดสต็อก...';
+        let finalDoNo = doObj.doNo;
+        let epodLink = '';
+        try {
+          const res = await callGasApi('issueDeliveryOrderAndDeductStock', { doData: doObj }, false);
+          if (res && res.status === 'OK') {
+            finalDoNo = res.doNo;
+            epodLink = res.epodUrl || '';
+            if (document.getElementById('inpDoNo')) document.getElementById('inpDoNo').value = finalDoNo;
+          }
+        } catch (e) {}
+
+        if (!epodLink) {
+          const gUrl = getGasEndpointUrl();
+          epodLink = gUrl + '?action=epodDo&doNo=' + encodeURIComponent(finalDoNo) + '&cust=' + encodeURIComponent(doObj.customerName || '');
+        }
+
+        saveLocalDoRecord({
+          doNo: finalDoNo,
+          shipDate: doObj.shipDate,
+          salesOrderNo: doObj.salesOrderNo,
+          customerName: doObj.customerName,
+          shipmentMethod: doObj.shipmentMethod,
+          epodStatus: 'PENDING_EPOD',
+          receiverInfo: 'รอเซ็นรับ e-POD'
+        });
+
+        btnIssueDo.disabled = false;
+        btnIssueDo.textContent = '📦 ออกเลข DO, ตัดสต็อก & ลิงก์เซ็นรับ e-POD';
+        const openNow = confirm('✅ ออกใบส่งของเลขที่ ' + finalDoNo + ' และตัดสต็อกเรียบร้อยแล้ว!\n\nลิงก์ให้ลูกค้า/คนขับเซ็นรับของ (e-POD):\n' + epodLink + '\n\nกด OK เพื่อเปิดหน้าเซ็นรับของ e-POD ทันที');
+        if (openNow) window.open(epodLink, '_blank');
+      };
+    }
+  });
+  obsV1184.observe(document.body, { childList: true, subtree: true });
 })();

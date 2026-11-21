@@ -7225,3 +7225,814 @@ ${finalUrl}`;
     bootPersonalizedCockpitV1171();
   }
 })();
+
+
+
+// ============================================================================
+// ENTERPRISE v1181 — PM & BIG CLEANING REPORT ENGINE (BEFORE / AFTER)
+//   1) 1-Click Convert from Service Report -> PM & Big Cleaning Report
+//   2) Structured Before / After Photo Pairs (Condenser, Evaporator/Bin, Water/Drain, Exterior)
+//   3) Wide-Angle Installation Area Photo + Ambient & Inlet Water Temp + Auto Technical Analysis
+//   4) Next PM Cycle Recommendation (+3 / +4 / +6 / +12 Months) synced to Annual PM Scheduler
+//   5) Manager Review & Approval -> A4 Preview / Save PDF / Share LINE / Smart Tracking Link
+// ============================================================================
+(function initHoshizakiPmBigCleaningModuleV1181() {
+  if (window.__HZK_PM_BIG_CLEANING_V1181__) return;
+  window.__HZK_PM_BIG_CLEANING_V1181__ = true;
+
+  const PM_PAIR_CATEGORIES = [
+    { key: 'CONDENSER', title: '1. ระบบระบายความร้อน (Condenser Coil & Air Filter)', beforeHint: 'คราบฝุ่น/ไขมันอุดตันก่อนล้าง', afterHint: 'ล้างขจัดคราบสะอาดโปร่งหลังล้าง' },
+    { key: 'EVAPORATOR_BIN', title: '2. ระบบผลิตน้ำแข็ง & ถังเก็บ (Evaporator / Ice Bin)', beforeHint: 'คราบตะกรัน/เมือกก่อนล้าง', afterHint: 'ล้างและฆ่าเชื้อ Sanitizing เรียบร้อย' },
+    { key: 'WATER_DRAIN', title: '3. ระบบน้ำเข้า-ท่อน้ำทิ้ง & ปั๊มน้ำ (Water Valve / Drain)', beforeHint: 'สภาพชุดน้ำ/ถาดน้ำทิ้งก่อนล้าง', afterHint: 'ล้างทำความสะอาดการไหลน้ำปกติ' },
+    { key: 'EXTERIOR_GASKET', title: '4. ตัวเครื่องภายนอก & ขอบยางประตู (Exterior & Gasket)', beforeHint: 'สภาพภายนอก/ขอบยางก่อนทำความสะอาด', afterHint: 'เช็ดทำความสะอาดภายนอกเรียบร้อย' }
+  ];
+
+  window.HZK_PM_STATE = window.HZK_PM_STATE || {
+    wideAnglePhoto: '',
+    pairs: {
+      CONDENSER: { before: '', after: '', note: '' },
+      EVAPORATOR_BIN: { before: '', after: '', note: '' },
+      WATER_DRAIN: { before: '', after: '', note: '' },
+      EXTERIOR_GASKET: { before: '', after: '', note: '' }
+    }
+  };
+
+  function updatePmPairBadgeCount() {
+    const badge = document.getElementById('pmPairCountStatusBadge');
+    if (!badge) return;
+    let completeCount = 0;
+    let partialCount = 0;
+    PM_PAIR_CATEGORIES.forEach(cat => {
+      const p = (window.HZK_PM_STATE.pairs && window.HZK_PM_STATE.pairs[cat.key]) || {};
+      if (p.before && p.after) completeCount++;
+      else if (p.before || p.after) partialCount++;
+    });
+    badge.textContent = `📸 จับคู่ภาพ Before / After ครบแล้ว ${completeCount}/${PM_PAIR_CATEGORIES.length} หมวด` + (partialCount ? ` (รอคู่เพิ่ม ${partialCount} หมวด)` : '');
+  }
+
+  window.syncPmAmbientToMainGauge = function(val) {
+    const mainAmb = document.getElementById('gaugeAmbient');
+    if (mainAmb && val) mainAmb.value = val;
+    if (typeof debounceAutoSave === 'function') debounceAutoSave();
+  };
+
+  window.applyPmCycleRecommendation = function(cycleVal) {
+    const months = parseInt(cycleVal, 10);
+    if (!isNaN(months) && months > 0 && typeof window.setNextPmMonths === 'function') {
+      window.setNextPmMonths(months);
+    }
+    if (typeof debounceAutoSave === 'function') debounceAutoSave();
+  };
+
+  window.handlePmWideAnglePhotoUpload = async function(event) {
+    const file = event && event.target && event.target.files && event.target.files[0];
+    if (!file) return;
+    try {
+      const dataUrl = (typeof compressImageFile === 'function')
+        ? await compressImageFile(file, 960, 0.78)
+        : await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
+      window.HZK_PM_STATE.wideAnglePhoto = dataUrl;
+      renderPmWideAnglePreview();
+      if (typeof debounceAutoSave === 'function') debounceAutoSave();
+      if (typeof showToast === 'function') showToast('✅ แนบภาพมุมกว้างบริเวณจุดติดตั้งเครื่องเรียบร้อย');
+    } catch (e) {
+      console.error(e);
+    }
+    event.target.value = '';
+  };
+
+  function renderPmWideAnglePreview() {
+    const box = document.getElementById('pmWideAnglePreviewBox');
+    if (!box) return;
+    if (window.HZK_PM_STATE.wideAnglePhoto) {
+      box.innerHTML = `<img src="${window.HZK_PM_STATE.wideAnglePhoto}" class="w-full h-full object-cover" alt="Wide-Angle Site Photo">`;
+    } else {
+      box.innerHTML = 'ยังไม่ได้แนบภาพมุมกว้างบริเวณจุดติดตั้ง';
+    }
+  }
+
+  window.collectPmBigCleaningData = function() {
+    return {
+      pmCycle: document.getElementById('pmCycleIntervalSelect')?.value || '6',
+      pmBillingCategory: document.getElementById('pmBillingCategorySelect')?.value || 'CONTRACT_PM',
+      siteAmbientTemp: document.getElementById('pmSiteAmbientTemp')?.value || document.getElementById('gaugeAmbient')?.value || '',
+      inletWaterTemp: document.getElementById('pmInletWaterTemp')?.value || '',
+      ventilationStatus: document.getElementById('pmVentilationStatus')?.value || 'PASS',
+      managerApprovalStage: document.getElementById('pmManagerApprovalStage')?.value || 'TECH_DRAFT',
+      siteEnvironmentNote: document.getElementById('pmSiteEnvironmentNote')?.value || '',
+      beforeSummary: document.getElementById('pmBeforeSummaryText')?.value || '',
+      afterSummary: document.getElementById('pmAfterSummaryText')?.value || '',
+      cycleBefore: document.getElementById('pmCycleBefore')?.value || '',
+      cycleAfter: document.getElementById('pmCycleAfter')?.value || '',
+      ampBefore: document.getElementById('pmAmpBefore')?.value || '',
+      ampAfter: document.getElementById('pmAmpAfter')?.value || '',
+      psiBefore: document.getElementById('pmPsiBefore')?.value || '',
+      psiAfter: document.getElementById('pmPsiAfter')?.value || '',
+      tempBefore: document.getElementById('pmTempBefore')?.value || '',
+      tempAfter: document.getElementById('pmTempAfter')?.value || '',
+      wideAnglePhoto: window.HZK_PM_STATE.wideAnglePhoto || '',
+      pairs: JSON.parse(JSON.stringify(window.HZK_PM_STATE.pairs || {}))
+    };
+  };
+
+  window.applyPmBigCleaningData = function(pm) {
+    if (!pm) return;
+    if (document.getElementById('pmCycleIntervalSelect')) document.getElementById('pmCycleIntervalSelect').value = pm.pmCycle || '6';
+    if (document.getElementById('pmBillingCategorySelect')) document.getElementById('pmBillingCategorySelect').value = pm.pmBillingCategory || 'CONTRACT_PM';
+    if (document.getElementById('pmSiteAmbientTemp')) document.getElementById('pmSiteAmbientTemp').value = pm.siteAmbientTemp || '';
+    if (document.getElementById('pmInletWaterTemp')) document.getElementById('pmInletWaterTemp').value = pm.inletWaterTemp || '';
+    if (document.getElementById('pmVentilationStatus')) document.getElementById('pmVentilationStatus').value = pm.ventilationStatus || 'PASS';
+    if (document.getElementById('pmManagerApprovalStage')) document.getElementById('pmManagerApprovalStage').value = pm.managerApprovalStage || 'TECH_DRAFT';
+    if (document.getElementById('pmSiteEnvironmentNote')) document.getElementById('pmSiteEnvironmentNote').value = pm.siteEnvironmentNote || '';
+    if (document.getElementById('pmBeforeSummaryText')) document.getElementById('pmBeforeSummaryText').value = pm.beforeSummary || '';
+    if (document.getElementById('pmAfterSummaryText')) document.getElementById('pmAfterSummaryText').value = pm.afterSummary || '';
+    if (document.getElementById('pmCycleBefore')) document.getElementById('pmCycleBefore').value = pm.cycleBefore || '';
+    if (document.getElementById('pmCycleAfter')) document.getElementById('pmCycleAfter').value = pm.cycleAfter || '';
+    if (document.getElementById('pmAmpBefore')) document.getElementById('pmAmpBefore').value = pm.ampBefore || '';
+    if (document.getElementById('pmAmpAfter')) document.getElementById('pmAmpAfter').value = pm.ampAfter || '';
+    if (document.getElementById('pmPsiBefore')) document.getElementById('pmPsiBefore').value = pm.psiBefore || '';
+    if (document.getElementById('pmPsiAfter')) document.getElementById('pmPsiAfter').value = pm.psiAfter || '';
+    if (document.getElementById('pmTempBefore')) document.getElementById('pmTempBefore').value = pm.tempBefore || '';
+    if (document.getElementById('pmTempAfter')) document.getElementById('pmTempAfter').value = pm.tempAfter || '';
+    window.HZK_PM_STATE.wideAnglePhoto = pm.wideAnglePhoto || '';
+    if (pm.pairs) window.HZK_PM_STATE.pairs = pm.pairs;
+    renderPmWideAnglePreview();
+    updatePmPairBadgeCount();
+  };
+
+  // Auto-map existing photos from Service Report into Before/After pairs by caption keywords
+  function autoHydratePmPairsFromJobPhotos() {
+    const cards = Array.from(document.querySelectorAll('#photoPreviewContainer .photo-card'));
+    if (!cards.length) return;
+    const unmatched = [];
+    cards.forEach(card => {
+      const src = card.querySelector('img')?.src || '';
+      const cap = (card.querySelector('.photo-caption')?.value || '').trim();
+      if (!src) return;
+      const isAfter = /หลัง|after|clean|เสร็จ|เรียบร้อย/i.test(cap);
+      const isBefore = /ก่อน|before|สกปรก|ฝุ่น|ตะกรัน/i.test(cap);
+      let catKey = 'CONDENSER';
+      if (/ถัง|น้ำแข็ง|evap|bin|ถาด|ในตู้/i.test(cap)) catKey = 'EVAPORATOR_BIN';
+      else if (/น้ำ|ท่อ|ปั๊ม|water|drain/i.test(cap)) catKey = 'WATER_DRAIN';
+      else if (/ภายนอก|ประตู|ยาง|exterior|รอบ|มุมกว้าง|ติดตั้ง/i.test(cap)) {
+        if (/มุมกว้าง|ติดตั้ง|สถานที่/i.test(cap) && !window.HZK_PM_STATE.wideAnglePhoto) {
+          window.HZK_PM_STATE.wideAnglePhoto = src;
+          return;
+        }
+        catKey = 'EXTERIOR_GASKET';
+      }
+      if (isBefore && !window.HZK_PM_STATE.pairs[catKey].before) {
+        window.HZK_PM_STATE.pairs[catKey].before = src;
+      } else if (isAfter && !window.HZK_PM_STATE.pairs[catKey].after) {
+        window.HZK_PM_STATE.pairs[catKey].after = src;
+      } else {
+        unmatched.push(src);
+      }
+    });
+    // Fill remaining empty slots sequentially if technician uploaded paired photos without captions
+    if (unmatched.length) {
+      let ptr = 0;
+      PM_PAIR_CATEGORIES.forEach(cat => {
+        if (!window.HZK_PM_STATE.pairs[cat.key].before && ptr < unmatched.length) {
+          window.HZK_PM_STATE.pairs[cat.key].before = unmatched[ptr++];
+        }
+        if (!window.HZK_PM_STATE.pairs[cat.key].after && ptr < unmatched.length) {
+          window.HZK_PM_STATE.pairs[cat.key].after = unmatched[ptr++];
+        }
+      });
+    }
+    renderPmWideAnglePreview();
+    updatePmPairBadgeCount();
+  }
+
+  // 1-Click Convert from Service Report to PM & Big Cleaning Report
+  window.convertCurrentServiceJobToPmReport = function() {
+    const jobData = (typeof collectFullJobData === 'function') ? collectFullJobData() : {};
+    // Keep a snapshot backup of original Service Report in localStorage
+    try {
+      const archive = JSON.parse(localStorage.getItem('hzk_service_to_pm_source_archive') || '{}');
+      if (jobData.jobNo) archive[jobData.jobNo] = jobData;
+      localStorage.setItem('hzk_service_to_pm_source_archive', JSON.stringify(archive));
+    } catch (e) {}
+
+    if (typeof window.switchReportDocumentMode === 'function') {
+      window.switchReportDocumentMode('PM', false);
+    }
+
+    // Pull Ambient, Amp, PSI, Temp, Symptom & Action into PM fields
+    if (jobData.gaugeAmbient && document.getElementById('pmSiteAmbientTemp')) {
+      document.getElementById('pmSiteAmbientTemp').value = jobData.gaugeAmbient;
+    }
+    if (jobData.gaugeAmp && document.getElementById('pmAmpAfter') && !document.getElementById('pmAmpAfter').value) {
+      document.getElementById('pmAmpAfter').value = jobData.gaugeAmp;
+    }
+    if (jobData.gaugePsi && document.getElementById('pmPsiAfter') && !document.getElementById('pmPsiAfter').value) {
+      document.getElementById('pmPsiAfter').value = jobData.gaugePsi;
+    }
+    if (jobData.tempActual && document.getElementById('pmTempAfter') && !document.getElementById('pmTempAfter').value) {
+      document.getElementById('pmTempAfter').value = jobData.tempActual;
+    }
+    if (jobData.symptom && document.getElementById('pmBeforeSummaryText') && !document.getElementById('pmBeforeSummaryText').value) {
+      document.getElementById('pmBeforeSummaryText').value = jobData.symptom;
+    }
+    if (jobData.action && document.getElementById('pmAfterSummaryText') && !document.getElementById('pmAfterSummaryText').value) {
+      document.getElementById('pmAfterSummaryText').value = jobData.action;
+    }
+
+    autoHydratePmPairsFromJobPhotos();
+
+    // Ensure Next PM Date is populated (default +6 months if empty)
+    const nextPmEl = document.getElementById('nextPmDate');
+    if (nextPmEl && !nextPmEl.value && typeof window.setNextPmMonths === 'function') {
+      const selMonths = parseInt(document.getElementById('pmCycleIntervalSelect')?.value || '6', 10) || 6;
+      window.setNextPmMonths(selMonths);
+    }
+
+    if (typeof debounceAutoSave === 'function') debounceAutoSave();
+    window.openPmReportStudioModal(false);
+    if (typeof showToast === 'function') {
+      showToast('🧼 ดึงข้อมูลจาก Service Report สร้างเป็น PM & Big Cleaning Report เรียบร้อยแล้ว');
+    }
+  };
+
+  // Intelligent Technical Analysis & Next PM Recommendation
+  window.autoAnalyzePmSiteAndMachine = function() {
+    const ambRaw = document.getElementById('pmSiteAmbientTemp')?.value || document.getElementById('gaugeAmbient')?.value || '';
+    const ambNum = parseFloat(String(ambRaw).replace(/[^0-9.]/g, ''));
+    const vent = document.getElementById('pmVentilationStatus')?.value || 'PASS';
+    const cycleMonths = document.getElementById('pmCycleIntervalSelect')?.value || '6';
+    const model = document.getElementById('eqModel')?.value || 'HOSHIZAKI';
+
+    const findings = [];
+    let recommendedMonths = parseInt(cycleMonths, 10) || 6;
+
+    if (!isNaN(ambNum) && ambNum >= 35) {
+      findings.push(`อุณหภูมิแวดล้อมจุดติดตั้งค่อนข้างสูง (${ambNum}°C เกินเกณฑ์ 35°C) ส่งผลให้คอมเพรสเซอร์ทำงานหนักขึ้น แนะนำเพิ่มการระบายอากาศและล้างแผงคอยล์ร้อนทุก 3 เดือน`);
+      recommendedMonths = 3;
+    } else if (!isNaN(ambNum) && ambNum > 0) {
+      findings.push(`อุณหภูมิแวดล้อมจุดติดตั้งอยู่ในเกณฑ์เหมาะสม (${ambNum}°C)`);
+    }
+
+    if (vent === 'HOT_AREA' || vent === 'TIGHT') {
+      findings.push('พื้นที่ติดตั้งค่อนข้างจำกัด/ใกล้แหล่งความร้อน แนะนำให้พนักงานหน้าร้านถอดล้างแผ่นกรองฝุ่น (Air Filter) ทุก 2 สัปดาห์ และเว้นระยะระบายอากาศด้านข้าง/ด้านหลังอย่างน้อย 15 ซม.');
+      if (recommendedMonths > 4) recommendedMonths = 4;
+    } else {
+      findings.push('ระยะระบายอากาศรอบเครื่องผ่านเกณฑ์มาตรฐาน แนะนำล้างทำความสะอาดใหญ่ (Big Cleaning & Sanitizing) ตามรอบอย่างสม่ำเสมอเพื่อรักษาคุณภาพน้ำแข็งและประหยัดพลังงาน');
+    }
+
+    const recInput = document.getElementById('custRecommendation');
+    if (recInput) {
+      recInput.value = findings.join(' | ');
+    }
+    const afterInput = document.getElementById('pmAfterSummaryText');
+    if (afterInput && !afterInput.value.trim()) {
+      afterInput.value = `ดำเนินการล้างทำความสะอาดใหญ่ (Big Cleaning) และฆ่าเชื้อระบบผลิตน้ำแข็ง/ถังเก็บเครื่องรุ่น ${model} เรียบร้อย ตรวจเช็กกระแสไฟ แรงดันน้ำยา และรอบการผลิตทำงานปกติเต็มประสิทธิภาพ`;
+    }
+    if (document.getElementById('pmCycleIntervalSelect')) {
+      document.getElementById('pmCycleIntervalSelect').value = String(recommendedMonths);
+    }
+    if (typeof window.setNextPmMonths === 'function') {
+      window.setNextPmMonths(recommendedMonths);
+    }
+    if (typeof debounceAutoSave === 'function') debounceAutoSave();
+    if (typeof showToast === 'function') {
+      showToast(`✨ วิเคราะห์สภาพเครื่องและตั้งนัดหมาย PM รอบถัดไป (+${recommendedMonths} เดือน) เรียบร้อย`);
+    }
+  };
+
+  // Interactive Before/After Studio & Printable A4 PM Report Modal
+  window.openPmReportStudioModal = function(openPrintPreviewDirectly) {
+    autoHydratePmPairsFromJobPhotos();
+    const jobData = (typeof collectFullJobData === 'function') ? collectFullJobData() : {};
+    const pmData = window.collectPmBigCleaningData();
+
+    let modal = document.getElementById('hzkPmBigCleaningStudioModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkPmBigCleaningStudioModal';
+      modal.className = 'fixed inset-0 z-[20180] bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-y-auto';
+      document.body.appendChild(modal);
+    }
+
+    const jobPhotos = jobData.photos || [];
+    const jobPhotoOptions = jobPhotos.map((p, i) => `<option value="${i}">ดึงจากรูปใบงาน #${i + 1}${p.caption ? ' - ' + p.caption : ''}</option>`).join('');
+
+    modal.innerHTML = `
+      <div class="bg-white w-full max-w-6xl max-h-[94vh] rounded-2xl shadow-2xl border-2 border-emerald-500 flex flex-col overflow-hidden font-sans text-slate-900">
+        <div class="bg-gradient-to-r from-[#002B49] via-emerald-900 to-emerald-800 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div class="text-[10.5px] text-emerald-300 font-extrabold tracking-wider">HOSHIZAKI PM &amp; BIG CLEANING REPORT STUDIO (v1181)</div>
+            <div class="text-sm sm:text-base font-black">🧼 จัดคู่ภาพ Before / After &amp; ตรวจสอบเอกสาร PM Report ก่อนส่งมอบลูกค้า</div>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" id="btnPmStudioApproveMgr" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black px-3 py-1.5 rounded-lg shadow-xs">
+              🛡️ Manager ตรวจสอบ &amp; อนุมัติ
+            </button>
+            <button type="button" id="btnPmStudioPreviewA4" class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-black px-3 py-1.5 rounded-lg shadow-xs">
+              🖨️ พรีวิว A4 / Save PDF
+            </button>
+            <button type="button" id="btnPmStudioShareTrack" class="bg-[#06C755] hover:bg-[#05b34c] text-white text-xs font-black px-3 py-1.5 rounded-lg shadow-xs">
+              🔗 แชร์ลูกค้า &amp; ติดตามผล (LINE / Track)
+            </button>
+            <button type="button" onclick="document.getElementById('hzkPmBigCleaningStudioModal').classList.add('hidden')" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">
+              ✕ ปิด
+            </button>
+          </div>
+        </div>
+
+        <div class="p-4 overflow-y-auto space-y-4 text-xs">
+          <!-- Info Summary Banner -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50 border border-slate-200 rounded-xl p-3">
+            <div>
+              <div class="text-[10.5px] font-bold text-slate-500">เลขที่เอกสาร / ลูกค้า / สาขา</div>
+              <div class="font-black text-[#002B49] text-sm">${jobData.jobNo || 'PM-REPORT'} — ${jobData.store || '-'}</div>
+              <div class="text-[11px] text-slate-600">รุ่น: <b>${jobData.model || '-'}</b> | S/N: <b>${jobData.serial || '-'}</b></div>
+            </div>
+            <div>
+              <div class="text-[10.5px] font-bold text-slate-500">สภาพแวดล้อมจุดติดตั้ง &amp; อุณหภูมิ</div>
+              <div class="font-bold text-slate-800">อุณหภูมิห้อง: <span class="text-sky-800">${pmData.siteAmbientTemp || '-'}</span> | น้ำเข้า: <span class="text-sky-800">${pmData.inletWaterTemp || '-'}</span></div>
+              <div class="text-[11px] text-slate-600">${pmData.siteEnvironmentNote || 'ระบายอากาศปกติ'}</div>
+            </div>
+            <div>
+              <div class="text-[10.5px] font-bold text-slate-500">นัดหมายล้างเครื่องครั้งถัดไป (Next PM)</div>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="font-black text-emerald-800 text-sm">${jobData.nextPmDate || 'ยังไม่ระบุวัน'}</span>
+                <button type="button" onclick="window.applyPmCycleRecommendation('3'); window.openPmReportStudioModal(false);" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold text-[10px]">+3ด.</button>
+                <button type="button" onclick="window.applyPmCycleRecommendation('4'); window.openPmReportStudioModal(false);" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold text-[10px]">+4ด.</button>
+                <button type="button" onclick="window.applyPmCycleRecommendation('6'); window.openPmReportStudioModal(false);" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold text-[10px]">+6ด.</button>
+                <button type="button" onclick="window.applyPmCycleRecommendation('12'); window.openPmReportStudioModal(false);" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-bold text-[10px]">+1ปี</button>
+              </div>
+              <button type="button" id="btnPmSyncAnnualScheduler" class="mt-1 bg-emerald-700 hover:bg-emerald-800 text-white text-[10.5px] font-bold px-2 py-0.5 rounded">
+                📅 บันทึกรอบนัดเข้า Annual PM Scheduler
+              </button>
+            </div>
+          </div>
+
+          <!-- Wide-Angle Photo Section -->
+          <div class="border border-sky-200 bg-sky-50/40 rounded-xl p-3 flex flex-col sm:flex-row items-center gap-3">
+            <div class="w-full sm:w-64 h-36 bg-white border border-slate-300 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
+              ${pmData.wideAnglePhoto ? `<img src="${pmData.wideAnglePhoto}" class="w-full h-full object-cover">` : '<span class="text-slate-400 text-[11px]">ยังไม่มีภาพมุมกว้างจุดติดตั้ง</span>'}
+            </div>
+            <div class="flex-1 space-y-1.5">
+              <div class="font-black text-[#002B49] text-xs">📐 ภาพมุมกว้างบริเวณสถานที่ติดตั้งเครื่อง (Wide-Angle Site &amp; Installation Area)</div>
+              <p class="text-[11px] text-slate-600">แสดงสภาพพื้นที่รอบตัวเครื่อง จุดระบายความร้อน ท่อน้ำดี-น้ำทิ้ง เพื่อใช้วิเคราะห์ความเหมาะสมของสถานที่ติดตั้ง</p>
+              <div class="flex flex-wrap gap-2">
+                <label class="bg-[#002B49] hover:bg-sky-900 text-white px-3 py-1.5 rounded-lg font-bold cursor-pointer">
+                  📷 อัปโหลดภาพมุมกว้างใหม่
+                  <input type="file" accept="image/*" id="inpPmStudioWidePhoto" class="hidden">
+                </label>
+                ${jobPhotos.length ? `
+                  <select id="selPmWideFromJob" class="border border-slate-300 rounded-lg px-2 py-1.5 bg-white font-bold">
+                    <option value="">-- เลือกภาพมุมกว้างจากรูปในใบงาน --</option>
+                    ${jobPhotoOptions}
+                  </select>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Categories Before / After Matrix -->
+          <div class="space-y-3">
+            ${PM_PAIR_CATEGORIES.map(cat => {
+              const pair = pmData.pairs[cat.key] || { before: '', after: '', note: '' };
+              return `
+                <div class="border border-slate-300 rounded-xl p-3 bg-white shadow-2xs space-y-2">
+                  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-1.5">
+                    <span class="font-black text-[#002B49] text-xs">${cat.title}</span>
+                    <input type="text" data-pm-note="${cat.key}" value="${(pair.note || '').replace(/"/g, '&quot;')}" placeholder="รายละเอียดการล้างทำความสะอาดจุดนี้..." class="border border-slate-200 rounded px-2 py-1 text-[11px] w-full sm:w-80 bg-slate-50">
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- BEFORE -->
+                    <div class="border-2 border-rose-200 bg-rose-50/30 rounded-lg p-2 space-y-1.5">
+                      <div class="flex items-center justify-between">
+                        <span class="bg-rose-700 text-white text-[10px] font-black px-2 py-0.5 rounded">BEFORE (ก่อนล้างทำความสะอาด)</span>
+                        <div class="flex gap-1">
+                          <label class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer">
+                            + รูป Before
+                            <input type="file" accept="image/*" data-pm-upload="${cat.key}:before" class="hidden">
+                          </label>
+                          ${jobPhotos.length ? `<select data-pm-pick="${cat.key}:before" class="border border-rose-300 rounded px-1 py-0.5 text-[10px] bg-white"><option value="">เลือกจากใบงาน</option>${jobPhotoOptions}</select>` : ''}
+                        </div>
+                      </div>
+                      <div class="h-44 bg-white border border-rose-100 rounded overflow-hidden flex items-center justify-center">
+                        ${pair.before ? `<img src="${pair.before}" class="w-full h-full object-cover">` : `<span class="text-slate-400 text-[11px]">${cat.beforeHint}</span>`}
+                      </div>
+                    </div>
+                    <!-- AFTER -->
+                    <div class="border-2 border-emerald-300 bg-emerald-50/30 rounded-lg p-2 space-y-1.5">
+                      <div class="flex items-center justify-between">
+                        <span class="bg-emerald-700 text-white text-[10px] font-black px-2 py-0.5 rounded">AFTER (หลังล้างทำความสะอาดเรียบร้อย)</span>
+                        <div class="flex gap-1">
+                          <label class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer">
+                            + รูป After
+                            <input type="file" accept="image/*" data-pm-upload="${cat.key}:after" class="hidden">
+                          </label>
+                          ${jobPhotos.length ? `<select data-pm-pick="${cat.key}:after" class="border border-emerald-300 rounded px-1 py-0.5 text-[10px] bg-white"><option value="">เลือกจากใบงาน</option>${jobPhotoOptions}</select>` : ''}
+                        </div>
+                      </div>
+                      <div class="h-44 bg-white border border-emerald-100 rounded overflow-hidden flex items-center justify-center">
+                        ${pair.after ? `<img src="${pair.after}" class="w-full h-full object-cover">` : `<span class="text-slate-400 text-[11px]">${cat.afterHint}</span>`}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    modal.classList.remove('hidden');
+
+    // Bind uploads & pickers inside studio
+    const wideInp = document.getElementById('inpPmStudioWidePhoto');
+    if (wideInp) {
+      wideInp.onchange = async (ev) => {
+        await window.handlePmWideAnglePhotoUpload(ev);
+        window.openPmReportStudioModal(false);
+      };
+    }
+    const wideSel = document.getElementById('selPmWideFromJob');
+    if (wideSel) {
+      wideSel.onchange = () => {
+        const idx = parseInt(wideSel.value, 10);
+        if (!isNaN(idx) && jobPhotos[idx]) {
+          window.HZK_PM_STATE.wideAnglePhoto = jobPhotos[idx].src;
+          renderPmWideAnglePreview();
+          if (typeof debounceAutoSave === 'function') debounceAutoSave();
+          window.openPmReportStudioModal(false);
+        }
+      };
+    }
+
+    modal.querySelectorAll('input[data-pm-note]').forEach(inp => {
+      inp.oninput = () => {
+        const k = inp.getAttribute('data-pm-note');
+        window.HZK_PM_STATE.pairs[k].note = inp.value;
+        if (typeof debounceAutoSave === 'function') debounceAutoSave();
+      };
+    });
+
+    modal.querySelectorAll('input[data-pm-upload]').forEach(inp => {
+      inp.onchange = async (ev) => {
+        const file = ev.target.files && ev.target.files[0];
+        if (!file) return;
+        const [k, side] = inp.getAttribute('data-pm-upload').split(':');
+        const dataUrl = (typeof compressImageFile === 'function')
+          ? await compressImageFile(file, 900, 0.76)
+          : await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
+        window.HZK_PM_STATE.pairs[k][side] = dataUrl;
+        updatePmPairBadgeCount();
+        if (typeof debounceAutoSave === 'function') debounceAutoSave();
+        window.openPmReportStudioModal(false);
+      };
+    });
+
+    modal.querySelectorAll('select[data-pm-pick]').forEach(sel => {
+      sel.onchange = () => {
+        const idx = parseInt(sel.value, 10);
+        if (isNaN(idx) || !jobPhotos[idx]) return;
+        const [k, side] = sel.getAttribute('data-pm-pick').split(':');
+        window.HZK_PM_STATE.pairs[k][side] = jobPhotos[idx].src;
+        updatePmPairBadgeCount();
+        if (typeof debounceAutoSave === 'function') debounceAutoSave();
+        window.openPmReportStudioModal(false);
+      };
+    });
+
+    document.getElementById('btnPmStudioApproveMgr').onclick = () => {
+      window.approvePmReportByManager();
+      window.openPmReportStudioModal(false);
+    };
+    document.getElementById('btnPmStudioPreviewA4').onclick = () => {
+      window.openPmA4PrintableReportWindow();
+    };
+    document.getElementById('btnPmStudioShareTrack').onclick = () => {
+      window.sendPmReportTrackedToCustomer();
+    };
+    document.getElementById('btnPmSyncAnnualScheduler').onclick = () => {
+      window.syncPmNextAppointmentToAnnualScheduler();
+    };
+
+    if (openPrintPreviewDirectly) {
+      window.openPmA4PrintableReportWindow();
+    }
+  };
+
+  // Manager Review & Approval Workflow (with LINE notification & locking)
+  window.submitPmReportForManagerReview = async function() {
+    const jobData = (typeof collectFullJobData === 'function') ? collectFullJobData() : {};
+    const stageEl = document.getElementById('pmManagerApprovalStage');
+    if (stageEl) stageEl.value = 'PENDING_MGR_REVIEW';
+    if (typeof debounceAutoSave === 'function') debounceAutoSave();
+
+    const gasUrl = (typeof getGasEndpointUrl === 'function') ? getGasEndpointUrl() : (localStorage.getItem('hoshizaki_gas_webapp_url') || '');
+    if (gasUrl) {
+      try {
+        await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'savePmBigCleaningReport',
+            report: Object.assign({}, jobData, { pmReportData: window.collectPmBigCleaningData(), approvalStage: 'PENDING_MGR_REVIEW' })
+          })
+        });
+      } catch (e) {}
+    }
+    if (typeof showToast === 'function') {
+      showToast(`📤 ส่ง PM Report เลขที่ ${jobData.jobNo || ''} ให้ Manager ตรวจสอบและแจ้งเตือนใน LINE เรียบร้อย`);
+    }
+  };
+
+  window.approvePmReportByManager = function() {
+    const stageEl = document.getElementById('pmManagerApprovalStage');
+    if (stageEl) stageEl.value = 'MGR_APPROVED';
+    const mgrNameEl = document.getElementById('nameManager');
+    if (mgrNameEl && !mgrNameEl.value.trim()) {
+      mgrNameEl.value = 'นพรินทร์ หอมหวล (Deputy Service Manager)';
+    }
+    const mgrDateEl = document.getElementById('managerApprovalDate');
+    if (mgrDateEl) {
+      mgrDateEl.innerText = new Date().toLocaleDateString('th-TH');
+    }
+    if (typeof debounceAutoSave === 'function') debounceAutoSave();
+    window.syncPmNextAppointmentToAnnualScheduler(true);
+    if (typeof showToast === 'function') {
+      showToast('✅ Manager อนุมัติ PM & Big Cleaning Report เรียบร้อย พร้อมส่งมอบและติดตามผลลูกค้า');
+    }
+  };
+
+  // Sync Next PM Date into Multi-Visit Annual PM Scheduler & GAS Backend
+  window.syncPmNextAppointmentToAnnualScheduler = async function(silent) {
+    const jobData = (typeof collectFullJobData === 'function') ? collectFullJobData() : {};
+    const pmData = window.collectPmBigCleaningData();
+    if (!jobData.nextPmDate) {
+      if (!silent && typeof showToast === 'function') showToast('⚠️ กรุณาเลือกวันที่นัดหมาย PM ครั้งถัดไปก่อนบันทึก');
+      return;
+    }
+    try {
+      const schedList = JSON.parse(localStorage.getItem('hoshizaki_service_schedule') || '[]');
+      const exists = schedList.some(item => item.serial === jobData.serial && item.date === jobData.nextPmDate && item.category === 'PM');
+      if (!exists) {
+        schedList.unshift({
+          id: 'PM-NEXT-' + Date.now(),
+          date: jobData.nextPmDate,
+          customer: jobData.store || 'ลูกค้า PM',
+          model: jobData.model || '',
+          serial: jobData.serial || '',
+          category: 'PM',
+          van: jobData.techCode || 'T08',
+          note: `นัดล้างใหญ่ / PM รอบถัดไป (${pmData.pmCycle} เดือน) ต่อเนื่องจาก ${jobData.jobNo || ''}`
+        });
+        localStorage.setItem('hoshizaki_service_schedule', JSON.stringify(schedList));
+      }
+    } catch (e) {}
+
+    const gasUrl = (typeof getGasEndpointUrl === 'function') ? getGasEndpointUrl() : (localStorage.getItem('hoshizaki_gas_webapp_url') || '');
+    if (gasUrl) {
+      try {
+        await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'savePmBigCleaningReport',
+            report: Object.assign({}, jobData, { pmReportData: pmData })
+          })
+        });
+      } catch (e) {}
+    }
+    if (!silent && typeof showToast === 'function') {
+      showToast(`📅 บันทึกนัดหมายล้างเครื่องรอบถัดไป (${jobData.nextPmDate}) ลงระบบติดตามและตารางช่างเรียบร้อย`);
+    }
+  };
+
+  // Generate Smart Tracking Link + Share PM Report to Customer (Read Receipt + E-Sign + Next PM Confirm)
+  window.sendPmReportTrackedToCustomer = async function() {
+    const jobData = (typeof collectFullJobData === 'function') ? collectFullJobData() : {};
+    const pmData = window.collectPmBigCleaningData();
+    const gasUrl = (typeof getGasEndpointUrl === 'function') ? getGasEndpointUrl() : (localStorage.getItem('hoshizaki_gas_webapp_url') || '');
+    const trackId = 'TRK-PM-' + (jobData.jobNo || Date.now()).replace(/[^A-Z0-9-]/gi, '');
+
+    if (gasUrl) {
+      try {
+        await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'sendServiceTrackedDoc',
+            channel: 'LINE',
+            attachType: 'LINK',
+            senderName: jobData.nameManager || 'ฝ่ายบริการ HOSHIZAKI (Thailand)',
+            document: {
+              trackId: trackId,
+              docType: 'PM & Big Cleaning Report (Before/After)',
+              docNo: jobData.jobNo || trackId,
+              customerName: jobData.store || '',
+              model: jobData.model || '',
+              serialNo: jobData.serial || '',
+              nextPmDate: jobData.nextPmDate || '',
+              grandTotal: jobData.total || '0.00',
+              department: 'Service & PM'
+            }
+          })
+        });
+      } catch (e) {}
+    }
+
+    if (typeof window.openSmartShareableLinksPreviewModal === 'function') {
+      window.openSmartShareableLinksPreviewModal({
+        customerName: jobData.store || '',
+        model: jobData.model || '',
+        serialNo: jobData.serial || '',
+        jobNo: trackId
+      });
+      setTimeout(() => {
+        const sel = document.getElementById('hzkSmlTargetType');
+        if (sel) {
+          sel.value = 'DOC_ESIGN';
+          sel.dispatchEvent(new Event('change'));
+        }
+        const msgBox = document.getElementById('hzkSmlMessageBox');
+        const urlInp = document.getElementById('hzkSmlGeneratedUrl');
+        if (msgBox && urlInp) {
+          msgBox.value =
+            `🧼 [รายงานการล้างทำความสะอาดใหญ่ & บำรุงรักษาเครื่อง HOSHIZAKI — PM REPORT]\n` +
+            `• เลขที่เอกสาร: ${jobData.jobNo || trackId}\n` +
+            `• ลูกค้า / สาขา: ${jobData.store || '-'}\n` +
+            `• รุ่นเครื่อง / S/N: ${jobData.model || '-'} (${jobData.serial || '-'})\n` +
+            `• นัดหมายล้างเครื่องรอบถัดไป: ${jobData.nextPmDate || '-'}\n` +
+            `ท่านสามารถเปิดดูรายงานภาพถ่าย Before / After ผลวิเคราะห์หน้างาน และกดลงนามรับทราบงานได้ที่ลิงก์ด้านล่าง:\n` +
+            `${urlInp.value}`;
+        }
+      }, 120);
+    }
+  };
+
+  // Printable & Saveable A4 PM & Big Cleaning Report (Before / After Layout)
+  window.openPmA4PrintableReportWindow = function() {
+    const data = (typeof collectFullJobData === 'function') ? collectFullJobData() : {};
+    const pm = window.collectPmBigCleaningData();
+
+    const techSig = data.signatures && data.signatures.sigTech ? `<img src="${data.signatures.sigTech}" style="max-height:48px;margin:0 auto;">` : '<div style="height:48px;"></div>';
+    const mgrSig = data.signatures && data.signatures.sigManager ? `<img src="${data.signatures.sigManager}" style="max-height:48px;margin:0 auto;">` : '<div style="height:48px;"></div>';
+    const custSig = data.signatures && data.signatures.sigCustomer ? `<img src="${data.signatures.sigCustomer}" style="max-height:48px;margin:0 auto;">` : '<div style="height:48px;"></div>';
+
+    const pairsRowsHtml = PM_PAIR_CATEGORIES.map(cat => {
+      const p = (pm.pairs && pm.pairs[cat.key]) || {};
+      const beforeImg = p.before
+        ? `<img src="${p.before}" style="width:100%;height:145px;object-fit:cover;border-radius:6px;border:1px solid #FCA5A5;">`
+        : `<div style="height:145px;border:1px dashed #CBD5E1;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:10px;">ไม่มีภาพ Before</div>`;
+      const afterImg = p.after
+        ? `<img src="${p.after}" style="width:100%;height:145px;object-fit:cover;border-radius:6px;border:1px solid #6EE7B7;">`
+        : `<div style="height:145px;border:1px dashed #CBD5E1;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:10px;">ไม่มีภาพ After</div>`;
+      return `
+        <div style="border:1px solid #CBD5E1;border-radius:8px;padding:8px;margin-bottom:8px;page-break-inside:avoid;">
+          <div style="font-weight:800;color:#002B49;font-size:11px;margin-bottom:5px;display:flex;justify-content:space-between;">
+            <span>${cat.title}</span>
+            <span style="color:#475569;font-weight:600;">${p.note || ''}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <div style="background:#FEE2E2;color:#991B1B;font-weight:800;font-size:9.5px;padding:2px 6px;border-radius:4px;margin-bottom:3px;text-align:center;">BEFORE (ก่อนล้างทำความสะอาด)</div>
+              ${beforeImg}
+            </div>
+            <div>
+              <div style="background:#D1FAE5;color:#065F46;font-weight:800;font-size:9.5px;padding:2px 6px;border-radius:4px;margin-bottom:3px;text-align:center;">AFTER (หลังล้างทำความสะอาดเรียบร้อย)</div>
+              ${afterImg}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const htmlDoc = `<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>PM & Big Cleaning Report — ${data.jobNo || 'PM-REPORT'}</title>
+  <style>
+    @page { size: A4 portrait; margin: 10mm; }
+    body { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #0F172A; margin: 0; background: #E2E8F0; }
+    .toolbar { background: #002B49; color: #FFF; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 20; }
+    .toolbar button { border: none; border-radius: 6px; padding: 7px 14px; font-weight: 800; cursor: pointer; font-size: 12px; }
+    .page { background: #FFF; width: 210mm; min-height: 297mm; margin: 12px auto; padding: 11mm; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+    th, td { border: 1px solid #CBD5E1; padding: 5px 7px; font-size: 10.5px; }
+    th { background: #002B49; color: #FFF; text-align: left; }
+    @media print {
+      body { background: #FFF; }
+      .toolbar { display: none !important; }
+      .page { margin: 0; box-shadow: none; width: 100%; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div><b>HOSHIZAKI (THAILAND) LIMITED</b> — PM &amp; Big Cleaning Report (${data.jobNo || 'PM-REPORT'})</div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="window.print()" style="background:#059669;color:#FFF;">🖨️ พิมพ์ / บันทึกเป็น PDF</button>
+      <button onclick="window.close()" style="background:#EF4444;color:#FFF;">✕ ปิดหน้าต่าง</button>
+    </div>
+  </div>
+  <div class="page">
+    <!-- Corporate Header -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #002B49;padding-bottom:8px;margin-bottom:10px;">
+      <div>
+        <div style="font-size:18px;font-weight:900;color:#002B49;letter-spacing:0.5px;">HOSHIZAKI (THAILAND) LIMITED</div>
+        <div style="font-size:9.5px;color:#475569;">Building A, 1st floor, No. 10/11 Soi Vibhavadi Rangsit 64, Talat Bang Khen, Lak Si, Bangkok 10210 | Tel: (+66)97-230-5941</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="background:#065F46;color:#FFF;font-weight:900;font-size:11.5px;padding:4px 10px;border-radius:6px;">PM &amp; BIG CLEANING REPORT</div>
+        <div style="font-size:11px;font-weight:800;color:#002B49;margin-top:3px;">DOC NO: ${data.jobNo || '-'} | DATE: ${data.date || '-'}</div>
+      </div>
+    </div>
+
+    <!-- Customer & Equipment Info -->
+    <table>
+      <tr>
+        <th style="width:18%;">ลูกค้า / สาขา</th><td style="width:32%;"><b>${data.store || '-'}</b></td>
+        <th style="width:18%;">รุ่นเครื่อง (Model)</th><td style="width:32%;"><b>${data.model || '-'}</b></td>
+      </tr>
+      <tr>
+        <th>ผู้ติดต่อ / ที่อยู่</th><td>${data.contact || '-'} / ${data.address || '-'}</td>
+        <th>หมายเลขเครื่อง (S/N)</th><td><b>${data.serial || '-'}</b> (ประกัน: ${data.warranty || 'Yes'})</td>
+      </tr>
+      <tr>
+        <th>รอบ PM / ประเภท</th><td>รอบทุก <b>${pm.pmCycle || '6'} เดือน</b> (${pm.pmBillingCategory || 'CONTRACT_PM'})</td>
+        <th>นัดหมาย PM รอบถัดไป</th><td><b style="color:#065F46;font-size:11.5px;">${data.nextPmDate || 'ตามแผนสัญญา'}</b></td>
+      </tr>
+    </table>
+
+    <!-- Site Environment & Wide-Angle Photo -->
+    <div style="display:grid;grid-template-columns:1.1fr 1.3fr;gap:10px;border:1px solid #93C5FD;background:#F0F9FF;border-radius:8px;padding:8px;margin-bottom:10px;">
+      <div>
+        <div style="font-weight:800;color:#002B49;font-size:10.5px;margin-bottom:4px;">📐 ภาพมุมกว้างบริเวณสถานที่ติดตั้งเครื่อง</div>
+        ${pm.wideAnglePhoto
+          ? `<img src="${pm.wideAnglePhoto}" style="width:100%;height:125px;object-fit:cover;border-radius:6px;border:1px solid #BAE6FD;">`
+          : `<div style="height:125px;background:#FFF;border:1px dashed #93C5FD;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#64748B;font-size:10px;">ภาพบริเวณจุดติดตั้งเครื่อง</div>`}
+      </div>
+      <div style="font-size:10.5px;line-height:1.5;">
+        <div style="font-weight:800;color:#002B49;margin-bottom:3px;">🌡️ ข้อมูลสภาพแวดล้อมจุดติดตั้ง &amp; การวิเคราะห์เบื้องต้น</div>
+        <div>• <b>อุณหภูมิแวดล้อม (Ambient Temp):</b> ${pm.siteAmbientTemp || data.gaugeAmbient || '-'} | <b>อุณหภูมิน้ำเข้า:</b> ${pm.inletWaterTemp || '-'}</div>
+        <div>• <b>ระยะระบายอากาศรอบเครื่อง:</b> ${pm.ventilationStatus || 'PASS'} (${pm.siteEnvironmentNote || 'ปกติ'})</div>
+        <div style="margin-top:4px;background:#FFF;border:1px solid #BAE6FD;border-radius:6px;padding:5px;">
+          <b>ข้อแนะนำจากฝ่ายบริการ:</b> ${data.custRecommendation || 'ควรล้างแผ่นกรองฝุ่น Air Filter ทุก 2 สัปดาห์ และล้างใหญ่ตามรอบนัดหมาย'}
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Comparison Before vs After -->
+    <table>
+      <thead>
+        <tr>
+          <th style="width:28%;">ค่าตรวจวัดประสิทธิภาพเครื่อง</th>
+          <th style="width:36%;background:#991B1B;">ก่อนล้าง (BEFORE)</th>
+          <th style="width:36%;background:#065F46;">หลังล้างทำความสะอาด (AFTER)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>รอบเวลาผลิตน้ำแข็ง (Cycle Time)</td><td>${pm.cycleBefore || '-'}</td><td><b>${pm.cycleAfter || '-'}</b></td></tr>
+        <tr><td>กระแสไฟฟ้าขณะทำงาน (Amp)</td><td>${pm.ampBefore || '-'}</td><td><b>${pm.ampAfter || data.gaugeAmp || '-'}</b></td></tr>
+        <tr><td>แรงดันน้ำยา High / Low (PSI)</td><td>${pm.psiBefore || '-'}</td><td><b>${pm.psiAfter || data.gaugePsi || '-'}</b></td></tr>
+        <tr><td>อุณหภูมิตู้ / น้ำแข็ง (°C)</td><td>${pm.tempBefore || '-'}</td><td><b>${pm.tempAfter || data.tempActual || '-'}</b></td></tr>
+        <tr><td>สรุปผลการปฏิบัติงาน</td><td>${pm.beforeSummary || data.symptom || '-'}</td><td><b>${pm.afterSummary || data.action || '-'}</b></td></tr>
+      </tbody>
+    </table>
+
+    <!-- Before vs After Photo Comparison -->
+    <div style="font-weight:900;color:#002B49;font-size:11.5px;margin:6px 0;">📸 ภาพถ่ายเปรียบเทียบก่อนและหลังการล้างทำความสะอาด (BEFORE vs. AFTER)</div>
+    ${pairsRowsHtml}
+
+    <!-- Signatures -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px;page-break-inside:avoid;">
+      <div style="border:1px solid #CBD5E1;border-radius:8px;padding:6px;text-align:center;">
+        <div style="font-weight:800;font-size:10px;color:#002B49;">ช่างผู้ปฏิบัติงาน (Technician)</div>
+        ${techSig}
+        <div style="font-size:10px;border-top:1px solid #E2E8F0;padding-top:3px;">${data.responsibleTech || '-'}</div>
+      </div>
+      <div style="border:1px solid #CBD5E1;border-radius:8px;padding:6px;text-align:center;">
+        <div style="font-weight:800;font-size:10px;color:#002B49;">ผู้ตรวจสอบ &amp; อนุมัติ (Service Manager)</div>
+        ${mgrSig}
+        <div style="font-size:10px;border-top:1px solid #E2E8F0;padding-top:3px;">${data.nameManager || 'นพรินทร์ หอมหวล'}</div>
+      </div>
+      <div style="border:1px solid #CBD5E1;border-radius:8px;padding:6px;text-align:center;">
+        <div style="font-weight:800;font-size:10px;color:#002B49;">ผู้รับมอบงาน (Customer Sign-Off)</div>
+        ${custSig}
+        <div style="font-size:10px;border-top:1px solid #E2E8F0;padding-top:3px;">${data.nameCustomer || 'ลงชื่อลูกค้า / ผู้จัดการสาขา'}</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.open();
+      win.document.write(htmlDoc);
+      win.document.close();
+    } else if (typeof showToast === 'function') {
+      showToast('⚠️ เบราว์เซอร์บล็อกหน้าต่างป๊อปอัป กรุณาอนุญาต Pop-up เพื่อพรีวิว A4');
+    }
+  };
+})();

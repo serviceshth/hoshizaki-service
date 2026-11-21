@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1180-omni-heal-growth';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1181-pm-big-cleaning';
 const CORE_ASSETS = [
   './',
   './index.html',

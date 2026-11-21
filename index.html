@@ -1823,8 +1823,9 @@ Website : www.hoshizaki-sea.com</p>
 <div class="flex items-center gap-2">
 <canvas id="jobQrCanvas" width="44" height="44" class="border border-gray-200 rounded bg-white p-0.5 flex-shrink-0" title="QR Code สำหรับสแกนเปิดใบงานนี้"></canvas>
 <div class="flex flex-col items-end gap-1">
-<div class="no-print inline-flex rounded-lg border border-sky-300 bg-sky-50 p-0.5 text-[11px] font-extrabold shadow-xs" role="group" aria-label="เลือกประเภทเอกสาร">
+<div class="no-print inline-flex flex-wrap rounded-lg border border-sky-300 bg-sky-50 p-0.5 text-[11px] font-extrabold shadow-xs gap-0.5" role="group" aria-label="เลือกประเภทเอกสาร">
   <button type="button" id="btnDocModeService" onclick="switchReportDocumentMode('SERVICE')" class="px-2.5 py-1 rounded-md bg-hoshizaki-navy text-white transition">🛠️ Service Report (ซ่อม/บริการ)</button>
+  <button type="button" id="btnDocModePm" onclick="switchReportDocumentMode('PM')" class="px-2.5 py-1 rounded-md text-emerald-900 hover:bg-emerald-100 transition">🧼 PM / Big Cleaning Report (Before/After)</button>
   <button type="button" id="btnDocModeInspection" onclick="switchReportDocumentMode('INSPECTION')" class="px-2.5 py-1 rounded-md text-hoshizaki-navy hover:bg-sky-100 transition">📋 Inspection Report (ตรวจเช็กทั่วไป)</button>
   <button type="button" id="btnDocModeFavorite" onclick="switchReportDocumentMode('FAVORITE')" class="px-2.5 py-1 rounded-md text-amber-900 hover:bg-amber-100 transition">⭐ Favorite Report (ทางลัด/แม่แบบโปรด)</button>
 </div>
@@ -1858,6 +1859,141 @@ SERVICE REPORT / ใบแจ้งบริการ
 <input type="date" id="jobDate" class="border-b border-gray-400 w-44 sm:w-36 text-center focus:outline-none focus:border-hoshizaki-blue bg-transparent py-1">
 </div>
 </div>
+</div>
+<!-- PM & Big Cleaning Report Before/After & Environment Panel (Visible in PM mode or 1-Click Convert) -->
+<div id="pmBigCleaningWorkflowPanel" class="hidden border-2 border-emerald-400 bg-gradient-to-br from-emerald-50 via-teal-50/70 to-sky-50 rounded-xl p-3.5 space-y-3 shadow-xs">
+  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-200 pb-2">
+    <div class="flex items-center gap-2">
+      <span class="bg-emerald-700 text-white text-[10.5px] font-extrabold px-2.5 py-0.5 rounded-full">PM &amp; BIG CLEANING REPORT</span>
+      <span class="font-extrabold text-xs sm:text-sm text-emerald-950">รายงานการล้างทำความสะอาดใหญ่ &amp; บำรุงรักษา (Before / After + สภาพแวดล้อมจุดติดตั้ง)</span>
+    </div>
+    <div class="no-print flex flex-wrap items-center gap-1.5">
+      <button type="button" onclick="autoAnalyzePmSiteAndMachine()" class="bg-sky-700 hover:bg-sky-800 text-white text-[11px] font-extrabold px-2.5 py-1.5 rounded-lg shadow-2xs flex items-center gap-1">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> <span>วิเคราะห์เบื้องต้นอัตโนมัติ</span>
+      </button>
+      <button type="button" onclick="openPmReportStudioModal(true)" class="bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-extrabold px-3 py-1.5 rounded-lg shadow-2xs flex items-center gap-1">
+        <i class="fa-solid fa-table-columns"></i> <span>จัดคู่รูป Before/After &amp; พรีวิว A4 PM</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Row 1: PM Cycle, Contract Type & Site Ambient Environment -->
+  <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-xs bg-white/90 border border-emerald-200 rounded-lg p-2.5">
+    <div>
+      <label class="block text-[10.5px] font-bold text-emerald-900 mb-0.5">รอบการทำ PM / Big Cleaning</label>
+      <select id="pmCycleIntervalSelect" onchange="applyPmCycleRecommendation(this.value)" class="w-full border border-emerald-300 rounded-lg px-2 py-1.5 font-extrabold text-emerald-950 bg-emerald-50/60">
+        <option value="3">ทุก 3 เดือน (Quarterly PM)</option>
+        <option value="4">ทุก 4 เดือน (4-Month PM)</option>
+        <option value="6" selected>ทุก 6 เดือน (Semi-Annual Big Cleaning)</option>
+        <option value="12">ทุก 1 ปี (Annual Overhaul PM)</option>
+        <option value="ONE_TIME">ล้างใหญ่ครั้งเดียว (On-Demand Big Cleaning)</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-[10.5px] font-bold text-slate-700 mb-0.5">ประเภทสัญญา / ค่าบริการ PM</label>
+      <select id="pmBillingCategorySelect" onchange="debounceAutoSave()" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 font-bold text-slate-800 bg-white">
+        <option value="CONTRACT_PM">ในสัญญา PM รายปี (Contract)</option>
+        <option value="INCLUDED_WARRANTY">แถมมากับเครื่องใหม่ (Included PM)</option>
+        <option value="PAID_BIG_CLEANING">ล้างใหญ่แบบคิดค่าบริการ (Paid PM)</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-[10.5px] font-bold text-slate-700 mb-0.5">อุณหภูมิแวดล้อมจุดติดตั้ง (°C)</label>
+      <input type="text" id="pmSiteAmbientTemp" oninput="syncPmAmbientToMainGauge(this.value)" placeholder="เช่น 31.5°C" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-center font-bold bg-white">
+    </div>
+    <div>
+      <label class="block text-[10.5px] font-bold text-slate-700 mb-0.5">อุณหภูมิน้ำเข้า (°C)</label>
+      <input type="text" id="pmInletWaterTemp" oninput="debounceAutoSave()" placeholder="เช่น 27.0°C" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-center font-bold bg-white">
+    </div>
+    <div>
+      <label class="block text-[10.5px] font-bold text-slate-700 mb-0.5">ระยะระบายอากาศรอบเครื่อง</label>
+      <select id="pmVentilationStatus" onchange="debounceAutoSave()" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 font-bold bg-white">
+        <option value="PASS">ผ่านเกณฑ์มาตรฐาน (&ge;15 ซม.)</option>
+        <option value="TIGHT">พื้นที่แคบ/ใกล้ผนัง (&lt;15 ซม.)</option>
+        <option value="HOT_AREA">ใกล้เตาความร้อน/อับลม</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-[10.5px] font-bold text-slate-700 mb-0.5">สถานะตรวจอนุมัติ Manager</label>
+      <select id="pmManagerApprovalStage" onchange="debounceAutoSave()" class="w-full border border-amber-300 rounded-lg px-2 py-1.5 font-extrabold text-amber-900 bg-amber-50">
+        <option value="TECH_DRAFT">1. ช่างกำลังบันทึกหน้างาน</option>
+        <option value="PENDING_MGR_REVIEW">2. รอ Manager ตรวจสอบ</option>
+        <option value="MGR_APPROVED">3. Manager อนุมัติแล้ว (พร้อมส่งลูกค้า)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Row 2: Wide-Angle Installation Area Photo + Before/After Summary Strip -->
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 text-xs bg-white/95 border border-emerald-200 rounded-lg p-2.5">
+    <div class="md:col-span-4 border border-dashed border-sky-300 rounded-lg p-2 bg-sky-50/40 flex flex-col justify-between">
+      <div class="flex items-center justify-between gap-1 mb-1">
+        <span class="font-extrabold text-[#002B49] text-[11px]"><i class="fa-solid fa-panorama text-sky-600"></i> ภาพมุมกว้างบริเวณจุดติดตั้งเครื่อง (Wide-Angle)</span>
+        <label class="no-print bg-[#002B49] hover:bg-sky-900 text-white text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer">
+          + แนบภาพมุมกว้าง
+          <input type="file" accept="image/*" onchange="handlePmWideAnglePhotoUpload(event)" class="hidden">
+        </label>
+      </div>
+      <div id="pmWideAnglePreviewBox" class="h-28 rounded bg-white border border-slate-200 flex items-center justify-center overflow-hidden text-[11px] text-slate-400">
+        ยังไม่ได้แนบภาพมุมกว้างบริเวณจุดติดตั้ง
+      </div>
+      <input type="text" id="pmSiteEnvironmentNote" oninput="debounceAutoSave()" placeholder="บันทึกสภาพแวดล้อมจุดติดตั้ง เช่น วางในครัวร้อน ระยะห่างผนัง 20 ซม." class="mt-1.5 w-full border border-slate-200 rounded px-2 py-1 text-[11px] bg-white">
+    </div>
+    <div class="md:col-span-8 flex flex-col justify-between space-y-2">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10.5px] font-extrabold text-rose-800 mb-0.5">🔴 สภาพก่อนล้าง (BEFORE Cleaning Summary):</label>
+          <textarea id="pmBeforeSummaryText" rows="2" oninput="debounceAutoSave()" placeholder="เช่น คอยล์ร้อนมีฝุ่นและคราบไขมันสะสมหนา ภายในถังและถาดน้ำมีคราบตะกรัน/เมือกเล็กน้อย" class="w-full border border-rose-200 rounded-lg p-1.5 text-[11.5px] bg-rose-50/30"></textarea>
+        </div>
+        <div>
+          <label class="block text-[10.5px] font-extrabold text-emerald-800 mb-0.5">🟢 สภาพหลังล้าง &amp; ฆ่าเชื้อ (AFTER Cleaning Summary):</label>
+          <textarea id="pmAfterSummaryText" rows="2" oninput="debounceAutoSave()" placeholder="เช่น ล้างแผงคอยล์ร้อนด้วยน้ำยาขจัดคราบ ล้างฆ่าเชื้อถังเก็บน้ำแข็งและระบบน้ำ (Sanitizing) สะอาดพร้อมใช้งาน 100%" class="w-full border border-emerald-200 rounded-lg p-1.5 text-[11.5px] bg-emerald-50/30"></textarea>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 bg-slate-50 border border-slate-200 rounded-lg p-2">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-600">รอบผลิตน้ำแข็ง (Before ➔ After)</label>
+          <div class="flex gap-1 mt-0.5">
+            <input type="text" id="pmCycleBefore" placeholder="24 นาที" class="w-1/2 border border-rose-200 rounded px-1 py-0.5 text-center text-[11px] bg-white">
+            <input type="text" id="pmCycleAfter" placeholder="18 นาที" class="w-1/2 border border-emerald-300 rounded px-1 py-0.5 text-center text-[11px] bg-emerald-50/50 font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-600">กระแสไฟ Amp (Before ➔ After)</label>
+          <div class="flex gap-1 mt-0.5">
+            <input type="text" id="pmAmpBefore" placeholder="4.8A" class="w-1/2 border border-rose-200 rounded px-1 py-0.5 text-center text-[11px] bg-white">
+            <input type="text" id="pmAmpAfter" placeholder="4.1A" class="w-1/2 border border-emerald-300 rounded px-1 py-0.5 text-center text-[11px] bg-emerald-50/50 font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-600">แรงดันน้ำยา PSI (Before ➔ After)</label>
+          <div class="flex gap-1 mt-0.5">
+            <input type="text" id="pmPsiBefore" placeholder="275/38" class="w-1/2 border border-rose-200 rounded px-1 py-0.5 text-center text-[11px] bg-white">
+            <input type="text" id="pmPsiAfter" placeholder="235/34" class="w-1/2 border border-emerald-300 rounded px-1 py-0.5 text-center text-[11px] bg-emerald-50/50 font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-600">อุณหภูมิตู้/น้ำแข็ง (Before ➔ After)</label>
+          <div class="flex gap-1 mt-0.5">
+            <input type="text" id="pmTempBefore" placeholder="4.5°C" class="w-1/2 border border-rose-200 rounded px-1 py-0.5 text-center text-[11px] bg-white">
+            <input type="text" id="pmTempAfter" placeholder="2.0°C" class="w-1/2 border border-emerald-300 rounded px-1 py-0.5 text-center text-[11px] bg-emerald-50/50 font-bold">
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+        <span id="pmPairCountStatusBadge" class="text-[11px] font-extrabold text-emerald-900 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded-full">
+          📸 จับคู่ภาพ Before / After: 0 หมวด (คลิกจัดคู่รูปหรือดึงจากรูปหน้างานได้ทันที)
+        </span>
+        <div class="no-print flex flex-wrap gap-1.5">
+          <button type="button" onclick="submitPmReportForManagerReview()" class="bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-2xs">
+            📤 ส่งให้ Manager ตรวจสอบ (Notify LINE)
+          </button>
+          <button type="button" onclick="sendPmReportTrackedToCustomer()" class="bg-[#002B49] hover:bg-sky-900 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-lg shadow-2xs">
+            🔗 แชร์ PM Report &amp; ติดตามผลลูกค้า (Track Link)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- Inspection Report Internal Workflow & Traffic-Light Bar (Visible in INSPECTION mode) -->
 <div id="inspectionModeWorkflowPanel" class="hidden border-2 border-indigo-300 bg-gradient-to-r from-indigo-50 via-sky-50 to-emerald-50 rounded-xl p-3.5 space-y-3">
@@ -2284,9 +2420,10 @@ SERVICE REPORT / ใบแจ้งบริการ
 <label class="block text-gray-500 font-medium mb-1">นัดหมายบำรุงรักษาครั้งถัดไป (Next PM):</label>
 <div class="flex items-center gap-1">
 <input type="date" id="nextPmDate" class="border border-gray-300 rounded p-1.5 bg-white flex-1 text-center">
-<button type="button" onclick="setNextPmMonths(3)" class="no-print bg-blue-100 hover:bg-blue-200 text-hoshizaki-navy px-2 py-1.5 rounded text-[11px] font-bold">+3ด.</button>
-<button type="button" onclick="setNextPmMonths(6)" class="no-print bg-blue-100 hover:bg-blue-200 text-hoshizaki-navy px-2 py-1.5 rounded text-[11px] font-bold">+6ด.</button>
-<button type="button" onclick="setNextPmMonths(12)" class="no-print bg-blue-100 hover:bg-blue-200 text-hoshizaki-navy px-2 py-1.5 rounded text-[11px] font-bold">+12ด.</button>
+<button type="button" onclick="setNextPmMonths(3)" class="no-print bg-blue-100 hover:bg-blue-200 text-hoshizaki-navy px-1.5 py-1.5 rounded text-[11px] font-bold">+3ด.</button>
+<button type="button" onclick="setNextPmMonths(4)" class="no-print bg-blue-100 hover:bg-blue-200 text-hoshizaki-navy px-1.5 py-1.5 rounded text-[11px] font-bold">+4ด.</button>
+<button type="button" onclick="setNextPmMonths(6)" class="no-print bg-blue-100 hover:bg-blue-200 text-hoshizaki-navy px-1.5 py-1.5 rounded text-[11px] font-bold">+6ด.</button>
+<button type="button" onclick="setNextPmMonths(12)" class="no-print bg-blue-100 hover:bg-blue-200 text-hoshizaki-navy px-1.5 py-1.5 rounded text-[11px] font-bold">+12ด.</button>
 </div>
 </div>
 <div class="md:col-span-3">
@@ -5622,6 +5759,7 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
                 managerApprovalDate: document.getElementById('managerApprovalDate')?.innerText || '',
                 namePayee: document.getElementById('namePayee')?.value || '',
                 payeeApprovalDate: document.getElementById('payeeApprovalDate')?.innerText || '',
+                pmReportData: (typeof window.collectPmBigCleaningData === 'function') ? window.collectPmBigCleaningData() : null,
                 signatures: sigData,
                 timestamp: new Date().toISOString()
             };
@@ -5639,7 +5777,11 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             if (document.getElementById('eqSerial')) document.getElementById('eqSerial').value = data.serial || '';
             if (document.getElementById('eqProductType')) document.getElementById('eqProductType').value = data.productType || '';
             if (typeof switchReportDocumentMode === 'function') {
-                switchReportDocumentMode(data.docReportMode || (String(data.jobNo || '').startsWith('INS-') ? 'INSPECTION' : 'SERVICE'), true);
+                const inferredMode = data.docReportMode || (String(data.jobNo || '').startsWith('PM-') ? 'PM' : (String(data.jobNo || '').startsWith('INS-') ? 'INSPECTION' : 'SERVICE'));
+                switchReportDocumentMode(inferredMode, true);
+            }
+            if (data.pmReportData && typeof window.applyPmBigCleaningData === 'function') {
+                window.applyPmBigCleaningData(data.pmReportData);
             }
             if (document.getElementById('inspectionPurposeSelect')) document.getElementById('inspectionPurposeSelect').value = data.inspectionPurpose || 'PRE_DELIVERY';
             if (document.getElementById('inspectionTrafficVerdict')) {
@@ -17625,16 +17767,19 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
   window.switchReportDocumentMode = function(mode, skipJobNoSwap) {
     try {
       const rawMode = String(mode || 'SERVICE').toUpperCase();
-      const target = rawMode === 'INSPECTION' ? 'INSPECTION' : (rawMode === 'FAVORITE' ? 'FAVORITE' : 'SERVICE');
+      const target = rawMode === 'INSPECTION' ? 'INSPECTION' : (rawMode === 'PM' ? 'PM' : (rawMode === 'FAVORITE' ? 'FAVORITE' : 'SERVICE'));
       window._currentReportDocMode = target;
       const isInsp = (target === 'INSPECTION');
+      const isPm = (target === 'PM');
       const isFav = (target === 'FAVORITE');
 
       const btnSvc = document.getElementById('btnDocModeService');
+      const btnPm = document.getElementById('btnDocModePm');
       const btnIns = document.getElementById('btnDocModeInspection');
       const btnFav = document.getElementById('btnDocModeFavorite');
       const badge = document.getElementById('docHeaderTitleBadge');
       const wfPanel = document.getElementById('inspectionModeWorkflowPanel');
+      const pmPanel = document.getElementById('pmBigCleaningWorkflowPanel');
       const sigCust = document.getElementById('sigCardCustomer');
       const sigMgr = document.getElementById('sigCardManager') || (document.getElementById('nameManager') && document.getElementById('nameManager').closest('.border'));
       const sigPayee = document.getElementById('sigCardPayee');
@@ -17648,6 +17793,11 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
           ? 'px-2.5 py-1 rounded-md bg-hoshizaki-navy text-white transition'
           : 'px-2.5 py-1 rounded-md text-hoshizaki-navy hover:bg-sky-100 transition';
       }
+      if (btnPm) {
+        btnPm.className = isPm
+          ? 'px-2.5 py-1 rounded-md bg-emerald-700 text-white transition'
+          : 'px-2.5 py-1 rounded-md text-emerald-900 hover:bg-emerald-100 transition';
+      }
       if (btnIns) {
         btnIns.className = isInsp
           ? 'px-2.5 py-1 rounded-md bg-indigo-700 text-white transition'
@@ -17660,15 +17810,27 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
       }
 
       if (badge) {
-        badge.textContent = isInsp
-          ? 'INSPECTION REPORT / ใบรายงานตรวจเช็กสภาพเครื่อง'
-          : 'SERVICE REPORT / ใบแจ้งบริการ';
-        badge.className = isInsp
-          ? 'inline-block bg-indigo-800 text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-md tracking-wider'
-          : 'inline-block bg-hoshizaki-navy text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-md tracking-wider';
+        badge.textContent = isPm
+          ? 'PM & BIG CLEANING REPORT / รายงานบำรุงรักษาและล้างใหญ่'
+          : (isInsp
+            ? 'INSPECTION REPORT / ใบรายงานตรวจเช็กสภาพเครื่อง'
+            : 'SERVICE REPORT / ใบแจ้งบริการ');
+        badge.className = isPm
+          ? 'inline-block bg-emerald-800 text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-md tracking-wider'
+          : (isInsp
+            ? 'inline-block bg-indigo-800 text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-md tracking-wider'
+            : 'inline-block bg-hoshizaki-navy text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-md tracking-wider');
       }
 
       if (wfPanel) wfPanel.classList.toggle('hidden', !isInsp);
+      if (pmPanel) pmPanel.classList.toggle('hidden', !isPm);
+      if (isPm) {
+        const typePmEl = document.getElementById('typePm');
+        if (typePmEl) typePmEl.checked = true;
+        const ambMain = document.getElementById('gaugeAmbient')?.value || '';
+        const pmAmb = document.getElementById('pmSiteAmbientTemp');
+        if (pmAmb && !pmAmb.value && ambMain) pmAmb.value = ambMain;
+      }
 
       // Show all 4 signature boxes in SERVICE / FAVORITE mode; hide Customer & Payee only in INSPECTION mode
       if (sigCust) sigCust.classList.toggle('hidden', isInsp);
@@ -17701,10 +17863,12 @@ HOSHIZAKI (THAILAND) LIMITED ขอส่งรายงานใบแจ้ง
       if (!skipJobNoSwap) {
         const jobNoEl = document.getElementById('jobNo');
         if (jobNoEl && jobNoEl.value) {
-          if (isInsp && jobNoEl.value.startsWith('JOB-')) {
-            jobNoEl.value = jobNoEl.value.replace(/^JOB-/, 'INS-');
-          } else if (!isInsp && jobNoEl.value.startsWith('INS-')) {
-            jobNoEl.value = jobNoEl.value.replace(/^INS-/, 'JOB-');
+          if (isPm && /^(JOB|INS)-/.test(jobNoEl.value)) {
+            jobNoEl.value = jobNoEl.value.replace(/^(JOB|INS)-/, 'PM-');
+          } else if (isInsp && /^(JOB|PM)-/.test(jobNoEl.value)) {
+            jobNoEl.value = jobNoEl.value.replace(/^(JOB|PM)-/, 'INS-');
+          } else if (!isInsp && !isPm && /^(INS|PM)-/.test(jobNoEl.value)) {
+            jobNoEl.value = jobNoEl.value.replace(/^(INS|PM)-/, 'JOB-');
           }
         }
       }
@@ -18599,6 +18763,9 @@ function exportWeeklyDealerClientReport() {
                 bar.innerHTML = `
                     <button type="button" id="btnManagerApproveJob" onclick="toggleManagerJobSignOff()" class="bg-slate-800 hover:bg-slate-900 text-white px-2.5 py-1 rounded-md font-bold">
                         <i class="fa-solid fa-stamp text-amber-300 mr-1"></i>อนุมัติปิดงาน (Manager)
+                    </button>
+                    <button type="button" onclick="convertCurrentServiceJobToPmReport()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1 rounded-md font-bold shadow-2xs" title="ดึงข้อมูลทั้งหมดจาก Service Report สร้างเป็น PM / Big Cleaning Report (Before/After)">
+                        <i class="fa-solid fa-sparkles mr-1 text-amber-200"></i>สร้าง PM Report (Before/After)
                     </button>
                     <button type="button" onclick="copyCustomerJobStatusPortalLink()" class="bg-sky-600 hover:bg-sky-700 text-white px-2.5 py-1 rounded-md font-bold">
                         <i class="fa-solid fa-link mr-1"></i>ลิงก์สถานะลูกค้า

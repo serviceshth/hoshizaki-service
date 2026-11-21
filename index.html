@@ -6799,7 +6799,7 @@ THB <span id="recBahtText" class="font-normal text-[10px] ml-2">(ศูนย์
             if (typeof updateFloatingSummaryBar === 'function') updateFloatingSummaryBar();
         }
 
-        function buildJobSheetPdfFile(prefix = 'Hoshizaki_JobSheet') {
+        async function buildJobSheetPdfFile(prefix = 'Hoshizaki_JobSheet') {
             const element = document.getElementById('jobSheetContainer');
             const jobNo = document.getElementById('jobNo')?.value || 'Service_Report';
             const date = document.getElementById('jobDate')?.value || '';

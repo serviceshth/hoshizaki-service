@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1173-CLEAN-CANVAS-PERSONAL-PIN-APP-DRAWER',
+    version: 'v1174-COMPLETE-5-PILLAR-SCALE-UP-SUITE',
     masterDb: null,
     items: []
   };
@@ -5588,18 +5588,22 @@ ${transcript}</div>
     { id: 'DEPT_REPORT', icon: '📑', cat: 'Collaboration & Reports', titleTh: 'ศูนย์ออกรายงานประจำแผนก 1 คลิก', titleEn: '1-Click Department Reports', titleJp: '部署別ワンクリックレポート出力', sub: 'ดาวน์โหลดรายงานเฉพาะแผนก (CSV / Excel)', fn: "window.openDepartmentReportCenterModal()" },
     { id: 'LIFECYCLE_PNL', icon: '💰', cat: 'Executive & Intelligence', titleTh: 'วิเคราะห์กำไร-ขาดทุน S/N & ตั้งราคา', titleEn: 'Serial Lifecycle P&L & Pricing', titleJp: '機種別ライフサイクル損益・価格戦略', sub: 'เทียบราคาขายหักต้นทุนซ่อม + จำลองโปรฯ', fn: "window.openSerialLifecyclePricingSuiteModal()" },
     { id: 'EXEC_BI', icon: '📈', cat: 'Executive & Intelligence', titleTh: 'รายงานสรุปผู้บริหาร & AI Copilot (BI)', titleEn: 'Executive BI & AI Copilot', titleJp: '経営サマリーBI & AIコパイロット', sub: 'ภาพรวมยอดขาย PO งานบริการ & ส่งเข้า LINE', fn: "window.openExecutiveBiDashboardModal()" },
-    { id: 'INCENTIVE_KPI', icon: '🏆', cat: 'Executive & Intelligence', titleTh: 'สรุปผลงาน & Incentive รายบุคคล', titleEn: 'Monthly Sales & Tech KPI', titleJp: '月次営業・サービス個人別実績KPI', sub: 'จัดอันดับยอดปิดการขายและผลงานช่างรายเดือน', fn: "window.openMonthlyIncentiveKpiModal()" }
+    { id: 'INCENTIVE_KPI', icon: '🏆', cat: 'Executive & Intelligence', titleTh: 'สรุปผลงาน & Incentive รายบุคคล', titleEn: 'Monthly Sales & Tech KPI', titleJp: '月次営業・サービス個人別実績KPI', sub: 'จัดอันดับยอดปิดการขายและผลงานช่างรายเดือน', fn: "window.openMonthlyIncentiveKpiModal()" },
+    { id: 'FIELD_GEO_QC', icon: '📍', cat: 'Service & Field Tech', titleTh: 'เช็กอิน GPS หน้างาน & QC Checklist 5 ข้อ', titleEn: 'Field GPS Check-in & 5-Point QC', titleJp: '現場GPSチェックイン・品質点検表', sub: 'บันทึกพิกัดเดินทาง-ถึงหน้างาน-ปิดงาน + ค่าเดินทางโซนอัตโนมัติ', fn: "window.openFieldGeoCheckinAndQcModal()" },
+    { id: 'MODEL_COMPARE_ROI', icon: '⚖️', cat: 'Sales & Japanese Corp', titleTh: 'เปรียบเทียบสเปกรุ่นเครื่อง & ROI 1 คลิก', titleEn: 'Side-by-Side Model Spec & ROI', titleJp: '機種スペック・投資回収(ROI)比較表', sub: 'เทียบกำลังผลิต ขนาด W×D×H ค่าไฟ และส่งการ์ดเข้า LINE ลูกค้า', fn: "window.openModelComparisonRoiModal()" },
+    { id: 'AR_BUDGET_TRACKER', icon: '💳', cat: 'Accounting, Admin & HR', titleTh: 'ติดตามลูกหนี้ (AR Aging) & เป้าหมายงบประมาณ', titleEn: 'AR Aging & Budget Target Tracker', titleJp: '売掛金年齢調べ・予算達成率管理', sub: 'ติดตามบิลครบกำหนด 30/60 วัน และแถบ % ยอดขายเทียบเป้าแผนก', fn: "window.openArAgingAndBudgetModal()" },
+    { id: 'SANDBOX_GOV_BACKUP', icon: '🧪', cat: 'Accounting, Admin & HR', titleTh: 'โหมดฝึกซ้อม (Sandbox) • Audit Trail • สำรองข้อมูล', titleEn: 'Sandbox Training, Audit & DB Backup', titleJp: '研修サンドボックス・監査ログ・DBバックアップ', sub: 'สลับโหมดฝึกซ้อมพนักงานใหม่ ตรวจประวัติแก้ไข และสำรองฐานข้อมูล', fn: "window.openSandboxAndGovernanceModal()" }
   ];
 
   const DEFAULT_DEPT_PINS_V1173 = {
-    SERVICE_TECH: ['SCAN_SN_360', 'VAN_STOCK', 'FIELD_REPAIR_ETA', 'OMNI_MEET_AI'],
+    SERVICE_TECH: ['FIELD_GEO_QC', 'SCAN_SN_360', 'VAN_STOCK', 'FIELD_REPAIR_ETA'],
     SERVICE_MGR: ['DISPATCH_BOARD', 'FIELD_REPAIR_ETA', 'PM_RENEWAL', 'LIFECYCLE_PNL'],
-    SALES_TH: ['QUOTE_SALES_THB', 'DOC_TRACKING', 'CROSS_HANDOVER', 'TASK_BOARD'],
-    JPC_CORP: ['QUOTE_JPC', 'SCAN_SN_360', 'DEPT_REPORT', 'OMNI_MEET_AI'],
+    SALES_TH: ['QUOTE_SALES_THB', 'MODEL_COMPARE_ROI', 'DOC_TRACKING', 'CROSS_HANDOVER'],
+    JPC_CORP: ['QUOTE_JPC', 'MODEL_COMPARE_ROI', 'SCAN_SN_360', 'DEPT_REPORT'],
     MARKETING: ['DEMO_STOCK', 'QUOTE_MARKETING', 'LIFECYCLE_PNL', 'DEPT_REPORT'],
-    ACCOUNTING: ['BILLING_RECEIPT', 'EXPORT_NAV', 'DOC_TRACKING', 'DEPT_REPORT'],
-    ADMIN_HR: ['TASK_BOARD', 'OMNI_MEET_AI', 'GO_LIVE_QA', 'DEPT_REPORT'],
-    EXECUTIVE: ['EXEC_BI', 'LIFECYCLE_PNL', 'INCENTIVE_KPI', 'OMNI_MEET_AI']
+    ACCOUNTING: ['BILLING_RECEIPT', 'AR_BUDGET_TRACKER', 'EXPORT_NAV', 'DOC_TRACKING'],
+    ADMIN_HR: ['TASK_BOARD', 'SANDBOX_GOV_BACKUP', 'OMNI_MEET_AI', 'GO_LIVE_QA'],
+    EXECUTIVE: ['EXEC_BI', 'AR_BUDGET_TRACKER', 'LIFECYCLE_PNL', 'INCENTIVE_KPI']
   };
 
   function getEmployeePinnedToolIds(emp) {
@@ -6039,8 +6043,495 @@ ${transcript}</div>
   window.renderPersonalizedEmployeeCockpit = renderCleanCanvasCockpitV1173;
   window.openPersonalAppDrawerModal = openPersonalAppDrawerModal;
 
+
+
+  // ============================================================================
+  // ENTERPRISE v1174 MODALS:
+  //   1) Field Tech GPS Geo-Checkin + Auto Travel Allowance + 5-Point QC Gate
+  //   2) Side-by-Side Model Spec & ROI Comparison Generator (1-Click LINE Card)
+  //   3) AR Aging (30/60 Days) & Target vs Actual Budget Tracker
+  //   4) Sandbox Training Mode, System Audit Trail & Weekly DB Snapshot Backup
+  // ============================================================================
+  const HZK_SANDBOX_MODE_KEY = 'hzk_v1174_sandbox_training_mode';
+
+  function isSandboxTrainingModeActive() {
+    return localStorage.getItem(HZK_SANDBOX_MODE_KEY) === 'true';
+  }
+
+  function applySandboxBannerIfNeeded() {
+    let sb = document.getElementById('hzkSandboxModeFloatingBanner');
+    if (!isSandboxTrainingModeActive()) {
+      if (sb) sb.style.display = 'none';
+      return;
+    }
+    if (!sb) {
+      sb = document.createElement('div');
+      sb.id = 'hzkSandboxModeFloatingBanner';
+      sb.style.cssText =
+        'position:fixed;top:0;left:0;right:0;z-index:26000;background:linear-gradient(90deg,#D97706,#B45309);' +
+        'color:#FFF;padding:6px 14px;font-family:sans-serif;font-size:12px;font-weight:800;' +
+        'display:flex;justify-content:center;align-items:center;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,0.25);';
+      document.body.appendChild(sb);
+    }
+    sb.innerHTML = `
+      <span>🧪 โหมดฝึกซ้อม (SANDBOX TRAINING MODE) — ข้อมูลที่ทดสอบจะไม่ถูกบันทึกลงฐานข้อมูลจริง</span>
+      <button type="button" id="hzkExitSandboxBtn" style="background:#0F172A;color:#FDE047;border:none;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800;cursor:pointer;">ออกจากโหมดฝึกซ้อม</button>
+    `;
+    sb.style.display = 'flex';
+    document.getElementById('hzkExitSandboxBtn').onclick = () => {
+      localStorage.setItem(HZK_SANDBOX_MODE_KEY, 'false');
+      applySandboxBannerIfNeeded();
+      showHzkToastNotification('✅ กลับเข้าสู่โหมดใช้งานจริง (Production Mode) เรียบร้อยแล้ว', false);
+    };
+  }
+
+  // 1) Field Tech GPS Geo-Checkin + 5-Point QC Checklist Gate
+  async function openFieldGeoCheckinAndQcModal() {
+    const emp = getActiveEmployeeProfileV1171();
+    let modal = document.getElementById('hzkFieldGeoQcModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkFieldGeoQcModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20092;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:860px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#7F1D1D,#B91C1C);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#FECACA;font-weight:800;">ENTERPRISE v1174 • FIELD GPS GEO-LOG &amp; MANDATORY 5-POINT QC GATE</div>
+            <div style="font-size:16px;font-weight:800;">📍 เช็กอินพิกัด GPS หน้างาน, คำนวณค่าเดินทาง &amp; ตรวจ QC ก่อนปิดงาน</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkFieldGeoQcModal').style.display='none'" style="background:#0F172A;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:18px 20px;font-size:13px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px;">
+            <div>
+              <label style="font-weight:700;font-size:12px;">เลขที่ใบงาน (Job ID):</label>
+              <input id="hzkGeoJobId" type="text" value="JOB-${new Date().toISOString().slice(2, 10).replace(/-/g, '')}" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;font-weight:700;" />
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">ชื่อลูกค้า / สถานที่:</label>
+              <input id="hzkGeoCust" type="text" placeholder="ระบุชื่อร้าน / สาขา..." style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;" />
+            </div>
+            <div>
+              <label style="font-weight:700;font-size:12px;">จังหวัด / โซนเดินทาง (คำนวณเบี้ยเลี้ยง):</label>
+              <select id="hzkGeoProvince" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;font-weight:700;">
+                <option value="กรุงเทพฯ">กรุงเทพฯ (โซน 1 — 500 THB)</option>
+                <option value="นนทบุรี">ปริมณฑล / ชลบุรี / อยุธยา (โซน 2 — 850 THB)</option>
+                <option value="ต่างจังหวัด">ต่างจังหวัด (โซน 3 — 1,800 THB)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:12px;margin-bottom:14px;">
+            <div style="font-weight:800;color:#002B49;margin-bottom:8px;">🛡️ แบบตรวจคุณภาพ 5 ข้อบังคับก่อนปิดงานซ่อม/ติดตั้ง (5-Point QC Gate):</div>
+            <label style="display:block;margin-bottom:5px;"><input type="checkbox" class="hzk-qc-cb" checked /> 1. ตรวจวัดแรงดันน้ำยา (Suction / Discharge Pressure) อยู่ในเกณฑ์มาตรฐาน</label>
+            <label style="display:block;margin-bottom:5px;"><input type="checkbox" class="hzk-qc-cb" checked /> 2. ตรวจวัดกระแสคอมเพรสเซอร์ (Ampere) และแรงดันไฟ 220V ปกติ</label>
+            <label style="display:block;margin-bottom:5px;"><input type="checkbox" class="hzk-qc-cb" checked /> 3. ทดสอบรอบผลิตน้ำแข็ง / อุณหภูมิตู้แช่ ครบสมบูรณ์อย่างน้อย 1 รอบ</label>
+            <label style="display:block;margin-bottom:5px;"><input type="checkbox" class="hzk-qc-cb" checked /> 4. ตรวจสอบรอยรั่วน้ำทิ้ง ความสะอาดตัวเครื่อง และแผ่นกรองอากาศ</label>
+            <label style="display:block;"><input type="checkbox" class="hzk-qc-cb" checked /> 5. ถ่ายรูปก่อน-หลังซ่อม 2 ภาพ และให้ลูกค้าตรวจสอบเรียบร้อย</label>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px;">
+            <button type="button" data-stage="DEPART" class="hzk-geo-stamp-btn" style="background:#0284C7;color:#FFF;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;">🚐 1. กดออกเดินทาง (Stamp GPS)</button>
+            <button type="button" data-stage="ARRIVE" class="hzk-geo-stamp-btn" style="background:#D97706;color:#FFF;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;">📍 2. กดถึงหน้างานลูกค้า (Arrive)</button>
+            <button type="button" data-stage="COMPLETE" class="hzk-geo-stamp-btn" style="background:#059669;color:#FFF;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;">✅ 3. ผ่าน QC &amp; ปิดงานซ่อม (Complete)</button>
+          </div>
+
+          <div id="hzkGeoStatusBanner" style="display:none;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:10px 12px;font-size:12.5px;margin-bottom:12px;"></div>
+          <div id="hzkGeoHistoryWrap"></div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    async function stampGeoStage(stage) {
+      const allQcChecked = Array.from(modal.querySelectorAll('.hzk-qc-cb')).every(cb => cb.checked);
+      if (stage === 'COMPLETE' && !allQcChecked) {
+        alert('⚠️ กรุณาติ๊กยืนยันรายการตรวจคุณภาพ (5-Point QC Checklist) ให้ครบทั้ง 5 ข้อก่อนกดปิดงานครับ');
+        return;
+      }
+
+      const stBanner = document.getElementById('hzkGeoStatusBanner');
+      stBanner.style.display = 'block';
+      stBanner.textContent = '⏳ กำลังดึงพิกัด GPS และบันทึกเวลาปฏิบัติงาน...';
+
+      let lat = 0;
+      let lng = 0;
+      if (navigator.geolocation) {
+        try {
+          const pos = await new Promise((resolve, reject) =>
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
+          );
+          lat = pos.coords.latitude;
+          lng = pos.coords.longitude;
+        } catch (e) {}
+      }
+
+      const payload = {
+        action: 'logFieldGeoCheckin',
+        techName: emp.name,
+        jobId: document.getElementById('hzkGeoJobId').value.trim(),
+        customerName: document.getElementById('hzkGeoCust').value.trim() || 'ลูกค้าหน้างาน',
+        province: document.getElementById('hzkGeoProvince').value,
+        stage: stage,
+        lat: lat,
+        lng: lng,
+        qcPassed: allQcChecked
+      };
+
+      if (isSandboxTrainingModeActive()) {
+        stBanner.innerHTML = `🧪 <b>[SANDBOX]</b> จำลองบันทึกพิกัด ${stage} (${lat ? lat.toFixed(5) + ',' + lng.toFixed(5) : 'GPS จำลอง'}) เรียบร้อยแล้ว`;
+        return;
+      }
+
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          const r = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+          const d = await r.json();
+          if (d && d.status === 'OK') {
+            stBanner.innerHTML = `✅ บันทึก <b>${stage}</b> สำเร็จ (${d.timestamp}) • พิกัด: <b>${d.coords}</b> • ค่าเดินทางโซนอัตโนมัติ: <b>฿${d.travelAllowance}</b>`;
+            return;
+          }
+        } catch (e) {}
+      }
+      stBanner.innerHTML = `✅ บันทึกเวลา <b>${stage}</b> ในเครื่องเรียบร้อยแล้ว (${new Date().toLocaleTimeString('th-TH')})`;
+    }
+
+    modal.querySelectorAll('.hzk-geo-stamp-btn').forEach(btn => {
+      btn.onclick = () => stampGeoStage(btn.getAttribute('data-stage'));
+    });
+  }
+
+  // 2) Side-by-Side Model Spec & ROI Comparison Generator (1-Click LINE Card)
+  async function openModelComparisonRoiModal() {
+    const db = await loadSalesMasterDb(false);
+    const models = db.models || [];
+    const stockMap = db.stockMap || {};
+
+    let modal = document.getElementById('hzkModelCompareRoiModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkModelCompareRoiModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20094;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    const optsHtml = models.map(m =>
+      `<option value="${m.model}">${m.model} — ${m.description}</option>`
+    ).join('');
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:960px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#002B49,#0284C7);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1174 • SIDE-BY-SIDE SPEC &amp; ROI COMPARISON</div>
+            <div style="font-size:16px;font-weight:800;">⚖️ ตารางเปรียบเทียบสเปกรุ่นเครื่อง ขนาดพื้นที่ติดตั้ง &amp; จุดคุ้มทุน (ROI)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkModelCompareRoiModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:18px 20px;font-size:13px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+            <div>
+              <label style="font-weight:800;color:#002B49;">เลือกรุ่นที่ 1 (Option A):</label>
+              <select id="hzkCmpModelA" style="width:100%;padding:8px;border:1.5px solid #0284C7;border-radius:8px;margin-top:4px;font-weight:700;">${optsHtml}</select>
+            </div>
+            <div>
+              <label style="font-weight:800;color:#059669;">เลือกรุ่นที่ 2 (Option B):</label>
+              <select id="hzkCmpModelB" style="width:100%;padding:8px;border:1.5px solid #059669;border-radius:8px;margin-top:4px;font-weight:700;">${optsHtml}</select>
+            </div>
+          </div>
+
+          <div id="hzkCmpTableArea" style="margin-bottom:14px;"></div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+            <button type="button" id="hzkCmpCopyLineTextBtn" style="background:#059669;color:#FFF;border:none;border-radius:9px;padding:9px 15px;font-weight:700;cursor:pointer;">💬 คัดลอกตารางเทียบสเปกส่งเข้า LINE ลูกค้า</button>
+            <button type="button" id="hzkCmpAddToQuoteBtn" style="background:#002B49;color:#FFF;border:none;border-radius:9px;padding:9px 15px;font-weight:700;cursor:pointer;">📄 นำทั้ง 2 รุ่นไปออกใบเสนอราคา</button>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    const selA = document.getElementById('hzkCmpModelA');
+    const selB = document.getElementById('hzkCmpModelB');
+    if (selA.options.length > 5) selA.selectedIndex = 4;
+    if (selB.options.length > 7) selB.selectedIndex = 6;
+
+    function renderComparison() {
+      const mA = models.find(x => x.model === selA.value) || models[0] || { model: 'IM-100NE', description: 'Cube Ice Maker', w: 704, d: 506, h: 1200, factory: 'HOSHIZAKI' };
+      const mB = models.find(x => x.model === selB.value) || models[1] || { model: 'IM-130NE', description: 'Cube Ice Maker', w: 704, d: 506, h: 1200, factory: 'HOSHIZAKI' };
+      const stA = stockMap[String(mA.model).toUpperCase()];
+      const stB = stockMap[String(mB.model).toUpperCase()];
+
+      document.getElementById('hzkCmpTableArea').innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+          <thead>
+            <tr style="background:#002B49;color:#FFF;">
+              <th style="padding:9px;text-align:left;width:28%;">หัวข้อเปรียบเทียบ</th>
+              <th style="padding:9px;background:#0369A1;width:36%;">Option A: ${mA.model}</th>
+              <th style="padding:9px;background:#047857;width:36%;">Option B: ${mB.model}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:8px;border:1px solid #CBD5E1;font-weight:700;">รายละเอียดรุ่น</td><td style="padding:8px;border:1px solid #CBD5E1;">${mA.description}</td><td style="padding:8px;border:1px solid #CBD5E1;">${mB.description}</td></tr>
+            <tr><td style="padding:8px;border:1px solid #CBD5E1;font-weight:700;">ขนาดเครื่อง (W × D × H mm.)</td><td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-weight:700;">${mA.w || '-'} × ${mA.d || '-'} × ${mA.h || '-'} mm</td><td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-weight:700;">${mB.w || '-'} × ${mB.d || '-'} × ${mB.h || '-'} mm</td></tr>
+            <tr><td style="padding:8px;border:1px solid #CBD5E1;font-weight:700;">ฐานการผลิต (Factory)</td><td style="padding:8px;border:1px solid #CBD5E1;text-align:center;">${mA.factory || 'HOSHIZAKI'}</td><td style="padding:8px;border:1px solid #CBD5E1;text-align:center;">${mB.factory || 'HOSHIZAKI'}</td></tr>
+            <tr><td style="padding:8px;border:1px solid #CBD5E1;font-weight:700;">สถานะสต็อกพร้อมส่ง (Live Stock)</td><td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-weight:700;color:#0369A1;">${stA ? (stA.available > 0 ? '🟢 พร้อมส่ง ' + stA.available + ' เครื่อง' : stA.leadTime) : 'ตรวจสอบกับคลังสินค้า'}</td><td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-weight:700;color:#047857;">${stB ? (stB.available > 0 ? '🟢 พร้อมส่ง ' + stB.available + ' เครื่อง' : stB.leadTime) : 'ตรวจสอบกับคลังสินค้า'}</td></tr>
+            <tr><td style="padding:8px;border:1px solid #CBD5E1;font-weight:700;">จุดเด่น &amp; ความคุ้มค่า (ROI)</td><td style="padding:8px;border:1px solid #CBD5E1;">ประหยัดพื้นที่ติดตั้ง น้ำแข็งก้อนใสละลายช้า มาตรฐานญี่ปุ่น</td><td style="padding:8px;border:1px solid #CBD5E1;">รองรับยอดขายช่วง Peak Hour ได้ต่อเนื่อง ลดต้นทุนซื้อน้ำแข็งกระสอบ 60%</td></tr>
+          </tbody>
+        </table>
+      `;
+    }
+
+    selA.onchange = renderComparison;
+    selB.onchange = renderComparison;
+    renderComparison();
+
+    document.getElementById('hzkCmpCopyLineTextBtn').onclick = () => {
+      const mA = models.find(x => x.model === selA.value) || { model: selA.value, description: '', w: '-', d: '-', h: '-' };
+      const mB = models.find(x => x.model === selB.value) || { model: selB.value, description: '', w: '-', d: '-', h: '-' };
+      const summary =
+        `❄️ เปรียบเทียบรุ่นเครื่อง HOSHIZAKI สำหรับร้านของคุณ:
+` +
+        `1️⃣ รุ่น ${mA.model} (${mA.w}x${mA.d}x${mA.h} mm) — ${mA.description}
+` +
+        `2️⃣ รุ่น ${mB.model} (${mB.w}x${mB.d}x${mB.h} mm) — ${mB.description}
+` +
+        `✅ รับประกันมาตรฐาน HOSHIZAKI (Thailand) พร้อมทีมช่างและอะไหล่แท้ทั่วประเทศครับ`;
+      navigator.clipboard && navigator.clipboard.writeText(summary);
+      showHzkToastNotification('✅ คัดลอกข้อความเปรียบเทียบสเปกพร้อมวางส่งใน LINE ลูกค้าแล้วครับ', false);
+    };
+
+    document.getElementById('hzkCmpAddToQuoteBtn').onclick = async () => {
+      const mA = models.find(x => x.model === selA.value) || { model: selA.value, description: 'Hoshizaki Equipment', w: '', d: '', h: '' };
+      const mB = models.find(x => x.model === selB.value) || { model: selB.value, description: 'Hoshizaki Equipment', w: '', d: '', h: '' };
+      modal.style.display = 'none';
+      HZK_OMNI_STATE.items = [
+        { model: mA.model, description: mA.description + ' (Option A)', w: mA.w, d: mA.d, h: mA.h, unitPrice: 0, discount: 0, qty: 1, isService: false },
+        { model: mB.model, description: mB.description + ' (Option B)', w: mB.w, d: mB.d, h: mB.h, unitPrice: 0, discount: 0, qty: 1, isService: false }
+      ];
+      await openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)');
+    };
+  }
+
+  // 3) AR Aging & Target vs Actual Budget Tracker
+  async function openArAgingAndBudgetModal() {
+    let modal = document.getElementById('hzkArAgingBudgetModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkArAgingBudgetModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20096;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1020px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#134E4A,#0F766E);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#99F6E4;font-weight:800;">ENTERPRISE v1174 • TARGET VS ACTUAL BUDGET &amp; AR AGING TRACKER</div>
+            <div style="font-size:16px;font-weight:800;">💳 ติดตามเป้าหมายงบประมาณรายแผนก (Target vs Actual) &amp; อายุลูกหนี้ (AR Aging)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkArAgingBudgetModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div id="hzkArBudgetBody" style="padding:18px 20px;font-size:13px;">⏳ กำลังโหลดข้อมูลเป้าหมายงบประมาณและรายการวางบิล...</div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    const body = document.getElementById('hzkArBudgetBody');
+    let budgets = [
+      { department: 'Sales', monthlyTarget: 4500000, actualAmount: 3150000, achievementPct: 70 },
+      { department: 'Japanese Corporate', monthlyTarget: 3200000, actualAmount: 2720000, achievementPct: 85 },
+      { department: 'Marketing', monthlyTarget: 1200000, actualAmount: 840000, achievementPct: 70 },
+      { department: 'Service & Billing', monthlyTarget: 1800000, actualAmount: 1530000, achievementPct: 85 }
+    ];
+    let arList = [];
+
+    const gasUrl = getGasEndpointUrl();
+    if (gasUrl) {
+      try {
+        const r = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'getArAgingAndBudgetSummary' })
+        });
+        const d = await r.json();
+        if (d && d.status === 'OK') {
+          if (Array.isArray(d.budgetProgress) && d.budgetProgress.length) budgets = d.budgetProgress;
+          arList = d.arAgingList || [];
+        }
+      } catch (e) {}
+    }
+
+    const budgetCardsHtml = budgets.map(b => {
+      const pct = Math.min(100, Number(b.achievementPct || 0));
+      const barCol = pct >= 80 ? '#059669' : (pct >= 50 ? '#0284C7' : '#D97706');
+      return `
+        <div style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:12px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;font-weight:800;font-size:13px;color:#002B49;">
+            <span>${b.department}</span>
+            <span style="color:${barCol};">${b.achievementPct}%</span>
+          </div>
+          <div style="height:9px;background:#E2E8F0;border-radius:999px;overflow:hidden;margin:7px 0;">
+            <div style="height:100%;width:${pct}%;background:${barCol};"></div>
+          </div>
+          <div style="font-size:11.5px;color:#475569;">ทำได้จริง: <b>฿${Number(b.actualAmount || 0).toLocaleString()}</b> / เป้าหมาย: <b>฿${Number(b.monthlyTarget || 0).toLocaleString()}</b></div>
+        </div>
+      `;
+    }).join('');
+
+    const arRowsHtml = arList.map(a => `
+      <tr>
+        <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${a.docNo}</td>
+        <td style="padding:7px;border:1px solid #CBD5E1;">${a.docType}</td>
+        <td style="padding:7px;border:1px solid #CBD5E1;">${a.customer}</td>
+        <td style="padding:7px;border:1px solid #CBD5E1;text-align:right;font-weight:700;">${a.amount}</td>
+        <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">${a.ageDays} วัน</td>
+        <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:700;color:${a.ageDays > 30 ? '#DC2626' : '#059669'};">${a.bucket}</td>
+      </tr>
+    `).join('') || '<tr><td colspan="6" style="padding:12px;text-align:center;color:#64748B;">ไม่พบรายการใบวางบิลค้างชำระเกินกำหนด</td></tr>';
+
+    body.innerHTML = `
+      <div style="font-weight:800;color:#002B49;font-size:14px;margin-bottom:8px;">📊 ความคืบหน้ายอดขายเทียบเป้าหมายรายแผนก (Monthly Target vs Actual)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:18px;">
+        ${budgetCardsHtml}
+      </div>
+
+      <div style="font-weight:800;color:#0F766E;font-size:14px;margin-bottom:8px;">🧾 ตารางติดตามอายุบิล &amp; ใบสั่งซื้อรอเก็บเงิน (AR Aging &amp; Billing Follow-Up)</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="background:#002B49;color:#FFF;"><th style="padding:7px;">เลขที่เอกสาร</th><th style="padding:7px;">ประเภท</th><th style="padding:7px;text-align:left;">ลูกค้า</th><th style="padding:7px;text-align:right;">ยอดเงิน</th><th style="padding:7px;">อายุบิล</th><th style="padding:7px;">สถานะเครดิต</th></tr></thead>
+          <tbody>${arRowsHtml}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  // 4) Sandbox Training Mode, Audit Trail & Weekly DB Snapshot Backup
+  async function openSandboxAndGovernanceModal() {
+    let modal = document.getElementById('hzkSandboxGovModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkSandboxGovModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20098;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    const isSb = isSandboxTrainingModeActive();
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:940px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#312E81,#4338CA);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1174 • ONBOARDING SANDBOX, AUDIT TRAIL &amp; AUTO-BACKUP</div>
+            <div style="font-size:16px;font-weight:800;">🧪 โหมดฝึกซ้อมพนักงานใหม่ (Sandbox) • ประวัติการตรวจสอบ (Audit) • สำรองข้อมูล</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkSandboxGovModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:18px 20px;font-size:13px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-bottom:16px;">
+            <div style="background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:12px;padding:14px;">
+              <div style="font-weight:800;color:#92400E;margin-bottom:4px;">🧪 โหมดฝึกซ้อมพนักงานใหม่ (Sandbox Mode)</div>
+              <div style="font-size:11.5px;color:#475569;margin-bottom:10px;">ให้พนักงานใหม่ทดลองกดทุกปุ่มได้เต็มที่โดยไม่ส่งข้อมูลเข้าฐานจริง</div>
+              <button type="button" id="hzkToggleSandboxBtn" style="width:100%;background:${isSb ? '#DC2626' : '#D97706'};color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">${isSb ? '⏹️ ปิดโหมดฝึกซ้อม (กลับสู่ระบบจริง)' : '▶️ เปิดโหมดฝึกซ้อม (Sandbox)'}</button>
+            </div>
+
+            <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:12px;padding:14px;">
+              <div style="font-weight:800;color:#1E40AF;margin-bottom:4px;">💾 สำรองฐานข้อมูล Google Sheets ทันที</div>
+              <div style="font-size:11.5px;color:#475569;margin-bottom:10px;">สร้างไฟล์ Backup เก็บในโฟลเดอร์ HOSHIZAKI_DB_Backups บน Drive</div>
+              <button type="button" id="hzkBackupDbNowBtn" style="width:100%;background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">☁️ สำรองฐานข้อมูลเดี๋ยวนี้</button>
+            </div>
+
+            <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:12px;padding:14px;">
+              <div style="font-weight:800;color:#166534;margin-bottom:4px;">☀️ ส่งการ์ด Morning Briefing เข้า LINE</div>
+              <div style="font-size:11.5px;color:#475569;margin-bottom:10px;">ส่งสรุปงานด่วนประจำวันพร้อมปุ่มเข้าโต๊ะทำงานส่วนตัวทันที</div>
+              <button type="button" id="hzkPushMorningNowBtn" style="width:100%;background:#059669;color:#FFF;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">📲 ส่ง Morning Push ทันที</button>
+            </div>
+          </div>
+
+          <div style="font-weight:800;color:#002B49;margin-bottom:8px;">📜 ประวัติการดำเนินการสำคัญในระบบ (System Audit Trail):</div>
+          <div id="hzkAuditLogsWrap" style="color:#64748B;">⏳ กำลังโหลดประวัติ Audit Trail...</div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    document.getElementById('hzkToggleSandboxBtn').onclick = () => {
+      const next = !isSandboxTrainingModeActive();
+      localStorage.setItem(HZK_SANDBOX_MODE_KEY, String(next));
+      applySandboxBannerIfNeeded();
+      modal.style.display = 'none';
+      showHzkToastNotification(next ? '🧪 เปิดโหมดฝึกซ้อม (Sandbox Training) แล้ว' : '✅ กลับสู่โหมดระบบจริงแล้ว', false);
+    };
+
+    const gasUrl = getGasEndpointUrl();
+    document.getElementById('hzkBackupDbNowBtn').onclick = async () => {
+      if (!gasUrl) { alert('กรุณาตั้งค่า GAS URL ก่อนสำรองข้อมูลครับ'); return; }
+      const r = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'runWeeklyDatabaseSnapshotBackup' })
+      });
+      const d = await r.json();
+      alert(d && d.status === 'OK' ? (`✅ สำรองฐานข้อมูลสำเร็จ: ${d.backupName}`) : '⚠️ สำรองไม่สำเร็จ');
+    };
+
+    document.getElementById('hzkPushMorningNowBtn').onclick = async () => {
+      if (!gasUrl) { alert('กรุณาตั้งค่า GAS URL ก่อนส่ง LINE ครับ'); return; }
+      const r = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'sendMorningPersonalPushNow' })
+      });
+      const d = await r.json();
+      alert(d && d.status === 'OK' ? (`✅ ส่ง Morning Focus Briefing เข้า LINE เรียบร้อยแล้ว`) : '⚠️ ส่งไม่สำเร็จ');
+    };
+
+    const logWrap = document.getElementById('hzkAuditLogsWrap');
+    if (gasUrl) {
+      try {
+        const r = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'getSystemAuditLogs' })
+        });
+        const d = await r.json();
+        const logs = (d && d.logs) || [];
+        logWrap.innerHTML = logs.length
+          ? `<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#0F172A;color:#FFF;"><th style="padding:6px;">เวลา</th><th style="padding:6px;">ผู้ดำเนินการ</th><th style="padding:6px;">กิจกรรม</th><th style="padding:6px;text-align:left;">รายละเอียด</th></tr></thead><tbody>${logs.map(l => `<tr><td style="padding:6px;border:1px solid #CBD5E1;">${l.timestamp}</td><td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${l.actor}</td><td style="padding:6px;border:1px solid #CBD5E1;">${l.actionType}</td><td style="padding:6px;border:1px solid #CBD5E1;">${l.detail}</td></tr>`).join('')}</tbody></table>`
+          : 'ยังไม่มีรายการบันทึก Audit Trail ในระบบ';
+      } catch (e) {}
+    } else {
+      logWrap.textContent = 'เชื่อมต่อ Google Apps Script URL เพื่อดูประวัติ Audit Trail แบบเรียลไทม์';
+    }
+  }
+
+  window.openFieldGeoCheckinAndQcModal = openFieldGeoCheckinAndQcModal;
+  window.openModelComparisonRoiModal = openModelComparisonRoiModal;
+  window.openArAgingAndBudgetModal = openArAgingAndBudgetModal;
+  window.openSandboxAndGovernanceModal = openSandboxAndGovernanceModal;
+
   function bootPersonalizedCockpitV1171() {
     installGlobalRuntimeGuard();
+    applySandboxBannerIfNeeded();
     dockOmniBridgeButtons();
     renderCleanCanvasCockpitV1173(getActiveEmployeeProfileV1171());
     setTimeout(initMobileCleanUiDeclutter, 300);

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1173-clean-canvas-pin';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1174-complete-scaleup';
 const CORE_ASSETS = [
   './',
   './index.html',

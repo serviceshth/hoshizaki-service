@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1156-MOBILE-CLEAN-UI-VERIFIED',
+    version: 'v1171-PERSONALIZED-MULTI-DEPT-COCKPIT',
     masterDb: null,
     items: []
   };
@@ -309,6 +309,23 @@
       }
     });
 
+    const myCockpitBtn = document.createElement('button');
+    myCockpitBtn.id = 'hzkMyPersonalCockpitPillBtn';
+    myCockpitBtn.type = 'button';
+    myCockpitBtn.innerHTML = '🧑‍💻 โต๊ะทำงานฉัน (เลือกพนักงาน/แผนก) ▾';
+    myCockpitBtn.style.cssText =
+      'background:linear-gradient(135deg,#002B49,#1E3A8A);color:#FDE047;border:1px solid #38BDF8;' +
+      'border-radius:999px;padding:5px 12px;font-weight:800;font-size:12px;line-height:1.35;' +
+      'cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;' +
+      'box-shadow:0 2px 6px rgba(0,43,73,0.28);height:28px;';
+    myCockpitBtn.onclick = function (e) {
+      e.stopPropagation();
+      if (typeof window.openPersonalEmployeeSelectorModal === 'function') {
+        window.openPersonalEmployeeSelectorModal();
+      }
+    };
+
+    wrap.appendChild(myCockpitBtn);
     wrap.appendChild(mainBtn);
     document.body.appendChild(menu);
 
@@ -3969,7 +3986,8 @@
             alert('กรุณาวางข้อมูล CSV หรือตารางจาก Excel ก่อนกดนำเข้าครับ');
             return;
           }
-          const lines = raw.split(/?
+          const lines = raw.split(/
+?
 /).filter(l => l.trim());
           const parsedRows = [];
           lines.forEach(line => {
@@ -4130,12 +4148,537 @@
   window.openSerialLifecyclePricingSuiteModal = openSerialLifecyclePricingSuiteModal;
   window.openPreInstallSiteSurveyModal = openPreInstallSiteSurveyModal;
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { installGlobalRuntimeGuard(); dockOmniBridgeButtons(); setTimeout(initMobileCleanUiDeclutter, 300); hookAdminStudioInspectorButton(); });
-  } else {
+
+
+  // ============================================================================
+  // ENTERPRISE v1171 MODULE: PERSONALIZED EMPLOYEE & 8-DEPARTMENT DAILY COCKPIT
+  // - Auto-routes every employee (all 18 HQ Staff + 8 Field Techs T01-T08)
+  //   into their tailored Department Workspace on load or 1-click profile switch
+  // - Live Cross-Department Handover Inbox ("งานส่งต่อถึงแผนกฉัน")
+  // - Japanese Corporate (JPC) TH / EN / 日本語 UI Language Toggle
+  // - Mobile-First Thumb-Zone Field Technician Wizard (T01-T08)
+  // ============================================================================
+  const HZK_V1171_ACTIVE_PROFILE_KEY = 'hzk_v1171_active_employee_profile';
+  const HZK_V1171_LANG_KEY = 'hzk_v1171_workspace_lang';
+
+  const COMPLETE_COMPANY_ROSTER_V1171 = [
+    // Service Unit & Field Technicians
+    { id: 'SVC-02', code: 'NOPARIN_H', vanCode: 'T02', name: 'นพรินทร์ หอมหวล (Noparin Homhoul)', nickname: 'Rinny', deptKey: 'SERVICE_MGR', deptLabel: 'Service Unit', role: 'Deputy Services Unit Manager (Super Admin)', isTech: false, langDefault: 'TH' },
+    { id: 'SVC-01', code: 'THANAKRIT_C', vanCode: 'T01', name: 'Mr. Thanakrit Chanmokonpanit', nickname: 'Tae', deptKey: 'SERVICE_MGR', deptLabel: 'Service Unit', role: 'Services Unit Manager (ext. 31)', isTech: false, langDefault: 'TH' },
+    { id: 'SVC-05', code: 'WANWIPHA_N', vanCode: 'T08', name: 'Ms. Wanwipha Nakamrod', nickname: 'Oh', deptKey: 'SERVICE_MGR', deptLabel: 'Service & Billing', role: 'Services Admin Staff (ext. 30)', isTech: false, langDefault: 'TH' },
+    { id: 'SVC-03', code: 'T03', vanCode: 'T03', name: 'Mr. Surin Sarawong (ช่าง T03)', nickname: 'Rin', deptKey: 'SERVICE_TECH', deptLabel: 'Service Field Tech', role: 'Senior Field Service Technician (BKK East)', isTech: true, langDefault: 'TH' },
+    { id: 'SVC-04', code: 'T05', name: 'Mr. Nirun Sornrat (ช่าง T05)', nickname: 'Pui', deptKey: 'SERVICE_TECH', deptLabel: 'Service Field Tech', role: 'Field Service Technician (Samut Prakan)', isTech: true, langDefault: 'TH' },
+    { id: 'SVC-06', code: 'T06', name: 'Mr. Surin Tharapai (ช่าง T06)', nickname: 'Beer', deptKey: 'SERVICE_TECH', deptLabel: 'Service Field Tech', role: 'Field Service Technician (Ayutthaya/Central)', isTech: true, langDefault: 'TH' },
+    { id: 'SVC-07', code: 'T04', name: 'Mr. Jeerapan Phrasawang (ช่าง T04)', nickname: 'Ceasar', deptKey: 'SERVICE_TECH', deptLabel: 'Service Field Tech', role: 'Field Service Technician (Nonthaburi)', isTech: true, langDefault: 'TH' },
+    { id: 'CTR-01', code: 'T07', name: 'Mr. Pawat Warongtheradet (ช่าง T07 / IMS)', nickname: 'Prince', deptKey: 'SERVICE_TECH', deptLabel: 'Service Center & IMS', role: 'Field Tech & Warehouse IMS (Upcountry)', isTech: true, langDefault: 'TH' },
+    { id: 'TECH-01', code: 'T01', name: 'ทีมช่างบริการภาคสนาม T01 (BKK North)', nickname: 'T01', deptKey: 'SERVICE_TECH', deptLabel: 'Service Field Tech', role: 'Field Service Van T01', isTech: true, langDefault: 'TH' },
+    { id: 'TECH-08', code: 'T08', name: 'ทีมช่างติดตั้ง & PM T08 (Install Specialist)', nickname: 'T08', deptKey: 'SERVICE_TECH', deptLabel: 'Service Field Tech', role: 'Installation & PM Van T08', isTech: true, langDefault: 'TH' },
+
+    // Commercial Sales (THB)
+    { id: 'SLS-01', code: 'KULATHIDA_C', vanCode: '', name: 'Ms. Kulathida Charoenying', nickname: 'Honey', deptKey: 'SALES_TH', deptLabel: 'Sales Department', role: 'Deputy Sales Manager', isTech: false, langDefault: 'TH' },
+    { id: 'SLS-02', code: 'JANYALUCK_P', vanCode: '', name: 'Ms. Janyaluck Paithaisong', nickname: 'Nui', deptKey: 'SALES_TH', deptLabel: 'Sales Department', role: 'Senior Sales Staff', isTech: false, langDefault: 'TH' },
+    { id: 'SLS-03', code: 'KETSARAPORN', vanCode: '', name: 'Ms. Ketsaraporn Porjai', nickname: 'Nam', deptKey: 'SALES_TH', deptLabel: 'Sales Department', role: 'Senior Sales Staff', isTech: false, langDefault: 'TH' },
+    { id: 'SLS-04', code: 'WISUTTHA_W', vanCode: '', name: 'Ms. Wisuttha Wonglaw', nickname: 'Sand', deptKey: 'SALES_TH', deptLabel: 'Sales Department', role: 'Sales Support (ext. 20)', isTech: false, langDefault: 'TH' },
+
+    // Japanese Corporate (JPC)
+    { id: 'JPC-02', code: 'FURUJO', vanCode: '', name: 'Mr. Naoki Furujo', nickname: 'Furujo', deptKey: 'JPC_CORP', deptLabel: 'Japanese Corporate', role: 'Senior Sales Staff (Japanese Corporate)', isTech: false, langDefault: 'JP' },
+    { id: 'JPC-01', code: 'SULEEWAN_S', vanCode: '', name: 'Ms. Suleewan Siripirom', nickname: 'Pang', deptKey: 'JPC_CORP', deptLabel: 'Japanese Corporate', role: 'Japanese Corporate Staff', isTech: false, langDefault: 'TH' },
+
+    // Marketing
+    { id: 'MKT-01', code: 'TAKSAON_T', vanCode: '', name: 'Ms. Taksaon Tipsrisombat', nickname: 'Poy', deptKey: 'MARKETING', deptLabel: 'Marketing Department', role: 'Marketing Unit Manager (ext. 21)', isTech: false, langDefault: 'TH' },
+    { id: 'MKT-02', code: 'KHAJORNYOT_J', vanCode: '', name: 'Mr. Khajornyot Jewkrang', nickname: 'Men', deptKey: 'MARKETING', deptLabel: 'Marketing Department', role: 'Marketing Staff', isTech: false, langDefault: 'TH' },
+
+    // Accounting & Finance
+    { id: 'ACC-01', code: 'WARAPORN_K', vanCode: '', name: 'Ms. Waraporn Kianthong', nickname: 'Noi San', deptKey: 'ACCOUNTING', deptLabel: 'Accounting & Finance', role: 'Accounting Manager (ext. 10)', isTech: false, langDefault: 'TH' },
+    { id: 'ACC-02', code: 'DUANGKAMON_T', vanCode: '', name: 'Ms. Duangkamon Tantayanon', nickname: 'Yok', deptKey: 'ACCOUNTING', deptLabel: 'Accounting & Finance', role: 'Senior Accounting Staff (ext. 12)', isTech: false, langDefault: 'TH' },
+    { id: 'ACC-03', code: 'WITHARAT_R', vanCode: '', name: 'Ms. Witharat Riangpha', nickname: 'Z-cath', deptKey: 'ACCOUNTING', deptLabel: 'Accounting & Finance', role: 'Accounting Staff (ext. 11)', isTech: false, langDefault: 'TH' },
+
+    // Admin & HR
+    { id: 'ADM-01', code: 'KANOKWAN_T', vanCode: '', name: 'Ms. Kanokwan Treesukol', nickname: 'June', deptKey: 'ADMIN_HR', deptLabel: 'Admin & HR', role: 'Administration Manager (ext. 03)', isTech: false, langDefault: 'TH' },
+    { id: 'ADM-02', code: 'NATTAPONG_C', vanCode: '', name: 'Mr. Nattapong Chataram', nickname: 'Nat', deptKey: 'ADMIN_HR', deptLabel: 'Admin & HR', role: 'Senior Administration Staff (ext. 01)', isTech: false, langDefault: 'TH' },
+    { id: 'ADM-03', code: 'CHAYANIN_K', vanCode: '', name: 'Mr. Chayanin Kuptrakul', nickname: 'Beer', deptKey: 'ADMIN_HR', deptLabel: 'Admin & HR', role: 'Administration Staff (ext. 02)', isTech: false, langDefault: 'TH' },
+
+    // Executive Management
+    { id: 'EXE-01', code: 'DAISUKE_S', vanCode: '', name: 'Mr. Daisuke Suzuki', nickname: 'Suzuki', deptKey: 'EXECUTIVE', deptLabel: 'Executive Management', role: 'Managing Director / GM All Departments', isTech: false, langDefault: 'JP' }
+  ];
+
+  const DEPT_COCKPIT_CONFIGS_V1171 = {
+    SERVICE_TECH: {
+      accent: '#991B1B',
+      gradient: 'linear-gradient(135deg,#7F1D1D,#B91C1C)',
+      badge: '🛠️ FIELD TECHNICIAN MOBILE WIZARD',
+      titleTh: 'โต๊ะทำงานช่างบริการภาคสนาม (โหมดมือถือใช้ง่าย)',
+      titleEn: 'Field Technician Mobile Wizard',
+      titleJp: 'フィールドサービス技術者画面',
+      subTh: 'ซ่อนเมนูออฟฟิศและราคาทุนอัตโนมัติ — เน้นสแกนป้าย S/N เปิด/ปิดใบงานซ่อม และเบิกอะไหล่ในรถตู้',
+      subEn: 'Streamlined mobile view — Scan S/N, complete repair report & manage van parts.',
+      subJp: '現場作業専用画面：S/Nスキャン・修理報告・車載部品在庫管理',
+      hideJobSheet: false,
+      actions: [
+        { icon: '📷', titleTh: '1. สแกน S/N & ดูประวัติ 360°', titleEn: '1. Scan S/N & 360° History', titleJp: '1. S/Nスキャン・360°履歴', sub: 'เช็กประกัน ดีลเลอร์ และประวัติซ่อมเก่า', fn: "window.openSerial360TimelineModal('')" },
+        { icon: '🚐', titleTh: '2. เบิก/เช็กอะไหล่ในรถตู้ (T01–T08)', titleEn: '2. Technician Van Stock', titleJp: '2. サービスカー部品在庫', sub: 'ตัดสต็อกหน้างาน + แจ้งเตือนสโตร์อัตโนมัติ', fn: "window.openTechnicianVanStockModal()" },
+        { icon: '📅', titleTh: '3. ดูคิวงานติดตั้ง & ซ่อมวันนี้', titleEn: '3. Today Dispatch Schedule', titleJp: '3. 本日の作業スケジュール', sub: 'ตารางนัดหมายเข้าหน้างานรายวัน', fn: "window.openServiceDispatchCalendarModal()" },
+        { icon: '📤', titleTh: '4. ส่งใบแจ้งบริการ/ใบเสร็จให้ลูกค้า', titleEn: '4. Send Tracked Service Doc', titleJp: '4. サービス報告書・領収書送信', sub: 'ส่งเข้า LINE / Email พร้อมปุ่มยืนยันรับ', fn: "launchTrackedDocFromServiceForm()" }
+      ]
+    },
+    SERVICE_MGR: {
+      accent: '#B91C1C',
+      gradient: 'linear-gradient(135deg,#002B49,#991B1B)',
+      badge: '🧑‍💼 SERVICE COMMAND & DISPATCH CENTER',
+      titleTh: 'ศูนย์ควบคุมงานบริการ จ่ายงานช่าง และวิเคราะห์ต้นทุน S/N',
+      titleEn: 'Service Management & Dispatch Center',
+      titleJp: 'サービス部 司令室・ディスパッチ管理',
+      subTh: 'คุมคิวช่าง T01–T08 ติดตามดีลเลอร์ SLA 2 ชม. ต่อสัญญา PM 60 วัน และวิเคราะห์กำไร-ขาดทุนรายเครื่อง',
+      subEn: 'Manage T01-T08 dispatch, Dealer 2-hr SLA, 60-day PM renewals & Unit Lifecycle P&L.',
+      subJp: '技術者手配・代理店SLA監視・保守契約更新・機種別損益分析',
+      hideJobSheet: false,
+      actions: [
+        { icon: '📅', titleTh: 'ตารางจ่ายงานช่าง & ติดตั้ง (T01–T08)', titleEn: 'Technician Dispatch Board', titleJp: '技術者ディスパッチ予定表', sub: 'จัดคิวติดตั้ง/ซ่อม + แจ้งเตือนกลุ่ม LINE', fn: "window.openServiceDispatchCalendarModal()" },
+        { icon: '💰', titleTh: 'วิเคราะห์กำไร-ขาดทุนราย S/N (Lifecycle P&L)', titleEn: 'Serial 360° Lifecycle P&L', titleJp: 'シリアル別損益・価格分析', sub: 'เทียบราคาขายหักต้นทุนซ่อมประกัน & ตั้งราคา PM', fn: "window.openSerialLifecyclePricingSuiteModal()" },
+        { icon: '🔔', titleTh: 'แจ้งเตือนหมดประกัน & ต่อสัญญา PM (60 วัน)', titleEn: 'PM & Warranty Renewal (60d)', titleJp: '保証期限・保守契約更新 (60日前)', sub: 'สแกนเครื่องใกล้หมดประกัน + ออกใบเสนอราคา 1 คลิก', fn: "window.openWarrantyPmRenewalModal()" },
+        { icon: '🚐', titleTh: 'คลังอะไหล่รถช่าง T01–T08 & เบิกเติม', titleEn: 'Van Stock Inventory T01-T08', titleJp: 'サービスカー部品在庫管理', sub: 'ตรวจสอบจุดสั่งซื้อ Min-Max อะไหล่รถตู้', fn: "window.openTechnicianVanStockModal()" }
+      ]
+    },
+    SALES_TH: {
+      accent: '#0284C7',
+      gradient: 'linear-gradient(135deg,#002B49,#0284C7)',
+      badge: '💼 COMMERCIAL SALES WORKSPACE (THB)',
+      titleTh: 'โต๊ะทำงานฝ่ายขายในประเทศ (Sales Command & Fast Quote)',
+      titleEn: 'Commercial Sales Workspace (THB)',
+      titleJp: '国内営業部 ワークスペース (THB)',
+      subTh: 'ออกใบเสนอราคา Y2026 เติมขนาด W×D×H อัตโนมัติ เช็กสต็อกสด 203 รุ่น ตรวจหน้างาน และส่งต่องานติดตั้ง',
+      subEn: 'Create Y2026 THB Quotations with WxDxH, live stock check, site survey & install handover.',
+      subJp: '見積書作成(W×D×H自動入力)・リアルタイム在庫確認・設置引継',
+      hideJobSheet: true,
+      actions: [
+        { icon: '📄', titleTh: 'ออกใบเสนอราคา Sales (THB Y2026)', titleEn: 'New Sales Quotation (THB)', titleJp: '新規見積書作成 (THB)', sub: 'เติมขนาด W×D×H + เช็กสต็อกสด + คุมเพดานส่วนลด', fn: "openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)')" },
+        { icon: '📐', titleTh: 'แบบตรวจความพร้อมหน้างาน (Site Survey)', titleEn: 'Pre-Install Site Survey', titleJp: '設置前現場チェックシート', sub: 'เช็กแรงดันน้ำ ไฟ ท่อน้ำทิ้ง & แนะนำชุดกรองน้ำ', fn: "window.openPreInstallSiteSurveyModal()" },
+        { icon: '🔄', titleTh: 'ส่งต่องานติดตั้ง & ลงทะเบียน S/N', titleEn: 'Sales-to-Service Install Handover', titleJp: 'サービス部へ設置作業引継', sub: 'ส่งใบงานให้ฝ่ายบริการเข้าติดตั้งพร้อมผูกประกัน', fn: "openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)', 'HANDOVER')" },
+        { icon: '📊', titleTh: 'ติดตามสถานะเอกสาร & E-Sign PO ลูกค้า', titleEn: 'Document & PO Tracking', titleJp: '見積書送付・注文書(PO)承認状況', sub: 'ดูว่าลูกค้าเปิดอ่าน กดยืนยัน หรือเซ็น PO แล้วหรือยัง', fn: "window.openDocumentTrackingDashboardModal()" }
+      ]
+    },
+    JPC_CORP: {
+      accent: '#312E81',
+      gradient: 'linear-gradient(135deg,#1E1B4B,#3730A3)',
+      badge: '🇯🇵 JAPANESE CORPORATE DIVISION (TH / EN / 日本語)',
+      titleTh: 'โต๊ะทำงานฝ่ายขายองค์กรญี่ปุ่น (Japanese Corporate Division)',
+      titleEn: 'Japanese Corporate Division Workspace',
+      titleJp: '日系法人営業部 ワークスペース (THB / USD Export)',
+      subTh: 'รองรับใบเสนอราคาทั้ง Local THB และ Export USD (0% VAT) พร้อมส่ง CC ทีม JPC และรายงาน 3 ภาษา',
+      subEn: 'Dedicated workspace for Japanese Corporate accounts (Local THB & Export USD 0% VAT).',
+      subJp: '日系法人顧客向け見積書作成（国内THB・輸出USD 0% VAT対応）',
+      hideJobSheet: true,
+      actions: [
+        { icon: '🇯🇵', titleTh: 'ออกใบเสนอราคา Japanese Corporate', titleEn: 'New JPC Quotation (THB/USD)', titleJp: '日系法人向け見積書作成', sub: 'รองรับ Export USD 0% VAT & Local THB + CC JPC_TEAM', fn: "openSalesCorporateQuotationWithPreset('Japanese Corporate', 'ใบเสนอราคา (Quotation)')" },
+        { icon: '🔎', titleTh: 'ตรวจสอบประวัติเครื่องลูกค้า S/N 360°', titleEn: 'Customer Asset S/N 360°', titleJp: '納入機器 S/N 360°履歴照会', sub: 'ดูประวัติติดตั้ง การซ่อม และรอบ PM ของลูกค้าญี่ปุ่น', fn: "window.openSerial360TimelineModal('')" },
+        { icon: '📊', titleTh: 'ติดตามสถานะเอกสาร & อนุมัติ PO', titleEn: 'Quotation & PO Tracking', titleJp: '見積承認・PO受領トラッキング', sub: 'ติดตามการตอบรับใบเสนอราคาจากลูกค้าองค์กรญี่ปุ่น', fn: "window.openDocumentTrackingDashboardModal()" },
+        { icon: '💰', titleTh: 'วิเคราะห์ต้นทุน & แพ็คเกจ PM รายเครื่อง', titleEn: 'Lifecycle Cost & PM Package', titleJp: '機器ライフサイクル損益・保守設計', sub: 'เปรียบเทียบต้นทุนซ่อมและคำนวณแพ็คเกจ VIP PM', fn: "window.openSerialLifecyclePricingSuiteModal()" }
+      ]
+    },
+    MARKETING: {
+      accent: '#065F46',
+      gradient: 'linear-gradient(135deg,#064E3B,#059669)',
+      badge: '📣 MARKETING & PRODUCT CAMPAIGN HUB',
+      titleTh: 'โต๊ะทำงานฝ่ายการตลาด แคมเปญ และสต็อกเครื่องโชว์/Clearance',
+      titleEn: 'Marketing & Product Campaign Hub',
+      titleJp: 'マーケティング・販促キャンペーン管理',
+      subTh: 'บริหารสต็อกเครื่องโชว์/มีตำหนิ 602 รายการพร้อมใบตรวจสภาพ ออกใบเสนอราคาแคมเปญ และจำลองโปรโมชั่น',
+      subEn: 'Manage 602 Demo/Clearance units with inspection links, campaign quotes & promo simulator.',
+      subJp: '展示機・訳あり品在庫(602台)管理・販促見積・プロモーション損益試算',
+      hideJobSheet: true,
+      actions: [
+        { icon: '🏷️', titleTh: 'สต็อกเครื่องโชว์ / มีตำหนิ (602 รายการ)', titleEn: 'Demo & Clearance Stock (602)', titleJp: '展示機・訳あり在庫一覧 (602台)', sub: 'ดูสภาพเครื่อง ลิงก์ใบตรวจสภาพ และดึงลงใบเสนอราคา', fn: "window.openDamageDemoStockModal()" },
+        { icon: '📣', titleTh: 'ออกใบเสนอราคาแคมเปญ Marketing', titleEn: 'Campaign & Promo Quotation', titleJp: 'キャンペーン見積書作成', sub: 'สร้างใบเสนอราคาโปรโมชันพร้อมการ์ด LINE สีเขียวมรกต', fn: "openSalesCorporateQuotationWithPreset('Marketing', 'ใบเสนอราคา (Quotation)')" },
+        { icon: '🧮', titleTh: 'จำลองตั้งราคา & โปรโมชั่นแถม PM', titleEn: 'Promo & PM Package Simulator', titleJp: 'プロモーション・保守付帯価格シミュレーター', sub: 'คำนวณจุดคุ้มทุนเมื่อลดราคาหรือแถม PM ฟรี', fn: "window.openSerialLifecyclePricingSuiteModal()" },
+        { icon: '📥', titleTh: 'อัปเดตสต็อกจากอีเมล MICHIRU-RPA', titleEn: 'Sync Daily Stock Report', titleJp: '日次在庫レポート同期', sub: 'ดึงรายงาน Stock on Hand ล่าสุดเข้าฐานข้อมูล', fn: "window.triggerEmailStockSyncNow()" }
+      ]
+    },
+    ACCOUNTING: {
+      accent: '#0F766E',
+      gradient: 'linear-gradient(135deg,#134E4A,#0D9488)',
+      badge: '🧾 ACCOUNTING, BILLING & ERP/NAV BRIDGE',
+      titleTh: 'โต๊ะทำงานฝ่ายบัญชี การเงิน ใบวางบิล และส่งออก Dynamics NAV',
+      titleEn: 'Accounting, Billing & ERP/NAV Bridge',
+      titleJp: '経理・請求書発行・Dynamics NAV 連携',
+      subTh: 'แปลงใบเสนอราคาเป็นใบวางบิล/ใบเสร็จใน 1 คลิก ตรวจเลขผู้เสียภาษี 13 หลัก และส่งออก CSV เข้า NAV',
+      subEn: '1-Click convert to Billing/Receipt, verify 13-digit Tax ID & export CSV for Dynamics NAV.',
+      subJp: 'ワンクリック請求書/領収書変換・納税者番号確認・NAV用CSV出力',
+      hideJobSheet: true,
+      actions: [
+        { icon: '🧾', titleTh: 'ออกใบวางบิล / ใบเสร็จรับเงิน (1 คลิก)', titleEn: 'Create Billing Note / Receipt', titleJp: '請求書・領収書作成', sub: 'กรอกเลขผู้เสียภาษี 13 หลัก/สาขา + คำนวณ VAT 7% / WHT 3%', fn: "openSalesCorporateQuotationWithPreset('Service & Billing', 'ใบวางบิล (Billing Note)')" },
+        { icon: '🏭', titleTh: 'ส่งออกข้อมูลเปิด Sales Order เข้า NAV', titleEn: 'Export PO Approved to NAV CSV', titleJp: '承認済POデータをNAV用CSV出力', sub: 'ดาวน์โหลดไฟล์ CSV พร้อมนำเข้า Microsoft Dynamics NAV', fn: "window.exportErpSalesOrdersCsv()" },
+        { icon: '📊', titleTh: 'ตรวจสอบสถานะลูกค้ายืนยันรับบิล / PO', titleEn: 'Billing & PO Tracking Status', titleJp: '請求書受領・PO承認ステータス確認', sub: 'เช็กประวัติการส่งบิลและหลักฐาน PO ลูกค้า', fn: "window.openDocumentTrackingDashboardModal()" },
+        { icon: '📥', titleTh: 'นำเข้าประวัติขาย NAV ผูก S/N', titleEn: 'Import NAV Sales History', titleJp: 'NAV販売履歴インポート', sub: 'อัปโหลดประวัติราคาขายจาก NAV เข้าฐานข้อมูล S/N', fn: "window.openSerialLifecyclePricingSuiteModal()" }
+      ]
+    },
+    ADMIN_HR: {
+      accent: '#4338CA',
+      gradient: 'linear-gradient(135deg,#312E81,#4F46E5)',
+      badge: '🏢 ADMIN, HR & SYSTEM GOVERNANCE',
+      titleTh: 'โต๊ะทำงานฝ่ายธุรการ บุคคล และควบคุมมาตรฐานระบบองค์กร',
+      titleEn: 'Admin, HR & System Governance',
+      titleJp: '総務・人事・システム管理ワークスペース',
+      subTh: 'ตรวจสอบความพร้อมระบบ Go-Live QA จัดการฐานบุคลากร กลุ่มอีเมล 7 แผนก และคู่มือ SOP',
+      subEn: 'Manage staff directory, 7-department email groups, system QA health & role SOP guides.',
+      subJp: '社員マスタ・7部署メールグループ・システム稼働点検・SOP管理',
+      hideJobSheet: true,
+      actions: [
+        { icon: '🛡️', titleTh: 'ตรวจความพร้อมระบบ & Go-Live Control (QA)', titleEn: 'Production Readiness QA', titleJp: '本番稼働・システムヘルス点検', sub: 'เช็กสถานะ API, Google Sheets, LINE OA และ Triggers', fn: "window.openProductionGoLiveQaModal()" },
+        { icon: '🩺', titleTh: 'Deep Scan ตรวจสอบ & ซ่อมแซมการเชื่อมต่อ', titleEn: 'Deep System Diagnostic', titleJp: 'システム詳細診断・修復', sub: 'ทดสอบลิงก์ Google Apps Script และฐานข้อมูล JSON', fn: "window.runDeepSystemDiagnosticModal()" },
+        { icon: '📖', titleTh: 'คู่มือใช้งานแยกแผนก (Role SOP Guide)', titleEn: 'Department Role SOP Guide', titleJp: '部署別操作マニュアル (SOP)', sub: 'คู่มือมาตรฐานการทำงานสำหรับทุกแผนก', fn: "window.openDepartmentRoleSopModal()" },
+        { icon: '📊', titleTh: 'ติดตามเอกสาร & การส่งต่องานข้ามแผนก', titleEn: 'Document Tracking Dashboard', titleJp: '社内ドキュメント追跡一覧', sub: 'ตรวจสอบเอกสารค้างติดตาม > 24 ชม. ของทุกแผนก', fn: "window.openDocumentTrackingDashboardModal()" }
+      ]
+    },
+    EXECUTIVE: {
+      accent: '#B45309',
+      gradient: 'linear-gradient(135deg,#002B49,#B45309)',
+      badge: '👑 EXECUTIVE BOARDROOM & STRATEGIC INTELLIGENCE',
+      titleTh: 'ห้องประชุมผู้บริหาร (Executive Command & Lifecycle Intelligence)',
+      titleEn: 'Executive Command & Boardroom BI',
+      titleJp: '経営陣ダッシュボード・全社統括インテリジェンス',
+      subTh: 'ภาพรวมยอดขาย PO กำไรสุทธิหลังหักต้นทุนซ่อม S/N ผลงานรายบุคคล และส่งสรุปเข้า LINE ผู้บริหาร',
+      subEn: 'Company-wide sales pipeline, S/N lifecycle net margin, staff KPIs & LINE briefings.',
+      subJp: '全社売上・機種別ライフサイクル純利益・社員別KPI・LINE経営報告',
+      hideJobSheet: true,
+      actions: [
+        { icon: '📈', titleTh: 'รายงานสรุปผู้บริหาร & AI Copilot (BI)', titleEn: 'Executive BI & AI Copilot', titleJp: '経営サマリーBI & AIコパイロット', sub: 'ยอดขายรวม สถานะ PO งานบริการ และส่งเข้า LINE ทันที', fn: "window.openExecutiveBiDashboardModal()" },
+        { icon: '💰', titleTh: 'วิเคราะห์กำไร-ขาดทุนราย S/N & ตั้งราคา', titleEn: 'Serial Lifecycle P&L & Pricing', titleJp: '機種別ライフサイクル損益・価格戦略', sub: 'เปรียบเทียบต้นทุนเคลมข้ามรุ่น/ข้ามดีลเลอร์ & จำลองโปรฯ', fn: "window.openSerialLifecyclePricingSuiteModal()" },
+        { icon: '🏆', titleTh: 'สรุปผลงานปิดการขาย & ปิดงานช่างรายบุคคล', titleEn: 'Monthly Sales & Tech KPI', titleJp: '月次営業・サービス個人別実績KPI', sub: 'จัดอันดับยอดปิดการขาย PO Approved และผลงานช่าง', fn: "window.openMonthlyIncentiveKpiModal()" },
+        { icon: '🎭', titleTh: 'ตรวจสอบหน้าจอจริงแยกแผนก & รายบุคคล', titleEn: 'Live Dept & Staff Inspector', titleJp: '部署別・個人別画面インスペクター', sub: 'สลับดูมุมมองการทำงานของแต่ละแผนกและพนักงาน', fn: "window.openDepartmentLiveSimulatorModal()" }
+      ]
+    }
+  };
+
+  function getActiveEmployeeProfileV1171() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(HZK_V1171_ACTIVE_PROFILE_KEY) || 'null');
+      if (saved && saved.id && DEPT_COCKPIT_CONFIGS_V1171[saved.deptKey]) return saved;
+    } catch (e) {}
+
+    // Fallback: auto-detect from existing PWA login session (`hoshizaki_active_auth_session_v1042`)
+    try {
+      const rawSess = localStorage.getItem('hoshizaki_active_auth_session_v1042');
+      if (rawSess) {
+        const sess = JSON.parse(rawSess);
+        if (sess && sess.id) {
+          const found = COMPLETE_COMPANY_ROSTER_V1171.find(x => x.id === sess.id || x.code === sess.code);
+          if (found) return found;
+        }
+      }
+    } catch (e) {}
+
+    return COMPLETE_COMPANY_ROSTER_V1171[0]; // Default: Mr. Noparin Homhoul (Service Unit / Super Admin)
+  }
+
+  function setActiveEmployeeProfileV1171(empObj, persistLang) {
+    if (!empObj) return;
+    localStorage.setItem(HZK_V1171_ACTIVE_PROFILE_KEY, JSON.stringify(empObj));
+    if (persistLang && empObj.langDefault) {
+      localStorage.setItem(HZK_V1171_LANG_KEY, empObj.langDefault);
+    }
+    applyGlobalAppRoleMode(empObj.isTech ? 'TECH' : 'MANAGER');
+    renderPersonalizedEmployeeCockpit(empObj);
+  }
+
+  function getActiveCockpitLang() {
+    return localStorage.getItem(HZK_V1171_LANG_KEY) || 'TH';
+  }
+
+  function setActiveCockpitLang(lang) {
+    localStorage.setItem(HZK_V1171_LANG_KEY, lang);
+    renderPersonalizedEmployeeCockpit(getActiveEmployeeProfileV1171());
+  }
+
+  async function renderPersonalizedEmployeeCockpit(empProfile) {
+    const emp = empProfile || getActiveEmployeeProfileV1171();
+    const cfg = DEPT_COCKPIT_CONFIGS_V1171[emp.deptKey] || DEPT_COCKPIT_CONFIGS_V1171.SERVICE_MGR;
+    const lang = getActiveCockpitLang();
+
+    // Update top header pill label with active employee's nickname & department
+    const pillBtn = document.getElementById('hzkMyPersonalCockpitPillBtn');
+    if (pillBtn) {
+      pillBtn.innerHTML = `🧑‍💻 ${emp.nickname || emp.code} [${emp.deptLabel}] ▾`;
+    }
+
+    // Manage visibility of technician Job Service Report container according to employee role
+    const jobSheet = document.getElementById('jobSheetContainer');
+    const mobNav = document.getElementById('mobileSectionNav');
+    const showJobOverride = sessionStorage.getItem('hzk_v1171_force_show_jobsheet') === 'true';
+
+    if (cfg.hideJobSheet && !showJobOverride) {
+      if (jobSheet) jobSheet.style.display = 'none';
+      if (mobNav) mobNav.style.display = 'none';
+    } else {
+      if (jobSheet) jobSheet.style.display = '';
+      if (mobNav) mobNav.style.display = '';
+    }
+
+    let cockpit = document.getElementById('hzkPersonalizedEmployeeCockpitCard');
+    if (!cockpit) {
+      cockpit = document.createElement('section');
+      cockpit.id = 'hzkPersonalizedEmployeeCockpitCard';
+      cockpit.style.cssText =
+        'max-width:1080px;margin:10px auto 14px;background:#FFFFFF;border-radius:16px;' +
+        'box-shadow:0 12px 32px rgba(15,23,42,0.12);overflow:hidden;font-family:sans-serif;';
+      if (jobSheet && jobSheet.parentNode) {
+        jobSheet.parentNode.insertBefore(cockpit, jobSheet);
+      } else {
+        document.body.insertBefore(cockpit, document.body.firstChild);
+      }
+    }
+
+    cockpit.style.border = `2px solid ${cfg.accent}`;
+    const titleText = lang === 'JP' ? cfg.titleJp : (lang === 'EN' ? cfg.titleEn : cfg.titleTh);
+    const subText = lang === 'JP' ? cfg.subJp : (lang === 'EN' ? cfg.subEn : cfg.subTh);
+
+    const actionCardsHtml = cfg.actions.map(act => {
+      const aTitle = lang === 'JP' ? act.titleJp : (lang === 'EN' ? act.titleEn : act.titleTh);
+      return `
+        <button type="button" onclick="${act.fn}" style="text-align:left;background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:13px;padding:13px 14px;cursor:pointer;display:flex;align-items:flex-start;gap:11px;transition:all 0.15s ease;min-height:66px;">
+          <span style="font-size:24px;line-height:1.1;">${act.icon}</span>
+          <span>
+            <div style="font-weight:800;font-size:13.5px;color:#0F172A;">${aTitle}</div>
+            <div style="font-size:11.5px;color:#475569;margin-top:3px;line-height:1.35;">${act.sub}</div>
+          </span>
+        </button>
+      `;
+    }).join('');
+
+    const toggleJobBtnHtml = cfg.hideJobSheet
+      ? `<button type="button" id="hzkV1171ToggleJobFormBtn" style="background:rgba(255,255,255,0.16);color:#FFF;border:1px solid rgba(255,255,255,0.4);border-radius:8px;padding:6px 11px;font-size:11.5px;font-weight:700;cursor:pointer;">${showJobOverride ? '🙈 ซ่อนฟอร์มใบแจ้งซ่อมช่าง' : '🛠️ เปิดดูฟอร์มใบแจ้งซ่อมช่าง'}</button>`
+      : '';
+
+    cockpit.innerHTML = `
+      <div style="background:${cfg.gradient};color:#FFFFFF;padding:15px 18px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span style="background:rgba(0,0,0,0.28);color:#FDE047;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:0.4px;">${cfg.badge}</span>
+            <span style="background:rgba(255,255,255,0.18);color:#FFF;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:700;">👤 ${emp.name} • ${emp.role}</span>
+          </div>
+          <div style="font-size:17px;font-weight:800;margin-top:6px;">${titleText}</div>
+          <div style="font-size:12px;opacity:0.92;margin-top:2px;">${subText}</div>
+        </div>
+
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          <div style="background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;display:inline-flex;gap:2px;">
+            <button type="button" data-lang="TH" class="hzk-v1171-lang-btn" style="background:${lang === 'TH' ? '#FFF' : 'transparent'};color:${lang === 'TH' ? '#002B49' : '#FFF'};border:none;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:800;cursor:pointer;">TH</button>
+            <button type="button" data-lang="EN" class="hzk-v1171-lang-btn" style="background:${lang === 'EN' ? '#FFF' : 'transparent'};color:${lang === 'EN' ? '#002B49' : '#FFF'};border:none;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:800;cursor:pointer;">EN</button>
+            <button type="button" data-lang="JP" class="hzk-v1171-lang-btn" style="background:${lang === 'JP' ? '#FFF' : 'transparent'};color:${lang === 'JP' ? '#002B49' : '#FFF'};border:none;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:800;cursor:pointer;">日本語</button>
+          </div>
+          ${toggleJobBtnHtml}
+          <button type="button" id="hzkV1171SwitchUserBtn" style="background:#FDE047;color:#0F172A;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;">🔄 สลับพนักงาน / แผนก</button>
+        </div>
+      </div>
+
+      <div style="padding:14px 18px;">
+        <div id="hzkV1171MyMetricsBar" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:12px;">
+          <div style="background:#F1F5F9;border-radius:10px;padding:9px 12px;">
+            <div style="font-size:10.5px;color:#475569;font-weight:700;">📥 งานส่งต่อถึงแผนกฉัน</div>
+            <div id="hzkMetricHandovers" style="font-size:17px;font-weight:800;color:#002B49;">0 รายการ</div>
+          </div>
+          <div style="background:#F1F5F9;border-radius:10px;padding:9px 12px;">
+            <div style="font-size:10.5px;color:#475569;font-weight:700;">🛠️ ใบงานบริการค้างปิด</div>
+            <div id="hzkMetricOpenJobs" style="font-size:17px;font-weight:800;color:#B91C1C;">-</div>
+          </div>
+          <div style="background:#F1F5F9;border-radius:10px;padding:9px 12px;">
+            <div style="font-size:10.5px;color:#475569;font-weight:700;">📄 ใบเสนอราคาของฉัน / รวม</div>
+            <div id="hzkMetricMyQt" style="font-size:17px;font-weight:800;color:#0284C7;">-</div>
+          </div>
+          <div style="background:#F1F5F9;border-radius:10px;padding:9px 12px;">
+            <div style="font-size:10.5px;color:#475569;font-weight:700;">✅ PO Approved รอวางบิล</div>
+            <div id="hzkMetricPoApproved" style="font-size:17px;font-weight:800;color:#059669;">-</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;">
+          ${actionCardsHtml}
+        </div>
+
+        <div id="hzkV1171CrossDeptInboxWrap" style="margin-top:12px;display:none;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:12px;padding:11px 14px;">
+          <div style="font-weight:800;color:#92400E;font-size:12.5px;margin-bottom:6px;">📥 กล่องรับงานข้ามแผนกที่ส่งถึง ${emp.deptLabel} (Pending Cross-Dept Handovers):</div>
+          <div id="hzkV1171CrossDeptInboxList" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+      </div>
+    `;
+
+    cockpit.querySelectorAll('.hzk-v1171-lang-btn').forEach(btn => {
+      btn.onclick = () => setActiveCockpitLang(btn.getAttribute('data-lang'));
+    });
+
+    document.getElementById('hzkV1171SwitchUserBtn').onclick = openPersonalEmployeeSelectorModal;
+
+    const toggleJobBtn = document.getElementById('hzkV1171ToggleJobFormBtn');
+    if (toggleJobBtn) {
+      toggleJobBtn.onclick = () => {
+        const nextVal = !showJobOverride;
+        sessionStorage.setItem('hzk_v1171_force_show_jobsheet', String(nextVal));
+        renderPersonalizedEmployeeCockpit(emp);
+      };
+    }
+
+    // Fetch live personalized briefing & pending handovers from GAS if connected
+    const gasUrl = getGasEndpointUrl();
+    if (gasUrl) {
+      try {
+        const res = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'getEmployeeWorkspaceBriefing',
+            empId: emp.id,
+            empCode: emp.code,
+            department: emp.deptLabel
+          })
+        });
+        const d = await res.json();
+        if (d && d.status === 'OK' && d.metrics) {
+          const m = d.metrics;
+          const elH = document.getElementById('hzkMetricHandovers');
+          const elJ = document.getElementById('hzkMetricOpenJobs');
+          const elQ = document.getElementById('hzkMetricMyQt');
+          const elP = document.getElementById('hzkMetricPoApproved');
+          if (elH) elH.textContent = `${m.pendingHandoversCount} รายการ`;
+          if (elJ) elJ.textContent = emp.isTech ? `${m.myJobsCount} งานฉัน / ${m.openJobsCount} รวม` : `${m.openJobsCount} เคส`;
+          if (elQ) elQ.textContent = `${m.myQtCount} ฉบับ / ${m.totalQtCount} รวม`;
+          if (elP) elP.textContent = `${m.poApprovedCount} รายการ`;
+
+          const inboxWrap = document.getElementById('hzkV1171CrossDeptInboxWrap');
+          const inboxList = document.getElementById('hzkV1171CrossDeptInboxList');
+          if (inboxWrap && inboxList && Array.isArray(d.pendingHandovers) && d.pendingHandovers.length > 0) {
+            inboxWrap.style.display = 'block';
+            inboxList.innerHTML = d.pendingHandovers.map(h => `
+              <div style="background:#FFFFFF;border:1px solid #FCD34D;border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;">
+                <div>
+                  <b>[${h.handoverId}] จาก ${h.fromDept}</b> (${h.sender}) ➔ ลูกค้า: <b>${h.customerName}</b> | ${h.modelSn} (${h.amount})
+                </div>
+                <button type="button" data-hnd-id="${h.handoverId}" class="hzk-v1171-ack-hnd-btn" style="background:#059669;color:#FFF;border:none;border-radius:6px;padding:5px 10px;font-weight:700;cursor:pointer;">✅ รับเรื่องดำเนินการแล้ว</button>
+              </div>
+            `).join('');
+
+            inboxList.querySelectorAll('.hzk-v1171-ack-hnd-btn').forEach(b => {
+              b.onclick = async () => {
+                const hId = b.getAttribute('data-hnd-id');
+                b.disabled = true;
+                b.textContent = '⏳ กำลังบันทึก...';
+                await fetch(gasUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                  body: JSON.stringify({ action: 'completeCrossDeptHandover', handoverId: hId, actorName: emp.name })
+                });
+                renderPersonalizedEmployeeCockpit(emp);
+              };
+            });
+          }
+        }
+      } catch (err) {}
+    } else {
+      // Offline/local stats fallback
+      const localArchives = (() => {
+        try { return JSON.parse(localStorage.getItem(STORAGE_ARCHIVE_KEY) || '[]'); } catch (e) { return []; }
+      })();
+      const myQt = localArchives.filter(q => String(q.salesperson || '').toUpperCase() === emp.code.toUpperCase());
+      const elQ = document.getElementById('hzkMetricMyQt');
+      const elJ = document.getElementById('hzkMetricOpenJobs');
+      const elP = document.getElementById('hzkMetricPoApproved');
+      if (elQ) elQ.textContent = `${myQt.length} ฉบับ / ${localArchives.length} รวม`;
+      if (elJ) elJ.textContent = 'พร้อมใช้งาน Offline';
+      if (elP) elP.textContent = 'ซิงก์เมื่อต่อ GAS';
+    }
+  }
+
+  function openPersonalEmployeeSelectorModal() {
+    let selModal = document.getElementById('hzkPersonalEmployeeSelectorModal');
+    if (!selModal) {
+      selModal = document.createElement('div');
+      selModal.id = 'hzkPersonalEmployeeSelectorModal';
+      selModal.style.cssText =
+        'position:fixed;inset:0;z-index:20070;background:rgba(15,23,42,0.86);display:flex;' +
+        'align-items:center;justify-content:center;padding:12px;overflow-y:auto;';
+      document.body.appendChild(selModal);
+    }
+
+    const activeEmp = getActiveEmployeeProfileV1171();
+    const groups = [
+      { key: 'SERVICE_MGR', label: '🧑‍💼 แผนกบริการ (Service Management & Admin)' },
+      { key: 'SERVICE_TECH', label: '🛠️ ทีมช่างบริการภาคสนาม & คลัง IMS (T01–T08)' },
+      { key: 'SALES_TH', label: '💼 ฝ่ายขายในประเทศ (Commercial Sales THB)' },
+      { key: 'JPC_CORP', label: '🇯🇵 ฝ่ายขายองค์กรญี่ปุ่น (Japanese Corporate)' },
+      { key: 'MARKETING', label: '📣 ฝ่ายการตลาดและผลิตภัณฑ์ (Marketing)' },
+      { key: 'ACCOUNTING', label: '🧾 ฝ่ายบัญชีและการเงิน (Accounting & Finance)' },
+      { key: 'ADMIN_HR', label: '🏢 ฝ่ายธุรการและบุคคล (Admin & HR)' },
+      { key: 'EXECUTIVE', label: '👑 คณะผู้บริหารระดับสูง (Executive Management)' }
+    ];
+
+    const groupsHtml = groups.map(g => {
+      const members = COMPLETE_COMPANY_ROSTER_V1171.filter(m => m.deptKey === g.key);
+      const cards = members.map(m => {
+        const isCurrent = m.id === activeEmp.id;
+        return `
+          <button type="button" data-emp-id="${m.id}" class="hzk-pick-emp-cockpit-btn" style="text-align:left;background:${isCurrent ? '#EFF6FF' : '#F8FAFC'};border:${isCurrent ? '2px solid #0284C7' : '1px solid #CBD5E1'};border-radius:10px;padding:10px 12px;cursor:pointer;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;">
+              <span style="font-weight:800;font-size:13px;color:#0F172A;">${m.name}</span>
+              ${isCurrent ? '<span style="background:#0284C7;color:#FFF;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:800;">กำลังใช้งาน</span>' : ''}
+            </div>
+            <div style="font-size:11.5px;color:#475569;margin-top:2px;">${m.role} (${m.code})</div>
+          </button>
+        `;
+      }).join('');
+
+      return `
+        <div style="margin-bottom:14px;">
+          <div style="font-weight:800;color:#002B49;font-size:13.5px;margin-bottom:6px;border-bottom:1px solid #E2E8F0;padding-bottom:4px;">${g.label}</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;">${cards}</div>
+        </div>
+      `;
+    }).join('');
+
+    selModal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:980px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:#002B49;color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1171 • PERSONALIZED EMPLOYEE WORKSPACE ROUTER</div>
+            <div style="font-size:16px;font-weight:800;">🧑‍💻 เลือกโปรไฟล์พนักงานหรือแผนกของคุณเพื่อปรับหน้าจอให้ตรงกับงานจริง</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkPersonalEmployeeSelectorModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+        <div style="padding:16px 20px;">
+          <div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:9px 12px;font-size:12px;color:#0369A1;margin-bottom:14px;">
+            💡 <b>ระบบจดจำโปรไฟล์อัตโนมัติ:</b> เมื่อเลือกชื่อของคุณแล้ว หน้าจอจะปรับสี ปุ่มลัด ภาษา (TH/EN/日本語) และซ่อนฟอร์มที่ไม่เกี่ยวข้องให้เหมาะสมกับตำแหน่งงานของคุณทันทีในทุกครั้งที่เปิดแอปครับ
+          </div>
+          ${groupsHtml}
+        </div>
+      </div>
+    `;
+    selModal.style.display = 'flex';
+
+    selModal.querySelectorAll('.hzk-pick-emp-cockpit-btn').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.getAttribute('data-emp-id');
+        const found = COMPLETE_COMPANY_ROSTER_V1171.find(x => x.id === id);
+        if (found) {
+          sessionStorage.removeItem('hzk_v1171_force_show_jobsheet');
+          setActiveEmployeeProfileV1171(found, true);
+          selModal.style.display = 'none';
+          showHzkToastNotification(`✅ ปรับหน้าจอเข้าสู่โต๊ะทำงานของ ${found.name} (${found.deptLabel}) เรียบร้อยแล้ว`, false);
+        }
+      };
+    });
+  }
+
+  window.openPersonalEmployeeSelectorModal = openPersonalEmployeeSelectorModal;
+  window.renderPersonalizedEmployeeCockpit = renderPersonalizedEmployeeCockpit;
+
+  function bootPersonalizedCockpitV1171() {
     installGlobalRuntimeGuard();
     dockOmniBridgeButtons();
+    renderPersonalizedEmployeeCockpit(getActiveEmployeeProfileV1171());
     setTimeout(initMobileCleanUiDeclutter, 300);
     hookAdminStudioInspectorButton();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootPersonalizedCockpitV1171);
+  } else {
+    bootPersonalizedCockpitV1171();
   }
 })();

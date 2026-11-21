@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1170-lifecycle-pnl';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1171-personalized-cockpit';
 const CORE_ASSETS = [
   './',
   './index.html',

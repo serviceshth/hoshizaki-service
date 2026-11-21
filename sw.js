@@ -1,11 +1,15 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1156-mobile-clean-ui';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1158-deepscan-fixed';
 const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './hzk_enterprise_modules.js',
   './hzk_sales_crm_quotation_addon.js',
   './sales_crm_master_db_y2026.json',
-  './live_stock_snapshot_y2026.json'
+  './live_stock_snapshot_y2026.json',
+  './parts_catalog.json',
+  './serial_db.json',
+  './quotation_archive.json'
 ];
 
 self.addEventListener('install', (event) => {

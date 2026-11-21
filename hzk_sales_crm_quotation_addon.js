@@ -1542,6 +1542,53 @@
     bindSalesQuotationEvents(db);
   }
 
+  
+  function validateSalesQuotationBeforeCommit_(db, actionLabel) {
+    const cust = (document.getElementById('hzkSqCustomer')?.value || '').trim();
+    const errors = [];
+    if (!cust) {
+      errors.push('✕ ยังไม่ได้ระบุชื่อลูกค้า / บริษัท (Customer Name)');
+    }
+    if (!Array.isArray(HZK_OMNI_STATE.items) || HZK_OMNI_STATE.items.length === 0) {
+      errors.push('✕ ยังไม่มีรายการสินค้าหรือบริการในใบเสนอราคา/ใบสั่งซื้อ');
+    } else {
+      const zeroItems = HZK_OMNI_STATE.items.filter(it => Number(it.unitPrice || 0) <= 0);
+      if (zeroItems.length > 0) {
+        errors.push('✕ พบรายการที่ราคาต่อหน่วยเป็น 0.00 บาท (' + zeroItems.map(x => x.model).join(', ') + ')');
+      }
+      const stockMap = (db && db.stockMap) || {};
+      const shortItems = HZK_OMNI_STATE.items.filter(it => {
+        if (it.isService) return false;
+        const st = stockMap[String(it.model || '').trim().toUpperCase()];
+        return st && Number(st.available || 0) < Number(it.qty || 1);
+      });
+      if (shortItems.length > 0) {
+        errors.push('⚠️ สินค้าบางรายการมีสต็อกพร้อมส่งไม่พอจำนวนที่สั่ง (' + shortItems.map(x => x.model).join(', ') + ') — แนะนำเปิดใบขอซื้อ PR ควบคู่');
+      }
+    }
+
+    let banner = document.getElementById('hzkSqValidationErrorBanner');
+    if (!banner) {
+      const actionBar = document.querySelector('#hzkSalesCorporateQtModal .hzk-sq-action-bar');
+      if (actionBar && actionBar.parentElement) {
+        banner = document.createElement('div');
+        banner.id = 'hzkSqValidationErrorBanner';
+        actionBar.parentElement.insertBefore(banner, actionBar);
+      }
+    }
+    if (errors.length > 0) {
+      if (banner) {
+        banner.style.cssText = 'background:#FEF2F2;border:2px solid #DC2626;color:#991B1B;border-radius:12px;padding:10px 14px;margin-bottom:10px;font-size:12px;font-weight:700;line-height:1.5;';
+        banner.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span>🚨 ตรวจพบข้อควรระวังก่อน' + actionLabel + ':</span><button type="button" onclick="this.parentElement.parentElement.style.display=\'none\'" style="background:#DC2626;color:#FFF;border:none;border-radius:6px;padding:2px 8px;font-weight:900;cursor:pointer;">✕</button></div>' + errors.join('<br>');
+        banner.style.display = 'block';
+      }
+      return confirm('ตรวจพบข้อควรระวังก่อน' + actionLabel + ':\n\n' + errors.join('\n') + '\n\nต้องการดำเนินการต่อหรือไม่?');
+    } else if (banner) {
+      banner.style.display = 'none';
+    }
+    return true;
+  }
+
   function bindSalesQuotationEvents(db) {
     const modal = document.getElementById('hzkSalesCorporateQtModal');
     modal.querySelectorAll('input, select, textarea').forEach(el => {
@@ -1603,13 +1650,14 @@
         d: '',
         h: ''
       };
+      const autoUnitPrice = Number(mObj.listPrice || mObj.unitPrice || mObj.price || 0);
       HZK_OMNI_STATE.items.push({
         model: mObj.model,
         description: mObj.description,
         w: mObj.w,
         d: mObj.d,
         h: mObj.h,
-        unitPrice: 0,
+        unitPrice: autoUnitPrice,
         discount: 0,
         qty: 1,
         isService: false
@@ -1658,10 +1706,12 @@
     };
 
     document.getElementById('hzkSqPrintPdfBtn').onclick = function () {
+      if (!validateSalesQuotationBeforeCommit_(db, 'พิมพ์ / บันทึก PDF')) return;
       openIsolatedA4PreviewWindow(db, true);
     };
 
     document.getElementById('hzkSqExportExcelBtn').onclick = function () {
+      if (!validateSalesQuotationBeforeCommit_(db, 'ส่งออก Excel')) return;
       downloadExcelFileDirect(db);
     };
 
@@ -1686,6 +1736,7 @@
     };
 
     document.getElementById('hzkSqSaveSyncBtn').onclick = async function () {
+      if (!validateSalesQuotationBeforeCommit_(db, 'บันทึกลงฐานข้อมูล')) return;
       const qt = collectCurrentFormPayload(db);
       autoSaveDraftToLocal(db);
       saveToLocalArchiveList(qt);
@@ -1722,15 +1773,27 @@
         const lineAmt = Math.max(0, (Number(item.unitPrice || 0) - Number(item.discount || 0)) * Number(item.qty || 1));
         subTotal += lineAmt;
         if (item.isService) serviceSubTotal += lineAmt;
+        const stInfo = (db && db.stockMap) ? db.stockMap[String(item.model || '').trim().toUpperCase()] : null;
+        const reqQty = Number(item.qty || 1);
+        const stockBadgeHtml = item.isService
+          ? '<div style="font-size:10px;color:#0369A1;font-weight:600;">🛠️ งานบริการ</div>'
+          : (stInfo
+              ? (Number(stInfo.available || 0) >= reqQty
+                  ? `<div style="font-size:10px;color:#047857;font-weight:700;">🟢 พร้อมส่ง (${stInfo.available} เครื่อง)</div>`
+                  : `<div style="font-size:10px;color:#B91C1C;font-weight:800;">✕ สต็อกไม่พอ (มี ${stInfo.available || 0} / ${stInfo.leadTime || 'ต้องเปิด PR'})</div>`)
+              : '<div style="font-size:10px;color:#B45309;font-weight:600;">🟠 เช็กสต็อก/สั่งนำเข้า</div>');
+        const zeroPriceWarn = Number(item.unitPrice || 0) <= 0
+          ? 'border:2px solid #DC2626;background:#FEF2F2;'
+          : 'border:1px solid #E2E8F0;';
         return `
           <tr>
             <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">${idx + 1}</td>
-            <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${item.model}</td>
+            <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${item.model}${stockBadgeHtml}</td>
             <td style="padding:6px;border:1px solid #CBD5E1;"><input data-idx="${idx}" data-f="description" value="${item.description}" style="width:100%;border:1px solid #E2E8F0;padding:4px;" /></td>
             <td style="padding:6px;border:1px solid #CBD5E1;width:62px;"><input data-idx="${idx}" data-f="w" value="${item.w}" style="width:100%;border:1px solid #E2E8F0;padding:4px;text-align:center;" /></td>
             <td style="padding:6px;border:1px solid #CBD5E1;width:62px;"><input data-idx="${idx}" data-f="d" value="${item.d}" style="width:100%;border:1px solid #E2E8F0;padding:4px;text-align:center;" /></td>
             <td style="padding:6px;border:1px solid #CBD5E1;width:62px;"><input data-idx="${idx}" data-f="h" value="${item.h}" style="width:100%;border:1px solid #E2E8F0;padding:4px;text-align:center;" /></td>
-            <td style="padding:6px;border:1px solid #CBD5E1;width:95px;"><input type="number" data-idx="${idx}" data-f="unitPrice" value="${item.unitPrice}" style="width:100%;border:1px solid #E2E8F0;padding:4px;text-align:right;" /></td>
+            <td style="padding:6px;border:1px solid #CBD5E1;width:95px;"><input type="number" data-idx="${idx}" data-f="unitPrice" value="${item.unitPrice}" style="width:100%;${zeroPriceWarn}padding:4px;text-align:right;" /></td>
             <td style="padding:6px;border:1px solid #CBD5E1;width:80px;"><input type="number" data-idx="${idx}" data-f="discount" value="${item.discount}" style="width:100%;border:1px solid #E2E8F0;padding:4px;text-align:right;" /></td>
             <td style="padding:6px;border:1px solid #CBD5E1;width:58px;"><input type="number" data-idx="${idx}" data-f="qty" value="${item.qty}" style="width:100%;border:1px solid #E2E8F0;padding:4px;text-align:center;" /></td>
             <td style="padding:6px;border:1px solid #CBD5E1;text-align:right;font-weight:700;">${lineAmt.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>

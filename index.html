@@ -639,7 +639,7 @@ padding-left: 0.55rem !important;
 position: fixed;
 top: max(10px, env(safe-area-inset-top, 10px));
 right: max(12px, env(safe-area-inset-right, 12px));
-z-index: 9999;
+z-index: 10999;
 display: none;
 align-items: center;
 gap: 6px;
@@ -819,7 +819,7 @@ transform: scale(0.96);
 </div>
 </div>
 <div class="flex flex-wrap items-center gap-1.5 mt-1 min-w-0">
-<p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1178-CLEAN-CANVAS-APP-DRAWER</span></p>
+<p class="text-[11px] sm:text-xs text-hoshizaki-blue">Job Service Management System <span class="text-[10px] bg-emerald-500/30 border border-emerald-400/40 px-1.5 py-0.2 rounded text-emerald-200 font-bold">Enterprise v1179-FULL-QA-VERIFIED</span></p>
 </div>
 <!-- แถวปุ่มสถานะด่วนกะทัดรัด (Flex-Wrap พอดีกรอบ 100% ไม่ล้นขอบจอทุกอุปกรณ์) -->
 <div id="topHeaderStatusPillsRow" class="flex flex-wrap items-center gap-1.5 mt-1.5 min-w-0 max-w-full">
@@ -889,7 +889,7 @@ transform: scale(0.96);
 สลับเป็นโหมดช่างดำเนินงาน
 </button>
 </div>
-<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1178-CLEAN-CANVAS-APP-DRAWER · ≤30 Core Users) -->
+<!-- แถบกระดานงานประจำวันเฉพาะตำแหน่ง (My Daily Role Workspace — Enterprise v1179-FULL-QA-VERIFIED · ≤30 Core Users) -->
 <div id="myDailyRoleWorkspaceBar" class="mt-2 rounded-xl bg-white/10 border border-white/20 p-2 text-xs">
 <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5 px-1">
 <span id="myDailyWorkspaceTitle" class="font-extrabold text-sky-200 flex items-center gap-1.5">
@@ -1779,7 +1779,7 @@ transform: scale(0.96);
 </nav>
 <!-- Main Job Sheet Printable Container -->
 <main id="jobSheetContainer" class="print-container max-w-4xl mx-auto bg-white rounded-xl shadow-xl p-3.5 sm:p-6 space-y-4 border border-gray-200">
-<!-- Visual 5-Stage End-to-End Lifecycle Stepper (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER) -->
+<!-- Visual 5-Stage End-to-End Lifecycle Stepper (Enterprise v1179-FULL-QA-VERIFIED) -->
 <div id="jobEndToEndStepperBar" class="no-print bg-gradient-to-r from-[#002B49] via-sky-900 to-emerald-900 text-white rounded-xl p-2.5 shadow-sm border border-sky-300/40">
   <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2 px-1">
     <span class="text-[11px] font-extrabold text-amber-300 flex items-center gap-1.5">
@@ -2629,7 +2629,7 @@ SERVICE REPORT / ใบแจ้งบริการ
 <!-- Web App UI Footer -->
 <div class="no-print bg-hoshizaki-navy/95 text-white/90 rounded-xl px-4 py-2.5 shadow-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px]">
 <div class="font-extrabold tracking-wide text-amber-300">
-HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1178-CLEAN-CANVAS-APP-DRAWER</span>
+HOSHIZAKI™ GLOBAL ENTERPRISE <span class="text-white/70 font-normal">| Enterprise v1179-FULL-QA-VERIFIED</span>
 </div>
 <div class="text-white/80 font-medium">
 <span onclick="showCreatorCreditPopup()" class="cursor-pointer hover:text-amber-200 transition underline decoration-dotted underline-offset-2" title="Service Management System">Service Management System</span> · <span class="text-rose-300 font-bold">For Internal Use Only</span>
@@ -19633,7 +19633,7 @@ function openFullScreenSpecViewerModal(presetModel) {
             } catch (e) {}
         });
     </script>
-<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER) -->
+<!-- Full-Screen Serial 360° Dossier Modal (Enterprise v1179-FULL-QA-VERIFIED) -->
 <div id="serial360FullScreenModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[85] flex items-center justify-center p-0 sm:p-3 no-print">
 <div class="bg-white w-full h-full sm:h-[95vh] sm:max-w-6xl sm:rounded-2xl shadow-2xl border border-sky-200 flex flex-col overflow-hidden">
 <!-- Top Navy Header -->
@@ -22529,7 +22529,7 @@ function openFullScreenSpecViewerModal(presetModel) {
         });
     
         // =========================================================================
-        // Enterprise v1178-CLEAN-CANVAS-APP-DRAWER AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
+        // Enterprise v1179-FULL-QA-VERIFIED AUTO-LEARN MASTER DATABASE + GEOFENCE AUTO CHECK-IN/OUT + DIRECT PDF/IMAGE UPLOAD
         // =========================================================================
 
         function autoPersistNewMasterDataFromJob(jobData) {
@@ -30375,7 +30375,7 @@ transition: all 0.15s ease;
         }
 
         const passed = checks.filter(c => c.ok).length;
-        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER)</span>`;
+        badgeEl.innerHTML = `<span class="${passed === checks.length ? 'text-emerald-700' : 'text-amber-700'}">ผลการตรวจสอบ: PASS ${passed} / ${checks.length} รายการ (Enterprise v1179-FULL-QA-VERIFIED)</span>`;
         listEl.innerHTML = checks.map(c => `
             <div class="flex items-center justify-between px-3 py-1.5 rounded-lg border ${c.ok ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}">
                 <span class="font-medium">${c.name}</span>
@@ -30569,7 +30569,7 @@ display: none !important;
 
     const TRILINGUAL_LABELS = {
         TH: {
-            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER)',
+            subtitle: 'ระบบบริหารจัดการงานบริการภาคสนามครบวงจร (Enterprise v1179-FULL-QA-VERIFIED)',
             selectTech: 'เลือกโปรไฟล์ช่าง',
             pullCloud: 'ดึงข้อมูล Cloud',
             kpiDash: 'แดชบอร์ด KPI',
@@ -30578,7 +30578,7 @@ display: none !important;
             execBriefBtn: 'สรุปผู้บริหาร 3 ภาษา (TH/EN/JP)'
         },
         EN: {
-            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER)',
+            subtitle: 'Enterprise Digital Field Service Management (Enterprise v1179-FULL-QA-VERIFIED)',
             selectTech: 'Technician Profile',
             pullCloud: 'Two-Way Cloud Sync',
             kpiDash: 'Executive KPI',
@@ -30587,7 +30587,7 @@ display: none !important;
             execBriefBtn: 'Trilingual Exec Brief (TH/EN/JP)'
         },
         JP: {
-            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER)',
+            subtitle: '統合デジタルフィールドサービス管理システム (Enterprise v1179-FULL-QA-VERIFIED)',
             selectTech: 'エンジニア選択',
             pullCloud: 'クラウド双方向同期',
             kpiDash: '経営KPIダッシュボード',
@@ -30669,21 +30669,21 @@ display: none !important;
                 <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇹🇭 สรุปรายงานผู้บริหาร (ภาษาไทย — Phase 1 Service Unit &amp; Service Center)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
+                        ระบบ HOSHIZAKI Job Service Management (Enterprise v1179-FULL-QA-VERIFIED) เปิดใช้งานจริงในเฟสที่ 1 (Service Unit และ Service Center) โดยมีใบงานสะสมในระบบ <b>${jobs.length}</b> รายการ ปิดงานสำเร็จ <b>${completed}</b> รายการ (อัตราซ่อมสำเร็จ ${ftfr}%) งานค้างรออะไหล่ <b>${waiting}</b> รายการ และยอดรวมค่าบริการและอะไหล่ <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> ระบบควบคุมการแจ้งเตือนเฉพาะหน่วยงานบริการ 100% พร้อมรองรับการขยายสู่ Admin Unit และ Accounting Unit ในเฟสถัดไป
                     </p>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl p-3 bg-sky-50/50">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇬🇧 Executive Operations Summary (Corporate English)</div>
                     <p class="text-slate-700 leading-relaxed">
-                        The HOSHIZAKI Enterprise v1178-CLEAN-CANVAS-APP-DRAWER Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
+                        The HOSHIZAKI Enterprise v1179-FULL-QA-VERIFIED Field Service Platform is live in Phase 1 (Service Unit &amp; Service Center). Out of <b>${jobs.length}</b> total logged service jobs, <b>${completed}</b> have been completed (${ftfr}% resolution rate), with <b>${waiting}</b> jobs awaiting spare parts and cumulative service revenue of <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b>. Automated notifications remain strictly isolated to Service operations prior to Phase 2 Admin &amp; Accounting rollout.
                     </p>
                 </div>
 
                 <div class="border border-amber-200 rounded-xl p-3 bg-amber-50/40">
                     <div class="font-extrabold text-hoshizaki-navy mb-1">🇯🇵 エグゼクティブ業務サマリー（日本語・経営報告用）</div>
                     <p class="text-slate-800 leading-relaxed">
-                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1178-CLEAN-CANVAS-APP-DRAWER）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
+                        ホシザキ・タイランド サービス業務管理システム（Enterprise v1179-FULL-QA-VERIFIED）は、第1フェーズ（サービス部およびサービスセンター限定）にて本稼働しております。現在の累計登録案件数は <b>${jobs.length}件</b>、作業完了は <b>${completed}件</b>（完了率 ${ftfr}%）、部品入荷待ちは <b>${waiting}件</b>、サービス・部品売上累計は <b>${totalRev.toLocaleString('en-US', {minimumFractionDigits:2})} THB</b> です。他部署への自動通知は完全に分離されており、第2フェーズでの管理部・経理部連携へ安全に拡張可能です。
                     </p>
                 </div>
             </div>
@@ -33695,9 +33695,9 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
             JP: 'ホシザキ・タイランド サービス部 経営会議プレゼンテーション資料'
         };
         const subMap = {
-            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1178-CLEAN-CANVAS-APP-DRAWER',
-            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER)',
-            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER)'
+            TH: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด • ระบบบริหารงานบริการหลังการขาย Enterprise v1179-FULL-QA-VERIFIED',
+            EN: 'HOSHIZAKI (THAILAND) LIMITED • After-Sales Field Service Intelligence (Enterprise v1179-FULL-QA-VERIFIED)',
+            JP: 'ホシザキ・タイランド株式会社 • 統合アフターサービス経営分析レポート (Enterprise v1179-FULL-QA-VERIFIED)'
         };
 
         const deckHtml = `<!DOCTYPE html>
@@ -33759,7 +33759,7 @@ Loaner / Demo Machine Tracker • AI Spare Parts Demand Forecasting)
       <tbody>${(d.topModels.length ? d.topModels : [['IM / KM / FM Series', d.totalJobs]]).map(([m, c]) => `<tr><td><b>${m}</b></td><td>${c}</td><td>${d.totalJobs ? Math.round((c/d.totalJobs)*100) : 100}%</td></tr>`).join('')}</tbody>
     </table>
   </div>
-  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1178-CLEAN-CANVAS-APP-DRAWER Live Report</span></div>
+  <div class="ftr"><span>Prepared By: Noparin Homhoul — Deputy Service Manager, Hoshizaki (Thailand) Limited</span><span>Enterprise v1179-FULL-QA-VERIFIED Live Report</span></div>
 </div>
 
 <!-- Slide 2: 360 Workforce & Outsource Scorecard -->
@@ -33984,7 +33984,7 @@ ONE-FILE PORTABLE MASTER BACKUP / MIGRATION BUNDLE
 <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[94dvh] border border-slate-200">
 <div class="bg-gradient-to-r from-[#0f172a] via-[#002B49] to-[#0369a1] text-white px-4 py-3 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
 <div>
-<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1178-CLEAN-CANVAS-APP-DRAWER — Multi-Branch &amp; White-Label Ready)</h3>
+<h3 class="font-extrabold text-sm sm:text-base"><i class="fa-solid fa-sliders text-amber-300 mr-1.5"></i>Developer &amp; Admin Control Studio (Enterprise v1179-FULL-QA-VERIFIED — Multi-Branch &amp; White-Label Ready)</h3>
 <p class="text-[11px] text-sky-200">ศูนย์ควบคุมสำหรับผู้ดูแลระบบและผู้พัฒนา: เปิด/ปิดฟีเจอร์ • โหมดจำลองตรวจสอบก่อนใช้งานจริง (Staging Sandbox) • โคลนไฟล์เดียวสำหรับสาขา/ต่างประเทศ • สำรองข้อมูลและย้ายเซิร์ฟเวอร์</p>
 </div>
 <div class="flex items-center gap-1.5">
@@ -38038,7 +38038,7 @@ CUSTOMER CSAT & 7-DAY POST-SERVICE QUALITY RADAR MODAL (v1131-AUTO-FIRST-TIME-ST
                         <div>
                             <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-[#00A3E0]"></i>
-                                <span>HOSHIZAKI Enterprise v1178-CLEAN-CANVAS-APP-DRAWER — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
+                                <span>HOSHIZAKI Enterprise v1179-FULL-QA-VERIFIED — ระบบบริหารงานบริการครบวงจร 4 มิติ</span>
                             </h3>
                             <p class="text-[11px] text-sky-200">Visual Flat-Rate Menu • Skill-Based Dispatch • Van Min/Max Auto-Restock • Outsource Billing & Predictive BI</p>
                         </div>
@@ -38563,7 +38563,7 @@ FIELD TECHNICIAN + COORDINATOR OPERATIONAL SUITE
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-sky-200">
                     <div class="bg-gradient-to-r from-[#002B49] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1178-CLEAN-CANVAS-APP-DRAWER</span>
+                            <span class="bg-emerald-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full">Enterprise v1179-FULL-QA-VERIFIED</span>
                             <h3 class="font-extrabold text-sm sm:text-base mt-0.5">ผู้ช่วยช่างภาคสนาม &amp; ศูนย์ประสานงานรวดเร็ว (Field &amp; Coordinator Suite)</h3>
                         </div>
                         <button type="button" onclick="document.getElementById('fieldAndCoordinatorOpsModal').classList.add('hidden')" class="bg-red-600 hover:bg-red-700 text-white rounded-lg w-8 h-8 font-extrabold text-lg">&times;</button>
@@ -39471,7 +39471,7 @@ Accounting VAT/WHT Ledger, Invoice/Receipt & NAV ERP Export • Audit Trail)
                     <div class="bg-gradient-to-r from-[#002B49] via-[#00406B] to-[#0082C8] text-white px-4 py-3 flex items-center justify-between">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1178-CLEAN-CANVAS-APP-DRAWER</span>
+                                <span class="bg-amber-400 text-[#002B49] text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Enterprise v1179-FULL-QA-VERIFIED</span>
                                 <h3 class="font-extrabold text-sm sm:text-base">ศูนย์บริหารจัดการ ผู้บริหาร • แอดมิน • บัญชี (Executive, Admin &amp; Accounting Hub)</h3>
                             </div>
                             <p class="text-[11px] text-sky-100 mt-0.5">GP% &amp; Discount Approval Gatekeeper • Admin PO/Document QC • Accounting VAT/WHT &amp; NAV ERP Export • Immutable Audit Log</p>
@@ -41021,7 +41021,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI AI Field Co-Pilot &amp; IoT Digital Twin Suite</span>
-<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1178-CLEAN-CANVAS-APP-DRAWER</span>
+<span class="text-[10px] bg-amber-400/25 border border-amber-300/50 text-amber-200 px-2 py-0.5 rounded-full">Enterprise v1179-FULL-QA-VERIFIED</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. Digital Twin &amp; Root-Cause · 2. Vision &amp; Voice Report · 3. Auto-Dispatch &amp; Van Pre-Alloc · 4. AI Triage &amp; Upsell · 5. Executive AI Copilot</p>
 </div>
@@ -41065,7 +41065,7 @@ margin-top: 0.5rem;
 <div>
 <h2 class="text-sm sm:text-base font-extrabold tracking-wide flex items-center gap-2">
 <span>HOSHIZAKI Enterprise Governance, EHS/ESG, NAV ERP &amp; Role Guide</span>
-<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1178-CLEAN-CANVAS-APP-DRAWER</span>
+<span class="text-[10px] bg-emerald-400/25 border border-emerald-300/50 text-emerald-200 px-2 py-0.5 rounded-full">Enterprise v1179-FULL-QA-VERIFIED</span>
 </h2>
 <p class="text-[11px] text-sky-200">1. PDPA &amp; Audit Trail · 2. Van Cycle Count &amp; Defective QR · 3. EHS LOTO &amp; ESG Carbon · 4. NAV ERP &amp; Split Billing · 5. In-App Role Guide &amp; Batch QR</p>
 </div>
@@ -42003,6 +42003,139 @@ Van Stock T01-T08, Parts Catalog, Factory GIT/ETA & NAV ERP CSV)
   document.addEventListener('DOMContentLoaded', function() {
     mountCleanCanvasV1178_();
     setTimeout(mountCleanCanvasV1178_, 900);
+  });
+})();
+</script>
+
+
+<style id="v1179-STANDARD-RED-CLOSE-AND-PORTAL-CSS">
+  #universalModalRedCloseBar {
+    z-index: 10999 !important;
+  }
+  /* Standardize Red '✕' Close Buttons in Dynamic Modals */
+  [id$="Modal"] button[onclick*="classList.add('hidden')"],
+  [id$="Modal"] button[onclick*="remove()"],
+  [id$="Modal"] button[onclick*="close"] {
+    transition: transform 0.12s ease, background-color 0.15s ease;
+  }
+  /* Floating Portal Mode for Dropdowns when triggered from App Drawer */
+  #pmSuiteDropdownMenu.hzk-portal-float,
+  #outsourceHubDropdownMenu.hzk-portal-float,
+  #manualSearchMenu.hzk-portal-float,
+  #topExecutiveReportDropdownMenu.hzk-portal-float {
+    position: fixed !important;
+    top: 68px !important;
+    right: 16px !important;
+    left: auto !important;
+    width: min(92vw, 400px) !important;
+    z-index: 10650 !important;
+    max-height: 82vh !important;
+    overflow-y: auto !important;
+    box-shadow: 0 24px 48px rgba(2, 6, 23, 0.45) !important;
+  }
+</style>
+
+<script id="v1179-FULL-QA-PORTAL-AND-CLOSE-PATCH">
+(function() {
+  // Ensure floating dropdowns are always accessible even when #toolbarActions is collapsed
+  const PORTAL_DROPDOWN_IDS = [
+    'pmSuiteDropdownMenu',
+    'outsourceHubDropdownMenu',
+    'manualSearchMenu',
+    'topExecutiveReportDropdownMenu'
+  ];
+
+  function promoteDropdownToBodyPortal_(menuId) {
+    const menu = document.getElementById(menuId);
+    if (!menu) return null;
+    if (menu.parentElement !== document.body) {
+      document.body.appendChild(menu);
+    }
+    menu.classList.add('hzk-portal-float');
+    return menu;
+  }
+
+  ['togglePmSuiteDropdown', 'toggleOutsourceHubDropdown', 'toggleManualSearchMenu', 'toggleTopExecutiveReportDropdown'].forEach(fnName => {
+    const origFn = window[fnName];
+    if (typeof origFn === 'function') {
+      window[fnName] = function(ev) {
+        const cleanOn = document.body.classList.contains('hzk-clean-canvas-on');
+        if (cleanOn) {
+          PORTAL_DROPDOWN_IDS.forEach(promoteDropdownToBodyPortal_);
+        }
+        return origFn.apply(this, arguments);
+      };
+    }
+  });
+
+  // Override App Drawer button execution so dropdown triggers open cleanly in portal mode
+  const origRenderDrawer = window.renderHzkV1178DrawerBody;
+  if (typeof origRenderDrawer === 'function') {
+    window.renderHzkV1178DrawerBody = function(catOverride) {
+      origRenderDrawer.apply(this, arguments);
+      const listEl = document.getElementById('hzkV1178DrawerListBody');
+      if (!listEl) return;
+      listEl.querySelectorAll('.hzk-drw-exec-btn').forEach(btn => {
+        const prevClick = btn.onclick;
+        btn.onclick = function(e) {
+          PORTAL_DROPDOWN_IDS.forEach(promoteDropdownToBodyPortal_);
+          if (typeof prevClick === 'function') prevClick.call(this, e);
+        };
+      });
+    };
+  }
+
+  // Extend getActivePopupModalsList & closeTopmostActivePopupModal to include App Drawer & z-[10050+] modals
+  const origGetActive = window.getActivePopupModalsList;
+  window.getActivePopupModalsList = function() {
+    const base = typeof origGetActive === 'function' ? origGetActive() : [];
+    const drawer = document.getElementById('hzkV1178AppDrawerBackdrop');
+    if (drawer && !drawer.classList.contains('hidden') && !base.includes(drawer)) {
+      base.push(drawer);
+    }
+    // Also detect dynamically created modals with style.display === 'flex' or 'block'
+    document.querySelectorAll('[id$="Modal"]').forEach(el => {
+      if (!el.classList.contains('hidden') && el.style.display !== 'none' && !base.includes(el)) {
+        base.push(el);
+      }
+    });
+    return base;
+  };
+
+  const origCloseTop = window.closeTopmostActivePopupModal;
+  window.closeTopmostActivePopupModal = function() {
+    const drawer = document.getElementById('hzkV1178AppDrawerBackdrop');
+    if (drawer && !drawer.classList.contains('hidden')) {
+      window.closeHzkV1178AppDrawer();
+      if (typeof updateUniversalRedCloseBarVisibility === 'function') updateUniversalRedCloseBarVisibility();
+      return;
+    }
+    if (typeof origCloseTop === 'function') origCloseTop();
+  };
+
+  // Standardize Red '✕' styling on modal header close buttons across dynamic modals
+  const redCloseObserver = new MutationObserver(function() {
+    if (typeof updateUniversalRedCloseBarVisibility === 'function') {
+      updateUniversalRedCloseBarVisibility();
+    }
+    document.querySelectorAll('[id$="Modal"] button').forEach(btn => {
+      const txt = (btn.textContent || '').trim();
+      const oc = (btn.getAttribute('onclick') || '');
+      if ((txt === '×' || txt === '✕' || txt === '✕ ปิด') && (oc.includes('hidden') || oc.includes('close') || oc.includes('remove'))) {
+        if (!btn.dataset.v1179RedStyled) {
+          btn.dataset.v1179RedStyled = '1';
+          btn.style.backgroundColor = '#DC2626';
+          btn.style.color = '#FFFFFF';
+          btn.style.borderRadius = '8px';
+          btn.style.fontWeight = '900';
+          btn.style.border = '1.5px solid #FCA5A5';
+        }
+      }
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    redCloseObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
   });
 })();
 </script>

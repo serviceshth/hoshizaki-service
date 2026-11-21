@@ -4535,10 +4535,11 @@
       document.body.appendChild(pop);
     }
 
+    pop.style.zIndex = '10650';
     const trigger = document.getElementById(triggerBtnId);
-    if (trigger) {
-      const rect = trigger.getBoundingClientRect();
-      const popW = Math.min(window.innerWidth * 0.94, 430);
+    const rect = trigger ? trigger.getBoundingClientRect() : null;
+    const popW = Math.min(window.innerWidth * 0.94, 430);
+    if (rect && rect.width > 0 && rect.height > 0) {
       let leftPos = rect.left;
       if (leftPos + popW > window.innerWidth - 10) {
         leftPos = Math.max(10, window.innerWidth - popW - 10);
@@ -4552,8 +4553,9 @@
         pop.style.top = Math.min(window.innerHeight - 280, rect.bottom + 6) + 'px';
       }
     } else {
-      pop.style.left = '16px';
-      pop.style.top = '120px';
+      pop.style.left = Math.max(12, Math.round((window.innerWidth - popW) / 2)) + 'px';
+      pop.style.bottom = 'auto';
+      pop.style.top = '72px';
     }
 
     pop.classList.remove('hidden');

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1178-clean-canvas-app-drawer';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1179-full-qa-verified';
 const CORE_ASSETS = [
   './',
   './index.html',

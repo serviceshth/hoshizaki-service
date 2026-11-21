@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1185-enterprise-18-modules-complete';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1186-production-ready-ai-ocr';
 const CORE_ASSETS = [
   './',
   './index.html',

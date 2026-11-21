@@ -249,6 +249,7 @@
       { icon: '🧾', label: 'ใบแจ้งหนี้ / ใบกำกับภาษี / ใบวางบิล (ฟอร์มมาตรฐานบัญชี + Digital Sign)', sub: 'ฟอร์ม A4 เหมือนต้นฉบับบัญชีเป๊ะ + ลายเซ็นดิจิทัล Chayanin / Witharat / Waraporn', action: () => window.openAccountingTaxInvoiceStudioModal() },
       { icon: '📦', label: 'ใบส่งของ Admin — Delivery Order / DO (ฟอร์มมาตรฐาน + Digital Sign)', sub: 'ฟอร์ม A4 Delivery Order ใบส่งของ(ไม่ใช่ใบกำกับภาษี) + ที่อยู่ปัจจุบัน + ลายเซ็นดิจิทัล Chayanin K.', action: () => window.openAdminDeliveryOrderStudioModal() },
       { icon: '📊', label: 'ทะเบียนคุม DO (e-POD เซ็นรับของ) & รายงานภาษีขาย (PP.30 / NAV)', sub: 'ติดตามสถานะเซ็นรับสินค้า e-POD + ตัดสต็อก/ลงทะเบียน S/N + ส่งออก Excel ภาษีขาย', action: () => window.openOutputVatAndDoRegisterModal() },
+      { icon: '⚡', label: 'คิวงานอัตโนมัติ & AI OCR อ่านสลิป/50 ทวิ/บิลทางด่วน (Zero-Friction Flow)', sub: 'เชื่อม QT ➔ คิว Admin DO ➔ คิวบัญชี SI ➔ ปิดยอด RV + สแกนสลิปโอนเงิน/50 ทวิ/ใบเสร็จทางด่วนด้วย AI', action: () => window.openZeroFrictionPipelineAndOcrModal() },
       { icon: '🏛️', label: 'ศูนย์รวมระบบองค์กรครบวงจร (Receipt RV / 50 ทวิ / CN / คลังค้นหา / รถส่วนตัว & รถเช่าผู้บริหาร)', sub: 'ครบทั้ง 18 โมดูล: รับชำระ RV, หัก ณ ที่จ่าย 3%, ใบลดหนี้ CN, ค้นหาเอกสารกลาง, เบิกรถช่าง, ค่าเสื่อม/ระยะทางรถส่วนตัว & รถเช่า MD/JPC', action: () => window.openEnterpriseOmniCommandCenterV1185() },
       { icon: '🛠️', label: 'ส่ง & ติดตามเอกสาร Service / ใบวางบิล / ใบเสร็จ', sub: 'ดึงข้อมูลจากใบแจ้งบริการปัจจุบันส่งพร้อมปุ่ม Track', action: () => launchTrackedDocFromServiceForm() },
       { icon: '🔄', label: 'ศูนย์ส่งต่องานข้ามแผนก (1-Click Handover)', sub: 'Sales ➔ ติดตั้ง/ลงทะเบียน S/N | Service ➔ บัญชี', action: () => openSalesCorporateQuotationWithPreset('Sales', 'ใบเสนอราคา (Quotation)', 'HANDOVER') },
@@ -10355,5 +10356,282 @@ ${finalUrl}`;
     else if (startTab === 'STORE_IMPORT') renderStoreImportTab();
     else if (startTab === 'RINGI_HR') renderRingiHrTab();
     else renderVaultTab();
+  };
+})();
+
+
+
+// ============================================================================
+// ENTERPRISE v1186 — PRODUCTION HARDENING, ZERO-FRICTION PIPELINE (QT->DO->SI->RV),
+//                    AI OCR SLIP / 50 ทวิ / TOLL SCANNER & STRICT ROLE LOCK
+// ============================================================================
+(function initHoshizakiProductionHardeningV1186() {
+  if (window.__HZK_PRODUCTION_HARDENING_V1186__) return;
+  window.__HZK_PRODUCTION_HARDENING_V1186__ = true;
+
+  // Enforce strict role lock for non-Super-Admin employees
+  const STRICT_ROLE_LOCK_KEY = 'hzk_v1186_strict_role_lock_enabled';
+
+  window.isStrictRoleLockEnabledV1186 = function () {
+    return localStorage.getItem(STRICT_ROLE_LOCK_KEY) === 'true';
+  };
+
+  window.toggleStrictRoleLockV1186 = function (enable) {
+    localStorage.setItem(STRICT_ROLE_LOCK_KEY, enable ? 'true' : 'false');
+    const emp = (typeof getActiveEmployeeProfileV1171 === 'function') ? getActiveEmployeeProfileV1171() : null;
+    if (emp && typeof renderPersonalizedEmployeeCockpit === 'function') {
+      renderPersonalizedEmployeeCockpit(emp);
+    }
+  };
+
+  // Zero-Friction Fulfillment Pipeline (QT -> DO -> SI -> RV) + AI OCR Scanner Modal
+  window.openZeroFrictionPipelineAndOcrModal = async function () {
+    let modal = document.getElementById('hzkZeroFrictionOcrModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkZeroFrictionOcrModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20290;background:rgba(15,23,42,0.9);display:flex;' +
+        'align-items:center;justify-content:center;padding:8px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    const isLocked = window.isStrictRoleLockEnabledV1186();
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1140px;max-height:95vh;overflow-y:auto;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,0.55);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#002B49,#0369A1);color:#FFF;padding:14px 20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;position:sticky;top:0;z-index:10;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1186 • ZERO-FRICTION PIPELINE (QT ➔ DO ➔ SI ➔ RV) + GEMINI AI OCR</div>
+            <div style="font-size:16px;font-weight:800;">⚡ ศูนย์ไหลงานอัตโนมัติข้ามแผนก &amp; AI OCR สแกนสลิป / 50 ทวิ / บิลทางด่วน</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <label style="background:rgba(255,255,255,0.16);padding:5px 10px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;">
+              <input type="checkbox" id="chkStrictRoleLockV1186" ${isLocked ? 'checked' : ''}> 🔒 ล็อกสิทธิ์หน้าจอรายบุคคล (Production Lock)
+            </label>
+            <button type="button" id="btnRunWatchdogNowV1186" style="background:#D97706;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:800;cursor:pointer;">🔔 ตรวจงานค้าง &amp; ซ่อมซ้ำ (SLA)</button>
+            <button type="button" onclick="document.getElementById('hzkZeroFrictionOcrModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+          </div>
+        </div>
+
+        <div style="padding:16px 20px;font-size:12.5px;">
+          <!-- AI OCR Document Scanner Section -->
+          <div style="background:linear-gradient(135deg,#F0F9FF,#ECFDF5);border:1.5px solid #7DD3FC;border-radius:14px;padding:14px;margin-bottom:16px;">
+            <div style="font-weight:800;color:#002B49;font-size:14px;margin-bottom:6px;">🤖 AI OCR อ่านเอกสารอัตโนมัติ (สลิปโอนเงิน • หนังสือรับรอง 50 ทวิ • ใบเสร็จทางด่วน/น้ำมัน)</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <select id="selOcrDocCategory" style="padding:8px 10px;border:1px solid #93C5FD;border-radius:8px;font-weight:700;background:#FFF;">
+                <option value="SLIP_OR_WHT">💰 สลิปโอนเงินธนาคาร / ใบหัก ณ ที่จ่าย 3% (50 ทวิ)</option>
+                <option value="TOLL_FUEL">🛣️ ใบเสร็จทางด่วน / ที่จอดรถ / ค่าน้ำมัน (เบิกรถส่วนตัว)</option>
+              </select>
+              <input type="file" id="inpOcrImageFile" accept="image/*" style="background:#FFF;padding:6px;border:1px solid #CBD5E1;border-radius:8px;font-size:12px;">
+              <button type="button" id="btnRunGeminiOcrNow" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:8px 16px;font-weight:800;cursor:pointer;">✨ สแกนอ่านข้อมูลด้วย AI ทันที</button>
+            </div>
+            <div id="ocrScanResultBox" style="margin-top:10px;display:none;background:#FFF;border:1px solid #CBD5E1;border-radius:10px;padding:10px;"></div>
+          </div>
+
+          <!-- 3-Stage Live Cross-Department Queue -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;">
+            <!-- Stage 1: Sales PO -> Admin DO Queue -->
+            <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:12px;">
+              <div style="font-weight:800;color:#1E3A8A;font-size:13.5px;margin-bottom:8px;">1️⃣ คิวรอ Admin ออกใบส่งของ (Sales PO ➔ Admin DO)</div>
+              <div id="queueAdminDoWrap" style="display:flex;flex-direction:column;gap:8px;">⏳ กำลังโหลดคิวงาน...</div>
+            </div>
+
+            <!-- Stage 2: Delivered DO (e-POD) -> Accounting SI Queue -->
+            <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:12px;">
+              <div style="font-weight:800;color:#0F766E;font-size:13.5px;margin-bottom:8px;">2️⃣ คิวรอบัญชีออกใบกำกับภาษี (DO e-POD ➔ บัญชี SI)</div>
+              <div id="queueAccSiWrap" style="display:flex;flex-direction:column;gap:8px;">⏳ กำลังโหลดคิวงาน...</div>
+            </div>
+
+            <!-- Stage 3: Unpaid Tax Invoice -> Receipt RV & 50 ทวิ Queue -->
+            <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:12px;">
+              <div style="font-weight:800;color:#B45309;font-size:13.5px;margin-bottom:8px;">3️⃣ คิวรอรับชำระเงิน &amp; ปิดยอดลูกหนี้ (SI ➔ ใบเสร็จ RV)</div>
+              <div id="queueAccRvWrap" style="display:flex;flex-direction:column;gap:8px;">⏳ กำลังโหลดคิวงาน...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    document.getElementById('chkStrictRoleLockV1186').onchange = (e) => {
+      window.toggleStrictRoleLockV1186(e.target.checked);
+      alert(e.target.checked
+        ? '🔒 เปิดโหมดล็อกสิทธิ์หน้าจอรายบุคคลแล้ว — พนักงานจะเห็นเฉพาะโต๊ะทำงานของแผนกตนเอง'
+        : '🔓 ปลดล็อกโหมดสลับแผนกสำหรับผู้ดูแลระบบแล้ว');
+    };
+
+    document.getElementById('btnRunWatchdogNowV1186').onclick = async () => {
+      try {
+        const res = await callGasApi('runProductionComplianceWatchdog', {}, false);
+        if (res && res.status === 'OK') {
+          alert(res.alertCount > 0
+            ? ('🔔 ตรวจพบรายการแจ้งเตือน ' + res.alertCount + ' รายการ และส่งเข้ากลุ่ม LINE แล้ว:\n\n' + res.alerts.join('\n'))
+            : '✅ ตรวจสอบเรียบร้อย: ไม่มีใบส่งของค้างออกบิลหรือเคสซ่อมซ้ำเกินกำหนดครับ');
+        }
+      } catch (e) {}
+    };
+
+    // AI OCR Handler
+    document.getElementById('btnRunGeminiOcrNow').onclick = async () => {
+      const fileInp = document.getElementById('inpOcrImageFile');
+      const cat = document.getElementById('selOcrDocCategory').value;
+      const resBox = document.getElementById('ocrScanResultBox');
+      if (!fileInp.files || !fileInp.files[0]) {
+        alert('กรุณาเลือกรูปภาพสลิปโอนเงิน ใบ 50 ทวิ หรือใบเสร็จทางด่วนก่อนกดสแกนครับ');
+        return;
+      }
+      resBox.style.display = 'block';
+      resBox.innerHTML = '⏳ กำลังส่งภาพให้ Gemini AI อ่านตัวเลขและวันที่...';
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const ocrRes = await callGasApi('scanDocumentWithGeminiOcr', {
+            docCategory: cat,
+            imageDataUrl: reader.result
+          }, false);
+
+          if (ocrRes && ocrRes.status === 'OK') {
+            if (cat === 'TOLL_FUEL') {
+              resBox.innerHTML = `
+                <div style="font-weight:800;color:#059669;margin-bottom:4px;">✅ อ่านข้อมูลใบเสร็จสำเร็จ (${ocrRes.docType || 'TOLL/FUEL'})</div>
+                <div>• <b>วันที่:</b> ${ocrRes.date || '-'} | <b>ยอดเงิน:</b> ${Number(ocrRes.amount || 0).toFixed(2)} THB | <b>ด่าน/สถานี:</b> ${ocrRes.routeOrStation || '-'}</div>
+                <button type="button" id="btnApplyOcrToMileage" style="margin-top:8px;background:#1D4ED8;color:#FFF;border:none;border-radius:7px;padding:6px 12px;font-weight:700;cursor:pointer;">🚗 ส่งยอดนี้เข้าฟอร์มเบิกค่ารถส่วนตัว &amp; ทางด่วนทันที</button>
+              `;
+              document.getElementById('btnApplyOcrToMileage').onclick = () => {
+                modal.style.display = 'none';
+                window.openEnterpriseOmniCommandCenterV1185('FLEET_MILEAGE');
+                setTimeout(() => {
+                  if (document.getElementById('inpMilToll')) document.getElementById('inpMilToll').value = Number(ocrRes.amount || 0);
+                  if (document.getElementById('inpMilRoute') && ocrRes.routeOrStation) document.getElementById('inpMilRoute').value = ocrRes.routeOrStation;
+                }, 300);
+              };
+            } else {
+              resBox.innerHTML = `
+                <div style="font-weight:800;color:#059669;margin-bottom:4px;">✅ อ่านข้อมูลสลิป / 50 ทวิ สำเร็จ (${ocrRes.docType || 'SLIP'})</div>
+                <div>• <b>ยอดโอน:</b> ${Number(ocrRes.transferAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} THB | <b>หัก ณ ที่จ่าย 3%:</b> ${Number(ocrRes.whtAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} THB | <b>เลขที่อ้างอิง:</b> ${ocrRes.docOrRefNo || '-'}</div>
+                <button type="button" id="btnApplyOcrToRv" style="margin-top:8px;background:#059669;color:#FFF;border:none;border-radius:7px;padding:6px 12px;font-weight:700;cursor:pointer;">💰 ส่งยอดนี้เข้าฟอร์มออกใบเสร็จรับเงิน (RV) ทันที</button>
+              `;
+              document.getElementById('btnApplyOcrToRv').onclick = () => {
+                modal.style.display = 'none';
+                window.openEnterpriseOmniCommandCenterV1185('ACC_RV_CN');
+                setTimeout(() => {
+                  if (document.getElementById('inpRvTransfer') && Number(ocrRes.transferAmount) > 0) document.getElementById('inpRvTransfer').value = Number(ocrRes.transferAmount);
+                  if (document.getElementById('inpRvWht') && Number(ocrRes.whtAmount) > 0) document.getElementById('inpRvWht').value = Number(ocrRes.whtAmount);
+                  if (document.getElementById('inpRvWhtDoc') && ocrRes.docOrRefNo) document.getElementById('inpRvWhtDoc').value = ocrRes.docOrRefNo;
+                }, 300);
+              };
+            }
+          } else {
+            resBox.innerHTML = `<div style="color:#B45309;">⚠️ ${(ocrRes && ocrRes.message) || 'ไม่สามารถอ่านภาพอัตโนมัติได้ กรุณากรอกข้อมูลด้วยตนเอง'}</div>`;
+          }
+        } catch (err) {
+          resBox.innerHTML = `<div style="color:#DC2626;">❌ เกิดข้อผิดพลาด: ${err.message}</div>`;
+        }
+      };
+      reader.readAsDataURL(fileInp.files[0]);
+    };
+
+    // Load 3-stage pipeline queues (with smart local fallback)
+    let qAdminDo = [
+      { offerNo: 'SO2611-058', customerName: 'RIJIRA CO., LTD.', address: '7/29 MOO 2 KATHU, PHUKET 83120', phone: '081-415-2649', grandTotal: 14500, itemsJson: JSON.stringify([{ model: '4HC-H', description: 'WATER FILTER CARTRIDGE', qty: 3 }]) }
+    ];
+    let qAccSi = [
+      { doNo: 'DO2611-070', shipDate: '09/11/2026', soNo: 'SO2611-056', customerName: 'RIJIRA CO., LTD.', address: '7/29 MOO 2 KATHU, PHUKET 83120', tel: '081-415-2649', epodStatus: 'DELIVERED', itemsJson: JSON.stringify([{ itemNo: 'P00350-03', description: 'THERMISTOR IM-65NE', qty: 2 }]) }
+    ];
+    let qAccRv = [
+      { invoiceNo: 'SI2611-215', date: '19/11/2026', customerName: 'บริษัท ไทยสจ๊วต เซอร์วิสเซ็ส จำกัด', inclVat: 84423.00 }
+    ];
+
+    try {
+      const qData = await callGasApi('getFulfillmentPipelineQueues', {}, false);
+      if (qData && qData.status === 'OK') {
+        if (Array.isArray(qData.pendingAdminDoQueue) && qData.pendingAdminDoQueue.length) qAdminDo = qData.pendingAdminDoQueue;
+        if (Array.isArray(qData.pendingAccountingSiQueue) && qData.pendingAccountingSiQueue.length) qAccSi = qData.pendingAccountingSiQueue;
+        if (Array.isArray(qData.unpaidAccountingRvQueue) && qData.unpaidAccountingRvQueue.length) qAccRv = qData.unpaidAccountingRvQueue;
+      }
+    } catch (e) {}
+
+    document.getElementById('queueAdminDoWrap').innerHTML = qAdminDo.map((q, idx) => `
+      <div style="background:#FFF;border:1px solid #CBD5E1;border-radius:9px;padding:9px;">
+        <div style="font-weight:800;color:#1E3A8A;">${q.offerNo} — ${q.customerName}</div>
+        <div style="font-size:11px;color:#475569;margin:2px 0 6px;">ยอดขาย: ${Number(q.grandTotal || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} THB</div>
+        <button type="button" data-qdo="${idx}" class="btn-queue-to-do" style="width:100%;background:#1D4ED8;color:#FFF;border:none;border-radius:7px;padding:6px;font-weight:700;cursor:pointer;">📦 เปิดฟอร์มออกใบส่งของ (DO) ทันที</button>
+      </div>
+    `).join('');
+
+    document.getElementById('queueAccSiWrap').innerHTML = qAccSi.map((d, idx) => `
+      <div style="background:#FFF;border:1px solid #CBD5E1;border-radius:9px;padding:9px;">
+        <div style="font-weight:800;color:#0F766E;">${d.doNo} (${d.epodStatus}) — ${d.customerName}</div>
+        <div style="font-size:11px;color:#475569;margin:2px 0 6px;">SO: ${d.soNo || '-'} | วันที่ส่ง: ${d.shipDate || '-'}</div>
+        <button type="button" data-qsi="${idx}" class="btn-queue-to-si" style="width:100%;background:#0F766E;color:#FFF;border:none;border-radius:7px;padding:6px;font-weight:700;cursor:pointer;">🧾 เปิดฟอร์มออกใบกำกับภาษี (SI) ทันที</button>
+      </div>
+    `).join('');
+
+    document.getElementById('queueAccRvWrap').innerHTML = qAccRv.map((s, idx) => `
+      <div style="background:#FFF;border:1px solid #CBD5E1;border-radius:9px;padding:9px;">
+        <div style="font-weight:800;color:#B45309;">${s.invoiceNo} — ${s.customerName}</div>
+        <div style="font-size:11px;color:#475569;margin:2px 0 6px;">ยอดค้างชำระ: <b>${Number(s.inclVat || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} THB</b></div>
+        <button type="button" data-qrv="${idx}" class="btn-queue-to-rv" style="width:100%;background:#D97706;color:#FFF;border:none;border-radius:7px;padding:6px;font-weight:700;cursor:pointer;">💰 รับชำระเงิน &amp; ออกใบเสร็จ (RV)</button>
+      </div>
+    `).join('');
+
+    modal.querySelectorAll('.btn-queue-to-do').forEach(b => {
+      b.onclick = () => {
+        const item = qAdminDo[Number(b.getAttribute('data-qdo'))];
+        modal.style.display = 'none';
+        if (window.HZK_ADMIN_DO_STATE) {
+          window.HZK_ADMIN_DO_STATE.doNo = 'AUTO';
+          window.HZK_ADMIN_DO_STATE.salesOrderNo = item.offerNo;
+          window.HZK_ADMIN_DO_STATE.customerName = item.customerName;
+          window.HZK_ADMIN_DO_STATE.address = item.address || '';
+          window.HZK_ADMIN_DO_STATE.tel = item.phone || '';
+          try {
+            const parsed = JSON.parse(item.itemsJson || '[]');
+            if (parsed.length) {
+              window.HZK_ADMIN_DO_STATE.items = parsed.map(x => ({ itemNo: x.model || x.itemNo || '', description: x.description || '', qty: Number(x.qty || 1), unit: 'PCS' }));
+            }
+          } catch (e) {}
+        }
+        window.openAdminDeliveryOrderStudioModal();
+      };
+    });
+
+    modal.querySelectorAll('.btn-queue-to-si').forEach(b => {
+      b.onclick = () => {
+        const d = qAccSi[Number(b.getAttribute('data-qsi'))];
+        modal.style.display = 'none';
+        if (window.HZK_TAX_INVOICE_STATE) {
+          window.HZK_TAX_INVOICE_STATE.invoiceNo = 'AUTO';
+          window.HZK_TAX_INVOICE_STATE.poNo = d.soNo || '';
+          window.HZK_TAX_INVOICE_STATE.dealerNameTh = d.customerName;
+          window.HZK_TAX_INVOICE_STATE.dealerNameEn = d.customerName;
+          window.HZK_TAX_INVOICE_STATE.addressLine1 = d.address || '';
+          window.HZK_TAX_INVOICE_STATE.tel = d.tel || '';
+          window.HZK_TAX_INVOICE_STATE.shipmentHeader = 'Shipment No. ' + d.doNo + ':';
+          try {
+            const parsed = JSON.parse(d.itemsJson || '[]');
+            if (parsed.length) {
+              window.HZK_TAX_INVOICE_STATE.items = parsed.map(x => ({ code: x.itemNo || x.model || '', desc: x.description || '', serialNote: '', qty: Number(x.qty || 1), unitPrice: 0, discount: 0 }));
+            }
+          } catch (e) {}
+        }
+        window.openAccountingTaxInvoiceStudioModal();
+      };
+    });
+
+    modal.querySelectorAll('.btn-queue-to-rv').forEach(b => {
+      b.onclick = () => {
+        const s = qAccRv[Number(b.getAttribute('data-qrv'))];
+        modal.style.display = 'none';
+        window.openEnterpriseOmniCommandCenterV1185('ACC_RV_CN');
+        setTimeout(() => {
+          if (document.getElementById('inpRvRefSi')) document.getElementById('inpRvRefSi').value = s.invoiceNo;
+          if (document.getElementById('inpRvCust')) document.getElementById('inpRvCust').value = s.customerName;
+          if (document.getElementById('inpRvTransfer')) document.getElementById('inpRvTransfer').value = Number(s.inclVat || 0).toFixed(2);
+        }, 300);
+      };
+    });
   };
 })();

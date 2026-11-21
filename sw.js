@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1171-personalized-cockpit';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1172-omni-meet-taskboard';
 const CORE_ASSETS = [
   './',
   './index.html',

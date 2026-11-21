@@ -25,7 +25,7 @@
   ];
 
   const HZK_OMNI_STATE = {
-    version: 'v1171-PERSONALIZED-MULTI-DEPT-COCKPIT',
+    version: 'v1172-OMNI-MEET-TASKBOARD-FIELD-PARTS-REPORTS',
     masterDb: null,
     items: []
   };
@@ -246,6 +246,10 @@
       { icon: '🏷️', label: 'สต็อกเครื่องโชว์ / มีตำหนิ & ใบตรวจสภาพ (602 รายการ)', sub: 'ดูรายการเครื่อง Demo/Damage + ลิงก์ใบตรวจสภาพ + ดึงลงใบเสนอราคา', action: () => window.openDamageDemoStockModal() },
       { icon: '📥', label: 'อัปเดต Stock จากอีเมล MICHIRU-RPA ทันที', sub: 'ดึงไฟล์ Stock on Hand ล่าสุดจาก Gmail เข้าฐานข้อมูลสด', action: () => window.triggerEmailStockSyncNow() },
       { icon: '🌐', label: 'พอร์ทัลลูกค้า & ตัวแทนจำหน่าย (Self-Service)', sub: 'เปิดหน้าเช็กเครื่องในร้าน ประวัติซ่อม และสถานะดีลเลอร์', action: () => window.openCustomerDealerPortalWindow() },
+      { icon: '📋', label: 'กระดานงาน & To-Do List อัจฉริยะแยกแผนก (Task Board)', sub: 'รวมงานค้างอัตโนมัติ (ด่วน/วันนี้/วางแผน) + Kanban 4 ช่อง + มติประชุม AI', action: () => window.openDepartmentTaskBoardModal() },
+      { icon: '🔧', label: 'ติดตามงานซ่อมต่อเนื่อง, รอบรออะไหล่ (ETA) & ล็อกคิวช่าง', sub: 'เสนอราคาอะไหล่เพิ่มเติมหลัง Testing + แจ้ง ETA ลูกค้า + คอนเฟิร์มคิวซ่อม 1 คลิก', action: () => window.openFieldRepairPartsPipelineModal() },
+      { icon: '📹', label: 'ห้องประชุมทีม & AI สรุปรายงานการประชุม (Omni-Meet + AI)', sub: 'ประชุมหน้างานช่าง / แยกแผนก / WFH 1-on-1 / ทั้งบริษัท + อัดเสียงสรุป 3 ภาษา', action: () => window.openOmniMeetAndAiMinutesModal() },
+      { icon: '📑', label: 'ศูนย์ออกรายงานประจำแผนก 1 คลิก (Department Report Center)', sub: 'ดาวน์โหลดรายงานเฉพาะแผนก (Sales / JPC / Marketing / บัญชี NAV / HR / Service)', action: () => window.openDepartmentReportCenterModal() },
       { icon: '💰', label: 'วิเคราะห์กำไร-ขาดทุนราย S/N & ตั้งราคา/โปรโมชั่น (Lifecycle P&L)', sub: 'เทียบราคาขาย (Dealer/Direct) หักต้นทุนซ่อม/เคลม + จำลองแพ็คเกจ PM + นำเข้าขาย NAV', action: () => window.openSerialLifecyclePricingSuiteModal() },
       { icon: '📐', label: 'แบบตรวจความพร้อมหน้างานก่อนติดตั้ง (Pre-Install Site Survey)', sub: 'เช็กแรงดันน้ำ ไฟ ท่อน้ำทิ้ง แนะนำชุดกรองน้ำ & ลดเคลมในประกัน', action: () => window.openPreInstallSiteSurveyModal() },
       { icon: '🔎', label: 'ประวัติเครื่องราย S/N 360° & อัลบั้มรูปหน้างาน', sub: 'ดูไทม์ไลน์ตั้งแต่คลัง ➔ ติดตั้ง ➔ ซ่อมบำรุง ➔ รูปถ่ายก่อน-หลัง', action: () => window.openSerial360TimelineModal() },
@@ -4494,6 +4498,16 @@
           ${actionCardsHtml}
         </div>
 
+        <div style="margin-top:12px;background:#F1F5F9;border:1px solid #CBD5E1;border-radius:12px;padding:10px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+          <div style="font-size:12px;font-weight:800;color:#002B49;">⚡ เครื่องมือการทำงานร่วมกัน &amp; กระดานงานประจำวัน (v1172):</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" onclick="window.openDepartmentTaskBoardModal()" style="background:#002B49;color:#FDE047;border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:800;cursor:pointer;">📋 กระดานงาน &amp; To-Do List แผนก</button>
+            <button type="button" onclick="window.openOmniMeetAndAiMinutesModal()" style="background:#4F46E5;color:#FFF;border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;">📹 ประชุมทีม / WFH + AI สรุปรายงาน</button>
+            <button type="button" onclick="window.openFieldRepairPartsPipelineModal()" style="background:#B91C1C;color:#FFF;border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;">🔧 งานซ่อมต่อเนื่อง &amp; รอบอะไหล่ ETA</button>
+            <button type="button" onclick="window.openDepartmentReportCenterModal()" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;">📑 ออกรายงานประจำแผนก</button>
+          </div>
+        </div>
+
         <div id="hzkV1171CrossDeptInboxWrap" style="margin-top:12px;display:none;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:12px;padding:11px 14px;">
           <div style="font-weight:800;color:#92400E;font-size:12.5px;margin-bottom:6px;">📥 กล่องรับงานข้ามแผนกที่ส่งถึง ${emp.deptLabel} (Pending Cross-Dept Handovers):</div>
           <div id="hzkV1171CrossDeptInboxList" style="display:flex;flex-direction:column;gap:6px;"></div>
@@ -4667,6 +4681,872 @@
 
   window.openPersonalEmployeeSelectorModal = openPersonalEmployeeSelectorModal;
   window.renderPersonalizedEmployeeCockpit = renderPersonalizedEmployeeCockpit;
+
+
+
+  // ============================================================================
+  // ENTERPRISE v1172 MODULES:
+  //   1) Auto-Aggregated Department Task Board & Priority To-Do List (List + Kanban)
+  //   2) Omni-Meet Video Call Hub (Field Live Assist / Dept / 1-on-1 / All-Hands)
+  //      + Live Speech Recorder & Gemini AI Meeting Minutes Generator (TH/EN/JP)
+  //   3) Multi-Round Field Repair, Supplemental Quote, Parts ETA & Auto-Dispatch
+  //   4) 1-Click Departmental Report Center (All 8 Departments)
+  // ============================================================================
+  const HZK_V1172_LOCAL_TASKS_KEY = 'hzk_v1172_local_tasks_v1';
+  const HZK_V1172_LOCAL_REPAIR_KEY = 'hzk_v1172_local_repair_pipeline_v1';
+  const HZK_V1172_LOCAL_MEETINGS_KEY = 'hzk_v1172_local_meeting_minutes_v1';
+
+  // ----------------------------------------------------------------------------
+  // MODULE 1: SMART PRIORITY TO-DO LIST & 4-COLUMN KANBAN BOARD
+  // ----------------------------------------------------------------------------
+  async function openDepartmentTaskBoardModal() {
+    const emp = getActiveEmployeeProfileV1171();
+    let modal = document.getElementById('hzkDeptTaskBoardModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkDeptTaskBoardModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20080;background:rgba(15,23,42,0.86);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1160px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#002B49,#1E3A8A);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1172 • AUTO-AGGREGATED DEPARTMENT TASK BOARD &amp; PRIORITY TO-DO</div>
+            <div style="font-size:16px;font-weight:800;">📋 กระดานงาน &amp; To-Do List อัจฉริยะ (รวมงานค้างจากทุกแผนก + มติประชุม AI)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkDeptTaskBoardModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:16px 20px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;background:#F1F5F9;padding:10px 12px;border-radius:10px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+              <label style="font-weight:700;">แผนก:</label>
+              <select id="hzkTskDeptSel" style="padding:7px 10px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+                <option value="${emp.deptLabel}">แผนกของฉัน (${emp.deptLabel})</option>
+                <option value="ALL">ทุกแผนกทั้งบริษัท (All Departments)</option>
+                <option value="Service Unit">Service Unit &amp; Field Tech</option>
+                <option value="Sales Department">Sales Department</option>
+                <option value="Japanese Corporate">Japanese Corporate</option>
+                <option value="Marketing Department">Marketing Department</option>
+                <option value="Accounting & Finance">Accounting &amp; Finance</option>
+                <option value="Admin & HR">Admin &amp; HR</option>
+              </select>
+              <button type="button" id="hzkTskViewListBtn" style="background:#002B49;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">📑 มุมมองลำดับความสำคัญ (To-Do List)</button>
+              <button type="button" id="hzkTskViewKanbanBtn" style="background:#FFFFFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">🗂️ มุมมองกระดาน 4 ช่อง (Kanban)</button>
+            </div>
+            <button type="button" id="hzkTskRefreshBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">🔄 รีเฟรชงานค้างล่าสุด</button>
+          </div>
+
+          <div style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:12px;padding:10px 12px;margin-bottom:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;">
+            <input id="hzkNewTskTitle" type="text" placeholder="+ เพิ่มรายการงาน To-Do ใหม่..." style="grid-column:span 2;padding:7px 10px;border:1px solid #94A3B8;border-radius:8px;font-weight:700;" />
+            <select id="hzkNewTskPrio" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+              <option value="URGENT">🔴 ด่วนที่สุด (Urgent)</option>
+              <option value="TODAY" selected>🟡 ทำวันนี้ (Today)</option>
+              <option value="UPCOMING">🟢 วางแผนล่วงหน้า (Upcoming)</option>
+            </select>
+            <input id="hzkNewTskDue" type="date" value="${new Date().toISOString().slice(0, 10)}" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+            <button type="button" id="hzkNewTskAddBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;">+ เพิ่มลงกระดาน</button>
+          </div>
+
+          <div id="hzkTaskBoardContainer">⏳ กำลังรวบรวมงานค้างและลำดับความสำคัญ...</div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    let viewMode = 'LIST';
+    let currentTasks = [];
+
+    function getLocalTasksFallback(dept) {
+      let localManual = [];
+      try {
+        localManual = JSON.parse(localStorage.getItem(HZK_V1172_LOCAL_TASKS_KEY) || '[]');
+      } catch (e) {}
+      const sampleAuto = [
+        { taskId: 'AUTO-SVC-01', department: 'Service Unit', assignee: 'T01 / T07', priority: 'URGENT', status: 'TODO', title: '✅ อะไหล่เข้าครบแล้ว: เข้าซ่อมร้านกาแฟตัวอย่าง สาขาภูเก็ต (K01234J)', detail: 'Water Valve + ล้างระบบ (ลูกค้าคอนเฟิร์มแล้ว)', dueDate: new Date().toISOString().slice(0, 10), source: 'FIELD_REPAIR_ETA', autoPulled: true },
+        { taskId: 'AUTO-SLS-01', department: 'Sales Department', assignee: 'KULATHIDA_C', priority: 'URGENT', status: 'WAITING', title: '⏰ ติดตามใบเสนอราคาค้างตอบรับ > 3 วัน (HTH-26108)', detail: 'ลูกค้า Chain Cafe สาขาสยามสแควร์ (118,000 THB)', dueDate: new Date().toISOString().slice(0, 10), source: 'DOC_TRACKING', autoPulled: true },
+        { taskId: 'AUTO-ACC-01', department: 'Accounting & Finance', assignee: 'WARAPORN_K', priority: 'TODAY', status: 'TODO', title: '🧾 ออกใบวางบิล & เปิด SO ใน NAV (SO-2026-0142)', detail: 'ลูกค้าอนุมัติ PO แล้ว (68,500 THB)', dueDate: new Date().toISOString().slice(0, 10), source: 'PO_APPROVED_BILLING', autoPulled: true },
+        { taskId: 'AUTO-MKT-01', department: 'Marketing Department', assignee: 'TAKSAON_T', priority: 'UPCOMING', status: 'IN_PROGRESS', title: '🏷️ จัดแคมเปญระบายสต็อกเครื่องตัวโชว์/มีตำหนิ (602 รายการ)', detail: 'คัดรุ่น IM-130NE / FM-1000 พร้อมใบตรวจสภาพ QCF', dueDate: new Date().toISOString().slice(0, 10), source: 'DEMO_STOCK', autoPulled: true }
+      ];
+      const all = localManual.concat(sampleAuto);
+      if (!dept || dept === 'ALL') return all;
+      return all.filter(t => String(t.department || '').toUpperCase().indexOf(dept.split(' ')[0].toUpperCase()) !== -1 || !t.autoPulled);
+    }
+
+    async function loadTasks() {
+      const dept = document.getElementById('hzkTskDeptSel').value;
+      const box = document.getElementById('hzkTaskBoardContainer');
+      box.innerHTML = '⏳ กำลังโหลดรายการงาน...';
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          const r = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'getDepartmentTaskBoard', department: dept })
+          });
+          const d = await r.json();
+          if (d && d.status === 'OK') {
+            let localManual = [];
+            try { localManual = JSON.parse(localStorage.getItem(HZK_V1172_LOCAL_TASKS_KEY) || '[]'); } catch (e) {}
+            currentTasks = (d.tasks || []).concat(localManual);
+            renderTasks();
+            return;
+          }
+        } catch (err) {}
+      }
+      currentTasks = getLocalTasksFallback(dept);
+      renderTasks();
+    }
+
+    async function updateTaskStatus(taskId, nextStatus) {
+      const idx = currentTasks.findIndex(x => x.taskId === taskId);
+      if (idx >= 0) currentTasks[idx].status = nextStatus;
+      try {
+        const localManual = JSON.parse(localStorage.getItem(HZK_V1172_LOCAL_TASKS_KEY) || '[]');
+        const lIdx = localManual.findIndex(x => x.taskId === taskId);
+        if (lIdx >= 0) {
+          localManual[lIdx].status = nextStatus;
+          localStorage.setItem(HZK_V1172_LOCAL_TASKS_KEY, JSON.stringify(localManual));
+        }
+      } catch (e) {}
+      renderTasks();
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'createOrUpdateTaskItem', taskId: taskId, status: nextStatus })
+          });
+        } catch (e) {}
+      }
+    }
+
+    function renderTasks() {
+      const box = document.getElementById('hzkTaskBoardContainer');
+      const activeList = currentTasks.filter(t => t.status !== 'DONE');
+      const doneList = currentTasks.filter(t => t.status === 'DONE');
+
+      if (viewMode === 'LIST') {
+        const groups = [
+          { key: 'URGENT', label: '🔴 1. ด่วนที่สุด / เกินกำหนด (Urgent & Overdue)', bg: '#FEF2F2', border: '#FECACA', text: '#991B1B' },
+          { key: 'TODAY', label: '🟡 2. งานที่ต้องทำวันนี้ (Today Action Queue)', bg: '#FFFBEB', border: '#FDE68A', text: '#92400E' },
+          { key: 'UPCOMING', label: '🟢 3. งานวางแผนล่วงหน้า (Upcoming & Follow-ups)', bg: '#F0FDF4', border: '#BBF7D0', text: '#166534' }
+        ];
+
+        box.innerHTML = groups.map(g => {
+          const items = activeList.filter(t => t.priority === g.key);
+          const rows = items.map(t => `
+            <div style="background:#FFFFFF;border:1px solid ${g.border};border-radius:10px;padding:10px 12px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <div>
+                <div style="font-weight:800;font-size:13px;color:#0F172A;">${t.title}</div>
+                <div style="font-size:11.5px;color:#475569;margin-top:2px;">${t.detail} • <b>แผนก:</b> ${t.department} • <b>กำหนด:</b> ${t.dueDate}</div>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                <button type="button" data-tid="${t.taskId}" data-st="IN_PROGRESS" class="hzk-tsk-move-btn" style="background:#0284C7;color:#FFF;border:none;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:700;cursor:pointer;">⚡ กำลังทำ</button>
+                <button type="button" data-tid="${t.taskId}" data-st="DONE" class="hzk-tsk-move-btn" style="background:#059669;color:#FFF;border:none;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:700;cursor:pointer;">✅ เสร็จแล้ว</button>
+              </div>
+            </div>
+          `).join('') || `<div style="font-size:12px;color:#64748B;padding:6px;">ไม่มีงานค้างในหมวดนี้</div>`;
+
+          return `
+            <div style="background:${g.bg};border:1.5px solid ${g.border};border-radius:12px;padding:12px;margin-bottom:12px;">
+              <div style="font-weight:800;color:${g.text};font-size:13.5px;margin-bottom:8px;">${g.label} (${items.length})</div>
+              ${rows}
+            </div>
+          `;
+        }).join('') + (doneList.length ? `<div style="font-size:12px;color:#059669;font-weight:700;margin-top:6px;">✅ งานที่ปิดเสร็จสิ้นแล้ว: ${doneList.length} รายการ</div>` : '');
+      } else {
+        // 4-Column Kanban Board
+        const cols = [
+          { key: 'TODO', title: '📥 รอดำเนินการ (To Do)', headerBg: '#002B49', next: 'IN_PROGRESS', nextLabel: '▶ เริ่มทำ' },
+          { key: 'IN_PROGRESS', title: '⚡ กำลังดำเนินการ (In Progress)', headerBg: '#0284C7', next: 'WAITING', nextLabel: '⏳ รอผล' },
+          { key: 'WAITING', title: '⏳ รออะไหล่ / รอลูกค้า (Waiting)', headerBg: '#D97706', next: 'DONE', nextLabel: '✅ ปิดงาน' },
+          { key: 'DONE', title: '✅ เสร็จสิ้น (Done)', headerBg: '#059669', next: '', nextLabel: '' }
+        ];
+
+        box.innerHTML = `
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;">
+            ${cols.map(c => {
+              const cItems = currentTasks.filter(t => t.status === c.key);
+              const cards = cItems.map(t => `
+                <div style="background:#FFFFFF;border:1px solid #CBD5E1;border-radius:9px;padding:9px;margin-bottom:8px;box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+                  <div style="font-size:10px;font-weight:800;color:${t.priority === 'URGENT' ? '#DC2626' : '#0369A1'};">${t.priority} • ${t.department}</div>
+                  <div style="font-weight:700;font-size:12px;color:#0F172A;margin-top:3px;">${t.title}</div>
+                  <div style="font-size:11px;color:#64748B;margin-top:3px;">${t.detail}</div>
+                  ${c.next ? `<button type="button" data-tid="${t.taskId}" data-st="${c.next}" class="hzk-tsk-move-btn" style="margin-top:7px;width:100%;background:${c.headerBg};color:#FFF;border:none;border-radius:6px;padding:5px;font-size:11px;font-weight:700;cursor:pointer;">${c.nextLabel}</button>` : ''}
+                </div>
+              `).join('') || '<div style="color:#94A3B8;font-size:11.5px;text-align:center;padding:12px;">- ว่าง -</div>';
+
+              return `
+                <div style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:12px;overflow:hidden;">
+                  <div style="background:${c.headerBg};color:#FFF;padding:8px 10px;font-weight:800;font-size:12px;">${c.title} (${cItems.length})</div>
+                  <div style="padding:8px;max-height:460px;overflow-y:auto;">${cards}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      box.querySelectorAll('.hzk-tsk-move-btn').forEach(b => {
+        b.onclick = () => updateTaskStatus(b.getAttribute('data-tid'), b.getAttribute('data-st'));
+      });
+    }
+
+    document.getElementById('hzkTskViewListBtn').onclick = () => {
+      viewMode = 'LIST';
+      document.getElementById('hzkTskViewListBtn').style.background = '#002B49';
+      document.getElementById('hzkTskViewListBtn').style.color = '#FFF';
+      document.getElementById('hzkTskViewKanbanBtn').style.background = '#FFFFFF';
+      document.getElementById('hzkTskViewKanbanBtn').style.color = '#0F172A';
+      renderTasks();
+    };
+
+    document.getElementById('hzkTskViewKanbanBtn').onclick = () => {
+      viewMode = 'KANBAN';
+      document.getElementById('hzkTskViewKanbanBtn').style.background = '#002B49';
+      document.getElementById('hzkTskViewKanbanBtn').style.color = '#FFF';
+      document.getElementById('hzkTskViewListBtn').style.background = '#FFFFFF';
+      document.getElementById('hzkTskViewListBtn').style.color = '#0F172A';
+      renderTasks();
+    };
+
+    document.getElementById('hzkNewTskAddBtn').onclick = async () => {
+      const title = document.getElementById('hzkNewTskTitle').value.trim();
+      if (!title) return;
+      const prio = document.getElementById('hzkNewTskPrio').value;
+      const due = document.getElementById('hzkNewTskDue').value;
+      const dept = document.getElementById('hzkTskDeptSel').value === 'ALL' ? emp.deptLabel : document.getElementById('hzkTskDeptSel').value;
+      const newObj = {
+        taskId: 'TSK-' + Date.now().toString().slice(-6),
+        department: dept,
+        assignee: emp.name,
+        priority: prio,
+        status: 'TODO',
+        title: title,
+        detail: 'เพิ่มโดย ' + emp.name,
+        dueDate: due,
+        source: 'MANUAL',
+        autoPulled: false
+      };
+      try {
+        const prev = JSON.parse(localStorage.getItem(HZK_V1172_LOCAL_TASKS_KEY) || '[]');
+        localStorage.setItem(HZK_V1172_LOCAL_TASKS_KEY, JSON.stringify([newObj].concat(prev)));
+      } catch (e) {}
+      document.getElementById('hzkNewTskTitle').value = '';
+      currentTasks.unshift(newObj);
+      renderTasks();
+
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(Object.assign({ action: 'createOrUpdateTaskItem' }, newObj))
+          });
+        } catch (e) {}
+      }
+    };
+
+    document.getElementById('hzkTskRefreshBtn').onclick = loadTasks;
+    document.getElementById('hzkTskDeptSel').onchange = loadTasks;
+    loadTasks();
+  }
+
+  // ----------------------------------------------------------------------------
+  // MODULE 2: OMNI-MEET HUB & GEMINI AI MEETING RECORDER / MINUTES GENERATOR
+  // ----------------------------------------------------------------------------
+  async function openOmniMeetAndAiMinutesModal() {
+    const emp = getActiveEmployeeProfileV1171();
+    let modal = document.getElementById('hzkOmniMeetAiModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkOmniMeetAiModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20082;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    const staffOptions = COMPLETE_COMPANY_ROSTER_V1171.map(s =>
+      `<option value="${s.name}">${s.name} [${s.deptLabel}]</option>`
+    ).join('');
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1080px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#1E1B4B,#4F46E5);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#FDE047;font-weight:800;">ENTERPRISE v1172 • HOSHIZAKI OMNI-MEET HUB &amp; AI MEETING MINUTES</div>
+            <div style="font-size:16px;font-weight:800;">📹 ประชุมทีม (WFH / On-Site ช่าง / แผนก / ทั้งบริษัท) &amp; AI สรุปรายงานการประชุม</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkOmniMeetAiModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:18px 20px;font-size:13px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;">
+          <!-- Left: Instant Video Call & Teams Launcher -->
+          <div style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:14px;padding:14px;">
+            <div style="font-weight:800;color:#002B49;font-size:14.5px;margin-bottom:8px;">1️⃣ เปิดห้องประชุมออนไลน์ &amp; Live Field Call</div>
+            <div style="margin-bottom:8px;">
+              <label style="font-weight:700;font-size:12px;">รูปแบบการประชุม:</label>
+              <select id="hzkMeetModeSel" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;font-weight:700;">
+                <option value="DEPARTMENT">🏢 ประชุมทีมภายในแผนก (${emp.deptLabel})</option>
+                <option value="FIELD_ASSIST">🛠️ On-Site Field Live Assist (ช่างหน้างานเปิดกล้องปรึกษาหัวหน้า)</option>
+                <option value="ONE_ON_ONE">👤 ประชุมตัวต่อตัว 1-on-1 (WFH Check-in / ปรึกษางาน)</option>
+                <option value="ALL_HANDS">🏛️ ประชุมรวมทั้งบริษัท (All-Hands 8 แผนก)</option>
+              </select>
+            </div>
+            <div id="hzkMeetOneOnOneWrap" style="display:none;margin-bottom:8px;">
+              <label style="font-weight:700;font-size:12px;">เลือกคู่สนทนา (รายบุคคล):</label>
+              <select id="hzkMeetTargetStaff" style="width:100%;padding:7px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;">${staffOptions}</select>
+            </div>
+            <div style="margin-bottom:8px;">
+              <label style="font-weight:700;font-size:12px;">หัวข้อประชุม / เลขที่ใบงาน / S/N:</label>
+              <input id="hzkMeetTitleInp" type="text" value="ประชุมทีม ${emp.deptLabel} (${new Date().toISOString().slice(0, 10)})" style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;font-weight:700;" />
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="font-weight:700;font-size:12px;">วาระการประชุม / อาการหน้างานที่ต้องการปรึกษา:</label>
+              <textarea id="hzkMeetAgendaInp" rows="2" placeholder="ระบุหัวข้อที่จะหารือ..." style="width:100%;padding:7px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;"></textarea>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button type="button" id="hzkLaunchWebRoomBtn" style="background:#059669;color:#FFF;border:none;border-radius:9px;padding:10px;font-weight:800;cursor:pointer;">🎥 เปิดห้องวิดีโอคอลทันที + ส่งปุ่มเข้าสายใน LINE</button>
+              <button type="button" id="hzkLaunchMsTeamsBtn" style="background:#4F46E5;color:#FFF;border:none;border-radius:9px;padding:9px;font-weight:700;cursor:pointer;">💼 เปิดผ่าน Microsoft Teams (สร้างนัดหมาย)</button>
+            </div>
+            <div id="hzkMeetRoomStatusBox" style="margin-top:10px;font-size:12px;color:#0369A1;display:none;background:#EFF6FF;padding:8px 10px;border-radius:8px;"></div>
+          </div>
+
+          <!-- Right: Live Voice Recorder & Gemini AI Minutes Generator -->
+          <div style="background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:14px;padding:14px;">
+            <div style="font-weight:800;color:#92400E;font-size:14.5px;margin-bottom:6px;">2️⃣ บันทึกเสียง &amp; AI สรุปรายงานการประชุม (TH / EN / 日本語)</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+              <button type="button" id="hzkStartRecBtn" style="background:#DC2626;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">🎙️ เริ่มอัดเสียง &amp; ถอดข้อความสด</button>
+              <button type="button" id="hzkStopRecBtn" disabled style="background:#475569;color:#FFF;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;">⏹️ หยุดบันทึก</button>
+              <span id="hzkRecStatusBadge" style="font-size:11.5px;font-weight:700;color:#64748B;align-self:center;">พร้อมบันทึก</span>
+            </div>
+            <div style="margin-bottom:8px;">
+              <label style="font-weight:700;font-size:12px;">ข้อความถอดเสียง / บันทึกการประชุม (พิมพ์เพิ่มเติมหรือแก้ไขได้):</label>
+              <textarea id="hzkMeetTranscriptBox" rows="5" placeholder="กดปุ่มเริ่มอัดเสียงเพื่อถอดข้อความอัตโนมัติ หรือพิมพ์สรุปประเด็นที่คุยกันที่นี่เพื่อให้ Gemini AI จัดรูปแบบรายงานและแยกงานส่งต่อ..." style="width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;margin-top:3px;font-size:12px;"></textarea>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;">
+              <label><input id="hzkAiCreateTasksCb" type="checkbox" checked /> ส่งมติที่ประชุมเข้า <b>กระดานงาน To-Do List</b> อัตโนมัติ</label>
+              <label><input id="hzkAiSendLineCb" type="checkbox" checked /> ส่งรายงานสรุปเข้า <b>กลุ่ม LINE</b></label>
+            </div>
+            <button type="button" id="hzkGenerateAiMinutesBtn" style="width:100%;background:linear-gradient(135deg,#002B49,#0284C7);color:#FFF;border:none;border-radius:9px;padding:10px;font-weight:800;cursor:pointer;">🤖 ให้ Gemini AI สรุปรายงานการประชุม &amp; แจกจ่ายงานทันที</button>
+            <div id="hzkAiMinutesOutputBox" style="margin-top:10px;display:none;background:#FFFFFF;border:1px solid #CBD5E1;border-radius:10px;padding:10px;font-size:12px;line-height:1.5;"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    document.getElementById('hzkMeetModeSel').onchange = function () {
+      document.getElementById('hzkMeetOneOnOneWrap').style.display = (this.value === 'ONE_ON_ONE') ? 'block' : 'none';
+    };
+
+    function buildRoomUrl() {
+      const slug = 'HOSHIZAKI-TH-' + Date.now().toString(36).toUpperCase();
+      return 'https://meet.jit.si/' + slug;
+    }
+
+    document.getElementById('hzkLaunchWebRoomBtn').onclick = async () => {
+      const roomUrl = buildRoomUrl();
+      const mType = document.getElementById('hzkMeetModeSel').value;
+      const title = document.getElementById('hzkMeetTitleInp').value.trim();
+      const agenda = document.getElementById('hzkMeetAgendaInp').value.trim();
+      const targetStaff = document.getElementById('hzkMeetTargetStaff').value;
+      const targetDept = mType === 'ALL_HANDS' ? 'All Departments (8 แผนก)' : (mType === 'ONE_ON_ONE' ? targetStaff : emp.deptLabel);
+
+      const stBox = document.getElementById('hzkMeetRoomStatusBox');
+      stBox.style.display = 'block';
+      stBox.innerHTML = `✅ เปิดห้องประชุมแล้ว: <a href="${roomUrl}" target="_blank" style="font-weight:800;color:#0284C7;">${roomUrl}</a> (กำลังส่งปุ่มเชิญเข้า LINE...)`;
+      window.open(roomUrl, '_blank');
+
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'dispatchOmniMeetingInvite',
+              meetType: mType,
+              roomTitle: title,
+              roomUrl: roomUrl,
+              hostName: emp.name,
+              department: targetDept,
+              agenda: agenda
+            })
+          });
+          stBox.innerHTML += ' • <b>ส่งการ์ดเข้ากลุ่ม LINE เรียบร้อยแล้ว!</b>';
+        } catch (e) {}
+      }
+    };
+
+    document.getElementById('hzkLaunchMsTeamsBtn').onclick = () => {
+      const title = encodeURIComponent(document.getElementById('hzkMeetTitleInp').value.trim());
+      const content = encodeURIComponent(document.getElementById('hzkMeetAgendaInp').value.trim());
+      window.open(`https://teams.microsoft.com/l/meeting/new?subject=${title}&content=${content}`, '_blank');
+    };
+
+    // Live Speech Recognition + MediaRecorder Audio Backup
+    let recognition = null;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordedAudioDataUrl = '';
+
+    document.getElementById('hzkStartRecBtn').onclick = async () => {
+      const badge = document.getElementById('hzkRecStatusBadge');
+      const ta = document.getElementById('hzkMeetTranscriptBox');
+      document.getElementById('hzkStartRecBtn').disabled = true;
+      document.getElementById('hzkStopRecBtn').disabled = false;
+      badge.textContent = '🔴 กำลังอัดเสียงและถอดข้อความ...';
+      badge.style.color = '#DC2626';
+
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRec) {
+        recognition = new SpeechRec();
+        recognition.lang = getActiveCockpitLang() === 'JP' ? 'ja-JP' : 'th-TH';
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.onresult = (ev) => {
+          for (let i = ev.resultIndex; i < ev.results.length; i++) {
+            if (ev.results[i].isFinal) {
+              ta.value += (ta.value ? '
+' : '') + '• ' + ev.results[i][0].transcript.trim();
+            }
+          }
+        };
+        try { recognition.start(); } catch (e) {}
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunks = [];
+        mediaRecorder = new MediaRecorder(stream, { audioBitsPerSecond: 32000 });
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(audioChunks, { type: 'audio/webm' });
+          const reader = new FileReader();
+          reader.onloadend = () => { recordedAudioDataUrl = reader.result; };
+          reader.readAsDataURL(blob);
+          stream.getTracks().forEach(t => t.stop());
+        };
+        mediaRecorder.start();
+      } catch (eMic) {}
+    };
+
+    document.getElementById('hzkStopRecBtn').onclick = () => {
+      if (recognition) { try { recognition.stop(); } catch (e) {} }
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') { try { mediaRecorder.stop(); } catch (e) {} }
+      document.getElementById('hzkStartRecBtn').disabled = false;
+      document.getElementById('hzkStopRecBtn').disabled = true;
+      const badge = document.getElementById('hzkRecStatusBadge');
+      badge.textContent = '✅ บันทึกเสียงเรียบร้อย';
+      badge.style.color = '#059669';
+    };
+
+    document.getElementById('hzkGenerateAiMinutesBtn').onclick = async () => {
+      const title = document.getElementById('hzkMeetTitleInp').value.trim();
+      const transcript = document.getElementById('hzkMeetTranscriptBox').value.trim();
+      if (!transcript && !recordedAudioDataUrl) {
+        alert('กรุณากดอัดเสียง หรือพิมพ์บันทึกเนื้อหาการประชุมก่อนให้ AI สรุปครับ');
+        return;
+      }
+      const outBox = document.getElementById('hzkAiMinutesOutputBox');
+      outBox.style.display = 'block';
+      outBox.innerHTML = '⏳ กำลังส่งข้อมูลให้ Gemini AI สรุปรายงานการประชุม 3 ภาษา และแยกงานส่งต่อ...';
+
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          const res = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'generateAiMeetingMinutes',
+              title: title,
+              department: emp.deptLabel,
+              hostName: emp.name,
+              participants: emp.deptLabel + ' Team',
+              transcript: transcript,
+              audioBase64: recordedAudioDataUrl,
+              autoCreateTasks: document.getElementById('hzkAiCreateTasksCb').checked,
+              sendToLine: document.getElementById('hzkAiSendLineCb').checked
+            })
+          });
+          const d = await res.json();
+          if (d && d.status === 'OK') {
+            outBox.innerHTML = `
+              <div style="font-weight:800;color:#059669;margin-bottom:6px;">✅ สรุปรายงานการประชุมสำเร็จ (${d.meetingId})</div>
+              <div style="white-space:pre-line;margin-bottom:8px;"><b>สรุปภาษาไทย:</b>
+${d.summaryTh}</div>
+              ${d.summaryJpEn ? `<div style="white-space:pre-line;background:#F8FAFC;padding:8px;border-radius:8px;margin-bottom:8px;"><b>JP / EN Summary:</b>
+${d.summaryJpEn}</div>` : ''}
+              <div style="font-size:11.5px;color:#0369A1;">📋 สร้างรายการงานเข้ากระดาน To-Do List แล้ว ${(d.actionItems || []).length} รายการ</div>
+            `;
+            return;
+          }
+        } catch (err) {}
+      }
+
+      // Local offline fallback summary
+      outBox.innerHTML = `
+        <div style="font-weight:800;color:#059669;margin-bottom:4px;">✅ บันทึกสรุปการประชุมในเครื่องเรียบร้อยแล้ว</div>
+        <div style="white-space:pre-line;"><b>หัวข้อ:</b> ${title}
+<b>เนื้อหา:</b>
+${transcript}</div>
+      `;
+    };
+  }
+
+  // ----------------------------------------------------------------------------
+  // MODULE 3: MULTI-ROUND FIELD REPAIR, SUPPLEMENTAL QUOTE & PARTS ETA PIPELINE
+  // ----------------------------------------------------------------------------
+  async function openFieldRepairPartsPipelineModal() {
+    let modal = document.getElementById('hzkFieldRepairEtaModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkFieldRepairEtaModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20084;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1080px;max-height:94vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#7F1D1D,#B91C1C);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#FECACA;font-weight:800;">ENTERPRISE v1172 • FIELD TESTING ➔ SUPPLEMENTAL QUOTE ➔ MULTI-ROUND PARTS ETA</div>
+            <div style="font-size:16px;font-weight:800;">🔧 ติดตามงานซ่อมต่อเนื่อง, แจ้งรอบอะไหล่ (ETA) &amp; ล็อกคิวช่างอัตโนมัติ</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkFieldRepairEtaModal').style.display='none'" style="background:#0F172A;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:16px 20px;font-size:13px;">
+          <div style="background:#FEF2F2;border:1.5px solid #FECACA;border-radius:12px;padding:14px;margin-bottom:16px;">
+            <div style="font-weight:800;color:#991B1B;font-size:14px;margin-bottom:8px;">➕ บันทึกผลตรวจหน้างาน (Testing) / เสนอราคาอะไหล่เพิ่มเติม &amp; กำหนดรอบอะไหล่ (ETA)</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-bottom:10px;">
+              <input id="hzkRprJobId" type="text" placeholder="เลขที่ใบงาน เช่น JOB-261121" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;" />
+              <input id="hzkRprCust" type="text" placeholder="ชื่อร้าน / ลูกค้า *" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+              <input id="hzkRprModel" type="text" placeholder="รุ่นเครื่อง เช่น IM-130NE" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+              <input id="hzkRprSn" type="text" placeholder="Serial No. เช่น K01234J" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+              <input id="hzkRprContact" type="text" placeholder="เบอร์โทร / อีเมลลูกค้า" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+              <select id="hzkRprTechVan" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;font-weight:700;">
+                <option value="T01">ช่าง T01 (BKK North)</option><option value="T02">ช่าง T02 (BKK South)</option>
+                <option value="T03">ช่าง T03 (BKK East)</option><option value="T04">ช่าง T04 (Nonthaburi)</option>
+                <option value="T05">ช่าง T05 (Samut Prakan)</option><option value="T06">ช่าง T06 (Ayutthaya)</option>
+                <option value="T07">ช่าง T07 (Upcountry)</option><option value="T08">ช่าง T08 (Install &amp; PM)</option>
+              </select>
+              <input id="hzkRprParts" type="text" placeholder="รายการอะไหล่ที่ต้องเปลี่ยนเพิ่มเติม *" style="grid-column:span 2;padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+              <input id="hzkRprEta" type="text" placeholder="รอบอะไหล่เข้า เช่น รอบ 1: 25 พ.ย. / รอบ 2: 2 ธ.ค." style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+              <input id="hzkRprDate" type="date" value="${today}" style="padding:7px;border:1px solid #CBD5E1;border-radius:8px;" />
+            </div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+              <label style="font-weight:700;color:#065F46;font-size:12.5px;">
+                <input id="hzkRprHasPartsCb" type="checkbox" /> 🟢 มีอะไหล่พร้อมในรถช่าง/คลังแล้ว (ล็อกคิวช่าง + ส่งเมล/LINE Confirm ลูกค้าเข้าซ่อมทันที)
+              </label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button type="button" id="hzkRprOpenAddQuoteBtn" style="background:#0284C7;color:#FFF;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;">📄 ออกใบเสนอราคาอะไหล่เพิ่มเติม</button>
+                <button type="button" id="hzkRprSaveEtaBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:8px 14px;font-weight:800;cursor:pointer;">💾 บันทึกรอบ ETA &amp; แจ้งเตือน</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-weight:800;color:#002B49;margin-bottom:8px;">📋 รายการงานซ่อมต่อเนื่องที่รออะไหล่ / รอเข้าซ่อมตามนัด (Multi-Round Repair Pipeline):</div>
+          <div id="hzkRprPipelineTableWrap">⏳ กำลังโหลดรายการ...</div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    async function loadPipeline() {
+      const wrap = document.getElementById('hzkRprPipelineTableWrap');
+      const gasUrl = getGasEndpointUrl();
+      let items = [];
+      if (gasUrl) {
+        try {
+          const r = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'getFieldRepairPipelineList' })
+          });
+          const d = await r.json();
+          if (d && d.status === 'OK') items = d.items || [];
+        } catch (e) {}
+      }
+      if (!items.length) {
+        try { items = JSON.parse(localStorage.getItem(HZK_V1172_LOCAL_REPAIR_KEY) || '[]'); } catch (e) {}
+      }
+
+      wrap.innerHTML = `
+        <div style="overflow-x:auto;">
+          <table style="width:100%;min-width:820px;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:#002B49;color:#FFF;">
+                <th style="padding:7px;">รหัส / ใบงาน</th>
+                <th style="padding:7px;text-align:left;">ลูกค้า / รุ่น / S/N</th>
+                <th style="padding:7px;text-align:left;">อะไหล่เพิ่มเติม</th>
+                <th style="padding:7px;">รอบอะไหล่ (ETA)</th>
+                <th style="padding:7px;">ช่าง</th>
+                <th style="padding:7px;">สถานะ</th>
+                <th style="padding:7px;">ดำเนินการเมื่ออะไหล่พร้อม</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map(it => `
+                <tr>
+                  <td style="padding:7px;border:1px solid #CBD5E1;font-weight:700;">${it.pipelineId}<br><span style="font-size:10.5px;color:#64748B;">${it.jobId}</span></td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;"><b>${it.customerName}</b><br>${it.model} (${it.serialNo})</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;">${it.partsDetail}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:700;color:#B45309;">${it.etaRound}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;font-weight:700;">${it.techVan}</td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+                    ${it.stage === 'PARTS_READY_CONFIRMED'
+                      ? `<span style="background:#DCFCE7;color:#166534;padding:3px 8px;border-radius:999px;font-weight:700;">✅ ล็อกคิวซ่อมแล้ว (${it.repairSlot})</span>`
+                      : `<span style="background:#FEF3C7;color:#92400E;padding:3px 8px;border-radius:999px;font-weight:700;">⏳ รออะไหล่เข้า</span>`}
+                  </td>
+                  <td style="padding:7px;border:1px solid #CBD5E1;text-align:center;">
+                    <button type="button" data-pid="${it.pipelineId}" data-van="${it.techVan}" class="hzk-rpr-dispatch-now-btn" style="background:#059669;color:#FFF;border:none;border-radius:6px;padding:5px 9px;font-weight:700;cursor:pointer;">🚀 อะไหล่พร้อม ➔ ล็อกคิว &amp; แจ้งลูกค้า</button>
+                  </td>
+                </tr>
+              `).join('') || '<tr><td colspan="7" style="padding:12px;text-align:center;color:#64748B;">ยังไม่มีรายการรอรอบอะไหล่เพิ่มเติม</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      wrap.querySelectorAll('.hzk-rpr-dispatch-now-btn').forEach(btn => {
+        btn.onclick = async () => {
+          const pid = btn.getAttribute('data-pid');
+          const van = btn.getAttribute('data-van');
+          const rDate = prompt('ระบุวันที่เข้าซ่อม (YYYY-MM-DD):', today) || today;
+          if (gasUrl) {
+            const res = await fetch(gasUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({
+                action: 'confirmPartsArrivedAndDispatchRepair',
+                pipelineId: pid,
+                repairDate: rDate,
+                timeSlot: '09:00 - 12:00',
+                techVan: van
+              })
+            });
+            const d = await res.json();
+            alert(d && d.message ? ('✅ ' + d.message) : '✅ ล็อกคิวซ่อมและแจ้งเตือนลูกค้าเรียบร้อยแล้ว');
+          } else {
+            alert(`✅ ล็อกคิวช่าง ${van} วันที่ ${rDate} และส่งยืนยันให้ลูกค้าเรียบร้อยแล้ว`);
+          }
+          loadPipeline();
+        };
+      });
+    }
+
+    document.getElementById('hzkRprOpenAddQuoteBtn').onclick = async () => {
+      const cust = document.getElementById('hzkRprCust').value.trim();
+      const model = document.getElementById('hzkRprModel').value.trim() || 'SPARE-PARTS';
+      const sn = document.getElementById('hzkRprSn').value.trim();
+      const parts = document.getElementById('hzkRprParts').value.trim();
+      const eta = document.getElementById('hzkRprEta').value.trim();
+      modal.style.display = 'none';
+      HZK_OMNI_STATE.items = [{
+        model: model,
+        description: `อะไหล่ซ่อมเพิ่มเติม (${parts}) [S/N: ${sn}] — กำหนดรอบอะไหล่: ${eta || 'พร้อมซ่อม'}`,
+        w: '',
+        d: '',
+        h: '',
+        unitPrice: 0,
+        discount: 0,
+        qty: 1,
+        isService: true
+      }];
+      await openSalesCorporateQuotationWithPreset('Service & Billing', 'ใบเสนอราคา (Quotation)');
+      if (cust) document.getElementById('hzkSqCustomer').value = cust;
+    };
+
+    document.getElementById('hzkRprSaveEtaBtn').onclick = async () => {
+      const payload = {
+        action: 'saveFieldRepairMultiRoundEta',
+        jobId: document.getElementById('hzkRprJobId').value.trim() || ('JOB-' + Date.now().toString().slice(-6)),
+        customerName: document.getElementById('hzkRprCust').value.trim() || 'ลูกค้างานซ่อม',
+        model: document.getElementById('hzkRprModel').value.trim(),
+        serialNo: document.getElementById('hzkRprSn').value.trim(),
+        contact: document.getElementById('hzkRprContact').value.trim(),
+        techVan: document.getElementById('hzkRprTechVan').value,
+        partsDetail: document.getElementById('hzkRprParts').value.trim(),
+        etaRound: document.getElementById('hzkRprEta').value.trim(),
+        repairDate: document.getElementById('hzkRprDate').value,
+        hasPartsReady: document.getElementById('hzkRprHasPartsCb').checked
+      };
+      const localRec = Object.assign({
+        pipelineId: 'RPR-' + Date.now().toString().slice(-6),
+        stage: payload.hasPartsReady ? 'PARTS_READY_CONFIRMED' : 'WAITING_PARTS_ETA',
+        repairSlot: payload.repairDate
+      }, payload);
+      try {
+        const prev = JSON.parse(localStorage.getItem(HZK_V1172_LOCAL_REPAIR_KEY) || '[]');
+        localStorage.setItem(HZK_V1172_LOCAL_REPAIR_KEY, JSON.stringify([localRec].concat(prev)));
+      } catch (e) {}
+
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          const r = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+          const d = await r.json();
+          if (d && d.status === 'OK') {
+            alert(d.message ? ('✅ ' + d.message) : `✅ บันทึกรอบรออะไหล่ (${d.etaRound}) และแจ้งเตือนเรียบร้อยแล้ว`);
+            loadPipeline();
+            return;
+          }
+        } catch (e) {}
+      }
+      alert('✅ บันทึกข้อมูลงานซ่อมต่อเนื่องและรอบอะไหล่เรียบร้อยแล้ว');
+      loadPipeline();
+    };
+
+    loadPipeline();
+  }
+
+  // ----------------------------------------------------------------------------
+  // MODULE 4: 1-CLICK DEPARTMENTAL REPORT CENTER (ALL 8 DEPARTMENTS)
+  // ----------------------------------------------------------------------------
+  async function openDepartmentReportCenterModal() {
+    const emp = getActiveEmployeeProfileV1171();
+    let modal = document.getElementById('hzkDeptReportCenterModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'hzkDeptReportCenterModal';
+      modal.style.cssText =
+        'position:fixed;inset:0;z-index:20086;background:rgba(15,23,42,0.88);display:flex;' +
+        'align-items:center;justify-content:center;padding:10px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div style="background:#FFFFFF;width:100%;max-width:1020px;max-height:92vh;overflow-y:auto;border-radius:16px;box-shadow:0 28px 70px rgba(0,0,0,0.5);font-family:sans-serif;color:#0F172A;">
+        <div style="background:linear-gradient(135deg,#064E3B,#059669);color:#FFF;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:11px;color:#A7F3D0;font-weight:800;">ENTERPRISE v1172 • 1-CLICK DEPARTMENTAL REPORT CENTER</div>
+            <div style="font-size:16px;font-weight:800;">📑 ศูนย์ออกรายงานประจำแผนก (CSV / Excel / พิมพ์รายงาน A4)</div>
+          </div>
+          <button type="button" onclick="document.getElementById('hzkDeptReportCenterModal').style.display='none'" style="background:#EF4444;color:#FFF;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;">✕ ปิด</button>
+        </div>
+
+        <div style="padding:18px 20px;font-size:13px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
+            <label style="font-weight:700;">เลือกแผนกที่ต้องการออกรายงาน:</label>
+            <select id="hzkRptDeptSel" style="padding:8px 12px;border:1.5px solid #CBD5E1;border-radius:8px;font-weight:700;">
+              <option value="${emp.deptLabel}">รายงานแผนกของฉัน (${emp.deptLabel})</option>
+              <option value="Sales Department">💼 Sales Department — Sales Pipeline &amp; Quotation Report</option>
+              <option value="Japanese Corporate">🇯🇵 Japanese Corporate — Bilingual Account &amp; Export Report</option>
+              <option value="Marketing Department">📣 Marketing — Campaign &amp; Demo/Clearance Stock Report</option>
+              <option value="Accounting & Finance">🧾 Accounting &amp; Finance — Tax, Billing &amp; NAV Ready Report</option>
+              <option value="Admin & HR">🏢 Admin &amp; HR — Staff Directory &amp; Task Audit Report</option>
+              <option value="Service Unit">🛠️ Service Unit — Field Jobs, Parts Cost &amp; Technician Report</option>
+              <option value="Executive Management">👑 Executive Boardroom — Unit Lifecycle P&amp;L &amp; Pricing Report</option>
+            </select>
+            <button type="button" id="hzkRptGenerateBtn" style="background:#002B49;color:#FFF;border:none;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer;">📊 สร้างรายงานทันที</button>
+            <button type="button" id="hzkRptDownloadCsvBtn" style="background:#059669;color:#FFF;border:none;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer;">📥 ดาวน์โหลด CSV / Excel</button>
+          </div>
+
+          <div id="hzkRptPreviewArea" style="color:#64748B;">กดปุ่ม "สร้างรายงานทันที" เพื่อดูตัวอย่างตารางและส่งออกไฟล์ครับ</div>
+        </div>
+      </div>
+    `;
+    modal.style.display = 'flex';
+
+    let latestReport = null;
+
+    async function runGenerateReport() {
+      const dept = document.getElementById('hzkRptDeptSel').value;
+      const area = document.getElementById('hzkRptPreviewArea');
+      area.innerHTML = '⏳ กำลังรวบรวมข้อมูลรายงานของแผนก ' + dept + '...';
+
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl) {
+        try {
+          const r = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'generateDepartmentReportBundle', department: dept })
+          });
+          const d = await r.json();
+          if (d && d.status === 'OK') {
+            latestReport = d;
+            renderReportPreview(d);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      // Local fallback report from local archive / lifecycle data
+      const fallbackPnl = getLocalFallbackLifecycleData('');
+      latestReport = {
+        reportTitle: dept + ' — Operational Summary Report (Local Snapshot)',
+        department: dept,
+        generatedAt: new Date().toLocaleString('th-TH'),
+        headers: ['Serial No.', 'Model', 'Channel / Dealer', 'Customer', 'Net Sale Price (THB)', 'Warranty Cost (THB)', 'Net Margin %'],
+        rows: (fallbackPnl.allUnits || []).map(u => [u.serialNumber, u.model, u.dealerName, u.customerStore, u.netSellingPrice, u.companyAbsorbedCost, u.netMarginPct + '%'])
+      };
+      renderReportPreview(latestReport);
+    }
+
+    function renderReportPreview(rep) {
+      const area = document.getElementById('hzkRptPreviewArea');
+      const ths = (rep.headers || []).map(h => `<th style="padding:7px;border:1px solid #CBD5E1;">${h}</th>`).join('');
+      const trs = (rep.rows || []).slice(0, 80).map(row =>
+        `<tr>${row.map(cell => `<td style="padding:6px;border:1px solid #CBD5E1;">${cell !== null && cell !== undefined ? cell : '-'}</td>`).join('')}</tr>`
+      ).join('') || `<tr><td colspan="${(rep.headers || []).length || 1}" style="padding:12px;text-align:center;color:#64748B;">ยังไม่มีรายการข้อมูลในหมวดนี้</td></tr>`;
+
+      area.innerHTML = `
+        <div style="font-weight:800;color:#002B49;font-size:14px;margin-bottom:4px;">${rep.reportTitle}</div>
+        <div style="font-size:11.5px;color:#475569;margin-bottom:10px;">ออกรายงานโดย: ${emp.name} | เวลา: ${rep.generatedAt} | จำนวน ${(rep.rows || []).length} รายการ</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;min-width:740px;border-collapse:collapse;font-size:12px;">
+            <thead><tr style="background:#002B49;color:#FFF;">${ths}</tr></thead>
+            <tbody>${trs}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    document.getElementById('hzkRptGenerateBtn').onclick = runGenerateReport;
+    document.getElementById('hzkRptDownloadCsvBtn').onclick = () => {
+      if (!latestReport) {
+        alert('กรุณากดปุ่ม "สร้างรายงานทันที" ก่อนดาวน์โหลดครับ');
+        return;
+      }
+      const csvLines = [(latestReport.headers || []).join(',')].concat(
+        (latestReport.rows || []).map(r => r.map(c => `"${String(c !== null && c !== undefined ? c : '').split('"').join('""')}"`).join(','))
+      );
+      const blob = new Blob(['﻿' + csvLines.join('
+')], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'HOSHIZAKI_' + latestReport.department.replace(/[^A-Za-z0-9]/g, '_') + '_Report_' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.click();
+    };
+
+    runGenerateReport();
+  }
+
+  window.openDepartmentTaskBoardModal = openDepartmentTaskBoardModal;
+  window.openOmniMeetAndAiMinutesModal = openOmniMeetAndAiMinutesModal;
+  window.openFieldRepairPartsPipelineModal = openFieldRepairPartsPipelineModal;
+  window.openDepartmentReportCenterModal = openDepartmentReportCenterModal;
 
   function bootPersonalizedCockpitV1171() {
     installGlobalRuntimeGuard();

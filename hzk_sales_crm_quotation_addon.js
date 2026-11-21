@@ -486,7 +486,7 @@
       return `
         <tr>
           <td style="border:1px solid #334155;padding:6px;text-align:center;">${idx + 1}</td>
-          <td style="border:1px solid #334155;padding:6px;font-weight:700;">${it.model || '-'}</td>
+          <td style="border:1px solid #334155;padding:6px;font-weight:700;text-align:center;"><img src="${resolveModelProductPhoto_(db, it.model)}" style="width:68px;height:46px;object-fit:cover;border-radius:5px;display:block;margin:0 auto 3px;" /><div>${it.model || '-'}</div></td>
           <td style="border:1px solid #334155;padding:6px;">${it.description || '-'}</td>
           <td style="border:1px solid #334155;padding:6px;text-align:center;">${it.w || '-'}</td>
           <td style="border:1px solid #334155;padding:6px;text-align:center;">${it.d || '-'}</td>
@@ -1543,6 +1543,71 @@
   }
 
   
+
+  // ============================================================================
+  // ENTERPRISE v1180 UPGRADE: PRODUCT PHOTO AUTO-MATCHER & TELEMETRY TRACKER
+  // ============================================================================
+  const HZK_V1180_CUSTOM_PHOTOS_KEY = 'hzk_v1180_custom_model_photos_map';
+
+  function resolveModelProductPhoto_(db, modelCode) {
+    const code = String(modelCode || '').trim().toUpperCase();
+    try {
+      const customMap = JSON.parse(localStorage.getItem(HZK_V1180_CUSTOM_PHOTOS_KEY) || '{}');
+      if (customMap[code]) return customMap[code];
+    } catch (e) {}
+
+    const gallery = (db && db.seriesPhotoGallery) || {};
+    const prefixes = ['DCM', 'JWE', 'HNC', '4HC', 'IM', 'KM', 'FM', 'HR', 'HF', 'RT'];
+    for (const p of prefixes) {
+      if (code.startsWith(p) && gallery[p] && gallery[p].imageUrl) {
+        return gallery[p].imageUrl;
+      }
+    }
+    return (gallery.DEFAULT && gallery.DEFAULT.imageUrl) || '';
+  }
+
+  window.registerCustomModelPhotoUrl = function(modelCode, imgUrl) {
+    const code = String(modelCode || '').trim().toUpperCase();
+    if (!code || !imgUrl) return;
+    try {
+      const customMap = JSON.parse(localStorage.getItem(HZK_V1180_CUSTOM_PHOTOS_KEY) || '{}');
+      customMap[code] = String(imgUrl).trim();
+      localStorage.setItem(HZK_V1180_CUSTOM_PHOTOS_KEY, JSON.stringify(customMap));
+    } catch (e) {}
+  };
+
+  window.logGoLiveAdoptionEventV1180 = function(moduleName, actionDetail) {
+    try {
+      const emp = (typeof getActiveEmployeeProfileV1171 === 'function') ? getActiveEmployeeProfileV1171() : { id: 'USR', name: 'Staff', deptLabel: 'General' };
+      const logs = JSON.parse(localStorage.getItem('hzk_v1180_golive_adoption_logs') || '[]');
+      logs.unshift({
+        ts: new Date().toISOString(),
+        empId: emp.id,
+        empName: emp.name,
+        dept: emp.deptLabel,
+        module: moduleName,
+        detail: actionDetail
+      });
+      localStorage.setItem('hzk_v1180_golive_adoption_logs', JSON.stringify(logs.slice(0, 500)));
+      const gasUrl = getGasEndpointUrl();
+      if (gasUrl && navigator.onLine) {
+        fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            actionType: 'LOG_GOLIVE_ADOPTION_TELEMETRY',
+            empId: emp.id,
+            empName: emp.name,
+            department: emp.deptLabel,
+            module: moduleName,
+            detail: actionDetail
+          })
+        }).catch(() => {});
+      }
+    } catch (e) {}
+  };
+
   function validateSalesQuotationBeforeCommit_(db, actionLabel) {
     const cust = (document.getElementById('hzkSqCustomer')?.value || '').trim();
     const errors = [];
@@ -1788,7 +1853,7 @@
         return `
           <tr>
             <td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">${idx + 1}</td>
-            <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;">${item.model}${stockBadgeHtml}</td>
+            <td style="padding:6px;border:1px solid #CBD5E1;font-weight:700;"><div style="display:flex;align-items:center;gap:6px;"><img src="${resolveModelProductPhoto_(db, item.model)}" style="width:46px;height:32px;object-fit:cover;border-radius:4px;border:1px solid #CBD5E1;flex-shrink:0;" /><div>${item.model}${stockBadgeHtml}</div></div></td>
             <td style="padding:6px;border:1px solid #CBD5E1;"><input data-idx="${idx}" data-f="description" value="${item.description}" style="width:100%;border:1px solid #E2E8F0;padding:4px;" /></td>
             <td style="padding:6px;border:1px solid #CBD5E1;width:62px;"><input data-idx="${idx}" data-f="w" value="${item.w}" style="width:100%;border:1px solid #E2E8F0;padding:4px;text-align:center;" /></td>
             <td style="padding:6px;border:1px solid #CBD5E1;width:62px;"><input data-idx="${idx}" data-f="d" value="${item.d}" style="width:100%;border:1px solid #E2E8F0;padding:4px;text-align:center;" /></td>

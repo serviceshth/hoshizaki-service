@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoshizaki-service-pwa-v1167-INSPECTION-FIXED-BKK-BRIDGE';
+const CACHE_NAME = 'hoshizaki-service-pwa-v1168-flex-creative-studio';
 const CORE_ASSETS = [
   './',
   './index.html',

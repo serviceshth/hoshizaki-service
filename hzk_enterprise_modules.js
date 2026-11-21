@@ -1898,43 +1898,282 @@
 })();
 
 
-// --- Module Block #51 ---
+// --- Module Block #51 (v1168: AI Vision + Voice Creative Director + 10-Dim Flex & Ad Studio) ---
 (function() {
-  const FLEX_TPL_KEY = 'hoshizaki_line_flex_templates_v1036';
+  const FLEX_TPL_KEY = 'hoshizaki_line_flex_templates_v1168';
 
+  // Helper: Fetch live model specs (W x D x H, type, description) & live stock from Master DBs
+  window.getHzkModelSpecForCreativeStudio = function(modelQuery) {
+    const q = String(modelQuery || '').trim().toUpperCase();
+    const fallback = {
+      model: q || 'IM-130NE',
+      type: 'ICE MAKER',
+      w: 704, d: 506, h: 1200,
+      description: 'Hoshizaki Commercial Cube Ice Maker (Japan Quality)',
+      stockQty: 5,
+      hasLiveStock: true,
+      priceHint: 'ติดต่อฝ่ายขาย / ดีลเลอร์เพื่อรับราคาพิเศษ'
+    };
+    if (!q) return fallback;
+
+    let foundModel = null;
+    try {
+      const db = window.HZK_SALES_CRM_MASTER_DB || window.SALES_CRM_MASTER_DB_Y2026 || null;
+      if (db && Array.isArray(db.models)) {
+        foundModel = db.models.find(m => String(m.model || '').toUpperCase() === q)
+          || db.models.find(m => String(m.model || '').toUpperCase().indexOf(q) === 0)
+          || db.models.find(m => String(m.model || '').toUpperCase().indexOf(q) >= 0);
+      }
+    } catch (e) {}
+
+    let stockQty = null;
+    try {
+      const stk = window.HZK_LIVE_STOCK_SNAPSHOT || window.LIVE_STOCK_SNAPSHOT_Y2026 || null;
+      const targetCode = foundModel ? String(foundModel.model || '').toUpperCase() : q;
+      if (stk && stk.stockMap && typeof stk.stockMap === 'object') {
+        if (stk.stockMap[targetCode] !== undefined) {
+          const entry = stk.stockMap[targetCode];
+          stockQty = typeof entry === 'number' ? entry : Number(entry.available ?? entry.qty ?? entry.total ?? 0);
+        }
+      }
+    } catch (e2) {}
+
+    if (foundModel) {
+      return {
+        model: foundModel.model,
+        type: foundModel.type || foundModel.prefix || 'HOSHIZAKI',
+        w: foundModel.w || '-',
+        d: foundModel.d || '-',
+        h: foundModel.h || '-',
+        description: foundModel.description || 'Hoshizaki Commercial Equipment',
+        stockQty: stockQty,
+        hasLiveStock: stockQty !== null && stockQty > 0
+      };
+    }
+    return Object.assign({}, fallback, { model: q, stockQty: stockQty, hasLiveStock: stockQty !== null && stockQty > 0 });
+  };
+
+  // Helper: Populate datalist of 331 models for instant search
+  function getModelsDatalistHtml_() {
+    let opts = [
+      'IM-30CNE-25', 'IM-45NE-25', 'IM-65NE-25', 'IM-100NE-25', 'IM-130NE', 'IM-240DNE-HC',
+      'KM-65A', 'KM-130A', 'KM-200A', 'KM-515MAJ', 'KM-901MAJ',
+      'FM-120KE', 'FM-480AKE', 'DCM-60KE', 'DCM-120KE',
+      'HR-63MA-S', 'HR-126MA-S', 'HF-126MA-S', 'RT-126MA-S', 'RT-156MA-S',
+      'JWE-450B', 'JWE-580B', 'JWE-680', 'HNC-120BE-R-B', 'HNC-150BE-R-B', '4HC-H'
+    ];
+    try {
+      const db = window.HZK_SALES_CRM_MASTER_DB || window.SALES_CRM_MASTER_DB_Y2026 || null;
+      if (db && Array.isArray(db.models) && db.models.length > 0) {
+        opts = db.models.slice(0, 350).map(m => m.model).filter(Boolean);
+      }
+    } catch (e) {}
+    return opts.map(m => `<option value="${String(m).replace(/"/g, '&quot;')}">`).join('');
+  }
+
+  // 10-Dimensional Unified Templates (LINE OA + Sales & Marketing)
   const DEFAULT_FLEX_TEMPLATES = [
     {
-      id: 'FLEX-TPL-DEALER-PROMO',
-      name: 'ประกาศโปรโมชันไส้กรองน้ำ 4HC-H & อะไหล่แท้ (กลุ่มดีลเลอร์)',
+      id: 'FLEX-TPL-MKT-SPEC-SPOTLIGHT',
+      category: 'SALES_MARKETING',
+      name: '1. [Sales/MKT] แนะนำสเปกเครื่อง & ขนาด W×D×H พร้อมสต็อก',
       targetChannel: 'ALL_DEALER_GROUPS',
+      sceneStyle: 'CORPORATE_SPEC',
+      modelCode: 'IM-130NE',
       headerBg: '#002B49',
-      headerBadge: 'HOSHIZAKI DEALER PARTNER UPDATE',
-      headerTitle: 'โปรโมชันไส้กรองน้ำ 4HC-H & อะไหล่บำรุงรักษา PM',
+      headerBadge: 'HOSHIZAKI PRODUCT & SPEC SPOTLIGHT',
+      headerTitle: 'เครื่องทำน้ำแข็งก้อนสี่เหลี่ยม รุ่น IM-130NE (พร้อมส่ง)',
       heroImageUrl: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=3',
       heroAspectRatio: '16:9',
       bodyRows: [
-        { label: 'รายละเอียด', text: 'สั่งซื้อไส้กรองน้ำแท้ HOSHIZAKI 4HC-H ยกลัง รับราคาพิเศษสำหรับตัวแทนจำหน่าย พร้อมบริการจัดส่งด่วนทั่วประเทศ', bold: true, color: '#0F172A' },
-        { label: 'เงื่อนไข', text: 'สามารถสั่งซื้อหรือแจ้งรหัสสินค้าผ่านระบบ Service Portal ได้ตลอด 24 ชม.', bold: false, color: '#334155' }
+        { label: 'สเปก & ขนาดติดตั้ง (W×D×H)', text: 'ขนาด กว้าง 704 × ลึก 506 × สูง 1,200 มม. | ระบบผลิตน้ำแข็งเซลล์ปิด สะอาด ละลายช้า มาตรฐานญี่ปุ่นแท้', bold: true, color: '#002B49' },
+        { label: 'จุดเด่นสำหรับร้านอาหาร & คาเฟ่', text: '• โครงสร้างสเตนเลสเกรดพรีเมียม แข็งแรง ทนทาน\n• ประหยัดพลังงาน พร้อมทีมช่างและอะไหล่แท้ทั่วประเทศ', bold: false, color: '#1E293B' }
       ],
       buttons: [
-        { label: '📲 เปิดระบบสั่งซื้อ / ใบงาน', uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#059669' }
+        { label: '📄 ขอใบเสนอราคา (Quotation)', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#059669' },
+        { label: '📐 ดูสเปก & แบบขนาดเครื่อง', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#002B49' }
+      ]
+    },
+    {
+      id: 'FLEX-TPL-MKT-HOT-PROMO',
+      category: 'SALES_MARKETING',
+      name: '2. [Sales/MKT] แบนเนอร์โปรโมชันประจำเดือน & แถมไส้กรอง 4HC-H',
+      targetChannel: 'ALL_DEALER_GROUPS',
+      sceneStyle: 'PROMO_DEAL',
+      modelCode: 'KM-901MAJ',
+      headerBg: '#B91C1C',
+      headerBadge: '🔥 HOSHIZAKI HOT CAMPAIGN 2026',
+      headerTitle: 'โปรโมชันพิเศษ! สั่งซื้อเครื่องทำน้ำแข็ง รับฟรีชุดไส้กรองน้ำ 4HC-H',
+      heroImageUrl: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=3',
+      heroAspectRatio: '1:1',
+      bodyRows: [
+        { label: 'สิทธิพิเศษแคมเปญการตลาด', text: 'รับฟรี! ชุดไส้กรองน้ำแท้ HOSHIZAKI 4HC-H มูลค่าพิเศษ พร้อมบริการตรวจเช็กติดตั้งมาตรฐานโรงงาน', bold: true, color: '#991B1B' },
+        { label: 'เหมาะสำหรับธุรกิจ', text: 'โรงแรม ร้านอาหาร คาเฟ่ และเชนธุรกิจที่ต้องการน้ำแข็งคุณภาพสูงต่อเนื่อง 24 ชม.', bold: false, color: '#1E293B' }
+      ],
+      buttons: [
+        { label: '🎁 รับสิทธิ์โปรโมชัน / ขอ QT', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#DC2626' }
+      ]
+    },
+    {
+      id: 'FLEX-TPL-MKT-CLEARANCE',
+      category: 'SALES_MARKETING',
+      name: '3. [Sales/MKT] ดีลพิเศษเครื่อง Demo / Grade B ราคาประหยัด',
+      targetChannel: 'ALL_DEALER_GROUPS',
+      sceneStyle: 'PROMO_DEAL',
+      modelCode: 'HR-126MA-S',
+      headerBg: '#B45309',
+      headerBadge: '⭐ HOSHIZAKI CERTIFIED DEMO & OUTLET',
+      headerTitle: 'ดีลคุ้มค่า! เครื่องตัวโชว์ & สินค้าคัดเกรด ผ่านการตรวจเช็กจากศูนย์',
+      heroImageUrl: '',
+      heroAspectRatio: '16:9',
+      bodyRows: [
+        { label: 'การรับรองคุณภาพ', text: 'ผ่านการทดสอบสมรรถนะ 100% (QC Passed) โดยทีมวิศวกรบริการ HOSHIZAKI (THAILAND) พร้อมใบรับรองสภาพเครื่อง', bold: true, color: '#78350F' },
+        { label: 'เงื่อนไขการสั่งจอง', text: 'จำนวนจำกัดตามสต็อกจริง สามารถจองสิทธิ์หรือขอใบเสนอราคาเรตดีลเลอร์ได้ทันที', bold: false, color: '#1E293B' }
+      ],
+      buttons: [
+        { label: '📦 เช็กสต็อก & จองสิทธิ์ทันที', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#D97706' }
+      ]
+    },
+    {
+      id: 'FLEX-TPL-MKT-CAFE-SCENE',
+      category: 'SALES_MARKETING',
+      name: '4. [Marketing Ads] ภาพโฆษณาโซเชียล (Cafe & Omakase Lifestyle)',
+      targetChannel: 'CUSTOMER_OA_USER',
+      sceneStyle: 'CAFE',
+      modelCode: 'IM-65NE-25',
+      headerBg: '#0F172A',
+      headerBadge: 'JAPANESE CRAFT ICE · HOSHIZAKI',
+      headerTitle: 'ยกระดับทุกแก้วเครื่องดื่ม ด้วยน้ำแข็งใสสะอาดมาตรฐานญี่ปุ่นแท้',
+      heroImageUrl: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=3',
+      heroAspectRatio: '1:1',
+      bodyRows: [
+        { label: 'ทำไมบาริสต้าและเชฟชั้นนำเลือกใช้', text: '• น้ำแข็งก้อนสี่เหลี่ยมใส แข็งแกร่ง ละลายช้า ไม่ทำให้เครื่องดื่มเสียรสชาติ\n• ขนาดกะทัดรัด วางใต้เคาน์เตอร์บาร์ได้ลงตัว', bold: true, color: '#0F172A' },
+        { label: '日本語案内 (Japanese Quality)', text: '日本品質の業務用製氷機ホシザキ。省エネ設計と全国アフターサービス網で店舗運営をサポート。', bold: false, color: '#0369A1' }
+      ],
+      buttons: [
+        { label: '💬 ปรึกษาผู้เชี่ยวชาญ & ขอราคา', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#059669' }
+      ]
+    },
+    {
+      id: 'FLEX-TPL-MKT-EXHIBITION',
+      category: 'SALES_MARKETING',
+      name: '5. [Marketing] เชิญชมบูธ THAIFEX / Showroom VIP & สาธิตเครื่อง',
+      targetChannel: 'ALL_DEALER_GROUPS',
+      sceneStyle: 'LUXURY_HOTEL',
+      modelCode: 'JWE-680',
+      headerBg: '#4C1D95',
+      headerBadge: '🎪 HOSHIZAKI SHOWROOM & EXHIBITION VIP',
+      headerTitle: 'ขอเชิญสัมผัสเทคโนโลยีเครื่องครัวและเครื่องทำน้ำแข็งรุ่นใหม่ล่าสุด',
+      heroImageUrl: '',
+      heroAspectRatio: '16:9',
+      bodyRows: [
+        { label: 'ไฮไลต์ภายในงาน', text: 'ชมการสาธิตการทำงานจริงของเครื่องทำน้ำแข็ง ตู้แช่สเตนเลส และเครื่องล้างจานอัตโนมัติ พร้อมรับข้อเสนอพิเศษเฉพาะในงาน', bold: true, color: '#4C1D95' },
+        { label: 'ลงทะเบียนล่วงหน้า', text: 'ลงทะเบียนเพื่อรับของที่ระลึกและนัดหมายทีมวิศวกรให้คำปรึกษาออกแบบครัวฟรี', bold: false, color: '#1E293B' }
+      ],
+      buttons: [
+        { label: '🎟️ ลงทะเบียนเข้าชม & นัดหมาย', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#6D28D9' }
+      ]
+    },
+    {
+      id: 'FLEX-TPL-OA-SELF-CHECK',
+      category: 'LINE_OA_CHATBOT',
+      name: '6. [LINE OA] การ์ดแนะนำตรวจเช็กเบื้องต้น 3 ภาษา (TH/EN/JP)',
+      targetChannel: 'CUSTOMER_OA_USER',
+      sceneStyle: 'SERVICE_CARE',
+      modelCode: 'IM-130NE',
+      headerBg: '#0369A1',
+      headerBadge: '🐧 HOSHIZAKI SMART SELF-CHECK (TH/EN/JP)',
+      headerTitle: 'วิธีตรวจเช็กเบื้องต้นด้วยตนเอง ก่อนเรียกช่างเข้าบริการ',
+      heroImageUrl: '',
+      heroAspectRatio: '16:9',
+      bodyRows: [
+        { label: 'ขั้นตอนตรวจเช็ก (ภาษาไทย)', text: '1. ตรวจสอบวาล์วน้ำเข้าเครื่องว่าเปิดสุดและมีน้ำไหลปกติ\n2. ถอดแผ่นกรองฝุ่น (Air Filter) ด้านหน้าออกมาล้างทำความสะอาด\n3. ปิดสวิตช์พักเครื่อง 3 นาที แล้วเปิดใหม่อีกครั้ง', bold: true, color: '#0F172A' },
+        { label: 'セルフチェック手順 (日本語)', text: '1. 給水バルブが開いているか確認してください。\n2. エアフィルターのホコリを清掃してください。\n3. 電源をOFFにし3分後に再起動してください。', bold: false, color: '#0369A1' }
+      ],
+      buttons: [
+        { label: '✅ ทำตามแล้ว เครื่องทำงานปกติ', uri: 'เครื่องกลับมาทำงานปกติแล้วครับ', color: '#059669' },
+        { label: '🚨 ยังไม่หาย / เปิดใบแจ้งซ่อม', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#DC2626' }
+      ]
+    },
+    {
+      id: 'FLEX-TPL-OA-FILTER-PM',
+      category: 'LINE_OA_CHATBOT',
+      name: '7. [LINE OA] แจ้งเตือนรอบเปลี่ยนไส้กรองน้ำ 4HC-H & PM รายปี',
+      targetChannel: 'CUSTOMER_OA_USER',
+      sceneStyle: 'SERVICE_CARE',
+      modelCode: '4HC-H',
+      headerBg: '#047857',
+      headerBadge: '💧 HOSHIZAKI PM & WATER FILTER REMINDER',
+      headerTitle: 'แจ้งเตือนรอบเปลี่ยนไส้กรองน้ำแท้ 4HC-H & บำรุงรักษา PM',
+      heroImageUrl: '',
+      heroAspectRatio: '16:9',
+      bodyRows: [
+        { label: 'ทำไมต้องเปลี่ยนไส้กรองทุก 6-12 เดือน', text: 'ช่วยป้องกันตะกรันอุดตันวาล์วน้ำ ทำให้น้ำแข็งใสสะอาดถูกสุขอนามัย และยืดอายุการใช้งานคอมเพรสเซอร์', bold: true, color: '#065F46' },
+        { label: 'บริการเข้าดูแลแบบครบวงจร', text: 'รองรับการนัดหมายเข้าเปลี่ยนไส้กรองพร้อมตรวจเช็กเครื่องทั้งสาขาในครั้งเดียว', bold: false, color: '#1E293B' }
+      ],
+      buttons: [
+        { label: '📅 นัดหมายเปลี่ยนไส้กรอง / ทำ PM', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#059669' },
+        { label: '🛒 สั่งซื้อไส้กรองน้ำแท้ 4HC-H', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#002B49' }
+      ]
+    },
+    {
+      id: 'FLEX-TPL-DEALER-PROMO',
+      category: 'LINE_OA_CHATBOT',
+      name: '8. [Dealer OA] ประกาศอัปเดตสต็อก & ราคาดีลเลอร์ (Co-Brand)',
+      targetChannel: 'ALL_DEALER_GROUPS',
+      sceneStyle: 'CORPORATE_SPEC',
+      modelCode: 'KM-515MAJ',
+      headerBg: '#002B49',
+      headerBadge: 'HOSHIZAKI DEALER PARTNER UPDATE',
+      headerTitle: 'อัปเดตสต็อกสินค้าพร้อมส่ง & แพ็กเกจอะไหล่แท้สำหรับตัวแทนจำหน่าย',
+      heroImageUrl: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=3',
+      heroAspectRatio: '16:9',
+      bodyRows: [
+        { label: 'สิทธิประโยชน์ตัวแทนจำหน่าย', text: 'ตัวแทนจำหน่ายสามารถออกใบเสนอราคาเรตดีลเลอร์ และปรับหัวกระดาษส่งต่อให้ลูกค้าปลายทางได้ทันทีในระบบ', bold: true, color: '#0F172A' },
+        { label: 'การประสานงานบริการ', text: 'รองรับการแจ้งซ่อมแยกตาม Serial Number รายเครื่องในสาขาเดียวกันอย่างแม่นยำ', bold: false, color: '#334155' }
+      ],
+      buttons: [
+        { label: '📲 เปิดระบบ Dealer & Quotation', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#059669' }
+      ]
+    },
+    {
+      id: 'FLEX-TPL-SERVICE-CASE-ETA',
+      category: 'LINE_OA_CHATBOT',
+      name: '9. [Service OA] แจ้งสถานะงานซ่อม & กำหนดอะไหล่เข้า (Parts ETA)',
+      targetChannel: 'ALL_DEALER_GROUPS',
+      sceneStyle: 'SERVICE_CARE',
+      modelCode: 'DCM-120KE',
+      headerBg: '#1D4ED8',
+      headerBadge: '🛠️ HOSHIZAKI SERVICE & PARTS ETA UPDATE',
+      headerTitle: 'อัปเดตสถานะอะไหล่ & นัดหมายทีมช่างเข้าดำเนินการซ่อม',
+      heroImageUrl: '',
+      heroAspectRatio: '16:9',
+      bodyRows: [
+        { label: 'สถานะการดำเนินงาน', text: 'อะไหล่แท้จากคลังสินค้า HOSHIZAKI พร้อมจัดเตรียมให้ทีมช่างเรียบร้อยแล้ว กรุณายืนยันวัน-เวลาที่สะดวกเข้าหน้างาน', bold: true, color: '#1E3A8A' },
+        { label: 'การติดตามเอกสาร', text: 'สามารถตรวจสอบใบเสนอราคา ใบแจ้งงาน และลงนามรับมอบงานออนไลน์ผ่านลิงก์ด้านล่าง', bold: false, color: '#334155' }
+      ],
+      buttons: [
+        { label: '📅 ยืนยันวัน-เวลานัดช่างเข้าซ่อม', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#2563EB' }
       ]
     },
     {
       id: 'FLEX-TPL-TECH-BULLETIN',
-      name: 'แจ้งเตือนคู่มือเทคนิค & Service Bulletin (กลุ่มช่าง/ดีลเลอร์)',
+      category: 'LINE_OA_CHATBOT',
+      name: '10. [Tech Group] คู่มือเทคนิค & Service Bulletin สำหรับทีมช่าง',
       targetChannel: 'TECH_GROUP',
-      headerBg: '#0369A1',
-      headerBadge: 'HOSHIZAKI TECHNICAL BULLETIN',
-      headerTitle: 'แนวทางตรวจเช็ก & ตั้งค่าพารามิเตอร์รุ่น IM / KM / FM',
+      sceneStyle: 'CORPORATE_SPEC',
+      modelCode: 'IM-240DNE-HC',
+      headerBg: '#0F172A',
+      headerBadge: 'HOSHIZAKI TECHNICAL SERVICE BULLETIN',
+      headerTitle: 'แนวทางตรวจเช็ก & ตั้งค่าพารามิเตอร์มาตรฐานรุ่น IM / KM / FM',
       heroImageUrl: '',
       heroAspectRatio: '16:9',
       bodyRows: [
-        { label: 'หัวข้อสำคัญ', text: 'อัปเดตตารางรหัส Error Code และค่าพารามิเตอร์มาตรฐานโรงงานฉบับล่าสุดในเว็บแอปเรียบร้อยแล้ว', bold: true, color: '#002B49' },
-        { label: 'วิธีใช้งาน', text: 'พิมพ์ SPEC <รุ่น> หรือ ERR <รุ่น> <รหัส> ในกลุ่ม LINE เพื่อดึงข้อมูลหน้างานทันที', bold: false, color: '#334155' }
+        { label: 'หัวข้อสำคัญสำหรับช่างบริการ', text: 'อัปเดตตารางรหัส Error Code, ค่าแรงดันน้ำยา และไดอะแกรมวงจรไฟฟ้าฉบับล่าสุดในเว็บแอปเรียบร้อยแล้ว', bold: true, color: '#002B49' },
+        { label: 'คำสั่งลัดในกลุ่ม LINE', text: 'พิมพ์ SPEC <รุ่น> หรือ SN <เลขเครื่อง> ในกลุ่ม LINE เพื่อดึงข้อมูลหน้างานทันที', bold: false, color: '#334155' }
       ],
       buttons: [
-        { label: '📚 เปิดคลังคู่มือ & Spec Sheet', uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#002B49' }
+        { label: '📚 เปิดคลังคู่มือ & Spec Sheet', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#002B49' }
       ]
     }
   ];
@@ -1951,91 +2190,545 @@
     localStorage.setItem(FLEX_TPL_KEY, JSON.stringify(list));
   }
 
-  // Active editor state
+  // Active editor state (Shared across LINE OA Studio & Sales/Marketing Studio)
   window.HZK_FLEX_STUDIO_STATE = {
     id: 'FLEX-' + Date.now().toString().slice(-6),
-    name: 'การ์ดแจ้งข่าวสาร HOSHIZAKI ใหม่',
+    name: 'การ์ดแนะนำสินค้า & บริการ HOSHIZAKI',
+    category: 'SALES_MARKETING',
     targetChannel: 'ALL_DEALER_GROUPS',
     targetId: '',
     botAccount: 'internal',
+    sceneStyle: 'CORPORATE_SPEC',
+    modelCode: 'IM-130NE',
+    includeSpecDim: true,
+    includeStockStatus: true,
+    includeQrBadge: true,
     headerBg: '#002B49',
-    headerBadge: 'HOSHIZAKI SMART SERVICE',
-    headerTitle: 'แจ้งข่าวสารและบริการหลังการขาย HOSHIZAKI',
+    headerBadge: 'HOSHIZAKI SMART CREATIVE STUDIO',
+    headerTitle: 'เครื่องทำน้ำแข็งก้อนสี่เหลี่ยม รุ่น IM-130NE (พร้อมส่ง)',
+    uploadedRawPhotoDataUrl: '',
     heroImageUrl: 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=3',
+    heroImageDataUrl: '',
     heroAspectRatio: '16:9',
     bodyRows: [
-      { label: 'รายละเอียด', text: 'บริษัท โฮชิซากิ (ประเทศไทย) จำกัด พร้อมให้บริการดูแลตรวจเช็กและจัดส่งอะไหล่แท้มาตรฐานโรงงาน', bold: false, color: '#1E293B' }
+      { label: 'สเปก & ขนาด (W×D×H)', text: 'ขนาด 704 × 506 × 1,200 มม. | มาตรฐานคุณภาพญี่ปุ่นแท้ ประหยัดพลังงาน พร้อมทีมช่างดูแลทั่วประเทศ', bold: true, color: '#0F172A' }
     ],
     buttons: [
-      { label: '📲 เปิดระบบบริการ HOSHIZAKI', uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#059669' }
+      { label: '📄 ขอใบเสนอราคา / ติดต่อศูนย์บริการ', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#059669' }
     ]
   };
 
-  // Auto-Resize & Auto-Optimize Image Upload for LINE Flex Hero Banner
+  // Helper: Draw rounded rectangle on Canvas
+  function drawRoundRect_(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  // AI Scene & Ad Poster Compositor: Combines Uploaded Product Photo + Simulated Scene Backdrop + Real Model Specs
+  window.composeFlexStudioAdPosterDataUrl = async function(customAspect) {
+    const st = window.HZK_FLEX_STUDIO_STATE;
+    const aspect = customAspect || st.heroAspectRatio || '16:9';
+    const targetW = aspect === '9:16' ? 720 : (aspect === '1:1' ? 1080 : 1024);
+    const targetH = aspect === '9:16' ? 1280 : (aspect === '1:1' ? 1080 : (aspect === '4:3' ? 768 : 576));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+
+    // 1) Scene Backdrop Simulation based on selected Scene Style
+    const scenePalettes = {
+      CORPORATE_SPEC: ['#002B49', '#005A9C', '#00A3E0'],
+      CAFE: ['#291D18', '#5C3A21', '#B45309'],
+      LUXURY_HOTEL: ['#0F172A', '#1E293B', '#334155'],
+      PROMO_DEAL: ['#7F1D1D', '#B91C1C', '#F59E0B'],
+      INDUSTRIAL: ['#0C4A6E', '#0369A1', '#0EA5E9'],
+      SERVICE_CARE: ['#064E3B', '#047857', '#10B981']
+    };
+    const pal = scenePalettes[st.sceneStyle] || [st.headerBg || '#002B49', '#005A9C', '#00A3E0'];
+
+    const grad = ctx.createLinearGradient(0, 0, targetW, targetH);
+    grad.addColorStop(0, pal[0]);
+    grad.addColorStop(0.55, pal[1]);
+    grad.addColorStop(1, pal[2]);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, targetW, targetH);
+
+    // Subtle architectural lighting & studio floor reflection
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.beginPath();
+    ctx.arc(targetW * 0.78, targetH * 0.35, targetW * 0.42, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Studio stage platform at bottom
+    const floorH = Math.round(targetH * 0.22);
+    const floorGrad = ctx.createLinearGradient(0, targetH - floorH, 0, targetH);
+    floorGrad.addColorStop(0, 'rgba(15, 23, 42, 0.35)');
+    floorGrad.addColorStop(1, 'rgba(2, 6, 23, 0.85)');
+    ctx.fillStyle = floorGrad;
+    ctx.fillRect(0, targetH - floorH, targetW, floorH);
+
+    // 2) Top Corporate Brand Ribbon
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    drawRoundRect_(ctx, 32, 26, 270, 42, 10);
+    ctx.fill();
+    ctx.fillStyle = '#002B49';
+    ctx.font = '900 22px sans-serif';
+    ctx.fillText('HOSHIZAKI', 48, 55);
+    ctx.fillStyle = '#00A3E0';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('JAPAN QUALITY', 184, 54);
+
+    // Scene / Campaign Badge on top right
+    const badgeTxt = String(st.headerBadge || 'OFFICIAL SPEC & PROMO').slice(0, 36);
+    ctx.fillStyle = 'rgba(251, 191, 36, 0.95)';
+    const badgeW = Math.min(targetW - 340, Math.max(240, badgeTxt.length * 10 + 36));
+    drawRoundRect_(ctx, targetW - badgeW - 32, 26, badgeW, 42, 10);
+    ctx.fill();
+    ctx.fillStyle = '#0F172A';
+    ctx.font = '800 15px sans-serif';
+    ctx.fillText(badgeTxt, targetW - badgeW - 16, 53);
+
+    // 3) Load & Composite Uploaded Product Image on Right/Center Stage
+    const srcImgUrl = st.uploadedRawPhotoDataUrl || st.heroImageDataUrl || '';
+    const isVertical = (aspect === '9:16');
+    const photoBoxX = isVertical ? Math.round(targetW * 0.12) : Math.round(targetW * 0.56);
+    const photoBoxY = isVertical ? Math.round(targetH * 0.36) : 92;
+    const photoBoxW = isVertical ? Math.round(targetW * 0.76) : Math.round(targetW * 0.40);
+    const photoBoxH = isVertical ? Math.round(targetH * 0.34) : (targetH - 135);
+
+    // Glass card frame behind product
+    ctx.fillStyle = 'rgba(255,255,255,0.96)';
+    drawRoundRect_(ctx, photoBoxX, photoBoxY, photoBoxW, photoBoxH, 20);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    if (srcImgUrl && srcImgUrl.startsWith('data:image')) {
+      await new Promise(resolve => {
+        const img = new Image();
+        img.onload = function() {
+          const pad = 18;
+          const availW = photoBoxW - pad * 2;
+          const availH = photoBoxH - pad * 2 - 28;
+          const sc = Math.min(availW / img.width, availH / img.height);
+          const dw = Math.round(img.width * sc);
+          const dh = Math.round(img.height * sc);
+          const dx = photoBoxX + Math.round((photoBoxW - dw) / 2);
+          const dy = photoBoxY + Math.round((photoBoxH - 28 - dh) / 2);
+          ctx.drawImage(img, dx, dy, dw, dh);
+          resolve();
+        };
+        img.onerror = resolve;
+        img.src = srcImgUrl;
+      });
+    } else {
+      // Clean technical product silhouette placeholder
+      ctx.fillStyle = '#E2E8F0';
+      drawRoundRect_(ctx, photoBoxX + 24, photoBoxY + 24, photoBoxW - 48, photoBoxH - 76, 14);
+      ctx.fill();
+      ctx.fillStyle = '#002B49';
+      ctx.font = '800 22px sans-serif';
+      ctx.fillText(st.modelCode || 'HOSHIZAKI', photoBoxX + 42, photoBoxY + Math.round(photoBoxH * 0.45));
+      ctx.fillStyle = '#475569';
+      ctx.font = '14px sans-serif';
+      ctx.fillText('อัปโหลดภาพถ่ายเครื่องจริงเพื่อแสดงที่นี่', photoBoxX + 42, photoBoxY + Math.round(photoBoxH * 0.54));
+    }
+
+    // Model label strip inside product frame
+    ctx.fillStyle = '#002B49';
+    drawRoundRect_(ctx, photoBoxX + 14, photoBoxY + photoBoxH - 40, photoBoxW - 28, 28, 8);
+    ctx.fill();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('MODEL: ' + (st.modelCode || 'HOSHIZAKI SERIES'), photoBoxX + 26, photoBoxY + photoBoxH - 21);
+
+    // 4) Left Side Typography & Real Spec Chips
+    const leftMaxW = isVertical ? (targetW - 64) : (photoBoxX - 52);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '900 ' + (isVertical ? '34px' : '30px') + ' sans-serif';
+
+    // Word wrap headline
+    const rawTitle = String(st.headerTitle || 'HOSHIZAKI Commercial Solution');
+    const words = rawTitle.split(' ');
+    let line = '';
+    let curY = 122;
+    for (let i = 0; i < words.length; i++) {
+      const test = line + words[i] + ' ';
+      if (ctx.measureText(test).width > leftMaxW && i > 0) {
+        ctx.fillText(line.trim(), 34, curY);
+        line = words[i] + ' ';
+        curY += 38;
+        if (curY > 210) break;
+      } else {
+        line = test;
+      }
+    }
+    if (curY <= 215) {
+      ctx.fillText(line.trim(), 34, curY);
+      curY += 34;
+    }
+
+    // Fetch real spec from DB
+    const spec = window.getHzkModelSpecForCreativeStudio(st.modelCode);
+    if (st.includeSpecDim !== false) {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.72)';
+      drawRoundRect_(ctx, 34, curY, leftMaxW, 56, 12);
+      ctx.fill();
+      ctx.strokeStyle = '#38BDF8';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#7DD3FC';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('📐 ขนาดเครื่อง (W × D × H) & ประเภท:', 48, curY + 21);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '800 16px sans-serif';
+      ctx.fillText(`${spec.w} × ${spec.d} × ${spec.h} มม. (${spec.type})`, 48, curY + 44);
+      curY += 68;
+    }
+
+    if (st.includeStockStatus !== false) {
+      const stockText = spec.hasLiveStock
+        ? `✅ สินค้าพร้อมส่งในคลัง (In Stock: ${spec.stockQty} เครื่อง)`
+        : '📦 สั่งจอง / สอบถามรอบนำเข้ากับฝ่ายขายได้ทันที';
+      ctx.fillStyle = spec.hasLiveStock ? 'rgba(6, 95, 70, 0.88)' : 'rgba(180, 83, 9, 0.88)';
+      drawRoundRect_(ctx, 34, curY, leftMaxW, 36, 10);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText(stockText, 48, curY + 23);
+      curY += 48;
+    }
+
+    // Body highlight points
+    const primaryBody = (st.bodyRows && st.bodyRows[0] && st.bodyRows[0].text) || '';
+    const bodyLines = primaryBody.split('\n').slice(0, 3);
+    ctx.fillStyle = '#F8FAFC';
+    ctx.font = '15px sans-serif';
+    bodyLines.forEach(bl => {
+      if (curY < targetH - 65) {
+        ctx.fillText(String(bl).slice(0, 56), 34, curY + 14);
+        curY += 26;
+      }
+    });
+
+    // Bottom Contact Footer
+    ctx.fillStyle = '#FDE047';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('📞 HOSHIZAKI (THAILAND) | LINE OA: @hoshizakithailand | Tel: 02-005-9980', 34, targetH - 22);
+
+    return canvas.toDataURL('image/jpeg', 0.90);
+  };
+
+  // Auto-sync composed image to Google Drive so LINE Flex Hero URL is always valid HTTPS
+  window.syncComposedBannerToGoogleDrive = async function(dataUrl, customFileName) {
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '';
+    const statusEl = document.getElementById('flexStudioImgUploadStatus');
+    if (!gasUrl) {
+      if (statusEl) statusEl.innerHTML = '<span class="text-sky-700 font-bold">✅ สร้างภาพโฆษณาในเครื่องเรียบร้อย (พร้อมดาวน์โหลด PNG/JPG ทันที)</span>';
+      return '';
+    }
+    if (statusEl) {
+      statusEl.innerHTML = '<span class="text-amber-700 font-bold"><i class="fa-solid fa-spinner fa-spin mr-1"></i>กำลังอัปโหลดภาพขึ้น Google Drive สาธารณะสำหรับส่ง LINE Flex...</span>';
+    }
+    try {
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          actionType: 'UPLOAD_FLEX_IMAGE_TO_DRIVE',
+          fileName: customFileName || ('HZK_FLEX_' + Date.now() + '.jpg'),
+          imageDataUrl: dataUrl
+        })
+      });
+      const out = await res.json();
+      if (out && out.publicImageUrl) {
+        window.HZK_FLEX_STUDIO_STATE.heroImageUrl = out.publicImageUrl;
+        const urlInp = document.getElementById('flexStudioImgUrlInput');
+        if (urlInp) urlInp.value = out.publicImageUrl;
+        if (statusEl) {
+          statusEl.innerHTML = '<span class="text-emerald-700 font-bold">✅ ซิงค์รูปขึ้น Google Drive สาธารณะสำเร็จ! พร้อมส่งเข้า LINE OA ทันที</span>';
+        }
+        return out.publicImageUrl;
+      }
+    } catch (e) {}
+    if (statusEl) {
+      statusEl.innerHTML = '<span class="text-amber-700">⚠️ แสดงภาพในเครื่องแล้ว (หากส่งเข้า LINE จริง กรุณาตรวจสอบลิงก์ GAS หรือวาง URL https://)</span>';
+    }
+    return '';
+  };
+
+  // Re-render simulated Ad/Banner image from current state + uploaded photo
+  window.regenerateFlexStudioVisualPoster = async function(uploadToDrive) {
+    const composed = await window.composeFlexStudioAdPosterDataUrl();
+    window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl = composed;
+    window.refreshFlexStudioPreview();
+    if (uploadToDrive) {
+      await window.syncComposedBannerToGoogleDrive(composed);
+      window.refreshFlexStudioPreview();
+    }
+  };
+
+  // Download High-Res Ad Poster (1:1 Square, 16:9 Banner, or 9:16 TikTok/Story)
+  window.downloadFlexStudioPosterPng = async function(aspectOverride) {
+    const aspect = aspectOverride || window.HZK_FLEX_STUDIO_STATE.heroAspectRatio || '1:1';
+    const dataUrl = await window.composeFlexStudioAdPosterDataUrl(aspect);
+    const a = document.createElement('a');
+    const safeModel = String(window.HZK_FLEX_STUDIO_STATE.modelCode || 'HOSHIZAKI').replace(/[^A-Z0-9\-]/gi, '_');
+    a.href = dataUrl;
+    a.download = `HOSHIZAKI_Ad_${safeModel}_${aspect.replace(':', 'x')}_${Date.now().toString().slice(-4)}.jpg`;
+    a.click();
+    if (typeof showToast === 'function') {
+      showToast(`🖼️ ดาวน์โหลดรูปภาพโฆษณา (${aspect}) สำหรับโพสต์/ส่งลูกค้าเรียบร้อยแล้ว!`);
+    }
+  };
+
+  // Upload Photo -> Run AI Vision Inspection -> Auto-Fill Model Spec -> Compose Scene Banner -> Sync Drive
   window.handleFlexStudioImageUpload = function(inputEl) {
     const file = inputEl && inputEl.files && inputEl.files[0];
     if (!file) return;
-    const aspect = document.getElementById('flexStudioAspectInput')?.value || '16:9';
-    const targetW = 1024;
-    const targetH = aspect === '1:1' ? 1024 : (aspect === '4:3' ? 768 : 576);
 
     const reader = new FileReader();
     reader.onload = function(ev) {
-      const img = new Image();
-      img.onload = async function() {
-        const canvas = document.createElement('canvas');
-        canvas.width = targetW;
-        canvas.height = targetH;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#F8FAFC';
-        ctx.fillRect(0, 0, targetW, targetH);
+      const rawDataUrl = ev.target.result;
+      window.HZK_FLEX_STUDIO_STATE.uploadedRawPhotoDataUrl = rawDataUrl;
 
-        // Fit image cleanly preserving aspect ratio without distortion
-        const scale = Math.min(targetW / img.width, targetH / img.height);
-        const drawW = Math.round(img.width * scale);
-        const drawH = Math.round(img.height * scale);
-        const dx = Math.round((targetW - drawW) / 2);
-        const dy = Math.round((targetH - drawH) / 2);
-        ctx.drawImage(img, dx, dy, drawW, drawH);
+      const statusEl = document.getElementById('flexStudioImgUploadStatus');
+      if (statusEl) {
+        statusEl.innerHTML = '<span class="text-indigo-700 font-bold"><i class="fa-solid fa-wand-magic-sparkles fa-spin mr-1"></i>AI Vision กำลังวิเคราะห์รูปภาพเครื่อง & ดึงสเปกอัตโนมัติ...</span>';
+      }
 
-        const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.86);
-        window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl = optimizedDataUrl;
-        window.HZK_FLEX_STUDIO_STATE.heroImageUrl = optimizedDataUrl;
-        window.refreshFlexStudioPreview();
+      // Immediately compose initial visual preview
+      window.regenerateFlexStudioVisualPoster(false);
 
-        // Automatically upload to Google Drive public folder so LINE Server can render it via HTTPS URL
-        const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
-        const statusEl = document.getElementById('flexStudioImgUploadStatus');
-        if (gasUrl) {
-          if (statusEl) statusEl.innerHTML = '<span class="text-amber-700 font-bold"><i class="fa-solid fa-spinner fa-spin mr-1"></i>กำลังปรับขนาด 1024px และซิงค์รูปขึ้น Google Drive สาธารณะ...</span>';
-          try {
-            const res = await fetch(gasUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                actionType: 'UPLOAD_FLEX_IMAGE_TO_DRIVE',
-                fileName: 'FLEX_' + Date.now() + '.jpg',
-                imageDataUrl: optimizedDataUrl
-              })
-            });
-            const out = await res.json();
-            if (out && out.publicImageUrl) {
-              window.HZK_FLEX_STUDIO_STATE.heroImageUrl = out.publicImageUrl;
-              const urlInp = document.getElementById('flexStudioImgUrlInput');
-              if (urlInp) urlInp.value = out.publicImageUrl;
-              window.refreshFlexStudioPreview();
-              if (statusEl) statusEl.innerHTML = '<span class="text-emerald-700 font-bold">✅ ปรับขนาด (' + targetW + 'x' + targetH + 'px) และสร้างลิงก์สาธารณะสำหรับ LINE สำเร็จ!</span>';
-            }
-          } catch (e) {
-            if (statusEl) statusEl.innerHTML = '<span class="text-amber-700">⚠️ แสดงพรีวิวในเครื่องแล้ว (หากต้องการส่งเข้า LINE จริง กรุณาตรวจสอบการเชื่อมต่อ GAS หรือวางลิงก์ https://)</span>';
+      // Call Gemini Vision via GAS if available
+      const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '';
+      const voiceHint = document.getElementById('flexStudioAiPromptInput')?.value || '';
+      if (gasUrl) {
+        fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            actionType: 'ANALYZE_PRODUCT_PHOTO_VISION',
+            imageDataUrl: rawDataUrl,
+            userHint: voiceHint
+          })
+        })
+        .then(r => r.json())
+        .then(async aiOut => {
+          if (aiOut && aiOut.detectedModel) {
+            window.applyModelSpecToFlexStudio(aiOut.detectedModel, aiOut);
           }
-        } else if (statusEl) {
-          statusEl.innerHTML = '<span class="text-sky-700 font-bold">✅ ปรับขนาดรูปภาพอัตโนมัติ (' + targetW + 'x' + targetH + 'px) เรียบร้อยแล้ว</span>';
-        }
-      };
-      img.src = ev.target.result;
+          await window.regenerateFlexStudioVisualPoster(true);
+        })
+        .catch(async () => {
+          await window.regenerateFlexStudioVisualPoster(true);
+        });
+      }
     };
     reader.readAsDataURL(file);
+  };
+
+  // Auto-Fetch Model Specs from 331-Model DB & Apply to Card + Poster
+  window.applyModelSpecToFlexStudio = function(modelCodeInput, aiVisionData) {
+    const code = String(modelCodeInput || document.getElementById('flexStudioModelInput')?.value || '').trim().toUpperCase();
+    if (!code) return;
+    const spec = window.getHzkModelSpecForCreativeStudio(code);
+    const st = window.HZK_FLEX_STUDIO_STATE;
+    st.modelCode = spec.model;
+
+    const modelInp = document.getElementById('flexStudioModelInput');
+    if (modelInp) modelInp.value = spec.model;
+
+    if (aiVisionData && aiVisionData.sceneRecommendation) {
+      st.sceneStyle = aiVisionData.sceneRecommendation;
+      const scSel = document.getElementById('flexStudioSceneSelect');
+      if (scSel) scSel.value = st.sceneStyle;
+    }
+
+    const headline = (aiVisionData && aiVisionData.headlineTh)
+      ? aiVisionData.headlineTh
+      : `HOSHIZAKI ${spec.model} (${spec.type}) — มาตรฐานญี่ปุ่นแท้`;
+
+    st.headerTitle = headline;
+    const titleInp = document.getElementById('flexStudioTitleInput');
+    if (titleInp) titleInp.value = headline;
+
+    const stockStr = spec.hasLiveStock
+      ? `✅ มีสินค้าพร้อมส่งในคลัง (${spec.stockQty} เครื่อง)`
+      : '📦 สอบถามรอบสินค้าเข้า / สั่งจองกับฝ่ายขาย';
+
+    const sellingPoints = (aiVisionData && aiVisionData.sellingPointsTh)
+      ? aiVisionData.sellingPointsTh
+      : `• ${spec.description}\n• โครงสร้างสเตนเลสคุณภาพสูง ประหยัดพลังงาน\n• พร้อมทีมช่างและอะไหล่แท้ดูแลทั่วประเทศ`;
+
+    st.bodyRows = [
+      {
+        label: `สเปก & ขนาดติดตั้ง (${spec.model})`,
+        text: `ขนาด (W×D×H): ${spec.w} × ${spec.d} × ${spec.h} มม.\nสถานะสต็อก: ${stockStr}`,
+        bold: true,
+        color: '#002B49'
+      },
+      {
+        label: 'จุดเด่นผลิตภัณฑ์ & บริการหลังการขาย',
+        text: sellingPoints,
+        bold: false,
+        color: '#1E293B'
+      }
+    ];
+
+    if (aiVisionData && aiVisionData.sellingPointsJp) {
+      st.bodyRows.push({
+        label: '製品特長 (日本語)',
+        text: aiVisionData.sellingPointsJp,
+        bold: false,
+        color: '#0369A1'
+      });
+    }
+
+    renderFlexStudioEditorLists_();
+    window.regenerateFlexStudioVisualPoster(false);
+    if (typeof showToast === 'function') {
+      showToast(`✨ ดึงสเปกรุ่น ${spec.model} (${spec.w}×${spec.d}×${spec.h} มม.) ลงการ์ดและภาพโฆษณาเรียบร้อย!`);
+    }
+  };
+
+  // Voice Command Director (Speech-to-Creative Layout & Scene Generator)
+  window.startVoiceCreativeDirectorForFlexStudio = function() {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      if (typeof showToast === 'function') {
+        showToast('⚠️ เบราว์เซอร์นี้ไม่รองรับการสั่งงานด้วยเสียง กรุณาพิมพ์คำสั่งในช่อง AI Prompt แทนครับ');
+      }
+      return;
+    }
+    const rec = new SpeechRec();
+    rec.lang = 'th-TH';
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+
+    const btn = document.getElementById('flexStudioVoiceBtn');
+    if (btn) {
+      btn.innerHTML = '<i class="fa-solid fa-microphone-lines fa-beat text-amber-300"></i> กำลังฟังคำสั่งเสียง...';
+    }
+    if (typeof showToast === 'function') {
+      showToast('🎙️ พูดสั่งได้เลย เช่น "ทำป้ายโปรโมชันรุ่น IM-130NE ฉากคาเฟ่หรู แถมไส้กรอง 4HC-H"');
+    }
+
+    rec.onresult = function(ev) {
+      const transcript = ev.results[0][0].transcript || '';
+      const promptInp = document.getElementById('flexStudioAiPromptInput');
+      if (promptInp) promptInp.value = transcript;
+      window.applyAiCreativePromptToFlexStudio(transcript);
+    };
+    rec.onerror = function() {
+      if (typeof showToast === 'function') showToast('⚠️ ไม่สามารถรับเสียงได้ กรุณาลองใหม่อีกครั้ง');
+    };
+    rec.onend = function() {
+      if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-microphone"></i> สั่งสร้างภาพด้วยเสียง';
+      }
+    };
+    rec.start();
+  };
+
+  // Parse Voice or Text Prompt -> Auto-configure Model, Scene, Aspect Ratio, Language & Copy
+  window.applyAiCreativePromptToFlexStudio = async function(rawPrompt) {
+    const prompt = String(rawPrompt || document.getElementById('flexStudioAiPromptInput')?.value || '').trim();
+    if (!prompt) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาพูดหรือพิมพ์คำสั่งที่ต้องการให้ AI สร้างการ์ดครับ');
+      return;
+    }
+
+    const st = window.HZK_FLEX_STUDIO_STATE;
+
+    // 1) Detect model code (e.g., IM-130NE, KM-901MAJ, JWE-680, HR-126MA-S, DCM-120KE, 4HC-H)
+    const modelMatch = prompt.toUpperCase().match(/\b(IM|KM|FM|DCM|JWE|HW|HR|HF|RT|RTF|HNC|B|4HC)[-\s]?[A-Z0-9\-]{2,12}\b/);
+    if (modelMatch) {
+      const cleanModel = modelMatch[0].replace(/\s+/g, '-');
+      st.modelCode = cleanModel;
+      const mInp = document.getElementById('flexStudioModelInput');
+      if (mInp) mInp.value = cleanModel;
+    }
+
+    // 2) Detect scene style from keywords
+    if (/คาเฟ่|กาแฟ|บาร์|cafe|coffee/i.test(prompt)) {
+      st.sceneStyle = 'CAFE';
+      st.headerBg = '#451A03';
+    } else if (/โรงแรม|ญี่ปุ่น|โอมากาเสะ|หรู|hotel|omakase/i.test(prompt)) {
+      st.sceneStyle = 'LUXURY_HOTEL';
+      st.headerBg = '#0F172A';
+    } else if (/โปร|ลดราคา|แถม|clearance|demo|sale|promo/i.test(prompt)) {
+      st.sceneStyle = 'PROMO_DEAL';
+      st.headerBg = '#B91C1C';
+    } else if (/ซ่อม|แจ้งเตือน|ไส้กรอง|pm|service|ตรวจเช็ก/i.test(prompt)) {
+      st.sceneStyle = 'SERVICE_CARE';
+      st.headerBg = '#047857';
+    } else {
+      st.sceneStyle = 'CORPORATE_SPEC';
+      st.headerBg = '#002B49';
+    }
+    const scSel = document.getElementById('flexStudioSceneSelect');
+    if (scSel) scSel.value = st.sceneStyle;
+
+    // 3) Detect aspect ratio
+    if (/จัตุรัส|1:1|เฟซบุ๊ก|facebook|ig/i.test(prompt)) {
+      st.heroAspectRatio = '1:1';
+    } else if (/สตอรี่|แนวตั้ง|9:16|tiktok|reels|story/i.test(prompt)) {
+      st.heroAspectRatio = '9:16';
+    } else {
+      st.heroAspectRatio = '16:9';
+    }
+    const aspSel = document.getElementById('flexStudioAspectInput');
+    if (aspSel) aspSel.value = st.heroAspectRatio;
+
+    // 4) Fetch model specs & build tailored copy
+    const spec = window.getHzkModelSpecForCreativeStudio(st.modelCode);
+    st.headerTitle = prompt.length <= 55 ? prompt : `HOSHIZAKI ${spec.model} — ${prompt.slice(0, 42)}`;
+    const titleInp = document.getElementById('flexStudioTitleInput');
+    if (titleInp) titleInp.value = st.headerTitle;
+
+    const stockStr = spec.hasLiveStock ? `✅ พร้อมส่งในคลัง (${spec.stockQty} เครื่อง)` : '📦 ติดต่อฝ่ายขาย/ดีลเลอร์';
+    st.bodyRows = [
+      {
+        label: `ข้อมูลรุ่นเครื่อง ${spec.model} (${spec.type})`,
+        text: `ขนาด (W×D×H): ${spec.w} × ${spec.d} × ${spec.h} มม. | ${stockStr}`,
+        bold: true,
+        color: '#002B49'
+      },
+      {
+        label: 'รายละเอียดแคมเปญ / คำแนะนำ',
+        text: `${prompt}\n• มาตรฐานคุณภาพญี่ปุ่นแท้ HOSHIZAKI พร้อมทีมช่างและอะไหล่แท้ดูแลทั่วประเทศ`,
+        bold: false,
+        color: '#1E293B'
+      }
+    ];
+
+    if (/ญี่ปุ่น|jp|japanese|เชฟ/i.test(prompt)) {
+      st.bodyRows.push({
+        label: '日本語案内 (Japanese)',
+        text: `ホシザキ ${spec.model} (${spec.w}×${spec.d}×${spec.h}mm) — 日本品質の信頼性と全国アフターサービス体制。`,
+        bold: false,
+        color: '#0369A1'
+      });
+    }
+
+    renderFlexStudioEditorLists_();
+    await window.regenerateFlexStudioVisualPoster(true);
+    if (typeof showToast === 'function') {
+      showToast('✨ AI สร้างภาพโฆษณาและการ์ด Flex ตามคำสั่งเรียบร้อยแล้ว!');
+    }
   };
 
   window.addFlexStudioBodyRow = function() {
@@ -2062,7 +2755,7 @@
     }
     window.HZK_FLEX_STUDIO_STATE.buttons.push({
       label: '🔗 เปิดดูรายละเอียด',
-      uri: 'https://serviceshth.github.io/hoshizaki-service/',
+      uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/',
       color: '#002B49'
     });
     renderFlexStudioEditorLists_();
@@ -2095,11 +2788,12 @@
 
     const imgUrl = String(st.heroImageUrl || '').trim();
     if (imgUrl && imgUrl.startsWith('https://')) {
+      const lineAspect = (st.heroAspectRatio === '9:16') ? '9:16' : (st.heroAspectRatio === '1:1' ? '1:1' : (st.heroAspectRatio === '4:3' ? '4:3' : '16:9'));
       bubble.hero = {
         type: 'image',
         url: imgUrl,
         size: 'full',
-        aspectRatio: st.heroAspectRatio || '16:9',
+        aspectRatio: lineAspect,
         aspectMode: 'cover'
       };
     }
@@ -2148,7 +2842,6 @@
         spacing: 'xs',
         paddingAll: '12px',
         contents: validBtns.map(b => {
-          // Strict 40-char LINE API enforcement so card NEVER fails HTTP 400
           const safeLabel = String(b.label).trim().slice(0, 38);
           const rawUri = String(b.uri || '').trim();
           const isHttps = /^https?:\/\//i.test(rawUri);
@@ -2178,20 +2871,22 @@
     if (jsonEl) jsonEl.value = JSON.stringify(flexPayload, null, 2);
 
     const imgPreviewSrc = st.heroImageDataUrl || st.heroImageUrl || '';
-    const aspectClass = st.heroAspectRatio === '1:1' ? 'aspect-square' : (st.heroAspectRatio === '4:3' ? 'aspect-[4/3]' : 'aspect-video');
+    const aspectClass = st.heroAspectRatio === '1:1'
+      ? 'aspect-square'
+      : (st.heroAspectRatio === '9:16' ? 'aspect-[9/16] max-h-[340px] mx-auto' : (st.heroAspectRatio === '4:3' ? 'aspect-[4/3]' : 'aspect-video'));
 
     prevEl.innerHTML = `
       <div class="bg-[#8CABD9] p-3 rounded-2xl shadow-inner">
-        <div class="text-[10px] text-white/90 font-bold mb-1.5 flex items-center justify-between">
-          <span><i class="fa-brands fa-line text-white mr-1"></i> ตัวอย่างการแสดงผลจริงในห้องแชท LINE</span>
-          <span class="bg-black/25 px-2 py-0.5 rounded-full">LINE Flex Mega Bubble</span>
+        <div class="text-[10px] text-white/95 font-bold mb-1.5 flex items-center justify-between">
+          <span><i class="fa-brands fa-line text-white mr-1"></i> ตัวอย่างการแสดงผลจริงใน LINE &amp; โปสเตอร์โฆษณา</span>
+          <span class="bg-black/25 px-2 py-0.5 rounded-full">${st.heroAspectRatio || '16:9'} · ${st.modelCode || 'HOSHIZAKI'}</span>
         </div>
-        <div class="bg-white rounded-2xl overflow-hidden shadow-lg max-w-[320px] mx-auto border border-slate-200">
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg max-w-[330px] mx-auto border border-slate-200">
           <div style="background-color:${st.headerBg || '#002B49'}" class="p-3.5 text-white">
             <div class="text-[10px] font-extrabold tracking-wide text-sky-200">${st.headerBadge || ''}</div>
             <div class="text-sm font-extrabold leading-snug mt-0.5">${st.headerTitle || ''}</div>
           </div>
-          ${imgPreviewSrc ? `<div class="w-full ${aspectClass} bg-slate-100 overflow-hidden border-b border-slate-100"><img src="${imgPreviewSrc}" class="w-full h-full object-cover" alt="Hero"></div>` : ''}
+          ${imgPreviewSrc ? `<div class="w-full ${aspectClass} bg-slate-100 overflow-hidden border-b border-slate-100"><img src="${imgPreviewSrc}" class="w-full h-full object-cover" alt="Hero Ad Poster"></div>` : ''}
           <div class="p-3.5 space-y-2">
             ${(st.bodyRows || []).map((r, idx) => `
               ${idx > 0 ? '<div class="border-t border-slate-100 pt-1.5"></div>' : ''}
@@ -2224,7 +2919,7 @@
       rowsWrap.innerHTML = st.bodyRows.map((r, idx) => `
         <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1.5">
           <div class="flex items-center justify-between gap-2">
-            <input type="text" value="${(r.label || '').replace(/"/g, '&quot;')}" oninput="window.HZK_FLEX_STUDIO_STATE.bodyRows[${idx}].label=this.value; refreshFlexStudioPreview();" placeholder="หัวข้อย่อย (เช่น รายละเอียด / โปรโมชัน)" class="flex-1 border border-slate-300 rounded-lg px-2 py-1 text-[11px] font-bold bg-white">
+            <input type="text" value="${(r.label || '').replace(/"/g, '&quot;')}" oninput="window.HZK_FLEX_STUDIO_STATE.bodyRows[${idx}].label=this.value; refreshFlexStudioPreview();" placeholder="หัวข้อย่อย (เช่น สเปก / โปรโมชัน)" class="flex-1 border border-slate-300 rounded-lg px-2 py-1 text-[11px] font-bold bg-white">
             <label class="inline-flex items-center gap-1 text-[10px] font-bold text-slate-700 cursor-pointer">
               <input type="checkbox" ${r.bold ? 'checked' : ''} onchange="window.HZK_FLEX_STUDIO_STATE.bodyRows[${idx}].bold=this.checked; refreshFlexStudioPreview();"> ตัวหนา
             </label>
@@ -2253,6 +2948,7 @@
   window.saveCurrentFlexStudioTemplate = async function() {
     const st = Object.assign({}, window.HZK_FLEX_STUDIO_STATE);
     delete st.heroImageDataUrl;
+    delete st.uploadedRawPhotoDataUrl;
     st.flexPayload = buildActualLineFlexJson_();
     st.updatedAt = new Date().toLocaleString('th-TH');
 
@@ -2263,7 +2959,7 @@
     saveFlexTemplates_(list);
     renderSavedFlexTemplatesBar_();
 
-    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '';
     if (gasUrl) {
       try {
         await fetch(gasUrl, {
@@ -2277,38 +2973,43 @@
     if (typeof showToast === 'function') showToast('💾 บันทึกเทมเพลตการ์ด "' + st.name + '" เรียบร้อย (สามารถเรียกแก้ไขได้ตลอด)');
   };
 
-  window.loadFlexStudioTemplateById = function(tplId) {
+  window.loadFlexStudioTemplateById = async function(tplId) {
     const list = loadFlexTemplates_();
     const found = list.find(x => x.id === tplId);
     if (!found) return;
+    const prevUploaded = window.HZK_FLEX_STUDIO_STATE.uploadedRawPhotoDataUrl || '';
     window.HZK_FLEX_STUDIO_STATE = JSON.parse(JSON.stringify(found));
-    const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
-    setVal('flexStudioTplNameInput', found.name);
-    setVal('flexStudioHeaderBgInput', found.headerBg || '#002B49');
-    setVal('flexStudioBadgeInput', found.headerBadge);
-    setVal('flexStudioTitleInput', found.headerTitle);
-    setVal('flexStudioImgUrlInput', found.heroImageUrl);
-    setVal('flexStudioAspectInput', found.heroAspectRatio || '16:9');
-    setVal('flexStudioTargetChannel', found.targetChannel || 'ALL_DEALER_GROUPS');
-    renderFlexStudioEditorLists_();
-    window.refreshFlexStudioPreview();
-    if (typeof showToast === 'function') showToast('📂 โหลดการ์ด "' + found.name + '" เข้าสู่หน้าแก้ไขแล้ว');
+    if (prevUploaded) {
+      window.HZK_FLEX_STUDIO_STATE.uploadedRawPhotoDataUrl = prevUploaded;
+    }
+    window.loadFlexStudioTemplateById_fromState();
+    if (prevUploaded) {
+      await window.regenerateFlexStudioVisualPoster(false);
+    }
+    if (typeof showToast === 'function') showToast('📂 โหลดเทมเพลต "' + found.name + '" เข้าสู่หน้าแก้ไขแล้ว');
   };
 
   window.createNewBlankFlexStudioTemplate = function() {
     window.HZK_FLEX_STUDIO_STATE = {
       id: 'FLEX-' + Date.now().toString().slice(-6),
       name: 'การ์ดประกาศใหม่ #' + (loadFlexTemplates_().length + 1),
+      category: 'SALES_MARKETING',
       targetChannel: 'ALL_DEALER_GROUPS',
       targetId: '',
       botAccount: 'internal',
+      sceneStyle: 'CORPORATE_SPEC',
+      modelCode: 'IM-130NE',
+      includeSpecDim: true,
+      includeStockStatus: true,
       headerBg: '#002B49',
-      headerBadge: 'HOSHIZAKI SERVICE UPDATE',
-      headerTitle: 'หัวข้อประกาศ / แจ้งเตือนบริการ',
+      headerBadge: 'HOSHIZAKI CREATIVE UPDATE',
+      headerTitle: 'หัวข้อประกาศ / แจ้งเตือนบริการหรือโปรโมชัน',
+      uploadedRawPhotoDataUrl: '',
       heroImageUrl: '',
+      heroImageDataUrl: '',
       heroAspectRatio: '16:9',
       bodyRows: [{ label: 'รายละเอียด', text: 'ระบุข้อความที่ต้องการแสดงผลในการ์ด...', bold: false, color: '#1E293B' }],
-      buttons: [{ label: '📲 เปิดเว็บแอปบริการ', uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#059669' }]
+      buttons: [{ label: '📲 เปิดเว็บแอป HOSHIZAKI', uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#059669' }]
     };
     window.loadFlexStudioTemplateById_fromState();
   };
@@ -2323,6 +3024,8 @@
     setVal('flexStudioImgUrlInput', st.heroImageUrl);
     setVal('flexStudioAspectInput', st.heroAspectRatio || '16:9');
     setVal('flexStudioTargetChannel', st.targetChannel || 'ALL_DEALER_GROUPS');
+    setVal('flexStudioSceneSelect', st.sceneStyle || 'CORPORATE_SPEC');
+    setVal('flexStudioModelInput', st.modelCode || 'IM-130NE');
     renderFlexStudioEditorLists_();
     window.refreshFlexStudioPreview();
   };
@@ -2330,30 +3033,36 @@
   function renderSavedFlexTemplatesBar_() {
     const bar = document.getElementById('flexStudioSavedListBar');
     if (!bar) return;
-    const list = loadFlexTemplates_();
-    bar.innerHTML = list.map(t => `
-      <button type="button" onclick="loadFlexStudioTemplateById('${t.id}')" class="text-left bg-white hover:bg-sky-50 border border-slate-200 rounded-xl px-3 py-1.5 text-[11px] flex items-center gap-2 shadow-2xs">
-        <span style="background-color:${t.headerBg || '#002B49'}" class="w-3 h-3 rounded-full inline-block flex-shrink-0"></span>
-        <span class="font-bold text-slate-800 truncate max-w-[190px]">${t.name}</span>
-      </button>
-    `).join('');
+    const filterCat = document.getElementById('flexStudioTplFilterSelect')?.value || 'ALL';
+    const list = loadFlexTemplates_().filter(t => filterCat === 'ALL' || (t.category || 'LINE_OA_CHATBOT') === filterCat);
+    bar.innerHTML = list.map(t => {
+      const isMkt = t.category === 'SALES_MARKETING';
+      return `
+        <button type="button" onclick="loadFlexStudioTemplateById('${t.id}')" class="text-left bg-white hover:bg-sky-50 border ${isMkt ? 'border-fuchsia-200' : 'border-sky-200'} rounded-xl px-2.5 py-1.5 text-[11px] flex items-center gap-1.5 shadow-2xs">
+          <span style="background-color:${t.headerBg || '#002B49'}" class="w-2.5 h-2.5 rounded-full inline-block flex-shrink-0"></span>
+          <span class="font-bold text-slate-800 truncate max-w-[215px]">${t.name}</span>
+        </button>
+      `;
+    }).join('');
   }
+  window.filterFlexStudioSavedTemplates = renderSavedFlexTemplatesBar_;
 
   window.sendFlexStudioCardNow = async function() {
-    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || '';
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '';
     if (!gasUrl) {
       if (typeof showToast === 'function') showToast('⚠️ กรุณาตั้งค่า Google Apps Script Web App URL ในเมนู ซิงค์ & สำรองข้อมูล ก่อนส่งครับ');
       return;
     }
+
+    // If user composed an image locally and has not synced to Drive yet, auto-sync now
+    if (window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl && !String(window.HZK_FLEX_STUDIO_STATE.heroImageUrl || '').startsWith('https://')) {
+      await window.syncComposedBannerToGoogleDrive(window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl);
+    }
+
     const targetMode = document.getElementById('flexStudioTargetChannel')?.value || 'TECH_GROUP';
     const customTargetId = (document.getElementById('flexStudioCustomTargetId')?.value || '').trim();
     const botAccount = document.getElementById('flexStudioBotAccount')?.value || 'internal';
     const flexMsg = buildActualLineFlexJson_();
-
-    if (flexMsg.contents.hero && !String(flexMsg.contents.hero.url || '').startsWith('https://')) {
-      if (typeof showToast === 'function') showToast('⚠️ กรุณารออัปโหลดรูปขึ้น Google Drive ให้ได้ลิงก์ https:// หรือใส่ลิงก์รูปภาพสาธารณะก่อนส่งครับ');
-      return;
-    }
 
     await window.saveCurrentFlexStudioTemplate();
     if (typeof showToast === 'function') showToast('🚀 กำลังส่งการ์ด LINE Flex Message ไปยังกลุ่มเป้าหมาย...');
@@ -2374,7 +3083,7 @@
       if (out && out.status === 'ok') {
         if (typeof showToast === 'function') showToast('✅ ส่งการ์ด LINE Flex Message สำเร็จ (' + (out.sentCount || 1) + ' ปลายทาง)!');
       } else {
-        if (typeof showToast === 'function') showToast('⚠️ ส่งไม่สำเร็จ: ตรวจสอบ Group ID / User ID หรือ Token ในแท็บที่ 1');
+        if (typeof showToast === 'function') showToast('⚠️ ส่งไม่สำเร็จ: ' + (out && out.message ? out.message : 'ตรวจสอบ Group ID / User ID หรือ Token ในแท็บที่ 1'));
       }
     } catch (e) {
       if (typeof showToast === 'function') showToast('✅ ส่งคำสั่งไปยังเซิร์ฟเวอร์เรียบร้อยแล้ว กรุณาตรวจสอบในห้องแชท LINE');
@@ -2390,29 +3099,91 @@
       }
       const st = window.HZK_FLEX_STUDIO_STATE;
       body.innerHTML = `
-        <div class="bg-gradient-to-r from-sky-50 to-emerald-50 border border-sky-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+        <datalist id="flexStudioModelsDatalist">${getModelsDatalistHtml_()}</datalist>
+
+        <div class="bg-gradient-to-r from-[#002B49] via-sky-900 to-fuchsia-900 text-white rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
           <div>
-            <div class="font-extrabold text-[#002B49] text-sm"><i class="fa-solid fa-wand-magic-sparkles text-sky-600 mr-1"></i> Visual LINE Flex Message Studio &amp; Auto-Image Optimizer</div>
-            <div class="text-[11px] text-slate-600">ออกแบบการ์ด เพิ่ม/ลดข้อความ ใส่รูปภาพ (ปรับขนาดอัตโนมัติ 1024px) เปลี่ยนสี พรีวิวก่อนส่ง และบันทึกแก้ไขย้อนหลังได้</div>
+            <div class="font-extrabold text-sm flex items-center gap-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+              <span>AI Visual &amp; Voice LINE Flex + Sales/Marketing Ad Studio (v1168)</span>
+            </div>
+            <div class="text-[11px] text-sky-100">อัปโหลดรูปเครื่องจริง → AI วิเคราะห์รุ่น &amp; ดึงสเปก W×D×H จาก 331 รุ่น → จำลองฉากโฆษณา &amp; ส่งเข้า LINE OA ได้ทันที</div>
           </div>
-          <div class="flex gap-1.5">
-            <button type="button" onclick="createNewBlankFlexStudioTemplate()" class="bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold px-2.5 py-1.5 rounded-lg text-[11px]">
-              <i class="fa-solid fa-plus mr-1"></i> สร้างการ์ดใหม่
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="createNewBlankFlexStudioTemplate()" class="bg-white/15 hover:bg-white/25 text-white border border-white/30 font-bold px-2.5 py-1.5 rounded-lg text-[11px]">
+              <i class="fa-solid fa-plus mr-1"></i> การ์ดใหม่
             </button>
-            <button type="button" onclick="saveCurrentFlexStudioTemplate()" class="bg-[#002B49] hover:bg-sky-900 text-white font-bold px-3 py-1.5 rounded-lg text-[11px]">
-              <i class="fa-solid fa-floppy-disk mr-1 text-amber-300"></i> บันทึกเทมเพลต
+            <button type="button" onclick="saveCurrentFlexStudioTemplate()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold px-3 py-1.5 rounded-lg text-[11px]">
+              <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกเทมเพลต
             </button>
           </div>
         </div>
 
-        <div class="space-y-1">
-          <div class="text-[11px] font-bold text-slate-600">เทมเพลตการ์ดที่บันทึกไว้ (คลิกเพื่อโหลดมาแก้ไขหรือส่งซ้ำ):</div>
+        <!-- AI Voice & Prompt Creative Director Bar -->
+        <div class="bg-gradient-to-r from-fuchsia-50 via-sky-50 to-amber-50 border-2 border-fuchsia-200 rounded-xl p-3 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="font-extrabold text-[#002B49] text-xs"><i class="fa-solid fa-robot text-fuchsia-600 mr-1"></i> AI Voice &amp; Prompt Creative Director (สั่งด้วยเสียงหรือพิมพ์โจทย์ให้ AI ออกแบบการ์ด &amp; ฉากโฆษณา):</span>
+            <button type="button" id="flexStudioVoiceBtn" onclick="startVoiceCreativeDirectorForFlexStudio()" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-3 py-1 rounded-lg text-[11px] flex items-center gap-1.5 shadow-xs">
+              <i class="fa-solid fa-microphone"></i> สั่งสร้างภาพด้วยเสียง
+            </button>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input type="text" id="flexStudioAiPromptInput" placeholder="เช่น: ทำป้ายโปรโมชันรุ่น IM-130NE ฉากคาเฟ่หรู แถมไส้กรอง 4HC-H ขนาดสี่เหลี่ยมจัตุรัส..." class="flex-1 border border-fuchsia-300 rounded-lg px-3 py-1.5 text-xs bg-white font-medium">
+            <button type="button" onclick="applyAiCreativePromptToFlexStudio()" class="bg-gradient-to-r from-fuchsia-700 to-[#002B49] text-white font-extrabold px-4 py-1.5 rounded-lg text-xs whitespace-nowrap shadow-xs">
+              ✨ ให้ AI สร้างภาพ &amp; ข้อความ
+            </button>
+          </div>
+        </div>
+
+        <!-- 10-Dimensional Template Library Bar -->
+        <div class="space-y-1.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-[11px] font-extrabold text-slate-700">คลังเทมเพลตสำเร็จรูป 10 มิติ (ใช้งานร่วมกันทั้ง LINE OA &amp; Sales/Marketing):</span>
+            <select id="flexStudioTplFilterSelect" onchange="filterFlexStudioSavedTemplates()" class="border border-slate-300 rounded-lg px-2 py-0.5 text-[11px] bg-white font-bold text-[#002B49]">
+              <option value="ALL">แสดงทั้งหมด (10+ เทมเพลต)</option>
+              <option value="SALES_MARKETING">หมวด Sales &amp; Marketing (โปรโมชัน / สเปก / Ads / บูธ)</option>
+              <option value="LINE_OA_CHATBOT">หมวด LINE OA Chatbot (ซ่อมเบื้องต้น / PM / ดีลเลอร์ / ช่าง)</option>
+            </select>
+          </div>
           <div id="flexStudioSavedListBar" class="flex flex-wrap gap-1.5"></div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           <!-- Left Editor Column -->
           <div class="lg:col-span-7 space-y-3 bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
+            <!-- Auto-Fetch Model Spec & Scene Simulator -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-2">
+              <div class="font-extrabold text-[#002B49] text-xs"><i class="fa-solid fa-database text-sky-600 mr-1"></i> ดึงสเปกเครื่องจริงอัตโนมัติ (331 รุ่น) &amp; จำลองฉากหลังโฆษณา</div>
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <div class="sm:col-span-5">
+                  <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">เลือกรุ่นเครื่อง HOSHIZAKI:</label>
+                  <div class="flex gap-1">
+                    <input type="text" id="flexStudioModelInput" list="flexStudioModelsDatalist" value="${st.modelCode || 'IM-130NE'}" placeholder="พิมพ์รุ่น เช่น IM-130NE" class="w-full border border-slate-300 rounded-lg px-2 py-1 text-xs font-mono font-bold bg-white">
+                    <button type="button" onclick="applyModelSpecToFlexStudio()" class="bg-[#002B49] hover:bg-sky-800 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] whitespace-nowrap">ดึงสเปก</button>
+                  </div>
+                </div>
+                <div class="sm:col-span-7">
+                  <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">จำลองฉากหลังโฆษณา (AI Scene Backdrop):</label>
+                  <select id="flexStudioSceneSelect" onchange="window.HZK_FLEX_STUDIO_STATE.sceneStyle=this.value; regenerateFlexStudioVisualPoster(false);" class="w-full border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold bg-white">
+                    <option value="CORPORATE_SPEC" ${st.sceneStyle === 'CORPORATE_SPEC' ? 'selected' : ''}>🏢 Corporate Navy &amp; Cyan (สเปกทางการ / B2B)</option>
+                    <option value="CAFE" ${st.sceneStyle === 'CAFE' ? 'selected' : ''}>☕ Modern Café &amp; Coffee Bar (ร้านกาแฟ/บาร์เครื่องดื่ม)</option>
+                    <option value="LUXURY_HOTEL" ${st.sceneStyle === 'LUXURY_HOTEL' ? 'selected' : ''}>🍣 Luxury Hotel &amp; Omakase Kitchen (โรงแรม/ร้านอาหารญี่ปุ่น)</option>
+                    <option value="PROMO_DEAL" ${st.sceneStyle === 'PROMO_DEAL' ? 'selected' : ''}>🔥 Hot Promotion &amp; Clearance Sale (ป้ายโปรโมชัน/ลดราคา)</option>
+                    <option value="INDUSTRIAL" ${st.sceneStyle === 'INDUSTRIAL' ? 'selected' : ''}>❄️ High-Output Ice Plant (รุ่นใหญ่กำลังผลิตสูง)</option>
+                    <option value="SERVICE_CARE" ${st.sceneStyle === 'SERVICE_CARE' ? 'selected' : ''}>🛠️ Service &amp; Maintenance Care (คู่มือดูแล/แจ้งเตือน PM)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-3 text-[11px] font-bold text-slate-700 pt-0.5">
+                <label class="inline-flex items-center gap-1 cursor-pointer">
+                  <input type="checkbox" ${st.includeSpecDim !== false ? 'checked' : ''} onchange="window.HZK_FLEX_STUDIO_STATE.includeSpecDim=this.checked; regenerateFlexStudioVisualPoster(false);"> แสดงขนาด W×D×H บนภาพ
+                </label>
+                <label class="inline-flex items-center gap-1 cursor-pointer">
+                  <input type="checkbox" ${st.includeStockStatus !== false ? 'checked' : ''} onchange="window.HZK_FLEX_STUDIO_STATE.includeStockStatus=this.checked; regenerateFlexStudioVisualPoster(false);"> แสดงสถานะสต็อกพร้อมส่ง
+                </label>
+              </div>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label class="block font-bold text-slate-700 mb-0.5">ชื่อเทมเพลต (สำหรับเก็บในคลัง):</label>
@@ -2425,7 +3196,7 @@
                   <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.headerBg='#002B49'; document.getElementById('flexStudioHeaderBgInput').value='#002B49'; refreshFlexStudioPreview();" class="px-2 py-1 rounded bg-[#002B49] text-white text-[10px] font-bold">Navy</button>
                   <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.headerBg='#00A3E0'; document.getElementById('flexStudioHeaderBgInput').value='#00A3E0'; refreshFlexStudioPreview();" class="px-2 py-1 rounded bg-[#00A3E0] text-white text-[10px] font-bold">Cyan</button>
                   <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.headerBg='#059669'; document.getElementById('flexStudioHeaderBgInput').value='#059669'; refreshFlexStudioPreview();" class="px-2 py-1 rounded bg-[#059669] text-white text-[10px] font-bold">Green</button>
-                  <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.headerBg='#B91C1C'; document.getElementById('flexStudioHeaderBgInput').value='#B91C1C'; refreshFlexStudioPreview();" class="px-2 py-1 rounded bg-[#B91C1C] text-white text-[10px] font-bold">Alert</button>
+                  <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.headerBg='#B91C1C'; document.getElementById('flexStudioHeaderBgInput').value='#B91C1C'; refreshFlexStudioPreview();" class="px-2 py-1 rounded bg-[#B91C1C] text-white text-[10px] font-bold">Promo</button>
                 </div>
               </div>
             </div>
@@ -2433,30 +3204,32 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label class="block font-bold text-slate-700 mb-0.5">ป้ายกำกับด้านบน (Badge):</label>
-                <input type="text" id="flexStudioBadgeInput" value="${st.headerBadge}" oninput="window.HZK_FLEX_STUDIO_STATE.headerBadge=this.value; refreshFlexStudioPreview();" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
+                <input type="text" id="flexStudioBadgeInput" value="${st.headerBadge}" oninput="window.HZK_FLEX_STUDIO_STATE.headerBadge=this.value; regenerateFlexStudioVisualPoster(false);" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
               </div>
               <div>
                 <label class="block font-bold text-slate-700 mb-0.5">หัวข้อหลักของการ์ด (Header Title):</label>
-                <input type="text" id="flexStudioTitleInput" value="${st.headerTitle}" oninput="window.HZK_FLEX_STUDIO_STATE.headerTitle=this.value; refreshFlexStudioPreview();" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold">
+                <input type="text" id="flexStudioTitleInput" value="${st.headerTitle}" oninput="window.HZK_FLEX_STUDIO_STATE.headerTitle=this.value; regenerateFlexStudioVisualPoster(false);" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold">
               </div>
             </div>
 
-            <!-- Auto-Resize Image Uploader -->
+            <!-- Auto-Resize & AI Vision Photo Uploader -->
             <div class="bg-sky-50/70 border border-sky-200 rounded-xl p-2.5 space-y-1.5">
               <div class="flex flex-wrap items-center justify-between gap-2">
-                <label class="font-extrabold text-[#002B49]"><i class="fa-solid fa-image text-sky-600 mr-1"></i> รูปภาพประกอบการ์ด (อัปโหลดปรับขนาด 1024px อัตโนมัติ):</label>
-                <select id="flexStudioAspectInput" onchange="window.HZK_FLEX_STUDIO_STATE.heroAspectRatio=this.value; refreshFlexStudioPreview();" class="border border-slate-300 rounded-lg px-2 py-1 text-[11px] bg-white font-bold">
-                  <option value="16:9" ${st.heroAspectRatio === '16:9' ? 'selected' : ''}>สัดส่วน 16:9 (แบนเนอร์แนวนอน)</option>
-                  <option value="4:3" ${st.heroAspectRatio === '4:3' ? 'selected' : ''}>สัดส่วน 4:3 (มาตรฐาน)</option>
-                  <option value="1:1" ${st.heroAspectRatio === '1:1' ? 'selected' : ''}>สัดส่วน 1:1 (สี่เหลี่ยมจัตุรัส)</option>
+                <label class="font-extrabold text-[#002B49]"><i class="fa-solid fa-camera-retro text-sky-600 mr-1"></i> อัปโหลดรูปเครื่องจริง (AI Vision สำรวจรุ่น + จัดฉากโฆษณาอัตโนมัติ):</label>
+                <select id="flexStudioAspectInput" onchange="window.HZK_FLEX_STUDIO_STATE.heroAspectRatio=this.value; regenerateFlexStudioVisualPoster(false);" class="border border-slate-300 rounded-lg px-2 py-1 text-[11px] bg-white font-bold">
+                  <option value="16:9" ${st.heroAspectRatio === '16:9' ? 'selected' : ''}>16:9 (แบนเนอร์ LINE Flex / YouTube)</option>
+                  <option value="1:1" ${st.heroAspectRatio === '1:1' ? 'selected' : ''}>1:1 (โพสต์โฆษณา Facebook / IG / LINE Voom)</option>
+                  <option value="9:16" ${st.heroAspectRatio === '9:16' ? 'selected' : ''}>9:16 (แนวตั้ง TikTok / Reels / Story)</option>
+                  <option value="4:3" ${st.heroAspectRatio === '4:3' ? 'selected' : ''}>4:3 (ใบปลิว / แคตตาล็อกมาตรฐาน)</option>
                 </select>
               </div>
               <div class="flex flex-wrap items-center gap-2">
                 <input type="file" accept="image/*" onchange="handleFlexStudioImageUpload(this)" class="text-[11px] file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-[#002B49] file:text-white hover:file:bg-sky-800">
-                <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.heroImageUrl=''; window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl=''; document.getElementById('flexStudioImgUrlInput').value=''; refreshFlexStudioPreview();" class="text-[11px] text-rose-600 font-bold hover:underline">ลบรูปภาพ</button>
+                <button type="button" onclick="regenerateFlexStudioVisualPoster(true)" class="bg-sky-600 hover:bg-sky-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">เรนเดอร์ภาพ &amp; ซิงค์ Drive</button>
+                <button type="button" onclick="window.HZK_FLEX_STUDIO_STATE.uploadedRawPhotoDataUrl=''; window.HZK_FLEX_STUDIO_STATE.heroImageUrl=''; window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl=''; document.getElementById('flexStudioImgUrlInput').value=''; refreshFlexStudioPreview();" class="text-[11px] text-rose-600 font-bold hover:underline">ลบรูปภาพ</button>
               </div>
               <input type="text" id="flexStudioImgUrlInput" value="${st.heroImageUrl}" oninput="window.HZK_FLEX_STUDIO_STATE.heroImageUrl=this.value; window.HZK_FLEX_STUDIO_STATE.heroImageDataUrl=''; refreshFlexStudioPreview();" placeholder="หรือวางลิงก์รูปภาพสาธารณะ https://..." class="w-full border border-slate-300 rounded-lg px-2 py-1 text-[11px] font-mono bg-white">
-              <div id="flexStudioImgUploadStatus" class="text-[10px] text-slate-500">ระบบจะย่อและปรับอัตราส่วนภาพให้พอดีกับ LINE Flex Bubble อัตโนมัติ</div>
+              <div id="flexStudioImgUploadStatus" class="text-[10px] text-slate-600">อัปโหลดรูปเครื่องทำน้ำแข็งหรือตู้แช่ ระบบจะดึงสเปกและสร้างภาพโฆษณาพร้อมลิงก์ LINE อัตโนมัติ</div>
             </div>
 
             <!-- Dynamic Text Blocks -->
@@ -2467,7 +3240,7 @@
                   <i class="fa-solid fa-plus mr-1"></i> เพิ่มข้อความ
                 </button>
               </div>
-              <div id="flexStudioBodyRowsEditor" class="space-y-2 max-h-[220px] overflow-y-auto pr-1"></div>
+              <div id="flexStudioBodyRowsEditor" class="space-y-2 max-h-[200px] overflow-y-auto pr-1"></div>
             </div>
 
             <!-- Dynamic Action Buttons -->
@@ -2482,15 +3255,33 @@
             </div>
           </div>
 
-          <!-- Right Live Preview & Dispatch Column -->
+          <!-- Right Live Preview, Ad Export & Dispatch Column -->
           <div class="lg:col-span-5 space-y-3">
             <div id="flexStudioLivePreviewBox"></div>
 
+            <!-- Export Ad Poster Images for Sales & Marketing -->
+            <div class="bg-fuchsia-50 border border-fuchsia-200 rounded-2xl p-3 space-y-2">
+              <div class="font-extrabold text-fuchsia-950 text-xs"><i class="fa-solid fa-image text-fuchsia-600 mr-1"></i> ส่งออกเป็นไฟล์ภาพโฆษณา (สำหรับ Sales &amp; Marketing)</div>
+              <div class="grid grid-cols-3 gap-1.5">
+                <button type="button" onclick="downloadFlexStudioPosterPng('1:1')" class="bg-white hover:bg-fuchsia-100 text-fuchsia-950 border border-fuchsia-300 font-extrabold py-1.5 px-2 rounded-lg text-[10.5px] text-center">
+                  🖼️ 1:1 Square<br><span class="font-normal text-[9.5px]">FB / IG / Voom</span>
+                </button>
+                <button type="button" onclick="downloadFlexStudioPosterPng('16:9')" class="bg-white hover:bg-fuchsia-100 text-fuchsia-950 border border-fuchsia-300 font-extrabold py-1.5 px-2 rounded-lg text-[10.5px] text-center">
+                  🖥️ 16:9 Banner<br><span class="font-normal text-[9.5px]">LINE / Web</span>
+                </button>
+                <button type="button" onclick="downloadFlexStudioPosterPng('9:16')" class="bg-white hover:bg-fuchsia-100 text-fuchsia-950 border border-fuchsia-300 font-extrabold py-1.5 px-2 rounded-lg text-[10.5px] text-center">
+                  📱 9:16 Story<br><span class="font-normal text-[9.5px]">TikTok / Reels</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Broadcast to LINE OA / Dealer Groups -->
             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2">
-              <div class="font-extrabold text-[#002B49]"><i class="fa-solid fa-paper-plane text-[#06C755] mr-1"></i> เลือกกลุ่มเป้าหมายที่จะส่งการ์ดจริง</div>
+              <div class="font-extrabold text-[#002B49]"><i class="fa-solid fa-paper-plane text-[#06C755] mr-1"></i> ส่งการ์ด Flex Message เข้า LINE OA ทันที</div>
               <select id="flexStudioTargetChannel" onchange="document.getElementById('flexStudioCustomIdWrap').classList.toggle('hidden', this.value !== 'SPECIFIC_ID' && this.value !== 'CUSTOMER_OA_USER');" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white">
                 <option value="ALL_DEALER_GROUPS">🏢 ส่งเข้ากลุ่ม LINE ตัวแทนจำหน่ายทั้งหมดที่ผูกไว้ (Dealer Groups)</option>
                 <option value="TECH_GROUP">👨‍🔧 ส่งเข้ากลุ่ม LINE ทีมช่างบริการ HOSHIZAKI</option>
+                <option value="MGMT_GROUP">👔 ส่งเข้ากลุ่ม LINE ผู้บริหาร (Management Group)</option>
                 <option value="SPECIFIC_ID">🎯 ส่งเข้า Group ID / Room ID เฉพาะกลุ่มที่ระบุ</option>
                 <option value="CUSTOMER_OA_USER">👤 ส่งเข้า Customer LINE OA (ระบุ User ID ลูกค้า)</option>
               </select>
@@ -2522,6 +3313,7 @@
   if (typeof window.installUnifiedDualLineTabRouterV1065 === 'function') {
     window.installUnifiedDualLineTabRouterV1065();
   }
+
 
   // =========================================================================
   // UPGRADE 2: FULL-STACK DEEP-SCAN AUTO-CHECK & AUTO-HEAL ENGINE (24 CHECKS)
@@ -13781,9 +14573,12 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     lib.unshift(item);
     localStorage.setItem(UNIFIED_CARDS_KEY, JSON.stringify(lib));
 
-    // Also sync directly into LINE Flex Studio state so it can be broadcast immediately
+    // Also sync directly into LINE Flex Studio state & upload image to Drive so it can broadcast immediately
     if (window.HZK_FLEX_STUDIO_STATE) {
+      const prodCode = document.getElementById('uaiProductSeries')?.value || 'IM-130NE';
       window.HZK_FLEX_STUDIO_STATE.name = '[AI] ' + title.slice(0, 40);
+      window.HZK_FLEX_STUDIO_STATE.category = 'SALES_MARKETING';
+      window.HZK_FLEX_STUDIO_STATE.modelCode = prodCode;
       window.HZK_FLEX_STUDIO_STATE.headerBg = window._uaiCurrentBgHex || '#002B49';
       window.HZK_FLEX_STUDIO_STATE.headerBadge = window._uaiCurrentBadge || 'HOSHIZAKI AI STUDIO';
       window.HZK_FLEX_STUDIO_STATE.headerTitle = title;
@@ -13793,9 +14588,12 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
         { label: '日本語案内 (JP)', text: bodyJp || '-', bold: false, color: '#0369A1' }
       ];
       window.HZK_FLEX_STUDIO_STATE.buttons = [
-        { label: cta1.slice(0, 38), uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#059669' },
-        { label: cta2.slice(0, 38), uri: 'https://serviceshth.github.io/hoshizaki-service/', color: '#002B49' }
+        { label: cta1.slice(0, 38), uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#059669' },
+        { label: cta2.slice(0, 38), uri: 'https://serviceshth.github.io/hoshizaki-service-management-system/', color: '#002B49' }
       ];
+      if (window._uaiCurrentPreviewImg && typeof window.syncComposedBannerToGoogleDrive === 'function') {
+        window.syncComposedBannerToGoogleDrive(window._uaiCurrentPreviewImg, 'UAI_' + Date.now() + '.jpg');
+      }
     }
 
     syncBlock68Cloud_('SAVE_UNIFIED_AI_CARD', { card: item });

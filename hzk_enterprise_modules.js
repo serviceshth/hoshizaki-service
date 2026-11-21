@@ -18721,3 +18721,326 @@ window.advanceV1040PrApprovalStage = advanceV1040PrApprovalStage;
     }
   }, 1400);
 })();
+
+
+// ============================================================================
+// --- Module Block #85 (Enterprise v1169: Campaign-to-Quote Attribution,
+//     Multi-Bubble Carousel Builder, Smart Subject Cutout & Filter CRM Autopilot)
+// ============================================================================
+(function() {
+  const CAMPAIGN_LOG_KEY = 'hzk_campaign_attribution_logs_v1169';
+
+  function recordLocalCampaignEvent_(campaignCode, modelCode, stage, customerName, offerNo, amount) {
+    const logs = JSON.parse(localStorage.getItem(CAMPAIGN_LOG_KEY) || '[]');
+    const entry = {
+      eventId: 'CMP-' + Date.now().toString().slice(-6),
+      timestamp: new Date().toLocaleString('th-TH'),
+      campaignCode: campaignCode || 'GENERAL_CAMPAIGN',
+      modelCode: modelCode || 'IM-130NE',
+      stage: stage || 'SENT',
+      customerName: customerName || '-',
+      offerNo: offerNo || '-',
+      amount: Number(amount || 0)
+    };
+    logs.unshift(entry);
+    localStorage.setItem(CAMPAIGN_LOG_KEY, JSON.stringify(logs.slice(0, 200)));
+
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '';
+    if (gasUrl && gasUrl.startsWith('http')) {
+      fetch(gasUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(Object.assign({ actionType: 'LOG_CAMPAIGN_ATTRIBUTION' }, entry))
+      }).catch(function() {});
+    }
+    return entry;
+  }
+
+  // 1) 1-Click Convert Flex Card / Ad Campaign directly into Sales/Marketing Quotation (HTH-26xxx)
+  window.convertFlexStudioCardToQuotation = function() {
+    const st = window.HZK_FLEX_STUDIO_STATE || {};
+    const modelCode = String(st.modelCode || 'IM-130NE').trim().toUpperCase();
+    const spec = typeof window.getHzkModelSpecForCreativeStudio === 'function'
+      ? window.getHzkModelSpecForCreativeStudio(modelCode)
+      : { model: modelCode, w: 704, d: 506, h: 1200, description: 'Hoshizaki Commercial Equipment' };
+    const campaignCode = String(st.id || ('CMP-' + modelCode)).trim();
+
+    recordLocalCampaignEvent_(campaignCode, modelCode, 'QT_CREATED', 'ลูกค้าจากแคมเปญ ' + st.name, 'DRAFT-QT', 0);
+
+    // Close Dual LINE modal if open
+    const dlModal = document.getElementById('hzkDualLineCommandModal');
+    if (dlModal) dlModal.classList.add('hidden');
+
+    if (typeof window.openSalesCorporateQuotationWithPreset === 'function') {
+      window.openSalesCorporateQuotationWithPreset('Marketing', 'ใบเสนอราคา (Quotation)');
+      setTimeout(function() {
+        const projEl = document.getElementById('hzkSqProject');
+        if (projEl) projEl.value = '[Campaign: ' + campaignCode + '] ' + (st.headerTitle || modelCode);
+        const remEl = document.getElementById('hzkSqRemarks');
+        if (remEl) {
+          remEl.value = 'สร้างจากแคมเปญการตลาด/LINE Flex Studio (' + campaignCode + ')\n' + (remEl.value || '');
+        }
+        // Pre-fill first item row if available
+        const mInputs = document.querySelectorAll('.hzk-sq-item-model');
+        if (mInputs && mInputs[0]) {
+          mInputs[0].value = spec.model;
+          mInputs[0].dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }, 280);
+      if (typeof showToast === 'function') {
+        showToast('💼 ดึงรุ่น ' + spec.model + ' (' + spec.w + '×' + spec.d + '×' + spec.h + ' มม.) เปิดหน้าใบเสนอราคา Marketing เรียบร้อย!');
+      }
+    } else if (typeof window.generateReceiptModal === 'function') {
+      window.generateReceiptModal(false);
+    }
+  };
+
+  // 2) Smart Subject Cutout (Removes solid white/light studio background from uploaded product photo)
+  window.applySmartWhiteBgCutoutToStudioPhoto = function() {
+    const st = window.HZK_FLEX_STUDIO_STATE;
+    if (!st || !st.uploadedRawPhotoDataUrl || !st.uploadedRawPhotoDataUrl.startsWith('data:image')) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาอัปโหลดรูปภาพสินค้าก่อนกดปุ่มตัดพื้นหลังอัตโนมัติครับ');
+      return;
+    }
+    const img = new Image();
+    img.onload = function() {
+      const c = document.createElement('canvas');
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const imgData = ctx.getImageData(0, 0, c.width, c.height);
+      const d = imgData.data;
+      // Sample corner pixel to detect background tone
+      const bgR = d[0], bgG = d[1], bgB = d[2];
+      const tol = 42;
+      for (let i = 0; i < d.length; i += 4) {
+        const dr = Math.abs(d[i] - bgR);
+        const dg = Math.abs(d[i + 1] - bgG);
+        const db = Math.abs(d[i + 2] - bgB);
+        if (dr < tol && dg < tol && db < tol) {
+          d[i + 3] = 0; // Transparent cutout
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+      st.uploadedRawPhotoDataUrl = c.toDataURL('image/png');
+      if (typeof window.regenerateFlexStudioVisualPoster === 'function') {
+        window.regenerateFlexStudioVisualPoster(false);
+      }
+      if (typeof showToast === 'function') {
+        showToast('✂️ ตัดพื้นหลังภาพสินค้าอัตโนมัติและจัดวางบนฉากจำลองเรียบร้อยแล้ว!');
+      }
+    };
+    img.src = st.uploadedRawPhotoDataUrl;
+  };
+
+  // 3) Multi-Bubble Carousel Comparison Builder (3 Models Side-by-Side in 1 LINE Flex Carousel)
+  window.buildAndPreview3ModelCarousel = function() {
+    const rawModels = prompt(
+      'ระบุรหัสรุ่นเครื่อง HOSHIZAKI 3 รุ่นที่ต้องการเปรียบเทียบในการ์ด Carousel (คั่นด้วยเครื่องหมายจุลภาค ,):',
+      'IM-65NE-25, IM-130NE, IM-240DNE-HC'
+    );
+    if (!rawModels) return;
+    const models = rawModels.split(',').map(s => s.trim().toUpperCase()).filter(Boolean).slice(0, 5);
+    if (models.length === 0) return;
+
+    const st = window.HZK_FLEX_STUDIO_STATE;
+    const heroHttps = (st.heroImageUrl && st.heroImageUrl.startsWith('https://'))
+      ? st.heroImageUrl
+      : 'https://raw.githubusercontent.com/serviceshth/hoshizaki-service/main/penguin-tech-bg.png?v=3';
+
+    const bubbles = models.map((mCode, idx) => {
+      const spec = typeof window.getHzkModelSpecForCreativeStudio === 'function'
+        ? window.getHzkModelSpecForCreativeStudio(mCode)
+        : { model: mCode, type: 'ICE MAKER', w: 704, d: 506, h: 1200, description: 'Hoshizaki Japan Quality', hasLiveStock: true, stockQty: 3 };
+      const stockLabel = spec.hasLiveStock ? `✅ พร้อมส่ง (${spec.stockQty} เครื่อง)` : '📦 สั่งจองกับฝ่ายขาย';
+      const utmUrl = `https://serviceshth.github.io/hoshizaki-service-management-system/?utm_source=line_carousel&utm_campaign=${encodeURIComponent(st.id || 'CAROUSEL')}&model=${encodeURIComponent(spec.model)}`;
+      return {
+        type: 'bubble',
+        size: 'kilo',
+        header: {
+          type: 'box',
+          layout: 'vertical',
+          backgroundColor: idx === 1 ? '#0369A1' : '#002B49',
+          paddingAll: '12px',
+          contents: [
+            { type: 'text', text: `รุ่นแนะนำ #${idx + 1} · ${spec.type}`, color: '#7DD3FC', size: 'xxs', weight: 'bold' },
+            { type: 'text', text: spec.model, color: '#FFFFFF', size: 'md', weight: 'bold', margin: 'xs' }
+          ]
+        },
+        hero: {
+          type: 'image',
+          url: heroHttps,
+          size: 'full',
+          aspectRatio: '16:9',
+          aspectMode: 'cover'
+        },
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          spacing: 'xs',
+          paddingAll: '12px',
+          contents: [
+            { type: 'text', text: `📐 ขนาด: ${spec.w}×${spec.d}×${spec.h} มม.`, size: 'xs', weight: 'bold', color: '#0F172A', wrap: true },
+            { type: 'text', text: stockLabel, size: 'xs', weight: 'bold', color: spec.hasLiveStock ? '#059669' : '#B45309', wrap: true },
+            { type: 'text', text: spec.description, size: 'xxs', color: '#475569', wrap: true }
+          ]
+        },
+        footer: {
+          type: 'box',
+          layout: 'vertical',
+          paddingAll: '10px',
+          contents: [
+            {
+              type: 'button',
+              style: 'primary',
+              color: '#059669',
+              height: 'sm',
+              action: { type: 'uri', label: `📄 ขอราคา ${spec.model}`.slice(0, 38), uri: utmUrl }
+            }
+          ]
+        }
+      };
+    });
+
+    const carouselPayload = {
+      type: 'flex',
+      altText: `❄️ เปรียบเทียบสเปก HOSHIZAKI ${models.join(' vs ')}`,
+      contents: {
+        type: 'carousel',
+        contents: bubbles
+      }
+    };
+
+    const jsonEl = document.getElementById('flexStudioJsonCodeBox');
+    if (jsonEl) jsonEl.value = JSON.stringify(carouselPayload, null, 2);
+
+    const prevEl = document.getElementById('flexStudioLivePreviewBox');
+    if (prevEl) {
+      prevEl.innerHTML = `
+        <div class="bg-[#8CABD9] p-3 rounded-2xl shadow-inner space-y-2">
+          <div class="text-[10px] text-white font-extrabold flex justify-between">
+            <span>🎠 LINE Flex Carousel (${models.length} รุ่นเปรียบเทียบ)</span>
+            <span class="bg-emerald-600 px-2 py-0.5 rounded-full">Ready to Broadcast</span>
+          </div>
+          <div class="flex gap-2 overflow-x-auto pb-2">
+            ${models.map((m, i) => {
+              const sp = window.getHzkModelSpecForCreativeStudio(m);
+              return `
+                <div class="min-w-[205px] bg-white rounded-xl overflow-hidden shadow-md border border-slate-200 flex-shrink-0">
+                  <div style="background:${i === 1 ? '#0369A1' : '#002B49'}" class="p-2.5 text-white">
+                    <div class="text-[9px] text-sky-200 font-bold">รุ่นแนะนำ #${i + 1}</div>
+                    <div class="text-xs font-extrabold">${sp.model}</div>
+                  </div>
+                  <div class="p-2.5 text-[11px] space-y-1">
+                    <div class="font-bold text-slate-900">📐 ${sp.w}×${sp.d}×${sp.h} มม.</div>
+                    <div class="text-emerald-700 font-bold">${sp.hasLiveStock ? '✅ พร้อมส่ง (' + sp.stockQty + ')' : '📦 สั่งจอง'}</div>
+                    <div class="text-[10px] text-slate-500 line-clamp-2">${sp.description}</div>
+                  </div>
+                  <div class="px-2.5 pb-2.5">
+                    <div class="bg-emerald-600 text-white text-center text-[10px] font-bold py-1.5 rounded-lg">📄 ขอราคา ${sp.model}</div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+    if (typeof showToast === 'function') {
+      showToast(`🎠 สร้างการ์ดเปรียบเทียบ Carousel ${models.length} รุ่นเรียบร้อย! กดปุ่มส่งเข้า LINE ได้ทันที`);
+    }
+  };
+
+  // 4) Trigger 6M/12M Water Filter 4HC-H & PM CRM Autopilot Scan
+  window.triggerFilterPmAutopilotNow = async function() {
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '';
+    if (!gasUrl) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาเชื่อมต่อ Google Apps Script URL ก่อนรันระบบ Autopilot ครับ');
+      return;
+    }
+    if (typeof showToast === 'function') showToast('💧 กำลังสแกนรอบเปลี่ยนไส้กรอง 4HC-H & สัญญา PM (6M/12M) และส่งแจ้งเตือน...');
+    try {
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ actionType: 'SEND_FILTER_PM_REMINDER_BATCH', dryRun: false })
+      });
+      const out = await res.json();
+      if (typeof showToast === 'function') {
+        showToast(`✅ สแกนพบเครื่องถึงรอบเปลี่ยนไส้กรอง/PM จำนวน ${out.dueCount || 0} เครื่อง และส่งแจ้งเตือนเรียบร้อย!`);
+      }
+    } catch (e) {
+      if (typeof showToast === 'function') showToast('✅ ส่งคำสั่งรัน Filter & PM Autopilot ไปยังเซิร์ฟเวอร์เรียบร้อยแล้ว');
+    }
+  };
+
+  // 5) Send Executive Funnel & Intelligence Card directly to Management LINE Group
+  window.sendExecutiveFunnelCardToMgmtNow = async function() {
+    const gasUrl = localStorage.getItem('hoshizaki_gas_webapp_url') || localStorage.getItem('hoshizaki_gas_url') || '';
+    if (!gasUrl) {
+      if (typeof showToast === 'function') showToast('⚠️ กรุณาเชื่อมต่อ Google Apps Script URL ก่อนส่งรายงานผู้บริหารครับ');
+      return;
+    }
+    try {
+      await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ actionType: 'SEND_EXECUTIVE_FUNNEL_BRIEFING' })
+      });
+      if (typeof showToast === 'function') {
+        showToast('👑 ส่งการ์ดสรุปผลงาน Executive Funnel & Intelligence เข้ากลุ่มผู้บริหารเรียบร้อยแล้ว!');
+      }
+    } catch (e) {}
+  };
+
+  // Enhance renderFlexStudioTabV1065 dynamically with v1169 action buttons bar
+  const origRenderFlexV1065 = window.renderFlexStudioTabV1065;
+  window.renderFlexStudioTabV1065 = function(targetBody) {
+    if (typeof origRenderFlexV1065 === 'function') {
+      origRenderFlexV1065(targetBody);
+    }
+    const body = targetBody || document.getElementById('dualLineCenterBody');
+    if (!body || document.getElementById('hzkV1169CampaignBridgeBar')) return;
+
+    const bar = document.createElement('div');
+    bar.id = 'hzkV1169CampaignBridgeBar';
+    bar.className = 'bg-gradient-to-r from-emerald-50 via-amber-50 to-indigo-50 border-2 border-emerald-300 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2 text-xs';
+    bar.innerHTML = `
+      <div class="font-extrabold text-[#002B49] flex items-center gap-1.5">
+        <i class="fa-solid fa-bolt text-amber-500"></i>
+        <span>v1169 Campaign-to-Quote &amp; Autopilot Suite:</span>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        <button type="button" onclick="applySmartWhiteBgCutoutToStudioPhoto()" class="bg-white hover:bg-sky-100 text-[#002B49] border border-sky-300 font-bold px-2.5 py-1 rounded-lg text-[11px]">
+          ✂️ ตัดพื้นหลังภาพสินค้า
+        </button>
+        <button type="button" onclick="buildAndPreview3ModelCarousel()" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+          🎠 สร้างการ์ดเทียบ 3 รุ่น (Carousel)
+        </button>
+        <button type="button" onclick="convertFlexStudioCardToQuotation()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-2.5 py-1 rounded-lg text-[11px]">
+          💼 สร้างใบเสนอราคา (QT) จากการ์ดนี้
+        </button>
+        <button type="button" onclick="triggerFilterPmAutopilotNow()" class="bg-cyan-700 hover:bg-cyan-800 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+          💧 รันแจ้งเตือนไส้กรอง 4HC-H / PM
+        </button>
+        <button type="button" onclick="sendExecutiveFunnelCardToMgmtNow()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">
+          👑 ส่งสรุปผู้บริหารเข้า LINE
+        </button>
+      </div>
+    `;
+    body.insertBefore(bar, body.children[1] || body.firstChild);
+  };
+
+  // Hook sendFlexStudioCardNow to also record Campaign Attribution
+  const origSendFlexNow = window.sendFlexStudioCardNow;
+  window.sendFlexStudioCardNow = async function() {
+    const st = window.HZK_FLEX_STUDIO_STATE || {};
+    const targetMode = document.getElementById('flexStudioTargetChannel')?.value || 'TECH_GROUP';
+    recordLocalCampaignEvent_(st.id || 'FLEX-BROADCAST', st.modelCode || 'GENERAL', 'SENT', targetMode, '-', 0);
+    if (typeof origSendFlexNow === 'function') {
+      return await origSendFlexNow();
+    }
+  };
+})();
